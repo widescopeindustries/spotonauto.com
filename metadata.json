@@ -1,0 +1,5 @@
+{
+  "name": "AI Auto Repair Guide",
+  "description": "An AI-powered service manual for DIY mechanics, providing custom, illustrated repair guides for any vehicle. Get step-by-step instructions and technical drawings generated on the fly for your specific car and repair task.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Auto Repair Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-cyan': {
+                DEFAULT: '#00FFFF',
+                'light': '#7DFDFE',
+                'dark': '#00B8B8',
+              },
+              'brand-gray': {
+                '100': '#F0F2F5',
+                '200': '#E4E7EB',
+                '700': '#333F48',
+                '800': '#232B31',
+                '900': '#1A2025',
+              },
+            },
+            fontFamily: {
+              sans: ['Orbitron', 'sans-serif'],
+            },
+            boxShadow: {
+              'glow-cyan': '0 0 15px rgba(0, 255, 255, 0.6), 0 0 5px rgba(0, 255, 255, 0.8)',
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/"
+  }
+}
+</script>
+</head>
+  <body class="bg-black text-gray-200 font-sans transition-colors duration-300">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
