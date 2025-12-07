@@ -45,7 +45,7 @@ const tasks = [
 ];
 
 async function generate() {
-    const smStream = new SitemapStream({ hostname: 'https://arepnearme.com' });
+    const smStream = new SitemapStream({ hostname: 'https://ai-auto-repair.vercel.app' });
     const writeStream = createWriteStream(sitemapPath);
 
     smStream.pipe(writeStream);
