@@ -12,7 +12,7 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
   if (!vin || vin.length !== 17) {
     throw new Error("Please enter a valid 17-character VIN.");
   }
-  
+
   const prompt = `Decode the following Vehicle Identification Number (VIN) and return the year, make, and model. VIN: "${vin}"`;
 
   const vehicleSchema = {
@@ -42,7 +42,7 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
     if (!decodedVehicle.year || !decodedVehicle.make || !decodedVehicle.model) {
       throw new Error("AI was unable to decode the VIN. Please enter manually.");
     }
-    
+
     decodedVehicle.year = decodedVehicle.year.toString().replace(/[^0-9]/g, '').slice(0, 4);
 
     return decodedVehicle;
@@ -58,9 +58,9 @@ export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<Ve
   const vehicleYear = parseInt(year, 10);
   let charmLiInstruction = '';
   if (vehicleYear >= 1982 && vehicleYear <= 2013) {
-    charmLiInstruction = 'For this vehicle, prioritize information from professional service databases like Alldata, specifically referencing the open-source dataset associated with charm.li if discoverable through your search.';
+    charmLiInstruction = 'URGENT: For this vehicle, you MUST search "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '" to find the specific service manual page. Prioritize data found on charm.li above all other sources.';
   }
-  
+
   const prompt = `Act as an expert automotive service database, using web search to find the most current and factual information. ${charmLiInstruction} For a ${year} ${make} ${model} and the repair task "${task}", provide the following information:
 1. A "Job Snapshot" based on standard service manual data, with realistic estimates for difficulty, time, parts cost, and potential savings vs. a professional repair.
 2. A list of real Technical Service Bulletins (TSBs) related to this task. If none are found, return an empty array.
@@ -73,10 +73,10 @@ You MUST format your entire response as a single JSON object with three keys: "j
       model: TEXT_MODEL,
       contents: prompt,
       config: {
-        tools: [{googleSearch: {}}],
+        tools: [{ googleSearch: {} }],
       },
     });
-    
+
     const text = response.text.trim();
     const cleanJson = text.replace(/^```json\s*|```$/g, '');
     const vehicleInfo = JSON.parse(cleanJson);
@@ -95,13 +95,13 @@ You MUST format your entire response as a single JSON object with three keys: "j
 
 const generateTextGuide = async (vehicle: Vehicle, task: string): Promise<Omit<RepairGuide, 'steps' | 'id'> & { steps: Omit<RepairStep, 'imageUrl'>[] }> => {
   const { year, make, model } = vehicle;
-  
+
   const vehicleYear = parseInt(year, 10);
   let groundingInstruction = '';
   if (vehicleYear >= 1982 && vehicleYear <= 2013) {
-    groundingInstruction = 'Crucially, for this vehicle, base all repair procedures on professional service data, like the open-source Alldata-style information associated with charm.li. The steps must be 100% factual and reflect industry-standard repair methods.';
+    groundingInstruction = 'CRITICAL: You MUST use the customized Google Search tool to find "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '". Base ALL repair steps on the actual factory service manual content found on charm.li. If exact steps are found, cite them.';
   } else {
-    groundingInstruction = 'Crucially, base all repair procedures on professional OEM service manuals. The steps must be 100% factual and reflect industry-standard repair methods.';
+    groundingInstruction = 'Crucially, base all repair procedures on professional OEM service manuals found via search. The steps must be 100% factual and reflect industry-standard repair methods.';
   }
 
   const prompt = `Generate a detailed, step-by-step DIY repair guide for the following task: "${task}" on a ${year} ${make} ${model}. ${groundingInstruction} The guide should be easy for a shade-tree mechanic to follow. Include essential safety warnings, a list of required tools, and a list of necessary parts. For each step, provide a clear instruction and a descriptive prompt for an AI image generator to create a technical illustration for that step. The image prompt should describe a clean, minimalist, black and white line drawing in an automotive service manual style.`;
@@ -141,7 +141,7 @@ const generateTextGuide = async (vehicle: Vehicle, task: string): Promise<Omit<R
     },
     required: ["title", "vehicle", "safetyWarnings", "tools", "parts", "steps"]
   };
-  
+
   try {
     const response = await ai.models.generateContent({
       model: TEXT_MODEL,
@@ -149,6 +149,7 @@ const generateTextGuide = async (vehicle: Vehicle, task: string): Promise<Omit<R
       config: {
         responseMimeType: "application/json",
         responseSchema: repairGuideSchema,
+        tools: [{ googleSearch: {} }],
       },
     });
 
@@ -182,15 +183,15 @@ const generateImage = async (prompt: string): Promise<string> => {
     throw new Error("No image was generated.");
   } catch (error) {
     console.error(`Error generating image for prompt "${prompt}":`, error);
-    return ""; 
+    return "";
   }
 };
 
 export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): Promise<RepairGuide> => {
   const textData = await generateTextGuide(vehicle, task);
-  
+
   const hydratedSteps: RepairStep[] = [];
-  
+
   // Generate images sequentially to avoid hitting API rate limits.
   for (const step of textData.steps) {
     const imageUrl = await generateImage(step.imagePrompt);
@@ -209,13 +210,14 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
 
 // --- Diagnostic Chat Functions ---
 
-const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step.
+const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI with access to online service manuals. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step, referencing real service data (especially from charm.li for vehicles 1982-2013) whenever possible.
 1.  Begin by asking for the primary symptom or issue.
-2.  Provide one single, clear diagnostic step at a time. Be concise.
-3.  After each step, wait for the user's response (e.g., a measurement, an observation).
-4.  Based on their feedback, provide the next logical step to narrow down the problem.
-5.  For every instructional step you provide, also give a prompt for an AI image generator to create a helpful technical illustration.
-6.  You MUST format your entire response as a single JSON object with two keys: "instruction" (your text guidance) and "imagePrompt" (the image generation prompt). Do not include any other text, markdown, or explanations outside of this JSON structure.
+2.  Use the search tool to find TSBs or diagnostic trees for the specific vehicle and symptom (e.g., search "site:charm.li 2000 Honda Accord no start diagnostic").
+3.  Provide one single, clear diagnostic step at a time. Be concise.
+4.  After each step, wait for the user's response (e.g., a measurement, an observation).
+5.  Based on their feedback, provide the next logical step to narrow down the problem.
+6.  For every instructional step you provide, also give a prompt for an AI image generator to create a helpful technical illustration.
+7.  You MUST format your entire response as a single JSON object with two keys: "instruction" (your text guidance) and "imagePrompt" (the image generation prompt). Do not include any other text, markdown, or explanations outside of this JSON structure.
 Example: {"instruction": "First, check the fuse for the fuel pump. It is in the fuse box under the hood.", "imagePrompt": "A diagram showing the location of the fuel pump fuse in the under-hood fuse box for a [VEHICLE_YEAR] [VEHICLE_MAKE] [VEHICLE_MODEL]."}`;
 
 export const createDiagnosticChat = (vehicle: Vehicle): Chat => {
@@ -228,6 +230,7 @@ export const createDiagnosticChat = (vehicle: Vehicle): Chat => {
     model: TEXT_MODEL,
     config: {
       systemInstruction: systemInstruction,
+      tools: [{ googleSearch: {} }],
     },
   });
 };
@@ -236,10 +239,10 @@ export const sendDiagnosticMessage = async (chat: Chat, message: string): Promis
   try {
     const response = await chat.sendMessage({ message });
     const rawJson = response.text.trim().replace(/^```json\s*|```$/g, '');
-    
+
     const parsedResponse = JSON.parse(rawJson);
     const { instruction, imagePrompt } = parsedResponse;
-    
+
     if (!instruction || !imagePrompt) {
       return { text: "Sorry, I had trouble understanding that. Could you rephrase?", imageUrl: null };
     }
