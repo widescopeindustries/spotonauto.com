@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
 import type { RepairGuide } from '../types';
-import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon } from './Icons';
-import { generatePartLinks } from '../services/affiliateService';
+import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon, ExternalLinkIcon } from './Icons';
+import { generatePartLinks, generateToolLinks } from '../services/affiliateService';
 
 interface RepairGuideDisplayProps {
     guide: RepairGuide;
@@ -22,8 +22,8 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
         <button
             onClick={() => setActiveTab(tab)}
             className={`flex items-center gap-2 px-4 py-3 font-bold rounded-lg transition-all duration-200 uppercase text-sm tracking-wider ${activeTab === tab
-                    ? 'bg-brand-cyan text-black shadow-glow-cyan'
-                    : 'text-brand-cyan-light hover:bg-brand-cyan/20'
+                ? 'bg-brand-cyan text-black shadow-glow-cyan'
+                : 'text-brand-cyan-light hover:bg-brand-cyan/20'
                 }`}
         >
             {icon}
@@ -77,25 +77,41 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                 {activeTab === Tab.ToolsParts && (
                     <div className="grid md:grid-cols-2 gap-8">
                         <div>
-                            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest"><WrenchIcon className="text-brand-cyan" />Tools</h2>
-                            <ul className="space-y-2">
-                                {guide.tools.map((tool, index) => (
-                                    <li key={index} className="flex items-center gap-3 text-gray-200">
-                                        <CheckCircleIcon className="text-brand-cyan flex-shrink-0" />
-                                        <span>{tool}</span>
-                                    </li>
-                                ))}
+                            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest"><WrenchIcon className="text-brand-cyan" />Tools Needed</h2>
+                            <ul className="space-y-3">
+                                {guide.tools.map((tool, index) => {
+                                    const links = generateToolLinks(tool);
+                                    return (
+                                        <li key={index} className="flex items-center justify-between gap-3 text-gray-200 p-2 hover:bg-white/5 rounded transition-colors group">
+                                            <div className="flex items-center gap-3">
+                                                <CheckCircleIcon className="text-brand-cyan flex-shrink-0" />
+                                                <span>{tool}</span>
+                                            </div>
+                                            {links.map((link, i) => (
+                                                <a
+                                                    key={i}
+                                                    href={link.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="opacity-0 group-hover:opacity-100 text-brand-cyan text-xs flex items-center gap-1 hover:underline transition-opacity"
+                                                >
+                                                    <ExternalLinkIcon className="w-3 h-3" /> Get this
+                                                </a>
+                                            ))}
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest"><WrenchIcon className="text-brand-cyan" />Parts</h2>
+                            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest"><ShoppingCartIcon className="text-brand-cyan" />Parts List</h2>
                             <ul className="space-y-4">
                                 {guide.parts.map((part, index) => {
                                     const links = generatePartLinks(part, guide.vehicle);
                                     return (
-                                        <li key={index} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-brand-cyan/50 transition-colors">
+                                        <li key={index} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white/5 rounded-lg border border-brand-cyan/20 hover:border-brand-cyan/50 hover:bg-brand-cyan/5 transition-all duration-300">
                                             <div className="flex items-center gap-3 text-gray-200">
-                                                <CheckCircleIcon className="text-brand-cyan flex-shrink-0" />
+                                                <div className="w-2 h-2 rounded-full bg-brand-cyan shadow-glow-cyan" />
                                                 <span className="font-medium">{part}</span>
                                             </div>
                                             {links.map((link, i) => (
@@ -104,18 +120,29 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                                     href={link.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex items-center justify-center gap-2 bg-brand-cyan text-black px-4 py-2 rounded-md font-bold text-sm hover:bg-brand-cyan-light transition-colors"
+                                                    className="flex items-center justify-center gap-2 bg-brand-cyan text-black px-5 py-2.5 rounded-full font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-cyan-500/50"
                                                 >
                                                     <ShoppingCartIcon className="w-4 h-4" />
-                                                    Buy on {link.provider}
+                                                    BUY NOW
                                                 </a>
                                             ))}
                                         </li>
                                     );
                                 })}
                             </ul>
-                            <p className="text-xs text-gray-500 mt-4 italic">
-                                *As an Amazon Associate I earn from qualifying purchases. Prices and availability may vary.
+                            <div className="mt-8 p-4 bg-brand-cyan/10 border border-brand-cyan/30 rounded-xl text-center">
+                                <p className="text-sm text-gray-300 mb-4 font-medium italic">Support our free guides by using our links!</p>
+                                <a
+                                    href={`https://www.amazon.com/s?k=${encodeURIComponent(guide.vehicle + ' maintenance parts')}&tag=${process.env.AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-brand-cyan border-2 border-brand-cyan px-6 py-3 rounded-full font-bold hover:bg-brand-cyan hover:text-black transition-all"
+                                >
+                                    SHOP ALL PARTS FOR THIS CAR <ExternalLinkIcon className="w-4 h-4" />
+                                </a>
+                            </div>
+                            <p className="text-[10px] text-gray-500 mt-6 text-center leading-relaxed">
+                                <span className="font-bold text-gray-400">Affiliate Disclosure:</span> As an Amazon Associate I earn from qualifying purchases. This means we may receive a small commission if you buy through our links, at no extra cost to you.
                             </p>
                         </div>
                     </div>

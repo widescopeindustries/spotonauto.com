@@ -13,6 +13,8 @@ export default {
         extend: {
             colors: {
                 'brand-black': '#050505',
+                'brand-cyan': '#00f3ff',
+                'brand-cyan-light': '#33f6ff',
                 'neon-cyan': '#00f3ff',
                 'neon-amber': '#ffaa00',
                 'glass-black': 'rgba(5, 5, 5, 0.7)',
@@ -26,6 +28,7 @@ export default {
                 'glow-cyan': '0 0 20px rgba(0, 243, 255, 0.5), 0 0 10px rgba(0, 243, 255, 0.3)',
                 'glow-amber': '0 0 20px rgba(255, 170, 0, 0.5), 0 0 10px rgba(255, 170, 0, 0.3)',
                 'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                'glass-premium': '0 0 50px -12px rgba(0, 0, 0, 0.5)',
             },
             backgroundImage: {
                 'cyber-grid': "radial-gradient(circle, rgba(0, 243, 255, 0.1) 1px, transparent 1px)",

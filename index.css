@@ -4,24 +4,46 @@
 
 @layer base {
     body {
-        @apply bg-brand-black text-gray-100;
+        @apply bg-[#030303] text-gray-100 font-sans antialiased selection:bg-neon-cyan selection:text-black;
     }
 }
 
 @layer utilities {
     .glass-panel {
-        @apply bg-glass-black backdrop-blur-md border border-glass-white/10 shadow-glass;
+        @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-glass-premium;
     }
 
     .glass-panel-hover {
-        @apply hover:bg-glass-white/10 hover:border-neon-cyan/30 transition-all duration-300;
+        @apply hover:bg-white/5 hover:border-neon-cyan/40 transition-all duration-500 hover:shadow-neon-cyan/20;
     }
 
     .text-glow {
-        text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        text-shadow: 0 0 15px rgba(0, 243, 255, 0.6), 0 0 30px rgba(0, 243, 255, 0.2);
     }
 
     .text-glow-amber {
-        text-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+        text-shadow: 0 0 15px rgba(255, 170, 0, 0.6), 0 0 30px rgba(255, 170, 0, 0.2);
+    }
+
+    .shadow-glow-cyan {
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+    }
+
+    .animate-pulse-slow {
+        animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.02);
     }
 }
