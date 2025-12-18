@@ -133,7 +133,7 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                             <div className="mt-8 p-4 bg-brand-cyan/10 border border-brand-cyan/30 rounded-xl text-center">
                                 <p className="text-sm text-gray-300 mb-4 font-medium italic">Support our free guides by using our links!</p>
                                 <a
-                                    href={`https://www.amazon.com/s?k=${encodeURIComponent(guide.vehicle + ' maintenance parts')}&tag=${process.env.AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
+                                    href={`https://www.amazon.com/s?k=${encodeURIComponent(guide.vehicle + ' maintenance parts')}&tag=${process.env.AMAZON_AFFILIATE_TAG || 'aiautorepai04-20'}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2 text-brand-cyan border-2 border-brand-cyan px-6 py-3 rounded-full font-bold hover:bg-brand-cyan hover:text-black transition-all"
