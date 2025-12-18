@@ -49,7 +49,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle, initialProblem
                 setTimeout(() => {
                     const greeting = initialProblem
                         ? `Diagnostic Core Online. Analyzing provided symptom: "${initialProblem}"...`
-                        : `Diagnostic Core Online. Connected to ${currentVehicle.year} ${currentVehicle.make} ${currentVehicle.model} database. Accessing technical service bulletins and service manuals (1982-2013: Charm.li optimized). Please describe the primary symptom.`;
+                        : `Diagnostic Core Online. Connected to ${currentVehicle.year} ${currentVehicle.make} ${currentVehicle.model} database. Accessing factory-level technical service bulletins and professional diagnostic manuals. Please describe the primary symptom.`;
 
                     setMessages([{
                         id: 'init',
@@ -214,7 +214,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle, initialProblem
                     </button>
                 </form>
                 <div className="text-center mt-2">
-                    <span className="text-[10px] text-gray-500 font-mono">POWERED BY GEMINI 2.0 // CHARM.LI PROTOCOL ENABLED</span>
+                    <span className="text-[10px] text-gray-500 font-mono">POWERED BY GEMINI 2.0 // FACTORY MANUAL PROTOCOL ENABLED</span>
                 </div>
             </div>
         </div>

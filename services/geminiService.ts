@@ -58,7 +58,7 @@ export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<Ve
   const vehicleYear = parseInt(year, 10);
   let charmLiInstruction = '';
   if (vehicleYear >= 1982 && vehicleYear <= 2013) {
-    charmLiInstruction = 'URGENT: For this vehicle, you MUST search "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '" to find the specific service manual page. Prioritize data found on charm.li above all other sources.';
+    charmLiInstruction = 'URGENT: For this vehicle, you MUST search "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '" to find the specific professional service manual page. Prioritize data found in these factory-level databases.';
   }
 
   const prompt = `Act as an expert automotive service database, using web search to find the most current and factual information. ${charmLiInstruction} For a ${year} ${make} ${model} and the repair task "${task}", provide the following information:
@@ -99,7 +99,7 @@ const generateTextGuide = async (vehicle: Vehicle, task: string): Promise<Omit<R
   const vehicleYear = parseInt(year, 10);
   let groundingInstruction = '';
   if (vehicleYear >= 1982 && vehicleYear <= 2013) {
-    groundingInstruction = 'CRITICAL: You MUST use the Google Search tool to find "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '". This is a factory service manual repository. Base ALL repair steps, torque specs, and fluid capacities on the content found on charm.li. If exact steps are found, use them as the source of truth.';
+    groundingInstruction = 'CRITICAL: You MUST use the Google Search tool to find "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '". This search targets a factory-level service manual database. Base ALL repair steps, torque specs, and fluid capacities on the verified factory manual content retrieved. If exact steps are found, use them as the source of truth.';
   } else {
     groundingInstruction = 'Crucially, use Google Search to find professional OEM service manuals or technical forums for this specific vehicle. The steps must be 100% factual and reflect industry-standard repair methods.';
   }
@@ -224,7 +224,7 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
 
 // --- Diagnostic Chat Functions ---
 
-const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI with access to online service manuals. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step, referencing real service data (especially from charm.li for vehicles 1982-2013) whenever possible.
+const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI with access to online service manuals. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step, referencing real factory-level service data whenever possible.
 1.  Begin by asking for the primary symptom or issue.
 2.  Use the search tool to find TSBs or diagnostic trees for the specific vehicle and symptom (e.g., search "site:charm.li 2000 Honda Accord no start diagnostic").
 3.  Provide one single, clear diagnostic step at a time. Be concise.

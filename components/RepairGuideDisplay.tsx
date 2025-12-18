@@ -191,7 +191,7 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                         </div>
                         <div className="mt-8 p-6 bg-brand-cyan/5 border border-brand-cyan/20 rounded-xl">
                             <p className="text-sm text-gray-400 leading-relaxed italic text-center">
-                                "Our AI uses real-time web grounding to cross-reference factory service manuals, Technical Service Bulletins, and professional mechanical databases (including Charm.li for 1982-2013 vehicles) to ensure maximum accuracy."
+                                "Our AI uses real-time web grounding to cross-reference factory service manuals, Technical Service Bulletins, and professional mechanical databases to ensure maximum accuracy and reliability."
                             </p>
                         </div>
                     </div>
