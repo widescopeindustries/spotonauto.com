@@ -29,6 +29,7 @@ export interface RepairGuide {
   tools: string[];
   parts: string[];
   steps: RepairStep[];
+  sources?: GroundingSource[];
 }
 
 export interface ChatMessage {

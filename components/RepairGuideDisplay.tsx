@@ -12,7 +12,8 @@ interface RepairGuideDisplayProps {
 enum Tab {
     Guide,
     ToolsParts,
-    Safety
+    Safety,
+    Sources
 }
 
 const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset }) => {
@@ -47,6 +48,9 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                 <TabButton tab={Tab.Guide} label="Guide" icon={<ListIcon className="w-5 h-5" />} />
                 <TabButton tab={Tab.ToolsParts} label="Tools & Parts" icon={<WrenchIcon className="w-5 h-5" />} />
                 <TabButton tab={Tab.Safety} label="Safety" icon={<AlertIcon className="w-5 h-5" />} />
+                {guide.sources && guide.sources.length > 0 && (
+                    <TabButton tab={Tab.Sources} label="Sources" icon={<ExternalLinkIcon className="w-5 h-5" />} />
+                )}
             </nav>
 
             <main className="p-6 md:p-8">
@@ -158,6 +162,38 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                 </li>
                             ))}
                         </ul>
+                    </div>
+                )}
+                {activeTab === Tab.Sources && guide.sources && (
+                    <div className="animate-fade-in">
+                        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2 uppercase tracking-widest">
+                            <ExternalLinkIcon className="text-brand-cyan" />
+                            Knowledge Backbone
+                        </h2>
+                        <div className="grid gap-4">
+                            {guide.sources.map((source, index) => (
+                                <a
+                                    key={index}
+                                    href={source.uri}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-4 bg-white/5 border border-white/10 rounded-lg hover:border-brand-cyan/50 hover:bg-brand-cyan/5 transition-all group"
+                                >
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <h3 className="text-brand-cyan font-bold group-hover:underline">{source.title}</h3>
+                                            <p className="text-xs text-gray-500 mt-1 truncate max-w-md">{source.uri}</p>
+                                        </div>
+                                        <ExternalLinkIcon className="text-gray-600 group-hover:text-brand-cyan" />
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                        <div className="mt-8 p-6 bg-brand-cyan/5 border border-brand-cyan/20 rounded-xl">
+                            <p className="text-sm text-gray-400 leading-relaxed italic text-center">
+                                "Our AI uses real-time web grounding to cross-reference factory service manuals, Technical Service Bulletins, and professional mechanical databases (including Charm.li for 1982-2013 vehicles) to ensure maximum accuracy."
+                            </p>
+                        </div>
                     </div>
                 )}
             </main>

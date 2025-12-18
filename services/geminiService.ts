@@ -99,9 +99,9 @@ const generateTextGuide = async (vehicle: Vehicle, task: string): Promise<Omit<R
   const vehicleYear = parseInt(year, 10);
   let groundingInstruction = '';
   if (vehicleYear >= 1982 && vehicleYear <= 2013) {
-    groundingInstruction = 'CRITICAL: You MUST use the customized Google Search tool to find "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '". Base ALL repair steps on the actual factory service manual content found on charm.li. If exact steps are found, cite them conceptually but do not output "Source: charm.li" in the user-facing text.';
+    groundingInstruction = 'CRITICAL: You MUST use the Google Search tool to find "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '". This is a factory service manual repository. Base ALL repair steps, torque specs, and fluid capacities on the content found on charm.li. If exact steps are found, use them as the source of truth.';
   } else {
-    groundingInstruction = 'Crucially, base all repair procedures on professional OEM service manuals found via search. The steps must be 100% factual and reflect industry-standard repair methods.';
+    groundingInstruction = 'Crucially, use Google Search to find professional OEM service manuals or technical forums for this specific vehicle. The steps must be 100% factual and reflect industry-standard repair methods.';
   }
 
   const prompt = `Generate a detailed, step-by-step DIY repair guide for the following task: "${task}" on a ${year} ${make} ${model}. ${groundingInstruction} The guide should be easy for a shade-tree mechanic to follow, using clear "IF this, THEN that" logic where applicable for diagnostics or complex steps. 
@@ -154,13 +154,19 @@ const generateTextGuide = async (vehicle: Vehicle, task: string): Promise<Omit<R
       config: {
         responseMimeType: "application/json",
         responseSchema: repairGuideSchema,
+        tools: [{ googleSearch: {} }],
       },
     });
 
     const text = response.text.trim();
-    console.log("Raw GenAI Response:", text); // Debug log
     const cleanJson = text.replace(/^```json\s*|```$/g, '');
-    return JSON.parse(cleanJson);
+    const data = JSON.parse(cleanJson);
+
+    const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
+      ?.map(chunk => chunk.web)
+      .filter((web): web is { uri: string; title: string } => !!(web?.uri && web.title)) || [];
+
+    return { ...data, sources };
 
   } catch (error) {
     console.error("Error generating text guide:", error);
@@ -213,7 +219,7 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
     .toLowerCase()
     .replace(/\s+/g, '-');
 
-  return { ...textData, id: guideId, steps: hydratedSteps };
+  return { ...textData, id: guideId, steps: hydratedSteps } as RepairGuide;
 };
 
 // --- Diagnostic Chat Functions ---
