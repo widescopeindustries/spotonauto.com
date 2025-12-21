@@ -1,64 +1,78 @@
 
 import { google } from 'googleapis';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
-import 'dotenv/config';
-
-// Load credentials from environment
-const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
-const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-
-if (!clientEmail || !privateKey) {
-    console.error('Error: GOOGLE_CLIENT_EMAIL and GOOGLE_PRIVATE_KEY are required in .env');
-    process.exit(1);
-}
-
-const auth = new google.auth.JWT(
-    clientEmail,
-    null,
-    privateKey,
-    ['https://www.googleapis.com/auth/indexing']
-);
-
-const indexing = google.indexing('v3');
-
-async function submitUrl(url) {
-    try {
-        const response = await indexing.urlNotifications.publish({
-            auth,
-            requestBody: {
-                url,
-                type: 'URL_UPDATED',
-            },
-        });
-        console.log(`Successfully submitted: ${url}`);
-        return response.data;
-    } catch (error) {
-        console.error(`Error submitting ${url}:`, error.message);
-        return null;
-    }
-}
 
 async function runIndexing() {
+    const jsonPath = resolve('./service-account.json');
+
+    if (!existsSync(jsonPath)) {
+        console.error('Error: service-account.json not found.');
+        process.exit(1);
+    }
+
+    console.log('Authenticating with Google Indexing API...');
+
+    // Now that JSON is fixed, we can use the standard auth methods
+    const auth = new google.auth.GoogleAuth({
+        keyFile: jsonPath,
+        scopes: ['https://www.googleapis.com/auth/indexing'],
+    });
+
+    const indexing = google.indexing({
+        version: 'v3',
+        auth: auth,
+    });
+
+    async function submitUrl(url) {
+        try {
+            // Correct format using the auth client
+            await indexing.urlNotifications.publish({
+                requestBody: {
+                    url,
+                    type: 'URL_UPDATED',
+                },
+            });
+            console.log(`Successfully submitted: ${url}`);
+        } catch (error) {
+            console.error(`Error submitting ${url}:`, error.response?.data?.error?.message || error.message);
+        }
+    }
+
     const sitemapPath = resolve('./public/sitemap.xml');
     try {
+        if (!existsSync(sitemapPath)) {
+            console.error(`Sitemap not found at ${sitemapPath}`);
+            return;
+        }
         const sitemapContent = readFileSync(sitemapPath, 'utf-8');
-        // Extract URLs from sitemap.xml using simple regex
-        const urls = sitemapContent.match(/<loc>(.*?)<\/loc>/g).map(loc => loc.replace(/<\/?loc>/g, ''));
+        let urls = sitemapContent.match(/<loc>(.*?)<\/loc>/g)?.map(loc => loc.replace(/<\/?loc>/g, '')) || [];
+
+        if (urls.length === 0) {
+            console.error('No URLs found in sitemap.');
+            return;
+        }
 
         console.log(`Found ${urls.length} URLs in sitemap.`);
 
-        // Batch submit (Indexing API has limits, usually 100-200 per day by default, but we can try)
-        // For thousands of URLs, we should probably only index the most important ones or use chunks
-        const limit = 200; // Default daily quota
+        // Final sanity check on URLs - ensure they use the correct production domain
+        const correctDomain = 'https://ai-auto-repair-mobile.vercel.app';
+        urls = urls.map(url => {
+            if (url.includes('ai-auto-repair.vercel.app')) {
+                return url.replace('https://ai-auto-repair.vercel.app', correctDomain);
+            }
+            return url;
+        });
+
+        const limit = 200;
         const toProcess = urls.slice(0, limit);
 
-        console.log(`Submitting first ${toProcess.length} URLs...`);
+        console.log(`Submitting first ${toProcess.length} URLs to Google...`);
 
         for (const url of toProcess) {
             await submitUrl(url);
-            // Slight delay to avoid rate limiting
-            await new Promise(r => setTimeout(r, 500));
+            // Slight delay to be safe
+            await new Promise(r => setTimeout(r, 600));
         }
 
         console.log('Indexing submission complete.');

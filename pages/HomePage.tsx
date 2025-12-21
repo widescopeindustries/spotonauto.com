@@ -7,7 +7,8 @@ const HomePage: React.FC = () => {
         <>
             <SEOHead
                 title="Antigravity Diagnostics - AI Auto Repair System"
-                description="Silence the Check Engine Light. Instant Diagnostics, Powered by Hyper-Intelligence."
+                description="Silence the Check Engine Light. Instant Diagnostics, Licensed Factory Data, Step-by-Step AI Repair Guides."
+                canonicalUrl="https://ai-auto-repair-mobile.vercel.app/"
             />
 
             <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4 relative overflow-hidden">

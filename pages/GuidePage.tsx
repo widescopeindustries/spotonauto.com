@@ -83,9 +83,15 @@ const GuidePage: React.FC = () => {
     const title = guide ? guide.title : `How to fix ${task} on ${year} ${make} ${model}`;
     const desc = `Step-by-step DIY repair guide for ${task} on a ${year} ${make} ${model}. Includes diagrams, parts list, and tool requirements.`;
 
+    const currentUrl = `https://ai-auto-repair-mobile.vercel.app/repair/${year}/${make}/${model}/${task}`;
+
     if (loading) return (
         <>
-            <SEOHead title={`Generating Guide... | AI Auto Repair`} description="Please wait..." />
+            <SEOHead
+                title={`Generating Guide... | AI Auto Repair`}
+                description="Please wait..."
+                canonicalUrl={currentUrl}
+            />
             <div className="min-h-screen flex items-center justify-center">
                 <LoadingIndicator />
             </div>
@@ -102,7 +108,7 @@ const GuidePage: React.FC = () => {
 
     return (
         <>
-            <SEOHead title={`${title} | AI Auto Repair`} description={desc} />
+            <SEOHead title={`${title} | AI Auto Repair`} description={desc} canonicalUrl={currentUrl} />
             <div className="p-4 md:p-8 flex justify-center">
                 {guide && <RepairGuideDisplay guide={guide} onReset={() => navigate('/')} />}
             </div>
