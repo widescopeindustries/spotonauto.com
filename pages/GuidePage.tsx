@@ -52,7 +52,7 @@ const GuidePage: React.FC = () => {
                 const guideId = `${year}-${make}-${model}-${cleanTask}`.toLowerCase().replace(/\s+/g, '-');
 
                 // Check storage first (if premium or we want to cache for everyone)
-                const cached = getGuideById(guideId);
+                const cached = await getGuideById(guideId);
                 if (cached) {
                     setGuide(cached);
                     setLoading(false);
