@@ -24,10 +24,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     price_data: {
                         currency: 'usd',
                         product_data: {
-                            name: 'Premium Subscription',
-                            description: 'Unlimited Repair Guides & AI Diagnostic Chat',
+                            name: 'ai auto repair pro',
+                            description: 'Access to unlimited on demand repair guides and unlimited diagnostic flow charts',
                         },
-                        unit_amount: 999, // $9.99
+                        unit_amount: 1099, // $10.99
                         recurring: {
                             interval: 'month',
                         },
