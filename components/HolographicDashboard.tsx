@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Car, Search, Zap, AlertTriangle, ScanLine, Wrench } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { decodeVin } from '../services/geminiService';
+import { getYears, COMMON_MAKES, fetchModels } from '../services/vehicleData';
+import { useEffect } from 'react';
 
 const HolographicDashboard: React.FC = () => {
     const navigate = useNavigate();
@@ -11,6 +13,25 @@ const HolographicDashboard: React.FC = () => {
     const [vin, setVin] = useState('');
     const [isDecoding, setIsDecoding] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Dropdown Data State
+    const [availableYears] = useState(getYears());
+    const [availableModels, setAvailableModels] = useState<string[]>([]);
+    const [loadingModels, setLoadingModels] = useState(false);
+
+    useEffect(() => {
+        if (vehicle.make && vehicle.year) {
+            setLoadingModels(true);
+            fetchModels(vehicle.make, vehicle.year)
+                .then(models => {
+                    setAvailableModels(models);
+                    setLoadingModels(false);
+                })
+                .catch(() => setLoadingModels(false));
+        } else {
+            setAvailableModels([]);
+        }
+    }, [vehicle.make, vehicle.year]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -119,18 +140,68 @@ const HolographicDashboard: React.FC = () => {
 
                 <form onSubmit={handleSearch} className="w-full space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {['Year', 'Make', 'Model'].map((field) => (
-                            <div key={field} className="relative group">
-                                <input
-                                    type="text"
-                                    placeholder={`ENTER ${field.toUpperCase()}`}
-                                    className="w-full bg-black/50 border border-neon-cyan/30 rounded-lg px-4 py-3 text-neon-cyan placeholder-neon-cyan/30 focus:outline-none focus:border-neon-cyan focus:shadow-glow-cyan transition-all font-mono text-sm uppercase"
-                                    value={vehicle[field.toLowerCase() as keyof typeof vehicle]}
-                                    onChange={(e) => setVehicle({ ...vehicle, [field.toLowerCase()]: e.target.value })}
-                                />
-                                <div className="absolute inset-0 border border-neon-cyan/0 group-hover:border-neon-cyan/20 rounded-lg pointer-events-none transition-all" />
+                        {/* YEAR DROPDOWN */}
+                        <div className="relative group">
+                            <select
+                                className="w-full bg-black/50 border border-neon-cyan/30 rounded-lg px-4 py-3 text-neon-cyan focus:outline-none focus:border-neon-cyan focus:shadow-glow-cyan transition-all font-mono text-sm uppercase appearance-none"
+                                value={vehicle.year}
+                                onChange={(e) => {
+                                    setVehicle({ ...vehicle, year: e.target.value, model: '' }); // Reset model on year change
+                                }}
+                            >
+                                <option value="">SELECT YEAR</option>
+                                {availableYears.map(year => (
+                                    <option key={year} value={year}>{year}</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-4 top-3.5 pointer-events-none text-neon-cyan/50">
+                                <span className="text-[10px]">▼</span>
                             </div>
-                        ))}
+                        </div>
+
+                        {/* MAKE DROPDOWN */}
+                        <div className="relative group">
+                            <select
+                                className="w-full bg-black/50 border border-neon-cyan/30 rounded-lg px-4 py-3 text-neon-cyan focus:outline-none focus:border-neon-cyan focus:shadow-glow-cyan transition-all font-mono text-sm uppercase appearance-none disabled:opacity-50"
+                                value={vehicle.make}
+                                onChange={(e) => {
+                                    setVehicle({ ...vehicle, make: e.target.value, model: '' });
+                                }}
+                                disabled={!vehicle.year}
+                            >
+                                <option value="">{vehicle.year ? "SELECT MAKE" : "YEAR FIRST"}</option>
+                                {COMMON_MAKES.map(make => (
+                                    <option key={make} value={make}>{make.toUpperCase()}</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-4 top-3.5 pointer-events-none text-neon-cyan/50">
+                                <span className="text-[10px]">▼</span>
+                            </div>
+                        </div>
+
+                        {/* MODEL DROPDOWN */}
+                        <div className="relative group">
+                            {loadingModels ? (
+                                <div className="absolute right-4 top-3.5 text-neon-cyan animate-spin">
+                                    <Zap className="w-4 h-4" />
+                                </div>
+                            ) : (
+                                <div className="absolute right-4 top-3.5 pointer-events-none text-neon-cyan/50">
+                                    <span className="text-[10px]">▼</span>
+                                </div>
+                            )}
+                            <select
+                                className="w-full bg-black/50 border border-neon-cyan/30 rounded-lg px-4 py-3 text-neon-cyan focus:outline-none focus:border-neon-cyan focus:shadow-glow-cyan transition-all font-mono text-sm uppercase appearance-none disabled:opacity-50"
+                                value={vehicle.model}
+                                onChange={(e) => setVehicle({ ...vehicle, model: e.target.value })}
+                                disabled={!vehicle.make || loadingModels}
+                            >
+                                <option value="">{loadingModels ? "LOADING..." : (vehicle.make ? "SELECT MODEL" : "MAKE FIRST")}</option>
+                                {availableModels.map(model => (
+                                    <option key={model} value={model}>{model}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="relative group">
@@ -147,14 +218,29 @@ const HolographicDashboard: React.FC = () => {
                         <div className="absolute inset-0 border border-neon-cyan/0 group-hover:border-neon-cyan/20 rounded-lg pointer-events-none transition-all" />
                     </div>
 
-                    <div className="pt-4">
+                    <div className="pt-4 grid grid-cols-2 gap-4">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (vehicle.year && vehicle.make && vehicle.model && task) {
+                                    // Navigate to Diagnostic Chat
+                                    navigate('/diagnose', { state: { vehicle, initialProblem: task } });
+                                }
+                            }}
+                            disabled={!vehicle.year || !vehicle.make || !vehicle.model || !task}
+                            className="w-full bg-transparent border border-neon-cyan text-neon-cyan px-6 py-3 rounded-lg font-bold font-mono tracking-wider flex items-center justify-center gap-2 hover:bg-neon-cyan/10 transition-all uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <Zap className="w-5 h-5" />
+                            <span>DIAGNOSE</span>
+                        </button>
+
                         <button
                             type="submit"
                             disabled={!vehicle.year || !vehicle.make || !vehicle.model || !task}
                             className="w-full bg-neon-cyan/10 hover:bg-neon-cyan/20 border border-neon-cyan text-neon-cyan px-6 py-3 rounded-lg font-bold font-mono tracking-wider flex items-center justify-center gap-2 hover:shadow-glow-cyan transition-all uppercase disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <Search className="w-5 h-5" />
-                            <span>INITIATE DIAGNOSTIC PROTOCOL</span>
+                            <span>GUIDE</span>
                         </button>
                     </div>
                 </form>
