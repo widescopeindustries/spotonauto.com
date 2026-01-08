@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import type { Vehicle, ChatMessage } from '../types';
-import { createDiagnosticChat, sendDiagnosticMessage } from '../services/geminiService';
-import type { Chat } from '@google/genai';
+import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/geminiService';
 import { WrenchIcon } from './Icons';
 
 interface DiagnosticAssistantProps {

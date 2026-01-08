@@ -7,7 +7,9 @@ import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 interface AuthContextType {
   user: AppUser | null;
   loading: boolean;
-  login: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  loginWithEmail: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -77,7 +79,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, []);
 
-  const login = async () => {
+  const loginWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -85,9 +87,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       },
     });
     if (error) {
-      console.error('Login failed:', error.message);
+      console.error('Google Login failed:', error.message);
       throw error;
     }
+  };
+
+  const loginWithEmail = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+    });
+    if (error) {
+        console.error('Email Login failed:', error.message);
+        throw error;
+    }
+  };
+
+  const signup = async (email: string, password: string) => {
+      const { error } = await supabase.auth.signUp({
+          email,
+          password,
+      });
+      if (error) {
+          console.error('Signup failed:', error.message);
+          throw error;
+      }
   };
 
   const logout = async () => {
@@ -99,7 +123,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithEmail, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -10,7 +10,7 @@ interface UpgradeModalProps {
 }
 
 const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClick }) => {
-  const { user, login } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -29,11 +29,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: user.email,
-          userId: (user as any).id || undefined // We need to ensure we can get the ID via context or other means. Context 'user' type only had email/tier. I should update 'User' type or fetch ID. 
-          // Note: AuthContext 'user' often has email/tier. I'll rely on the auth context to have ID or fetch status.
-          // Actually, `useAuth` user might not have ID mapped in my previous code.
-          // Let's assume the context provides enough info. 
-          // Wait, I mapped `email` and `tier` in AuthContext.ts but not `id`. I should fix AuthContext to include `id`.
+          userId: user.id
         })
       });
 

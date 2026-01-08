@@ -9,7 +9,6 @@ const HomePage: React.FC = () => {
     const getCarImage = () => {
         if (!selectedVehicle || !selectedVehicle.model) return null;
         const modelLower = selectedVehicle.model.toLowerCase();
-        const makeLower = selectedVehicle.make.toLowerCase();
 
         if (modelLower.includes('f-150') || modelLower.includes('silverado') || modelLower.includes('ram') || modelLower.includes('tundra') || modelLower.includes('truck')) {
             return '/truck.png';
@@ -32,79 +31,92 @@ const HomePage: React.FC = () => {
                 canonicalUrl="https://ai-auto-repair-mobile.vercel.app/"
             />
 
-            <div
-                className="flex h-screen w-full relative overflow-hidden bg-cover bg-center bg-no-repeat transition-all duration-1000"
-                style={{ backgroundImage: `url('/showroom_bg.png')` }}
-            >
-                {/* Floating Sidebar Navigation */}
-                <aside className="hidden md:flex flex-col items-center justify-center gap-8 w-24 h-full z-20 bg-white/10 backdrop-blur-md border-r border-white/20">
-                    <div className="p-3 rounded-full bg-white shadow-lg cursor-pointer hover:scale-110 transition-transform">
-                        <div className="w-6 h-6 bg-blue-600 rounded-full"></div>
-                    </div>
-                    {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="w-10 h-10 rounded-full border border-white/40 bg-white/20 hover:bg-white/60 cursor-pointer transition-all flex items-center justify-center backdrop-blur-sm">
-                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full opacity-50"></span>
-                        </div>
-                    ))}
-                </aside>
+            <div className="flex min-h-screen w-full relative overflow-hidden bg-deep-space">
+                 {/* Background Elements */}
+                <div className="absolute inset-0 bg-cyber-grid bg-grid-sm opacity-20 animate-pulse-slow"></div>
+                <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-radial from-neon-purple/20 to-transparent blur-3xl rounded-full opacity-30"></div>
+                <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-radial from-neon-cyan/20 to-transparent blur-3xl rounded-full opacity-30"></div>
+
 
                 {/* Main Configurator Area */}
-                <main className="flex-1 flex flex-col relative z-10 p-6 md:p-12 overflow-y-auto">
+                <main className="flex-1 flex flex-col relative z-10 p-4 md:p-8 overflow-y-auto">
 
                     {/* Header Overlay */}
-                    <div className="flex justify-between items-start mb-10">
+                    <div className="flex justify-between items-start mb-8 animate-slide-up">
                         <div>
-                            <h2 className="text-4xl font-light text-slate-800 tracking-tight">Vehicle <span className="font-bold text-blue-600">Diagnostics</span></h2>
-                            <p className="text-slate-500 font-medium mt-2 tracking-wide uppercase text-sm">Select Model // Configure Analysis</p>
+                            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight text-glow">
+                                SYSTEM <span className="text-brand-cyan">ONLINE</span>
+                            </h2>
+                            <p className="text-gray-400 font-mono mt-2 tracking-wide uppercase text-xs md:text-sm">
+                                // Initiate Diagnostic Sequence
+                            </p>
                         </div>
-                        <div className="bg-white/80 backdrop-blur-md px-6 py-2 rounded-full shadow-sm border border-white/50">
-                            <span className="text-slate-800 font-bold font-mono tracking-wider">AI CORE v2.4 ONLINE</span>
+                        <div className="hidden md:block bg-black/40 backdrop-blur-md px-6 py-2 rounded-full border border-brand-cyan/30 shadow-glow-cyan">
+                            <span className="text-brand-cyan font-bold font-mono tracking-wider text-sm flex items-center gap-2">
+                                <span className="w-2 h-2 bg-brand-cyan rounded-full animate-pulse"></span>
+                                AI CORE v2.4 CONNECTED
+                            </span>
                         </div>
                     </div>
 
                     {/* Central Glass Card */}
                     <div className="flex-1 flex items-center justify-center">
-                        <div className="w-full max-w-6xl bg-white/60 backdrop-blur-2xl border border-white/60 rounded-[3rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-8 md:p-12 animate-float relative overflow-hidden">
+                        <div className="w-full max-w-7xl bg-glass-dark backdrop-blur-2xl border border-white/10 rounded-[2rem] md:rounded-[3rem] shadow-glass-premium p-6 md:p-12 animate-float relative overflow-hidden group">
+                            
                             {/* Decorative refraction lines */}
-                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500/0 via-blue-500/20 to-blue-500/0"></div>
+                            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/50 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-purple/50 to-transparent"></div>
 
-                            <div className="grid md:grid-cols-2 gap-16 items-center">
+                            <div className="grid lg:grid-cols-2 gap-12 items-center">
                                 {/* Left: UI Controls */}
                                 <div className="space-y-8 relative z-20">
                                     <div>
-                                        <h3 className="text-2xl font-bold text-slate-800 mb-2">Configure Session</h3>
-                                        <p className="text-slate-500 text-sm leading-relaxed">
-                                            Select your vehicle parameters to initiate the deep-scan diagnostic protocol. Access factory service data instantly.
+                                        <h3 className="text-2xl font-bold text-white mb-2 font-sans tracking-wide">Configuration Panel</h3>
+                                        <p className="text-gray-400 text-sm leading-relaxed font-mono">
+                                            Select vehicle parameters to calibrate the deep-scan neural network. Accessing global service database...
                                         </p>
                                     </div>
 
-                                    {/* The Dashboard Component - We will style this via its own file next */}
+                                    {/* The Dashboard Component */}
                                     <HolographicDashboard onVehicleChange={setSelectedVehicle} />
                                 </div>
 
                                 {/* Right: Dynamic Car Visualization */}
-                                <div className="hidden md:flex items-center justify-center relative h-[400px] w-full">
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/30 to-white/0 rounded-3xl -z-10"></div>
+                                <div className="hidden lg:flex items-center justify-center relative h-[400px] w-full perspective-1000">
+                                    {/* Holographic Base */}
+                                    <div className="absolute bottom-10 w-[80%] h-20 bg-brand-cyan/10 blur-xl rounded-[100%] animate-pulse"></div>
+                                    <div className="absolute bottom-12 w-[60%] h-[1px] bg-brand-cyan shadow-glow-cyan"></div>
+                                    
+                                    {/* Scanning Grid */}
+                                    <div className="absolute inset-0 bg-gradient-to-b from-brand-cyan/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
                                     {carImage ? (
-                                        <div className="relative w-full h-full flex items-center justify-center animate-fade-in-up">
-                                            {/* Shadow underneath */}
-                                            <div className="absolute bottom-10 w-[80%] h-4 bg-black/20 blur-xl rounded-[100%]"></div>
-                                            <img
-                                                src={carImage}
-                                                alt="Vehicle Preview"
-                                                className="relative z-10 w-full h-auto object-contain max-h-[350px] drop-shadow-2xl transition-all duration-700 transform hover:scale-105"
-                                            />
-                                            <div className="absolute top-4 right-4 bg-white/80 backdrop-blur px-3 py-1 rounded text-xs font-bold text-slate-500 uppercase tracking-widest border border-white">
-                                                Preview Render
+                                        <div className="relative w-full h-full flex items-center justify-center animate-fade-in">
+                                            <div className="relative z-10 w-full flex justify-center">
+                                                <img
+                                                    src={carImage}
+                                                    alt="Vehicle Preview"
+                                                    className="w-auto max-h-[300px] object-contain drop-shadow-2xl transition-all duration-700 transform hover:scale-105 filter brightness-110 contrast-110"
+                                                />
+                                                {/* Scanline Effect Overlay on Car */}
+                                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-cyan/10 to-transparent h-4 w-full animate-scanline pointer-events-none"></div>
+                                            </div>
+                                            
+                                            <div className="absolute top-0 right-0 flex flex-col items-end gap-1">
+                                                <div className="bg-black/60 backdrop-blur px-3 py-1 rounded-none border-r-2 border-brand-cyan">
+                                                     <span className="text-[10px] font-bold text-brand-cyan uppercase tracking-widest font-mono">Holo-Render Active</span>
+                                                </div>
+                                                <div className="text-[10px] text-gray-500 font-mono">
+                                                    {selectedVehicle ? `${selectedVehicle.year} // ${selectedVehicle.make} // ${selectedVehicle.model}` : 'Waiting for Data...'}
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (
                                         <div className="text-center space-y-4 opacity-40">
-                                            <div className="w-64 h-20 border-2 border-dashed border-slate-300 rounded-lg mx-auto flex items-center justify-center">
-                                                <span className="text-xs font-mono text-slate-400">NO SIGNAL</span>
+                                            <div className="w-64 h-32 border border-dashed border-gray-600 rounded-lg mx-auto flex flex-col items-center justify-center bg-black/30">
+                                                <span className="text-xs font-mono text-gray-500 animate-pulse">AWAITING INPUT</span>
                                             </div>
-                                            <p className="text-xs text-slate-400 font-mono tracking-widest">AWAITING VEHICLE SELECTION...</p>
+                                            <p className="text-xs text-gray-600 font-mono tracking-widest">NO SIGNAL DETECTED</p>
                                         </div>
                                     )}
                                 </div>
@@ -113,11 +125,11 @@ const HomePage: React.FC = () => {
                     </div>
 
                     {/* Bottom Stats */}
-                    <div className="mt-8 grid grid-cols-3 gap-8 max-w-4xl mx-auto">
+                    <div className="mt-8 grid grid-cols-3 gap-8 max-w-4xl mx-auto opacity-70">
                         {['450k+ Models', 'Real-time TSBs', 'Factory Manuals'].map((stat, i) => (
-                            <div key={i} className="text-center">
-                                <p className="text-slate-900 font-bold text-lg">{stat}</p>
-                                <div className="h-1 w-8 bg-blue-500/30 mx-auto mt-2 rounded-full"></div>
+                            <div key={i} className="text-center group cursor-default">
+                                <p className="text-gray-300 font-bold text-sm md:text-lg font-mono group-hover:text-brand-cyan transition-colors">{stat}</p>
+                                <div className="h-[2px] w-8 bg-gray-700 mx-auto mt-2 group-hover:bg-brand-cyan group-hover:w-16 transition-all duration-500"></div>
                             </div>
                         ))}
                     </div>

@@ -13,16 +13,20 @@ const HistoryPage: React.FC = () => {
     const { user } = useAuth(); // Ensure we react to auth changes
 
     useEffect(() => {
-        if (user) {
-            setHistory(getHistory());
-        } else {
-            setHistory([]);
-        }
+        const fetchHistory = async () => {
+            if (user) {
+                const historyItems = await getHistory();
+                setHistory(historyItems);
+            } else {
+                setHistory([]);
+            }
+        };
+        fetchHistory();
     }, [user]);
 
-    const handleViewHistoryItem = (id: string) => {
+    const handleViewHistoryItem = async (id: string) => {
         // We need to reconstruct the URL from the saved guide to navigate there
-        const guide = getGuideById(id);
+        const guide = await getGuideById(id);
         if (guide) {
             // Assume ID format matches URL slug format or guide has fields
             // Guide object has vehicle "Year Make Model".
