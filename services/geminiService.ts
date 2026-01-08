@@ -1,272 +1,75 @@
-import { GoogleGenAI, Type, Chat } from "@google/genai";
-import { RepairGuide, RepairStep, Vehicle, VehicleInfo } from '../types';
-import { TEXT_MODEL, IMAGE_MODEL } from '../constants';
 
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable is not set.");
+import { Vehicle, VehicleInfo, RepairGuide } from '../types';
+
+// We need a custom type to mimic the 'Chat' interface for the UI, 
+// even though the backend is stateless-ish (we pass history).
+export interface Chat {
+  history: { role: string, parts: { text: string }[] }[];
+  vehicle: Vehicle;
+  sendMessage: (msg: { message: string }) => Promise<{ text: string }>; // method signature to match usage if needed, or we adapt UI
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Since the original UI used `ai.chats.create` return type, we might need to adapt.
+// Existing usage: `const chat = createDiagnosticChat(vehicle);` 
+// `const response = await sendDiagnosticMessage(chat, input);`
+// `sendDiagnosticMessage` implementation in original file returned `{ text, imageUrl }`.
+// I will keep the function signatures compatible with the UI as much as possible.
+
+const API_ENDPOINT = '/api/generate-guide';
+
+async function callApi(action: string, payload: any) {
+  const response = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ action, payload }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || 'API Request Failed');
+  }
+  return response.json();
+}
 
 export const decodeVin = async (vin: string): Promise<Vehicle> => {
-  if (!vin || vin.length !== 17) {
-    throw new Error("Please enter a valid 17-character VIN.");
-  }
-
-  const prompt = `Decode the following Vehicle Identification Number (VIN) and return the year, make, and model. VIN: "${vin}"`;
-
-  const vehicleSchema = {
-    type: Type.OBJECT,
-    properties: {
-      year: { type: Type.STRING, description: "The model year of the vehicle." },
-      make: { type: Type.STRING, description: "The manufacturer of the vehicle (e.g., Honda)." },
-      model: { type: Type.STRING, description: "The model of the vehicle (e.g., Civic)." },
-    },
-    required: ["year", "make", "model"],
-  };
-
-  try {
-    const response = await ai.models.generateContent({
-      model: TEXT_MODEL,
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: vehicleSchema,
-      },
-    });
-
-    const text = response.text.trim();
-    const cleanJson = text.replace(/^```json\s*|```$/g, '');
-    const decodedVehicle = JSON.parse(cleanJson);
-
-    if (!decodedVehicle.year || !decodedVehicle.make || !decodedVehicle.model) {
-      throw new Error("AI was unable to decode the VIN. Please enter manually.");
-    }
-
-    decodedVehicle.year = decodedVehicle.year.toString().replace(/[^0-9]/g, '').slice(0, 4);
-
-    return decodedVehicle;
-  } catch (error) {
-    console.error("Error decoding VIN:", error);
-    throw new Error("Failed to decode VIN. The AI may be unable to process this VIN or it may be invalid.");
-  }
+  return callApi('decode-vin', { vin });
 };
 
-// New function to get vehicle info
 export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<VehicleInfo> => {
-  const { year, make, model } = vehicle;
-  const vehicleYear = parseInt(year, 10);
-  let charmLiInstruction = '';
-  if (vehicleYear >= 1982 && vehicleYear <= 2013) {
-    charmLiInstruction = 'URGENT: For this vehicle, you MUST search "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '" to find the specific professional service manual page. Prioritize data found in these factory-level databases.';
-  }
-
-  const prompt = `Act as an expert automotive service database, using web search to find the most current and factual information. ${charmLiInstruction} For a ${year} ${make} ${model} and the repair task "${task}", provide the following information:
-1. A "Job Snapshot" based on standard service manual data, with realistic estimates for difficulty, time, parts cost, and potential savings vs. a professional repair.
-2. A list of real Technical Service Bulletins (TSBs) related to this task. If none are found, return an empty array.
-3. A list of real safety recalls that might be relevant. If none are found, return an empty array.
-
-You MUST format your entire response as a single JSON object with three keys: "jobSnapshot", "tsbs", and "recalls". Do not include any markdown formatting like \`\`\`json.`;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: TEXT_MODEL,
-      contents: prompt,
-      config: {
-        tools: [{ googleSearch: {} }],
-      },
-    });
-
-    const text = response.text.trim();
-    const cleanJson = text.replace(/^```json\s*|```$/g, '');
-    const vehicleInfo = JSON.parse(cleanJson);
-
-    const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
-      ?.map(chunk => chunk.web)
-      .filter((web): web is { uri: string; title: string } => !!(web?.uri && web.title)) || [];
-
-    return { ...vehicleInfo, sources };
-  } catch (error) {
-    console.error("Error fetching vehicle info:", error);
-    throw new Error("Failed to retrieve vehicle analysis. The AI may be unable to process this request or the response was not valid JSON.");
-  }
-};
-
-
-const generateTextGuide = async (vehicle: Vehicle, task: string): Promise<Omit<RepairGuide, 'steps' | 'id'> & { steps: Omit<RepairStep, 'imageUrl'>[] }> => {
-  const { year, make, model } = vehicle;
-
-  const vehicleYear = parseInt(year, 10);
-  let groundingInstruction = '';
-  if (vehicleYear >= 1982 && vehicleYear <= 2013) {
-    groundingInstruction = 'CRITICAL: You MUST use the Google Search tool to find "site:charm.li ' + year + ' ' + make + ' ' + model + ' ' + task + '". This search targets a factory-level service manual database. Base ALL repair steps, torque specs, and fluid capacities on the verified factory manual content retrieved. If exact steps are found, use them as the source of truth.';
-  } else {
-    groundingInstruction = 'Crucially, use Google Search to find professional OEM service manuals or technical forums for this specific vehicle. The steps must be 100% factual and reflect industry-standard repair methods.';
-  }
-
-  const prompt = `Generate a detailed, step-by-step DIY repair guide for the following task: "${task}" on a ${year} ${make} ${model}. ${groundingInstruction} The guide should be easy for a shade-tree mechanic to follow, using clear "IF this, THEN that" logic where applicable for diagnostics or complex steps. 
-
-  Include essential safety warnings, a list of required tools, and a list of necessary parts. 
-  IMPORTANT: For the 'parts' list, provide specific, searchable product names (e.g., "Front Brake Pads (Ceramic)" instead of just "Brake Pads") so they can be easily found on Amazon.
-
-  For each step, provide a clear instruction and a descriptive prompt for an AI image generator to create a technical illustration for that step. The image prompt should describe a clean, minimalist, black and white line drawing in an automotive service manual style.`;
-
-  const repairGuideSchema = {
-    type: Type.OBJECT,
-    properties: {
-      title: { type: Type.STRING, description: "A concise title for the repair job." },
-      vehicle: { type: Type.STRING, description: "The vehicle information (Year, Make, Model)." },
-      safetyWarnings: {
-        type: Type.ARRAY,
-        items: { type: Type.STRING },
-        description: "A list of crucial safety warnings (e.g., 'Disconnect the battery')."
-      },
-      tools: {
-        type: Type.ARRAY,
-        items: { type: Type.STRING },
-        description: "A list of tools required for the job."
-      },
-      parts: {
-        type: Type.ARRAY,
-        items: { type: Type.STRING },
-        description: "A list of parts that need to be replaced or purchased."
-      },
-      steps: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            step: { type: Type.INTEGER, description: "The step number." },
-            instruction: { type: Type.STRING, description: "The detailed instruction for this step." },
-            imagePrompt: { type: Type.STRING, description: "A prompt for an AI image generator to create a technical illustration for this step." }
-          },
-          required: ["step", "instruction", "imagePrompt"]
-        }
-      }
-    },
-    required: ["title", "vehicle", "safetyWarnings", "tools", "parts", "steps"]
-  };
-
-  try {
-    const response = await ai.models.generateContent({
-      model: TEXT_MODEL,
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: repairGuideSchema,
-        tools: [{ googleSearch: {} }],
-      },
-    });
-
-    const text = response.text.trim();
-    const cleanJson = text.replace(/^```json\s*|```$/g, '');
-    const data = JSON.parse(cleanJson);
-
-    const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
-      ?.map(chunk => chunk.web)
-      .filter((web): web is { uri: string; title: string } => !!(web?.uri && web.title)) || [];
-
-    return { ...data, sources };
-
-  } catch (error) {
-    console.error("Error generating text guide:", error);
-    if (error instanceof Error) {
-      console.error("Error details:", error.message, error.stack);
-    }
-    throw new Error("Failed to generate the repair guide. The AI may be unable to process this request.");
-  }
-};
-
-const generateImage = async (prompt: string): Promise<string> => {
-  const fullPrompt = `Technical line art illustration, automotive service manual style. Clean, black and white, minimalist, white background. ${prompt}`;
-  try {
-    const response = await ai.models.generateImages({
-      model: IMAGE_MODEL,
-      prompt: fullPrompt,
-      config: {
-        numberOfImages: 1,
-        outputMimeType: 'image/jpeg',
-        aspectRatio: '4:3',
-      },
-    });
-
-    if (response.generatedImages && response.generatedImages.length > 0) {
-      const base64ImageBytes = response.generatedImages[0].image.imageBytes;
-      return `data:image/jpeg;base64,${base64ImageBytes}`;
-    }
-    throw new Error("No image was generated.");
-  } catch (error) {
-    console.error(`Error generating image for prompt "${prompt}":`, error);
-    return "";
-  }
+  return callApi('vehicle-info', { vehicle, task });
 };
 
 export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): Promise<RepairGuide> => {
-  const textData = await generateTextGuide(vehicle, task);
-
-  const hydratedSteps: RepairStep[] = [];
-
-  // Generate images sequentially to avoid hitting API rate limits.
-  for (const step of textData.steps) {
-    const imageUrl = await generateImage(step.imagePrompt);
-    hydratedSteps.push({
-      ...step,
-      imageUrl: imageUrl,
-    });
-  }
-
-  const guideId = `${vehicle.year}-${vehicle.make}-${vehicle.model}-${textData.title}`
-    .toLowerCase()
-    .replace(/\s+/g, '-');
-
-  return { ...textData, id: guideId, steps: hydratedSteps } as RepairGuide;
+  return callApi('generate-guide', { vehicle, task });
 };
 
-// --- Diagnostic Chat Functions ---
+// --- Diagnostic Chat Wrapper ---
 
-const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI with access to online service manuals. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step, referencing real factory-level service data whenever possible.
-1.  Begin by asking for the primary symptom or issue.
-2.  Use the search tool to find TSBs or diagnostic trees for the specific vehicle and symptom (e.g., search "site:charm.li 2000 Honda Accord no start diagnostic").
-3.  Provide one single, clear diagnostic step at a time. Be concise.
-4.  After each step, wait for the user's response (e.g., a measurement, an observation).
-5.  Based on their feedback, provide the next logical step to narrow down the problem.
-6.  For every instructional step you provide, also give a prompt for an AI image generator to create a helpful technical illustration.
-7.  You MUST format your entire response as a single JSON object with two keys: "instruction" (your text guidance) and "imagePrompt" (the image generation prompt). Do not include any other text, markdown, or explanations outside of this JSON structure.
-Example: {"instruction": "First, check the fuse for the fuel pump. It is in the fuse box under the hood.", "imagePrompt": "A diagram showing the location of the fuel pump fuse in the under-hood fuse box for a [VEHICLE_YEAR] [VEHICLE_MAKE] [VEHICLE_MODEL]."}`;
-
+// The UI likely expects a specific object structure. 
+// I'll define a simple object that holds the history.
 export const createDiagnosticChat = (vehicle: Vehicle): Chat => {
-  const systemInstruction = diagnosticSystemInstruction
-    .replace('[VEHICLE_YEAR]', vehicle.year)
-    .replace('[VEHICLE_MAKE]', vehicle.make)
-    .replace('[VEHICLE_MODEL]', vehicle.model);
-
-  return ai.chats.create({
-    model: TEXT_MODEL,
-    config: {
-      systemInstruction: systemInstruction,
-      tools: [{ googleSearch: {} }],
-    },
-  });
+  return {
+    history: [], // Start empty
+    vehicle: vehicle,
+    sendMessage: async () => ({ text: '' }) // Dummy, not used directly by `sendDiagnosticMessage` usually, but checked by types
+  };
 };
 
 export const sendDiagnosticMessage = async (chat: Chat, message: string): Promise<{ text: string, imageUrl: string | null }> => {
-  try {
-    const response = await chat.sendMessage({ message });
-    const rawJson = response.text.trim().replace(/^```json\s*|```$/g, '');
+  // Call the API with current history and new message
+  const result = await callApi('diagnostic-chat', {
+    history: chat.history,
+    message,
+    vehicle: chat.vehicle
+  });
 
-    const parsedResponse = JSON.parse(rawJson);
-    const { instruction, imagePrompt } = parsedResponse;
+  // Update local history
+  chat.history.push({ role: 'user', parts: [{ text: message }] });
+  chat.history.push({ role: 'model', parts: [{ text: JSON.stringify({ instruction: result.text, imagePrompt: "..." }) }] }); // We store the mock JSON response in history so the AI context stays valid? 
+  // Actually, simpler to just store the text content if the system instruction handles formatting. 
+  // The server instruction says "You MUST format...". So the history should probably contain the JSON string.
 
-    if (!instruction || !imagePrompt) {
-      return { text: "Sorry, I had trouble understanding that. Could you rephrase?", imageUrl: null };
-    }
-
-    const imageUrl = await generateImage(imagePrompt);
-    return { text: instruction, imageUrl };
-
-  } catch (error) {
-    console.error("Error in diagnostic chat:", error);
-    // If JSON parsing fails or another error occurs, return a user-friendly message.
-    return { text: "I encountered an issue. Let's try that again. What did you observe?", imageUrl: null };
-  }
+  return result;
 };

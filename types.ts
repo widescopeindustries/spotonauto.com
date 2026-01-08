@@ -4,6 +4,7 @@ export enum SubscriptionTier {
 }
 
 export interface User {
+  id: string;
   email: string;
   tier: SubscriptionTier;
 }

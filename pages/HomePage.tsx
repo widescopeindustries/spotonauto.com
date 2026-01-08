@@ -6,8 +6,9 @@ const HomePage: React.FC = () => {
     return (
         <>
             <SEOHead
-                title="Antigravity Diagnostics - AI Auto Repair System"
-                description="Silence the Check Engine Light. Instant Diagnostics, Licensed Factory Data, Step-by-Step AI Repair Guides."
+                title="AI Auto Repair Assistant | Instant Diagnostics & DIY Guides"
+                description="Expert AI Auto Repair help for 450K+ vehicles. Get instant diagnostics, step-by-step repair guides, and labor cost estimates. Fix your car today."
+                keywords="auto repair, car repair, check engine light, mechanic, car diagnostics, auto mechanic, vehicle repair, car maintenance"
                 canonicalUrl="https://ai-auto-repair-mobile.vercel.app/"
             />
 
