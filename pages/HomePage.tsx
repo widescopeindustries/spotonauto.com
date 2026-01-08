@@ -25,8 +25,8 @@ const HomePage: React.FC = () => {
     return (
         <>
             <SEOHead
-                title="AI Auto Repair | Intelligent Vehicle Configurator"
-                description="Configure your vehicle diagnostics. AI-powered repair guides and real-time analysis in a modern virtual showroom."
+                title="Antigravity Diagnostics | AI Auto Repair"
+                description="Silence the check engine light. AI-powered repair guides with 98.4% diagnostic accuracy."
                 keywords="auto repair, car diagnostics, showroom, virtual garage, AI mechanic"
                 canonicalUrl="https://ai-auto-repair-mobile.vercel.app/"
             />
@@ -44,17 +44,18 @@ const HomePage: React.FC = () => {
                     {/* Header Overlay */}
                     <div className="flex justify-between items-start mb-8 animate-slide-up">
                         <div>
-                            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight text-glow">
-                                SYSTEM <span className="text-brand-cyan">ONLINE</span>
+                            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight text-glow uppercase leading-tight">
+                                SILENCE THE <span className="text-brand-cyan">CHECK ENGINE LIGHT</span>
                             </h2>
-                            <p className="text-gray-400 font-mono mt-2 tracking-wide uppercase text-xs md:text-sm">
-                                // Initiate Diagnostic Sequence
+                            <p className="text-gray-400 font-mono mt-3 tracking-wide text-xs md:text-sm flex gap-4">
+                                <span className="text-neon-cyan"> // 98.4% DIAGNOSTIC ACCURACY</span>
+                                <span className="hidden md:inline"> // 0.05s LATENCY</span>
                             </p>
                         </div>
                         <div className="hidden md:block bg-black/40 backdrop-blur-md px-6 py-2 rounded-full border border-brand-cyan/30 shadow-glow-cyan">
                             <span className="text-brand-cyan font-bold font-mono tracking-wider text-sm flex items-center gap-2">
                                 <span className="w-2 h-2 bg-brand-cyan rounded-full animate-pulse"></span>
-                                AI CORE v2.4 CONNECTED
+                                ANTIGRAVITY CORE ONLINE
                             </span>
                         </div>
                     </div>
@@ -126,7 +127,7 @@ const HomePage: React.FC = () => {
 
                     {/* Bottom Stats */}
                     <div className="mt-8 grid grid-cols-3 gap-8 max-w-4xl mx-auto opacity-70">
-                        {['450k+ Models', 'Real-time TSBs', 'Factory Manuals'].map((stat, i) => (
+                        {['98.4% Accuracy', '0.05s Latency', 'Factory Manuals'].map((stat, i) => (
                             <div key={i} className="text-center group cursor-default">
                                 <p className="text-gray-300 font-bold text-sm md:text-lg font-mono group-hover:text-brand-cyan transition-colors">{stat}</p>
                                 <div className="h-[2px] w-8 bg-gray-700 mx-auto mt-2 group-hover:bg-brand-cyan group-hover:w-16 transition-all duration-500"></div>

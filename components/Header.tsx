@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ onAuthClick, onHistoryClick }) => {
                     <WrenchIcon className="w-8 h-8 text-brand-cyan relative z-10" />
                 </div>
                 <span className="text-xl font-bold text-white hidden sm:inline uppercase tracking-widest font-sans text-glow">
-                    AI Auto Repair
+                    Antigravity Diagnostics
                 </span>
             </div>
             <div className="flex items-center gap-4">

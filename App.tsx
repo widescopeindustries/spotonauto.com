@@ -1,13 +1,16 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import GuidePage from './pages/GuidePage';
 import DiagnosticPage from './pages/DiagnosticPage';
 import AuthPage from './pages/AuthPage';
 import HistoryPage from './pages/HistoryPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 const App: React.FC = () => {
   // Header navigation handler - since Header is outside Routes, 
@@ -26,16 +29,16 @@ const App: React.FC = () => {
               <Route path="/diagnose" element={<DiagnosticPage />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/history" element={<HistoryPage />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
             </Routes>
           </main>
+          <Footer />
         </div>
       </Router>
     </HelmetProvider>
   );
 };
-
-// Helper to allow Header to use navigation
-import { useNavigate } from 'react-router-dom';
 
 const HeaderWithNav: React.FC = () => {
   const navigate = useNavigate();
