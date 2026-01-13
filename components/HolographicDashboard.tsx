@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Car, Search, Zap, AlertTriangle, ScanLine, Wrench } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { decodeVin } from '../services/geminiService';
+import { decodeVin } from '../services/apiClient';
 import { getYears, COMMON_MAKES, fetchModels } from '../services/vehicleData';
 import { useEffect } from 'react';
 

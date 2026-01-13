@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Cpu, Activity, ImageIcon, Camera } from 'lucide-react';
-import { createDiagnosticChat, sendDiagnosticMessage, Chat } from '../services/geminiService';
+import { createDiagnosticChat, sendDiagnosticMessage, Chat } from '../services/apiClient';
 import { Vehicle } from '../types';
 
 interface DiagnosticChatProps {

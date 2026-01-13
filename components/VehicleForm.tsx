@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Vehicle, User } from '../types';
 import { WrenchIcon } from './Icons';
-import { decodeVin } from '../services/geminiService';
+import { decodeVin } from '../services/apiClient';
 
 interface VehicleFormProps {
   vehicle: Vehicle;

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import type { Vehicle, ChatMessage } from '../types';
-import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/geminiService';
+import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/apiClient';
 import { WrenchIcon } from './Icons';
 
 interface DiagnosticAssistantProps {

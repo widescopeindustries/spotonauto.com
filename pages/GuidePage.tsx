@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import RepairGuideDisplay from '../components/RepairGuideDisplay';
 import LoadingIndicator from '../components/LoadingIndicator';
 import SEOHead from '../components/seo/SEOHead';
-import { generateFullRepairGuide } from '../services/geminiService';
+import { generateFullRepairGuide } from '../services/apiClient';
 import { saveGuide, getGuideById } from '../services/storageService';
 import { RepairGuide, SubscriptionTier } from '../types';
 import { useAuth } from '../contexts/AuthContext';

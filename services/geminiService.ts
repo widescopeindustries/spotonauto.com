@@ -2,10 +2,12 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { Vehicle, VehicleInfo, RepairGuide, ChatMessage } from '../types';
 
+// NOTE: This service is now only used server-side (e.g., in api/ folder).
+// Client-side code should use apiClient.ts instead to make secure API requests.
 const apiKey = import.meta.env.GEMINI_API_KEY;
 
 if (!apiKey || apiKey === 'placeholder_gemini_key') {
-  console.error("Gemini API Key is missing or invalid.");
+  console.error("Gemini API Key is missing or invalid. Make sure GEMINI_API_KEY is set in your .env file.");
 }
 
 const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
