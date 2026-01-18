@@ -1,19 +1,12 @@
 
 import React, { useState } from 'react';
 import type { RepairGuide } from '../types';
-import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon, ExternalLinkIcon } from './Icons';
+import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon, ExternalLinkIcon, ShieldCheckIcon, ClockIcon } from './Icons';
 import { generatePartLinks, generateToolLinks } from '../services/affiliateService';
 
 interface RepairGuideDisplayProps {
     guide: RepairGuide;
     onReset: () => void;
-}
-
-enum Tab {
-    Guide,
-    ToolsParts,
-    Safety,
-    Sources
 }
 
 const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset }) => {
@@ -23,20 +16,37 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                 {/* Header Background Glow */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-blue-500/20 transition-all duration-1000"></div>
 
-                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2 drop-shadow-sm">
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div className="flex-grow">
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-[0.2em] border border-emerald-500/20">
+                                <ShieldCheckIcon className="w-3.5 h-3.5" />
+                                Verified Diagnostic
+                            </span>
+                            <span className="text-white/30 text-[10px] font-mono tracking-widest uppercase">ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}</span>
+                        </div>
+                        <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter mb-4 drop-shadow-sm leading-tight">
                             {guide.title}
                         </h1>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                             <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm font-bold border border-blue-500/30 uppercase tracking-wider">
                                 {guide.vehicle}
                             </span>
+                            <div className="flex items-center gap-4 ml-2 border-l border-white/10 pl-4">
+                                <div className="flex items-center gap-2">
+                                    <ClockIcon className="w-4 h-4 text-gray-500" />
+                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Est: 45-90m</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <WrenchIcon className="w-4 h-4 text-gray-500" />
+                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Diff: Intermediate</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <button
                         onClick={onReset}
-                        className="px-6 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm uppercase tracking-widest transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+                        className="px-6 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm uppercase tracking-widest transition-all hover:scale-105 hover:shadow-lg active:scale-95 whitespace-nowrap"
                     >
                         New Diagnostic
                     </button>

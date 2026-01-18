@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ai-auto-repair-mobile.vercel.app/sitemap.xml
+Sitemap: https://spotonauto.com/sitemap.xml

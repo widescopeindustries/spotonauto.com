@@ -83,7 +83,24 @@ const GuidePage: React.FC = () => {
     const title = guide ? guide.title : `How to fix ${task} on ${year} ${make} ${model}`;
     const desc = `Step-by-step DIY repair guide for ${task} on a ${year} ${make} ${model}. Includes diagrams, parts list, and tool requirements.`;
 
-    const currentUrl = `https://ai-auto-repair-mobile.vercel.app/repair/${year}/${make}/${model}/${task}`;
+    const currentUrl = `https://spotonauto.com/repair/${year}/${make}/${model}/${task}`;
+
+    const schema = guide ? {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": guide.title,
+        "description": desc,
+        "image": guide.steps?.[0]?.imageUrl,
+        "step": guide.steps?.map(step => ({
+            "@type": "HowToStep",
+            "name": `Step ${step.step}`,
+            "text": step.instruction,
+            "image": step.imageUrl
+        })),
+        "totalTime": "PT30M", // Placeholder or dynamic if available
+        "supply": guide.parts?.map(part => ({ "@type": "HowToSupply", "name": part })),
+        "tool": guide.tools?.map(tool => ({ "@type": "HowToTool", "name": tool }))
+    } : null;
 
     if (loading) return (
         <>
@@ -108,7 +125,12 @@ const GuidePage: React.FC = () => {
 
     return (
         <>
-            <SEOHead title={`${title} | AI Auto Repair`} description={desc} canonicalUrl={currentUrl} />
+            <SEOHead
+                title={`${title} | AI Auto Repair`}
+                description={desc}
+                canonicalUrl={currentUrl}
+                schema={schema}
+            />
             <div className="p-4 md:p-8 flex justify-center">
                 {guide && <RepairGuideDisplay guide={guide} onReset={() => navigate('/')} />}
             </div>

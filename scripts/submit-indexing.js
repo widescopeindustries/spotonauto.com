@@ -56,18 +56,20 @@ async function runIndexing() {
         console.log(`Found ${urls.length} URLs in sitemap.`);
 
         // Final sanity check on URLs - ensure they use the correct production domain
-        const correctDomain = 'https://ai-auto-repair-mobile.vercel.app';
+        const correctDomain = 'https://spotonauto.com';
         urls = urls.map(url => {
-            if (url.includes('ai-auto-repair.vercel.app')) {
-                return url.replace('https://ai-auto-repair.vercel.app', correctDomain);
+            if (url.includes('ai-auto-repair-mobile.vercel.app') || url.includes('ai-auto-repair.vercel.app')) {
+                return url.replace(/https:\/\/.*?.vercel.app/, correctDomain);
             }
             return url;
         });
 
+        // Increase limit slightly or process in batches if needed. 
+        // Note: Google's default quota is often 200 per day.
         const limit = 200;
         const toProcess = urls.slice(0, limit);
 
-        console.log(`Submitting first ${toProcess.length} URLs to Google...`);
+        console.log(`Submitting first ${toProcess.length} URLs to Google for domain ${correctDomain}...`);
 
         for (const url of toProcess) {
             await submitUrl(url);

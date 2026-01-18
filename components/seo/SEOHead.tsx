@@ -7,9 +7,10 @@ interface SEOHeadProps {
     description: string;
     keywords?: string;
     canonicalUrl?: string;
+    schema?: any;
 }
 
-const SEOHead: React.FC<SEOHeadProps> = ({ title, description, keywords, canonicalUrl }) => {
+const SEOHead: React.FC<SEOHeadProps> = ({ title, description, keywords, canonicalUrl, schema }) => {
     return (
         <Helmet>
             <title>{title}</title>
@@ -19,6 +20,11 @@ const SEOHead: React.FC<SEOHeadProps> = ({ title, description, keywords, canonic
             <meta property="og:description" content={description} />
             <meta name="twitter:card" content="summary_large_image" />
             {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+            {schema && (
+                <script type="application/ld+json">
+                    {JSON.stringify(schema)}
+                </script>
+            )}
         </Helmet>
     );
 };
