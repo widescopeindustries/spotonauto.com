@@ -103,8 +103,8 @@ You MUST format your entire response as a single JSON object with three keys: "j
     model: TEXT_MODEL,
     contents: prompt,
     config: {
-      tools: [{ googleSearch: {} }],
       responseMimeType: "application/json",
+      responseSchema: vehicleSchema,
     },
   });
 
@@ -165,7 +165,6 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
     config: {
       responseMimeType: "application/json",
       responseSchema: repairGuideSchema,
-      tools: [{ googleSearch: {} }],
     },
   });
 
@@ -176,11 +175,8 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
     ?.map((chunk: any) => chunk.web)
     .filter((web: any): web is { uri: string; title: string } => !!(web?.uri && web.title)) || [];
 
-  // Generate images in parallel
-  const stepsWithImages = await Promise.all(data.steps.map(async (step: any) => {
-    const imageUrl = await generateImage(step.imagePrompt);
-    return { ...step, imageUrl };
-  }));
+  // Disable image generation for now to stay under 10s timeout
+  const stepsWithImages = data.steps.map((step: any) => ({ ...step, imageUrl: "" }));
 
   const guideId = `${year}-${make}-${model}-${data.title}`.toLowerCase().replace(/\s+/g, '-');
 
@@ -195,19 +191,16 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
 // --- Diagnostic Chat ---
 
 export const createDiagnosticChat = (vehicle: Vehicle): Chat => {
-  const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI with access to online service manuals. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step, referencing real factory-level service data whenever possible.
+  const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step.
     1.  Begin by asking for the primary symptom or issue.
-    2.  Use the search tool to find TSBs or diagnostic trees for the specific vehicle (${vehicle.year} ${vehicle.make} ${vehicle.model}).
-    3.  Provide one single, clear diagnostic step at a time. Be concise.
-    4.  After each step, wait for the user's response.
-    5.  For every instructional step you provide, also give a prompt for an AI image generator to create a helpful technical illustration.
-    6.  You MUST format your entire response as a single JSON object with two keys: "instruction" (your text guidance) and "imagePrompt" (the image generation prompt). Do not include any other text.`;
+    2.  Provide one single, clear diagnostic step at a time. Be concise.
+    3.  After each step, wait for the user's response.
+    4.  You MUST format your entire response as a single JSON object with one key: "instruction" (your text guidance). Do not include any other text.`;
 
   const session = genAI.chats.create({
     model: TEXT_MODEL,
     config: {
       systemInstruction: diagnosticSystemInstruction,
-      tools: [{ googleSearch: {} }],
     },
     history: []
   });
@@ -229,16 +222,10 @@ export const sendDiagnosticMessage = async (chat: Chat, message: string): Promis
   try {
     parsedResponse = JSON.parse(text);
   } catch (e) {
-      // Fallback if the model ignores JSON constraint (rare with schema/instruction)
-      console.warn("Model response was not JSON:", text);
       return { text: text, imageUrl: null };
   }
 
-  const { instruction, imagePrompt } = parsedResponse;
-  const imageUrl = await generateImage(imagePrompt);
-
-  // Update local history abstraction if needed by UI (though session handles it)
-  // The UI uses the return value to update its state.
+  const { instruction } = parsedResponse;
   
-  return { text: instruction, imageUrl };
+  return { text: instruction, imageUrl: null };
 };
