@@ -16,6 +16,27 @@ const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
 const TEXT_MODEL = "gemini-2.0-flash";
 const IMAGE_MODEL = "imagen-3.0-generate-002";
 
+// Schemas
+const vehicleSchema = {
+  type: Type.OBJECT,
+  properties: {
+    year: { type: Type.STRING, description: "The model year of the vehicle." },
+    make: { type: Type.STRING, description: "The manufacturer of the vehicle." },
+    model: { type: Type.STRING, description: "The model of the vehicle." },
+  },
+  required: ["year", "make", "model"],
+};
+
+const vehicleInfoSchema = {
+  type: Type.OBJECT,
+  properties: {
+    jobSnapshot: { type: Type.STRING, description: "A summary of the repair task based on service manual data." },
+    tsbs: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of Technical Service Bulletins related to the task." },
+    recalls: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of safety recalls relevant to the task." },
+  },
+  required: ["jobSnapshot", "tsbs", "recalls"],
+};
+
 // Helper for Image Generation
 async function generateImage(prompt: string): Promise<string> {
   // Client-side image generation might be restricted or require specific OAuth.
@@ -56,22 +77,12 @@ export interface Chat {
 export const decodeVin = async (vin: string): Promise<Vehicle> => {
   const prompt = `Decode the following Vehicle Identification Number (VIN) and return the year, make, and model. VIN: "${vin}"`;
 
-  const vehicleSchema = {
-    type: Type.OBJECT,
-    properties: {
-      year: { type: Type.STRING, description: "The model year of the vehicle." },
-      make: { type: Type.STRING, description: "The manufacturer of the vehicle." },
-      model: { type: Type.STRING, description: "The model of the vehicle." },
-    },
-    required: ["year", "make", "model"],
-  };
-
   const response = await genAI.models.generateContent({
     model: TEXT_MODEL,
     contents: prompt,
     config: {
       responseMimeType: "application/json",
-      responseSchema: vehicleSchema,
+      responseSchema: vehicleInfoSchema,
     },
   });
 
