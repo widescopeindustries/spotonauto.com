@@ -82,7 +82,7 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
     contents: prompt,
     config: {
       responseMimeType: "application/json",
-      responseSchema: vehicleInfoSchema,
+      responseSchema: vehicleSchema,
     },
   });
 
