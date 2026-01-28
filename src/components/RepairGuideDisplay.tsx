@@ -93,8 +93,8 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                             <span className="text-gray-200 font-medium">{tool}</span>
                                         </div>
                                         {links.map((link, i) => (
-                                            <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="opacity-0 group-hover:opacity-100 text-blue-400 hover:text-white transition-opacity">
-                                                <ExternalLinkIcon className="w-4 h-4" />
+                                            <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black text-xs font-bold rounded transition-all flex items-center gap-1">
+                                                <ShoppingCartIcon className="w-3 h-3" /> Amazon
                                             </a>
                                         ))}
                                     </li>
@@ -123,9 +123,10 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                                     href={link.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex-1 flex items-center justify-center gap-2 bg-blue-600/20 hover:bg-blue-600 border border-blue-500/30 text-blue-100 hover:text-white px-3 py-2 rounded text-xs font-bold uppercase transition-all"
+                                                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black px-4 py-2.5 rounded-lg text-xs font-black uppercase tracking-wide transition-all shadow-lg hover:shadow-amber-500/30 hover:scale-105"
                                                 >
-                                                    Purchase
+                                                    <ShoppingCartIcon className="w-4 h-4" />
+                                                    Get on Amazon
                                                 </a>
                                             ))}
                                         </div>
@@ -135,11 +136,12 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                         </ul>
                         <div className="mt-6 text-center">
                             <a
-                                                                 href={`https://www.amazon.com/s?k=${encodeURIComponent(guide.vehicle + ' maintenance parts')}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'aiautorepai04-20'}`}                                target="_blank"
+                                href={`https://www.amazon.com/s?k=${encodeURIComponent(guide.vehicle + ' maintenance parts')}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'aiautorepair-20'}`}
+                                target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-blue-400 text-sm font-bold hover:text-white transition-colors"
+                                className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500 hover:to-orange-500 border border-amber-500/30 text-amber-300 hover:text-black text-sm font-bold rounded-lg transition-all hover:scale-105"
                             >
-                                Browse All Parts <ExternalLinkIcon className="w-3 h-3" />
+                                <ShoppingCartIcon className="w-4 h-4" /> Browse All Parts on Amazon
                             </a>
                         </div>
                     </section>
