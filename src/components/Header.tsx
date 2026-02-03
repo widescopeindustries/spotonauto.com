@@ -1,68 +1,69 @@
 'use client';
 
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { WrenchIcon, UserIcon, LogoutIcon, BookOpenIcon, ShoppingCartIcon } from './Icons';
 import { useRouter } from 'next/navigation';
+import { Cpu, ShoppingCart, Wrench, Search } from 'lucide-react';
 
 const Header: React.FC = () => {
-    const { user, logout } = useAuth();
     const router = useRouter();
 
     return (
-        <header className="w-full bg-black/60 backdrop-blur-md border-b border-white/10 p-4 flex justify-between items-center flex-shrink-0 sticky top-0 z-50 shadow-glass">
-            <div className="flex items-center gap-3">
-                <div className="relative">
-                    <div className="absolute inset-0 bg-brand-cyan blur-md opacity-20 animate-pulse-slow"></div>
-                    <WrenchIcon className="w-8 h-8 text-brand-cyan relative z-10" />
-                </div>
-                <span className="text-xl font-bold text-white hidden sm:inline uppercase tracking-widest font-sans text-glow cursor-pointer" onClick={() => router.push('/')}>
-                    SpotOn Auto
-                </span>
-            </div>
-            <div className="flex items-center gap-4">
-                {/* Shop Parts - Always visible */}
-                <button
-                    onClick={() => router.push('/parts')}
-                    className="flex items-center gap-2 text-amber-400 hover:text-amber-300 font-semibold transition-all duration-300 hover:scale-105"
-                    aria-label="Shop Parts"
-                >
-                    <ShoppingCartIcon className="w-5 h-5"/>
-                    <span className="hidden md:inline font-mono text-sm">Parts</span>
-                </button>
-                <div className="h-6 border-l border-white/10"></div>
-                {user ? (
-                    <>
-                         <button
-                            onClick={() => router.push('/history')}
-                            className="flex items-center gap-2 text-gray-400 hover:text-brand-cyan font-semibold transition-all duration-300 hover:scale-105"
-                            aria-label="Repair History"
-                        >
-                            <BookOpenIcon className="w-5 h-5"/>
-                            <span className="hidden md:inline font-mono text-sm">History</span>
-                        </button>
-                        <div className="h-6 border-l border-white/10"></div>
-                        <div className="flex items-center gap-2 group">
-                            <UserIcon className="w-5 h-5 text-gray-400 group-hover:text-neon-purple transition-colors" />
-                            <span className="font-semibold text-gray-300 hidden md:inline font-mono text-sm group-hover:text-white transition-colors">{user.email}</span>
-                        </div>
-                        <button 
-                            onClick={logout} 
-                            className="flex items-center gap-2 text-gray-400 hover:text-red-400 font-semibold transition-all duration-300"
-                            aria-label="Logout"
-                        >
-                            <LogoutIcon className="w-5 h-5"/>
-                            <span className="hidden md:inline font-mono text-sm">Logout</span>
-                        </button>
-                    </>
-                ) : (
-                    <button 
-                        onClick={() => router.push('/auth')}
-                        className="bg-brand-cyan/10 border border-brand-cyan/50 text-brand-cyan font-bold py-2 px-6 rounded-lg hover:bg-brand-cyan hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-brand-cyan transition-all duration-300 shadow-glow-cyan"
+        <header className="w-full glass-strong border-b border-cyan-500/20 sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-16 md:h-20">
+                    {/* Logo */}
+                    <div
+                        className="flex items-center gap-2 cursor-pointer group"
+                        onClick={() => router.push('/')}
                     >
-                       Login / Sign Up
-                    </button>
-                )}
+                        <div className="relative w-10 h-10 flex items-center justify-center">
+                            <div className="absolute inset-0 bg-cyan-500/20 rounded-lg animate-pulse-glow" />
+                            <Cpu className="w-6 h-6 text-cyan-400 relative z-10" />
+                        </div>
+                        <span className="font-display font-bold text-xl tracking-wider text-white group-hover:text-cyan-400 transition-colors">
+                            SPOTON<span className="text-cyan-400">AUTO</span>
+                        </span>
+                    </div>
+
+                    {/* Navigation */}
+                    <div className="hidden md:flex items-center gap-8">
+                        <a
+                            href="#features"
+                            className="font-body text-sm text-gray-300 hover:text-cyan-400 transition-colors relative group"
+                        >
+                            Features
+                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
+                        </a>
+                        <a
+                            href="#how-it-works"
+                            className="font-body text-sm text-gray-300 hover:text-cyan-400 transition-colors relative group"
+                        >
+                            How It Works
+                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
+                        </a>
+                    </div>
+
+                    {/* CTA Buttons */}
+                    <div className="flex items-center gap-4">
+                        {/* Shop Parts */}
+                        <button
+                            onClick={() => router.push('/parts')}
+                            className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors"
+                        >
+                            <ShoppingCart className="w-5 h-5" />
+                            <span className="hidden md:inline font-body text-sm font-semibold">Parts</span>
+                        </button>
+
+                        {/* Diagnose CTA */}
+                        <button
+                            onClick={() => router.push('/diagnose')}
+                            className="btn-cyber-primary flex items-center gap-2 py-2 px-4"
+                        >
+                            <Search className="w-4 h-4" />
+                            <span className="font-display text-xs tracking-wider">DIAGNOSE</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
     );

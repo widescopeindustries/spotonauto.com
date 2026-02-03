@@ -3,7 +3,6 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { AuthProvider } from "@/contexts/AuthContext";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
@@ -32,7 +31,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
       </head>
       <body className="bg-brand-black text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-neon-cyan selection:text-black">
         {/* Google Analytics */}
@@ -53,15 +52,15 @@ export default function RootLayout({
           </>
         )}
 
-        <AuthProvider>
-          <div className="min-h-screen w-full flex flex-col bg-black">
-            <Header />
-            <main className="flex-grow w-full">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </AuthProvider>
+        <div className="min-h-screen w-full flex flex-col bg-void">
+          {/* Noise overlay for cyberpunk effect */}
+          <div className="noise-overlay" />
+          <Header />
+          <main className="flex-grow w-full">
+            {children}
+          </main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
