@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Car, Menu, X, History, LogOut, User } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, Bluetooth } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Header: React.FC = () => {
@@ -68,6 +68,14 @@ const Header: React.FC = () => {
 
                     {/* CTA Buttons */}
                     <div className="hidden md:flex items-center gap-4">
+                        <motion.button
+                            onClick={() => router.push('/scanner')}
+                            className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors"
+                            whileHover={{ scale: 1.05 }}
+                        >
+                            <Bluetooth className="w-4 h-4" />
+                            <span className="font-body text-sm">Scanner</span>
+                        </motion.button>
                         <motion.button
                             onClick={() => router.push('/parts')}
                             className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-colors"
