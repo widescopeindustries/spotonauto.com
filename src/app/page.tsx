@@ -1,144 +1,178 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
+import { CheckCircle2 } from 'lucide-react';
 import HolographicDashboard from '@/components/HolographicDashboard';
-import SEOHead from '@/components/seo/SEOHead';
+import ParticleBackground from '@/components/ParticleBackground';
+import FeaturesSection from '@/components/FeaturesSection';
+import HowItWorksSection from '@/components/HowItWorksSection';
+import TestimonialsSection from '@/components/TestimonialsSection';
+import CTASection from '@/components/CTASection';
 
-export default function HomePage() {
+// Hero Section Component
+const HeroSection = () => {
     const [selectedVehicle, setSelectedVehicle] = React.useState<{ year: string; make: string; model: string } | null>(null);
 
-    // Determine which image to show based on heuristics
-    const getCarImage = () => {
-        if (!selectedVehicle || !selectedVehicle.model) return null;
-        const modelLower = selectedVehicle.model.toLowerCase();
-
-        if (modelLower.includes('f-150') || modelLower.includes('silverado') || modelLower.includes('ram') || modelLower.includes('tundra') || modelLower.includes('truck')) {
-            return '/truck.png';
-        }
-        if (modelLower.includes('suv') || modelLower.includes('explorer') || modelLower.includes('tahoe') || modelLower.includes('rav4') || modelLower.includes('cr-v') || modelLower.includes('jeep')) {
-            return '/suv.png';
-        }
-        // Default to sedan for now
-        return '/sedan.png';
-    };
-
-    const carImage = getCarImage();
-
     return (
-        <>
-            <SEOHead
-                title="SpotOn Auto | AI Auto Repair"
-                description="Silence the check engine light. SpotOn diagnostics with 98.4% accuracy."
-                keywords="auto repair, car diagnostics, spoton auto, virtual garage, AI mechanic"
-                canonicalUrl="https://spotonauto.com/"
-            />
+        <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+            {/* Background Effects */}
+            <div className="absolute inset-0 hex-pattern opacity-50" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px]" />
+            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/5 rounded-full blur-[100px]" />
 
-            <div className="flex min-h-screen w-full relative overflow-hidden bg-deep-space">
-                 {/* Background Elements */}
-                <div className="absolute inset-0 bg-cyber-grid bg-grid-sm opacity-20 animate-pulse-slow"></div>
-                <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-radial from-neon-purple/20 to-transparent blur-3xl rounded-full opacity-30"></div>
-                <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-radial from-neon-cyan/20 to-transparent blur-3xl rounded-full opacity-30"></div>
-
-
-                {/* Main Configurator Area */}
-                <main className="flex-1 flex flex-col relative z-10 p-4 md:p-8 overflow-y-auto">
-
-                    {/* Header Overlay */}
-                    <div className="flex justify-between items-start mb-8 animate-slide-up">
-                        <div>
-                            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight text-glow uppercase leading-tight">
-                                SILENCE THE <span className="text-brand-cyan">CHECK ENGINE LIGHT</span>
-                            </h2>
-                            <p className="text-gray-300 font-sans mt-4 text-base md:text-lg max-w-xl leading-relaxed">
-                                Instant AI Auto Repair. Diagnose problems and get step-by-step fix guides in seconds.
-                                <span className="block mt-2 text-brand-cyan font-bold text-sm uppercase tracking-wider">Trusted by 50,000+ DIY Mechanics.</span>
-                            </p>
-                        </div>
-                        <div className="hidden md:block bg-black/40 backdrop-blur-md px-6 py-2 rounded-full border border-brand-cyan/30 shadow-glow-cyan">
-                            <span className="text-brand-cyan font-bold font-mono tracking-wider text-sm flex items-center gap-2">
-                                <span className="w-2 h-2 bg-brand-cyan rounded-full animate-pulse"></span>
-                                AI SYSTEM ONLINE
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                    {/* Left Content */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="space-y-6"
+                    >
+                        {/* Status Badge */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass"
+                        >
+                            <span className="status-dot" />
+                            <span className="font-body text-xs tracking-widest text-cyan-400 uppercase">
+                                AI System Online
                             </span>
-                        </div>
-                    </div>
+                        </motion.div>
 
-                    {/* Central Glass Card */}
-                    <div className="flex-1 flex items-center justify-center">
-                        <div className="w-full max-w-7xl bg-glass-dark backdrop-blur-2xl border border-white/10 rounded-[2rem] md:rounded-[3rem] shadow-glass-premium p-6 md:p-12 animate-float relative overflow-hidden group">
-                            
-                            {/* Decorative refraction lines */}
-                            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/50 to-transparent"></div>
-                            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-purple/50 to-transparent"></div>
+                        {/* Heading */}
+                        <motion.h1
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            className="font-display font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight"
+                        >
+                            <span className="text-white">SILENCE THE</span>
+                            <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200 glow-text">
+                                CHECK ENGINE
+                            </span>
+                            <br />
+                            <span className="text-white">LIGHT</span>
+                        </motion.h1>
 
-                            <div className="grid lg:grid-cols-2 gap-12 items-center">
-                                {/* Left: UI Controls */}
-                                <div className="space-y-8 relative z-20">
-                                    <div>
-                                        <h3 className="text-2xl font-bold text-white mb-2 font-sans tracking-wide">Configuration Panel</h3>
-                                        <p className="text-gray-400 text-sm leading-relaxed font-mono">
-                                            Select vehicle parameters to calibrate the deep-scan neural network. Accessing global service database...
-                                        </p>
+                        {/* Subheading */}
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4, duration: 0.6 }}
+                            className="font-body text-lg sm:text-xl text-gray-400 max-w-lg"
+                        >
+                            Instant AI Auto Repair. Diagnose problems and get step-by-step fix guides in seconds.
+                        </motion.p>
+
+                        {/* Trust Badge */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="flex items-center gap-3"
+                        >
+                            <div className="flex -space-x-2">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div
+                                        key={i}
+                                        className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 border-2 border-[#050505] flex items-center justify-center"
+                                    >
+                                        <span className="text-xs font-bold text-white">{i}</span>
                                     </div>
+                                ))}
+                            </div>
+                            <span className="font-body text-sm text-cyan-400">
+                                Trusted by <span className="font-bold text-white">50,000+</span> DIY Mechanics
+                            </span>
+                        </motion.div>
+                    </motion.div>
 
-                                    {/* The Dashboard Component */}
-                                    <HolographicDashboard onVehicleChange={setSelectedVehicle} />
+                    {/* Right Content - Configuration Panel */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 50, rotateY: 15 }}
+                        animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                        transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                        className="relative"
+                    >
+                        <div className="glass rounded-2xl p-6 sm:p-8 border border-cyan-500/30 glow-border">
+                            {/* Panel Header */}
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 className="font-display font-bold text-xl text-white">
+                                        Configuration Panel
+                                    </h3>
+                                    <p className="font-body text-sm text-gray-400 mt-1">
+                                        Select vehicle parameters to calibrate the deep-scan neural network
+                                    </p>
                                 </div>
+                            </div>
 
-                                {/* Right: Dynamic Car Visualization */}
-                                <div className="hidden lg:flex items-center justify-center relative h-[400px] w-full perspective-1000">
-                                    {/* Holographic Base */}
-                                    <div className="absolute bottom-10 w-[80%] h-20 bg-brand-cyan/10 blur-xl rounded-[100%] animate-pulse"></div>
-                                    <div className="absolute bottom-12 w-[60%] h-[1px] bg-brand-cyan shadow-glow-cyan"></div>
-                                    
-                                    {/* Scanning Grid */}
-                                    <div className="absolute inset-0 bg-gradient-to-b from-brand-cyan/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                            {/* The Dashboard Component */}
+                            <HolographicDashboard onVehicleChange={setSelectedVehicle} />
 
-                                    {carImage ? (
-                                        <div className="relative w-full h-full flex items-center justify-center animate-fade-in">
-                                            <div className="relative z-10 w-full flex justify-center">
-                                                <img
-                                                    src={carImage}
-                                                    alt="Vehicle Preview"
-                                                    className="w-auto max-h-[300px] object-contain drop-shadow-2xl transition-all duration-700 transform hover:scale-105 filter brightness-110 contrast-110"
-                                                />
-                                                {/* Scanline Effect Overlay on Car */}
-                                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-cyan/10 to-transparent h-4 w-full animate-scanline pointer-events-none"></div>
-                                            </div>
-                                            
-                                            <div className="absolute top-0 right-0 flex flex-col items-end gap-1">
-                                                <div className="bg-black/60 backdrop-blur px-3 py-1 rounded-none border-r-2 border-brand-cyan">
-                                                     <span className="text-[10px] font-bold text-brand-cyan uppercase tracking-widest font-mono">Holo-Render Active</span>
-                                                </div>
-                                                <div className="text-[10px] text-gray-500 font-mono">
-                                                    {selectedVehicle ? `${selectedVehicle.year} // ${selectedVehicle.make} // ${selectedVehicle.model}` : 'Waiting for Data...'}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="text-center space-y-4 opacity-40">
-                                            <div className="w-64 h-32 border border-dashed border-gray-600 rounded-lg mx-auto flex flex-col items-center justify-center bg-black/30">
-                                                <span className="text-xs font-mono text-gray-500 animate-pulse">AWAITING INPUT</span>
-                                            </div>
-                                            <p className="text-xs text-gray-600 font-mono tracking-widest">NO SIGNAL DETECTED</p>
-                                        </div>
-                                    )}
+                            {/* Status Display */}
+                            <div className="mt-6 p-4 rounded-lg bg-black/40 border border-cyan-500/10">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="font-body text-xs text-gray-500 uppercase tracking-widest">
+                                        {selectedVehicle?.model ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}` : 'Awaiting Input'}
+                                    </span>
+                                    <span className="font-body text-xs text-cyan-400 animate-text-flicker">
+                                        {selectedVehicle?.model ? 'VEHICLE LOCKED' : 'NO SIGNAL DETECTED'}
+                                    </span>
+                                </div>
+                                <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
+                                    <div className={`h-full bg-gradient-to-r from-cyan-500 to-cyan-300 transition-all duration-500 ${selectedVehicle?.model ? 'w-full' : 'w-0'}`} />
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Bottom Stats */}
-                    <div className="mt-8 grid grid-cols-3 gap-8 max-w-4xl mx-auto opacity-70">
-                        {['98.4% Accuracy', 'Instant Results', 'Factory Manuals'].map((stat, i) => (
-                            <div key={i} className="text-center group cursor-default">
-                                <p className="text-gray-300 font-bold text-sm md:text-lg font-mono group-hover:text-brand-cyan transition-colors">{stat}</p>
-                                <div className="h-[2px] w-8 bg-gray-700 mx-auto mt-2 group-hover:bg-brand-cyan group-hover:w-16 transition-all duration-500"></div>
+                        {/* Floating Stats */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8 }}
+                            className="absolute -bottom-4 -right-4 glass rounded-xl p-4 border border-cyan-500/20"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                                    <CheckCircle2 className="w-6 h-6 text-cyan-400" />
+                                </div>
+                                <div>
+                                    <div className="font-display font-bold text-2xl text-white">98.4%</div>
+                                    <div className="font-body text-xs text-gray-400 uppercase tracking-wider">
+                                        Accuracy Rate
+                                    </div>
+                                </div>
                             </div>
-                        ))}
-                    </div>
-
-                </main>
+                        </motion.div>
+                    </motion.div>
+                </div>
             </div>
-        </>
+        </section>
+    );
+};
+
+export default function HomePage() {
+    return (
+        <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden">
+            {/* Background Effects */}
+            <ParticleBackground />
+            <div className="noise-overlay" />
+            <div className="scanline-overlay" />
+
+            {/* Main Content */}
+            <main className="relative z-10">
+                <HeroSection />
+                <FeaturesSection />
+                <HowItWorksSection />
+                <TestimonialsSection />
+                <CTASection />
+            </main>
+        </div>
     );
 }

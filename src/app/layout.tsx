@@ -33,7 +33,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
       </head>
-      <body className="bg-brand-black text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-neon-cyan selection:text-black">
+      <body className="bg-[#050505] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-cyan-400 selection:text-black">
         {/* Google Analytics */}
         {GA_MEASUREMENT_ID && (
           <>
@@ -52,9 +52,7 @@ export default function RootLayout({
           </>
         )}
 
-        <div className="min-h-screen w-full flex flex-col bg-void">
-          {/* Noise overlay for cyberpunk effect */}
-          <div className="noise-overlay" />
+        <div className="min-h-screen w-full flex flex-col">
           <Header />
           <main className="flex-grow w-full">
             {children}
