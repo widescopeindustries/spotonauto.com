@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Providers from "@/components/Providers";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
@@ -52,13 +53,15 @@ export default function RootLayout({
           </>
         )}
 
-        <div className="min-h-screen w-full flex flex-col">
-          <Header />
-          <main className="flex-grow w-full">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <Providers>
+          <div className="min-h-screen w-full flex flex-col">
+            <Header />
+            <main className="flex-grow w-full">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );

@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Car, Menu, X } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header: React.FC = () => {
     const router = useRouter();
+    const { user, logout, loading } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -17,6 +19,11 @@ const Header: React.FC = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const handleLogout = async () => {
+        await logout();
+        setIsMobileMenuOpen(false);
+    };
 
     return (
         <motion.header
@@ -49,7 +56,7 @@ const Header: React.FC = () => {
                         {['Features', 'How It Works', 'Testimonials'].map((item) => (
                             <motion.a
                                 key={item}
-                                href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
+                                href={`/#${item.toLowerCase().replace(/\s+/g, '-')}`}
                                 className="font-body text-sm text-gray-300 hover:text-cyan-400 transition-colors relative group"
                                 whileHover={{ y: -2 }}
                             >
@@ -69,13 +76,41 @@ const Header: React.FC = () => {
                             <Car className="w-4 h-4" />
                             <span className="font-body text-sm">Parts</span>
                         </motion.button>
-                        <motion.button
-                            className="btn-cyber"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            Login / Sign Up
-                        </motion.button>
+
+                        {!loading && (
+                            <>
+                                {user ? (
+                                    <div className="flex items-center gap-3">
+                                        <motion.button
+                                            onClick={() => router.push('/history')}
+                                            className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-colors"
+                                            whileHover={{ scale: 1.05 }}
+                                        >
+                                            <History className="w-4 h-4" />
+                                            <span className="font-body text-sm">History</span>
+                                        </motion.button>
+                                        <motion.button
+                                            onClick={handleLogout}
+                                            className="btn-cyber flex items-center gap-2 py-2 px-4"
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                            <span className="text-xs">Logout</span>
+                                        </motion.button>
+                                    </div>
+                                ) : (
+                                    <motion.button
+                                        onClick={() => router.push('/auth')}
+                                        className="btn-cyber"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        Login / Sign Up
+                                    </motion.button>
+                                )}
+                            </>
+                        )}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -101,7 +136,7 @@ const Header: React.FC = () => {
                             {['Features', 'How It Works', 'Testimonials'].map((item) => (
                                 <a
                                     key={item}
-                                    href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
+                                    href={`/#${item.toLowerCase().replace(/\s+/g, '-')}`}
                                     className="block font-body text-gray-300 hover:text-cyan-400 transition-colors"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
@@ -119,7 +154,42 @@ const Header: React.FC = () => {
                                     <Car className="w-4 h-4" />
                                     <span className="font-body">Parts</span>
                                 </button>
-                                <button className="btn-cyber w-full">Login / Sign Up</button>
+
+                                {!loading && (
+                                    <>
+                                        {user ? (
+                                            <>
+                                                <button
+                                                    onClick={() => {
+                                                        router.push('/history');
+                                                        setIsMobileMenuOpen(false);
+                                                    }}
+                                                    className="flex items-center gap-2 text-gray-300 w-full"
+                                                >
+                                                    <History className="w-4 h-4" />
+                                                    <span className="font-body">My History</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="btn-cyber w-full flex items-center justify-center gap-2"
+                                                >
+                                                    <LogOut className="w-4 h-4" />
+                                                    Logout
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button
+                                                onClick={() => {
+                                                    router.push('/auth');
+                                                    setIsMobileMenuOpen(false);
+                                                }}
+                                                className="btn-cyber w-full"
+                                            >
+                                                Login / Sign Up
+                                            </button>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </motion.div>
