@@ -17,6 +17,9 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://spotonauto.com",
   },
+  other: {
+    "fo-verify": "e75768c4-61f2-457f-a6b9-22cc832e8e7f",
+  },
 };
 
 export default function RootLayout({
