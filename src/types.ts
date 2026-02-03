@@ -79,8 +79,20 @@ export interface HistoryItem {
   timestamp: number;
 }
 
+export type AffiliateProvider = 'Amazon' | 'RockAuto' | 'AutoZone';
+
 export interface AffiliateLink {
-  provider: string; // e.g., 'Amazon'
+  provider: AffiliateProvider;
   url: string;
-  price: string;
+  buttonText: string;
+  badge?: 'Prime' | 'OEM Parts' | 'Local Pickup' | 'Best Value' | 'Wholesale';
+  priceRange?: 'low' | 'mid' | 'high';
+  icon?: string; // For retailer-specific styling
+}
+
+export interface PartWithLinks {
+  name: string;
+  links: AffiliateLink[];
+  isHighTicket: boolean;
+  category: 'brake' | 'engine' | 'electrical' | 'suspension' | 'fluid' | 'filter' | 'other';
 }

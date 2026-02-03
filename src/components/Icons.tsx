@@ -85,3 +85,49 @@ export const ShieldCheckIcon: React.FC<{ className?: string }> = ({ className = 
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.724 10.339 8.75 11.75 5.027-1.411 8.75-6.158 8.75-11.75 0-1.275-.21-2.501-.598-3.649A11.959 11.959 0 0112 2.714z" />
     </svg>
 );
+
+// Retailer Logos
+export const AmazonIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595.379-.144.754-.016.927.306.173.322.018.672-.373.895-2.932 1.67-6.156 2.505-9.668 2.505-4.57 0-8.664-1.353-12.266-4.058-.203-.152-.242-.334-.285-.697zm6.597-4.366c0-.753.199-1.386.597-1.897.398-.512.904-.812 1.518-.901.535-.077 1.103-.053 1.703.071v-.502c0-.404-.048-.729-.143-.974-.096-.245-.282-.404-.559-.476-.18-.047-.397-.072-.651-.072-.461 0-.965.086-1.512.259l-.262.07c-.184.047-.305-.01-.365-.168l-.17-.479c-.048-.132-.011-.266.11-.403.404-.379 1.096-.569 2.078-.569.896 0 1.527.221 1.894.663.355.429.533 1.098.533 2.007v2.918c0 .288-.099.452-.297.491l-1.048.174c-1.159.181-2.05.049-2.673-.396-.414-.294-.622-.755-.622-1.384v-.031c0-.011 0-.022 0-.033-.001-.001-.001-.001-.001-.001-.002.001-.002.001-.002.001 0 .01 0 .02 0 .03v.002zm1.714.268c0 .212.065.393.196.543.131.15.314.249.551.297.272.05.534.045.784-.015v-1.389c-.346-.131-.648-.152-.908-.063-.26.089-.451.262-.573.517-.032.075-.05.146-.05.213v-.103zm5.932-5.16c.428 0 .727.253.727.632 0 .363-.299.637-.727.637-.412 0-.727-.274-.727-.637 0-.379.315-.632.727-.632zm.564 7.197c0 .29-.098.435-.295.435H13.46c-.197 0-.296-.145-.296-.435V9.744c0-.29.099-.435.296-.435h1.097c.197 0 .295.145.295.435v6.215z"/>
+    </svg>
+);
+
+export const RockAutoIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+        <text x="6" y="16" fontSize="8" fontWeight="bold" fill="currentColor">R</text>
+    </svg>
+);
+
+export const AutoZoneIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+    </svg>
+);
+
+export const TruckIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+    </svg>
+);
+
+export const TagIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+    </svg>
+);
+
+export const MapPinIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+    </svg>
+);
+
+export const StarIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+    </svg>
+);

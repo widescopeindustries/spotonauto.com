@@ -1,8 +1,10 @@
+'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import type { RepairGuide } from '../types';
-import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon, ExternalLinkIcon, ShieldCheckIcon, ClockIcon } from './Icons';
-import { generatePartLinks, generateToolLinks } from '../services/affiliateService';
+import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon, ShieldCheckIcon, ClockIcon } from './Icons';
+import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
+import PartsComparison from './PartsComparison';
 
 interface RepairGuideDisplayProps {
     guide: RepairGuide;
@@ -10,10 +12,13 @@ interface RepairGuideDisplayProps {
 }
 
 const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset }) => {
+    // Generate enhanced parts data with all affiliate links
+    const partsWithLinks = generateAllPartsWithLinks(guide.parts || [], guide.vehicle);
+
     return (
         <div className="w-full max-w-6xl mx-auto bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-fade-in ring-1 ring-white/5">
+            {/* HEADER */}
             <header className="relative p-8 border-b border-white/10 overflow-hidden group">
-                {/* Header Background Glow */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-blue-500/20 transition-all duration-1000"></div>
 
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -23,7 +28,9 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                 <ShieldCheckIcon className="w-3.5 h-3.5" />
                                 Verified Diagnostic
                             </span>
-                            <span className="text-white/30 text-[10px] font-mono tracking-widest uppercase">ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}</span>
+                            <span className="text-white/30 text-[10px] font-mono tracking-widest uppercase">
+                                ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}
+                            </span>
                         </div>
                         <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter mb-4 drop-shadow-sm leading-tight">
                             {guide.title}
@@ -55,7 +62,7 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
 
             <main className="p-6 md:p-10 space-y-12">
 
-                {/* SAFETY ALERTS - Redesigned */}
+                {/* SAFETY ALERTS */}
                 {guide.safetyWarnings && guide.safetyWarnings.length > 0 && (
                     <section className="relative overflow-hidden rounded-xl bg-gradient-to-r from-red-950/40 to-slate-900/40 border border-red-500/30 p-1">
                         <div className="bg-black/20 p-6 rounded-lg backdrop-blur-sm">
@@ -75,16 +82,20 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                     </section>
                 )}
 
-                {/* CONSOLIDATED PARTS & TOOLS */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    {/* TOOLS CARD */}
+                {/* PARTS COMPARISON - THE AFFILIATE MONEY MAKER */}
+                {partsWithLinks.length > 0 && (
+                    <PartsComparison parts={partsWithLinks} vehicle={guide.vehicle} />
+                )}
+
+                {/* TOOLS SECTION */}
+                {guide.tools && guide.tools.length > 0 && (
                     <section className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 hover:bg-white/[0.04] transition-colors">
                         <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3 uppercase tracking-widest">
                             <WrenchIcon className="text-blue-400 w-5 h-5" />
                             Required Tools
                         </h2>
-                        <ul className="space-y-2">
-                            {guide.tools?.map((tool, index) => {
+                        <ul className="grid md:grid-cols-2 gap-2">
+                            {guide.tools.map((tool, index) => {
                                 const links = generateToolLinks(tool);
                                 return (
                                     <li key={index} className="group flex items-center justify-between p-3 rounded-lg bg-black/20 border border-transparent hover:border-white/10 transition-all">
@@ -93,7 +104,13 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                             <span className="text-gray-200 font-medium">{tool}</span>
                                         </div>
                                         {links.map((link, i) => (
-                                            <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black text-xs font-bold rounded transition-all flex items-center gap-1">
+                                            <a
+                                                key={i}
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black text-xs font-bold rounded transition-all flex items-center gap-1"
+                                            >
                                                 <ShoppingCartIcon className="w-3 h-3" /> Amazon
                                             </a>
                                         ))}
@@ -102,50 +119,7 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                             })}
                         </ul>
                     </section>
-
-                    {/* PARTS CARD */}
-                    <section className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 hover:bg-white/[0.04] transition-colors relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3 uppercase tracking-widest">
-                            <ShoppingCartIcon className="text-blue-400 w-5 h-5" />
-                            Required Parts
-                        </h2>
-                        <ul className="space-y-3">
-                            {guide.parts?.map((part, index) => {
-                                const links = generatePartLinks(part, guide.vehicle);
-                                return (
-                                    <li key={index} className="flex flex-col gap-2 p-3 bg-black/20 rounded-lg border border-white/5">
-                                        <span className="text-gray-100 font-bold">{part}</span>
-                                        <div className="flex gap-2">
-                                            {links.map((link, i) => (
-                                                <a
-                                                    key={i}
-                                                    href={link.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black px-4 py-2.5 rounded-lg text-xs font-black uppercase tracking-wide transition-all shadow-lg hover:shadow-amber-500/30 hover:scale-105"
-                                                >
-                                                    <ShoppingCartIcon className="w-4 h-4" />
-                                                    Get on Amazon
-                                                </a>
-                                            ))}
-                                        </div>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                        <div className="mt-6 text-center">
-                            <a
-                                href={`https://www.amazon.com/s?k=${encodeURIComponent(guide.vehicle + ' maintenance parts')}&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'aiautorepair-20'}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500 hover:to-orange-500 border border-amber-500/30 text-amber-300 hover:text-black text-sm font-bold rounded-lg transition-all hover:scale-105"
-                            >
-                                <ShoppingCartIcon className="w-4 h-4" /> Browse All Parts on Amazon
-                            </a>
-                        </div>
-                    </section>
-                </div>
+                )}
 
                 {/* STEP-BY-STEP INSTRUCTIONS */}
                 <section>
@@ -166,7 +140,7 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                 )}
 
                                 <div className="grid lg:grid-cols-12 gap-8 items-start relative z-10">
-                                    {/* Stop Number Column */}
+                                    {/* Step Number Column */}
                                     <div className="lg:col-span-1 hidden lg:flex justify-center">
                                         <div className="w-14 h-14 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-xl font-black text-white group-hover:border-blue-500/50 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all">
                                             {step.step}
@@ -223,6 +197,5 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
         </div>
     );
 };
-
 
 export default RepairGuideDisplay;

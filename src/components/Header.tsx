@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { WrenchIcon, UserIcon, LogoutIcon, BookOpenIcon } from './Icons';
+import { WrenchIcon, UserIcon, LogoutIcon, BookOpenIcon, ShoppingCartIcon } from './Icons';
 import { useRouter } from 'next/navigation';
 
 const Header: React.FC = () => {
@@ -21,10 +21,20 @@ const Header: React.FC = () => {
                 </span>
             </div>
             <div className="flex items-center gap-4">
+                {/* Shop Parts - Always visible */}
+                <button
+                    onClick={() => router.push('/parts')}
+                    className="flex items-center gap-2 text-amber-400 hover:text-amber-300 font-semibold transition-all duration-300 hover:scale-105"
+                    aria-label="Shop Parts"
+                >
+                    <ShoppingCartIcon className="w-5 h-5"/>
+                    <span className="hidden md:inline font-mono text-sm">Parts</span>
+                </button>
+                <div className="h-6 border-l border-white/10"></div>
                 {user ? (
                     <>
-                         <button 
-                            onClick={() => router.push('/history')} 
+                         <button
+                            onClick={() => router.push('/history')}
                             className="flex items-center gap-2 text-gray-400 hover:text-brand-cyan font-semibold transition-all duration-300 hover:scale-105"
                             aria-label="Repair History"
                         >
