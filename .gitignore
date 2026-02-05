@@ -35,3 +35,7 @@ next-env.d.ts
 
 # api keys
 src/apikeys.txt
+/credentials/
+
+# indexing script progress
+scripts/indexing-progress.json

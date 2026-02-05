@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import GuideContent from './GuideContent';
 import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import Link from 'next/link';
+import { isValidVehicleCombination, getDisplayName } from '@/data/vehicles';
 
 interface PageProps {
     params: Promise<{
@@ -177,8 +179,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function Page({ params }: PageProps) {
     const resolvedParams = await params;
     const { year, make, model, task } = resolvedParams;
+
+    // Validate vehicle/year combination - return 404 for invalid combinations
+    if (!isValidVehicleCombination(year, make, model, task)) {
+        notFound();
+    }
+
     const cleanTask = task.replace(/-/g, ' ');
-    const vehicleName = `${year} ${decodeURIComponent(make)} ${decodeURIComponent(model)}`;
+    // Use display names for proper capitalization
+    const displayMake = getDisplayName(make, 'make') || decodeURIComponent(make);
+    const displayModel = getDisplayName(model, 'model') || decodeURIComponent(model);
+    const vehicleName = `${year} ${displayMake} ${displayModel}`;
 
     const repairData = REPAIR_DATA[task] || DEFAULT_REPAIR;
 

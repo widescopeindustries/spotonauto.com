@@ -1,36 +1,9 @@
 import { MetadataRoute } from 'next'
+import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS } from '@/data/vehicles';
 
-const years = Array.from({ length: 2013 - 1982 + 1 }, (_, i) => 1982 + i);
-const cars = {
-    Toyota: ['Camry', 'Corolla', 'RAV4', 'Highlander', 'Tacoma', 'Tundra', 'Prius', 'Sienna'],
-    Honda: ['Civic', 'Accord', 'CR-V', 'Pilot', 'Odyssey', 'Fit'],
-    Ford: ['F-150', 'Escape', 'Explorer', 'Focus', 'Fusion', 'Mustang', 'Edge'],
-    Chevrolet: ['Silverado', 'Equinox', 'Malibu', 'Tahoe', 'Suburban', 'Impala'],
-    Nissan: ['Altima', 'Rogue', 'Sentra', 'Versa', 'Pathfinder'],
-    Hyundai: ['Elantra', 'Sonata', 'Tucson', 'Santa Fe'],
-    Kia: ['Optima', 'Sorento', 'Soul', 'Sportage'],
-    BMW: ['3 Series', '5 Series', 'X3', 'X5'],
-    Mercedes: ['C-Class', 'E-Class', 'GLC', 'GLE'],
-    Jeep: ['Grand Cherokee', 'Wrangler', 'Cherokee'],
-    Subaru: ['Outback', 'Forester', 'Crosstrek']
-};
-
-const tasks = [
-    'oil-change',
-    'brake-pad-replacement',
-    'brake-rotor-replacement',
-    'alternator-replacement',
-    'starter-replacement',
-    'battery-replacement',
-    'spark-plug-replacement',
-    'radiator-replacement',
-    'thermostat-replacement',
-    'water-pump-replacement',
-    'serpentine-belt-replacement',
-    'cabin-air-filter-replacement',
-    'engine-air-filter-replacement',
-    'headlight-bulb-replacement'
-];
+// Only generate years within our target range that also match production years
+const SITEMAP_YEAR_MIN = 1982;
+const SITEMAP_YEAR_MAX = 2013;
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://spotonauto.com';
@@ -55,14 +28,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
     ];
 
-    // Note: Next.js might have limits on sitemap size if generated dynamically like this.
-    // For 25k URLs, this is fine.
-    for (const [make, models] of Object.entries(cars)) {
+    // Generate only valid vehicle/year combinations
+    for (const [make, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
         const makeSlug = make.toLowerCase().replace(/\s+/g, '-');
-        for (const model of models) {
+
+        for (const [model, productionYears] of Object.entries(models)) {
             const modelSlug = model.toLowerCase().replace(/\s+/g, '-');
-            for (const year of years) {
-                for (const task of tasks) {
+
+            // Calculate valid year range for this model within our sitemap bounds
+            const startYear = Math.max(productionYears.start, SITEMAP_YEAR_MIN);
+            const endYear = Math.min(productionYears.end, SITEMAP_YEAR_MAX);
+
+            // Skip if no valid years in range
+            if (startYear > endYear) continue;
+
+            for (let year = startYear; year <= endYear; year++) {
+                for (const task of VALID_TASKS) {
                     entries.push({
                         url: `${baseUrl}/repair/${year}/${makeSlug}/${modelSlug}/${task}`,
                         lastModified: new Date(),
