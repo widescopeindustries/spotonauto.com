@@ -114,7 +114,7 @@ const Header: React.FC = () => {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        Login / Sign Up
+                                        My Garage (Login)
                                     </motion.button>
                                 )}
                             </>
@@ -193,7 +193,7 @@ const Header: React.FC = () => {
                                                 }}
                                                 className="btn-cyber w-full"
                                             >
-                                                Login / Sign Up
+                                                My Garage (Login)
                                             </button>
                                         )}
                                     </>
