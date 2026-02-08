@@ -40,6 +40,21 @@ const TOOLS = [
                 href: '/tools/bmw-x3-headlight-bulb',
             },
             {
+                name: 'Hyundai Sonata Belt Diagram',
+                description: 'Serpentine belt routing diagrams and sizes for all Sonata years',
+                href: '/tools/hyundai-sonata-belt-diagram',
+            },
+            {
+                name: 'Nissan Sentra Thermostat Location',
+                description: 'Find where the thermostat is located on any Sentra year',
+                href: '/tools/nissan-sentra-thermostat-location',
+            },
+            {
+                name: 'Honda Odyssey Serpentine Belt',
+                description: 'Belt routing diagrams and part numbers for Odyssey minivans',
+                href: '/tools/honda-odyssey-serpentine-belt',
+            },
+            {
                 name: 'BMW X3 Battery Location',
                 description: 'Find your X3 battery location, jump points, and replacement specs',
                 href: '/tools/bmw-x3-battery-location',
