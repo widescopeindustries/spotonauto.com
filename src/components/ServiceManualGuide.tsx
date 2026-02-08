@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import type { RepairGuide } from '../types';
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ServiceManualGuideProps {
     guide: RepairGuide;
@@ -15,11 +16,23 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
 
     return (
         <div className="service-manual">
-            {/* Manual Cover/Header */}
-            <header className="manual-header">
+            {/* Manual Cover/Header - Animated Entry */}
+            <motion.header 
+                className="manual-header"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+            >
                 <div className="manual-header-inner">
                     <div className="manual-badge">SERVICE MANUAL</div>
-                    <h1 className="manual-title">{guide.title}</h1>
+                    <motion.h1 
+                        className="manual-title"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.5 }}
+                    >
+                        {guide.title}
+                    </motion.h1>
                     <div className="manual-vehicle">{guide.vehicle}</div>
                     <div className="manual-meta">
                         <span className="manual-meta-item">
@@ -43,7 +56,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                         </span>
                     </div>
                 </div>
-            </header>
+            </motion.header>
 
             {/* Main Content Area - Book-like layout */}
             <main className="manual-content">
@@ -77,7 +90,14 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
 
                     {/* Page: Safety Warnings */}
                     {guide.safetyWarnings && guide.safetyWarnings.length > 0 && (
-                        <section id="safety" className="manual-page">
+                        <motion.section 
+                            id="safety" 
+                            className="manual-page"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5 }}
+                        >
                             <div className="page-header warning">
                                 <span className="page-icon">⚠️</span>
                                 <h2 className="page-title">Safety Warnings</h2>
@@ -95,12 +115,19 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                     ))}
                                 </ul>
                             </div>
-                        </section>
+                        </motion.section>
                     )}
 
                     {/* Page: Parts Required */}
                     {partsWithLinks.length > 0 && (
-                        <section id="parts" className="manual-page">
+                        <motion.section 
+                            id="parts" 
+                            className="manual-page"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                        >
                             <div className="page-header">
                                 <span className="page-icon">🔧</span>
                                 <h2 className="page-title">Parts Required</h2>
@@ -133,12 +160,19 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                     ))}
                                 </tbody>
                             </table>
-                        </section>
+                        </motion.section>
                     )}
 
                     {/* Page: Tools Needed */}
                     {guide.tools && guide.tools.length > 0 && (
-                        <section id="tools" className="manual-page">
+                        <motion.section 
+                            id="tools" 
+                            className="manual-page"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                        >
                             <div className="page-header">
                                 <span className="page-icon">🛠️</span>
                                 <h2 className="page-title">Tools Needed</h2>
@@ -159,7 +193,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                     );
                                 })}
                             </div>
-                        </section>
+                        </motion.section>
                     )}
 
                     {/* Page: Procedure Steps */}
@@ -171,44 +205,89 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
 
                         <div className="steps-container">
                             {guide.steps?.map((step, idx) => (
-                                <div
+                                <motion.div
                                     key={step.step}
                                     id={`step-${step.step}`}
                                     className={`step-card ${activeStep === step.step ? 'active' : ''}`}
                                     onClick={() => setActiveStep(activeStep === step.step ? null : step.step)}
+                                    
+                                    // Storytelling Animation: Slide in from bottom-left like a timeline entry
+                                    initial={{ opacity: 0, x: -50, y: 20 }}
+                                    whileInView={{ opacity: 1, x: 0, y: 0 }}
+                                    viewport={{ once: true, margin: "-100px" }} // Trigger when 100px into view
+                                    transition={{ duration: 0.6, type: "spring", bounce: 0.3 }}
                                 >
                                     <div className="step-header">
-                                        <div className="step-number">{step.step}</div>
+                                        <motion.div 
+                                            className="step-number"
+                                            initial={{ scale: 0 }}
+                                            whileInView={{ scale: 1 }}
+                                            transition={{ delay: 0.2, type: "spring" }}
+                                        >
+                                            {step.step}
+                                        </motion.div>
                                         <div className="step-instruction">
                                             {step.instruction}
                                         </div>
                                     </div>
 
-                                    {step.imageUrl && (
-                                        <div className="step-image-container">
-                                            <img
-                                                src={step.imageUrl}
-                                                alt={`Step ${step.step} illustration`}
-                                                className="step-image"
-                                            />
-                                            <div className="image-caption">Figure {step.step}: Visual reference</div>
-                                        </div>
-                                    )}
+                                    <AnimatePresence>
+                                        {step.imageUrl && (
+                                            <motion.div 
+                                                className="step-image-container"
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                transition={{ duration: 0.4 }}
+                                            >
+                                                <img
+                                                    src={step.imageUrl}
+                                                    alt={`Step ${step.step} illustration`}
+                                                    className="step-image"
+                                                />
+                                                <div className="image-caption">Figure {step.step}: Visual reference</div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
 
                                     {idx < (guide.steps?.length || 0) - 1 && (
                                         <div className="step-connector">
-                                            <div className="connector-line"></div>
-                                            <div className="connector-arrow">↓</div>
+                                            <motion.div 
+                                                className="connector-line"
+                                                initial={{ height: 0 }}
+                                                whileInView={{ height: '40px' }} // Approximate height
+                                                transition={{ duration: 0.5, delay: 0.4 }} // Wait for card to settle
+                                                style={{ 
+                                                    width: '2px', 
+                                                    background: '#d0ccc4', 
+                                                    margin: '0 auto', 
+                                                    transformOrigin: 'top' 
+                                                }}
+                                            />
+                                            <motion.div 
+                                                className="connector-arrow"
+                                                initial={{ opacity: 0 }}
+                                                whileInView={{ opacity: 1 }}
+                                                transition={{ delay: 0.9 }} // Show arrow after line grows
+                                            >
+                                                ↓
+                                            </motion.div>
                                         </div>
                                     )}
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     </section>
 
                     {/* Page: Sources */}
                     {guide.sources && guide.sources.length > 0 && (
-                        <section id="sources" className="manual-page">
+                        <motion.section 
+                            id="sources" 
+                            className="manual-page"
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                        >
                             <div className="page-header">
                                 <span className="page-icon">📚</span>
                                 <h2 className="page-title">Reference Sources</h2>
@@ -228,7 +307,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                     ))}
                                 </ul>
                             </div>
-                        </section>
+                        </motion.section>
                     )}
 
                 </div>
