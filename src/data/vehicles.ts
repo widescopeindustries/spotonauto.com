@@ -96,20 +96,22 @@ export const VALID_TASKS = [
 ];
 
 /**
- * Validates if a vehicle/year/task combination is valid
+ * Validates if a vehicle/year combination is valid.
+ * Task validation is NOT performed - any task input (including DTC codes like P0301,
+ * symptoms, or custom repair tasks) is passed to the AI for processing via charm.li.
  */
 export function isValidVehicleCombination(
     year: string | number,
     make: string,
     model: string,
-    task: string
+    task: string // task is accepted but not validated - AI handles all inputs
 ): boolean {
     const yearNum = typeof year === 'string' ? parseInt(year, 10) : year;
 
     if (isNaN(yearNum)) return false;
 
-    // Check if task is valid
-    if (!VALID_TASKS.includes(task)) return false;
+    // Ensure task is not empty
+    if (!task || task.trim().length === 0) return false;
 
     // Normalize make (convert slug back to proper name)
     const normalizedMake = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
