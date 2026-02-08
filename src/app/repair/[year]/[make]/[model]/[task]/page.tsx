@@ -149,26 +149,42 @@ const DEFAULT_REPAIR = {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { year, make, model, task } = await params;
     const cleanTask = task.replace(/-/g, ' ');
-    const vehicleName = `${year} ${decodeURIComponent(make)} ${decodeURIComponent(model)}`;
-    const title = `${cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} - ${vehicleName} | DIY Repair Guide`;
-    const description = `Complete DIY guide for ${cleanTask} on a ${vehicleName}. Step-by-step instructions, required tools, parts list with prices from Amazon, RockAuto & AutoZone. Save hundreds on repair costs.`;
+    const displayMake = decodeURIComponent(make);
+    const displayModel = decodeURIComponent(model);
+    const vehicleName = `${year} ${displayMake} ${displayModel}`;
+
+    // Capitalize each word for title
+    const titleTask = cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+    // SEO-optimized title: Action + Vehicle + Benefit
+    const title = `${titleTask} — ${vehicleName} | Step-by-Step DIY Guide`;
+
+    // Description with savings hook and clear value prop
+    const description = `How to ${cleanTask} on a ${vehicleName}. Complete DIY guide with step-by-step instructions, tools needed, and parts list. Save $100-400 vs shop prices.`;
 
     return {
         title,
         description,
         keywords: [
-            `${year} ${make} ${model} ${cleanTask}`,
-            `${make} ${model} ${cleanTask}`,
-            `${cleanTask} cost`,
+            `${year} ${displayMake} ${displayModel} ${cleanTask}`,
+            `${displayMake} ${displayModel} ${cleanTask}`,
+            `how to ${cleanTask} ${displayMake} ${displayModel}`,
+            `${cleanTask} ${displayMake}`,
             `${cleanTask} DIY`,
-            `how to ${cleanTask}`,
-            `${make} ${cleanTask}`,
+            `${cleanTask} instructions`,
+            `${cleanTask} steps`,
+            `${year} ${displayMake} ${cleanTask}`,
         ],
         openGraph: {
-            title,
-            description,
+            title: `${titleTask} Guide — ${vehicleName}`,
+            description: `DIY ${cleanTask} for ${vehicleName}. Save money with our step-by-step repair guide.`,
             type: 'article',
             url: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}`,
+        },
+        twitter: {
+            card: 'summary',
+            title: `${titleTask} — ${vehicleName}`,
+            description: `Complete DIY ${cleanTask} guide. Save $100-400.`,
         },
         alternates: {
             canonical: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}`,

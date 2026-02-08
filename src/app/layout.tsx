@@ -8,17 +8,37 @@ import Providers from "@/components/Providers";
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
-  title: "SpotOn Auto | AI Auto Repair & Parts Comparison",
-  description: "AI-powered auto repair diagnostics. Get step-by-step repair guides and compare parts prices from Amazon, RockAuto, and AutoZone. Trusted by 50,000+ DIY mechanics.",
-  keywords: ["auto repair", "car parts", "DIY mechanic", "brake pads", "oil change", "car diagnostics"],
+  title: "SpotOnAuto | Free DIY Auto Repair Guides for Your Car",
+  description: "Save hundreds on auto repairs. Get instant AI-generated repair guides for your exact vehicle — step-by-step instructions, parts lists, and pro tips. Skip the shop, fix it yourself.",
+  keywords: [
+    "DIY auto repair",
+    "car repair guide",
+    "fix car yourself",
+    "auto repair instructions",
+    "save money car repair",
+    "oil change guide",
+    "brake replacement guide",
+    "serpentine belt diagram",
+    "car battery replacement",
+    "auto repair near me alternative"
+  ],
   openGraph: {
-    title: "SpotOn Auto | AI Auto Repair",
-    description: "Instant AI diagnostics and parts price comparison from Amazon, RockAuto, and AutoZone.",
+    title: "SpotOnAuto | Skip the Shop. Fix It Yourself.",
+    description: "Free AI-powered repair guides for any car. Save $200-500 per repair with step-by-step instructions and parts lists.",
     type: "website",
     url: "https://spotonauto.com",
+    siteName: "SpotOnAuto",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SpotOnAuto | Free DIY Auto Repair Guides",
+    description: "Save hundreds on auto repairs. Instant AI guides for your exact vehicle.",
   },
   other: {
     "fo-verify": "e75768c4-61f2-457f-a6b9-22cc832e8e7f",
+  },
+  alternates: {
+    canonical: "https://spotonauto.com",
   },
 };
 
