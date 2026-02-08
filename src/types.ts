@@ -79,7 +79,7 @@ export interface HistoryItem {
   timestamp: number;
 }
 
-export type AffiliateProvider = 'Amazon' | 'RockAuto' | 'AutoZone';
+export type AffiliateProvider = 'Amazon';
 
 export interface AffiliateLink {
   provider: AffiliateProvider;

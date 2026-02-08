@@ -5,8 +5,6 @@ import { AffiliateLink, AffiliateProvider, PartWithLinks } from '../types';
 
 // Affiliate Tags - Set these in your .env.local
 const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
-const ROCKAUTO_AID = process.env.NEXT_PUBLIC_ROCKAUTO_AFFILIATE_ID || '';
-const AUTOZONE_AID = process.env.NEXT_PUBLIC_AUTOZONE_AFFILIATE_ID || '';
 
 // Part category detection for smarter linking
 const PART_CATEGORIES = {
@@ -20,9 +18,6 @@ const PART_CATEGORIES = {
 
 // High-ticket items that deserve more prominent display
 const HIGH_TICKET_PARTS = /alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|supercharger|differential|axle/i;
-
-// OEM-quality parts that RockAuto excels at
-const OEM_PARTS = /sensor|module|actuator|solenoid|pump|compressor|alternator|starter/i;
 
 /**
  * Detect part category for styling and badge assignment
@@ -59,82 +54,12 @@ function generateAmazonLink(partName: string, vehicleString: string): AffiliateL
 }
 
 /**
- * Generate RockAuto affiliate link
- * Strategy: Best for OEM and aftermarket parts at wholesale prices
- * RockAuto uses search-based linking
- */
-function generateRockAutoLink(partName: string, vehicleString: string): AffiliateLink {
-  // Parse vehicle string (e.g., "2015 Toyota Camry")
-  const parts = vehicleString.split(' ');
-  const year = parts[0] || '';
-  const make = parts[1] || '';
-  const model = parts.slice(2).join(' ') || '';
-
-  // RockAuto search URL format
-  const searchQuery = encodeURIComponent(`${year} ${make} ${model} ${partName}`);
-
-  // RockAuto affiliate link format (they use a simple referral system)
-  // If you have an affiliate ID, append it; otherwise use direct search
-  let url = `https://www.rockauto.com/en/catalog/?carcode=${encodeURIComponent(`${year},${make},${model}`)}&parttype=${encodeURIComponent(partName)}`;
-
-  // Fallback to search if carcode doesn't work
-  url = `https://www.rockauto.com/en/partsearch/?partnum=${searchQuery}`;
-
-  // Simple referral tracking via URL
-  if (ROCKAUTO_AID) {
-    url += `&affiliate=${ROCKAUTO_AID}`;
-  }
-
-  const isOEM = OEM_PARTS.test(partName);
-
-  return {
-    provider: 'RockAuto',
-    url,
-    buttonText: 'RockAuto Prices',
-    badge: isOEM ? 'OEM Parts' : 'Wholesale',
-    priceRange: 'low',
-    icon: 'rockauto'
-  };
-}
-
-/**
- * Generate AutoZone affiliate link
- * Strategy: Local pickup same-day, great for urgent repairs
- */
-function generateAutoZoneLink(partName: string, vehicleString: string): AffiliateLink {
-  const parts = vehicleString.split(' ');
-  const year = parts[0] || '';
-  const make = parts[1] || '';
-  const model = parts.slice(2).join(' ') || '';
-
-  // AutoZone search URL
-  const searchQuery = encodeURIComponent(`${year} ${make} ${model} ${partName}`);
-  let url = `https://www.autozone.com/searchresult?searchText=${searchQuery}`;
-
-  // AutoZone affiliate tracking (Commission Junction typically)
-  if (AUTOZONE_AID) {
-    url = `https://www.autozone.com/searchresult?searchText=${searchQuery}&ref=${AUTOZONE_AID}`;
-  }
-
-  return {
-    provider: 'AutoZone',
-    url,
-    buttonText: 'AutoZone - Pickup Today',
-    badge: 'Local Pickup',
-    priceRange: 'mid',
-    icon: 'autozone'
-  };
-}
-
-/**
  * Generate all affiliate links for a single part
- * Currently only Amazon (RockAuto has no program, AutoZone not approved)
+ * Currently only Amazon (RockAuto and AutoZone removed per request)
  */
 export function generatePartLinks(partName: string, vehicleString: string): AffiliateLink[] {
   const links: AffiliateLink[] = [
-    generateAmazonLink(partName, vehicleString),
-    // RockAuto - no affiliate program
-    // AutoZone - not approved
+    generateAmazonLink(partName, vehicleString)
   ];
 
   return links;
@@ -189,30 +114,12 @@ export function generateToolLinks(toolName: string): AffiliateLink[] {
 export function generateShopAllLink(vehicleString: string, provider: AffiliateProvider): AffiliateLink {
   const encoded = encodeURIComponent(vehicleString + ' parts');
 
-  switch (provider) {
-    case 'Amazon':
-      return {
-        provider: 'Amazon',
-        url: `https://www.amazon.com/s?k=${encoded}&i=automotive&tag=${AMAZON_TAG}`,
-        buttonText: 'Shop All on Amazon',
-        badge: 'Prime',
-        icon: 'amazon'
-      };
-    case 'RockAuto':
-      return {
-        provider: 'RockAuto',
-        url: `https://www.rockauto.com/`,
-        buttonText: 'Browse RockAuto',
-        badge: 'Wholesale',
-        icon: 'rockauto'
-      };
-    case 'AutoZone':
-      return {
-        provider: 'AutoZone',
-        url: `https://www.autozone.com/searchresult?searchText=${encoded}`,
-        buttonText: 'Shop AutoZone',
-        badge: 'Local Pickup',
-        icon: 'autozone'
-      };
-  }
+  // Default to Amazon if provider is not found or removed
+  return {
+    provider: 'Amazon',
+    url: `https://www.amazon.com/s?k=${encoded}&i=automotive&tag=${AMAZON_TAG}`,
+    buttonText: 'Shop All on Amazon',
+    badge: 'Prime',
+    icon: 'amazon'
+  };
 }

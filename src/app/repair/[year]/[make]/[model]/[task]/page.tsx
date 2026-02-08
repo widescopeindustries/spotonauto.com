@@ -252,7 +252,7 @@ export default async function Page({ params }: PageProps) {
                         <span className="block text-xl md:text-2xl text-brand-cyan mt-2">{vehicleName}</span>
                     </h1>
                     <p className="text-gray-400 max-w-2xl mx-auto">
-                        Complete DIY repair guide with step-by-step instructions. Compare parts prices from Amazon, RockAuto, and AutoZone.
+                        Complete DIY repair guide with step-by-step instructions. Find exact parts on Amazon for your vehicle.
                     </p>
                 </header>
 

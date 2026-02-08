@@ -26,22 +26,6 @@ const RETAILER_STYLES: Record<AffiliateProvider, {
         border: 'border-amber-500/30',
         accent: 'text-amber-400',
         gradient: 'from-amber-500 to-orange-500'
-    },
-    RockAuto: {
-        bg: 'bg-green-600',
-        bgHover: 'hover:bg-green-500',
-        text: 'text-white',
-        border: 'border-green-500/30',
-        accent: 'text-green-400',
-        gradient: 'from-green-600 to-emerald-500'
-    },
-    AutoZone: {
-        bg: 'bg-red-600',
-        bgHover: 'hover:bg-red-500',
-        text: 'text-white',
-        border: 'border-red-500/30',
-        accent: 'text-red-400',
-        gradient: 'from-red-600 to-orange-600'
     }
 };
 
@@ -110,7 +94,7 @@ const RetailerButton: React.FC<{ link: AffiliateLink; partName: string; vehicle:
                 bg-gradient-to-br ${style.gradient} ${style.bgHover}
                 ${style.text} font-bold text-sm
                 transition-all duration-300 transform hover:scale-105 hover:shadow-lg
-                min-w-[120px]
+                min-w-[120px] w-full
             `}
         >
             {/* Badge */}
@@ -165,17 +149,14 @@ const PartCard: React.FC<{ part: PartWithLinks; index: number; vehicle: string }
                 <CheckCircleIcon className="w-5 h-5 text-emerald-500/60" />
             </div>
 
-            {/* Retailer buttons grid */}
-            <div className="grid grid-cols-3 gap-3">
+            {/* Retailer buttons grid - Updated to show only available links, usually just Amazon now */}
+            <div className="grid grid-cols-1 gap-3">
                 {part.links.map((link, idx) => (
                     <RetailerButton key={idx} link={link} partName={part.name} vehicle={vehicle} isHighTicket={part.isHighTicket} />
                 ))}
             </div>
 
-            {/* Comparison hint */}
-            <p className="mt-4 text-xs text-gray-500 text-center">
-                Compare prices across retailers for best deal
-            </p>
+            {/* Comparison hint removed since we only have one retailer */}
         </div>
     );
 };
@@ -195,7 +176,7 @@ const PartsComparison: React.FC<PartsComparisonProps> = ({ parts, vehicle }) => 
                         Shop Parts
                     </h2>
                     <p className="text-sm text-gray-400 mt-1">
-                        Compare prices from 3 retailers - click to shop
+                        Find parts on Amazon - click to shop
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -205,19 +186,11 @@ const PartsComparison: React.FC<PartsComparisonProps> = ({ parts, vehicle }) => 
                 </div>
             </div>
 
-            {/* Retailer Legend */}
+            {/* Retailer Legend - Only Amazon */}
             <div className="flex flex-wrap items-center justify-center gap-4 p-4 bg-black/20 rounded-xl border border-white/5">
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-amber-500"></div>
                     <span className="text-xs text-gray-400">Amazon - Fast shipping, Prime eligible</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-600"></div>
-                    <span className="text-xs text-gray-400">RockAuto - Wholesale prices, OEM options</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-600"></div>
-                    <span className="text-xs text-gray-400">AutoZone - Same-day local pickup</span>
                 </div>
             </div>
 
@@ -226,7 +199,7 @@ const PartsComparison: React.FC<PartsComparisonProps> = ({ parts, vehicle }) => 
                 <div className="space-y-4">
                     <h3 className="text-lg font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
                         <TagIcon className="w-5 h-5" />
-                        Major Components - Compare Prices Carefully
+                        Major Components
                     </h3>
                     <div className="grid gap-4">
                         {highTicketParts.map((part, index) => (
@@ -266,26 +239,6 @@ const PartsComparison: React.FC<PartsComparisonProps> = ({ parts, vehicle }) => 
                 >
                     <ShoppingCartIcon className="w-4 h-4" />
                     All Parts on Amazon
-                </a>
-                <a
-                    href="https://www.rockauto.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => trackShopAllClick('RockAuto', vehicle)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold rounded-lg hover:scale-105 transition-transform"
-                >
-                    <ShoppingCartIcon className="w-4 h-4" />
-                    Browse RockAuto
-                </a>
-                <a
-                    href={`https://www.autozone.com/searchresult?searchText=${encodeURIComponent(vehicle + ' parts')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => trackShopAllClick('AutoZone', vehicle)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-600 to-orange-600 text-white font-bold rounded-lg hover:scale-105 transition-transform"
-                >
-                    <MapPinIcon className="w-4 h-4" />
-                    Find at AutoZone
                 </a>
             </div>
         </section>

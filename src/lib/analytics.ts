@@ -6,7 +6,7 @@ declare global {
   }
 }
 
-export type AffiliateProvider = 'Amazon' | 'RockAuto' | 'AutoZone';
+export type AffiliateProvider = 'Amazon';
 
 interface AffiliateClickEvent {
   provider: AffiliateProvider;

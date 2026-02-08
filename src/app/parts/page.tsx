@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ShoppingCartIcon, WrenchIcon, TruckIcon, MapPinIcon, TagIcon, StarIcon, CheckCircleIcon } from '@/components/Icons';
 
 export const metadata: Metadata = {
-    title: 'Auto Parts | Compare Prices from Amazon, RockAuto & AutoZone | SpotOn Auto',
-    description: 'Find the best prices on auto parts. Compare Amazon, RockAuto, and AutoZone. OEM and aftermarket parts for all makes and models. Free shipping available.',
+    title: 'Auto Parts | Shop Amazon & More | SpotOn Auto',
+    description: 'Find the best prices on auto parts. Shop Amazon for OEM and aftermarket parts for all makes and models. Fast shipping available.',
     keywords: [
         'auto parts',
         'car parts',
@@ -14,13 +14,11 @@ export const metadata: Metadata = {
         'oil filter',
         'alternator',
         'spark plugs',
-        'rockauto',
-        'autozone',
         'amazon auto parts'
     ],
     openGraph: {
-        title: 'Auto Parts - Compare Prices | SpotOn Auto',
-        description: 'Compare auto parts prices from Amazon, RockAuto, and AutoZone. Find the best deals on OEM and aftermarket parts.',
+        title: 'Auto Parts - Shop Online | SpotOn Auto',
+        description: 'Find auto parts prices from Amazon. Find the best deals on OEM and aftermarket parts.',
         type: 'website',
         url: 'https://spotonauto.com/parts',
     },
@@ -80,22 +78,6 @@ const RETAILERS = [
         benefit: '2-day delivery on most parts',
         color: 'bg-amber-500',
         url: `https://www.amazon.com/s?k=auto+parts&i=automotive&tag=${AMAZON_TAG}`
-    },
-    {
-        name: 'RockAuto',
-        logo: '🪨',
-        tagline: 'Wholesale prices',
-        benefit: 'OEM & aftermarket options',
-        color: 'bg-green-600',
-        url: 'https://www.rockauto.com/'
-    },
-    {
-        name: 'AutoZone',
-        logo: '🏪',
-        tagline: 'Same-day pickup',
-        benefit: 'Pick up today at local store',
-        color: 'bg-red-600',
-        url: 'https://www.autozone.com/'
     }
 ];
 
@@ -113,8 +95,7 @@ export default function PartsPage() {
                             <span className="text-brand-cyan">Shop</span> Auto Parts
                         </h1>
                         <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                            Compare prices from Amazon, RockAuto, and AutoZone.
-                            Find the best deals on OEM and aftermarket parts for your vehicle.
+                            Find the best deals on OEM and aftermarket parts for your vehicle on Amazon.
                         </p>
 
                         {/* Quick search CTA */}
@@ -139,14 +120,14 @@ export default function PartsPage() {
                         Shop from Trusted Retailers
                     </h2>
 
-                    <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <div className="flex justify-center">
                         {RETAILERS.map((retailer) => (
                             <a
                                 key={retailer.name}
                                 href={retailer.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group bg-white/[0.02] border border-white/10 rounded-2xl p-6 hover:bg-white/[0.05] hover:border-white/20 transition-all hover:scale-105"
+                                className="group bg-white/[0.02] border border-white/10 rounded-2xl p-6 hover:bg-white/[0.05] hover:border-white/20 transition-all hover:scale-105 max-w-md w-full"
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <span className="text-4xl">{retailer.logo}</span>
@@ -173,7 +154,7 @@ export default function PartsPage() {
                         Browse by Category
                     </h2>
                     <p className="text-center text-gray-400 mb-10 max-w-2xl mx-auto">
-                        Click any part to compare prices across all retailers
+                        Click any part to shop on Amazon
                     </p>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -212,7 +193,7 @@ export default function PartsPage() {
                 <div className="container mx-auto px-4">
                     <div className="max-w-4xl mx-auto text-center">
                         <h2 className="text-2xl font-bold text-white mb-10 uppercase tracking-widest">
-                            Why Compare Prices?
+                            Why Shop with Us?
                         </h2>
 
                         <div className="grid md:grid-cols-3 gap-8">
@@ -220,27 +201,27 @@ export default function PartsPage() {
                                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 flex items-center justify-center">
                                     <TagIcon className="w-8 h-8 text-amber-400" />
                                 </div>
-                                <h3 className="text-lg font-bold text-white mb-2">Save 20-50%</h3>
+                                <h3 className="text-lg font-bold text-white mb-2">Great Prices</h3>
                                 <p className="text-gray-400 text-sm">
-                                    Prices vary significantly between retailers. RockAuto often has the lowest base price, while Amazon offers Prime shipping.
+                                    Find competitive prices on millions of auto parts and accessories.
                                 </p>
                             </div>
                             <div className="text-center">
                                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
                                     <StarIcon className="w-8 h-8 text-emerald-400" />
                                 </div>
-                                <h3 className="text-lg font-bold text-white mb-2">OEM vs Aftermarket</h3>
+                                <h3 className="text-lg font-bold text-white mb-2">Huge Selection</h3>
                                 <p className="text-gray-400 text-sm">
-                                    RockAuto specializes in OEM parts at wholesale prices. Amazon has more aftermarket options. AutoZone offers store brands.
+                                    Access a vast inventory of OEM and aftermarket parts for any vehicle.
                                 </p>
                             </div>
                             <div className="text-center">
                                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-500/20 flex items-center justify-center">
                                     <TruckIcon className="w-8 h-8 text-purple-400" />
                                 </div>
-                                <h3 className="text-lg font-bold text-white mb-2">Shipping Options</h3>
+                                <h3 className="text-lg font-bold text-white mb-2">Fast Shipping</h3>
                                 <p className="text-gray-400 text-sm">
-                                    Need it today? AutoZone has same-day pickup. Amazon Prime gets it in 2 days. RockAuto ships free on large orders.
+                                    Get your parts quickly with Amazon Prime shipping options.
                                 </p>
                             </div>
                         </div>

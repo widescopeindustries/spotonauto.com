@@ -599,24 +599,6 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                     background: #e88b00;
                 }
 
-                .shop-link.rockauto {
-                    background: #2e7d32;
-                    color: white;
-                }
-
-                .shop-link.rockauto:hover {
-                    background: #1b5e20;
-                }
-
-                .shop-link.autozone {
-                    background: #c62828;
-                    color: white;
-                }
-
-                .shop-link.autozone:hover {
-                    background: #b71c1c;
-                }
-
                 /* Tools Grid */
                 .tools-grid {
                     display: grid;
