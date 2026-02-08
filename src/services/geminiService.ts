@@ -1,4 +1,4 @@
- 
+
 import { GoogleGenAI, Type } from '@google/genai';
 import { Vehicle, VehicleInfo, RepairGuide, ChatMessage } from '../types';
 
@@ -67,11 +67,11 @@ async function generateImage(prompt: string): Promise<string> {
 }
 
 export interface Chat {
-    // We keep the chat session instance to maintain history
-    session: any; 
-    vehicle: Vehicle;
-    // We add history property to satisfy types if needed, or manage it internally in the session
-    history: any[];
+  // We keep the chat session instance to maintain history
+  session: any;
+  vehicle: Vehicle;
+  // We add history property to satisfy types if needed, or manage it internally in the session
+  history: any[];
 }
 
 export const decodeVin = async (vin: string): Promise<Vehicle> => {
@@ -208,10 +208,10 @@ Keep instructions concise, practical, and grounded in actual service manual proc
   const rawSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
     ?.map((chunk: any) => chunk.web)
     .filter((web: any): web is { uri: string; title: string } => !!(web?.uri && web.title)) || [];
-  
+
   // Only pass sanitized source info (no URLs, just count for "verified" badge)
-  const sources = rawSources.length > 0 
-    ? [{ title: 'Factory Service Manual', uri: '#verified' }] 
+  const sources = rawSources.length > 0
+    ? [{ title: 'Factory Service Manual', uri: '#verified' }]
     : [];
 
   const stepsWithImages = data.steps.map((step: any, idx: number) => ({
@@ -254,25 +254,71 @@ Instructions:
   });
 
   return {
-      session,
-      vehicle,
-      history: []
+    session,
+    vehicle,
+    history: []
   };
 };
 
 export const sendDiagnosticMessage = async (chat: Chat, message: string): Promise<{ text: string, imageUrl: string | null }> => {
   const result = await chat.session.sendMessage(message);
-  
+
   const text = (result.text || "").trim().replace(/^```json\s*|```$/g, '');
   let parsedResponse;
-  
+
   try {
     parsedResponse = JSON.parse(text);
   } catch (e) {
-      return { text: text, imageUrl: null };
+    return { text: text, imageUrl: null };
   }
 
   const { instruction } = parsedResponse;
-  
+
   return { text: instruction, imageUrl: null };
+};
+
+/**
+ * Stateless diagnostic message handler - reconstructs chat from history each time
+ * This is needed because API calls are stateless between requests
+ */
+export const sendDiagnosticMessageWithHistory = async (
+  vehicle: Vehicle,
+  message: string,
+  history: { role: string; parts: { text: string }[] }[]
+): Promise<{ text: string, imageUrl: string | null }> => {
+  const { year, make, model } = vehicle;
+
+  const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI for a ${year} ${make} ${model}. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step.
+
+Instructions:
+1. If the user provides a diagnostic trouble code (like P0301, P0420, etc.), explain what it means and provide diagnostic steps.
+2. If the user describes symptoms, ask clarifying questions and guide them through diagnosis.
+3. Provide one clear diagnostic step at a time.
+4. Be conversational but professional. Keep responses focused and helpful.
+5. When you have enough information, suggest likely causes and repairs.
+
+Keep your response concise and practical. Do NOT return JSON - respond in natural language.`;
+
+  try {
+    // Create a new chat session with the history
+    const session = genAI.chats.create({
+      model: TEXT_MODEL,
+      config: {
+        systemInstruction: diagnosticSystemInstruction,
+      },
+      history: history.map(h => ({
+        role: h.role as 'user' | 'model',
+        parts: h.parts
+      }))
+    });
+
+    // Send the new message
+    const result = await session.sendMessage(message);
+    const responseText = (result.text || "").trim();
+
+    return { text: responseText, imageUrl: null };
+  } catch (error) {
+    console.error('Diagnostic message error:', error);
+    throw error;
+  }
 };

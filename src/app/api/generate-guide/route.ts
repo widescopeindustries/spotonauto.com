@@ -1,4 +1,4 @@
- 
+
 
 export const maxDuration = 45;
 export const dynamic = 'force-dynamic';
@@ -8,8 +8,7 @@ import {
   decodeVin,
   getVehicleInfo,
   generateFullRepairGuide,
-  createDiagnosticChat,
-  sendDiagnosticMessage
+  sendDiagnosticMessageWithHistory
 } from '@/services/geminiService';
 
 export async function POST(req: NextRequest) {
@@ -49,8 +48,12 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'diagnostic-chat':
-        const chat = createDiagnosticChat(payload.vehicle);
-        result = await sendDiagnosticMessage(chat, payload.message);
+        // For diagnostic chat, we need to reconstruct the chat with history
+        result = await sendDiagnosticMessageWithHistory(
+          payload.vehicle,
+          payload.message,
+          payload.history || []
+        );
         break;
 
       default:
