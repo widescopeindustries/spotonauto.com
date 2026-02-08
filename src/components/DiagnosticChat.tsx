@@ -156,12 +156,14 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
 
             {/* Chat Area */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6 z-10 scrollbar-thin scrollbar-thumb-neon-cyan/20 scrollbar-track-transparent">
-                <AnimatePresence>
+                <AnimatePresence mode="popLayout">
                     {messages.map((msg) => (
                         <motion.div
                             key={msg.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            layout
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
                             className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                             <div className={`max-w-[85%] rounded-lg p-4 font-mono text-sm leading-relaxed border ${msg.type === 'user'
@@ -181,7 +183,13 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                         </motion.div>
                     ))}
                     {typing && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                        <motion.div 
+                            layout
+                            initial={{ opacity: 0, y: 10 }} 
+                            animate={{ opacity: 1, y: 0 }} 
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="flex justify-start"
+                        >
                             <div className="bg-gray-900/80 border border-gray-700 px-4 py-3 rounded-lg flex items-center gap-1">
                                 <Activity className="w-4 h-4 text-neon-cyan animate-spin" />
                                 <span className="text-xs font-mono text-neon-cyan/70 ml-2">ANALYZING TELEMETRY...</span>
