@@ -39,3 +39,6 @@ src/apikeys.txt
 
 # indexing script progress
 scripts/indexing-progress.json
+
+# Old Vite project (not used in production)
+/spotonauto.com/
