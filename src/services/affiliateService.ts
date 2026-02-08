@@ -128,13 +128,13 @@ function generateAutoZoneLink(partName: string, vehicleString: string): Affiliat
 
 /**
  * Generate all affiliate links for a single part
- * Returns links from all 3 retailers with appropriate badges
+ * Currently only Amazon (RockAuto has no program, AutoZone not approved)
  */
 export function generatePartLinks(partName: string, vehicleString: string): AffiliateLink[] {
   const links: AffiliateLink[] = [
     generateAmazonLink(partName, vehicleString),
-    generateRockAutoLink(partName, vehicleString),
-    generateAutoZoneLink(partName, vehicleString),
+    // RockAuto - no affiliate program
+    // AutoZone - not approved
   ];
 
   return links;

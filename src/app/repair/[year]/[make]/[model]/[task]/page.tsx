@@ -300,32 +300,14 @@ export default async function Page({ params }: PageProps) {
                         {repairData.parts.map((part, i) => (
                             <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
                                 <span className="text-gray-300">{part}</span>
-                                <div className="flex gap-2">
-                                    <a
-                                        href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicleName + ' ' + part)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-3 py-1 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition"
-                                    >
-                                        Amazon
-                                    </a>
-                                    <a
-                                        href="https://www.rockauto.com"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-3 py-1 bg-green-600 text-white text-xs font-bold rounded hover:bg-green-500 transition"
-                                    >
-                                        RockAuto
-                                    </a>
-                                    <a
-                                        href={`https://www.autozone.com/searchresult?searchText=${encodeURIComponent(vehicleName + ' ' + part)}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded hover:bg-red-500 transition"
-                                    >
-                                        AutoZone
-                                    </a>
-                                </div>
+                                <a
+                                    href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicleName + ' ' + part)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-4 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition"
+                                >
+                                    Shop on Amazon
+                                </a>
                             </div>
                         ))}
                     </div>
@@ -380,9 +362,9 @@ export default async function Page({ params }: PageProps) {
 
                 <h3 className="text-lg font-bold text-white mt-6 mb-3">Where to Buy Parts</h3>
                 <p className="text-gray-400">
-                    We recommend comparing prices across multiple retailers. <strong>Amazon</strong> offers
-                    fast Prime shipping, <strong>RockAuto</strong> has the best wholesale prices on OEM parts,
-                    and <strong>AutoZone</strong> provides same-day local pickup if you need parts immediately.
+                    We recommend purchasing parts through <strong>Amazon</strong> for fast Prime shipping,
+                    competitive prices, and easy returns. All part links include your vehicle fitment
+                    information for accurate results.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-4">
