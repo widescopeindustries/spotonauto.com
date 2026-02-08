@@ -300,21 +300,31 @@ Instructions:
 Keep your response concise and practical. Do NOT return JSON - respond in natural language.`;
 
   try {
-    // Create a new chat session with the history
-    const session = genAI.chats.create({
+    // Build the conversation contents for a single generateContent call
+    // This is more reliable for stateless API calls
+    const contents = [
+      // Add history as alternating user/model messages
+      ...history.map(h => ({
+        role: h.role as 'user' | 'model',
+        parts: h.parts.map(p => ({ text: p.text }))
+      })),
+      // Add the new user message
+      {
+        role: 'user' as const,
+        parts: [{ text: message }]
+      }
+    ];
+
+    // Use generateContent instead of chat for stateless operation
+    const response = await genAI.models.generateContent({
       model: TEXT_MODEL,
+      contents: contents,
       config: {
         systemInstruction: diagnosticSystemInstruction,
-      },
-      history: history.map(h => ({
-        role: h.role as 'user' | 'model',
-        parts: h.parts
-      }))
+      }
     });
 
-    // Send the new message
-    const result = await session.sendMessage(message);
-    const responseText = (result.text || "").trim();
+    const responseText = (response.text || "").trim();
 
     return { text: responseText, imageUrl: null };
   } catch (error) {
