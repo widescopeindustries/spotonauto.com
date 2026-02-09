@@ -21,6 +21,12 @@ const Footer: React.FC = () => {
                     {/* Links */}
                     <div className="flex items-center gap-6">
                         <Link
+                            href="/guides"
+                            className="font-body text-sm text-gray-400 hover:text-cyan-400 transition-colors"
+                        >
+                            Repair Guides
+                        </Link>
+                        <Link
                             href="/privacy"
                             className="font-body text-sm text-gray-400 hover:text-cyan-400 transition-colors"
                         >

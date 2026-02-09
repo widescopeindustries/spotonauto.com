@@ -37,9 +37,6 @@ export const metadata: Metadata = {
   other: {
     "fo-verify": "e75768c4-61f2-457f-a6b9-22cc832e8e7f",
   },
-  alternates: {
-    canonical: "https://spotonauto.com",
-  },
 };
 
 export default function RootLayout({

@@ -156,11 +156,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // Capitalize each word for title
     const titleTask = cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-    // SEO-optimized title: Action + Vehicle + Benefit
-    const title = `${titleTask} — ${vehicleName} | Step-by-Step DIY Guide`;
+    // SEO-optimized title: Action + Vehicle
+    const title = `${titleTask} Guide — ${vehicleName}`;
 
     // Description with savings hook and clear value prop
-    const description = `How to ${cleanTask} on a ${vehicleName}. Complete DIY guide with step-by-step instructions, tools needed, and parts list. Save $100-400 vs shop prices.`;
+    const description = `DIY ${cleanTask} guide for ${vehicleName}. Step-by-step instructions, tools, and parts to save you hundreds on repairs.`;
 
     return {
         title,
@@ -187,7 +187,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description: `Complete DIY ${cleanTask} guide. Save $100-400.`,
         },
         alternates: {
-            canonical: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}`,
+            canonical: `https://spotonauto.com/repair/${year}/${make.toLowerCase()}/${model.toLowerCase()}/${task.toLowerCase()}`,
         },
     };
 }
