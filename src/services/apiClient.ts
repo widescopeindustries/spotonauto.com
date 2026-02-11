@@ -49,6 +49,26 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
 };
 
 /**
+ * Generate an image for a specific repair step
+ */
+export const generateStepImage = async (vehicle: string, instruction: string): Promise<string> => {
+  const response = await fetch('/api/generate-step-image', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ vehicle, instruction }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to generate image');
+  }
+
+  const data = await response.json();
+  return data.imageUrl;
+};
+
+/**
  * Stream guide generation for real-time updates
  */
 export const streamRepairGuide = async (
@@ -69,8 +89,9 @@ export const streamRepairGuide = async (
   }
 
   const reader = response.body?.getReader();
-  const decoder = new TextDecoder();
+  const decoder = new TextDecoder('utf-8', { fatal: false });
   let fullGuide: RepairGuide | null = null;
+  let buffer = '';
 
   if (!reader) {
     throw new Error('Response body is not readable');
@@ -80,8 +101,12 @@ export const streamRepairGuide = async (
     const { done, value } = await reader.read();
     if (done) break;
 
-    const chunk = decoder.decode(value);
-    const lines = chunk.split('\n');
+    const chunk = decoder.decode(value, { stream: true });
+    buffer += chunk;
+
+    // Process complete lines
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || ''; // Keep the last incomplete line in the buffer
 
     for (const line of lines) {
       if (line.startsWith('data: ')) {
@@ -95,7 +120,7 @@ export const streamRepairGuide = async (
             throw new Error(data.error);
           }
         } catch (e) {
-          console.warn('Failed to parse SSE data:', e);
+          console.warn('Failed to parse SSE data:', line, e);
         }
       }
     }
