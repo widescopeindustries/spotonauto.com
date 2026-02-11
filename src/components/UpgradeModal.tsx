@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { WrenchIcon, CheckCircleIcon } from './Icons';
 import { useAuth } from '../contexts/AuthContext';
+import { trackUpgradeModalShown, trackUpgradeClick } from '../lib/analytics';
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -13,11 +14,15 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (isOpen) trackUpgradeModalShown();
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleUpgrade = async () => {
+    trackUpgradeClick(!!user);
     if (!user) {
-      // If not logged in, log in first
       onAuthClick();
       return;
     }

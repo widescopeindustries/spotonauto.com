@@ -7,6 +7,7 @@ import LoadingIndicator from '@/components/LoadingIndicator';
 import { generateFullRepairGuide } from '@/services/apiClient';
 import { saveGuide, getGuideById } from '@/services/storageService';
 import { RepairGuide } from '@/types';
+import { trackGuideGenerated, trackRepairPageView } from '@/lib/analytics';
 
 interface GuideContentProps {
     params: {
@@ -53,6 +54,13 @@ export default function GuideContent({ params }: GuideContentProps) {
                 const generatedGuide = await generateFullRepairGuide(vehicle, cleanTask);
                 guideCache.set(guideId, generatedGuide);
                 await saveGuide(generatedGuide);
+                trackGuideGenerated({
+                    vehicle: `${year} ${make} ${model}`,
+                    task: cleanTask,
+                    partsCount: generatedGuide.parts?.length || 0,
+                    toolsCount: generatedGuide.tools?.length || 0,
+                });
+                trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
                 setGuide(generatedGuide);
             } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed to generate guide.");

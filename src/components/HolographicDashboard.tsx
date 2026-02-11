@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { decodeVin } from '../services/apiClient';
 import { getYears, COMMON_MAKES, fetchModels } from '../services/vehicleData';
 import { useEffect } from 'react';
+import { trackVehicleSearch, trackVinDecode } from '../lib/analytics';
 
 interface HolographicDashboardProps {
     onVehicleChange?: (vehicle: { year: string; make: string; model: string }) => void;
@@ -47,6 +48,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (vehicle.year && vehicle.make && vehicle.model && task) {
+            trackVehicleSearch(`${vehicle.year} ${vehicle.make} ${vehicle.model}`, task, 'guide');
             router.push(`/repair/${vehicle.year}/${vehicle.make}/${vehicle.model}/${task.replace(/\s+/g, '-')}`);
         }
     };
@@ -60,12 +62,14 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
         setError(null);
         try {
             const decoded = await decodeVin(vin);
+            trackVinDecode(vin, true);
             setVehicle({
                 year: decoded.year,
                 make: decoded.make,
                 model: decoded.model
             });
         } catch (err) {
+            trackVinDecode(vin, false);
             setError("Decoding failed. Please verify VIN.");
         } finally {
             setIsDecoding(false);
@@ -208,6 +212,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                         type="button"
                         onClick={() => {
                             if (vehicle.year && vehicle.make && vehicle.model && task) {
+                                trackVehicleSearch(`${vehicle.year} ${vehicle.make} ${vehicle.model}`, task, 'diagnose');
                                 const params = new URLSearchParams({
                                     year: vehicle.year,
                                     make: vehicle.make,

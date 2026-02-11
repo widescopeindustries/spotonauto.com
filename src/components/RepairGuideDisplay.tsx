@@ -5,6 +5,7 @@ import type { RepairGuide } from '../types';
 import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon, ShieldCheckIcon, ClockIcon } from './Icons';
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
 import PartsComparison from './PartsComparison';
+import { trackToolClick } from '../lib/analytics';
 
 interface RepairGuideDisplayProps {
     guide: RepairGuide;
@@ -109,6 +110,7 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                                 href={link.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
+                                                onClick={() => trackToolClick(tool, guide.vehicle)}
                                                 className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black text-xs font-bold rounded transition-all flex items-center gap-1"
                                             >
                                                 <ShoppingCartIcon className="w-3 h-3" /> Amazon
