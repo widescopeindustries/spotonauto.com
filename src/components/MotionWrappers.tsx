@@ -4,7 +4,7 @@ import { motion, AnimatePresence, HTMLMotionProps } from 'framer-motion';
 import React from 'react';
 
 // Standard easing for a "classy" feel
-const EASING = [0.22, 1, 0.36, 1]; // Custom cubic-bezier like easeOutQuint
+const EASING: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 interface MotionProps extends HTMLMotionProps<"div"> {
   children: React.ReactNode;
