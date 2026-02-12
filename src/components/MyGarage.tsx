@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { garageService, GarageVehicle, DiagnosisRecord } from '@/services/garageService';
 import { SubscriptionService } from '@/services/subscriptionService';
-import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 
 interface MyGarageProps {
