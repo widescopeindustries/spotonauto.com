@@ -97,61 +97,53 @@ export const VALID_TASKS = [
 
 /**
  * Validates if a vehicle/year combination is valid.
- * Task validation is NOT performed - any task input (including DTC codes like P0301,
- * symptoms, or custom repair tasks) is passed to the AI for processing via charm.li.
+ * Relaxed validation: Accepts any vehicle with a valid 4-digit year and non-empty make/model strings.
+ * This allows the AI to handle vehicles not explicitly listed in our sitemap data.
  */
 export function isValidVehicleCombination(
     year: string | number,
     make: string,
     model: string,
-    task: string // task is accepted but not validated - AI handles all inputs
+    task: string
 ): boolean {
     const yearNum = typeof year === 'string' ? parseInt(year, 10) : year;
 
     if (isNaN(yearNum)) return false;
 
-    // Ensure task is not empty
+    // Basic year sanity check (1900 to Next Year)
+    const currentYear = new Date().getFullYear();
+    if (yearNum < 1900 || yearNum > currentYear + 1) return false;
+
+    // Ensure make, model, and task are present
+    if (!make || make.trim().length === 0) return false;
+    if (!model || model.trim().length === 0) return false;
     if (!task || task.trim().length === 0) return false;
 
-    // Normalize make (convert slug back to proper name)
-    const normalizedMake = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
-        m => m.toLowerCase().replace(/\s+/g, '-') === make.toLowerCase()
-    );
-
-    if (!normalizedMake) return false;
-
-    const makeData = VEHICLE_PRODUCTION_YEARS[normalizedMake];
-
-    // Normalize model (convert slug back to proper name)
-    const normalizedModel = Object.keys(makeData).find(
-        m => m.toLowerCase().replace(/\s+/g, '-') === model.toLowerCase()
-    );
-
-    if (!normalizedModel) return false;
-
-    const modelData = makeData[normalizedModel];
-
-    // Check if year is within production range
-    return yearNum >= modelData.start && yearNum <= modelData.end;
+    return true;
 }
 
 /**
  * Get display name from slug
+ * Fallback: Capitalize words if not found in lookup table
  */
-export function getDisplayName(slug: string, type: 'make' | 'model'): string | null {
+export function getDisplayName(slug: string, type: 'make' | 'model'): string {
+    // Try to find in hardcoded list first
     if (type === 'make') {
-        return Object.keys(VEHICLE_PRODUCTION_YEARS).find(
-            m => m.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()
-        ) || null;
-    }
-
-    // For model, we need to search all makes
-    for (const [, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
-        const model = Object.keys(models).find(
+        const found = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
             m => m.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()
         );
-        if (model) return model;
+        if (found) return found;
+    } else {
+        for (const [, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
+            const found = Object.keys(models).find(
+                m => m.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()
+            );
+            if (found) return found;
+        }
     }
 
-    return null;
+    // Fallback: decode URI and Title Case
+    return decodeURIComponent(slug)
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
 }

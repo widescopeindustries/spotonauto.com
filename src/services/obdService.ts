@@ -140,7 +140,7 @@ class OBDService {
   private async readResponse(timeout = 1000): Promise<string> {
     if (!this.reader) throw new Error('No reader');
 
-    const decoder = new TextDecoder();
+    const decoder = new TextDecoder('utf-8', { fatal: false });
     let response = '';
     const startTime = Date.now();
 
@@ -155,7 +155,7 @@ class OBDService {
 
         if (done || !value) continue;
 
-        response += decoder.decode(value);
+        response += decoder.decode(value, { stream: true });
 
         // ELM327 ends responses with '>'
         if (response.includes('>')) {

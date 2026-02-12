@@ -66,6 +66,11 @@ async function generateImage(prompt: string): Promise<string> {
   }
 }
 
+export const generateRepairStepImage = async (vehicle: string, stepInstruction: string): Promise<string> => {
+  const prompt = `Show the specific action for: "${stepInstruction}" on a ${vehicle}. Focus on the mechanical parts involved. High contrast line art.`;
+  return generateImage(prompt);
+};
+
 export interface Chat {
   // We keep the chat session instance to maintain history
   session: any;
