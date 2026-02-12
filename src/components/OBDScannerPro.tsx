@@ -121,7 +121,7 @@ export default function OBDScannerPro({ userId, vehicle }: OBDScannerProProps) {
     }
   }
 
-  async function initializeOBD(characteristic: BluetoothRemoteGATTCharacteristic) {
+  async function initializeOBD(characteristic: any) {
     // Send initialization commands
     const initCommands = ['ATZ', 'ATE0', 'ATL1', 'ATH1', 'ATS0'];
     for (const cmd of initCommands) {
@@ -130,7 +130,7 @@ export default function OBDScannerPro({ userId, vehicle }: OBDScannerProProps) {
     }
   }
 
-  async function sendCommand(characteristic: BluetoothRemoteGATTCharacteristic, command: string): Promise<string> {
+  async function sendCommand(characteristic: any, command: string): Promise<string> {
     const encoder = new TextEncoder();
     const data = encoder.encode(command + '\r');
     await characteristic.writeValue(data);
