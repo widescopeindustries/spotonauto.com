@@ -1,9 +1,0 @@
-[phases.build]
-cmds = ["npm run build"]
-
-[phases.setup]
-nixPkgs = ["nodejs_22", "npm-9_x"]
-
-[variables]
-NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK = 'https://buy.stripe.com/cNi14na6t8iycykeo718c08'
-NEXT_PUBLIC_STRIPE_PRO_PLUS_MONTHLY_LINK = 'https://buy.stripe.com/fZubJ192pdCS1TGeo718c09'
