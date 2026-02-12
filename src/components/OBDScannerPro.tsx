@@ -78,12 +78,12 @@ export default function OBDScannerPro({ userId, vehicle }: OBDScannerProProps) {
 
     try {
       // Check if Web Bluetooth is supported
-      if (!navigator.bluetooth) {
+      if (!(navigator as any).bluetooth) {
         throw new Error('Web Bluetooth is not supported in this browser. Try Chrome on Android or desktop.');
       }
 
       // Request Bluetooth device
-      const device = await navigator.bluetooth.requestDevice({
+      const device = await (navigator as any).bluetooth.requestDevice({
         filters: [
           { namePrefix: 'OBD' },
           { namePrefix: 'Veepeak' },
