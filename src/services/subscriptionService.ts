@@ -72,7 +72,7 @@ export class SubscriptionService {
 
     const tier = subscription.tier as SubscriptionTier;
     const limit = TIER_LIMITS[tier].aiDiagnosesPerMonth;
-    const used = usage.ai_diagnoses_used;
+    const used = (usage as any).ai_diagnoses_used;
     const remaining = limit === Infinity ? 999 : Math.max(0, limit - used);
 
     return {
@@ -151,7 +151,7 @@ export class SubscriptionService {
           pro: 'Unlimited',
           proPlus: 'Unlimited',
           current: tier === 'free' 
-            ? `${usage?.ai_diagnoses_used || 0}/3 used`
+            ? `${(usage as any)?.ai_diagnoses_used || 0}/3 used`
             : 'Unlimited'
         },
         {
