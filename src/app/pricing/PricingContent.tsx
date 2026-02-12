@@ -37,9 +37,9 @@ interface PricingTier {
 
 // STRIPE PAYMENT LINKS - Replace these with your actual Stripe Payment Link URLs
 const STRIPE_PAYMENT_LINKS = {
-  proMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK || '',
+  proMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK || 'https://buy.stripe.com/cNi14na6t8iycykeo718c08',
   proAnnual: process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL_LINK || '',
-  proPlusMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_PLUS_MONTHLY_LINK || '',
+  proPlusMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_PLUS_MONTHLY_LINK || 'https://buy.stripe.com/fZubJ192pdCS1TGeo718c09',
   proPlusAnnual: process.env.NEXT_PUBLIC_STRIPE_PRO_PLUS_ANNUAL_LINK || '',
 };
 
