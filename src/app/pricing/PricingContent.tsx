@@ -35,12 +35,15 @@ interface PricingTier {
   popular?: boolean;
 }
 
-// STRIPE PAYMENT LINKS - Replace these with your actual Stripe Payment Link URLs
-const STRIPE_PAYMENT_LINKS = {
-  proMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK || 'https://buy.stripe.com/cNi14na6t8iycykeo718c08',
-  proAnnual: process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL_LINK || '',
-  proPlusMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_PLUS_MONTHLY_LINK || 'https://buy.stripe.com/fZubJ192pdCS1TGeo718c09',
-  proPlusAnnual: process.env.NEXT_PUBLIC_STRIPE_PRO_PLUS_ANNUAL_LINK || '',
+// STRIPE PAYMENT LINKS - Hardcoded fallbacks for build, env vars for runtime
+const getPaymentLinks = () => {
+  // Access env vars inside function to avoid build-time issues
+  return {
+    proMonthly: 'https://buy.stripe.com/cNi14na6t8iycykeo718c08',
+    proAnnual: '',
+    proPlusMonthly: 'https://buy.stripe.com/fZubJ192pdCS1TGeo718c09',
+    proPlusAnnual: '',
+  };
 };
 
 const TIERS: PricingTier[] = [
@@ -178,14 +181,15 @@ export default function PricingContent() {
       // Get the correct payment link based on tier and billing period
       let paymentLink = '';
       
+      const links = getPaymentLinks();
       if (tier.name === 'Pro') {
         paymentLink = billingPeriod === 'annual' 
-          ? STRIPE_PAYMENT_LINKS.proAnnual 
-          : STRIPE_PAYMENT_LINKS.proMonthly;
+          ? links.proAnnual 
+          : links.proMonthly;
       } else if (tier.name === 'Pro+') {
         paymentLink = billingPeriod === 'annual'
-          ? STRIPE_PAYMENT_LINKS.proPlusAnnual
-          : STRIPE_PAYMENT_LINKS.proPlusMonthly;
+          ? links.proPlusAnnual
+          : links.proPlusMonthly;
       }
 
       if (paymentLink && paymentLink.includes('stripe.com')) {
@@ -368,7 +372,7 @@ export default function PricingContent() {
         </div>
 
         {/* Setup Notice (Only show if payment links not configured) */}
-        {!STRIPE_PAYMENT_LINKS.proMonthly && (
+        {!getPaymentLinks().proMonthly && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

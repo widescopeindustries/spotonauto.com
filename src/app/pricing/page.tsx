@@ -1,6 +1,9 @@
 import { Metadata } from 'next';
 import PricingContent from './PricingContent';
 
+// Force dynamic rendering to avoid build-time env var issues
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Pricing | SpotOn Auto - Unlock Unlimited AI Diagnostics',
   description: 'Upgrade to SpotOn Auto Pro for unlimited AI diagnostics, OBD-II scanner integration, and priority support. Start fixing your car like a pro.',
