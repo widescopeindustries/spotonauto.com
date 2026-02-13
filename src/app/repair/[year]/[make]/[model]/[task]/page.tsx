@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import GuideContent from './GuideContent';
 import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import Link from 'next/link';
-import { isValidVehicleCombination, getDisplayName } from '@/data/vehicles';
+import { isValidVehicleCombination, getDisplayName, VALID_TASKS } from '@/data/vehicles';
+import { isInCharmLi } from '@/data/charmLiDatabase';
 
 interface PageProps {
     params: Promise<{
@@ -205,6 +206,13 @@ export default async function Page({ params }: PageProps) {
     // Use display names for proper capitalization
     const displayMake = getDisplayName(make, 'make') || decodeURIComponent(make);
     const displayModel = getDisplayName(model, 'model') || decodeURIComponent(model);
+
+    // ADDITIONAL CHECK: Verify this specific year/make/model exists in charm.li
+    const yearNum = parseInt(year, 10);
+    if (!isInCharmLi(yearNum, displayMake, displayModel)) {
+        console.warn(`[CHARM.LI] Data not available for ${year} ${displayMake} ${displayModel}`);
+        notFound();
+    }
     const vehicleName = `${year} ${displayMake} ${displayModel}`;
 
     const repairData = REPAIR_DATA[task] || DEFAULT_REPAIR;
