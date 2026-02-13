@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { RepairGuide } from '../types';
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
-import { generateStepImage } from '../services/apiClient';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Image as ImageIcon, Loader2 } from 'lucide-react';
 
 interface ServiceManualGuideProps {
     guide: RepairGuide;
@@ -14,46 +12,8 @@ interface ServiceManualGuideProps {
 
 const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset }) => {
     const [activeStep, setActiveStep] = useState<number | null>(null);
-    const [stepImages, setStepImages] = useState<Record<number, string>>({});
-    const [loadingImages, setLoadingImages] = useState<Set<number>>(new Set());
-    
+
     const partsWithLinks = generateAllPartsWithLinks(guide.parts || [], guide.vehicle);
-
-    // Auto-generate images for all steps sequentially on load
-    useEffect(() => {
-        if (!guide.steps || guide.steps.length === 0) return;
-
-        let cancelled = false;
-
-        const generateAllImages = async () => {
-            for (const step of guide.steps!) {
-                if (cancelled) break;
-                // Skip if already have image
-                if (step.imageUrl) continue;
-
-                setLoadingImages(prev => new Set(prev).add(step.step));
-                try {
-                    const imageUrl = await generateStepImage(guide.vehicle, step.instruction);
-                    if (!cancelled && imageUrl) {
-                        setStepImages(prev => ({ ...prev, [step.step]: imageUrl }));
-                    }
-                } catch (error) {
-                    console.error(`Failed to generate image for step ${step.step}`, error);
-                } finally {
-                    if (!cancelled) {
-                        setLoadingImages(prev => {
-                            const next = new Set(prev);
-                            next.delete(step.step);
-                            return next;
-                        });
-                    }
-                }
-            }
-        };
-
-        generateAllImages();
-        return () => { cancelled = true; };
-    }, [guide.vehicle, guide.steps]);
 
     return (
         <div className="service-manual">
@@ -272,40 +232,6 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                         </div>
                                     </div>
 
-                                    <motion.div
-                                        className="step-image-container"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ duration: 0.4 }}
-                                    >
-                                        {step.imageUrl ? (
-                                            <img
-                                                src={step.imageUrl}
-                                                alt={`Step ${step.step} illustration`}
-                                                className="step-image"
-                                            />
-                                        ) : stepImages[step.step] ? (
-                                            <img
-                                                src={stepImages[step.step]}
-                                                alt={`Step ${step.step} generated illustration`}
-                                                className="step-image"
-                                            />
-                                        ) : loadingImages.has(step.step) ? (
-                                            <div className="image-loading">
-                                                <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#1e3a5f' }} />
-                                                <p className="image-loading-text">Generating diagram...</p>
-                                            </div>
-                                        ) : (
-                                            <div className="image-pending">
-                                                <ImageIcon className="w-6 h-6" style={{ color: '#999' }} />
-                                                <p className="image-loading-text">Diagram pending...</p>
-                                            </div>
-                                        )}
-
-                                        {(step.imageUrl || stepImages[step.step]) && (
-                                            <div className="image-caption">Figure {step.step}: Visual reference</div>
-                                        )}
-                                    </motion.div>
 
                                     {idx < (guide.steps?.length || 0) - 1 && (
                                         <div className="step-connector">
