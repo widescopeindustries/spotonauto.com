@@ -199,3 +199,19 @@ export function trackAuth(method: 'google' | 'email', action: 'login' | 'signup'
     });
   }
 }
+
+/**
+ * Capture UTM parameters from URL and set as GA4 user properties
+ */
+export function captureUtmParams(): void {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  const params = new URLSearchParams(window.location.search);
+  const utmSource = params.get('utm_source');
+  if (utmSource) {
+    window.gtag('set', 'user_properties', {
+      utm_source: utmSource,
+      utm_medium: params.get('utm_medium') || '',
+      utm_campaign: params.get('utm_campaign') || '',
+    });
+  }
+}
