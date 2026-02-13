@@ -155,17 +155,17 @@ export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<Ve
 
   // Try to fetch from local charm.li server first
   const charmLiContent = await fetchFromCharmLi(year, make, model, task);
-  
-  if (!charmLiContent) {
-    throw new Error(`Service manual not available for ${year} ${make} ${model} in local charm.li database.`);
-  }
 
-  const prompt = `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", analyze the following charm.li service manual content and provide accurate information.
+  const prompt = charmLiContent
+    ? `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", analyze the following charm.li service manual content and provide accurate information.
 
 CHARM.LI SERVICE MANUAL CONTENT:
 ${charmLiContent.slice(0, 15000)}...
 
-Based on the above factory service manual data, provide:
+Based on the above factory service manual data, provide:`
+    : `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", provide accurate information based on your knowledge of factory service procedures.
+
+Provide:
 1. A "Job Snapshot" with realistic estimates for difficulty (1-5), time, parts cost, and potential savings.
 2. A list of real Technical Service Bulletins (TSBs) if mentioned.
 3. A list of real safety recalls relevant to this task if mentioned.
@@ -201,12 +201,9 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
 
   // Fetch from local charm.li server
   const charmLiContent = await fetchFromCharmLi(year, make, model, task);
-  
-  if (!charmLiContent) {
-    throw new Error(`Service manual not available for ${year} ${make} ${model}. This vehicle/year combination is not in the local charm.li database.`);
-  }
 
-  const prompt = `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
+  const prompt = charmLiContent
+    ? `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
 
 PRIMARY DATA SOURCE - CHARM.LI FACTORY SERVICE MANUAL:
 ${charmLiContent.slice(0, 20000)}...
@@ -218,7 +215,16 @@ INSTRUCTIONS:
 4. If the manual doesn't cover this specific task, state that clearly
 5. Do not invent information not present in the manual
 
-Based on the service manual, provide:
+Based on the service manual, provide:`
+    : `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
+
+INSTRUCTIONS:
+1. Provide accurate repair procedures based on known factory service procedures for this vehicle
+2. Include torque specs, part numbers, and safety warnings where known
+3. If you are not confident about specific details for this exact vehicle, note that clearly
+4. Focus on safety and correctness
+
+Provide:
 
 Return JSON with:
 - title (concise, based on actual procedure found)
