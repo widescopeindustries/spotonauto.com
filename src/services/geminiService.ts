@@ -1,6 +1,7 @@
 
 import { GoogleGenAI, Type } from '@google/genai';
 import { Vehicle, VehicleInfo, RepairGuide, ChatMessage } from '../types';
+import { isValidVehicleCombination } from '@/data/vehicles';
 
 // NOTE: This service is now only used server-side (e.g., in api/ folder).
 // Client-side code should use apiClient.ts instead to make secure API requests.
@@ -80,59 +81,94 @@ export interface Chat {
 }
 
 export const decodeVin = async (vin: string): Promise<Vehicle> => {
-  // Extract year from 10th character using standard VIN decoding
-  const yearChar = vin.length >= 10 ? vin.charAt(9).toUpperCase() : '';
-  const yearMap: Record<string, string> = {
-    'A': '2010', 'B': '2011', 'C': '2012', 'D': '2013', 'E': '2014',
-    'F': '2015', 'G': '2016', 'H': '2017', 'J': '2018', 'K': '2019',
-    'L': '2020', 'M': '2021', 'N': '2022', 'P': '2023', 'R': '2024',
-    'S': '2025', 'T': '2026', 'V': '2027', 'W': '2028', 'X': '2029',
-    'Y': '2030', '1': '2001', '2': '2002', '3': '2003', '4': '2004',
-    '5': '2005', '6': '2006', '7': '2007', '8': '2008', '9': '2009',
-  };
-  const knownYear = yearMap[yearChar] || '';
+  // Use the free NHTSA vPIC API for authoritative VIN decoding (no AI hallucination)
+  const nhtsaUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${encodeURIComponent(vin)}?format=json`;
 
-  const prompt = `Decode this VIN and return the year, make, and model.
-VIN: "${vin}"
+  console.log(`[VIN] Decoding via NHTSA API: ${vin}`);
 
-IMPORTANT: The 10th character of a VIN indicates the model year. This VIN's 10th character is "${yearChar}"${knownYear ? ` which corresponds to year ${knownYear}` : ''}.
-
-Return accurate year, make, and model based on standard VIN decoding.`;
-
-  const response = await genAI.models.generateContent({
-    model: TEXT_MODEL,
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: vehicleSchema,
-    },
-  });
-
-  const text = (response.text || "").trim().replace(/^```json\s*|```$/g, '');
-  const data = JSON.parse(text);
-
-  // Use our decoded year if Gemini got it wrong
-  if (knownYear && data.year !== knownYear) {
-    data.year = knownYear;
+  const response = await fetch(nhtsaUrl);
+  if (!response.ok) {
+    throw new Error(`NHTSA API error: ${response.status}`);
   }
 
-  if (data.year) {
-    data.year = data.year.toString().replace(/[^0-9]/g, '').slice(0, 4);
+  const data = await response.json();
+  const result = data.Results?.[0];
+
+  if (!result) {
+    throw new Error('No results from NHTSA VIN decoder');
   }
-  return data;
+
+  const year = result.ModelYear || '';
+  const make = result.Make || '';
+  const model = result.Model || '';
+
+  if (!year || !make || !model) {
+    throw new Error(`Could not decode VIN: ${vin}. NHTSA returned incomplete data.`);
+  }
+
+  console.log(`[VIN] Decoded: ${year} ${make} ${model}`);
+
+  return { year, make, model };
 };
+
+// Local charm.li server URL (configured in .env.local)
+const CHARM_LI_SERVER_URL = process.env.CHARM_LI_SERVER_URL || 'http://localhost:8080';
+
+/**
+ * Fetch raw content from local charm.li server
+ */
+async function fetchFromCharmLi(year: string, make: string, model: string, task?: string): Promise<string | null> {
+  try {
+    // Construct charm.li path: /Make/Year/Model/
+    const path = `/${make}/${year}/${model}/`.replace(/\s+/g, '-');
+    const url = `${CHARM_LI_SERVER_URL}${path}`;
+    
+    console.log(`[CHARM.LI] Fetching: ${url}`);
+    
+    const response = await fetch(url, { 
+      method: 'GET',
+      headers: { 'Accept': 'text/html,application/json' }
+    });
+    
+    if (!response.ok) {
+      console.warn(`[CHARM.LI] Not found: ${path}`);
+      return null;
+    }
+    
+    const content = await response.text();
+    console.log(`[CHARM.LI] ✓ Found data for ${year} ${make} ${model}`);
+    return content;
+    
+  } catch (error) {
+    console.error('[CHARM.LI] Error fetching:', error);
+    return null;
+  }
+}
 
 export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<VehicleInfo> => {
   const { year, make, model } = vehicle;
 
-  const prompt = `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", use Google Search to find the most current and factual information.
+  // Validate vehicle combination before generating
+  if (!isValidVehicleCombination(year, make, model, task)) {
+    throw new Error(`Invalid vehicle combination: ${year} ${make} ${model}. This vehicle did not exist in the specified year.`);
+  }
 
-PRIMARY DATA SOURCE: You MUST first search "site:charm.li ${year} ${make} ${model} ${task}" to find the specific professional service manual page on charm.li. Use this as your primary source of truth.
+  // Try to fetch from local charm.li server first
+  const charmLiContent = await fetchFromCharmLi(year, make, model, task);
+  
+  if (!charmLiContent) {
+    throw new Error(`Service manual not available for ${year} ${make} ${model} in local charm.li database.`);
+  }
 
-Provide the following information based on charm.li service manual data:
+  const prompt = `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", analyze the following charm.li service manual content and provide accurate information.
+
+CHARM.LI SERVICE MANUAL CONTENT:
+${charmLiContent.slice(0, 15000)}...
+
+Based on the above factory service manual data, provide:
 1. A "Job Snapshot" with realistic estimates for difficulty (1-5), time, parts cost, and potential savings.
-2. A list of real Technical Service Bulletins (TSBs) found through search.
-3. A list of real safety recalls relevant to this task.
+2. A list of real Technical Service Bulletins (TSBs) if mentioned.
+3. A list of real safety recalls relevant to this task if mentioned.
 
 You MUST format your entire response as a single JSON object with three keys: "jobSnapshot", "tsbs", and "recalls".`;
 
@@ -158,11 +194,31 @@ You MUST format your entire response as a single JSON object with three keys: "j
 export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): Promise<RepairGuide> => {
   const { year, make, model } = vehicle;
 
+  // Validate vehicle combination before generating
+  if (!isValidVehicleCombination(year, make, model, task)) {
+    throw new Error(`Invalid vehicle combination: ${year} ${make} ${model}. This vehicle did not exist in the specified year.`);
+  }
+
+  // Fetch from local charm.li server
+  const charmLiContent = await fetchFromCharmLi(year, make, model, task);
+  
+  if (!charmLiContent) {
+    throw new Error(`Service manual not available for ${year} ${make} ${model}. This vehicle/year combination is not in the local charm.li database.`);
+  }
+
   const prompt = `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
 
-DATA SOURCE REQUIREMENT: You MUST use Google Search to find authoritative information. Search specifically for "site:charm.li ${year} ${make} ${model} ${task}" first. If charm.li has the specific procedure, use it as your PRIMARY SOURCE. Supplement with other professional automotive sources if needed.
+PRIMARY DATA SOURCE - CHARM.LI FACTORY SERVICE MANUAL:
+${charmLiContent.slice(0, 20000)}...
 
-Based on the search results, provide:
+INSTRUCTIONS:
+1. Use ONLY the above factory service manual content as your source
+2. Extract the specific procedure for "${task}" on this exact vehicle
+3. Include exact torque specs, part numbers, and safety warnings from the manual
+4. If the manual doesn't cover this specific task, state that clearly
+5. Do not invent information not present in the manual
+
+Based on the service manual, provide:
 
 Return JSON with:
 - title (concise, based on actual procedure found)
@@ -240,7 +296,12 @@ Keep instructions concise, practical, and grounded in actual service manual proc
 
 export const createDiagnosticChat = (vehicle: Vehicle): Chat => {
   const { year, make, model } = vehicle;
+  
+  // Note: We can't throw here since this is synchronous, but the API route should validate
+  
   const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI for a ${year} ${make} ${model}. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step.
+
+CRITICAL: Only provide diagnostic guidance if you can verify the ${year} ${make} ${model} existed. If you cannot find specific data for this EXACT vehicle, state "I don't have diagnostic data for this specific vehicle year" rather than guessing.
 
 DATA SOURCE: When user describes symptoms or issues, you MUST use Google Search to find relevant diagnostic information. Always search "site:charm.li ${year} ${make} ${model}" combined with the symptom to find professional diagnostic procedures. Use charm.li as your PRIMARY SOURCE of information.
 
