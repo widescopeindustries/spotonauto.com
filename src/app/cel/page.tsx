@@ -1,33 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import Link from 'next/link';
-
-// Capture UTM params for GA4
-function useUtmCapture() {
-    const searchParams = useSearchParams();
-    useEffect(() => {
-        if (typeof window === 'undefined' || !window.gtag) return;
-        const utmSource = searchParams.get('utm_source');
-        const utmMedium = searchParams.get('utm_medium');
-        const utmCampaign = searchParams.get('utm_campaign');
-        if (utmSource) {
-            window.gtag('set', 'user_properties', {
-                utm_source: utmSource,
-                utm_medium: utmMedium || '',
-                utm_campaign: utmCampaign || '',
-            });
-            window.gtag('event', 'cel_landing_view', {
-                event_category: 'landing',
-                utm_source: utmSource,
-                utm_medium: utmMedium,
-                utm_campaign: utmCampaign,
-            });
-        }
-    }, [searchParams]);
-}
 
 declare global {
     interface Window {
@@ -53,7 +29,26 @@ function getYearsForModel(make: string, model: string): number[] {
 
 export default function CELLandingPage() {
     const router = useRouter();
-    useUtmCapture();
+
+    // Capture UTM params on mount
+    useEffect(() => {
+        if (typeof window === 'undefined' || !window.gtag) return;
+        const params = new URLSearchParams(window.location.search);
+        const utmSource = params.get('utm_source');
+        if (utmSource) {
+            window.gtag('set', 'user_properties', {
+                utm_source: utmSource,
+                utm_medium: params.get('utm_medium') || '',
+                utm_campaign: params.get('utm_campaign') || '',
+            });
+            window.gtag('event', 'cel_landing_view', {
+                event_category: 'landing',
+                utm_source: utmSource,
+                utm_medium: params.get('utm_medium'),
+                utm_campaign: params.get('utm_campaign'),
+            });
+        }
+    }, []);
 
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
@@ -227,7 +222,7 @@ export default function CELLandingPage() {
             {/* Final CTA */}
             <section className="py-16 px-4 text-center">
                 <div className="max-w-md mx-auto">
-                    <p className="font-display font-bold text-xl text-white mb-2 tracking-wider">SAVE $200–500 PER REPAIR</p>
+                    <p className="font-display font-bold text-xl text-white mb-2 tracking-wider">SAVE $200-500 PER REPAIR</p>
                     <p className="font-body text-sm text-gray-500 mb-6">Stop overpaying mechanics for simple fixes you can do yourself.</p>
                     <a
                         href="#"
