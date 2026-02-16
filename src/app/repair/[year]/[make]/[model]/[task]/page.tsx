@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import GuideContent from './GuideContent';
 import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import Link from 'next/link';
+import AffiliateLink from '@/components/AffiliateLink';
 import { isValidVehicleCombination, getDisplayName, VALID_TASKS } from '@/data/vehicles';
 
 interface PageProps {
@@ -317,14 +318,16 @@ export default async function Page({ params }: PageProps) {
                         {repairData.parts.map((part, i) => (
                             <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
                                 <span className="text-gray-300">{part}</span>
-                                <a
+                                <AffiliateLink
                                     href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicleName + ' ' + part)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    partName={part}
+                                    vehicle={vehicleName}
+                                    isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part)}
+                                    pageType="repair_guide"
                                     className="px-4 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition"
                                 >
                                     Shop on Amazon
-                                </a>
+                                </AffiliateLink>
                             </div>
                         ))}
                     </div>

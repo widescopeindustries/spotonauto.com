@@ -83,6 +83,11 @@ export const Analytics = {
   guideGenerated: (vehicle: string, task: string) =>
     trackEvent('guide_generated', { vehicle, task: task.slice(0, 100) }),
 
+  // CEL code lookup
+  celCodeSearch: (code: string) => trackEvent('cel_code_search', { code }),
+  celCodeTap: (code: string) => trackEvent('cel_code_tap', { code }),
+  celGetGuide: (code: string) => trackEvent('cel_get_guide', { code }),
+
   // Conversion
   signupStarted: () => trackEvent('sign_up_started'),
   signupCompleted: (method: string) => trackEvent('sign_up', { method }),
