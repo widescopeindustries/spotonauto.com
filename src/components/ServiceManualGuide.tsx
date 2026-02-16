@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import type { RepairGuide } from '../types';
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
+import { trackAffiliateClick, trackToolClick } from '../lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ServiceManualGuideProps {
@@ -121,8 +122,8 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
 
                     {/* Page: Parts Required */}
                     {partsWithLinks.length > 0 && (
-                        <motion.section 
-                            id="parts" 
+                        <motion.section
+                            id="parts"
                             className="manual-page"
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
@@ -133,34 +134,41 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                 <span className="page-icon">🔧</span>
                                 <h2 className="page-title">Parts Required</h2>
                             </div>
-                            <table className="parts-table">
-                                <thead>
-                                    <tr>
-                                        <th>Part</th>
-                                        <th>Shop Now</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {partsWithLinks.map((part, idx) => (
-                                        <tr key={idx}>
-                                            <td className="part-name">{part.name}</td>
-                                            <td className="part-links">
-                                                {part.links.map((link, linkIdx) => (
-                                                    <a
-                                                        key={linkIdx}
-                                                        href={link.url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={`shop-link ${link.provider.toLowerCase()}`}
-                                                    >
-                                                        {link.provider}
-                                                    </a>
-                                                ))}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <div className="parts-savings-banner">
+                                Save 30&ndash;50% vs. mechanic markup &mdash; buy parts direct
+                            </div>
+                            <div className="parts-grid">
+                                {partsWithLinks.map((part, idx) => (
+                                    <div key={idx} className={`part-card ${part.isHighTicket ? 'part-card-featured' : ''}`}>
+                                        {part.isHighTicket && (
+                                            <div className="part-featured-badge">Major Component</div>
+                                        )}
+                                        <div className="part-card-name">{part.name}</div>
+                                        {part.links.map((link, linkIdx) => (
+                                            <a
+                                                key={linkIdx}
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={() => trackAffiliateClick({
+                                                    provider: 'Amazon',
+                                                    partName: part.name,
+                                                    vehicle: guide.vehicle,
+                                                    isHighTicket: part.isHighTicket,
+                                                    pageType: 'repair_guide',
+                                                })}
+                                                className="part-amazon-btn"
+                                            >
+                                                <svg className="amazon-logo" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                                    <path d="M.045 18.02c.072-.116.187-.124.348-.022 3.012 1.935 6.338 2.907 9.971 2.907 2.888 0 5.61-.677 8.038-2.032.264-.143.4-.133.4.033 0 .2-.158.38-.474.558-2.397 1.373-5.164 2.064-8.007 2.064-3.57 0-6.754-1.002-9.55-3.006-.246-.167-.336-.299-.272-.39l.546-.112zM23.98 16.168c-.11-.163-.587-.195-1.345-.095-.758.1-1.69.32-1.69.32-.168.038-.2-.073-.04-.258.82-.598 1.152-.68 2.066-.784.914-.105 2.41.13 2.69.608.28.478-.302 3.015-1.13 4.33-.136.216-.28.152-.216-.06.408-.99.736-3.203.665-4.06z"/>
+                                                </svg>
+                                                Shop on Amazon
+                                                <span className="prime-badge">Prime</span>
+                                            </a>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
                         </motion.section>
                     )}
 
@@ -186,7 +194,13 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                             <span className="tool-check">✓</span>
                                             <span className="tool-name">{tool}</span>
                                             {links[0] && (
-                                                <a href={links[0].url} target="_blank" rel="noopener noreferrer" className="tool-buy">
+                                                <a
+                                                    href={links[0].url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    onClick={() => trackToolClick(tool, guide.vehicle)}
+                                                    className="tool-buy"
+                                                >
                                                     Buy
                                                 </a>
                                             )}
@@ -292,6 +306,33 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                             </div>
                         </motion.section>
                     )}
+
+                    {/* Upgrade Banner */}
+                    <motion.section
+                        className="manual-page upgrade-banner"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <div className="upgrade-inner">
+                            <div className="upgrade-icon">&#9889;</div>
+                            <h3 className="upgrade-title">Get Unlimited Repair Guides</h3>
+                            <p className="upgrade-desc">
+                                Save hundreds per repair with step-by-step guides for any vehicle.
+                                Plus OBD-II scanner integration, PDF downloads, and priority support.
+                            </p>
+                            <a
+                                href="https://buy.stripe.com/cNi14na6t8iycykeo718c08"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="upgrade-btn"
+                            >
+                                Upgrade to Pro &mdash; $9.99/mo
+                            </a>
+                            <p className="upgrade-sub">Less than a single mechanic diagnostic fee. Cancel anytime.</p>
+                        </div>
+                    </motion.section>
 
                 </div>
             </main>
@@ -522,64 +563,104 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                     font-weight: bold;
                 }
 
-                /* Parts Table */
-                .parts-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    background: white;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                }
-
-                .parts-table th {
-                    background: #1e3a5f;
+                /* Parts Section */
+                .parts-savings-banner {
+                    background: linear-gradient(135deg, #059669 0%, #047857 100%);
                     color: white;
-                    padding: 1rem;
-                    text-align: left;
+                    padding: 0.75rem 1.25rem;
+                    border-radius: 8px;
                     font-family: 'Arial', sans-serif;
                     font-weight: 700;
                     font-size: 0.875rem;
+                    text-align: center;
+                    margin-bottom: 1.25rem;
+                }
+
+                .parts-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                    gap: 1rem;
+                }
+
+                .part-card {
+                    background: white;
+                    border: 1px solid #d0ccc4;
+                    border-radius: 12px;
+                    padding: 1.25rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                    transition: all 0.2s;
+                    position: relative;
+                }
+
+                .part-card:hover {
+                    border-color: #ff9900;
+                    box-shadow: 0 4px 12px rgba(255,153,0,0.15);
+                }
+
+                .part-card-featured {
+                    border-color: #ff9900;
+                    border-width: 2px;
+                }
+
+                .part-featured-badge {
+                    position: absolute;
+                    top: -10px;
+                    right: 12px;
+                    background: linear-gradient(135deg, #ff9900, #e88b00);
+                    color: #111;
+                    font-family: 'Arial Black', sans-serif;
+                    font-size: 0.625rem;
+                    font-weight: 900;
+                    padding: 0.25rem 0.75rem;
+                    border-radius: 4px;
                     text-transform: uppercase;
                     letter-spacing: 0.05em;
                 }
 
-                .parts-table td {
-                    padding: 1rem;
-                    border-bottom: 1px solid #e5e5e5;
+                .part-card-name {
+                    font-weight: 600;
+                    font-size: 1.05rem;
+                    color: #1a1a1a;
                 }
 
-                .parts-table tr:last-child td {
-                    border-bottom: none;
-                }
-
-                .part-name {
-                    font-weight: 500;
-                }
-
-                .part-links {
+                .part-amazon-btn {
                     display: flex;
+                    align-items: center;
+                    justify-content: center;
                     gap: 0.5rem;
-                    flex-wrap: wrap;
-                }
-
-                .shop-link {
-                    padding: 0.375rem 0.75rem;
-                    border-radius: 4px;
-                    font-size: 0.75rem;
-                    font-weight: 700;
-                    text-decoration: none;
-                    text-transform: uppercase;
-                    transition: all 0.2s;
-                }
-
-                .shop-link.amazon {
-                    background: #ff9900;
+                    padding: 0.75rem 1rem;
+                    background: linear-gradient(180deg, #FFD814 0%, #FF9900 100%);
                     color: #111;
+                    border-radius: 8px;
+                    font-weight: 700;
+                    font-size: 0.875rem;
+                    text-decoration: none;
+                    transition: all 0.2s;
+                    border: 1px solid #e88b00;
                 }
 
-                .shop-link.amazon:hover {
-                    background: #e88b00;
+                .part-amazon-btn:hover {
+                    background: linear-gradient(180deg, #F7CA00 0%, #E88B00 100%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(255,153,0,0.3);
+                }
+
+                .amazon-logo {
+                    width: 16px;
+                    height: 16px;
+                }
+
+                .prime-badge {
+                    background: #232f3e;
+                    color: #00a8e1;
+                    font-size: 0.625rem;
+                    font-weight: 800;
+                    padding: 0.125rem 0.5rem;
+                    border-radius: 3px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                 }
 
                 /* Tools Grid */
@@ -776,6 +857,64 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
 
                 .source-link:hover {
                     text-decoration: underline;
+                }
+
+                /* Upgrade Banner */
+                .upgrade-banner {
+                    border-bottom: none !important;
+                }
+
+                .upgrade-inner {
+                    background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
+                    border-radius: 16px;
+                    padding: 2.5rem 2rem;
+                    text-align: center;
+                    border: 2px solid rgba(0,212,255,0.2);
+                }
+
+                .upgrade-icon {
+                    font-size: 2.5rem;
+                    margin-bottom: 0.75rem;
+                }
+
+                .upgrade-title {
+                    color: white;
+                    font-family: 'Arial Black', sans-serif;
+                    font-size: 1.5rem;
+                    margin: 0 0 0.5rem 0;
+                }
+
+                .upgrade-desc {
+                    color: #94a3b8;
+                    font-size: 0.95rem;
+                    line-height: 1.6;
+                    max-width: 500px;
+                    margin: 0 auto 1.5rem;
+                }
+
+                .upgrade-btn {
+                    display: inline-block;
+                    padding: 1rem 2rem;
+                    background: #06b6d4;
+                    color: #000;
+                    font-family: 'Arial Black', sans-serif;
+                    font-size: 1rem;
+                    font-weight: 900;
+                    border-radius: 12px;
+                    text-decoration: none;
+                    transition: all 0.2s;
+                }
+
+                .upgrade-btn:hover {
+                    background: #22d3ee;
+                    box-shadow: 0 0 30px rgba(6,182,212,0.4);
+                    transform: translateY(-2px);
+                }
+
+                .upgrade-sub {
+                    color: #64748b;
+                    font-size: 0.75rem;
+                    margin-top: 0.75rem;
                 }
             `}</style>
         </div>

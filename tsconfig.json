@@ -36,6 +36,18 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "pages-legacy",
+    "components",
+    "contexts",
+    "lib",
+    "services",
+    "types.ts",
+    "constants.ts",
+    "App.tsx",
+    "index.tsx",
+    "index.css",
+    "vite.config.ts",
+    "dist"
   ]
 }

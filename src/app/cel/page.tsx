@@ -264,7 +264,7 @@ export default function CELLandingPage() {
                             },
                             {
                                 q: 'Is it really free?',
-                                a: 'Your first diagnosis is 100% free, no credit card required. Premium members get unlimited diagnoses and saved repair history for $10.99/month.'
+                                a: 'Your first diagnosis is 100% free, no credit card required. Premium members get unlimited diagnoses and saved repair history for $9.99/month.'
                             },
                             {
                                 q: 'What if the AI gets it wrong?',
