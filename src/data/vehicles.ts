@@ -97,8 +97,8 @@ export const VALID_TASKS = [
 
 /**
  * Validates if a vehicle/year combination is valid.
- * STRICT validation: Only accepts vehicles that actually existed in the specified year.
- * This prevents AI hallucinations for impossible combinations like "1985 Ford Explorer".
+ * Permissive: rejects only known-impossible combos (e.g. year outside production range).
+ * Unknown makes/models are allowed through since NHTSA API provides thousands of models.
  */
 export function isValidVehicleCombination(
     year: string | number,
@@ -110,63 +110,40 @@ export function isValidVehicleCombination(
 
     if (isNaN(yearNum)) return false;
 
-    // Basic year sanity check (1900 to Next Year)
+    // Basic year sanity check (1900 to next year)
     const currentYear = new Date().getFullYear();
     if (yearNum < 1900 || yearNum > currentYear + 1) return false;
 
-    // Ensure make, model, and task are present
+    // Ensure make and model are present
     if (!make || make.trim().length === 0) return false;
     if (!model || model.trim().length === 0) return false;
-    if (!task || task.trim().length === 0) return false;
 
-    // Normalize make/model for lookup
-    const normalizedMake = make.trim();
-    const normalizedModel = model.trim();
-
-    // STRICT CHECK: Validate against known production years
-    // Find the make (case-insensitive)
+    // If we have production year data for this vehicle, validate the year range
     const makeEntry = Object.entries(VEHICLE_PRODUCTION_YEARS).find(
-        ([m]) => m.toLowerCase() === normalizedMake.toLowerCase()
+        ([m]) => m.toLowerCase() === make.trim().toLowerCase()
     );
 
-    if (!makeEntry) {
-        // Make not in our database - reject to prevent hallucinations
-        console.warn(`[VALIDATION] Rejected unknown make: ${normalizedMake}`);
-        return false;
+    if (makeEntry) {
+        const [, models] = makeEntry;
+        const modelEntry = Object.entries(models).find(([m]) => {
+            const normalizedDbModel = m.toLowerCase().replace(/\s+/g, '-');
+            const normalizedInputModel = model.trim().toLowerCase().replace(/\s+/g, '-');
+            return normalizedDbModel === normalizedInputModel;
+        });
+
+        if (modelEntry) {
+            const [, productionYears] = modelEntry;
+            if (yearNum < productionYears.start || yearNum > productionYears.end) {
+                console.warn(
+                    `[VALIDATION] Rejected ${yearNum} ${make} ${model}: ` +
+                    `valid range is ${productionYears.start}-${productionYears.end}`
+                );
+                return false;
+            }
+        }
     }
 
-    const [, models] = makeEntry;
-
-    // Find the model (case-insensitive, handle hyphen/space variations)
-    const modelEntry = Object.entries(models).find(([m]) => {
-        const normalizedDbModel = m.toLowerCase().replace(/\s+/g, '-');
-        const normalizedInputModel = normalizedModel.toLowerCase().replace(/\s+/g, '-');
-        return normalizedDbModel === normalizedInputModel;
-    });
-
-    if (!modelEntry) {
-        // Model not in our database - reject to prevent hallucinations
-        console.warn(`[VALIDATION] Rejected unknown model: ${normalizedMake} ${normalizedModel}`);
-        return false;
-    }
-
-    const [, productionYears] = modelEntry;
-
-    // Check if year is within valid production range
-    if (yearNum < productionYears.start || yearNum > productionYears.end) {
-        console.warn(
-            `[VALIDATION] Rejected ${yearNum} ${normalizedMake} ${normalizedModel}: ` +
-            `valid range is ${productionYears.start}-${productionYears.end}`
-        );
-        return false;
-    }
-
-    // Valid task check
-    if (!VALID_TASKS.includes(task)) {
-        console.warn(`[VALIDATION] Rejected unknown task: ${task}`);
-        return false;
-    }
-
+    // Unknown makes/models pass through - NHTSA has thousands we don't track
     return true;
 }
 
