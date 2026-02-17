@@ -108,16 +108,32 @@ export default function GuideContent({ params }: GuideContentProps) {
     );
 
     if (error) return (
-        <div className="max-w-xl mx-auto my-16 p-8 bg-white border border-red-200 rounded-lg shadow-lg text-center">
-            <div className="text-red-600 text-4xl mb-4">⚠️</div>
-            <h2 className="text-xl font-bold text-red-800 mb-2">Error Loading Guide</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-                onClick={() => router.push('/')}
-                className="px-6 py-2 bg-[#1e3a5f] text-white rounded font-semibold hover:bg-[#2d4a6f] transition-colors"
-            >
-                Return Home
-            </button>
+        <div className="max-w-xl mx-auto my-16 p-8 bg-black/80 border border-red-500/30 rounded-xl shadow-lg text-center">
+            <div className="text-red-500 text-4xl mb-4">⚠️</div>
+            <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Guide</h2>
+            <p className="text-gray-400 mb-6">{error}</p>
+            <div className="flex gap-3 justify-center">
+                <button
+                    onClick={() => {
+                        setError(null);
+                        setLoading(true);
+                        const cleanTask = task.replace(/-/g, ' ');
+                        const vehicle = { year, make, model };
+                        generateFullRepairGuide(vehicle, cleanTask)
+                            .then(g => { setGuide(g); setLoading(false); })
+                            .catch(e => { setError(e instanceof Error ? e.message : 'Failed to generate guide.'); setLoading(false); });
+                    }}
+                    className="px-6 py-2 bg-brand-cyan text-black rounded-lg font-semibold hover:bg-brand-cyan-light transition-colors"
+                >
+                    Try Again
+                </button>
+                <button
+                    onClick={() => router.push('/')}
+                    className="px-6 py-2 bg-white/10 text-white border border-white/20 rounded-lg font-semibold hover:bg-white/20 transition-colors"
+                >
+                    Return Home
+                </button>
+            </div>
         </div>
     );
 

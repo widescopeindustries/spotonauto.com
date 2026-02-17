@@ -97,8 +97,8 @@ export const VALID_TASKS = [
 
 /**
  * Validates if a vehicle/year combination is valid.
- * Relaxed validation: Accepts any vehicle with a valid 4-digit year and non-empty make/model strings.
- * This allows the AI to handle vehicles not explicitly listed in our sitemap data.
+ * STRICT validation: Only accepts vehicles that actually existed in the specified year.
+ * This prevents AI hallucinations for impossible combinations like "1985 Ford Explorer".
  */
 export function isValidVehicleCombination(
     year: string | number,
@@ -118,6 +118,54 @@ export function isValidVehicleCombination(
     if (!make || make.trim().length === 0) return false;
     if (!model || model.trim().length === 0) return false;
     if (!task || task.trim().length === 0) return false;
+
+    // Normalize make/model for lookup
+    const normalizedMake = make.trim();
+    const normalizedModel = model.trim();
+
+    // STRICT CHECK: Validate against known production years
+    // Find the make (case-insensitive)
+    const makeEntry = Object.entries(VEHICLE_PRODUCTION_YEARS).find(
+        ([m]) => m.toLowerCase() === normalizedMake.toLowerCase()
+    );
+
+    if (!makeEntry) {
+        // Make not in our database - reject to prevent hallucinations
+        console.warn(`[VALIDATION] Rejected unknown make: ${normalizedMake}`);
+        return false;
+    }
+
+    const [, models] = makeEntry;
+
+    // Find the model (case-insensitive, handle hyphen/space variations)
+    const modelEntry = Object.entries(models).find(([m]) => {
+        const normalizedDbModel = m.toLowerCase().replace(/\s+/g, '-');
+        const normalizedInputModel = normalizedModel.toLowerCase().replace(/\s+/g, '-');
+        return normalizedDbModel === normalizedInputModel;
+    });
+
+    if (!modelEntry) {
+        // Model not in our database - reject to prevent hallucinations
+        console.warn(`[VALIDATION] Rejected unknown model: ${normalizedMake} ${normalizedModel}`);
+        return false;
+    }
+
+    const [, productionYears] = modelEntry;
+
+    // Check if year is within valid production range
+    if (yearNum < productionYears.start || yearNum > productionYears.end) {
+        console.warn(
+            `[VALIDATION] Rejected ${yearNum} ${normalizedMake} ${normalizedModel}: ` +
+            `valid range is ${productionYears.start}-${productionYears.end}`
+        );
+        return false;
+    }
+
+    // Valid task check
+    if (!VALID_TASKS.includes(task)) {
+        console.warn(`[VALIDATION] Rejected unknown task: ${task}`);
+        return false;
+    }
 
     return true;
 }

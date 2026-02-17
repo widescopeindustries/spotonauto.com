@@ -10,6 +10,7 @@ import {
   generateFullRepairGuide,
   sendDiagnosticMessageWithHistory
 } from '@/services/geminiService';
+import { isValidVehicleCombination } from '@/data/vehicles';
 
 export async function POST(req: NextRequest) {
   if (!process.env.GEMINI_API_KEY) {
@@ -24,6 +25,25 @@ export async function POST(req: NextRequest) {
 
     if (!action) {
       return NextResponse.json({ error: 'Missing action' }, { status: 400 });
+    }
+
+    // Validate vehicle for actions that require it
+    if (['vehicle-info', 'generate-guide', 'diagnostic-chat'].includes(action)) {
+      const { vehicle, task } = payload;
+      if (!vehicle || !vehicle.year || !vehicle.make || !vehicle.model) {
+        return NextResponse.json({ error: 'Missing vehicle information' }, { status: 400 });
+      }
+
+      // For vehicle-info and generate-guide, validate against our database
+      if (action === 'vehicle-info' || action === 'generate-guide') {
+        if (!isValidVehicleCombination(vehicle.year, vehicle.make, vehicle.model, task || 'unknown')) {
+          console.warn(`[API] Rejected invalid vehicle: ${vehicle.year} ${vehicle.make} ${vehicle.model}`);
+          return NextResponse.json(
+            { error: `Invalid vehicle combination: ${vehicle.year} ${vehicle.make} ${vehicle.model} did not exist or is not supported.` },
+            { status: 400 }
+          );
+        }
+      }
     }
 
     let result;
