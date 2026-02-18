@@ -57,18 +57,11 @@ const HeroSection = () => {
                         {/* Trust Badge */}
                         <FadeInUp delay={0.5}>
                             <div className="flex items-center gap-3">
-                                <div className="flex -space-x-2">
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <div
-                                            key={i}
-                                            className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 border-2 border-[#050505] flex items-center justify-center"
-                                        >
-                                            <span className="text-xs font-bold text-white">{i}</span>
-                                        </div>
-                                    ))}
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 border-2 border-[#050505] flex items-center justify-center">
+                                    <CheckCircle2 className="w-4 h-4 text-white" />
                                 </div>
                                 <span className="font-body text-sm text-cyan-400">
-                                    Trusted by <span className="font-bold text-white">50,000+</span> DIY Mechanics
+                                    AI-Powered &middot; <span className="font-bold text-white">Factory Manual Data</span> &middot; Free to Try
                                 </span>
                             </div>
                         </FadeInUp>
@@ -126,9 +119,9 @@ const HeroSection = () => {
                                         <CheckCircle2 className="w-6 h-6 text-cyan-400" />
                                     </div>
                                     <div>
-                                        <div className="font-display font-bold text-2xl text-white">98.4%</div>
+                                        <div className="font-display font-bold text-lg text-white">Save $200+</div>
                                         <div className="font-body text-xs text-gray-400 uppercase tracking-wider">
-                                            Accuracy Rate
+                                            vs. Mechanic Visit
                                         </div>
                                     </div>
                                 </div>

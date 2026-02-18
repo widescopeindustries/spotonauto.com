@@ -1,45 +1,39 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Quote, Star } from 'lucide-react';
+import { DollarSign, Clock, Wrench, ShieldCheck, Zap, BookOpen } from 'lucide-react';
 
 const TestimonialsSection = () => {
-  const testimonials = [
+  const valueProps = [
     {
-      quote: "Saved me $400 on a diagnostic fee! The AI pinpointed the exact issue with my oxygen sensor.",
-      author: "Mike T.",
-      role: "DIY Enthusiast",
-      rating: 5,
+      icon: DollarSign,
+      title: 'Save $200-$500 Per Repair',
+      description: 'Mechanics charge $100-$150 just for diagnosis. Our AI gives you the same answer and a full repair guide.',
     },
     {
-      quote: "Fixed my brakes in 30 minutes. The step-by-step guide was incredibly detailed and easy to follow.",
-      author: "Sarah K.",
-      role: "First-time Mechanic",
-      rating: 5,
+      icon: Clock,
+      title: 'Results in 30 Seconds',
+      description: 'No appointments, no waiting rooms, no phone tag. Enter your vehicle and problem, get answers immediately.',
     },
     {
-      quote: "The AI knew exactly what was wrong. Even my mechanic was impressed with the accuracy.",
-      author: "James R.",
-      role: "Car Owner",
-      rating: 5,
+      icon: Wrench,
+      title: 'Step-by-Step Guides',
+      description: 'Every guide includes tools needed, parts with prices, safety warnings, and clear instructions.',
     },
     {
-      quote: "Best automotive tool I've ever used. Worth every penny for the peace of mind alone.",
-      author: "David L.",
-      role: "Fleet Manager",
-      rating: 5,
+      icon: ShieldCheck,
+      title: 'Vehicle-Specific Data',
+      description: 'Not generic advice. Guides are tailored to your exact year, make, and model with correct part numbers.',
     },
     {
-      quote: "Diagnosed a transmission issue that two shops couldn't figure out. Absolutely incredible.",
-      author: "Emily W.",
-      role: "Auto Shop Owner",
-      rating: 5,
+      icon: Zap,
+      title: 'AI Diagnostic Chat',
+      description: 'Describe your symptoms in plain English. The AI asks follow-up questions to narrow down the issue.',
     },
     {
-      quote: "The parts comparison feature alone saved me $200 on my last repair. Game changer!",
-      author: "Chris M.",
-      role: "Weekend Warrior",
-      rating: 5,
+      icon: BookOpen,
+      title: 'OEM Specifications',
+      description: 'Torque specs, fluid capacities, belt routing diagrams, and more from factory service data.',
     },
   ];
 
@@ -57,80 +51,58 @@ const TestimonialsSection = () => {
           className="text-center mb-16"
         >
           <span className="font-body text-xs tracking-[0.3em] text-cyan-400 uppercase mb-4 block">
-            Social Proof
+            Why DIY Mechanics Choose Us
           </span>
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-white mb-4">
-            WHAT <span className="text-cyan-400">MECHANICS</span> SAY
+            STOP <span className="text-cyan-400">OVERPAYING</span> FOR REPAIRS
           </h2>
         </motion.div>
 
-        {/* Marquee Container */}
-        <div className="space-y-6 overflow-hidden">
-          {/* Row 1 - Left */}
-          <div className="relative">
-            <div className="flex gap-6 animate-marquee-left hover:[animation-play-state:paused]">
-              {[...testimonials.slice(0, 3), ...testimonials.slice(0, 3)].map((testimonial, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 w-[350px] glass rounded-xl p-6 border border-cyan-500/10 hover:border-cyan-500/30 transition-all duration-300 hover:scale-105"
-                >
-                  <Quote className="w-8 h-8 text-cyan-400/30 mb-4" />
-                  <p className="font-body text-gray-300 mb-4">{testimonial.quote}</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center">
-                      <span className="font-display font-bold text-sm text-white">
-                        {testimonial.author[0]}
-                      </span>
-                    </div>
-                    <div>
-                      <div className="font-body font-semibold text-white text-sm">
-                        {testimonial.author}
-                      </div>
-                      <div className="font-body text-xs text-gray-500">{testimonial.role}</div>
-                    </div>
-                    <div className="ml-auto flex gap-0.5">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-cyan-400 text-cyan-400" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
+        {/* Cost Comparison */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="glass rounded-2xl p-8 border border-cyan-500/20 mb-16 max-w-2xl mx-auto"
+        >
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="font-display font-bold text-2xl text-red-400">$100-$150</div>
+              <div className="font-body text-xs text-gray-500 uppercase tracking-wider mt-1">Mechanic Diagnostic</div>
+            </div>
+            <div className="flex items-center justify-center">
+              <div className="font-body text-gray-500 text-2xl">vs.</div>
+            </div>
+            <div>
+              <div className="font-display font-bold text-2xl text-cyan-400">FREE</div>
+              <div className="font-body text-xs text-gray-500 uppercase tracking-wider mt-1">SpotOn Diagnosis</div>
             </div>
           </div>
+        </motion.div>
 
-          {/* Row 2 - Right */}
-          <div className="relative">
-            <div className="flex gap-6 animate-marquee-right hover:[animation-play-state:paused]">
-              {[...testimonials.slice(3, 6), ...testimonials.slice(3, 6)].map((testimonial, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 w-[350px] glass rounded-xl p-6 border border-cyan-500/10 hover:border-cyan-500/30 transition-all duration-300 hover:scale-105"
-                >
-                  <Quote className="w-8 h-8 text-cyan-400/30 mb-4" />
-                  <p className="font-body text-gray-300 mb-4">{testimonial.quote}</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center">
-                      <span className="font-display font-bold text-sm text-white">
-                        {testimonial.author[0]}
-                      </span>
-                    </div>
-                    <div>
-                      <div className="font-body font-semibold text-white text-sm">
-                        {testimonial.author}
-                      </div>
-                      <div className="font-body text-xs text-gray-500">{testimonial.role}</div>
-                    </div>
-                    <div className="ml-auto flex gap-0.5">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-cyan-400 text-cyan-400" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Value Props Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {valueProps.map((prop, index) => (
+            <motion.div
+              key={prop.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              className="glass rounded-xl p-6 border border-cyan-500/10 hover:border-cyan-500/30 transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-4">
+                <prop.icon className="w-6 h-6 text-cyan-400" />
+              </div>
+              <h3 className="font-display font-bold text-lg text-white mb-2">
+                {prop.title}
+              </h3>
+              <p className="font-body text-gray-400 text-sm">
+                {prop.description}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

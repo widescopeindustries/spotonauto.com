@@ -74,8 +74,45 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const userId = session.metadata?.supabaseUserId;
-  if (!userId) return;
+  // Check both metadata keys for compatibility with checkout sessions and payment links
+  const userId = session.metadata?.userId || session.metadata?.supabaseUserId;
+  
+  // For Payment Links: look up user by customer email if no metadata
+  if (!userId) {
+    const customerEmail = session.customer_details?.email || session.customer_email;
+    if (!customerEmail) {
+      console.error('No userId in metadata and no customer email found');
+      return;
+    }
+    
+    // Look up user by email in Supabase auth
+    const { data: users } = await supabase.auth.admin.listUsers();
+    const matchedUser = users?.users?.find(u => u.email === customerEmail);
+    if (!matchedUser) {
+      console.error(`No Supabase user found for email: ${customerEmail}`);
+      return;
+    }
+    
+    // Continue with the matched user
+    const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+    const priceId = subscription.items.data[0].price.id;
+    const tier = getTierFromPriceId(priceId);
+    
+    await supabase
+      .from('subscriptions')
+      .upsert({
+        user_id: matchedUser.id,
+        tier,
+        status: 'active',
+        stripe_customer_id: session.customer as string,
+        stripe_subscription_id: subscription.id,
+        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      }, { onConflict: 'user_id' });
+    
+    console.log(`Subscription activated for ${customerEmail} (${matchedUser.id}): ${tier}`);
+    return;
+  }
 
   // Get subscription details
   const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
@@ -84,17 +121,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const priceId = subscription.items.data[0].price.id;
   const tier = getTierFromPriceId(priceId);
 
-  // Update subscription in database
+  // Upsert subscription in database (handles both new and existing users)
   await supabase
     .from('subscriptions')
-    .update({
+    .upsert({
+      user_id: userId,
       tier,
       status: 'active',
+      stripe_customer_id: session.customer as string,
       stripe_subscription_id: subscription.id,
       current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
       current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-    })
-    .eq('user_id', userId);
+    }, { onConflict: 'user_id' });
 
   console.log(`✅ Subscription activated for user ${userId}: ${tier}`);
 }

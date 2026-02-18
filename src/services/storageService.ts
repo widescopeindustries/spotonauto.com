@@ -7,8 +7,8 @@ export const getHistory = async (): Promise<HistoryItem[]> => {
   if (!user) return [];
 
   const { data, error } = await supabase
-    .from('guides')
-    .select('id, vehicle_json, guide_content_json, created_at')
+    .from('diagnosis_history')
+    .select('id, vehicle_year, vehicle_make, vehicle_model, problem, diagnosis_summary, created_at')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
@@ -17,19 +17,12 @@ export const getHistory = async (): Promise<HistoryItem[]> => {
     return [];
   }
 
-  // Map to HistoryItem
-  return data.map((row) => {
-    // vehicle_json and guide_content_json are stored as JSONB, so they come back as objects
-    const vehicle = row.vehicle_json;
-    const guide = row.guide_content_json;
-
-    return {
-      id: row.id,
-      title: guide.title || 'Untitled Repair',
-      vehicle: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
-      timestamp: new Date(row.created_at).getTime(),
-    };
-  });
+  return data.map((row) => ({
+    id: row.id,
+    title: row.problem || row.diagnosis_summary || 'Untitled Repair',
+    vehicle: `${row.vehicle_year || ''} ${row.vehicle_make || ''} ${row.vehicle_model || ''}`.trim(),
+    timestamp: new Date(row.created_at).getTime(),
+  }));
 };
 
 export const saveGuide = async (guide: RepairGuide): Promise<void> => {
@@ -39,12 +32,23 @@ export const saveGuide = async (guide: RepairGuide): Promise<void> => {
     return;
   }
 
+  // Parse vehicle info from the guide.vehicle string (e.g., "2020 Toyota Camry")
+  const vehicleParts = (guide.vehicle || '').split(' ');
+  const vehicleYear = vehicleParts[0] || '';
+  const vehicleMake = vehicleParts[1] || '';
+  const vehicleModel = vehicleParts.slice(2).join(' ') || '';
+
   const { error } = await supabase
-    .from('guides')
+    .from('diagnosis_history')
     .insert({
       user_id: user.id,
-      vehicle_json: guide.vehicle, // Assuming guide.vehicle is the object
-      guide_content_json: guide,   // Store full guide
+      vehicle_year: vehicleYear,
+      vehicle_make: vehicleMake,
+      vehicle_model: vehicleModel,
+      problem: guide.title,
+      diagnosis_summary: guide.title,
+      conversation: guide, // Store full guide as JSONB
+      status: 'active',
     });
 
   if (error) {
@@ -58,12 +62,13 @@ export const getGuideById = async (id: string): Promise<RepairGuide | null> => {
   if (!user) return null;
 
   const { data, error } = await supabase
-    .from('guides')
-    .select('guide_content_json')
+    .from('diagnosis_history')
+    .select('conversation')
     .eq('id', id)
+    .eq('user_id', user.id)
     .single();
 
   if (error || !data) return null;
 
-  return data.guide_content_json as RepairGuide;
+  return data.conversation as RepairGuide;
 };

@@ -1,6 +1,7 @@
 export enum SubscriptionTier {
   Free = 'free',
-  Premium = 'premium',
+  Pro = 'pro',
+  ProPlus = 'pro_plus',
 }
 
 export interface User {

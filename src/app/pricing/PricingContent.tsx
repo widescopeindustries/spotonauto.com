@@ -161,14 +161,14 @@ export default function PricingContent() {
   }
 
   const handleCtaClick = async (tier: PricingTier) => {
-    // If user is not logged in, send to signup first
+    // If user is not logged in, send to auth first
     if (!user && tier.ctaAction !== 'signup') {
-      router.push('/auth/signup?redirect=/pricing');
+      router.push('/auth?redirect=/pricing');
       return;
     }
 
     if (tier.ctaAction === 'signup') {
-      router.push('/auth/signup');
+      router.push('/auth');
       return;
     }
 
@@ -178,7 +178,7 @@ export default function PricingContent() {
     }
 
     if (tier.ctaAction === 'dashboard') {
-      router.push('/dashboard');
+      router.push('/history');
       return;
     }
 
@@ -266,31 +266,33 @@ export default function PricingContent() {
             </motion.div>
           )}
 
-          {/* Billing Toggle */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center justify-center gap-4 mt-8"
-          >
-            <span className={`text-sm ${billingPeriod === 'monthly' ? 'text-white' : 'text-gray-500'}`}>
-              Monthly
-            </span>
-            <button
-              onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'annual' : 'monthly')}
-              className="relative w-14 h-7 bg-gray-800 rounded-full p-1 transition-colors"
+          {/* Billing Toggle - only show if annual links are configured */}
+          {getPaymentLinks().proAnnual && getPaymentLinks().proAnnual.includes('stripe.com') && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex items-center justify-center gap-4 mt-8"
             >
-              <motion.div
-                className="w-5 h-5 bg-neon-cyan rounded-full"
-                animate={{ x: billingPeriod === 'annual' ? 28 : 0 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              />
-            </button>
-            <span className={`text-sm ${billingPeriod === 'annual' ? 'text-white' : 'text-gray-500'}`}>
-              Annual
-              <span className="ml-2 text-xs text-neon-cyan">Save 20%</span>
-            </span>
-          </motion.div>
+              <span className={`text-sm ${billingPeriod === 'monthly' ? 'text-white' : 'text-gray-500'}`}>
+                Monthly
+              </span>
+              <button
+                onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'annual' : 'monthly')}
+                className="relative w-14 h-7 bg-gray-800 rounded-full p-1 transition-colors"
+              >
+                <motion.div
+                  className="w-5 h-5 bg-neon-cyan rounded-full"
+                  animate={{ x: billingPeriod === 'annual' ? 28 : 0 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                />
+              </button>
+              <span className={`text-sm ${billingPeriod === 'annual' ? 'text-white' : 'text-gray-500'}`}>
+                Annual
+                <span className="ml-2 text-xs text-neon-cyan">Save 20%</span>
+              </span>
+            </motion.div>
+          )}
         </div>
 
         {/* Pricing Cards */}
@@ -328,9 +330,9 @@ export default function PricingContent() {
                 <div className="mb-8">
                   <div className="flex items-baseline gap-1">
                     <span className="text-5xl font-bold text-white">
-                      ${billingPeriod === 'annual' ? (tier.price * 0.8).toFixed(2) : tier.price}
+                      ${billingPeriod === 'annual' && tier.price > 0 ? (tier.price * 12 * 0.8).toFixed(2) : tier.price}
                     </span>
-                    <span className="text-gray-500">/{billingPeriod === 'annual' ? 'year' : tier.period}</span>
+                    <span className="text-gray-500">/{billingPeriod === 'annual' && tier.price > 0 ? 'year' : tier.period}</span>
                   </div>
                   {billingPeriod === 'annual' && tier.price > 0 && (
                     <p className="text-sm text-neon-cyan mt-1">

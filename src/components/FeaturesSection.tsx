@@ -7,10 +7,10 @@ const FeaturesSection = () => {
   const features = [
     {
       icon: Activity,
-      title: '98.4% Accuracy',
-      description: 'Trained on millions of repair records and factory service manuals for precise diagnostics.',
-      stat: '10M+',
-      statLabel: 'Repairs Analyzed',
+      title: 'AI-Powered Diagnosis',
+      description: 'Powered by Gemini 2.0 and trained on factory service manuals for accurate, vehicle-specific diagnostics.',
+      stat: 'AI',
+      statLabel: 'Gemini 2.0 Flash',
     },
     {
       icon: Zap,
@@ -21,10 +21,10 @@ const FeaturesSection = () => {
     },
     {
       icon: BookOpen,
-      title: 'Factory Manuals',
-      description: 'Access OEM specifications, torque values, and step-by-step procedures instantly.',
-      stat: '50K+',
-      statLabel: 'Manuals Available',
+      title: 'Factory Manual Data',
+      description: 'Access OEM specifications, torque values, and step-by-step procedures for your specific vehicle.',
+      stat: 'OEM',
+      statLabel: 'Spec Coverage',
     },
   ];
 

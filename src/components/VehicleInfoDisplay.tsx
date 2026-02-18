@@ -16,7 +16,7 @@ const VehicleInfoDisplay: React.FC<VehicleInfoDisplayProps> = ({
     vehicleInfo, vehicle, task, user, onGenerateGuide, onStartDiagnostic, onBack 
 }) => {
   const { jobSnapshot, tsbs, recalls, sources } = vehicleInfo;
-  const isPremiumUser = user?.tier === SubscriptionTier.Premium;
+  const isPremiumUser = user?.tier === SubscriptionTier.Pro || user?.tier === SubscriptionTier.ProPlus;
 
   const InfoCard: React.FC<{ icon: React.ReactNode, title: string, value: string }> = ({ icon, title, value }) => (
     <div className="bg-gray-900 p-4 rounded-lg border border-brand-cyan/20 flex items-center gap-4">

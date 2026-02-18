@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { WrenchIcon, CheckCircleIcon } from './Icons';
 import { useAuth } from '../contexts/AuthContext';
 import { trackUpgradeModalShown, trackUpgradeClick } from '../lib/analytics';
+import { useRouter } from 'next/navigation';
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -10,9 +11,11 @@ interface UpgradeModalProps {
   onAuthClick: () => void;
 }
 
+const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK || 'https://buy.stripe.com/cNi14na6t8iycykeo718c08';
+
 const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClick }) => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (isOpen) trackUpgradeModalShown();
@@ -20,32 +23,22 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
 
   if (!isOpen) return null;
 
-  const handleUpgrade = async () => {
+  const handleUpgrade = () => {
     trackUpgradeClick(!!user);
     if (!user) {
       onAuthClick();
       return;
     }
 
-    setLoading(true);
-    try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: user.email,
-          userId: user.id
-        })
-      });
-
-      const { url } = await response.json();
-      if (url) {
-        window.location.href = url;
-      }
-    } catch (e) {
-      console.error("Upgrade failed", e);
-    } finally {
-      setLoading(false);
+    // Use Stripe Payment Link (same approach as pricing page)
+    if (PAYMENT_LINK && PAYMENT_LINK.includes('stripe.com')) {
+      const url = user.email
+        ? `${PAYMENT_LINK}?prefilled_email=${encodeURIComponent(user.email)}`
+        : PAYMENT_LINK;
+      window.open(url, '_blank');
+    } else {
+      // Fallback to pricing page
+      router.push('/pricing');
     }
   };
 
@@ -65,9 +58,9 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
           <div className="w-16 h-16 mx-auto bg-brand-cyan rounded-full flex items-center justify-center mb-6 shadow-glow-cyan">
             <WrenchIcon className="w-8 h-8 text-black" />
           </div>
-          <h2 id="upgrade-title" className="text-3xl font-bold text-white uppercase tracking-wider">Upgrade to Premium</h2>
+          <h2 id="upgrade-title" className="text-3xl font-bold text-white uppercase tracking-wider">Upgrade to Pro</h2>
           <p className="text-gray-300 mt-2">
-            You've used your free guide. Sign up for Premium to unlock unlimited access!
+            You've used your free guides. Upgrade to Pro for unlimited access!
           </p>
         </div>
 
@@ -79,20 +72,23 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
             </li>
             <li className="flex items-center gap-3">
               <CheckCircleIcon className="text-brand-cyan w-6 h-6 flex-shrink-0" />
-              <span className="text-gray-200">Live Diagnostic Assistant</span>
+              <span className="text-gray-200">Unlimited AI Diagnoses</span>
             </li>
             <li className="flex items-center gap-3">
               <CheckCircleIcon className="text-brand-cyan w-6 h-6 flex-shrink-0" />
               <span className="text-gray-200">Save Repair History</span>
             </li>
+            <li className="flex items-center gap-3">
+              <CheckCircleIcon className="text-brand-cyan w-6 h-6 flex-shrink-0" />
+              <span className="text-gray-200">PDF Guide Downloads</span>
+            </li>
           </ul>
           <div className="flex flex-col gap-3">
             <button
               onClick={handleUpgrade}
-              disabled={loading}
-              className="w-full bg-brand-cyan text-black font-bold py-3 px-4 rounded-lg hover:bg-brand-cyan-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-brand-cyan transition-all disabled:opacity-50"
+              className="w-full bg-brand-cyan text-black font-bold py-3 px-4 rounded-lg hover:bg-brand-cyan-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-brand-cyan transition-all"
             >
-              {loading ? 'Processing...' : (user ? 'Upgrade Now - $9.99/mo' : 'Sign In to Upgrade')}
+              {user ? 'Upgrade Now - $9.99/mo' : 'Sign In to Upgrade'}
             </button>
             <button
               onClick={onClose}
@@ -101,6 +97,9 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
               Maybe Later
             </button>
           </div>
+          <p className="text-center text-gray-600 text-xs mt-4">
+            14-day money-back guarantee. Cancel anytime.
+          </p>
         </div>
       </div>
     </div>
