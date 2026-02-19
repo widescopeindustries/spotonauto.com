@@ -266,33 +266,37 @@ export default function PricingContent() {
             </motion.div>
           )}
 
-          {/* Billing Toggle - only show if annual links are configured */}
-          {getPaymentLinks().proAnnual && getPaymentLinks().proAnnual.includes('stripe.com') && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center justify-center gap-4 mt-8"
-            >
-              <span className={`text-sm ${billingPeriod === 'monthly' ? 'text-white' : 'text-gray-500'}`}>
-                Monthly
-              </span>
+          {/* Billing Toggle */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center justify-center gap-4 mt-8"
+          >
+            <span className={`text-sm ${billingPeriod === 'monthly' ? 'text-white' : 'text-gray-500'}`}>
+              Monthly
+            </span>
+            {/* Annual billing toggle — disabled until Stripe annual links are configured */}
+            <div className="relative group">
               <button
-                onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'annual' : 'monthly')}
-                className="relative w-14 h-7 bg-gray-800 rounded-full p-1 transition-colors"
+                disabled
+                aria-disabled="true"
+                title="Annual billing coming soon"
+                className="relative w-14 h-7 bg-gray-800 rounded-full p-1 transition-colors opacity-50 cursor-not-allowed"
               >
                 <motion.div
-                  className="w-5 h-5 bg-neon-cyan rounded-full"
-                  animate={{ x: billingPeriod === 'annual' ? 28 : 0 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  className="w-5 h-5 bg-gray-500 rounded-full"
+                  animate={{ x: 0 }}
                 />
               </button>
-              <span className={`text-sm ${billingPeriod === 'annual' ? 'text-white' : 'text-gray-500'}`}>
-                Annual
-                <span className="ml-2 text-xs text-neon-cyan">Save 20%</span>
+            </div>
+            <span className="text-sm text-gray-600">
+              Annual
+              <span className="ml-2 text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full border border-gray-700">
+                Coming Soon
               </span>
-            </motion.div>
-          )}
+            </span>
+          </motion.div>
         </div>
 
         {/* Pricing Cards */}

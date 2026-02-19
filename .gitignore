@@ -42,3 +42,6 @@ scripts/indexing-progress.json
 
 # Old Vite project (not used in production)
 /spotonauto.com/
+
+.vercel
+.env*.local

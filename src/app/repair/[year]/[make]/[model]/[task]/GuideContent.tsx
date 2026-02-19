@@ -6,9 +6,10 @@ import ServiceManualGuide from '@/components/ServiceManualGuide';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { generateFullRepairGuide } from '@/services/apiClient';
 import { saveGuide, getGuideById } from '@/services/storageService';
-import { RepairGuide } from '@/types';
+import { RepairGuide, SubscriptionTier } from '@/types';
 import { trackGuideGenerated, trackRepairPageView, trackUpgradeModalShown } from '@/lib/analytics';
-import { trackGuideUse, isProUser } from '@/lib/usageTracker';
+import { trackGuideUse } from '@/lib/usageTracker';
+import { useAuth } from '@/contexts/AuthContext';
 import UpgradeGate from '@/components/UpgradeGate';
 
 interface GuideContentProps {
@@ -24,6 +25,7 @@ const guideCache = new Map<string, RepairGuide>();
 
 export default function GuideContent({ params }: GuideContentProps) {
     const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
     const { year, make, model, task } = params;
 
     const [guide, setGuide] = useState<RepairGuide | null>(null);
@@ -31,13 +33,25 @@ export default function GuideContent({ params }: GuideContentProps) {
     const [error, setError] = useState<string | null>(null);
     const [gated, setGated] = useState<{ used: number; limit: number } | null>(null);
 
+    // Determine pro status from Supabase (via AuthContext) — NOT localStorage
+    const isPro = user?.tier === SubscriptionTier.Pro || user?.tier === SubscriptionTier.ProPlus;
+
     useEffect(() => {
+        // Wait until auth state is resolved before proceeding
+        if (authLoading) return;
+
+        // If no user, redirect to auth (API now requires authentication)
+        if (!user) {
+            router.push(`/auth?redirect=${encodeURIComponent(window.location.pathname)}`);
+            return;
+        }
+
         const fetchGuide = async () => {
             setError(null);
             setLoading(true);
 
-            // Check usage limits (skip for pro users)
-            if (!isProUser()) {
+            // Check usage limits (skip for pro users — authoritative check is on server too)
+            if (!isPro) {
                 const usage = trackGuideUse();
                 if (!usage.allowed) {
                     setGated({ used: usage.used, limit: usage.limit });
@@ -75,7 +89,12 @@ export default function GuideContent({ params }: GuideContentProps) {
                 });
                 trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
                 setGuide(generatedGuide);
-            } catch (err) {
+            } catch (err: any) {
+                // Handle 401 specifically — redirect to auth
+                if (err.message?.includes('Authentication required') || err.message?.includes('401')) {
+                    router.push(`/auth?redirect=${encodeURIComponent(window.location.pathname)}`);
+                    return;
+                }
                 setError(err instanceof Error ? err.message : "Failed to generate guide.");
             } finally {
                 setLoading(false);
@@ -83,9 +102,9 @@ export default function GuideContent({ params }: GuideContentProps) {
         };
 
         fetchGuide();
-    }, [year, make, model, task]);
+    }, [year, make, model, task, authLoading, user, isPro]);
 
-    if (loading) return (
+    if (authLoading || loading) return (
         <div className="min-h-[60vh] flex flex-col items-center justify-center p-4 bg-[#f8f6f1]">
             <div className="text-center">
                 <div className="inline-block w-12 h-12 border-4 border-[#1e3a5f] border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -143,4 +162,3 @@ export default function GuideContent({ params }: GuideContentProps) {
         </div>
     );
 }
-

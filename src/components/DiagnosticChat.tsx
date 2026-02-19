@@ -3,8 +3,9 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Cpu, Activity, ImageIcon, Camera, Lock } from 'lucide-react';
 import { createDiagnosticChat, sendDiagnosticMessage, Chat } from '../services/apiClient';
-import { Vehicle } from '../types';
-import { trackDiagnosisUse, isProUser } from '../lib/usageTracker';
+import { Vehicle, SubscriptionTier } from '../types';
+import { trackDiagnosisUse } from '../lib/usageTracker';
+import { useAuth } from '../contexts/AuthContext';
 
 interface DiagnosticChatProps {
     vehicle?: Vehicle;
@@ -22,6 +23,7 @@ interface Message {
 const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, initialProblem: initialProblemProp }) => {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const { user } = useAuth();
     const [messages, setMessages] = useState<Message[]>([]);
     const [typing, setTyping] = useState(false);
     const [chatSession, setChatSession] = useState<Chat | null>(null);
@@ -29,6 +31,9 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const [limitReached, setLimitReached] = useState(false);
     const [messageCount, setMessageCount] = useState(0);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // Determine pro status from Supabase (via AuthContext) — NOT localStorage
+    const isPro = user?.tier === SubscriptionTier.Pro || user?.tier === SubscriptionTier.ProPlus;
 
     // Free users get 1 diagnostic session (tracked on first message send)
     const FREE_MESSAGE_LIMIT = 6; // Allow a few back-and-forth messages per session
@@ -98,8 +103,8 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const handleUserResponse = async (text: string, activeChat = chatSession) => {
         if (!text.trim() || !activeChat) return;
 
-        // Check usage limits for free users
-        if (!isProUser()) {
+        // Check usage limits for free users (isPro sourced from Supabase via AuthContext)
+        if (!isPro) {
             // On first user message, track the diagnosis use
             if (messageCount === 0) {
                 const { allowed } = trackDiagnosisUse();

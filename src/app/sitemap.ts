@@ -3,7 +3,7 @@ import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS } from '@/data/vehicles';
 
 // Only generate years within our target range that also match production years
 const SITEMAP_YEAR_MIN = 1982;
-const SITEMAP_YEAR_MAX = 2013;
+const SITEMAP_YEAR_MAX = 2024;
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://spotonauto.com';

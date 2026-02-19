@@ -1,10 +1,22 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-02-24.acacia',
-});
+// Guard: Stripe constructor throws if key is missing — defer instantiation to request time
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-02-24.acacia',
+    });
+  }
+  return _stripe;
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,7 +32,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+    event = getStripe().webhooks.constructEvent(payload, signature, webhookSecret);
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
     return NextResponse.json({ error: err.message }, { status: 400 });
@@ -94,7 +106,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
     
     // Continue with the matched user
-    const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+    const subscription = await getStripe().subscriptions.retrieve(session.subscription as string);
     const priceId = subscription.items.data[0].price.id;
     const tier = getTierFromPriceId(priceId);
     
@@ -115,7 +127,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   // Get subscription details
-  const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+  const subscription = await getStripe().subscriptions.retrieve(session.subscription as string);
   
   // Determine tier based on price
   const priceId = subscription.items.data[0].price.id;
@@ -151,7 +163,7 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
   if (!subscription) return;
 
   // Update period dates
-  const stripeSub = await stripe.subscriptions.retrieve(subscriptionId);
+  const stripeSub = await getStripe().subscriptions.retrieve(subscriptionId);
   
   await supabase
     .from('subscriptions')

@@ -10,6 +10,7 @@ import HowItWorksSection from '@/components/HowItWorksSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import CTASection from '@/components/CTASection';
 import { FadeInUp, ScaleIn, GlassCard } from '@/components/MotionWrappers';
+import PopularGuidesSection from '@/components/PopularGuidesSection';
 
 // Hero Section Component
 const HeroSection = () => {
@@ -145,6 +146,7 @@ export default function ClientHome() {
             {/* Main Content */}
             <main className="relative z-10">
                 <HeroSection />
+                <PopularGuidesSection />
                 <FeaturesSection />
                 <HowItWorksSection />
                 <TestimonialsSection />

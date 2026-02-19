@@ -156,39 +156,40 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { year, make, model, task } = await params;
     const cleanTask = task.replace(/-/g, ' ');
 
+    // Fix title case: use getDisplayName so "toyota" → "Toyota", "grand-cherokee" → "Grand Cherokee"
     const displayMake = getDisplayName(make, 'make') || toTitleCase(make);
     const displayModel = getDisplayName(model, 'model') || toTitleCase(model);
     const vehicleName = `${year} ${displayMake} ${displayModel}`;
 
-    // Title-case the task (e.g. "oil change" → "Oil Change")
+    // Title-case the task for display (e.g. "oil change" → "Oil Change")
     const titleTask = cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-    // Keyword-first title, hard cap ~55 chars for no truncation in SERPs
-    // Pattern: "[Year] [Make] [Model] [Task] Guide | SpotOnAuto"
-    const title = `${vehicleName} ${titleTask} Guide | SpotOnAuto`;
+    // CTR-optimized title: searchers use "how to" queries; year+make+model matches intent
+    const title = `How to ${titleTask} on a ${vehicleName} — Step-by-Step`;
 
-    // Under 160 chars, action-oriented
-    const description = `DIY ${cleanTask} for your ${vehicleName}. Step-by-step guide with tools, parts list, and safety tips. Save $100–$400 vs. the shop.`;
+    // Description: urgency + savings angle in 155 chars
+    const description = `Save $100–$400 doing your own ${cleanTask} on a ${vehicleName}. Step-by-step instructions, exact parts list, tools needed, and torque specs.`;
 
     return {
         title,
         description,
         keywords: [
-            `${year} ${displayMake} ${displayModel} ${cleanTask}`,
-            `${displayMake} ${displayModel} ${cleanTask}`,
             `how to ${cleanTask} ${displayMake} ${displayModel}`,
-            `${cleanTask} ${displayMake} ${displayModel} DIY`,
+            `${year} ${displayMake} ${displayModel} ${cleanTask}`,
+            `${displayMake} ${displayModel} ${cleanTask} DIY`,
+            `${cleanTask} ${displayMake} ${displayModel} step by step`,
             `${year} ${displayMake} ${cleanTask}`,
+            `${cleanTask} cost ${displayMake}`,
         ],
         openGraph: {
-            title: `${vehicleName} ${titleTask} Guide`,
-            description: `Step-by-step ${cleanTask} guide for the ${vehicleName}. Tools, parts & safety tips included.`,
+            title: `How to ${titleTask} on a ${vehicleName} — Step-by-Step`,
+            description: `Save $100–$400 with our DIY ${cleanTask} guide for the ${vehicleName}. Tools, parts, and step-by-step instructions.`,
             type: 'article',
             url: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}`,
         },
         twitter: {
             card: 'summary',
-            title: `${vehicleName} ${titleTask} Guide`,
+            title: `How to ${titleTask} on a ${vehicleName}`,
             description: `DIY guide — save $100–$400 vs. the shop. Tools, parts & steps.`,
         },
         alternates: {
@@ -208,8 +209,8 @@ export default async function Page({ params }: PageProps) {
 
     const cleanTask = task.replace(/-/g, ' ');
     // Use display names for proper capitalization
-    const displayMake = getDisplayName(make, 'make') || toTitleCase(make);
-    const displayModel = getDisplayName(model, 'model') || toTitleCase(model);
+    const displayMake = getDisplayName(make, 'make') || decodeURIComponent(make);
+    const displayModel = getDisplayName(model, 'model') || decodeURIComponent(model);
 
     const vehicleName = `${year} ${displayMake} ${displayModel}`;
 
@@ -371,7 +372,7 @@ export default async function Page({ params }: PageProps) {
             {/* More SEO Content */}
             <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
                 <h2 className="text-xl font-bold text-white mb-4">
-                    About {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} on {displayMake} {displayModel}
+                    About {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} on {make} {model}
                 </h2>
                 <p className="text-gray-400 mb-4">
                     Performing a {cleanTask} on your {vehicleName} is a common maintenance task that
@@ -379,7 +380,7 @@ export default async function Page({ params }: PageProps) {
                     you can save $100-400 compared to dealership or shop prices.
                 </p>
                 <p className="text-gray-400 mb-4">
-                    The {displayMake} {displayModel} has been in production for many years, and {cleanTask} procedures
+                    The {make} {model} has been in production for many years, and {cleanTask} procedures
                     are well-documented. Always refer to your owner&apos;s manual for vehicle-specific
                     information and torque specifications.
                 </p>
@@ -400,75 +401,7 @@ export default async function Page({ params }: PageProps) {
                     </Link>
                 </div>
             </section>
-
-            {/* ── Related Repairs ─────────────────────────────────────────── */}
-            {/* This section provides internal links so Google can crawl between */}
-            {/* repair pages, solving the orphan-page problem. */}
-            <section className="max-w-6xl mx-auto px-4 py-10 border-t border-white/10">
-                <h2 className="text-xl font-bold text-white mb-6">Related Repairs for Your {displayMake} {displayModel}</h2>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {VALID_TASKS
-                        .filter(t => t !== task)
-                        .map(relTask => (
-                            <Link
-                                key={relTask}
-                                href={`/repair/${year}/${make}/${model}/${relTask}`}
-                                className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
-                            >
-                                <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
-                                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                                    {year} {displayMake} {displayModel} {toTitleCase(relTask)}
-                                </span>
-                            </Link>
-                        ))
-                    }
-                </div>
-
-                <h2 className="text-xl font-bold text-white mt-10 mb-6">
-                    {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides for Other Vehicles
-                </h2>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {[
-                        { y: '2013', mk: 'bmw', mo: 'x3' },
-                        { y: '2009', mk: 'bmw', mo: 'x5' },
-                        { y: '2013', mk: 'toyota', mo: 'corolla' },
-                        { y: '2013', mk: 'honda', mo: 'odyssey' },
-                        { y: '2013', mk: 'nissan', mo: 'rogue' },
-                        { y: '2012', mk: 'nissan', mo: 'sentra' },
-                        { y: '2012', mk: 'chevrolet', mo: 'malibu' },
-                        { y: '2012', mk: 'kia', mo: 'soul' },
-                        { y: '2011', mk: 'subaru', mo: 'forester' },
-                    ]
-                        .filter(v => !(v.y === year && v.mk === make.toLowerCase() && v.mo === model.toLowerCase()))
-                        .slice(0, 6)
-                        .map(v => {
-                            const relMake = getDisplayName(v.mk, 'make') || toTitleCase(v.mk);
-                            const relModel = getDisplayName(v.mo, 'model') || toTitleCase(v.mo);
-                            return (
-                                <Link
-                                    key={`${v.y}-${v.mk}-${v.mo}`}
-                                    href={`/repair/${v.y}/${v.mk}/${v.mo}/${task}`}
-                                    className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
-                                >
-                                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
-                                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                                        {v.y} {relMake} {relModel} {toTitleCase(task)}
-                                    </span>
-                                </Link>
-                            );
-                        })
-                    }
-                </div>
-
-                <div className="mt-8">
-                    <Link
-                        href="/#popular-guides"
-                        className="inline-flex items-center gap-2 text-cyan-500 hover:text-cyan-400 text-sm font-medium transition-colors"
-                    >
-                        ← View All Popular Repair Guides
-                    </Link>
-                </div>
-            </section>
         </>
     );
 }
+

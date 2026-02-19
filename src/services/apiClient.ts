@@ -4,18 +4,37 @@
  */
 
 import { Vehicle, VehicleInfo, RepairGuide } from '../types';
+import { supabase } from '../lib/supabaseClient';
 
 const API_ENDPOINT = '/api/generate-guide';
+
+/**
+ * Get auth headers for API requests (attaches Supabase JWT if logged in)
+ */
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+  } catch {
+    // Silently fail - API route will return 401 if auth required
+  }
+  return headers;
+}
 
 /**
  * Makes a request to the server-side API
  */
 async function makeApiRequest(action: string, payload: any, options?: { stream?: boolean }) {
+  const headers = await getAuthHeaders();
+
   const response = await fetch(API_ENDPOINT, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify({ action, payload, stream: options?.stream }),
   });
 
@@ -52,11 +71,10 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
  * Generate an image for a specific repair step
  */
 export const generateStepImage = async (vehicle: string, instruction: string): Promise<string> => {
+  const authHeaders = await getAuthHeaders();
   const response = await fetch('/api/generate-step-image', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeaders,
     body: JSON.stringify({ vehicle, instruction }),
   });
 
@@ -76,11 +94,10 @@ export const streamRepairGuide = async (
   task: string,
   onUpdate: (chunk: any) => void
 ): Promise<RepairGuide> => {
+  const headers = await getAuthHeaders();
   const response = await fetch(API_ENDPOINT, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify({ action: 'generate-guide', payload: { vehicle, task }, stream: true }),
   });
 
@@ -174,3 +191,8 @@ export const sendDiagnosticMessage = async (
 
   return response;
 };
+
+/**
+ * Send a diagnostic message (alias for sendDiagnosticMessage for compatibility)
+ */
+export const sendDiagnosticMessageWithHistory = sendDiagnosticMessage;

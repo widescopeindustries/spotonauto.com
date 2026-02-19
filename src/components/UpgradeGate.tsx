@@ -3,6 +3,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { trackUpgradeModalShown, trackUpgradeClick } from '@/lib/analytics';
+import { useAuth } from '@/contexts/AuthContext';
+
+// Direct Stripe payment link (same source as UpgradeModal + PricingContent)
+const PRO_MONTHLY_LINK =
+  process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK ||
+  'https://buy.stripe.com/cNi14na6t8iycykeo718c08';
 
 interface UpgradeGateProps {
   type: 'guide' | 'diagnosis';
@@ -12,6 +18,7 @@ interface UpgradeGateProps {
 
 export default function UpgradeGate({ type, used, limit }: UpgradeGateProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const typeLabel = type === 'guide' ? 'repair guides' : 'diagnoses';
 
   useEffect(() => {
@@ -19,8 +26,20 @@ export default function UpgradeGate({ type, used, limit }: UpgradeGateProps) {
   }, []);
 
   const handleUpgrade = () => {
-    trackUpgradeClick(false);
-    router.push('/pricing');
+    trackUpgradeClick(!!user);
+
+    // If user is not logged in, send to auth first, then return to current page
+    if (!user) {
+      const returnUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
+      router.push(`/auth?redirect=${encodeURIComponent(returnUrl)}`);
+      return;
+    }
+
+    // User is logged in — go directly to Stripe checkout (3 steps: click → Stripe → done)
+    const url = user.email
+      ? `${PRO_MONTHLY_LINK}?prefilled_email=${encodeURIComponent(user.email)}`
+      : PRO_MONTHLY_LINK;
+    window.open(url, '_blank');
   };
 
   return (
@@ -66,12 +85,12 @@ export default function UpgradeGate({ type, used, limit }: UpgradeGateProps) {
         ))}
       </div>
 
-      {/* CTA */}
+      {/* CTA — directly opens Stripe checkout for logged-in users */}
       <button
         onClick={handleUpgrade}
         className="px-8 py-4 rounded-lg font-bold text-sm tracking-wider uppercase bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_30px_rgba(0,212,255,0.4)] transition-all mb-3"
       >
-        UPGRADE TO PRO &mdash; $9.99/mo
+        {user ? 'UPGRADE TO PRO — $9.99/mo' : 'SIGN IN TO UPGRADE'}
       </button>
 
       <p className="text-gray-600 text-xs mt-4">
