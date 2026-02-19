@@ -27,6 +27,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 interface PricingTier {
   name: string;
   price: number;
+  annualPrice?: number;
   period: string;
   description: string;
   icon: React.ReactNode;
@@ -74,6 +75,7 @@ const TIERS: PricingTier[] = [
   {
     name: 'Pro',
     price: 9.99,
+    annualPrice: 99,
     period: 'month',
     description: 'For serious DIY mechanics',
     icon: <Zap className="w-6 h-6" />,
@@ -94,6 +96,7 @@ const TIERS: PricingTier[] = [
   {
     name: 'Pro+',
     price: 19.99,
+    annualPrice: 199,
     period: 'month',
     description: 'Professional-grade tools',
     icon: <Car className="w-6 h-6" />,
@@ -334,13 +337,13 @@ export default function PricingContent() {
                 <div className="mb-8">
                   <div className="flex items-baseline gap-1">
                     <span className="text-5xl font-bold text-white">
-                      ${billingPeriod === 'annual' && tier.price > 0 ? (tier.price * 12 * 0.8).toFixed(2) : tier.price}
+                      ${billingPeriod === 'annual' && tier.annualPrice ? tier.annualPrice : tier.price}
                     </span>
                     <span className="text-gray-500">/{billingPeriod === 'annual' && tier.price > 0 ? 'year' : tier.period}</span>
                   </div>
-                  {billingPeriod === 'annual' && tier.price > 0 && (
+                  {billingPeriod === 'annual' && tier.annualPrice && tier.price > 0 && (
                     <p className="text-sm text-neon-cyan mt-1">
-                      Save ${(tier.price * 12 * 0.2).toFixed(0)}/year
+                      Save ${((tier.price * 12) - tier.annualPrice).toFixed(0)}/year
                     </p>
                   )}
                 </div>
