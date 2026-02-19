@@ -354,14 +354,35 @@ export default async function Page({ params }: PageProps) {
 
                 {/* CTA to AI Guide */}
                 <div className="bg-gradient-to-r from-brand-cyan/10 to-purple-500/10 rounded-2xl p-8 text-center border border-brand-cyan/30 mb-8">
-                    <h2 className="text-2xl font-bold text-white mb-4">
-                        Get Your Personalized AI Repair Guide
+                    <div className="inline-block bg-brand-cyan/20 text-brand-cyan text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
+                        Pro Feature
+                    </div>
+                    <h2 className="text-2xl font-bold text-white mb-3">
+                        Get the Full AI-Powered Repair Guide
                     </h2>
-                    <p className="text-gray-400 mb-6 max-w-xl mx-auto">
-                        Our AI generates a detailed, vehicle-specific guide with exact part numbers,
-                        torque specs, and step-by-step instructions for your {vehicleName}.
+                    <p className="text-gray-400 mb-2 max-w-xl mx-auto">
+                        Exact torque specs, part numbers, wiring diagrams, and step-by-step instructions tailored to your <strong className="text-white">{vehicleName}</strong>.
                     </p>
-                    <p className="text-sm text-brand-cyan mb-4">Loading your custom guide below...</p>
+                    <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
+                        Pro members get unlimited AI guides for every vehicle in their garage — plus OBD-II scanner integration and PDF downloads.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                        <a
+                            href="https://buy.stripe.com/cNi14na6t8iycykeo718c08"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-8 py-4 bg-brand-cyan text-black font-bold rounded-xl hover:bg-cyan-400 transition-colors text-lg"
+                        >
+                            Upgrade to Pro — $9.99/mo
+                        </a>
+                        <Link
+                            href="/auth/signup"
+                            className="px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20"
+                        >
+                            Try Free (3 guides/month)
+                        </Link>
+                    </div>
+                    <p className="text-xs text-gray-600 mt-4">Cancel anytime · 14-day money-back guarantee</p>
                 </div>
             </article>
 
