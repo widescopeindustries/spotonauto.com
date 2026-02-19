@@ -45,9 +45,9 @@ const getPaymentLinks = () => {
   // Access env vars inside function to avoid build-time issues
   return {
     proMonthly: 'https://buy.stripe.com/cNi14na6t8iycykeo718c08',
-    proAnnual: '',
+    proAnnual: 'https://buy.stripe.com/9B628r5QdbuK8i44Nx18c0b',
     proPlusMonthly: 'https://buy.stripe.com/fZubJ192pdCS1TGeo718c09',
-    proPlusAnnual: '',
+    proPlusAnnual: 'https://buy.stripe.com/3cI14n6UhbuK69Wgwf18c0a',
   };
 };
 
@@ -107,8 +107,8 @@ const TIERS: PricingTier[] = [
       { text: 'Advanced diagnostics', included: true },
       { text: 'White-glove onboarding', included: true },
     ],
-    cta: 'Contact Sales',
-    ctaAction: 'contact',
+    cta: 'Upgrade to Pro+',
+    ctaAction: 'payment-link',
   },
 ];
 
