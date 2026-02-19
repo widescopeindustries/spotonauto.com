@@ -55,20 +55,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Server configuration error: Missing API Key' }, { status: 500 });
   }
 
-  // ── Authentication guard ──────────────────────────────────────────────────
-  const user = await getAuthenticatedUser(req);
-  if (!user) {
-    return NextResponse.json(
-      { error: 'Authentication required. Please sign in to continue.' },
-      { status: 401 }
-    );
-  }
-  // ─────────────────────────────────────────────────────────────────────────
-
   try {
     const body = await req.json();
     const { action, payload, stream } = body;
-    console.log(`API Request [user:${user.id}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);
+
+    // ── Authentication guard ──────────────────────────────────────────────────
+    // diagnostic-chat is free for all visitors (no sign-up required, as advertised)
+    // generate-guide and other actions require authentication
+    const user = await getAuthenticatedUser(req);
+    if (action !== 'diagnostic-chat' && !user) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in to continue.' },
+        { status: 401 }
+      );
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
+    console.log(`API Request [user:${user?.id ?? 'anonymous'}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);
 
     if (!action) {
       return NextResponse.json({ error: 'Missing action' }, { status: 400 });
@@ -96,9 +99,9 @@ export async function POST(req: NextRequest) {
       // Pro users get unlimited; free users are rate-limited client-side.
       // This server check is an authoritative source of truth for Pro status.
       if (action === 'generate-guide') {
-        const userIsPro = await isProUser(user.id);
+        const userIsPro = await isProUser(user!.id);
         // Log for audit purposes (client-side limit still applies for free users)
-        console.log(`[API] generate-guide: user=${user.id}, isPro=${userIsPro}`);
+        console.log(`[API] generate-guide: user=${user!.id}, isPro=${userIsPro}`);
         // Future: enforce server-side usage limits for free tier here
       }
       // ────────────────────────────────────────────────────────────────────
