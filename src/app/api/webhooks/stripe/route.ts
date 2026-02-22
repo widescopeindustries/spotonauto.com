@@ -234,23 +234,16 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
 /**
  * Map a Stripe Price ID to a subscription tier.
- *
- * To configure: go to Stripe Dashboard → Product Catalog → each product →
- * copy the price_XXXX ID and add to Vercel env vars:
- *   STRIPE_PRO_PLUS_MONTHLY_PRICE_ID=price_XXXX
- *   STRIPE_PRO_PLUS_ANNUAL_PRICE_ID=price_XXXX
- *
- * Without these set, ALL payments default to 'pro' tier.
- * Pro subscribers get 'pro' correctly; Pro+ subscribers also get 'pro' (wrong)
- * until these env vars are configured.
+ * All 4 price IDs are now configured via env vars.
  */
 function getTierFromPriceId(priceId: string): 'pro' | 'pro_plus' {
   const proPlusPriceIds = [
-    process.env.STRIPE_PRO_PLUS_MONTHLY_PRICE_ID,
-    process.env.STRIPE_PRO_PLUS_ANNUAL_PRICE_ID,
+    process.env.STRIPE_PRO_PLUS_MONTHLY_PRICE_ID, // price_1SzvMzFHOW0K7xmh1cfzfQU3
+    process.env.STRIPE_PRO_PLUS_ANNUAL_PRICE_ID,  // price_1T2Q9SFHOW0K7xmhiAkaNS9R
   ].filter(Boolean);
 
   if (proPlusPriceIds.includes(priceId)) return 'pro_plus';
-  return 'pro';
+  return 'pro'; // covers Pro Monthly + Pro Annual
 }
+
 

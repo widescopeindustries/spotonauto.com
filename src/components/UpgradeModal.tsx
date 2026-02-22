@@ -1,6 +1,8 @@
+'use client';
 
-import React, { useState, useEffect } from 'react';
-import { WrenchIcon, CheckCircleIcon } from './Icons';
+import React, { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Zap, CheckCircle2, ArrowRight, Shield, Star } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { trackUpgradeModalShown, trackUpgradeClick } from '../lib/analytics';
 import { useRouter } from 'next/navigation';
@@ -9,19 +11,43 @@ interface UpgradeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAuthClick: () => void;
+  /** Controls the headline copy shown — matches the moment of friction */
+  trigger?: 'diagnosis-limit' | 'guide-limit' | 'feature-gate' | 'generic';
 }
 
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK || 'https://buy.stripe.com/cNi14na6t8iycykeo718c08';
 
-const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClick }) => {
+const TRIGGERS = {
+  'diagnosis-limit': {
+    headline: "You've used your 3 free diagnoses",
+    sub: "Your car problem isn't solved yet. Pro gives you unlimited AI diagnoses — get the answer now.",
+    urgency: '⚡ Most users solve their issue in the next session.',
+  },
+  'guide-limit': {
+    headline: "You've reached 5 free repair guides",
+    sub: "Unlock unlimited step-by-step guides with exact torque specs, wiring diagrams, and part numbers.",
+    urgency: '💰 Pro members save an average of $340 per repair.',
+  },
+  'feature-gate': {
+    headline: 'Pro feature — unlock it now',
+    sub: 'Get unlimited diagnostics, guides, OBD-II scanner integration, and PDF downloads.',
+    urgency: '🔓 Cancel anytime. No risk.',
+  },
+  'generic': {
+    headline: 'Unlock the full SpotOn Auto experience',
+    sub: 'Unlimited AI diagnoses and repair guides for less than a coffee a week.',
+    urgency: '🛡️ 14-day money-back guarantee.',
+  },
+};
+
+const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClick, trigger = 'generic' }) => {
   const { user } = useAuth();
   const router = useRouter();
+  const content = TRIGGERS[trigger];
 
   useEffect(() => {
     if (isOpen) trackUpgradeModalShown();
   }, [isOpen]);
-
-  if (!isOpen) return null;
 
   const handleUpgrade = () => {
     trackUpgradeClick(!!user);
@@ -29,80 +55,125 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
       onAuthClick();
       return;
     }
+    const url = user.email
+      ? `${PAYMENT_LINK}?prefilled_email=${encodeURIComponent(user.email)}`
+      : PAYMENT_LINK;
+    window.open(url, '_blank');
+    onClose();
+  };
 
-    // Use Stripe Payment Link (same approach as pricing page)
-    if (PAYMENT_LINK && PAYMENT_LINK.includes('stripe.com')) {
-      const url = user.email
-        ? `${PAYMENT_LINK}?prefilled_email=${encodeURIComponent(user.email)}`
-        : PAYMENT_LINK;
-      window.open(url, '_blank');
-    } else {
-      // Fallback to pricing page
-      router.push('/pricing');
-    }
+  const handleViewPlans = () => {
+    router.push('/pricing');
+    onClose();
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="upgrade-title"
-    >
-      <div
-        className="bg-black border border-brand-cyan/50 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden shadow-glow-cyan"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="p-8 text-center">
-          <div className="w-16 h-16 mx-auto bg-brand-cyan rounded-full flex items-center justify-center mb-6 shadow-glow-cyan">
-            <WrenchIcon className="w-8 h-8 text-black" />
-          </div>
-          <h2 id="upgrade-title" className="text-3xl font-bold text-white uppercase tracking-wider">Upgrade to Pro</h2>
-          <p className="text-gray-300 mt-2">
-            You've used your free guides. Upgrade to Pro for unlimited access!
-          </p>
-        </div>
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50"
+            onClick={onClose}
+            aria-hidden="true"
+          />
 
-        <div className="px-8 pb-8">
-          <ul className="space-y-3 text-left mb-8">
-            <li className="flex items-center gap-3">
-              <CheckCircleIcon className="text-brand-cyan w-6 h-6 flex-shrink-0" />
-              <span className="text-gray-200">Unlimited Repair Guides</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <CheckCircleIcon className="text-brand-cyan w-6 h-6 flex-shrink-0" />
-              <span className="text-gray-200">Unlimited AI Diagnoses</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <CheckCircleIcon className="text-brand-cyan w-6 h-6 flex-shrink-0" />
-              <span className="text-gray-200">Save Repair History</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <CheckCircleIcon className="text-brand-cyan w-6 h-6 flex-shrink-0" />
-              <span className="text-gray-200">PDF Guide Downloads</span>
-            </li>
-          </ul>
-          <div className="flex flex-col gap-3">
-            <button
-              onClick={handleUpgrade}
-              className="w-full bg-brand-cyan text-black font-bold py-3 px-4 rounded-lg hover:bg-brand-cyan-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-brand-cyan transition-all"
-            >
-              {user ? 'Upgrade Now - $9.99/mo' : 'Sign In to Upgrade'}
-            </button>
-            <button
-              onClick={onClose}
-              className="w-full bg-transparent border-2 border-gray-600 text-gray-300 font-bold py-3 px-4 rounded-lg hover:bg-gray-800 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-gray-500 transition-all"
-            >
-              Maybe Later
-            </button>
-          </div>
-          <p className="text-center text-gray-600 text-xs mt-4">
-            14-day money-back guarantee. Cancel anytime.
-          </p>
-        </div>
-      </div>
-    </div>
+          {/* Modal */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md px-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="upgrade-modal-title"
+          >
+            <div className="relative bg-[#09090f] border border-cyan-500/20 rounded-2xl p-7 shadow-2xl overflow-hidden">
+              {/* Background glow */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-24 bg-cyan-500/10 blur-[60px] pointer-events-none" />
+
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-600 hover:text-gray-300 transition-colors"
+                aria-label="Close upgrade modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-full mb-4">
+                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                <span className="text-amber-400 text-xs font-bold tracking-wider uppercase">SpotOn Pro</span>
+              </div>
+
+              {/* Headline */}
+              <h2 id="upgrade-modal-title" className="font-display font-black text-xl text-white mb-2 leading-tight">
+                {content.headline}
+              </h2>
+              <p className="text-gray-400 text-sm mb-5 leading-relaxed">
+                {content.sub}
+              </p>
+
+              {/* Price card */}
+              <div className="bg-white/[0.04] border border-white/10 rounded-xl p-4 mb-5">
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-3xl font-black text-white">$9.99</span>
+                  <span className="text-gray-500 text-sm">/month</span>
+                  <span className="ml-auto text-xs text-green-400 font-semibold bg-green-400/10 px-2 py-1 rounded-full whitespace-nowrap">
+                    Save 17% annually
+                  </span>
+                </div>
+                <ul className="space-y-2">
+                  {[
+                    'Unlimited AI diagnoses',
+                    'Unlimited repair guides',
+                    'OBD-II scanner integration',
+                    'PDF downloads & repair history',
+                    '10 vehicles in your garage',
+                  ].map(f => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                      <CheckCircle2 className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Urgency line */}
+              <p className="text-xs text-center text-amber-400/80 mb-4">{content.urgency}</p>
+
+              {/* Primary CTA */}
+              <button
+                onClick={handleUpgrade}
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl transition-all mb-2 text-sm"
+              >
+                <Zap className="w-4 h-4" />
+                {user ? 'Upgrade to Pro — $9.99/mo' : 'Sign In to Upgrade'}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={handleViewPlans}
+                className="w-full py-2 text-gray-500 hover:text-gray-300 text-sm transition-colors"
+              >
+                Compare all plans →
+              </button>
+
+              {/* Trust badge */}
+              <div className="flex items-center justify-center gap-1.5 mt-3">
+                <Shield className="w-3 h-3 text-gray-600" />
+                <span className="text-[11px] text-gray-600">14-day money-back · Cancel anytime · Instant access</span>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 
