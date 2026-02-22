@@ -376,7 +376,7 @@ export default async function Page({ params }: PageProps) {
                             Upgrade to Pro — $9.99/mo
                         </a>
                         <Link
-                            href="/auth/signup"
+                            href="/auth"
                             className="px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20"
                         >
                             Try Free (3 guides/month)

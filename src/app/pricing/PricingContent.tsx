@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { createClient } from '@supabase/supabase-js';
-import { 
-  Check, 
-  X, 
-  Zap, 
-  Car, 
-  Wrench, 
-  Bluetooth, 
-  FileText, 
+import {
+  Check,
+  X,
+  Zap,
+  Car,
+  Wrench,
+  Bluetooth,
+  FileText,
   Headphones,
   CreditCard,
   Shield,
@@ -41,14 +41,13 @@ interface PricingTier {
   popular?: boolean;
 }
 
-// STRIPE PAYMENT LINKS - Hardcoded fallbacks for build, env vars for runtime
+// STRIPE PAYMENT LINKS - env vars with hardcoded fallbacks
 const getPaymentLinks = () => {
-  // Access env vars inside function to avoid build-time issues
   return {
-    proMonthly: 'https://buy.stripe.com/cNi14na6t8iycykeo718c08',
-    proAnnual: 'https://buy.stripe.com/9B628r5QdbuK8i44Nx18c0b',
-    proPlusMonthly: 'https://buy.stripe.com/fZubJ192pdCS1TGeo718c09',
-    proPlusAnnual: 'https://buy.stripe.com/3cI14n6UhbuK69Wgwf18c0a',
+    proMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK || 'https://buy.stripe.com/cNi14na6t8iycykeo718c08',
+    proAnnual: process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL_LINK || 'https://buy.stripe.com/9B628r5QdbuK8i44Nx18c0b',
+    proPlusMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_PLUS_MONTHLY_LINK || 'https://buy.stripe.com/fZubJ192pdCS1TGeo718c09',
+    proPlusAnnual: process.env.NEXT_PUBLIC_STRIPE_PRO_PLUS_ANNUAL_LINK || 'https://buy.stripe.com/3cI14n6UhbuK69Wgwf18c0a',
   };
 };
 
@@ -112,6 +111,7 @@ const TIERS: PricingTier[] = [
     ],
     cta: 'Upgrade to Pro+',
     ctaAction: 'payment-link',
+    popular: false,
   },
 ];
 
@@ -143,7 +143,7 @@ export default function PricingContent() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
-      
+
       if (user) {
         // Get user's current subscription
         const { data: subscription } = await supabase
@@ -151,7 +151,7 @@ export default function PricingContent() {
           .select('tier')
           .eq('user_id', user.id)
           .single();
-        
+
         if (subscription) {
           setUserTier(subscription.tier);
         }
@@ -188,11 +188,11 @@ export default function PricingContent() {
     if (tier.ctaAction === 'payment-link') {
       // Get the correct payment link based on tier and billing period
       let paymentLink = '';
-      
+
       const links = getPaymentLinks();
       if (tier.name === 'Pro') {
-        paymentLink = billingPeriod === 'annual' 
-          ? links.proAnnual 
+        paymentLink = billingPeriod === 'annual'
+          ? links.proAnnual
           : links.proMonthly;
       } else if (tier.name === 'Pro+') {
         paymentLink = billingPeriod === 'annual'
@@ -202,10 +202,10 @@ export default function PricingContent() {
 
       if (paymentLink && paymentLink.includes('stripe.com')) {
         // Add user's email to prefill (if available)
-        const url = user?.email 
+        const url = user?.email
           ? `${paymentLink}?prefilled_email=${encodeURIComponent(user.email)}`
           : paymentLink;
-        
+
         window.open(url, '_blank');
       } else {
         alert('Payment link not configured yet. Please check the setup instructions.');
@@ -222,7 +222,7 @@ export default function PricingContent() {
       return 'Downgrade';
     }
     if ((tier.name === 'Pro' && userTier === 'pro_plus') ||
-        (tier.name === 'Pro+' && userTier === 'pro')) {
+      (tier.name === 'Pro+' && userTier === 'pro')) {
       return 'Switch Plan';
     }
     return tier.cta;
@@ -251,7 +251,7 @@ export default function PricingContent() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 max-w-2xl mx-auto"
           >
-            Start free, upgrade when you need more power. 
+            Start free, upgrade when you need more power.
             Save hundreds on diagnostics and repairs.
           </motion.p>
 
@@ -279,24 +279,23 @@ export default function PricingContent() {
             <span className={`text-sm ${billingPeriod === 'monthly' ? 'text-white' : 'text-gray-500'}`}>
               Monthly
             </span>
-            {/* Annual billing toggle — disabled until Stripe annual links are configured */}
+            {/* Annual billing toggle */}
             <div className="relative group">
               <button
-                disabled
-                aria-disabled="true"
-                title="Annual billing coming soon"
-                className="relative w-14 h-7 bg-gray-800 rounded-full p-1 transition-colors opacity-50 cursor-not-allowed"
+                onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'annual' : 'monthly')}
+                className={`relative w-14 h-7 rounded-full p-1 transition-colors ${billingPeriod === 'annual' ? 'bg-neon-cyan' : 'bg-gray-800'}`}
               >
                 <motion.div
-                  className="w-5 h-5 bg-gray-500 rounded-full"
-                  animate={{ x: 0 }}
+                  className="w-5 h-5 bg-white rounded-full"
+                  animate={{ x: billingPeriod === 'annual' ? 28 : 0 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               </button>
             </div>
-            <span className="text-sm text-gray-600">
+            <span className={`text-sm ${billingPeriod === 'annual' ? 'text-white' : 'text-gray-500'}`}>
               Annual
-              <span className="ml-2 text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full border border-gray-700">
-                Coming Soon
+              <span className="ml-2 text-xs bg-neon-cyan/20 text-neon-cyan px-2 py-0.5 rounded-full border border-neon-cyan/30">
+                Save 20%
               </span>
             </span>
           </motion.div>
@@ -310,11 +309,10 @@ export default function PricingContent() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * idx }}
-              className={`relative rounded-2xl overflow-hidden ${
-                tier.popular 
-                  ? 'bg-gradient-to-b from-neon-cyan/20 to-black border-2 border-neon-cyan' 
-                  : 'bg-gray-900/50 border border-gray-800'
-              } ${isButtonDisabled(tier) ? 'opacity-75' : ''}`}
+              className={`relative rounded-2xl overflow-hidden ${tier.popular
+                ? 'bg-gradient-to-b from-neon-cyan/20 to-black border-2 border-neon-cyan'
+                : 'bg-gray-900/50 border border-gray-800'
+                } ${isButtonDisabled(tier) ? 'opacity-75' : ''}`}
             >
               {tier.popular && (
                 <div className="absolute top-0 left-0 right-0 bg-neon-cyan text-black text-center text-sm font-bold py-1">
@@ -352,13 +350,12 @@ export default function PricingContent() {
                 <button
                   onClick={() => handleCtaClick(tier)}
                   disabled={isButtonDisabled(tier)}
-                  className={`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
-                    isButtonDisabled(tier)
-                      ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                      : tier.popular
-                        ? 'bg-neon-cyan text-black hover:bg-cyan-400'
-                        : 'bg-gray-800 text-white hover:bg-gray-700'
-                  }`}
+                  className={`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${isButtonDisabled(tier)
+                    ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                    : tier.popular
+                      ? 'bg-neon-cyan text-black hover:bg-cyan-400'
+                      : 'bg-gray-800 text-white hover:bg-gray-700'
+                    }`}
                 >
                   {getCtaText(tier)}
                   {!isButtonDisabled(tier) && tier.ctaAction === 'payment-link' && <ExternalLink className="w-4 h-4" />}
@@ -454,28 +451,28 @@ export default function PricingContent() {
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Can I cancel anytime?</h3>
             <p className="text-gray-400">
-              Yes! You can cancel your subscription at any time. You'll continue to have access 
+              Yes! You can cancel your subscription at any time. You'll continue to have access
               until the end of your billing period. No questions asked.
             </p>
           </div>
           <div>
             <h3 className="text-xl font-bold text-white mb-4">What OBD scanners work?</h3>
             <p className="text-gray-400">
-              We support most Bluetooth ELM327 adapters including BlueDriver, FIXD, Veepeak, 
+              We support most Bluetooth ELM327 adapters including BlueDriver, FIXD, Veepeak,
               and generic adapters. The scanner must support Bluetooth Low Energy (BLE).
             </p>
           </div>
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Is my data private?</h3>
             <p className="text-gray-400">
-              Absolutely. Your diagnostic data and vehicle information is encrypted and never 
+              Absolutely. Your diagnostic data and vehicle information is encrypted and never
               sold to third parties. We only use it to provide you with better repair guidance.
             </p>
           </div>
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Do you offer refunds?</h3>
             <p className="text-gray-400">
-              We offer a 14-day money-back guarantee. If you're not satisfied with Pro, 
+              We offer a 14-day money-back guarantee. If you're not satisfied with Pro,
               contact us for a full refund. No hassle, no hoops to jump through.
             </p>
           </div>
