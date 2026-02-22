@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Activity, Zap, BookOpen } from 'lucide-react';
+import { Activity, Zap, BookOpen, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const FeaturesSection = () => {
   const features = [
@@ -11,6 +12,8 @@ const FeaturesSection = () => {
       description: 'Powered by Gemini 2.0 and trained on factory service manuals for accurate, vehicle-specific diagnostics.',
       stat: 'AI',
       statLabel: 'Gemini 2.0 Flash',
+      href: '/diagnose',
+      ctaLabel: 'Diagnose Now',
     },
     {
       icon: Zap,
@@ -18,6 +21,8 @@ const FeaturesSection = () => {
       description: "No waiting for a mechanic's opinion. Get AI-powered diagnoses in under 30 seconds.",
       stat: '<30s',
       statLabel: 'Avg. Response',
+      href: '/diagnose',
+      ctaLabel: 'Start Chat',
     },
     {
       icon: BookOpen,
@@ -25,6 +30,8 @@ const FeaturesSection = () => {
       description: 'Access OEM specifications, torque values, and step-by-step procedures for your specific vehicle.',
       stat: 'OEM',
       statLabel: 'Spec Coverage',
+      href: '/guides',
+      ctaLabel: 'View Guides',
     },
   ];
 
@@ -61,7 +68,7 @@ const FeaturesSection = () => {
               transition={{ delay: index * 0.2, duration: 0.6 }}
               className="group"
             >
-              <div className="glass rounded-2xl p-8 h-full card-hover border border-cyan-500/10 hover:border-cyan-500/30 transition-all duration-500">
+              <div className="glass rounded-2xl p-8 h-full card-hover border border-cyan-500/10 hover:border-cyan-500/30 transition-all duration-500 flex flex-col">
                 {/* Icon */}
                 <div className="relative w-16 h-16 mb-6">
                   <div className="absolute inset-0 bg-cyan-500/20 rounded-xl rotate-6 group-hover:rotate-12 transition-transform duration-500" />
@@ -74,18 +81,28 @@ const FeaturesSection = () => {
                 <h3 className="font-display font-bold text-xl text-white mb-3">
                   {feature.title}
                 </h3>
-                <p className="font-body text-gray-400 mb-6">
+                <p className="font-body text-gray-400 mb-6 flex-grow">
                   {feature.description}
                 </p>
 
-                {/* Stat */}
-                <div className="flex items-center gap-2 pt-4 border-t border-cyan-500/10">
-                  <span className="font-display font-bold text-2xl text-cyan-400">
-                    {feature.stat}
-                  </span>
-                  <span className="font-body text-xs text-gray-500 uppercase tracking-wider">
-                    {feature.statLabel}
-                  </span>
+                {/* Stat & Link */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 pt-4 border-t border-cyan-500/10">
+                    <span className="font-display font-bold text-2xl text-cyan-400">
+                      {feature.stat}
+                    </span>
+                    <span className="font-body text-xs text-gray-500 uppercase tracking-wider">
+                      {feature.statLabel}
+                    </span>
+                  </div>
+
+                  <Link
+                    href={feature.href}
+                    className="flex items-center justify-between gap-2 w-full px-4 py-3 rounded-xl bg-cyan-500/5 border border-cyan-500/20 text-cyan-400 font-bold text-sm group/btn hover:bg-cyan-500/10 transition-all"
+                  >
+                    <span>{feature.ctaLabel}</span>
+                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                  </Link>
                 </div>
               </div>
             </motion.div>

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, DollarSign } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, DollarSign, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Header: React.FC = () => {
@@ -108,6 +108,18 @@ const Header: React.FC = () => {
                             <>
                                 {user ? (
                                     <div className="flex items-center gap-3">
+                                        {/* Free plan upgrade nudge */}
+                                        {user.tier === 'free' && (
+                                            <motion.button
+                                                onClick={() => router.push('/pricing')}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/40 hover:bg-amber-500/20 transition-all"
+                                                whileHover={{ scale: 1.05 }}
+                                            >
+                                                <Zap className="w-3 h-3 text-amber-400" />
+                                                <span className="text-amber-400 text-xs font-semibold">Free Plan</span>
+                                                <ArrowRight className="w-3 h-3 text-amber-400" />
+                                            </motion.button>
+                                        )}
                                         <motion.button
                                             onClick={() => router.push('/history')}
                                             className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-colors"
@@ -212,6 +224,17 @@ const Header: React.FC = () => {
                                     <>
                                         {user ? (
                                             <>
+                                                {/* Mobile free plan upgrade nudge */}
+                                                {user.tier === 'free' && (
+                                                    <button
+                                                        onClick={() => { router.push('/pricing'); setIsMobileMenuOpen(false); }}
+                                                        className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 font-semibold"
+                                                    >
+                                                        <Zap className="w-4 h-4" />
+                                                        <span>Upgrade to Pro — $9.99/mo</span>
+                                                        <ArrowRight className="w-4 h-4 ml-auto" />
+                                                    </button>
+                                                )}
                                                 <button
                                                     onClick={() => { router.push('/history'); setIsMobileMenuOpen(false); }}
                                                     className="flex items-center gap-2 text-gray-300 w-full"

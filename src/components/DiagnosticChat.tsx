@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Cpu, Activity, ImageIcon, Camera, Lock } from 'lucide-react';
+import { Send, Cpu, Activity, ImageIcon, Camera, Lock, Zap } from 'lucide-react';
 import { createDiagnosticChat, sendDiagnosticMessage, Chat } from '../services/apiClient';
 import { Vehicle, SubscriptionTier } from '../types';
 import { trackDiagnosisUse } from '../lib/usageTracker';
 import { useAuth } from '../contexts/AuthContext';
+import UpgradeModal from './UpgradeModal';
 
 interface DiagnosticChatProps {
     vehicle?: Vehicle;
@@ -29,6 +30,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const [chatSession, setChatSession] = useState<Chat | null>(null);
     const [userInput, setUserInput] = useState('');
     const [limitReached, setLimitReached] = useState(false);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [messageCount, setMessageCount] = useState(0);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -110,13 +112,15 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                 const { allowed } = trackDiagnosisUse();
                 if (!allowed) {
                     setLimitReached(true);
+                    setShowUpgradeModal(true);
                     return;
                 }
             }
-            
+
             // Limit conversation length for free users
             if (messageCount >= FREE_MESSAGE_LIMIT) {
                 setLimitReached(true);
+                setShowUpgradeModal(true);
                 return;
             }
             setMessageCount(prev => prev + 1);
@@ -182,7 +186,21 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                     <div className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse"></div>
                     <h3 className="text-neon-cyan font-mono tracking-widest text-sm">AI DIAGNOSTIC CORE v3.0 // {vehicle?.model || 'UNLINKED'}</h3>
                 </div>
-                <Cpu className="text-neon-cyan/50 w-5 h-5" />
+                <div className="flex items-center gap-3">
+                    {/* Free user message counter */}
+                    {!isPro && (
+                        <button
+                            onClick={() => setShowUpgradeModal(true)}
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
+                        >
+                            <Zap className="w-3 h-3 text-amber-400" />
+                            <span className="text-amber-400 font-mono text-[10px] tracking-wider">
+                                {Math.max(0, FREE_MESSAGE_LIMIT - messageCount)}/{FREE_MESSAGE_LIMIT} FREE
+                            </span>
+                        </button>
+                    )}
+                    <Cpu className="text-neon-cyan/50 w-5 h-5" />
+                </div>
             </div>
 
             {/* Chat Area */}
@@ -214,10 +232,10 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                         </motion.div>
                     ))}
                     {typing && (
-                        <motion.div 
+                        <motion.div
                             layout
-                            initial={{ opacity: 0, y: 10 }} 
-                            animate={{ opacity: 1, y: 0 }} 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9 }}
                             className="flex justify-start"
                         >
@@ -235,7 +253,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
             <div className="p-4 border-t border-neon-cyan/20 bg-black/60 z-10">
                 {limitReached ? (
                     <div className="text-center py-3">
-                        <div className="flex items-center justify-center gap-2 mb-3">
+                        <div className="flex items-center justify-center gap-2 mb-2">
                             <Lock className="w-4 h-4 text-amber-400" />
                             <span className="text-amber-400 font-mono text-sm">FREE DIAGNOSTIC LIMIT REACHED</span>
                         </div>
@@ -243,10 +261,10 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                             Upgrade to Pro for unlimited AI diagnostics and repair guides.
                         </p>
                         <button
-                            onClick={() => router.push('/pricing')}
+                            onClick={() => setShowUpgradeModal(true)}
                             className="bg-neon-cyan text-black font-bold py-2 px-6 rounded-lg text-sm hover:bg-cyan-400 transition-all"
                         >
-                            Upgrade to Pro &mdash; $9.99/mo
+                            Upgrade to Pro — $9.99/mo
                         </button>
                     </div>
                 ) : (
@@ -283,8 +301,16 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                     </>
                 )}
             </div>
+            {/* Upgrade Modal */}
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
+                onAuthClick={() => router.push('/auth')}
+                trigger="diagnosis-limit"
+            />
         </div>
     );
 };
 
 export default DiagnosticChat;
+
