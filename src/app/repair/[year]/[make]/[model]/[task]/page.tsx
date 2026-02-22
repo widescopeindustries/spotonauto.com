@@ -5,6 +5,7 @@ import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircle
 import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import { isValidVehicleCombination, getDisplayName, VALID_TASKS } from '@/data/vehicles';
+import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
 function toTitleCase(slug: string): string {
@@ -213,7 +214,20 @@ export default async function Page({ params }: PageProps) {
 
     const vehicleName = `${year} ${displayMake} ${displayModel}`;
 
-    const repairData = REPAIR_DATA[task] || DEFAULT_REPAIR;
+    const vehicleSpec = getVehicleRepairSpec(year, make, model, task);
+    const genericData = REPAIR_DATA[task] || DEFAULT_REPAIR;
+
+    // Merge: vehicle-specific data overrides generic, but generic fills gaps
+    const repairData = {
+        difficulty: vehicleSpec?.difficulty || genericData.difficulty,
+        time: vehicleSpec?.time || genericData.time,
+        tools: vehicleSpec?.tools || genericData.tools,
+        parts: vehicleSpec
+            ? vehicleSpec.parts.map(p => p.name + (p.spec ? ` (${p.spec})` : ''))
+            : genericData.parts,
+        warnings: vehicleSpec?.warnings || genericData.warnings,
+        steps: vehicleSpec?.steps || genericData.steps,
+    };
 
     // Schema.org structured data
     const schemaData = {
@@ -227,10 +241,15 @@ export default async function Page({ params }: PageProps) {
             "currency": "USD",
             "value": "50-300"
         },
-        "supply": repairData.parts.map(part => ({
-            "@type": "HowToSupply",
-            "name": part
-        })),
+        "supply": vehicleSpec
+            ? vehicleSpec.parts.map(part => ({
+                "@type": "HowToSupply",
+                "name": part.name + (part.aftermarket ? ` (${part.aftermarket})` : part.oem ? ` (${part.oem})` : '')
+            }))
+            : repairData.parts.map(part => ({
+                "@type": "HowToSupply",
+                "name": part
+            })),
         "tool": repairData.tools.map(tool => ({
             "@type": "HowToTool",
             "name": tool
@@ -286,6 +305,35 @@ export default async function Page({ params }: PageProps) {
                     </div>
                 </div>
 
+                {/* Vehicle-Specific Notes — only renders when we have real data */}
+                {vehicleSpec && (
+                    <section className="mb-8 bg-cyan-950/30 border border-cyan-500/30 rounded-xl p-6">
+                        <h2 className="text-xl font-bold text-cyan-400 mb-4">
+                            {vehicleName} — What You Need to Know
+                        </h2>
+                        <ul className="space-y-2">
+                            {vehicleSpec.vehicleNotes.map((note, i) => (
+                                <li key={i} className="flex items-start gap-2 text-cyan-100">
+                                    <span className="text-cyan-400 mt-1">→</span>
+                                    {note}
+                                </li>
+                            ))}
+                        </ul>
+                        {vehicleSpec.torqueSpecs && (
+                            <div className="mt-4 p-4 bg-cyan-900/30 rounded-lg">
+                                <span className="text-xs uppercase tracking-wider text-cyan-500 font-bold">Torque Specs</span>
+                                <p className="text-white font-mono mt-1">{vehicleSpec.torqueSpecs}</p>
+                            </div>
+                        )}
+                        {vehicleSpec.beltRouting && (
+                            <div className="mt-4 p-4 bg-slate-800/50 rounded-lg">
+                                <span className="text-xs uppercase tracking-wider text-cyan-500 font-bold">Belt Routing</span>
+                                <p className="text-gray-300 mt-1">{vehicleSpec.beltRouting}</p>
+                            </div>
+                        )}
+                    </section>
+                )}
+
                 {/* Safety Warnings */}
                 <section className="mb-8 bg-red-950/30 border border-red-500/30 rounded-xl p-6">
                     <h2 className="text-xl font-bold text-red-400 mb-4 flex items-center gap-2">
@@ -319,21 +367,59 @@ export default async function Page({ params }: PageProps) {
                 <section className="mb-8">
                     <h2 className="text-xl font-bold text-white mb-4">Parts Needed</h2>
                     <div className="space-y-3">
-                        {repairData.parts.map((part, i) => (
-                            <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
-                                <span className="text-gray-300">{part}</span>
-                                <AffiliateLink
-                                    href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicleName + ' ' + part)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
-                                    partName={part}
-                                    vehicle={vehicleName}
-                                    isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part)}
-                                    pageType="repair_guide"
-                                    className="px-4 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition"
-                                >
-                                    Shop on Amazon
-                                </AffiliateLink>
-                            </div>
-                        ))}
+                        {vehicleSpec ? (
+                            vehicleSpec.parts.map((part: PartSpec, i: number) => {
+                                const searchTerm = part.aftermarket || part.oem || `${vehicleName} ${part.name}`;
+                                return (
+                                    <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
+                                        <div className="flex-1 min-w-0">
+                                            <span className="text-gray-300">{part.name}</span>
+                                            {part.spec && (
+                                                <span className="block text-xs text-gray-500 mt-0.5">{part.spec}</span>
+                                            )}
+                                            <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                                {part.oem && (
+                                                    <span className="inline-block px-2 py-0.5 bg-blue-500/20 text-blue-300 text-xs rounded font-mono">
+                                                        OEM {part.oem}
+                                                    </span>
+                                                )}
+                                                {part.aftermarket && (
+                                                    <span className="inline-block px-2 py-0.5 bg-green-500/20 text-green-300 text-xs rounded font-mono">
+                                                        {part.aftermarket}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <AffiliateLink
+                                            href={`https://www.amazon.com/s?k=${encodeURIComponent(searchTerm)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
+                                            partName={part.name}
+                                            vehicle={vehicleName}
+                                            isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part.name)}
+                                            pageType="repair_guide"
+                                            className="flex-shrink-0 ml-4 px-4 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition"
+                                        >
+                                            Shop on Amazon
+                                        </AffiliateLink>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            repairData.parts.map((part, i) => (
+                                <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
+                                    <span className="text-gray-300">{part}</span>
+                                    <AffiliateLink
+                                        href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicleName + ' ' + part)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
+                                        partName={part}
+                                        vehicle={vehicleName}
+                                        isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part)}
+                                        pageType="repair_guide"
+                                        className="px-4 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition"
+                                    >
+                                        Shop on Amazon
+                                    </AffiliateLink>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </section>
 
