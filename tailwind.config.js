@@ -81,11 +81,11 @@ export default {
         charcoal: "#0a0a0a",
       },
       fontFamily: {
-        display: ["Orbitron", "sans-serif"],
-        body: ["Rajdhani", "sans-serif"],
-        ui: ["Inter", "sans-serif"],
-        sans: ["Orbitron", "sans-serif"],
-        mono: ["Share Tech Mono", "monospace"],
+        display: ["var(--font-display)", "sans-serif"],
+        body: ["var(--font-body)", "sans-serif"],
+        ui: ["var(--font-ui)", "sans-serif"],
+        sans: ["var(--font-display)", "sans-serif"],
+        mono: ["var(--font-mono)", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",

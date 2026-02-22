@@ -1,16 +1,19 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import HolographicDashboard from '@/components/HolographicDashboard';
-import ParticleBackground from '@/components/ParticleBackground';
-import FeaturesSection from '@/components/FeaturesSection';
-import HowItWorksSection from '@/components/HowItWorksSection';
-import TestimonialsSection from '@/components/TestimonialsSection';
-import CTASection from '@/components/CTASection';
-import { FadeInUp, ScaleIn, GlassCard } from '@/components/MotionWrappers';
+import { ScaleIn, GlassCard } from '@/components/MotionWrappers';
 import PopularGuidesSection from '@/components/PopularGuidesSection';
+
+// Lazy-load heavy/below-fold components — don't block initial paint
+const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
+const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'));
+const HowItWorksSection = dynamic(() => import('@/components/HowItWorksSection'));
+const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'));
+const CTASection = dynamic(() => import('@/components/CTASection'));
 
 // Hero Section Component
 const HeroSection = () => {
@@ -35,37 +38,31 @@ const HeroSection = () => {
                             </span>
                         </ScaleIn>
 
-                        {/* Heading */}
-                        <FadeInUp delay={0.2} duration={0.8}>
-                            <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
-                                <span className="text-white">SILENCE THE</span>
-                                <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200 glow-text">
-                                    CHECK ENGINE
-                                </span>
-                                <br />
-                                <span className="text-white">LIGHT</span>
-                            </h1>
-                        </FadeInUp>
+                        {/* Heading — no animation wrapper: renders at full opacity for fast LCP */}
+                        <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
+                            <span className="text-white">SILENCE THE</span>
+                            <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200 glow-text">
+                                CHECK ENGINE
+                            </span>
+                            <br />
+                            <span className="text-white">LIGHT</span>
+                        </h1>
 
                         {/* Subheading */}
-                        <FadeInUp delay={0.4} duration={0.6}>
-                            <p className="font-body text-lg sm:text-xl text-gray-400 max-w-lg">
-                                Instant AI Auto Repair. Diagnose problems and get step-by-step fix guides in seconds.
-                            </p>
-                        </FadeInUp>
+                        <p className="font-body text-lg sm:text-xl text-gray-400 max-w-lg">
+                            Instant AI Auto Repair. Diagnose problems and get step-by-step fix guides in seconds.
+                        </p>
 
                         {/* Trust Badge */}
-                        <FadeInUp delay={0.5}>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 border-2 border-[#050505] flex items-center justify-center">
-                                    <CheckCircle2 className="w-4 h-4 text-white" />
-                                </div>
-                                <span className="font-body text-sm text-cyan-400">
-                                    AI-Powered &middot; <span className="font-bold text-white">Factory Manual Data</span> &middot; Free to Try
-                                </span>
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 border-2 border-[#050505] flex items-center justify-center">
+                                <CheckCircle2 className="w-4 h-4 text-white" />
                             </div>
-                        </FadeInUp>
+                            <span className="font-body text-sm text-cyan-400">
+                                AI-Powered &middot; <span className="font-bold text-white">Factory Manual Data</span> &middot; Free to Try
+                            </span>
+                        </div>
                     </div>
 
                     {/* Right Content - Configuration Panel */}
