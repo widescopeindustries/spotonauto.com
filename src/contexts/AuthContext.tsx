@@ -107,7 +107,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
     if (error) {
@@ -118,24 +118,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const loginWithEmail = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      email,
+      password,
     });
     if (error) {
-        console.error('Email Login failed:', error.message);
-        throw error;
+      console.error('Email Login failed:', error.message);
+      throw error;
     }
   };
 
   const signup = async (email: string, password: string) => {
-      const { error } = await supabase.auth.signUp({
-          email,
-          password,
-      });
-      if (error) {
-          console.error('Signup failed:', error.message);
-          throw error;
-      }
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) {
+      console.error('Signup failed:', error.message);
+      throw error;
+    }
   };
 
   const logout = async () => {
