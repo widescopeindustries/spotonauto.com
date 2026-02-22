@@ -229,22 +229,58 @@ export default async function Page({ params }: PageProps) {
         steps: vehicleSpec?.steps || genericData.steps,
     };
 
-    // Schema.org structured data
+    // Convert "30-45 minutes" / "1-2 hours" to ISO 8601 duration (upper bound)
+    function toIso8601Duration(timeStr: string): string {
+        const lower = timeStr.toLowerCase();
+        // Extract the upper bound number from ranges like "30-45 minutes" or "1-2 hours"
+        const rangeMatch = lower.match(/[\d.]+\s*[-–]\s*([\d.]+)\s*(hour|hr|minute|min)/);
+        const singleMatch = lower.match(/([\d.]+)\s*(hour|hr|minute|min)/);
+        const match = rangeMatch || singleMatch;
+        if (!match) return 'PT2H';
+        const value = parseFloat(rangeMatch ? rangeMatch[1] : singleMatch![1]);
+        const unit = match[rangeMatch ? 2 : 2];
+        if (unit.startsWith('hour') || unit.startsWith('hr')) {
+            const hours = Math.floor(value);
+            const mins = Math.round((value - hours) * 60);
+            return mins > 0 ? `PT${hours}H${mins}M` : `PT${hours}H`;
+        }
+        return `PT${Math.round(value)}M`;
+    }
+
+    // Task-specific cost ranges (parts only, DIY labour = $0)
+    const COST_MAP: Record<string, string> = {
+        'oil-change': '25-80',
+        'battery-replacement': '80-200',
+        'brake-pad-replacement': '40-120',
+        'brake-rotor-replacement': '60-180',
+        'serpentine-belt-replacement': '25-80',
+        'cabin-air-filter-replacement': '15-40',
+        'engine-air-filter-replacement': '15-40',
+        'spark-plug-replacement': '30-120',
+        'alternator-replacement': '120-350',
+        'starter-replacement': '100-300',
+        'radiator-replacement': '150-400',
+        'thermostat-replacement': '20-80',
+        'water-pump-replacement': '80-250',
+        'headlight-bulb-replacement': '15-80',
+    };
+
+    // Schema.org HowTo structured data — drives rich results (step count, time, cost badges in SERPs)
     const schemaData = {
         "@context": "https://schema.org",
         "@type": "HowTo",
-        "name": `How to perform ${cleanTask} on a ${vehicleName}`,
-        "description": `Step-by-step guide for ${cleanTask} on ${vehicleName}`,
-        "totalTime": `PT${repairData.time.split('-')[1]?.trim() || '2H'}`,
+        "name": `How to Do a ${repairData.difficulty} ${cleanTask.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} on a ${vehicleName}`,
+        "description": `DIY ${cleanTask} for the ${vehicleName}. Takes ${repairData.time}. Difficulty: ${repairData.difficulty}. Save $100–$400 vs. a shop with this step-by-step guide.`,
+        "totalTime": toIso8601Duration(repairData.time),
         "estimatedCost": {
             "@type": "MonetaryAmount",
             "currency": "USD",
-            "value": "50-300"
+            "value": COST_MAP[task] || "50-300"
         },
         "supply": vehicleSpec
             ? vehicleSpec.parts.map(part => ({
                 "@type": "HowToSupply",
-                "name": part.name + (part.aftermarket ? ` (${part.aftermarket})` : part.oem ? ` (${part.oem})` : '')
+                "name": [part.name, part.aftermarket, part.oem].filter(Boolean).join(' / ')
             }))
             : repairData.parts.map(part => ({
                 "@type": "HowToSupply",
@@ -257,7 +293,9 @@ export default async function Page({ params }: PageProps) {
         "step": repairData.steps.map((step, i) => ({
             "@type": "HowToStep",
             "position": i + 1,
-            "text": step
+            "name": `Step ${i + 1}`,
+            "text": step,
+            "url": `https://spotonauto.com/repair/${year}/${make}/${model}/${task}#step-${i + 1}`
         }))
     };
 
