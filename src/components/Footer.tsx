@@ -2,56 +2,133 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Cpu } from 'lucide-react';
-import { FadeInUp } from './MotionWrappers';
+import { Cpu, Zap, Car, Bluetooth, DollarSign, BookOpen, Shield, Mail } from 'lucide-react';
 
 const Footer: React.FC = () => {
     return (
-        <footer className="relative py-12 border-t border-cyan-500/10">
-            <FadeInUp className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                    {/* Logo */}
-                    <div className="flex items-center gap-2">
-                        <Cpu className="w-6 h-6 text-cyan-400" />
-                        <span className="font-display font-bold text-lg tracking-wider text-white">
-                            SPOTON<span className="text-cyan-400">AUTO</span>
-                        </span>
-                    </div>
+        <footer className="relative border-t border-cyan-500/10 bg-black/40">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
 
-                    {/* Links */}
-                    <div className="flex items-center gap-6">
+                    {/* Brand */}
+                    <div className="md:col-span-1">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Cpu className="w-6 h-6 text-cyan-400" />
+                            <span className="font-display font-bold text-lg tracking-wider text-white">
+                                SPOTON<span className="text-cyan-400">AUTO</span>
+                            </span>
+                        </div>
+                        <p className="font-body text-sm text-gray-500 leading-relaxed mb-4">
+                            AI-powered auto repair guides. Save $200–$500 per repair with step-by-step instructions tailored to your exact vehicle.
+                        </p>
                         <Link
-                            href="/guides"
-                            className="font-body text-sm text-gray-400 hover:text-cyan-400 transition-colors"
+                            href="/pricing"
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-black bg-cyan-400 hover:bg-cyan-300 transition-colors px-3 py-1.5 rounded-full"
                         >
-                            Repair Guides
-                        </Link>
-                        <Link
-                            href="/privacy"
-                            className="font-body text-sm text-gray-400 hover:text-cyan-400 transition-colors"
-                        >
-                            Privacy Policy
-                        </Link>
-                        <Link
-                            href="/terms"
-                            className="font-body text-sm text-gray-400 hover:text-cyan-400 transition-colors"
-                        >
-                            Terms of Service
-                        </Link>
-                        <Link
-                            href="/contact"
-                            className="font-body text-sm text-gray-400 hover:text-cyan-400 transition-colors"
-                        >
-                            Contact
+                            <DollarSign className="w-3 h-3" />
+                            View Plans — from $9.99/mo
                         </Link>
                     </div>
 
-                    {/* Copyright */}
-                    <div className="font-body text-sm text-gray-500">
-                        &copy; {new Date().getFullYear()} SpotOn Auto. All rights reserved.
+                    {/* Tools */}
+                    <div>
+                        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Tools</h3>
+                        <ul className="space-y-3">
+                            {[
+                                { href: '/diagnose', label: 'AI Diagnostic Chat', icon: Zap, accent: true },
+                                { href: '/guides', label: 'Repair Guides', icon: BookOpen },
+                                { href: '/parts', label: 'Parts Finder', icon: Car },
+                                { href: '/scanner', label: 'OBD-II Scanner', icon: Bluetooth },
+                                { href: '/cel', label: 'Check Engine Light', icon: Shield },
+                            ].map((item) => (
+                                <li key={item.href}>
+                                    <Link
+                                        href={item.href}
+                                        className={`flex items-center gap-2 font-body text-sm transition-colors ${item.accent
+                                                ? 'text-amber-400 hover:text-amber-300'
+                                                : 'text-gray-400 hover:text-cyan-400'
+                                            }`}
+                                    >
+                                        <item.icon className="w-3.5 h-3.5" />
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Popular Guides */}
+                    <div>
+                        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Popular Guides</h3>
+                        <ul className="space-y-3">
+                            {[
+                                { href: '/repair/2013/bmw/x3/battery-replacement', label: 'BMW X3 Battery' },
+                                { href: '/repair/2009/bmw/x5/serpentine-belt-replacement', label: 'BMW X5 Serpentine Belt' },
+                                { href: '/repair/2013/toyota/corolla/oil-change', label: 'Toyota Corolla Oil Change' },
+                                { href: '/repair/2009/honda/fit/brake-rotor-replacement', label: 'Honda Fit Brake Rotors' },
+                                { href: '/repair/2013/nissan/rogue/serpentine-belt-replacement', label: 'Nissan Rogue Belt' },
+                                { href: '/guides', label: 'Browse All 57 Guides →' },
+                            ].map((item) => (
+                                <li key={item.href}>
+                                    <Link
+                                        href={item.href}
+                                        className="font-body text-sm text-gray-400 hover:text-cyan-400 transition-colors"
+                                    >
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Company */}
+                    <div>
+                        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Company</h3>
+                        <ul className="space-y-3">
+                            {[
+                                { href: '/pricing', label: 'Pricing & Plans' },
+                                { href: '/auth', label: 'Sign In / Sign Up' },
+                                { href: '/privacy', label: 'Privacy Policy' },
+                                { href: '/terms', label: 'Terms of Service' },
+                                { href: '/contact', label: 'Contact Us' },
+                            ].map((item) => (
+                                <li key={item.href}>
+                                    <Link
+                                        href={item.href}
+                                        className="font-body text-sm text-gray-400 hover:text-cyan-400 transition-colors"
+                                    >
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div className="mt-6 pt-4 border-t border-white/5">
+                            <a
+                                href="mailto:support@spotonauto.com"
+                                className="flex items-center gap-2 text-sm text-gray-500 hover:text-cyan-400 transition-colors"
+                            >
+                                <Mail className="w-3.5 h-3.5" />
+                                support@spotonauto.com
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </FadeInUp>
+
+                {/* Bottom bar */}
+                <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p className="font-body text-xs text-gray-600">
+                        © {new Date().getFullYear()} SpotOn Auto. All rights reserved. AI-generated content is for informational purposes only.
+                    </p>
+                    <div className="flex items-center gap-4">
+                        <span className="text-xs text-gray-700 font-mono">Powered by Gemini 2.0</span>
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-xs text-gray-600 font-mono">All Systems Operational</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </footer>
     );
 };

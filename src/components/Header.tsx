@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Car, Menu, X, History, LogOut, Bluetooth } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, DollarSign } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Header: React.FC = () => {
@@ -30,9 +31,8 @@ const Header: React.FC = () => {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-                isScrolled ? 'glass-strong' : 'bg-transparent'
-            }`}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'glass-strong' : 'bg-transparent'
+                }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16 md:h-20">
@@ -52,25 +52,44 @@ const Header: React.FC = () => {
                     </motion.div>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
-                        {['Features', 'How It Works', 'Testimonials'].map((item) => (
-                            <motion.a
-                                key={item}
-                                href={`/#${item.toLowerCase().replace(/\s+/g, '-')}`}
+                    <div className="hidden md:flex items-center gap-6">
+                        {[
+                            { label: 'Features', href: '/#features' },
+                            { label: 'How It Works', href: '/#how-it-works' },
+                            { label: 'Guides', href: '/guides' },
+                        ].map((item) => (
+                            <Link
+                                key={item.label}
+                                href={item.href}
                                 className="font-body text-sm text-gray-300 hover:text-cyan-400 transition-colors relative group"
-                                whileHover={{ y: -2 }}
                             >
-                                {item}
+                                {item.label}
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
-                            </motion.a>
+                            </Link>
                         ))}
+                        {/* Pricing — highlighted */}
+                        <Link
+                            href="/pricing"
+                            className="font-body text-sm text-cyan-400 hover:text-cyan-300 transition-colors relative group font-semibold"
+                        >
+                            Pricing
+                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
+                        </Link>
                     </div>
 
                     {/* CTA Buttons */}
-                    <div className="hidden md:flex items-center gap-4">
+                    <div className="hidden md:flex items-center gap-3">
+                        <motion.button
+                            onClick={() => router.push('/diagnose')}
+                            className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors"
+                            whileHover={{ scale: 1.05 }}
+                        >
+                            <Zap className="w-4 h-4" />
+                            <span className="font-body text-sm">Diagnose</span>
+                        </motion.button>
                         <motion.button
                             onClick={() => router.push('/scanner')}
-                            className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors"
+                            className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-colors"
                             whileHover={{ scale: 1.05 }}
                         >
                             <Bluetooth className="w-4 h-4" />
@@ -114,7 +133,7 @@ const Header: React.FC = () => {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        My Garage (Login)
+                                        Sign In
                                     </motion.button>
                                 )}
                             </>
@@ -125,6 +144,7 @@ const Header: React.FC = () => {
                     <button
                         className="md:hidden text-white"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        aria-label="Toggle menu"
                     >
                         {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                     </button>
@@ -141,26 +161,51 @@ const Header: React.FC = () => {
                         className="md:hidden glass-strong border-t border-cyan-500/20"
                     >
                         <div className="px-4 py-6 space-y-4">
-                            {['Features', 'How It Works', 'Testimonials'].map((item) => (
-                                <a
-                                    key={item}
-                                    href={`/#${item.toLowerCase().replace(/\s+/g, '-')}`}
+                            {[
+                                { label: 'Features', href: '/#features' },
+                                { label: 'How It Works', href: '/#how-it-works' },
+                                { label: 'Repair Guides', href: '/guides' },
+                            ].map((item) => (
+                                <Link
+                                    key={item.label}
+                                    href={item.href}
                                     className="block font-body text-gray-300 hover:text-cyan-400 transition-colors"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
-                                    {item}
-                                </a>
+                                    {item.label}
+                                </Link>
                             ))}
+
                             <div className="pt-4 border-t border-cyan-500/20 space-y-3">
+                                {/* Diagnose — primary mobile CTA */}
                                 <button
-                                    onClick={() => {
-                                        router.push('/parts');
-                                        setIsMobileMenuOpen(false);
-                                    }}
+                                    onClick={() => { router.push('/diagnose'); setIsMobileMenuOpen(false); }}
+                                    className="flex items-center gap-2 text-amber-400 w-full font-semibold"
+                                >
+                                    <Zap className="w-4 h-4" />
+                                    <span className="font-body">Diagnose My Car</span>
+                                </button>
+                                {/* Pricing */}
+                                <button
+                                    onClick={() => { router.push('/pricing'); setIsMobileMenuOpen(false); }}
+                                    className="flex items-center gap-2 text-cyan-400 w-full font-semibold"
+                                >
+                                    <DollarSign className="w-4 h-4" />
+                                    <span className="font-body">Pricing & Plans</span>
+                                </button>
+                                <button
+                                    onClick={() => { router.push('/parts'); setIsMobileMenuOpen(false); }}
                                     className="flex items-center gap-2 text-gray-300"
                                 >
                                     <Car className="w-4 h-4" />
-                                    <span className="font-body">Parts</span>
+                                    <span className="font-body">Parts Finder</span>
+                                </button>
+                                <button
+                                    onClick={() => { router.push('/scanner'); setIsMobileMenuOpen(false); }}
+                                    className="flex items-center gap-2 text-gray-300"
+                                >
+                                    <Bluetooth className="w-4 h-4" />
+                                    <span className="font-body">OBD-II Scanner</span>
                                 </button>
 
                                 {!loading && (
@@ -168,10 +213,7 @@ const Header: React.FC = () => {
                                         {user ? (
                                             <>
                                                 <button
-                                                    onClick={() => {
-                                                        router.push('/history');
-                                                        setIsMobileMenuOpen(false);
-                                                    }}
+                                                    onClick={() => { router.push('/history'); setIsMobileMenuOpen(false); }}
                                                     className="flex items-center gap-2 text-gray-300 w-full"
                                                 >
                                                     <History className="w-4 h-4" />
@@ -187,13 +229,10 @@ const Header: React.FC = () => {
                                             </>
                                         ) : (
                                             <button
-                                                onClick={() => {
-                                                    router.push('/auth');
-                                                    setIsMobileMenuOpen(false);
-                                                }}
+                                                onClick={() => { router.push('/auth'); setIsMobileMenuOpen(false); }}
                                                 className="btn-cyber w-full"
                                             >
-                                                My Garage (Login)
+                                                Sign In / Sign Up
                                             </button>
                                         )}
                                     </>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, ArrowRight, Shield, Clock, CheckCircle2 } from 'lucide-react';
+import { Zap, ArrowRight, Shield, Clock, CheckCircle2, DollarSign } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const CTASection = () => {
@@ -24,7 +24,7 @@ const CTASection = () => {
           transition={{ duration: 0.8 }}
           className="text-center"
         >
-          <h2 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl text-white mb-6">
+          <h2 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
             READY TO FIX
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200 glow-text">
@@ -32,41 +32,54 @@ const CTASection = () => {
             </span>
           </h2>
           <p className="font-body text-lg text-gray-400 mb-10 max-w-xl mx-auto">
-            Join 50,000+ DIY mechanics who trust SpotOn Auto for accurate diagnoses and step-by-step repair guides.
+            Join 50,000+ DIY mechanics saving $200–$500 per repair with AI-powered diagnoses and step-by-step guides.
           </p>
 
-          {/* CTA Button */}
-          <motion.div
-            className="relative inline-block"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            {/* Shockwave Effect */}
-            <AnimatePresence>
-              {isHovered && (
-                <motion.div
-                  initial={{ scale: 1, opacity: 1 }}
-                  animate={{ scale: 1.5, opacity: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="absolute inset-0 rounded-xl border-2 border-cyan-400"
-                />
-              )}
-            </AnimatePresence>
-
-            <motion.button
-              onClick={() => router.push('/#hero')}
-              className="relative btn-cyber-primary text-lg px-10 py-5 flex items-center gap-3 glow-button"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          {/* Dual CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+            {/* Primary — Diagnose */}
+            <motion.div
+              className="relative inline-block"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
             >
-              <Zap className="w-6 h-6" />
-              <span className="font-display font-bold tracking-wider">
-                {isHovered ? 'GO!' : 'START AI DIAGNOSIS'}
-              </span>
-              <ArrowRight className="w-6 h-6" />
+              <AnimatePresence>
+                {isHovered && (
+                  <motion.div
+                    initial={{ scale: 1, opacity: 1 }}
+                    animate={{ scale: 1.5, opacity: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="absolute inset-0 rounded-xl border-2 border-cyan-400"
+                  />
+                )}
+              </AnimatePresence>
+
+              <motion.button
+                onClick={() => router.push('/diagnose')}
+                className="relative btn-cyber-primary text-lg px-10 py-5 flex items-center gap-3 glow-button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Zap className="w-6 h-6" />
+                <span className="font-display font-bold tracking-wider">
+                  {isHovered ? 'GO!' : 'START AI DIAGNOSIS'}
+                </span>
+                <ArrowRight className="w-6 h-6" />
+              </motion.button>
+            </motion.div>
+
+            {/* Secondary — Pricing */}
+            <motion.button
+              onClick={() => router.push('/pricing')}
+              className="flex items-center gap-2 px-8 py-5 rounded-xl border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all font-bold text-base"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <DollarSign className="w-5 h-5" />
+              View Pro Plans — from $9.99/mo
             </motion.button>
-          </motion.div>
+          </div>
 
           {/* Trust Indicators */}
           <motion.div
@@ -74,7 +87,7 @@ const CTASection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="flex flex-wrap items-center justify-center gap-6 mt-10"
+            className="flex flex-wrap items-center justify-center gap-6"
           >
             <div className="flex items-center gap-2 text-gray-400">
               <Shield className="w-5 h-5 text-cyan-400" />
@@ -86,7 +99,7 @@ const CTASection = () => {
             </div>
             <div className="flex items-center gap-2 text-gray-400">
               <CheckCircle2 className="w-5 h-5 text-cyan-400" />
-              <span className="font-body text-sm">No Credit Card Required</span>
+              <span className="font-body text-sm">14-Day Money-Back Guarantee</span>
             </div>
           </motion.div>
         </motion.div>
