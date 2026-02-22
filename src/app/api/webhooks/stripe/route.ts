@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   // Check both metadata keys for compatibility with checkout sessions and payment links
   const userId = session.metadata?.userId || session.metadata?.supabaseUserId;
-  
+
   // For Payment Links: look up user by customer email if no metadata
   if (!userId) {
     const customerEmail = session.customer_details?.email || session.customer_email;
@@ -96,7 +96,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.error('No userId in metadata and no customer email found');
       return;
     }
-    
+
     // Look up user by email in Supabase auth
     const { data: users } = await supabase.auth.admin.listUsers();
     const matchedUser = users?.users?.find(u => u.email === customerEmail);
@@ -104,12 +104,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.error(`No Supabase user found for email: ${customerEmail}`);
       return;
     }
-    
+
     // Continue with the matched user
     const subscription = await getStripe().subscriptions.retrieve(session.subscription as string);
     const priceId = subscription.items.data[0].price.id;
     const tier = getTierFromPriceId(priceId);
-    
+
     await supabase
       .from('subscriptions')
       .upsert({
@@ -121,14 +121,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
       }, { onConflict: 'user_id' });
-    
+
     console.log(`Subscription activated for ${customerEmail} (${matchedUser.id}): ${tier}`);
     return;
   }
 
   // Get subscription details
   const subscription = await getStripe().subscriptions.retrieve(session.subscription as string);
-  
+
   // Determine tier based on price
   const priceId = subscription.items.data[0].price.id;
   const tier = getTierFromPriceId(priceId);
@@ -164,7 +164,7 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
 
   // Update period dates
   const stripeSub = await getStripe().subscriptions.retrieve(subscriptionId);
-  
+
   await supabase
     .from('subscriptions')
     .update({
@@ -199,8 +199,8 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   if (!sub) return;
 
   // Check if canceled
-  const status = subscription.cancel_at_period_end ? 'canceled' : 
-                 subscription.status === 'active' ? 'active' : 'past_due';
+  const status = subscription.cancel_at_period_end ? 'canceled' :
+    subscription.status === 'active' ? 'active' : 'past_due';
 
   // Check if tier changed
   const priceId = subscription.items.data[0].price.id;
@@ -232,11 +232,25 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   console.log(`❌ Subscription canceled: ${subscription.id}`);
 }
 
+/**
+ * Map a Stripe Price ID to a subscription tier.
+ *
+ * To configure: go to Stripe Dashboard → Product Catalog → each product →
+ * copy the price_XXXX ID and add to Vercel env vars:
+ *   STRIPE_PRO_PLUS_MONTHLY_PRICE_ID=price_XXXX
+ *   STRIPE_PRO_PLUS_ANNUAL_PRICE_ID=price_XXXX
+ *
+ * Without these set, ALL payments default to 'pro' tier.
+ * Pro subscribers get 'pro' correctly; Pro+ subscribers also get 'pro' (wrong)
+ * until these env vars are configured.
+ */
 function getTierFromPriceId(priceId: string): 'pro' | 'pro_plus' {
-  // Map your Stripe price IDs to tiers
-  const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
-  const proPlusPriceId = process.env.STRIPE_PRO_PLUS_PRICE_ID;
+  const proPlusPriceIds = [
+    process.env.STRIPE_PRO_PLUS_MONTHLY_PRICE_ID,
+    process.env.STRIPE_PRO_PLUS_ANNUAL_PRICE_ID,
+  ].filter(Boolean);
 
-  if (priceId === proPlusPriceId) return 'pro_plus';
+  if (proPlusPriceIds.includes(priceId)) return 'pro_plus';
   return 'pro';
 }
+
