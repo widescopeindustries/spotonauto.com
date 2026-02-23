@@ -265,6 +265,69 @@ export default async function Page({ params }: PageProps) {
         'headlight-bulb-replacement': '15-80',
     };
 
+    // ── FAQ data for GEO (Generative Engine Optimization) ────────────────
+    const costRange = COST_MAP[task] || '50-300';
+    const difficultyAnswer = repairData.difficulty === 'Easy'
+        ? `Yes, a ${cleanTask} on a ${vehicleName} is rated Easy and is a great beginner DIY project. You'll need basic hand tools and about ${repairData.time}.`
+        : repairData.difficulty === 'Intermediate'
+            ? `A ${cleanTask} on a ${vehicleName} is rated Intermediate. If you have some DIY experience and the right tools, you can do it yourself in about ${repairData.time}. First-timers should budget extra time and watch a tutorial first.`
+            : repairData.difficulty === 'Intermediate to Advanced'
+                ? `A ${cleanTask} on a ${vehicleName} is rated Intermediate to Advanced. It's doable for experienced DIYers with a good tool set, but beginners may want professional help. Expect it to take ${repairData.time}.`
+                : `Difficulty varies depending on your ${vehicleName}'s specific configuration. With the right tools and a service manual, most handy owners can complete this in ${repairData.time}.`;
+
+    const delayConsequences: Record<string, string> = {
+        'oil-change': `Delaying an oil change on your ${vehicleName} causes accelerated engine wear, sludge buildup, and reduced fuel economy. Extended neglect can lead to engine seizure and repairs costing $3,000–$7,000+.`,
+        'brake-pad-replacement': `Worn brake pads on your ${vehicleName} will grind into the rotors, turning a $40–$120 pad job into a $200–$400+ rotor-and-pad replacement. Braking distance increases significantly, creating a serious safety hazard.`,
+        'brake-rotor-replacement': `Driving with warped or worn rotors on your ${vehicleName} causes brake pulsation, uneven pad wear, and longer stopping distances. Ignoring it risks caliper damage and potential brake failure.`,
+        'battery-replacement': `A failing battery in your ${vehicleName} will leave you stranded and can damage the alternator by forcing it to overwork. Repeated deep discharges also shorten the life of electronic modules.`,
+        'spark-plug-replacement': `Old spark plugs in your ${vehicleName} cause misfires, rough idle, poor fuel economy, and can damage the catalytic converter—a $500–$1,500 repair. Plugs seized from over-waiting may snap during removal.`,
+        'alternator-replacement': `A failing alternator will drain your ${vehicleName}'s battery and can leave you stranded. Driving with a bad alternator risks damaging sensitive electronics and the battery itself.`,
+        'starter-replacement': `A failing starter means your ${vehicleName} won't start reliably. Continued attempts to start with a bad starter can drain the battery and damage the flywheel ring gear—an expensive transmission-area repair.`,
+        'serpentine-belt-replacement': `A cracked or worn serpentine belt on your ${vehicleName} can snap without warning, instantly killing power steering, the alternator, water pump, and A/C. An overheated engine from a lost water pump can cause head gasket failure.`,
+        'radiator-replacement': `A leaking radiator will cause your ${vehicleName} to overheat, risking head gasket failure ($1,000–$2,500+) or a warped cylinder head. Coolant loss can happen quickly and leave you stranded.`,
+        'thermostat-replacement': `A stuck thermostat causes your ${vehicleName} to overheat (stuck closed) or run too cold (stuck open). Overheating risks serious engine damage; running cold increases fuel consumption and wear.`,
+        'water-pump-replacement': `A failing water pump will cause your ${vehicleName} to overheat. Continued driving with a bad water pump can warp the cylinder head or blow the head gasket—repairs that cost $1,500–$3,000+.`,
+        'cabin-air-filter-replacement': `A clogged cabin air filter in your ${vehicleName} reduces HVAC airflow, causes musty odors, and can fog up windows. It also makes the blower motor work harder, shortening its life.`,
+        'engine-air-filter-replacement': `A dirty engine air filter in your ${vehicleName} restricts airflow to the engine, reducing power by up to 10% and hurting fuel economy. Over time it can allow debris into the engine.`,
+        'headlight-bulb-replacement': `Driving your ${vehicleName} with a burned-out headlight is a safety hazard and a ticketable offense in most states. Reduced visibility increases accident risk, especially at night and in bad weather.`,
+    };
+
+    const faqItems = [
+        {
+            question: `How much does ${cleanTask} cost for a ${vehicleName}?`,
+            answer: `DIY ${cleanTask} on a ${vehicleName} costs approximately $${costRange} in parts. A professional shop typically charges $${(() => { const [lo, hi] = costRange.split('-').map(Number); return `${lo + 80}-${hi + 200}`; })()} including labor. By doing it yourself, you save $80–$200+ in labor costs.`,
+        },
+        {
+            question: `How long does ${cleanTask} take on a ${vehicleName}?`,
+            answer: `A ${cleanTask} on a ${vehicleName} typically takes ${repairData.time} for a DIY mechanic. Professional shops may be faster due to lifts and pneumatic tools. First-timers should add 30–60 minutes for setup and learning.`,
+        },
+        {
+            question: `Can I do ${cleanTask} myself on a ${vehicleName}?`,
+            answer: difficultyAnswer,
+        },
+        {
+            question: `What tools do I need for ${cleanTask} on a ${vehicleName}?`,
+            answer: `For ${cleanTask} on a ${vehicleName} you'll need: ${repairData.tools.join(', ')}. You'll also need the correct replacement parts: ${repairData.parts.slice(0, 3).join(', ')}${repairData.parts.length > 3 ? `, and ${repairData.parts.length - 3} more item${repairData.parts.length - 3 > 1 ? 's' : ''}` : ''}.`,
+        },
+        {
+            question: `What happens if I delay ${cleanTask} on my ${vehicleName}?`,
+            answer: delayConsequences[task] || `Delaying ${cleanTask} on your ${vehicleName} can lead to more expensive repairs down the road, reduced vehicle reliability, and potential safety issues. It's best to address it within the manufacturer's recommended service interval.`,
+        },
+    ];
+
+    const faqSchemaData = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqItems.map(faq => ({
+            "@type": "Question",
+            "name": faq.question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer,
+            },
+        })),
+    };
+
     // Schema.org HowTo structured data — drives rich results (step count, time, cost badges in SERPs)
     const schemaData = {
         "@context": "https://schema.org",
@@ -304,6 +367,10 @@ export default async function Page({ params }: PageProps) {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchemaData) }}
             />
 
             {/* SEO Content - Renders server-side for Google */}
@@ -474,6 +541,23 @@ export default async function Page({ params }: PageProps) {
                             </li>
                         ))}
                     </ol>
+                </section>
+
+                {/* Frequently Asked Questions — GEO optimized for AI search citation */}
+                <section className="mb-8">
+                    <h2 className="text-xl font-bold text-white mb-4">Frequently Asked Questions</h2>
+                    <dl className="space-y-4">
+                        {faqItems.map((faq, i) => (
+                            <div key={i} className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                                <dt className="px-5 py-4 font-semibold text-white">
+                                    {faq.question}
+                                </dt>
+                                <dd className="px-5 pb-4 text-gray-400 text-sm leading-relaxed">
+                                    {faq.answer}
+                                </dd>
+                            </div>
+                        ))}
+                    </dl>
                 </section>
 
                 {/* CTA to AI Guide */}
