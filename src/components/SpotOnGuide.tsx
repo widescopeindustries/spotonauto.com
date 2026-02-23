@@ -6,35 +6,35 @@ import { X, Send, Loader2, Zap } from "lucide-react";
 interface Message {
   role: "assistant" | "user";
   content: string;
+  link?: { href: string; label: string };
 }
 
-const QUICK_ACTIONS = [
-  { label: "🔍 Diagnose a problem", value: "I want to diagnose a car problem", href: "/diagnose" },
-  { label: "🔧 Find a repair guide", value: "I want to find a repair guide", href: "/guides" },
-  { label: "📄 Export a PDF guide", value: "I want to export a PDF guide", href: null },
-];
+const GREETER_SEEN_KEY = "spotonauto_guide_seen";
 
 export function SpotOnGuide() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hey! I'm SpotOn Guide 👋 What can I help you with today?",
+      content: "Hey! 👋 What year, make, and model is your car?",
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showQuickActions, setShowQuickActions] = useState(true);
   const [sessionId] = useState(() => crypto.randomUUID());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-open after 60 seconds for free/logged-in users
+  // Auto-open after 3 seconds on first visit only
   useEffect(() => {
-    const t = setTimeout(() => {
-      if (!open) setOpen(true);
-    }, 60000);
+    const seen = localStorage.getItem(GREETER_SEEN_KEY);
+    if (seen) return;
+    const t = setTimeout(() => setOpen(true), 3000);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    if (open) localStorage.setItem(GREETER_SEEN_KEY, "1");
+  }, [open]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,55 +43,34 @@ export function SpotOnGuide() {
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
 
-    setShowQuickActions(false);
     const userMsg: Message = { role: "user", content: text };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/greeter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...messages, userMsg],
-          sessionId,
-          sourcePage: window.location.pathname,
-        }),
+        body: JSON.stringify({ messages: [...messages, userMsg], sessionId }),
       });
       const data = await res.json();
       if (data.reply) {
-        setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-      }
-      // If API returns a redirect, navigate after short delay
-      if (data.redirect) {
-        setTimeout(() => {
-          window.location.href = data.redirect;
-        }, 1200);
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.reply, link: data.link },
+        ]);
       }
     } catch {
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Having trouble connecting. Try the navigation above or refresh the page.",
+          content: "Having trouble connecting. Try searching from the top of the page!",
         },
       ]);
     } finally {
       setLoading(false);
-    }
-  }
-
-  function handleQuickAction(action: typeof QUICK_ACTIONS[0]) {
-    if (action.href) {
-      // Route directly and send a message showing what we're doing
-      sendMessage(action.value);
-      setTimeout(() => {
-        window.location.href = action.href!;
-      }, 800);
-    } else {
-      // PDF — conversational upsell
-      sendMessage(action.value);
     }
   }
 
@@ -130,7 +109,7 @@ export function SpotOnGuide() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+          <div key={i} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
             <div
               className={`max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
                 msg.role === "user"
@@ -140,23 +119,16 @@ export function SpotOnGuide() {
             >
               {msg.content}
             </div>
+            {msg.link && (
+              <a
+                href={msg.link.href}
+                className="mt-1.5 inline-flex items-center gap-1.5 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-semibold px-3 py-1.5 rounded-full transition-colors"
+              >
+                🔧 {msg.link.label} →
+              </a>
+            )}
           </div>
         ))}
-
-        {/* Quick action buttons — show after initial greeting only */}
-        {showQuickActions && messages.length === 1 && (
-          <div className="space-y-2 pt-1">
-            {QUICK_ACTIONS.map((action) => (
-              <button
-                key={action.value}
-                onClick={() => handleQuickAction(action)}
-                className="w-full text-left px-3 py-2 rounded-lg text-sm bg-white/5 border border-white/10 text-gray-300 hover:border-cyan-500/50 hover:text-white hover:bg-cyan-500/10 transition-all"
-              >
-                {action.label}
-              </button>
-            ))}
-          </div>
-        )}
 
         {loading && (
           <div className="flex justify-start">
@@ -174,7 +146,7 @@ export function SpotOnGuide() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
-          placeholder="Ask about your vehicle..."
+          placeholder="e.g. 2018 Honda Civic"
           className="flex-1 text-sm bg-white/5 border border-white/10 text-gray-200 placeholder-gray-600 rounded-lg px-3 py-2 outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30"
         />
         <button
