@@ -386,6 +386,25 @@ export default async function Page({ params }: PageProps) {
                     </p>
                 </header>
 
+                {/* Quick Answer — GEO target for AI featured snippets */}
+                <div className="mb-8 bg-white/5 border-l-4 border-brand-cyan rounded-xl p-5">
+                    <h2 className="text-sm font-bold text-brand-cyan uppercase tracking-wider mb-3">At a Glance</h2>
+                    <div className="flex flex-wrap gap-6 text-sm">
+                        <div>
+                            <span className="text-gray-500">Time: </span>
+                            <span className="text-white font-semibold">{repairData.time}</span>
+                        </div>
+                        <div>
+                            <span className="text-gray-500">Cost (parts): </span>
+                            <span className="text-white font-semibold">${costRange}</span>
+                        </div>
+                        <div>
+                            <span className="text-gray-500">Difficulty: </span>
+                            <span className="text-white font-semibold">{repairData.difficulty}</span>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Quick Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10">
