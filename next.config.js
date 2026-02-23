@@ -5,6 +5,9 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // Inline critical CSS and defer the rest — eliminates render-blocking CSS
+    // Requires: npm install --save-dev critters
+    optimizeCss: true,
   },
   // Make env vars available at build time
   env: {

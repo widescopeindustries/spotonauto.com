@@ -1,10 +1,8 @@
-
 'use client';
 
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useContext, useRef, ReactNode } from 'react';
 import { User as AppUser, SubscriptionTier } from '../types';
-import { supabase } from '../lib/supabaseClient';
-import { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import type { SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: AppUser | null;
@@ -21,12 +19,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
+  // Supabase client — loaded lazily after initial render to avoid blocking LCP
+  const sbRef = useRef<SupabaseClient | null>(null);
 
   // Helper to map Supabase user + subscription to AppUser
-  const mapUser = async (sbUser: SupabaseUser) => {
+  const mapUser = async (sbUser: SupabaseUser, sb: SupabaseClient) => {
     try {
-      // Fetch subscription tier from subscriptions table (NOT profiles)
-      const { data: subscription, error } = await supabase
+      const { data: subscription, error } = await sb
         .from('subscriptions')
         .select('tier, status')
         .eq('user_id', sbUser.id)
@@ -36,14 +35,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.error('Error fetching subscription:', error);
       }
 
-      // Map tier string to enum, default to free
       let tier = SubscriptionTier.Free;
       if (subscription?.status === 'active') {
         if (subscription.tier === 'pro') tier = SubscriptionTier.Pro;
         else if (subscription.tier === 'pro_plus') tier = SubscriptionTier.ProPlus;
       }
 
-      // Also set localStorage pro flag for client-side usage tracking
       if (typeof window !== 'undefined') {
         if (tier !== SubscriptionTier.Free) {
           localStorage.setItem('spoton_pro', 'true');
@@ -52,101 +49,90 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       }
 
-      setUser({
-        id: sbUser.id,
-        email: sbUser.email || '',
-        tier: tier,
-      });
+      setUser({ id: sbUser.id, email: sbUser.email || '', tier });
     } catch (err) {
       console.error('Unexpected error mapping user:', err);
-      setUser({
-        id: sbUser.id,
-        email: sbUser.email || '',
-        tier: SubscriptionTier.Free,
-      });
-    }
-  };
-
-  const refreshUser = async () => {
-    const { data: { user: sbUser } } = await supabase.auth.getUser();
-    if (sbUser) {
-      await mapUser(sbUser);
+      setUser({ id: sbUser.id, email: sbUser.email || '', tier: SubscriptionTier.Free });
     }
   };
 
   useEffect(() => {
-    // 1. Check active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        mapUser(session.user);
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
+    let cleanup: (() => void) | undefined;
 
-    // 2. Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        await mapUser(session.user);
-      } else {
-        setUser(null);
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('spoton_pro');
+    // Dynamically import Supabase AFTER initial render — keeps it out of
+    // the critical JS path so repair pages don't pay the ~150 KB cost.
+    import('../lib/supabaseClient').then(({ supabase }) => {
+      sbRef.current = supabase;
+
+      // Check active session
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          mapUser(session.user, supabase);
+        } else {
+          setUser(null);
         }
-      }
-      setLoading(false);
+        setLoading(false);
+      });
+
+      // Listen for auth changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        if (session?.user) {
+          await mapUser(session.user, supabase);
+        } else {
+          setUser(null);
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('spoton_pro');
+          }
+        }
+        setLoading(false);
+      });
+
+      cleanup = () => subscription.unsubscribe();
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => cleanup?.();
   }, []);
 
   const loginWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const sb = sbRef.current;
+    if (!sb) return;
+    const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
-    if (error) {
-      console.error('Google Login failed:', error.message);
-      throw error;
-    }
+    if (error) { console.error('Google Login failed:', error.message); throw error; }
   };
 
   const loginWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      console.error('Email Login failed:', error.message);
-      throw error;
-    }
+    const sb = sbRef.current;
+    if (!sb) return;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) { console.error('Email Login failed:', error.message); throw error; }
   };
 
   const signup = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (error) {
-      console.error('Signup failed:', error.message);
-      throw error;
-    }
+    const sb = sbRef.current;
+    if (!sb) return;
+    const { error } = await sb.auth.signUp({ email, password });
+    if (error) { console.error('Signup failed:', error.message); throw error; }
   };
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Logout failed:', error.message);
-    }
+    const sb = sbRef.current;
+    if (!sb) return;
+    const { error } = await sb.auth.signOut();
+    if (error) { console.error('Logout failed:', error.message); }
     setUser(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('spoton_pro');
     }
+  };
+
+  const refreshUser = async () => {
+    const sb = sbRef.current;
+    if (!sb) return;
+    const { data: { user: sbUser } } = await sb.auth.getUser();
+    if (sbUser) await mapUser(sbUser, sb);
   };
 
   return (
