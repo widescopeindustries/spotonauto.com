@@ -4,16 +4,17 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
-import HolographicDashboard from '@/components/HolographicDashboard';
 import { ScaleIn, GlassCard } from '@/components/MotionWrappers';
-import PopularGuidesSection from '@/components/PopularGuidesSection';
 
-// Lazy-load heavy/below-fold components — don't block initial paint
+// All heavy/below-fold components: ssr:false so they're NOT in initial HTML
+// Browser paints the hero first, then loads these progressively
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
-const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'));
-const HowItWorksSection = dynamic(() => import('@/components/HowItWorksSection'));
-const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'));
-const CTASection = dynamic(() => import('@/components/CTASection'));
+const HolographicDashboard = dynamic(() => import('@/components/HolographicDashboard'), { ssr: false });
+const PopularGuidesSection = dynamic(() => import('@/components/PopularGuidesSection'), { ssr: false });
+const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'), { ssr: false });
+const HowItWorksSection = dynamic(() => import('@/components/HowItWorksSection'), { ssr: false });
+const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'), { ssr: false });
+const CTASection = dynamic(() => import('@/components/CTASection'), { ssr: false });
 
 // Hero Section Component
 const HeroSection = () => {
