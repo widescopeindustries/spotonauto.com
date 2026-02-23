@@ -4,17 +4,17 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
+import HolographicDashboard from '@/components/HolographicDashboard';
 import { ScaleIn, GlassCard } from '@/components/MotionWrappers';
+import PopularGuidesSection from '@/components/PopularGuidesSection';
 
-// All heavy/below-fold components: ssr:false so they're NOT in initial HTML
-// Browser paints the hero first, then loads these progressively
+// ParticleBackground: canvas only, safe to skip SSR
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
-const HolographicDashboard = dynamic(() => import('@/components/HolographicDashboard'), { ssr: false });
-const PopularGuidesSection = dynamic(() => import('@/components/PopularGuidesSection'), { ssr: false });
-const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'), { ssr: false });
-const HowItWorksSection = dynamic(() => import('@/components/HowItWorksSection'), { ssr: false });
-const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'), { ssr: false });
-const CTASection = dynamic(() => import('@/components/CTASection'), { ssr: false });
+// Below-fold sections: SSR kept to avoid CLS, JS deferred
+const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'));
+const HowItWorksSection = dynamic(() => import('@/components/HowItWorksSection'));
+const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'));
+const CTASection = dynamic(() => import('@/components/CTASection'));
 
 // Hero Section Component
 const HeroSection = () => {

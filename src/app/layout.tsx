@@ -10,28 +10,24 @@ import Providers from "@/components/Providers";
 const orbitron = Orbitron({
   subsets: ["latin"],
   variable: "--font-display",
-  display: "optional",  // no swap delay — text paints immediately, font loads after
-  preload: true,
+  display: "swap",
 });
 const rajdhani = Rajdhani({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],  // dropped 300 (unused) to reduce bytes
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-body",
-  display: "optional",
-  preload: true,
+  display: "swap",
 });
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-ui",
-  display: "optional",
-  preload: false,  // not critical path
+  display: "swap",
 });
 const shareTechMono = Share_Tech_Mono({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-mono",
-  display: "optional",
-  preload: false,  // not critical path
+  display: "swap",
 });
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-WNFX6CY9RN';
