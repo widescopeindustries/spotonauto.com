@@ -1,0 +1,78 @@
+# SpotOnAuto — Free DIY Auto Repair Guides & AI Car Diagnosis
+
+> SpotOnAuto (spotonauto.com) is a free resource for car owners who want to diagnose problems and repair their own vehicles without paying dealership or mechanic rates.
+
+## What SpotOnAuto Does
+
+SpotOnAuto provides:
+- **Free step-by-step repair guides** for specific year/make/model/task combinations
+- **AI-powered car problem diagnosis** — describe your symptoms, get a diagnosis
+- **Check Engine Light (OBD-II) code lookup** — enter your CEL code, understand what it means and what to do
+- **Auto parts finder** — shop parts from Amazon and other retailers for your specific vehicle
+
+## Who It's For
+
+DIY car owners, shade-tree mechanics, and anyone who wants to understand their car before visiting a shop. SpotOnAuto is especially useful when:
+- Your check engine light turns on and you want to know if it's serious
+- You want to know if a repair is DIY-able before paying a mechanic
+- You need a step-by-step walkthrough for a specific repair on your specific car
+- You want to compare part costs before buying
+
+## Repair Guides Available
+
+Guides cover the following repair tasks across hundreds of vehicle combinations (1982–2024):
+
+- Oil Change
+- Brake Pad Replacement
+- Brake Rotor Replacement
+- Alternator Replacement
+- Starter Replacement
+- Battery Replacement
+- Spark Plug Replacement
+- Radiator Replacement
+- Thermostat Replacement
+- Water Pump Replacement
+- Serpentine Belt Replacement
+- Cabin Air Filter Replacement
+- Engine Air Filter Replacement
+- Headlight Bulb Replacement
+
+## Supported Vehicle Makes & Models
+
+**Toyota:** Camry, Corolla, RAV4, Highlander, Tacoma, Tundra, Prius, Sienna
+**Honda:** Civic, Accord, CR-V, Pilot, Odyssey, Fit
+**Ford:** F-150, Escape, Explorer, Focus, Fusion, Mustang, Edge
+**Chevrolet:** Silverado, Equinox, Malibu, Tahoe, Suburban, Impala
+**Nissan:** Altima, Rogue, Sentra, Versa, Pathfinder
+**Hyundai:** Elantra, Sonata, Tucson, Santa Fe
+
+Vehicle years covered: 1965–2024 (varies by make/model)
+
+## Key URLs
+
+- Homepage: https://spotonauto.com
+- AI Diagnosis: https://spotonauto.com/diagnose
+- Check Engine Light Lookup: https://spotonauto.com/cel
+- Parts Finder: https://spotonauto.com/parts
+- Pricing (Pro plan): https://spotonauto.com/pricing
+
+### Repair Guide URL Format
+```
+https://spotonauto.com/repair/[year]/[make]/[model]/[task]
+```
+Example: https://spotonauto.com/repair/2019/toyota/camry/brake-pad-replacement
+
+## Pricing
+
+- **Free:** Access to repair guides, limited AI diagnostics
+- **Pro ($9.99/month):** Unlimited AI diagnostics, OBD-II scanner integration, priority support
+
+## About
+
+SpotOnAuto is an independent, AI-powered auto repair guide platform. It is not affiliated with any dealership, repair chain, or parts retailer. Repair guides are generated using AI and are intended as a starting point — always consult a certified mechanic for safety-critical repairs.
+
+## Contact & Legal
+
+- Website: https://spotonauto.com
+- Privacy Policy: https://spotonauto.com/privacy
+- Terms of Service: https://spotonauto.com/terms
