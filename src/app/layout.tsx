@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
+import { SpotOnGuide } from "@/components/SpotOnGuide";
 
 // Self-hosted fonts — eliminates external Google Fonts network request (LCP fix)
 const orbitron = Orbitron({
@@ -101,6 +102,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <SpotOnGuide />
         </Providers>
       </body>
     </html>
