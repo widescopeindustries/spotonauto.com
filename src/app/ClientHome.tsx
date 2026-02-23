@@ -2,15 +2,12 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
-import HolographicDashboard from '@/components/HolographicDashboard';
-import { ScaleIn, GlassCard } from '@/components/MotionWrappers';
 import PopularGuidesSection from '@/components/PopularGuidesSection';
 
-// ParticleBackground: canvas only, safe to skip SSR
+// No Framer Motion in hero — CSS animations only (LCP fix)
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
-// Below-fold sections: SSR kept to avoid CLS, JS deferred
+const HolographicDashboard = dynamic(() => import('@/components/HolographicDashboard'), { ssr: false, loading: () => <div className="h-64 rounded-2xl bg-white/[0.02] animate-pulse" /> });
 const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'));
 const HowItWorksSection = dynamic(() => import('@/components/HowItWorksSection'));
 const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'));
@@ -32,12 +29,12 @@ const HeroSection = () => {
                     {/* Left Content */}
                     <div className="space-y-6">
                         {/* Status Badge */}
-                        <ScaleIn delay={0.3} className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass animate-scale-in">
                             <span className="status-dot" />
                             <span className="font-body text-xs tracking-widest text-cyan-400 uppercase">
                                 AI System Online
                             </span>
-                        </ScaleIn>
+                        </div>
 
                         {/* Heading — no animation wrapper: renders at full opacity for fast LCP */}
                         <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
@@ -67,13 +64,8 @@ const HeroSection = () => {
                     </div>
 
                     {/* Right Content - Configuration Panel */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 50, rotateY: 15 }}
-                        animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                        transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative"
-                    >
-                        <GlassCard className="p-6 sm:p-8 border-cyan-500/30 glow-border" hoverEffect={false}>
+                    <div className="relative animate-fade-in-right">
+                        <div className="glass border border-cyan-500/30 bg-white/[0.02] backdrop-blur-md rounded-2xl glow-border p-6 sm:p-8">
                             {/* Panel Header */}
                             <div className="flex items-center justify-between mb-6">
                                 <div>
@@ -103,16 +95,11 @@ const HeroSection = () => {
                                     <div className={`h-full bg-gradient-to-r from-cyan-500 to-cyan-300 transition-all duration-500 ${selectedVehicle?.model ? 'w-full' : 'w-0'}`} />
                                 </div>
                             </div>
-                        </GlassCard>
+                        </div>
 
                         {/* Floating Stats */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8 }}
-                            className="absolute -bottom-4 -right-4"
-                        >
-                            <GlassCard className="p-4 border-cyan-500/20">
+                        <div className="absolute -bottom-4 -right-4 animate-fade-in-up">
+                            <div className="glass border border-cyan-500/20 bg-white/[0.02] backdrop-blur-md rounded-2xl p-4">
                                 <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 rounded-lg bg-cyan-500/10 flex items-center justify-center">
                                         <CheckCircle2 className="w-6 h-6 text-cyan-400" />
@@ -124,9 +111,9 @@ const HeroSection = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </GlassCard>
-                        </motion.div>
-                    </motion.div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
