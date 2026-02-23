@@ -5,32 +5,31 @@ function getOpenAI() {
   return new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 }
 
-const SYSTEM_PROMPT = `You are a friendly auto repair guide for SpotOnAuto.com — a site that gives people free DIY repair guides for their specific car.
+const SYSTEM_PROMPT = `You are a friendly auto repair guide for SpotOnAuto.com — a site with free DIY repair guides AND an AI diagnosis tool for any car problem.
 
-Your ONLY job is a 2-step conversation:
+Your job is a fast 3-step conversation:
 
-STEP 1: If you don't know the year, make, and model yet — ask for it. Keep it warm and brief.
+STEP 1: If you don't know the year, make, and model — ask. Warm and brief.
 
-STEP 2: Once you have year/make/model — ask what's going on with the car. One question, keep it simple.
+STEP 2: Once you have year/make/model — ask what's going on with the car. One question.
 
-STEP 3: Once you have the vehicle AND the problem, respond with:
-- A short friendly message (1-2 sentences max, no fluff)
+STEP 3: Once you have vehicle AND problem, respond with:
+- A short friendly message (1-2 sentences, no fluff) acknowledging the issue
 - Then on its own line: [ROUTE: year=YEAR make=MAKE model=MODEL]
 
 Rules:
-- MAKE and MODEL should be lowercase, single words or hyphenated (e.g. honda, civic, f-150, rav4)
-- YEAR is 4 digits
-- Never include the [ROUTE] tag until you have both the vehicle AND what's wrong
+- MAKE and MODEL: lowercase, single words or hyphenated (honda, civic, f-150, rav4)
+- YEAR: 4 digits
+- Never include [ROUTE] until you have both vehicle AND problem
 - Keep every response under 3 sentences
-- Don't mention pricing, Pro tier, or subscriptions unprompted
-- Be warm and direct — like a knowledgeable friend, not a manual
+- Be warm and direct — knowledgeable friend, not a manual
 
 Examples:
 User: "2018 Honda Civic"
-You: "Nice choice! What's going on with it?"
+You: "Nice! What's going on with it?"
 
-User: "the brakes are squeaking"
-You: "Got it — that's usually worn brake pads. I'll pull up your exact guide right now!
+User: "brakes are squeaking"
+You: "Got it — sounds like worn brake pads. Pulling up your exact guide now!
 [ROUTE: year=2018 make=honda model=civic]"`;
 
 export async function POST(req: NextRequest) {
@@ -63,18 +62,26 @@ export async function POST(req: NextRequest) {
     const routeMatch = raw.match(/\[ROUTE:\s*year=(\d{4})\s+make=([a-z0-9-]+)\s+model=([a-z0-9-]+)\]/i);
 
     let link: { href: string; label: string } | undefined;
+    let followUp: { content: string; link: { href: string; label: string } } | undefined;
+
     if (routeMatch) {
       const [, year, make, model] = routeMatch;
+      const makeName = make.charAt(0).toUpperCase() + make.slice(1);
+      const modelName = model.charAt(0).toUpperCase() + model.slice(1);
       const href = `/repair/${year}/${make}/${model}`;
       link = {
         href,
-        label: `View ${year} ${make.charAt(0).toUpperCase() + make.slice(1)} ${model.charAt(0).toUpperCase() + model.slice(1)} Guides`,
+        label: `View ${year} ${makeName} ${modelName} Guides`,
+      };
+      followUp = {
+        content: `Also — Pro members get the AI diagnosis tool for any problem on their ${makeName} + printable repair manuals. Want to try it free for 7 days?`,
+        link: { href: "/diagnose", label: "Try Pro Free ⚡" },
       };
     }
 
     const cleanReply = raw.replace(/\[ROUTE:[^\]]+\]/g, "").trim();
 
-    return NextResponse.json({ reply: cleanReply, link });
+    return NextResponse.json({ reply: cleanReply, link, followUp });
   } catch (err) {
     console.error("Greeter API error:", err);
     return NextResponse.json({

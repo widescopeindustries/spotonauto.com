@@ -61,6 +61,15 @@ export function SpotOnGuide() {
           { role: "assistant", content: data.reply, link: data.link },
         ]);
       }
+      // Drip in the Pro value pitch after a short pause
+      if (data.followUp) {
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: data.followUp.content, link: data.followUp.link },
+          ]);
+        }, 1500);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
