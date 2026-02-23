@@ -638,6 +638,7 @@ export default async function Page({ params }: PageProps) {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {VALID_TASKS
                         .filter(t => t !== task)
+                        .slice(0, 6)
                         .map(relTask => (
                             <Link
                                 key={relTask}
