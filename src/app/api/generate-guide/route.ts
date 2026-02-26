@@ -60,18 +60,10 @@ export async function POST(req: NextRequest) {
     const { action, payload, stream } = body;
 
     // ── Authentication guard ──────────────────────────────────────────────────
-    // Public actions (no sign-in required):
-    //   - diagnostic-chat: free for all visitors
-    //   - decode-vin: calls NHTSA public API, no reason to gate
-    // All other actions (guide generation, vehicle-info) require auth.
-    const PUBLIC_ACTIONS = ['diagnostic-chat', 'decode-vin'];
+    // All actions are public — anonymous users can generate guides up to the
+    // client-side free limit (tracked in localStorage by usageTracker).
+    // Auth is only used to check Pro status for unlimited access.
     const user = await getAuthenticatedUser(req);
-    if (!PUBLIC_ACTIONS.includes(action) && !user) {
-      return NextResponse.json(
-        { error: 'Authentication required. Please sign in to continue.' },
-        { status: 401 }
-      );
-    }
     // ─────────────────────────────────────────────────────────────────────────
 
     console.log(`API Request [user:${user?.id ?? 'anonymous'}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);

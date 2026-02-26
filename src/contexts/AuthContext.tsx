@@ -7,7 +7,7 @@ import type { SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js
 interface AuthContextType {
   user: AppUser | null;
   loading: boolean;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: (redirectAfter?: string) => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -93,9 +93,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return () => cleanup?.();
   }, []);
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (redirectAfter?: string) => {
     const sb = sbRef.current;
     if (!sb) return;
+    // Save the intended destination so auth/callback can restore it after OAuth
+    const dest = redirectAfter || (typeof window !== 'undefined' ? window.location.pathname : '/');
+    if (dest && dest !== '/' && typeof window !== 'undefined') {
+      localStorage.setItem('auth_redirect', dest);
+    }
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },

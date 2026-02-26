@@ -5,9 +5,10 @@ import { Cpu } from 'lucide-react';
 
 interface AuthFormProps {
   onAuthSuccess: () => void;
+  redirectAfter?: string; // Where to send user after Google OAuth completes
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, redirectAfter }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,7 +32,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
 
   const handleGoogleLogin = async () => {
       try {
-          await loginWithGoogle();
+          // Pass the intended destination so callback can redirect there after OAuth
+          await loginWithGoogle(redirectAfter);
       } catch (err: any) {
           setError(err.message || 'Google Login failed');
       }

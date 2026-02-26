@@ -41,11 +41,8 @@ export default function GuideContent({ params }: GuideContentProps) {
         // Wait until auth state is resolved before proceeding
         if (authLoading) return;
 
-        // If no user, redirect to auth (API now requires authentication)
-        if (!user) {
-            router.push(`/auth?redirect=${encodeURIComponent(window.location.pathname)}`);
-            return;
-        }
+        // Anonymous users are allowed — guide generation is public up to the
+        // free limit tracked by localStorage (usageTracker). No auth redirect here.
 
         const fetchGuide = async () => {
             setError(null);
