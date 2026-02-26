@@ -32,6 +32,7 @@ export interface RepairGuide {
   parts: string[];
   steps: RepairStep[];
   sources?: GroundingSource[];
+  sourceCount?: number;
 }
 
 export interface ChatMessage {
@@ -67,8 +68,8 @@ export interface GroundingSource {
 
 export interface VehicleInfo {
   jobSnapshot: JobSnapshot;
-  tsbs: TSB[];
-  recalls: Recall[];
+  tsbs: string[];     // TSB descriptions as plain strings
+  recalls: string[];  // Real NHTSA recall strings or AI-generated fallbacks
   sources?: GroundingSource[];
 }
 

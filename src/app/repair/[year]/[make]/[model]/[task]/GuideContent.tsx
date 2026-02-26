@@ -11,6 +11,7 @@ import { trackGuideGenerated, trackRepairPageView, trackUpgradeModalShown } from
 import { trackGuideUse } from '@/lib/usageTracker';
 import { useAuth } from '@/contexts/AuthContext';
 import UpgradeGate from '@/components/UpgradeGate';
+import VehicleHealthSnapshot from '@/components/VehicleHealthSnapshot';
 
 interface GuideContentProps {
     params: {
@@ -158,7 +159,14 @@ export default function GuideContent({ params }: GuideContentProps) {
 
     return (
         <div className="py-8">
-            {guide && <ServiceManualGuide guide={guide} onReset={() => router.push('/')} />}
+            {guide && (
+                <>
+                    <div className="max-w-4xl mx-auto px-4">
+                        <VehicleHealthSnapshot year={year} make={make} model={model} />
+                    </div>
+                    <ServiceManualGuide guide={guide} onReset={() => router.push('/')} />
+                </>
+            )}
         </div>
     );
 }

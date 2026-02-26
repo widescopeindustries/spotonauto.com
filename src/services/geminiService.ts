@@ -2,6 +2,7 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { Vehicle, VehicleInfo, RepairGuide, ChatMessage } from '../types';
 import { isValidVehicleCombination } from '@/data/vehicles';
+import { getVehicleNHTSAData, nhtsaToPromptContext, recallsToSafetyWarnings } from './nhtsaService';
 
 // NOTE: This service is now only used server-side (e.g., in api/ folder).
 // Client-side code should use apiClient.ts instead to make secure API requests.
@@ -153,24 +154,33 @@ export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<Ve
     throw new Error(`Invalid vehicle combination: ${year} ${make} ${model}. This vehicle did not exist in the specified year.`);
   }
 
-  // Try to fetch from local charm.li server first
-  const charmLiContent = await fetchFromCharmLi(year, make, model, task);
+  // Fetch NHTSA data + charm.li in parallel
+  const [nhtsaData, charmLiContent] = await Promise.all([
+    getVehicleNHTSAData(year, make, model),
+    fetchFromCharmLi(year, make, model, task),
+  ]);
 
-  const prompt = charmLiContent
-    ? `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", analyze the following charm.li service manual content and provide accurate information.
+  const nhtsaContext = nhtsaToPromptContext(nhtsaData);
+
+  const basePrompt = charmLiContent
+    ? `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", use the service manual content and NHTSA safety data below.
 
 CHARM.LI SERVICE MANUAL CONTENT:
-${charmLiContent.slice(0, 15000)}...
+${charmLiContent.slice(0, 12000)}
 
-Based on the above factory service manual data, provide:`
-    : `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", provide accurate information based on your knowledge of factory service procedures.
+${nhtsaContext}`
+    : `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", use the NHTSA safety data below and your knowledge of factory service procedures.
+
+${nhtsaContext}`;
+
+  const prompt = `${basePrompt}
 
 Provide:
 1. A "Job Snapshot" with realistic estimates for difficulty (1-5), time, parts cost, and potential savings.
-2. A list of real Technical Service Bulletins (TSBs) if mentioned.
-3. A list of real safety recalls relevant to this task if mentioned.
+2. A list of relevant Technical Service Bulletins (TSBs) — use real ones from the data above if available.
+3. The ACTIVE RECALLS listed in the NHTSA data above — copy them exactly, do not invent new ones.
 
-You MUST format your entire response as a single JSON object with three keys: "jobSnapshot", "tsbs", and "recalls".`;
+Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
 
   const response = await genAI.models.generateContent({
     model: TEXT_MODEL,
@@ -184,11 +194,22 @@ You MUST format your entire response as a single JSON object with three keys: "j
   const text = (response.text || "").trim().replace(/^```json\s*|```$/g, '');
   const data = JSON.parse(text);
 
+  // Override AI-generated recalls with real NHTSA recalls
+  const realRecalls = nhtsaData.recalls.length > 0
+    ? nhtsaData.recalls.slice(0, 5).map(r =>
+        `[${r.nhtsaCampaignNumber}] ${r.component}: ${r.summary.slice(0, 300)}`
+      )
+    : data.recalls;
+
   const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
     ?.map((chunk: any) => chunk.web)
     .filter((web: any): web is { uri: string; title: string } => !!(web?.uri && web.title)) || [];
 
-  return { ...data, sources };
+  return {
+    ...data,
+    recalls: realRecalls,
+    sources,
+  };
 };
 
 export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): Promise<RepairGuide> => {
@@ -199,42 +220,50 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): P
     throw new Error(`Invalid vehicle combination: ${year} ${make} ${model}. This vehicle did not exist in the specified year.`);
   }
 
-  // Fetch from local charm.li server
-  const charmLiContent = await fetchFromCharmLi(year, make, model, task);
+  // Fetch NHTSA data + charm.li in parallel
+  const [nhtsaData, charmLiContent] = await Promise.all([
+    getVehicleNHTSAData(year, make, model),
+    fetchFromCharmLi(year, make, model, task),
+  ]);
+
+  const nhtsaContext = nhtsaToPromptContext(nhtsaData);
+  const recallWarnings = recallsToSafetyWarnings(nhtsaData.recalls);
 
   const prompt = charmLiContent
     ? `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
 
 PRIMARY DATA SOURCE - CHARM.LI FACTORY SERVICE MANUAL:
-${charmLiContent.slice(0, 20000)}...
+${charmLiContent.slice(0, 18000)}
+
+${nhtsaContext}
 
 INSTRUCTIONS:
-1. Use ONLY the above factory service manual content as your source
+1. Use the factory service manual content as your primary source for procedures
 2. Extract the specific procedure for "${task}" on this exact vehicle
-3. Include exact torque specs, part numbers, and safety warnings from the manual
-4. If the manual doesn't cover this specific task, state that clearly
-5. Do not invent information not present in the manual
+3. Include exact torque specs, part numbers from the manual
+4. IMPORTANT: Use the NHTSA recall data above as safety warnings — these are REAL and must be included
+5. Do not invent information not present in the sources above
 
-Based on the service manual, provide:`
+Return JSON with title, vehicle, safetyWarnings, tools, parts, steps.`
     : `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
+
+${nhtsaContext}
 
 INSTRUCTIONS:
 1. Provide accurate repair procedures based on known factory service procedures for this vehicle
 2. Include torque specs, part numbers, and safety warnings where known
-3. If you are not confident about specific details for this exact vehicle, note that clearly
+3. IMPORTANT: The NHTSA recall data above is REAL — include relevant recalls as the first safety warnings
 4. Focus on safety and correctness
 
-Provide:
-
 Return JSON with:
-- title (concise, based on actual procedure found)
+- title (concise repair task name)
 - vehicle ("${year} ${make} ${model}")
-- safetyWarnings (3-5 brief, critical warnings)
-- tools (5-10 common tools needed)
-- parts (5-10 searchable part names from service manual)
-- steps (5-8 numbered steps with clear instructions)
+- safetyWarnings (3-5 warnings — lead with any NHTSA recalls above)
+- tools (5-10 tools needed)
+- parts (5-10 part names with typical part numbers where known)
+- steps (5-8 clear numbered steps)
 
-Keep instructions concise, practical, and grounded in actual service manual procedures found through search.`;
+Keep instructions concise and practical.`;
 
   const repairGuideSchema = {
     type: Type.OBJECT,
@@ -287,14 +316,20 @@ Keep instructions concise, practical, and grounded in actual service manual proc
     imageUrl: ""
   }));
 
+  // Prepend real NHTSA recall warnings — these override AI-generated ones
+  const safetyWarnings: string[] = recallWarnings.length > 0
+    ? [...recallWarnings, ...(data.safetyWarnings ?? []).slice(0, 4)]
+    : (data.safetyWarnings ?? []);
+
   const guideId = `${year}-${make}-${model}-${data.title}`.toLowerCase().replace(/\s+/g, '-');
 
   return {
     ...data,
     id: guideId,
+    safetyWarnings,
     steps: stepsWithImages,
     sources,
-    sourceCount: rawSources.length
+    sourceCount: rawSources.length,
   };
 };
 

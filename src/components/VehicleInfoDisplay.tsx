@@ -63,12 +63,10 @@ const VehicleInfoDisplay: React.FC<VehicleInfoDisplayProps> = ({
                         <AlertIcon className="text-brand-cyan"/>Bulletins (TSBs)
                     </h2>
                     {tsbs.length > 0 ? (
-                        <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
-                           {tsbs.map((tsb) => (
-                               <div key={tsb.bulletinNumber} className="bg-gray-900 p-4 rounded-lg border border-brand-cyan/20">
-                                   <h3 className="font-bold text-brand-cyan-light">{tsb.title}</h3>
-                                   <p className="text-sm text-gray-300 mt-1">{tsb.summary}</p>
-                                   <p className="text-xs text-gray-500 mt-2">Bulletin: {tsb.bulletinNumber}</p>
+                        <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+                           {tsbs.map((tsb, i) => (
+                               <div key={i} className="bg-gray-900 p-4 rounded-lg border border-brand-cyan/20">
+                                   <p className="text-sm text-gray-300">{tsb}</p>
                                </div>
                            ))}
                         </div>
@@ -81,12 +79,10 @@ const VehicleInfoDisplay: React.FC<VehicleInfoDisplayProps> = ({
                         <AlertIcon className="text-red-500"/>Safety Recalls
                     </h2>
                      {recalls.length > 0 ? (
-                        <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
-                           {recalls.map((recall) => (
-                               <div key={recall.campaignNumber} className="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
-                                   <h3 className="font-bold text-red-300">{recall.title}</h3>
-                                   <p className="text-sm text-red-200 mt-1">{recall.consequence}</p>
-                                   <p className="text-xs text-red-400 mt-2">Campaign: {recall.campaignNumber}</p>
+                        <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+                           {recalls.map((recall, i) => (
+                               <div key={i} className="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
+                                   <p className="text-sm text-red-200">{recall}</p>
                                </div>
                            ))}
                         </div>
