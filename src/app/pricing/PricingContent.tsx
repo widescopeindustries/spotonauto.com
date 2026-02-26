@@ -164,7 +164,10 @@ export default function PricingContent() {
   }
 
   const handleCtaClick = async (tier: PricingTier) => {
-    // If user is not logged in, send to auth first
+    // Wait for session check to resolve before acting — prevents premature auth redirect
+    if (loading) return;
+
+    // If user is not logged in, send to auth first (redirect back here after login)
     if (!user && tier.ctaAction !== 'signup') {
       router.push('/auth?redirect=/pricing');
       return;
@@ -217,6 +220,7 @@ export default function PricingContent() {
 
   // Get CTA text based on user's current tier
   const getCtaText = (tier: PricingTier) => {
+    if (loading) return 'Loading...';
     if (tier.name.toLowerCase() === userTier) {
       return 'Current Plan';
     }
@@ -232,6 +236,7 @@ export default function PricingContent() {
 
   // Determine if button should be disabled
   const isButtonDisabled = (tier: PricingTier) => {
+    if (loading) return true;
     return tier.name.toLowerCase() === userTier;
   };
 

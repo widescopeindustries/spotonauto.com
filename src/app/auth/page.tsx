@@ -1,19 +1,23 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import AuthForm from '@/components/AuthForm';
 
-export default function AuthPage() {
+function AuthPageInner() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { user, loading } = useAuth();
+
+    // Honour ?redirect= param so pricing → auth → pricing flow works
+    const redirectTo = searchParams.get('redirect') || '/';
 
     useEffect(() => {
         if (!loading && user) {
-            router.push('/');
+            router.push(redirectTo);
         }
-    }, [user, loading, router]);
+    }, [user, loading, router, redirectTo]);
 
     if (loading) {
         return (
@@ -29,7 +33,20 @@ export default function AuthPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-20">
-            <AuthForm onAuthSuccess={() => router.push('/')} />
+            <AuthForm onAuthSuccess={() => router.push(redirectTo)} />
         </div>
+    );
+}
+
+// useSearchParams requires Suspense boundary in Next.js app router
+export default function AuthPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-pulse text-cyan-400">Loading...</div>
+            </div>
+        }>
+            <AuthPageInner />
+        </Suspense>
     );
 }
