@@ -90,14 +90,10 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // ── Server-side Pro enforcement for generate-guide ───────────────────
-      // Pro users get unlimited; free users are rate-limited client-side.
-      // This server check is an authoritative source of truth for Pro status.
-      if (action === 'generate-guide') {
-        const userIsPro = await isProUser(user!.id);
-        // Log for audit purposes (client-side limit still applies for free users)
-        console.log(`[API] generate-guide: user=${user!.id}, isPro=${userIsPro}`);
-        // Future: enforce server-side usage limits for free tier here
+      // ── Server-side Pro check for generate-guide (anonymous users allowed) ─
+      if (action === 'generate-guide' && user) {
+        const userIsPro = await isProUser(user.id);
+        console.log(`[API] generate-guide: user=${user.id}, isPro=${userIsPro}`);
       }
       // ────────────────────────────────────────────────────────────────────
     }
