@@ -58,7 +58,8 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
     const url = user.email
       ? `${PAYMENT_LINK}?prefilled_email=${encodeURIComponent(user.email)}`
       : PAYMENT_LINK;
-    window.open(url, '_blank');
+    // Use location.href — window.open in async handlers is silently blocked by popup blockers
+    window.location.href = url;
     onClose();
   };
 

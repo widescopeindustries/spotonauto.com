@@ -39,7 +39,8 @@ export default function UpgradeGate({ type, used, limit }: UpgradeGateProps) {
     const url = user.email
       ? `${PRO_MONTHLY_LINK}?prefilled_email=${encodeURIComponent(user.email)}`
       : PRO_MONTHLY_LINK;
-    window.open(url, '_blank');
+    // Use location.href — window.open in async handlers is silently blocked by popup blockers
+    window.location.href = url;
   };
 
   return (

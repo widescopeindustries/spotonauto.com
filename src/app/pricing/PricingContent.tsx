@@ -206,7 +206,9 @@ export default function PricingContent() {
           ? `${paymentLink}?prefilled_email=${encodeURIComponent(user.email)}`
           : paymentLink;
 
-        window.open(url, '_blank');
+        // Use location.href instead of window.open — async handlers are treated as
+        // non-gesture by Chrome/Safari popup blockers, causing window.open to silently fail.
+        window.location.href = url;
       } else {
         alert('Payment link not configured yet. Please check the setup instructions.');
       }
