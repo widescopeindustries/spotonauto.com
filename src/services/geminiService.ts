@@ -82,34 +82,57 @@ export interface Chat {
 }
 
 export const decodeVin = async (vin: string): Promise<Vehicle> => {
-  // Use the free NHTSA vPIC API for authoritative VIN decoding (no AI hallucination)
-  const nhtsaUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${encodeURIComponent(vin)}?format=json`;
+  // Basic VIN format check before hitting the API
+  const cleanVin = vin.trim().toUpperCase().replace(/[IOQ]/g, ''); // I, O, Q are illegal in VINs
+  if (cleanVin.length !== 17) {
+    throw new Error('VIN must be exactly 17 characters. Please check and try again.');
+  }
 
-  console.log(`[VIN] Decoding via NHTSA API: ${vin}`);
+  // Use the free NHTSA vPIC API for authoritative VIN decoding
+  const nhtsaUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${encodeURIComponent(cleanVin)}?format=json`;
+  console.log(`[VIN] Decoding via NHTSA vPIC: ${cleanVin}`);
 
-  const response = await fetch(nhtsaUrl);
+  let response: Response;
+  try {
+    response = await fetch(nhtsaUrl, { signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined });
+  } catch {
+    throw new Error('Could not reach the NHTSA VIN database. Please try again or enter vehicle details manually.');
+  }
+
   if (!response.ok) {
-    throw new Error(`NHTSA API error: ${response.status}`);
+    throw new Error(`NHTSA API returned ${response.status}. Please try again or enter vehicle details manually.`);
   }
 
   const data = await response.json();
-  const result = data.Results?.[0];
+  const r = data.Results?.[0];
+  if (!r) throw new Error('No response from NHTSA. Try entering vehicle details manually.');
 
-  if (!result) {
-    throw new Error('No results from NHTSA VIN decoder');
+  const year  = (r.ModelYear || '').trim();
+  const make  = (r.Make      || '').trim();
+  const model = (r.Model     || r.Series || r.Trim || '').trim();
+
+  // Need at minimum year + make to be useful
+  if (!year || !make) {
+    const errorCode = r.ErrorCode || '';
+    if (errorCode.includes('11') || errorCode.includes('12')) {
+      throw new Error('VIN check digit is invalid. Please double-check the VIN number.');
+    }
+    throw new Error('NHTSA could not identify this VIN. Verify the VIN on your door jamb sticker or title, or enter vehicle details manually.');
   }
 
-  const year = result.ModelYear || '';
-  const make = result.Make || '';
-  const model = result.Model || '';
-
-  if (!year || !make || !model) {
-    throw new Error(`Could not decode VIN: ${vin}. NHTSA returned incomplete data.`);
+  // Model missing but year+make present — return what we have, let user fill model
+  if (!model) {
+    console.warn(`[VIN] ${cleanVin}: year+make decoded (${year} ${make}) but model missing — NHTSA gap`);
+    return { year, make, model: '' }; // UI will prompt user to fill in model
   }
 
-  console.log(`[VIN] Decoded: ${year} ${make} ${model}`);
+  // Normalize make to title case (FORD → Ford)
+  const normMake = make.charAt(0).toUpperCase() + make.slice(1).toLowerCase();
+  // Normalize model (F-150 → F-150, already fine usually)
+  const normModel = model.charAt(0).toUpperCase() + model.slice(1).toLowerCase();
 
-  return { year, make, model };
+  console.log(`[VIN] ✓ Decoded: ${year} ${normMake} ${normModel}`);
+  return { year, make: normMake, model: normModel };
 };
 
 // ─── Operation CHARM (charm.li) live fetch ──────────────────────────────────

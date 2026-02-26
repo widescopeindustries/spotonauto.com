@@ -68,9 +68,12 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                 make: decoded.make,
                 model: decoded.model
             });
+            if (!decoded.model) {
+                setError(`Found ${decoded.year} ${decoded.make} — model not in NHTSA database. Please select your model below.`);
+            }
         } catch (err) {
             trackVinDecode(vin, false);
-            setError("Decoding failed. Please verify VIN.");
+            setError(err instanceof Error ? err.message : "Decoding failed. Please verify VIN or enter details manually.");
         } finally {
             setIsDecoding(false);
         }

@@ -60,10 +60,13 @@ export async function POST(req: NextRequest) {
     const { action, payload, stream } = body;
 
     // ── Authentication guard ──────────────────────────────────────────────────
-    // diagnostic-chat is free for all visitors (no sign-up required, as advertised)
-    // generate-guide and other actions require authentication
+    // Public actions (no sign-in required):
+    //   - diagnostic-chat: free for all visitors
+    //   - decode-vin: calls NHTSA public API, no reason to gate
+    // All other actions (guide generation, vehicle-info) require auth.
+    const PUBLIC_ACTIONS = ['diagnostic-chat', 'decode-vin'];
     const user = await getAuthenticatedUser(req);
-    if (action !== 'diagnostic-chat' && !user) {
+    if (!PUBLIC_ACTIONS.includes(action) && !user) {
       return NextResponse.json(
         { error: 'Authentication required. Please sign in to continue.' },
         { status: 401 }
