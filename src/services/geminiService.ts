@@ -112,36 +112,161 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
   return { year, make, model };
 };
 
-// Local charm.li server URL (configured in .env.local)
-const CHARM_LI_SERVER_URL = process.env.CHARM_LI_SERVER_URL || 'http://localhost:8080';
+// ─── Operation CHARM (charm.li) live fetch ──────────────────────────────────
+// Publicly free service manual archive ("no strings attached") covering 1982–2013.
+// We fetch live at query time — no local copy stored.
+// For 2014+ vehicles we fall back silently to AI-only.
+
+const CHARM_BASE = 'https://charm.li';
+const CHARM_FETCH_OPTS = {
+  headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' },
+  signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined,
+};
+
+/** Keywords mapping common repair tasks to relevant charm.li path segments */
+const TASK_KEYWORDS: Record<string, string[]> = {
+  'oil':          ['Oil', 'Lubrication', 'Engine Oil', 'Oil Pan', 'Oil Filter'],
+  'brake':        ['Brake', 'Brakes', 'Pad', 'Rotor', 'Caliper', 'Brake Disc'],
+  'spark':        ['Spark Plug', 'Tune-up', 'Ignition'],
+  'battery':      ['Battery', 'Charging System'],
+  'coolant':      ['Cooling System', 'Coolant', 'Thermostat', 'Radiator'],
+  'transmission': ['Transmission', 'Clutch', 'Fluid'],
+  'alternator':   ['Alternator', 'Charging', 'Generator'],
+  'starter':      ['Starter', 'Starting System'],
+  'belt':         ['Belt', 'Timing Belt', 'Serpentine', 'Drive Belt'],
+  'filter':       ['Filter', 'Air Filter', 'Cabin Filter', 'Fuel Filter'],
+  'tire':         ['Tire', 'Wheel Bearing', 'Hub', 'Suspension'],
+  'shock':        ['Shock', 'Strut', 'Suspension', 'Spring'],
+};
+
+function extractText(html: string): string {
+  return html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&').replace(/&#\d+;/g, ' ')
+    .replace(/\s{2,}/g, ' ').trim();
+}
+
+function extractLinks(html: string): string[] {
+  const matches = html.matchAll(/href=['"]([^'"]+\/)['"]/g);
+  return [...matches].map(m => m[1]);
+}
+
+/** Fuzzy match: find best vehicle variant on the year page for a given model name */
+function bestVariantMatch(modelName: string, variants: string[]): string | null {
+  const norm = (s: string) => decodeURIComponent(s).toLowerCase().replace(/[-_\s]+/g, ' ');
+  const target = norm(modelName);
+  // Score each variant by how many words from the model name appear in it
+  const targetWords = target.split(' ').filter(w => w.length > 2);
+  let bestScore = 0, bestVariant: string | null = null;
+  for (const v of variants) {
+    const vNorm = norm(v);
+    const score = targetWords.filter(w => vNorm.includes(w)).length;
+    if (score > bestScore) { bestScore = score; bestVariant = v; }
+  }
+  return bestScore > 0 ? bestVariant : (variants[0] ?? null); // fallback to first
+}
+
+/** Find relevant sections in the Repair+Diagnosis tree for a given task */
+function findTaskSections(sectionLinks: string[], task: string): string[] {
+  const taskLower = task.toLowerCase();
+  const relevantKeywords: string[] = [];
+
+  for (const [key, words] of Object.entries(TASK_KEYWORDS)) {
+    if (taskLower.includes(key) || words.some(w => taskLower.includes(w.toLowerCase()))) {
+      relevantKeywords.push(...words.map(w => w.toLowerCase()));
+    }
+  }
+
+  // Also add individual words from the task itself
+  const taskWords = taskLower.split(/\s+/).filter(w => w.length > 3);
+  relevantKeywords.push(...taskWords);
+
+  if (!relevantKeywords.length) return sectionLinks.slice(0, 5);
+
+  return sectionLinks.filter(link => {
+    const decoded = decodeURIComponent(link).toLowerCase();
+    return relevantKeywords.some(kw => decoded.includes(kw));
+  }).slice(0, 6);
+}
 
 /**
- * Fetch raw content from local charm.li server
+ * Fetch live repair manual content from charm.li for the given vehicle + task.
+ * Returns null for 2014+ vehicles or if charm.li doesn't have the data.
+ * Never throws — always fails gracefully.
  */
 async function fetchFromCharmLi(year: string, make: string, model: string, task?: string): Promise<string | null> {
+  // charm.li coverage is 1982–2013
+  const yearNum = parseInt(year, 10);
+  if (isNaN(yearNum) || yearNum > 2013 || yearNum < 1982) {
+    console.log(`[CHARM.LI] Year ${year} outside coverage (1982-2013), skipping`);
+    return null;
+  }
+
   try {
-    // Construct charm.li path: /Make/Year/Model/
-    const path = `/${make}/${year}/${model}/`.replace(/\s+/g, '-');
-    const url = `${CHARM_LI_SERVER_URL}${path}`;
-    
-    console.log(`[CHARM.LI] Fetching: ${url}`);
-    
-    const response = await fetch(url, { 
-      method: 'GET',
-      headers: { 'Accept': 'text/html,application/json' }
-    });
-    
-    if (!response.ok) {
-      console.warn(`[CHARM.LI] Not found: ${path}`);
-      return null;
+    // Step 1: Get year page to find vehicle variants
+    const yearUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`;
+    const yearResp = await fetch(yearUrl, CHARM_FETCH_OPTS);
+    if (!yearResp.ok) { console.warn(`[CHARM.LI] Make/year not found: ${make}/${year}`); return null; }
+    const yearHtml = await yearResp.text();
+
+    // Extract relative variant links (exclude breadcrumbs/nav)
+    const allLinks = extractLinks(yearHtml);
+    const variantLinks = allLinks.filter(l =>
+      l.startsWith(`/${make}/`) && l.split('/').length === 4 // /Make/Year/Variant/
+    );
+
+    if (!variantLinks.length) { console.warn(`[CHARM.LI] No variants found for ${make}/${year}`); return null; }
+
+    // Step 2: Fuzzy-match the user's model to available variants
+    const variantPaths = variantLinks.map(l => l.split('/')[3]); // just the encoded variant segment
+    const bestPath = bestVariantMatch(model, variantPaths);
+    if (!bestPath) return null;
+
+    const variantBase = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${bestPath}`;
+    const variantDecoded = decodeURIComponent(bestPath);
+    console.log(`[CHARM.LI] ✓ Matched "${model}" → "${variantDecoded}"`);
+
+    // Step 3: Fetch Repair and Diagnosis index
+    const rdUrl = `${variantBase}Repair%20and%20Diagnosis/`;
+    const rdResp = await fetch(rdUrl, CHARM_FETCH_OPTS);
+    if (!rdResp.ok) { console.warn(`[CHARM.LI] No Repair+Diagnosis for ${variantDecoded}`); return null; }
+    const rdHtml = await rdResp.text();
+
+    // Step 4: Find task-relevant sections
+    const sectionLinks = extractLinks(rdHtml).filter(l => !l.startsWith('/') || l.includes('Repair'));
+    const relevantSections = task ? findTaskSections(sectionLinks, task) : sectionLinks.slice(0, 4);
+
+    if (!relevantSections.length) {
+      // Return just the section index as context
+      return `=== charm.li: ${year} ${make} ${variantDecoded} — Repair & Diagnosis Index ===\n${extractText(rdHtml).slice(0, 4000)}`;
     }
-    
-    const content = await response.text();
-    console.log(`[CHARM.LI] ✓ Found data for ${year} ${make} ${model}`);
-    return content;
-    
+
+    // Step 5: Fetch up to 3 relevant section pages in parallel
+    const contentPages = await Promise.all(
+      relevantSections.slice(0, 3).map(async section => {
+        try {
+          const sectionUrl = `${rdUrl}${section}`;
+          const resp = await fetch(sectionUrl, CHARM_FETCH_OPTS);
+          if (!resp.ok) return null;
+          const html = await resp.text();
+          const text = extractText(html).slice(0, 3000);
+          const sectionName = decodeURIComponent(section.split('/').filter(Boolean).pop() ?? section);
+          return `=== ${sectionName} ===\n${text}`;
+        } catch { return null; }
+      })
+    );
+
+    const content = contentPages.filter(Boolean).join('\n\n');
+    if (!content.trim()) return null;
+
+    const header = `=== charm.li Factory Service Manual: ${year} ${make} ${variantDecoded} ===\n`;
+    console.log(`[CHARM.LI] ✓ Fetched ${contentPages.filter(Boolean).length} section(s) for "${task}"`);
+    return header + content;
+
   } catch (error) {
-    console.error('[CHARM.LI] Error fetching:', error);
+    console.error('[CHARM.LI] Fetch error:', error);
     return null;
   }
 }
