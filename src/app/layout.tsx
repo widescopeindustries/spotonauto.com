@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Orbitron, Rajdhani, Inter, Share_Tech_Mono } from "next/font/google";
+import { Orbitron, Rajdhani } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
-import { SpotOnGuide } from "@/components/SpotOnGuide";
+// SpotOnGuide moved into Providers (client component) for lazy loading
 
 // Self-hosted fonts — eliminates external Google Fonts network request (LCP fix)
 const orbitron = Orbitron({
@@ -21,17 +21,7 @@ const rajdhani = Rajdhani({
   display: "swap",
   adjustFontFallback: true,
 });
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-ui",
-  display: "swap",
-});
-const shareTechMono = Share_Tech_Mono({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-mono",
-  display: "swap",
-});
+// Inter and Share_Tech_Mono removed — system fonts sufficient, saves ~40KB font data on initial load
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-WNFX6CY9RN';
 
@@ -73,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${orbitron.variable} ${rajdhani.variable} ${inter.variable} ${shareTechMono.variable}`}>
+    <html lang="en" className={`${orbitron.variable} ${rajdhani.variable}`}>
       <head />
       <body className="bg-[#050505] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-cyan-400 selection:text-black">
         {/* Google Analytics */}
@@ -102,7 +92,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
-          <SpotOnGuide />
+          {/* SpotOnGuide rendered inside Providers */}
         </Providers>
       </body>
     </html>

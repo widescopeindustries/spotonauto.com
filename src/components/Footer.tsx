@@ -125,6 +125,10 @@ const Footer: React.FC = () => {
                         <img
                             src="https://www.veteranownedbusiness.com/images/banner_links/SDVOSB-Member-Badge-Horizontal.jpg"
                             alt="Veteran Owned Business Directory, Get your free listing, now!"
+                            width={200}
+                            height={40}
+                            loading="lazy"
+                            decoding="async"
                             style={{ maxWidth: '200px', height: 'auto' }}
                         />
                     </a>
