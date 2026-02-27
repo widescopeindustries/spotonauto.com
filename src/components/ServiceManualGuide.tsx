@@ -5,13 +5,78 @@ import type { RepairGuide } from '../types';
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
 import { trackAffiliateClick, trackToolClick } from '../lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
+import ProBadge from './ProBadge';
+import GatedUpgradeBanner from './GatedUpgradeBanner';
 
 interface ServiceManualGuideProps {
     guide: RepairGuide;
     onReset: () => void;
+    isPremiumGated?: boolean;
 }
 
-const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset }) => {
+// Regex patterns for detecting premium content
+const PART_NUMBER_PATTERN = /\b([A-Z]{2,4}[-\s]?\d{3,}[-\s]?[A-Z0-9]*|\d{4,}[-\s]?[A-Z0-9]+)\b/gi;
+const TORQUE_PATTERN = /\b(\d+(?:\.\d+)?)\s*(ft[-\s]?lb|lb[-\s]?ft|nm|n·m|foot[-\s]?pounds?)/gi;
+const FLUID_CAPACITY_PATTERN = /\b(\d+(?:\.\d+)?)\s*(quarts?|qts?|liters?|L|gallons?|gal|oz|ounces?|ml|pints?|pts?)\b/gi;
+const MEASUREMENT_PATTERN = /\b(\d+(?:\/\d+)?(?:\.\d+)?)\s*(mm|cm|inches?|in|"|')\b/gi;
+
+// Helper to blur premium content in text
+function blurPremiumContent(text: string, isPremiumGated: boolean): React.ReactNode {
+    if (!isPremiumGated) return text;
+
+    let result: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let key = 0;
+
+    // Combined pattern
+    const allPatterns = new RegExp(
+        `(${PART_NUMBER_PATTERN.source})|(${TORQUE_PATTERN.source})|(${FLUID_CAPACITY_PATTERN.source})|(${MEASUREMENT_PATTERN.source})`,
+        'gi'
+    );
+
+    let match;
+    while ((match = allPatterns.exec(text)) !== null) {
+        // Add text before match
+        if (match.index > lastIndex) {
+            result.push(text.slice(lastIndex, match.index));
+        }
+
+        // Add blurred span
+        result.push(
+            <span key={key++} className="premium-blur-wrapper">
+                <span className="premium-blurred">{match[0]}</span>
+                <ProBadge size="sm" className="ml-1" />
+            </span>
+        );
+
+        lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+        result.push(text.slice(lastIndex));
+    }
+
+    return result.length > 0 ? result : text;
+}
+
+// Helper to create blurred placeholder for part numbers
+function blurPartNumber(partName: string, isPremiumGated: boolean): React.ReactNode {
+    if (!isPremiumGated) return null;
+
+    // Check if part name contains a part number pattern
+    if (PART_NUMBER_PATTERN.test(partName)) {
+        return (
+            <span className="premium-blur-wrapper inline-flex items-center gap-1.5 mt-1">
+                <span className="premium-blurred text-xs">XXXX-XXXX</span>
+                <ProBadge size="sm" />
+            </span>
+        );
+    }
+    return null;
+}
+
+const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset, isPremiumGated = false }) => {
     const [activeStep, setActiveStep] = useState<number | null>(null);
 
     const partsWithLinks = generateAllPartsWithLinks(guide.parts || [], guide.vehicle);
@@ -144,6 +209,12 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                             <div className="part-featured-badge">Major Component</div>
                                         )}
                                         <div className="part-card-name">{part.name}</div>
+                                        {isPremiumGated && (
+                                            <div className="part-number-gated">
+                                                <span className="premium-blurred text-xs text-gray-500">Part #: XXXX-XXXX</span>
+                                                <ProBadge size="sm" className="ml-1.5" />
+                                            </div>
+                                        )}
                                         {part.links.map((link, linkIdx) => (
                                             <a
                                                 key={linkIdx}
@@ -233,7 +304,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                     transition={{ duration: 0.6, type: "spring", bounce: 0.3 }}
                                 >
                                     <div className="step-header">
-                                        <motion.div 
+                                        <motion.div
                                             className="step-number"
                                             initial={{ scale: 0 }}
                                             whileInView={{ scale: 1 }}
@@ -242,7 +313,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                             {step.step}
                                         </motion.div>
                                         <div className="step-instruction">
-                                            {step.instruction}
+                                            {blurPremiumContent(step.instruction, isPremiumGated)}
                                         </div>
                                     </div>
 
@@ -336,6 +407,9 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
 
                 </div>
             </main>
+
+            {/* Gated Upgrade Banner - shows at bottom for premium-gated guides */}
+            {isPremiumGated && <GatedUpgradeBanner />}
 
             {/* Inline Styles for Service Manual Look */}
             <style jsx>{`
@@ -915,6 +989,38 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                     color: #64748b;
                     font-size: 0.75rem;
                     margin-top: 0.75rem;
+                }
+
+                /* Premium Gated Content Styles */
+                .premium-blur-wrapper {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+
+                .premium-blurred {
+                    filter: blur(4px);
+                    user-select: none;
+                    pointer-events: none;
+                    opacity: 0.7;
+                    background: rgba(6, 182, 212, 0.1);
+                    padding: 0 4px;
+                    border-radius: 4px;
+                    transition: filter 0.2s;
+                }
+
+                .premium-blur-wrapper:hover .premium-blurred {
+                    filter: blur(3px);
+                }
+
+                .part-number-gated {
+                    display: flex;
+                    align-items: center;
+                    margin-top: 4px;
+                    padding: 4px 8px;
+                    background: rgba(6, 182, 212, 0.05);
+                    border: 1px dashed rgba(6, 182, 212, 0.3);
+                    border-radius: 6px;
                 }
             `}</style>
         </div>
