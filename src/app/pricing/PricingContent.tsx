@@ -46,6 +46,19 @@ const getPaymentLinks = () => {
   };
 };
 
+// FOUNDING MEMBER LINKS - coupon auto-applied via promo codes
+const FOUNDING_LINKS = {
+  proMonthly: 'https://buy.stripe.com/cNifZh6UhaqG69Wgwf18c0f',
+  proPlusMonthly: 'https://buy.stripe.com/28EbJ16UhgP48i46VF18c0g',
+  proAnnual: 'https://buy.stripe.com/3cI3cv5Qd56m7e06VF18c0h',
+};
+
+// Founding member promo codes for manual entry
+const FOUNDING_PROMO_CODES = {
+  pro: 'FOUNDING50',       // 5 months free on Pro
+  proPlus: 'FOUNDINGPLUS25', // 5 months free on Pro+
+};
+
 const TIERS: PricingTier[] = [
   {
     name: 'DIY',
@@ -210,6 +223,31 @@ export default function PricingContent() {
   return (
     <div className="min-h-screen bg-black pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Founding Member Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 relative overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10"
+        >
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMTgwLDAsMC4wNSkiLz48L3N2Zz4=')] opacity-50" />
+          <div className="relative px-6 py-5 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full mb-3">
+              <span className="text-amber-400 text-xs font-bold uppercase tracking-wider">🔥 Limited Launch Offer</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              Founding Member Launch
+            </h2>
+            <p className="text-gray-300 max-w-2xl mx-auto mb-3">
+              Be one of the first to go Pro — <span className="text-amber-400 font-bold">pay for 1 month, get 6 months free.</span> First 50 Pro and first 25 Pro+ members only.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-400">
+              <span className="flex items-center gap-1">✅ Cancel anytime</span>
+              <span className="flex items-center gap-1">✅ Full Pro access instantly</span>
+              <span className="flex items-center gap-1">✅ Shape future features</span>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Header */}
         <div className="text-center mb-16">
           <motion.h1
@@ -317,6 +355,27 @@ export default function PricingContent() {
                     <p className="text-sm text-neon-cyan mt-1">
                       Save ${((tier.price * 12) - tier.annualPrice).toFixed(0)}/year
                     </p>
+                  )}
+                  {/* Founding Member Deal */}
+                  {tier.price > 0 && billingPeriod === 'monthly' && (
+                    <div className="mt-3 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                      <p className="text-amber-400 text-sm font-bold">
+                        🔥 Founding Member: Pay ${tier.price} today, get 6 months
+                      </p>
+                      <p className="text-gray-400 text-xs mt-0.5">
+                        {tier.name === 'Pro' ? '47 of 50 spots left' : '24 of 25 spots left'} · Use code <span className="text-amber-300 font-mono">{tier.name === 'Pro' ? 'FOUNDING50' : 'FOUNDINGPLUS25'}</span>
+                      </p>
+                    </div>
+                  )}
+                  {tier.name === 'Pro' && billingPeriod === 'annual' && (
+                    <div className="mt-3 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                      <p className="text-amber-400 text-sm font-bold">
+                        🏆 Annual Founding Members get first access to every new feature + direct input on our roadmap
+                      </p>
+                      <p className="text-gray-400 text-xs mt-0.5">
+                        Only 10 spots · Lifetime Founding Member status
+                      </p>
+                    </div>
                   )}
                 </div>
 
