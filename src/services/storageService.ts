@@ -57,15 +57,35 @@ export const saveGuide = async (guide: RepairGuide): Promise<void> => {
   }
 };
 
-export const getGuideById = async (id: string): Promise<RepairGuide | null> => {
+/**
+ * Get a guide by its slug ID (e.g., "2020-toyota-camry-brake-pads")
+ * Parses the slug to search by vehicle fields + problem title
+ */
+export const getGuideById = async (slugId: string): Promise<RepairGuide | null> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
+
+  // Parse slug: year-make-model-task (task may have multiple words)
+  const parts = slugId.split('-');
+  if (parts.length < 4) return null;
+
+  const vehicleYear = parts[0];
+  const vehicleMake = parts[1];
+  // Model could be single word or multiple (e.g., "grand-cherokee")
+  // Task is typically the last segment(s) - we'll search by prefix match
+  const vehicleModel = parts[2];
+  const taskSlug = parts.slice(3).join(' '); // "brake pads" from "brake-pads"
 
   const { data, error } = await supabase
     .from('diagnosis_history')
     .select('conversation')
-    .eq('id', id)
     .eq('user_id', user.id)
+    .eq('vehicle_year', vehicleYear)
+    .ilike('vehicle_make', vehicleMake)
+    .ilike('vehicle_model', `${vehicleModel}%`)
+    .ilike('problem', `%${taskSlug}%`)
+    .order('created_at', { ascending: false })
+    .limit(1)
     .single();
 
   if (error || !data) return null;
