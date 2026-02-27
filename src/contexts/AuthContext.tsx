@@ -72,6 +72,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setUser(null);
         }
         setLoading(false);
+      }).catch((err: unknown) => {
+        console.error('getSession failed:', err);
+        setLoading(false);
       });
 
       // Listen for auth changes
@@ -88,6 +91,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
 
       cleanup = () => subscription.unsubscribe();
+    }).catch((err: unknown) => {
+      console.error('Supabase import failed:', err);
+      setLoading(false); // Never leave buttons stuck on "Loading..."
     });
 
     return () => cleanup?.();
