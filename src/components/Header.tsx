@@ -109,62 +109,58 @@ const Header: React.FC = () => {
                             <span className="font-body text-sm">Parts</span>
                         </button>
 
-                        {!loading && (
-                            <>
-                                {user ? (
-                                    <div className="flex items-center gap-3">
-                                        {user.tier === 'free' && guideUsage && (
-                                            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${
-                                                guideUsage.used >= guideUsage.limit
-                                                    ? 'bg-amber-500/10 border-amber-500/40'
-                                                    : 'bg-gray-800/60 border-gray-700/50'
-                                            }`}>
-                                                <BookOpen className={`w-3 h-3 ${
-                                                    guideUsage.used >= guideUsage.limit ? 'text-amber-400' : 'text-gray-400'
-                                                }`} />
-                                                <span className={`text-xs ${
-                                                    guideUsage.used >= guideUsage.limit ? 'text-amber-400' : 'text-gray-400'
-                                                }`}>
-                                                    {guideUsage.used >= guideUsage.limit
-                                                        ? '1 free guide used'
-                                                        : '1 free guide left'}
-                                                </span>
-                                            </div>
-                                        )}
-                                        {user.tier === 'free' && (
-                                            <button
-                                                onClick={() => router.push('/pricing')}
-                                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/40 hover:bg-amber-500/20 transition-all duration-200 hover:scale-105 active:scale-95"
-                                            >
-                                                <Zap className="w-3 h-3 text-amber-400" />
-                                                <span className="text-amber-400 text-xs font-semibold">Free Plan</span>
-                                                <ArrowRight className="w-3 h-3 text-amber-400" />
-                                            </button>
-                                        )}
-                                        <button
-                                            onClick={() => router.push('/history')}
-                                            className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-all duration-200 hover:scale-105 active:scale-95"
-                                        >
-                                            <History className="w-4 h-4" />
-                                            <span className="font-body text-sm">History</span>
-                                        </button>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="btn-cyber flex items-center gap-2 py-2 px-4 hover:scale-105 active:scale-95 transition-transform duration-200"
-                                        >
-                                            <LogOut className="w-4 h-4" />
-                                            <span className="text-xs">Logout</span>
-                                        </button>
+                        {user ? (
+                            <div className="flex items-center gap-3">
+                                {user.tier === 'free' && guideUsage && (
+                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${
+                                        guideUsage.used >= guideUsage.limit
+                                            ? 'bg-amber-500/10 border-amber-500/40'
+                                            : 'bg-gray-800/60 border-gray-700/50'
+                                    }`}>
+                                        <BookOpen className={`w-3 h-3 ${
+                                            guideUsage.used >= guideUsage.limit ? 'text-amber-400' : 'text-gray-400'
+                                        }`} />
+                                        <span className={`text-xs ${
+                                            guideUsage.used >= guideUsage.limit ? 'text-amber-400' : 'text-gray-400'
+                                        }`}>
+                                            {guideUsage.used >= guideUsage.limit
+                                                ? '1 free guide used'
+                                                : '1 free guide left'}
+                                        </span>
                                     </div>
-                                ) : (
+                                )}
+                                {user.tier === 'free' && (
                                     <button
-                                        onClick={() => router.push('/auth')}
-                                        className="btn-cyber hover:scale-105 active:scale-95 transition-transform duration-200"
+                                        onClick={() => router.push('/pricing')}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/40 hover:bg-amber-500/20 transition-all duration-200 hover:scale-105 active:scale-95"
                                     >
-                                        Sign In
+                                        <Zap className="w-3 h-3 text-amber-400" />
+                                        <span className="text-amber-400 text-xs font-semibold">Free Plan</span>
+                                        <ArrowRight className="w-3 h-3 text-amber-400" />
                                     </button>
                                 )}
-                            </>
+                                <button
+                                    onClick={() => router.push('/history')}
+                                    className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-all duration-200 hover:scale-105 active:scale-95"
+                                >
+                                    <History className="w-4 h-4" />
+                                    <span className="font-body text-sm">History</span>
+                                </button>
+                                <button
+                                    onClick={handleLogout}
+                                    className="btn-cyber flex items-center gap-2 py-2 px-4 hover:scale-105 active:scale-95 transition-transform duration-200"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                    <span className="text-xs">Logout</span>
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => router.push('/auth')}
+                                className="btn-cyber hover:scale-105 active:scale-95 transition-transform duration-200"
+                            >
+                                Sign In
+                            </button>
                         )}
                     </div>
 
@@ -231,9 +227,7 @@ const Header: React.FC = () => {
                             <span className="font-body">OBD-II Scanner</span>
                         </button>
 
-                        {!loading && (
-                            <>
-                                {user ? (
+                        {user ? (
                                     <>
                                         {user.tier === 'free' && guideUsage && (
                                             <div className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg border ${
@@ -282,8 +276,6 @@ const Header: React.FC = () => {
                                         Sign In / Sign Up
                                     </button>
                                 )}
-                            </>
-                        )}
                     </div>
                 </div>
             </div>
