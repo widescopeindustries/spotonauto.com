@@ -19,18 +19,14 @@ function AuthPageInner() {
         }
     }, [user, loading, router, redirectTo]);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-pulse text-cyan-400">Loading...</div>
-            </div>
-        );
-    }
-
-    if (user) {
+    // If already logged in and we know it, show nothing (redirect fires above)
+    if (!loading && user) {
         return null;
     }
 
+    // Always show the auth form — never block on loading state.
+    // If user is already logged in, the useEffect redirect will fire.
+    // Showing "Loading..." was causing the page to hang when Supabase import was slow.
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-20">
             <AuthForm onAuthSuccess={() => router.push(redirectTo)} redirectAfter={redirectTo} />
@@ -38,11 +34,10 @@ function AuthPageInner() {
     );
 }
 
-// useSearchParams requires Suspense boundary in Next.js app router
 export default function AuthPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center px-4 py-20">
                 <div className="animate-pulse text-cyan-400">Loading...</div>
             </div>
         }>
