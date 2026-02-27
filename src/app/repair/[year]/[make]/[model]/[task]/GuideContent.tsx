@@ -8,9 +8,8 @@ import { generateFullRepairGuide } from '@/services/apiClient';
 import { saveGuide, getGuideById } from '@/services/storageService';
 import { RepairGuide, SubscriptionTier } from '@/types';
 import { trackGuideGenerated, trackRepairPageView, trackUpgradeModalShown } from '@/lib/analytics';
-import { trackGuideUse } from '@/lib/usageTracker';
+import { trackGuideUse, isFirstFreeGuideUsed, getUsageStatus } from '@/lib/usageTracker';
 import { useAuth } from '@/contexts/AuthContext';
-import UpgradeGate from '@/components/UpgradeGate';
 import VehicleHealthSnapshot from '@/components/VehicleHealthSnapshot';
 
 interface GuideContentProps {
@@ -32,7 +31,7 @@ export default function GuideContent({ params }: GuideContentProps) {
     const [guide, setGuide] = useState<RepairGuide | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [gated, setGated] = useState<{ used: number; limit: number } | null>(null);
+    const [isPremiumGated, setIsPremiumGated] = useState(false);
 
     // Determine pro status from Supabase (via AuthContext) — NOT localStorage
     const isPro = user?.tier === SubscriptionTier.Pro || user?.tier === SubscriptionTier.ProPlus;
@@ -48,15 +47,23 @@ export default function GuideContent({ params }: GuideContentProps) {
             setError(null);
             setLoading(true);
 
-            // Check usage limits (skip for pro users — authoritative check is on server too)
+            // Determine if this guide should show blurred premium content
+            // Pro users: never gated
+            // Free users: 1st guide = full access, 2nd+ guide = blurred specs
+            let shouldGate = false;
             if (!isPro) {
-                const usage = trackGuideUse();
-                if (!usage.allowed) {
-                    setGated({ used: usage.used, limit: usage.limit });
-                    setLoading(false);
-                    return;
+                // Check if they've already used their free guide BEFORE tracking this one
+                const alreadyUsedFreeGuide = isFirstFreeGuideUsed();
+
+                if (alreadyUsedFreeGuide) {
+                    // This is guide 2+, show blurred content
+                    shouldGate = true;
+                } else {
+                    // This is their first guide, track it and give full access
+                    trackGuideUse();
                 }
             }
+            setIsPremiumGated(shouldGate);
 
             try {
                 const cleanTask = task.replace(/-/g, ' ');
@@ -116,14 +123,6 @@ export default function GuideContent({ params }: GuideContentProps) {
         </div>
     );
 
-    if (gated) return (
-        <UpgradeGate
-            type="guide"
-            used={gated.used}
-            limit={gated.limit}
-        />
-    );
-
     if (error) return (
         <div className="max-w-xl mx-auto my-16 p-8 bg-black/80 border border-red-500/30 rounded-xl shadow-lg text-center">
             <div className="text-red-500 text-4xl mb-4">⚠️</div>
@@ -177,7 +176,11 @@ export default function GuideContent({ params }: GuideContentProps) {
                     <div className="max-w-4xl mx-auto px-4">
                         <VehicleHealthSnapshot year={year} make={make} model={model} />
                     </div>
-                    <ServiceManualGuide guide={guide} onReset={() => router.push('/')} />
+                    <ServiceManualGuide
+                        guide={guide}
+                        onReset={() => router.push('/')}
+                        isPremiumGated={isPremiumGated}
+                    />
                 </>
             )}
         </div>
