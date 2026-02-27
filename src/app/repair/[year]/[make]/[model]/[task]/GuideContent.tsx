@@ -131,14 +131,30 @@ export default function GuideContent({ params }: GuideContentProps) {
             <p className="text-gray-400 mb-6">{error}</p>
             <div className="flex gap-3 justify-center">
                 <button
-                    onClick={() => {
+                    onClick={async () => {
                         setError(null);
                         setLoading(true);
                         const cleanTask = task.replace(/-/g, ' ');
                         const vehicle = { year, make, model };
-                        generateFullRepairGuide(vehicle, cleanTask)
-                            .then(g => { setGuide(g); setLoading(false); })
-                            .catch(e => { setError(e instanceof Error ? e.message : 'Failed to generate guide.'); setLoading(false); });
+                        try {
+                            const generatedGuide = await generateFullRepairGuide(vehicle, cleanTask);
+                            await saveGuide(generatedGuide);
+                            trackGuideGenerated({
+                                vehicle: `${year} ${make} ${model}`,
+                                task: cleanTask,
+                                partsCount: generatedGuide.parts?.length || 0,
+                                toolsCount: generatedGuide.tools?.length || 0,
+                            });
+                            setGuide(generatedGuide);
+                        } catch (e: any) {
+                            if (e.message?.includes('Authentication required') || e.message?.includes('401')) {
+                                router.push(`/auth?redirect=${encodeURIComponent(window.location.pathname)}`);
+                                return;
+                            }
+                            setError(e instanceof Error ? e.message : 'Failed to generate guide.');
+                        } finally {
+                            setLoading(false);
+                        }
                     }}
                     className="px-6 py-2 bg-brand-cyan text-black rounded-lg font-semibold hover:bg-brand-cyan-light transition-colors"
                 >
