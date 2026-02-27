@@ -55,7 +55,7 @@ const TIERS: PricingTier[] = [
     icon: <Wrench className="w-6 h-6" />,
     features: [
       { text: '3 AI diagnoses per month', included: true },
-      { text: '5 repair guides per month', included: true },
+      { text: '1 full repair guide per month', included: true },
       { text: 'VIN decoder', included: true },
       { text: 'Basic parts finder', included: true },
       { text: '1 vehicle in garage', included: true },

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { createContext, useState, useEffect, useContext, useRef, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { User as AppUser, SubscriptionTier } from '../types';
-import type { SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabaseClient';
 
 interface AuthContextType {
   user: AppUser | null;
@@ -19,13 +20,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
-  // Supabase client — loaded lazily after initial render to avoid blocking LCP
-  const sbRef = useRef<SupabaseClient | null>(null);
 
   // Helper to map Supabase user + subscription to AppUser
-  const mapUser = async (sbUser: SupabaseUser, sb: SupabaseClient) => {
+  const mapUser = async (sbUser: SupabaseUser) => {
     try {
-      const { data: subscription, error } = await sb
+      const { data: subscription, error } = await supabase
         .from('subscriptions')
         .select('tier, status')
         .eq('user_id', sbUser.id)
@@ -57,57 +56,41 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    // Dynamically import Supabase AFTER initial render — keeps it out of
-    // the critical JS path so repair pages don't pay the ~150 KB cost.
-    import('../lib/supabaseClient').then(({ supabase }) => {
-      sbRef.current = supabase;
-
-      // Check active session
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          mapUser(session.user, supabase);
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-      }).catch((err: unknown) => {
-        console.error('getSession failed:', err);
-        setLoading(false);
-      });
-
-      // Listen for auth changes
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-        if (session?.user) {
-          await mapUser(session.user, supabase);
-        } else {
-          setUser(null);
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('spoton_pro');
-          }
-        }
-        setLoading(false);
-      });
-
-      cleanup = () => subscription.unsubscribe();
+    // Check active session immediately — no lazy import
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        mapUser(session.user);
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
     }).catch((err: unknown) => {
-      console.error('Supabase import failed:', err);
-      setLoading(false); // Never leave buttons stuck on "Loading..."
+      console.error('getSession failed:', err);
+      setLoading(false);
     });
 
-    return () => cleanup?.();
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        await mapUser(session.user);
+      } else {
+        setUser(null);
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('spoton_pro');
+        }
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const loginWithGoogle = async (redirectAfter?: string) => {
-    const sb = sbRef.current;
-    if (!sb) return;
-    // Save the intended destination so auth/callback can restore it after OAuth
     const dest = redirectAfter || (typeof window !== 'undefined' ? window.location.pathname : '/');
     if (dest && dest !== '/' && typeof window !== 'undefined') {
       localStorage.setItem('auth_redirect', dest);
     }
-    const { error } = await sb.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
@@ -115,23 +98,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const loginWithEmail = async (email: string, password: string) => {
-    const sb = sbRef.current;
-    if (!sb) return;
-    const { error } = await sb.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { console.error('Email Login failed:', error.message); throw error; }
   };
 
   const signup = async (email: string, password: string) => {
-    const sb = sbRef.current;
-    if (!sb) return;
-    const { error } = await sb.auth.signUp({ email, password });
+    const { error } = await supabase.auth.signUp({ email, password });
     if (error) { console.error('Signup failed:', error.message); throw error; }
   };
 
   const logout = async () => {
-    const sb = sbRef.current;
-    if (!sb) return;
-    const { error } = await sb.auth.signOut();
+    const { error } = await supabase.auth.signOut();
     if (error) { console.error('Logout failed:', error.message); }
     setUser(null);
     if (typeof window !== 'undefined') {
@@ -140,10 +117,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const refreshUser = async () => {
-    const sb = sbRef.current;
-    if (!sb) return;
-    const { data: { user: sbUser } } = await sb.auth.getUser();
-    if (sbUser) await mapUser(sbUser, sb);
+    const { data: { user: sbUser } } = await supabase.auth.getUser();
+    if (sbUser) await mapUser(sbUser);
   };
 
   return (
