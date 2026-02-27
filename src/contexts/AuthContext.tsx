@@ -128,10 +128,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
+// Default fallback when AuthProvider hasn't mounted yet (deferred loading)
+const noop = async () => {};
+const defaultAuth: AuthContextType = {
+  user: null,
+  loading: true,
+  loginWithGoogle: noop,
+  loginWithEmail: noop,
+  signup: noop,
+  logout: noop,
+  refreshUser: noop,
+};
+
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  // Return default (loading state) if AuthProvider hasn't mounted yet
+  return context ?? defaultAuth;
 };
