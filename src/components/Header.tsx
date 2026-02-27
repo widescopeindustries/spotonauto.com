@@ -26,10 +26,8 @@ const Header: React.FC = () => {
     useEffect(() => {
         if (typeof window !== 'undefined' && user?.tier === 'free') {
             const usage = getUsageStatus();
-            // Only show if user has used at least 1 guide
-            if (usage.guides.used > 0) {
-                setGuideUsage(usage.guides);
-            }
+            // Always show for free users so they know their limit
+            setGuideUsage(usage.guides);
         } else {
             setGuideUsage(null);
         }
@@ -116,10 +114,20 @@ const Header: React.FC = () => {
                                 {user ? (
                                     <div className="flex items-center gap-3">
                                         {user.tier === 'free' && guideUsage && (
-                                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-800/60 border border-gray-700/50">
-                                                <BookOpen className="w-3 h-3 text-gray-400" />
-                                                <span className="text-gray-400 text-xs">
-                                                    {guideUsage.used}/{guideUsage.limit} guides
+                                            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${
+                                                guideUsage.used >= guideUsage.limit
+                                                    ? 'bg-amber-500/10 border-amber-500/40'
+                                                    : 'bg-gray-800/60 border-gray-700/50'
+                                            }`}>
+                                                <BookOpen className={`w-3 h-3 ${
+                                                    guideUsage.used >= guideUsage.limit ? 'text-amber-400' : 'text-gray-400'
+                                                }`} />
+                                                <span className={`text-xs ${
+                                                    guideUsage.used >= guideUsage.limit ? 'text-amber-400' : 'text-gray-400'
+                                                }`}>
+                                                    {guideUsage.used >= guideUsage.limit
+                                                        ? '1 free guide used'
+                                                        : '1 free guide left'}
                                                 </span>
                                             </div>
                                         )}
@@ -228,9 +236,17 @@ const Header: React.FC = () => {
                                 {user ? (
                                     <>
                                         {user.tier === 'free' && guideUsage && (
-                                            <div className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-gray-800/40 border border-gray-700/30 text-gray-400">
+                                            <div className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg border ${
+                                                guideUsage.used >= guideUsage.limit
+                                                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                                                    : 'bg-gray-800/40 border-gray-700/30 text-gray-400'
+                                            }`}>
                                                 <BookOpen className="w-4 h-4" />
-                                                <span className="text-sm">{guideUsage.used}/{guideUsage.limit} free guides used this month</span>
+                                                <span className="text-sm">
+                                                    {guideUsage.used >= guideUsage.limit
+                                                        ? 'Free guide used — upgrade for full access'
+                                                        : '1 free full-access guide this month'}
+                                                </span>
                                             </div>
                                         )}
                                         {user.tier === 'free' && (
