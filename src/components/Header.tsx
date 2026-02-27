@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, DollarSign, ArrowRight, BookOpen } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, DollarSign, ArrowRight, BookOpen, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUsageStatus } from '@/lib/usageTracker';
 
@@ -93,6 +93,13 @@ const Header: React.FC = () => {
                         >
                             <Zap className="w-4 h-4" />
                             <span className="font-body text-sm">Diagnose</span>
+                        </button>
+                        <button
+                            onClick={() => router.push('/second-opinion')}
+                            className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-all duration-200 hover:scale-105 active:scale-95"
+                        >
+                            <Shield className="w-4 h-4" />
+                            <span className="font-body text-sm">2nd Opinion</span>
                         </button>
                         <button
                             onClick={() => router.push('/scanner')}
@@ -211,6 +218,13 @@ const Header: React.FC = () => {
                         >
                             <DollarSign className="w-4 h-4" />
                             <span className="font-body">Pricing & Plans</span>
+                        </button>
+                        <button
+                            onClick={() => { router.push('/second-opinion'); setIsMobileMenuOpen(false); }}
+                            className="flex items-center gap-2 text-cyan-400 w-full font-semibold"
+                        >
+                            <Shield className="w-4 h-4" />
+                            <span className="font-body">2nd Opinion</span>
                         </button>
                         <button
                             onClick={() => { router.push('/parts'); setIsMobileMenuOpen(false); }}
