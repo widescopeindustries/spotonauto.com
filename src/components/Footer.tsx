@@ -86,6 +86,7 @@ const Footer: React.FC = () => {
                         <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Company</h3>
                         <ul className="space-y-3">
                             {[
+                                { href: '/about', label: 'About Us' },
                                 { href: '/pricing', label: 'Pricing & Plans' },
                                 { href: '/auth', label: 'Sign In / Sign Up' },
                                 { href: '/privacy', label: 'Privacy Policy' },
@@ -115,8 +116,15 @@ const Footer: React.FC = () => {
                     </div>
                 </div>
 
+                {/* SDVOSB Branding */}
+                <div className="mt-8 pt-6 border-t border-white/5 text-center">
+                    <p className="font-body text-sm" style={{ color: '#D4A017' }}>
+                        🇺🇸 A Widescope Industries LLC Company — SDVOSB Certified | Service-Disabled Veteran-Owned Small Business
+                    </p>
+                </div>
+
                 {/* Bottom bar */}
-                <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="font-body text-xs text-gray-600">
                         © {new Date().getFullYear()} SpotOn Auto. All rights reserved. AI-generated content is for informational purposes only.
                     </p>

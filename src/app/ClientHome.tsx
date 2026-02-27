@@ -36,6 +36,11 @@ const HeroSection = () => {
                             </span>
                         </div>
 
+                        {/* SDVOSB Trust Badge */}
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border" style={{ backgroundColor: 'rgba(212, 160, 23, 0.1)', borderColor: 'rgba(212, 160, 23, 0.4)', color: '#D4A017' }}>
+                            🛡️ SDVOSB Certified | Veteran-Owned &amp; Operated
+                        </span>
+
                         {/* Heading — no animation wrapper: renders at full opacity for fast LCP */}
                         <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
                             <span className="text-white">SILENCE THE</span>
