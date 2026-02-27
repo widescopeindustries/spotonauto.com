@@ -3,14 +3,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, DollarSign, ArrowRight } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, DollarSign, ArrowRight, BookOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { getUsageStatus } from '@/lib/usageTracker';
 
 const Header: React.FC = () => {
     const router = useRouter();
     const { user, logout, loading } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [guideUsage, setGuideUsage] = useState<{ used: number; limit: number } | null>(null);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -19,6 +21,19 @@ const Header: React.FC = () => {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Load usage stats for free users (client-side only)
+    useEffect(() => {
+        if (typeof window !== 'undefined' && user?.tier === 'free') {
+            const usage = getUsageStatus();
+            // Only show if user has used at least 1 guide
+            if (usage.guides.used > 0) {
+                setGuideUsage(usage.guides);
+            }
+        } else {
+            setGuideUsage(null);
+        }
+    }, [user]);
 
     const handleLogout = async () => {
         await logout();
@@ -100,6 +115,14 @@ const Header: React.FC = () => {
                             <>
                                 {user ? (
                                     <div className="flex items-center gap-3">
+                                        {user.tier === 'free' && guideUsage && (
+                                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-800/60 border border-gray-700/50">
+                                                <BookOpen className="w-3 h-3 text-gray-400" />
+                                                <span className="text-gray-400 text-xs">
+                                                    {guideUsage.used}/{guideUsage.limit} guides
+                                                </span>
+                                            </div>
+                                        )}
                                         {user.tier === 'free' && (
                                             <button
                                                 onClick={() => router.push('/pricing')}
@@ -204,6 +227,12 @@ const Header: React.FC = () => {
                             <>
                                 {user ? (
                                     <>
+                                        {user.tier === 'free' && guideUsage && (
+                                            <div className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-gray-800/40 border border-gray-700/30 text-gray-400">
+                                                <BookOpen className="w-4 h-4" />
+                                                <span className="text-sm">{guideUsage.used}/{guideUsage.limit} free guides used this month</span>
+                                            </div>
+                                        )}
                                         {user.tier === 'free' && (
                                             <button
                                                 onClick={() => { router.push('/pricing'); setIsMobileMenuOpen(false); }}
