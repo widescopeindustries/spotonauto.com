@@ -121,6 +121,13 @@ const Footer: React.FC = () => {
                     <p className="font-body text-sm" style={{ color: '#D4A017' }}>
                         🇺🇸 A Widescope Industries LLC Company — SDVOSB Certified | Service-Disabled Veteran-Owned Small Business
                     </p>
+                    <a href="https://www.veteranownedbusiness.com" target="_blank" rel="noopener noreferrer" className="inline-block mt-4">
+                        <img
+                            src="https://www.veteranownedbusiness.com/images/banner_links/SDVOSB-Member-Badge-Horizontal.jpg"
+                            alt="Veteran Owned Business Directory, Get your free listing, now!"
+                            style={{ maxWidth: '200px', height: 'auto' }}
+                        />
+                    </a>
                 </div>
 
                 {/* Bottom bar */}
