@@ -2,7 +2,7 @@
 // Uses localStorage for anonymous users, can be upgraded to Supabase for logged-in users
 
 const STORAGE_KEY = 'spoton_usage';
-const LIMITS = { diagnoses: 3, guides: 5 };
+const LIMITS = { diagnoses: 3, guides: 1 };
 
 interface UsageData {
   month: string; // "2026-02" format
@@ -69,4 +69,22 @@ export function isProUser(): boolean {
   // Check localStorage for pro status (set by Stripe webhook or auth flow)
   if (typeof window === 'undefined') return false;
   return localStorage.getItem('spoton_pro') === 'true';
+}
+
+/**
+ * Returns true if the user has already used their one free guide this month.
+ * Used to determine if subsequent guides should show blurred premium content.
+ */
+export function isFirstFreeGuideUsed(): boolean {
+  const usage = getUsage();
+  return usage.guides >= 1;
+}
+
+/**
+ * Peek at current guide usage without incrementing.
+ * Returns true if user can generate a full (non-gated) guide.
+ */
+export function canAccessFullGuide(): boolean {
+  const usage = getUsage();
+  return usage.guides < LIMITS.guides;
 }
