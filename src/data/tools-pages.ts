@@ -609,13 +609,24 @@ const tirePages: ToolPage[] = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════
-//  EXPORT ALL PAGES
+//  THE MACHINE — merge hand-crafted (rich) + auto-generated (scale)
 // ═══════════════════════════════════════════════════════════════════
 
-export const TOOL_PAGES: ToolPage[] = [
+import { generateAllToolPages } from './tool-machine';
+
+/** Hand-crafted pages with real researched specs — these always win */
+const HAND_CRAFTED: ToolPage[] = [
     ...oilPages,
     ...batteryPages,
     ...tirePages,
+];
+
+const handCraftedSlugs = new Set(HAND_CRAFTED.map(p => p.slug));
+
+/** All pages: hand-crafted first, then machine-generated for everything else */
+export const TOOL_PAGES: ToolPage[] = [
+    ...HAND_CRAFTED,
+    ...generateAllToolPages().filter(p => !handCraftedSlugs.has(p.slug)),
 ];
 
 // Quick lookup by slug

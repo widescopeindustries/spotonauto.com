@@ -7,8 +7,21 @@ interface PageProps {
     params: Promise<{ slug: string }>;
 }
 
+/**
+ * Pre-render the top ~200 pages at build time (highest search volume).
+ * The remaining ~1,600 pages are ISR — rendered on first visit, then cached.
+ * dynamicParams defaults to true, so non-pre-rendered slugs still work.
+ */
+const TOP_MAKES = new Set([
+    'Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'Hyundai',
+    'Kia', 'Jeep', 'Subaru', 'BMW', 'Dodge', 'GMC', 'Mazda',
+    'Volkswagen', 'Lexus', 'Mercedes',
+]);
+
 export async function generateStaticParams() {
-    return TOOL_PAGES.map(tp => ({ slug: tp.slug }));
+    return TOOL_PAGES
+        .filter(tp => TOP_MAKES.has(tp.make))
+        .map(tp => ({ slug: tp.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
