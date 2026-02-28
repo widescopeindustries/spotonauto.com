@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, Shield } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, Shield, Bookmark } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useT } from '@/lib/translations';
@@ -70,6 +70,17 @@ const Header: React.FC = () => {
 
                     {/* CTA Buttons */}
                     <div className="hidden md:flex items-center gap-3">
+                        <button
+                            onClick={() => {
+                                const key = navigator.userAgent.toLowerCase().includes('mac') ? 'Cmd' : 'Ctrl';
+                                alert(`Press ${key}+D to bookmark this page`);
+                            }}
+                            className="flex items-center gap-1.5 text-gray-300 hover:text-cyan-400 transition-all duration-200 hover:scale-105 active:scale-95"
+                            title="Bookmark this page"
+                        >
+                            <Bookmark className="w-4 h-4" />
+                            <span className="font-body text-sm">{t('nav.bookmark') || 'Bookmark'}</span>
+                        </button>
                         <LanguageSelector />
                         <button
                             onClick={() => router.push('/diagnose')}
@@ -165,6 +176,17 @@ const Header: React.FC = () => {
                             <LanguageSelector />
                             <span className="text-sm text-gray-500">{t('nav.guideLanguage')}</span>
                         </div>
+                        <button
+                            onClick={() => {
+                                const key = navigator.userAgent.toLowerCase().includes('mac') ? 'Cmd' : 'Ctrl';
+                                alert(`Press ${key}+D to bookmark this page`);
+                                setIsMobileMenuOpen(false);
+                            }}
+                            className="flex items-center gap-2 text-gray-300 w-full"
+                        >
+                            <Bookmark className="w-4 h-4" />
+                            <span className="font-body">{t('nav.bookmark') || 'Bookmark'}</span>
+                        </button>
                         <button
                             onClick={() => { router.push('/diagnose'); setIsMobileMenuOpen(false); }}
                             className="flex items-center gap-2 text-amber-400 w-full font-semibold"
