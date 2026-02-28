@@ -16,6 +16,7 @@ interface UpgradeModalProps {
 }
 
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_LINK || 'https://buy.stripe.com/cNi14na6t8iycykeo718c08';
+const FOUNDING_LINK = 'https://buy.stripe.com/cNifZh6UhaqG69Wgwf18c0f?prefilled_promo_code=FOUNDING50';
 
 const TRIGGERS = {
   'diagnosis-limit': {
@@ -24,8 +25,8 @@ const TRIGGERS = {
     urgency: '⚡ Most users solve their issue in the next session.',
   },
   'guide-limit': {
-    headline: "You've reached 5 free repair guides",
-    sub: "Unlock unlimited step-by-step guides with exact torque specs, wiring diagrams, and part numbers.",
+    headline: "Like what you see? It gets better.",
+    sub: "Founding Members get 6 months of unlimited guides, AI diagnoses, and OBD-II scanning — for the price of one month.",
     urgency: '💰 Pro members save an average of $340 per repair.',
   },
   'feature-gate': {
@@ -55,10 +56,11 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
       onAuthClick();
       return;
     }
+    // Use Founding Member link with auto-applied promo code
+    const baseUrl = FOUNDING_LINK;
     const url = user.email
-      ? `${PAYMENT_LINK}?prefilled_email=${encodeURIComponent(user.email)}`
-      : PAYMENT_LINK;
-    // Use location.href — window.open in async handlers is silently blocked by popup blockers
+      ? `${baseUrl}&prefilled_email=${encodeURIComponent(user.email)}`
+      : baseUrl;
     window.location.href = url;
     onClose();
   };
@@ -109,7 +111,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-full mb-4">
                 <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                <span className="text-amber-400 text-xs font-bold tracking-wider uppercase">SpotOn Pro</span>
+                <span className="text-amber-400 text-xs font-bold tracking-wider uppercase">🔥 Founding Member Launch</span>
               </div>
 
               {/* Headline */}
@@ -120,15 +122,13 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
                 {content.sub}
               </p>
 
-              {/* Price card */}
-              <div className="bg-white/[0.04] border border-white/10 rounded-xl p-4 mb-5">
-                <div className="flex items-baseline gap-2 mb-3">
+              {/* Founding Member Price card */}
+              <div className="bg-gradient-to-b from-amber-500/5 to-transparent border border-amber-500/30 rounded-xl p-4 mb-5">
+                <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-3xl font-black text-white">$9.99</span>
-                  <span className="text-gray-500 text-sm">/month</span>
-                  <span className="ml-auto text-xs text-green-400 font-semibold bg-green-400/10 px-2 py-1 rounded-full whitespace-nowrap">
-                    Save 17% annually
-                  </span>
+                  <span className="text-gray-500 text-sm line-through">$59.94</span>
                 </div>
+                <p className="text-amber-400 text-sm font-bold mb-3">6 months of Pro for the price of 1</p>
                 <ul className="space-y-2">
                   {[
                     'Unlimited AI diagnoses',
@@ -143,18 +143,16 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
                     </li>
                   ))}
                 </ul>
+                <p className="text-xs text-gray-500 mt-3">Only 47 of 50 founding spots left</p>
               </div>
 
-              {/* Urgency line */}
-              <p className="text-xs text-center text-amber-400/80 mb-4">{content.urgency}</p>
-
-              {/* Primary CTA */}
+              {/* Primary CTA — Founding Member */}
               <button
                 onClick={handleUpgrade}
-                className="w-full flex items-center justify-center gap-2 py-3.5 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl transition-all mb-2 text-sm"
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all mb-2 text-sm"
               >
                 <Zap className="w-4 h-4" />
-                {user ? 'Upgrade to Pro — $9.99/mo' : 'Sign In to Upgrade'}
+                {user ? 'Claim Founding Pro — $9.99 for 6 months' : 'Sign In to Claim'}
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -168,7 +166,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, onAuthClic
               {/* Trust badge */}
               <div className="flex items-center justify-center gap-1.5 mt-3">
                 <Shield className="w-3 h-3 text-gray-600" />
-                <span className="text-[11px] text-gray-600">14-day money-back · Cancel anytime · Instant access</span>
+                <span className="text-[11px] text-gray-600">Cancel anytime · Full access instantly · Regular price after 6 months</span>
               </div>
             </div>
           </motion.div>

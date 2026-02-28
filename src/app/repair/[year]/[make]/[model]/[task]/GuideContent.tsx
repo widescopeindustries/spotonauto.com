@@ -11,6 +11,7 @@ import { trackGuideGenerated, trackRepairPageView, trackUpgradeModalShown } from
 import { trackGuideUse, isFirstFreeGuideUsed, getUsageStatus } from '@/lib/usageTracker';
 import { useAuth } from '@/contexts/AuthContext';
 import VehicleHealthSnapshot from '@/components/VehicleHealthSnapshot';
+import UpgradeModal from '@/components/UpgradeModal';
 
 interface GuideContentProps {
     params: {
@@ -32,6 +33,7 @@ export default function GuideContent({ params }: GuideContentProps) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isPremiumGated, setIsPremiumGated] = useState(false);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
     // Determine pro status from Supabase (via AuthContext) — NOT localStorage
     const isPro = user?.tier === SubscriptionTier.Pro || user?.tier === SubscriptionTier.ProPlus;
@@ -94,6 +96,11 @@ export default function GuideContent({ params }: GuideContentProps) {
                 });
                 trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
                 setGuide(generatedGuide);
+
+                // Show Founding Member upgrade modal 3 seconds after guide loads for free users
+                if (!isPro) {
+                    setTimeout(() => setShowUpgradeModal(true), 3000);
+                }
             } catch (err: any) {
                 // Handle 401 specifically — redirect to auth
                 if (err.message?.includes('Authentication required') || err.message?.includes('401')) {
@@ -183,6 +190,12 @@ export default function GuideContent({ params }: GuideContentProps) {
                     />
                 </>
             )}
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
+                onAuthClick={() => router.push(`/auth?redirect=${encodeURIComponent(window.location.pathname)}`)}
+                trigger="guide-limit"
+            />
         </div>
     );
 }
