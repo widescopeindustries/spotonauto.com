@@ -1,21 +1,16 @@
 import { MetadataRoute } from 'next'
-import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { TOOL_PAGES } from '@/data/tools-pages';
-
-const SITEMAP_YEAR_MIN = 2000;
-const SITEMAP_YEAR_MAX = 2025;
-
-// Top makes to include repair pages for (keeps sitemap manageable)
-const TOP_MAKES = [
-    'Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'Hyundai',
-    'Kia', 'Jeep', 'Subaru', 'BMW', 'Dodge', 'GMC', 'Mazda',
-    'Volkswagen', 'Lexus', 'Mercedes-Benz',
-];
 
 function slugify(s: string) {
     return s.toLowerCase().replace(/\s+/g, '-');
 }
 
+/**
+ * Single flat sitemap — includes static pages, all tool pages, and guide pages.
+ * Repair pages are discoverable via guide pages (internal links) and don't need
+ * explicit sitemap entries — Google will crawl them through navigation.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://spotonauto.com';
     const entries: MetadataRoute.Sitemap = [];
@@ -36,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
     );
 
-    // Tool pages (all 1,854)
+    // Tool pages (all ~1,854)
     for (const tp of TOOL_PAGES) {
         if (!tp?.slug) continue;
         entries.push({
@@ -47,54 +42,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
         });
     }
 
-    // Guide directory — one entry per make
+    // Guide directory — make and model level pages
     const allMakes = Object.keys(VEHICLE_PRODUCTION_YEARS);
     for (const make of allMakes) {
         if (!make) continue;
+        const makeSlug = slugify(make);
         entries.push({
-            url: `${baseUrl}/guides/${slugify(make)}`,
+            url: `${baseUrl}/guides/${makeSlug}`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.7,
         });
 
-        // Guide model pages
         const models = VEHICLE_PRODUCTION_YEARS[make];
         if (!models) continue;
         for (const model of Object.keys(models)) {
             if (!model) continue;
             entries.push({
-                url: `${baseUrl}/guides/${slugify(make)}/${slugify(model)}`,
+                url: `${baseUrl}/guides/${makeSlug}/${slugify(model)}`,
                 lastModified: new Date(),
                 changeFrequency: 'weekly',
                 priority: 0.7,
             });
-        }
-    }
-
-    // Repair pages — top makes only to keep size manageable
-    for (const make of TOP_MAKES) {
-        const models = VEHICLE_PRODUCTION_YEARS[make];
-        if (!models) continue;
-        const makeSlug = slugify(make);
-
-        for (const [model, productionYears] of Object.entries(models)) {
-            if (!model || !productionYears) continue;
-            const modelSlug = slugify(model);
-            const startYear = Math.max(productionYears.start, SITEMAP_YEAR_MIN);
-            const endYear = Math.min(productionYears.end, SITEMAP_YEAR_MAX);
-            if (startYear > endYear) continue;
-
-            for (let year = startYear; year <= endYear; year++) {
-                for (const task of VALID_TASKS) {
-                    entries.push({
-                        url: `${baseUrl}/repair/${year}/${makeSlug}/${modelSlug}/${task}`,
-                        lastModified: new Date(),
-                        changeFrequency: 'monthly',
-                        priority: 0.6,
-                    });
-                }
-            }
         }
     }
 
