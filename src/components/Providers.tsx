@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
+import { LocaleProvider } from '@/lib/localeContext';
 
 // Phase 1: Render children immediately with no auth context
 // Phase 2: After first paint, load AuthProvider + SpotOnGuide
@@ -27,13 +28,15 @@ export default function Providers({ children }: { children: ReactNode }) {
 
   if (!mounted) {
     // First paint — no Supabase JS loaded, children render fast
-    return <>{children}</>;
+    return <LocaleProvider>{children}</LocaleProvider>;
   }
 
   return (
-    <AuthProvider>
-      {children}
-      <SpotOnGuide />
-    </AuthProvider>
+    <LocaleProvider>
+      <AuthProvider>
+        {children}
+        <SpotOnGuide />
+      </AuthProvider>
+    </LocaleProvider>
   );
 }

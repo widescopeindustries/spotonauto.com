@@ -360,7 +360,13 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
   };
 };
 
-export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): Promise<RepairGuide> => {
+const LOCALE_NAMES: Record<string, string> = {
+  en: 'English', es: 'Spanish', fr: 'French', de: 'German',
+  pt: 'Portuguese', pl: 'Polish', it: 'Italian', nl: 'Dutch',
+  ja: 'Japanese', ko: 'Korean',
+};
+
+export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, locale?: string): Promise<RepairGuide> => {
   const { year, make, model } = vehicle;
 
   // Validate vehicle combination before generating
@@ -391,6 +397,7 @@ INSTRUCTIONS:
 3. Include exact torque specs, part numbers from the manual
 4. IMPORTANT: Use the NHTSA recall data above as safety warnings — these are REAL and must be included
 5. Do not invent information not present in the sources above
+${locale && locale !== 'en' ? `\nLANGUAGE: Generate ALL content (title, safety warnings, tools, parts, step instructions) in ${LOCALE_NAMES[locale] || 'English'}. Use the native language for everything except proper nouns, part numbers, and technical specifications.` : ''}
 
 Return JSON with title, vehicle, safetyWarnings, tools, parts, steps.`
     : `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
@@ -402,6 +409,7 @@ INSTRUCTIONS:
 2. Include torque specs, part numbers, and safety warnings where known
 3. IMPORTANT: The NHTSA recall data above is REAL — include relevant recalls as the first safety warnings
 4. Focus on safety and correctness
+${locale && locale !== 'en' ? `\nLANGUAGE: Generate ALL content (title, safety warnings, tools, parts, step instructions) in ${LOCALE_NAMES[locale] || 'English'}. Use the native language for everything except proper nouns, part numbers, and technical specifications.` : ''}
 
 Return JSON with:
 - title (concise repair task name)
@@ -539,9 +547,13 @@ export const sendDiagnosticMessage = async (chat: Chat, message: string): Promis
 export const sendDiagnosticMessageWithHistory = async (
   vehicle: Vehicle,
   message: string,
-  history: { role: string; parts: { text: string }[] }[]
+  history: { role: string; parts: { text: string }[] }[],
+  locale?: string
 ): Promise<{ text: string, imageUrl: string | null }> => {
   const { year, make, model } = vehicle;
+  const langInstruction = locale && locale !== 'en'
+    ? `\n6. IMPORTANT: Respond entirely in ${LOCALE_NAMES[locale] || 'English'}. Use the native language for everything except proper nouns, part numbers, and technical codes.`
+    : '';
 
   const diagnosticSystemInstruction = `You are an expert automotive diagnostic AI for a ${year} ${make} ${model}. Your goal is to guide a DIY mechanic through diagnosing a vehicle issue step-by-step.
 
@@ -550,7 +562,7 @@ Instructions:
 2. If the user describes symptoms, ask clarifying questions and guide them through diagnosis.
 3. Provide one clear diagnostic step at a time.
 4. Be conversational but professional. Keep responses focused and helpful.
-5. When you have enough information, suggest likely causes and repairs.
+5. When you have enough information, suggest likely causes and repairs.${langInstruction}
 
 Keep your response concise and practical. Do NOT return JSON - respond in natural language.`;
 

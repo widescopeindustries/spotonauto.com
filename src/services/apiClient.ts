@@ -29,13 +29,19 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
 /**
  * Makes a request to the server-side API
  */
+function getClientLocale(): string {
+  if (typeof window === 'undefined') return 'en';
+  return localStorage.getItem('spoton-locale') || 'en';
+}
+
 async function makeApiRequest(action: string, payload: any, options?: { stream?: boolean }) {
   const headers = await getAuthHeaders();
+  const locale = getClientLocale();
 
   const response = await fetch(API_ENDPOINT, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ action, payload, stream: options?.stream }),
+    body: JSON.stringify({ action, payload: { ...payload, locale }, stream: options?.stream }),
   });
 
   if (!response.ok) {

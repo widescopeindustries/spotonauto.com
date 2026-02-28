@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'generate-guide':
-        result = await generateFullRepairGuide(payload.vehicle, payload.task);
+        result = await generateFullRepairGuide(payload.vehicle, payload.task, payload.locale);
         if (result.sources && result.sources.length > 0) {
           console.log(`✓ Guide grounded in ${result.sources.length} sources`);
         }
@@ -124,7 +124,8 @@ export async function POST(req: NextRequest) {
         result = await sendDiagnosticMessageWithHistory(
           payload.vehicle,
           payload.message,
-          payload.history || []
+          payload.history || [],
+          payload.locale
         );
         break;
 

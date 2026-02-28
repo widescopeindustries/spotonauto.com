@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, DollarSign, ArrowRight, BookOpen, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUsageStatus } from '@/lib/usageTracker';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const Header: React.FC = () => {
     const router = useRouter();
@@ -87,6 +88,7 @@ const Header: React.FC = () => {
 
                     {/* CTA Buttons */}
                     <div className="hidden md:flex items-center gap-3">
+                        <LanguageSelector />
                         <button
                             onClick={() => router.push('/diagnose')}
                             className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-all duration-200 hover:scale-105 active:scale-95"
@@ -205,6 +207,10 @@ const Header: React.FC = () => {
                     ))}
 
                     <div className="pt-4 border-t border-cyan-500/20 space-y-3">
+                        <div className="flex items-center gap-2 text-gray-300 mb-2">
+                            <LanguageSelector />
+                            <span className="text-sm text-gray-500">Guide language</span>
+                        </div>
                         <button
                             onClick={() => { router.push('/diagnose'); setIsMobileMenuOpen(false); }}
                             className="flex items-center gap-2 text-amber-400 w-full font-semibold"
