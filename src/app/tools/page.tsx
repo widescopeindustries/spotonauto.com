@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { TOOL_PAGES, TOOL_TYPE_META } from '@/data/tools-pages';
 
 export const metadata: Metadata = {
     title: 'Free Auto Repair Tools | SpotOnAuto',
@@ -109,11 +110,13 @@ const TOOLS = [
 ];
 
 const POPULAR_SEARCHES = [
-    { query: 'bmw x3 headlight bulb', href: '/tools/bmw-x3-headlight-bulb' },
+    { query: 'toyota camry oil type', href: '/tools/toyota-camry-oil-type' },
+    { query: 'honda civic battery location', href: '/tools/honda-civic-battery-location' },
+    { query: 'ford f150 tire size', href: '/tools/ford-f150-tire-size' },
     { query: 'bmw x3 battery location', href: '/tools/bmw-x3-battery-location' },
-    { query: 'toyota camry oil change', href: '/repair/2020/toyota/camry/oil-change' },
-    { query: 'honda civic brake pads', href: '/repair/2020/honda/civic/brake-pad-replacement' },
-    { query: 'ford f150 serpentine belt', href: '/repair/2020/ford/f-150/serpentine-belt-replacement' },
+    { query: 'jeep wrangler tire size', href: '/tools/jeep-wrangler-tire-size' },
+    { query: 'toyota rav4 oil type', href: '/tools/toyota-rav4-oil-type' },
+    { query: 'honda crv oil type', href: '/tools/honda-crv-oil-type' },
     { query: 'check engine light p0300', href: '/diagnose' },
 ];
 
@@ -177,6 +180,34 @@ export default function ToolsPage() {
                         </div>
                     </div>
                 ))}
+
+                {/* Vehicle Spec Guides — programmatic pages */}
+                {Object.entries(TOOL_TYPE_META).map(([type, meta]) => {
+                    const pages = TOOL_PAGES.filter(tp => tp.toolType === type);
+                    if (pages.length === 0) return null;
+                    return (
+                        <div key={type} className="mb-12">
+                            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                                <span>{meta.icon}</span>
+                                {meta.label} Guides
+                            </h2>
+                            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {pages.map(tp => (
+                                    <Link
+                                        key={tp.slug}
+                                        href={`/tools/${tp.slug}`}
+                                        className="block bg-white/5 rounded-xl p-4 border border-white/10 hover:border-cyan-400 hover:bg-white/10 transition group"
+                                    >
+                                        <h3 className="font-semibold text-sm group-hover:text-cyan-400 transition">
+                                            {tp.make} {tp.model}
+                                        </h3>
+                                        <p className="text-gray-500 text-xs mt-1">{meta.label}</p>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
 
                 {/* Popular Searches */}
                 <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-12">
