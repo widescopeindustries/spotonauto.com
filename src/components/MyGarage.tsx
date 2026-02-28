@@ -75,13 +75,6 @@ export default function MyGarage({ userId }: MyGarageProps) {
   }
 
   async function handleAddVehicle() {
-    const canAdd = await subscriptionService.canAddVehicle(vehicles.length);
-    
-    if (!canAdd) {
-      setShowUpgradeModal(true);
-      return;
-    }
-
     // Navigate to VIN decoder or manual entry
     window.location.href = '/?addVehicle=true';
   }

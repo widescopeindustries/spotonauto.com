@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Cpu, Activity, ImageIcon, Camera, Lock, Zap } from 'lucide-react';
+import { Send, Cpu, Activity, ImageIcon, Camera } from 'lucide-react';
 import { createDiagnosticChat, sendDiagnosticMessage, Chat } from '../services/apiClient';
-import { Vehicle, SubscriptionTier } from '../types';
-import { trackDiagnosisUse } from '../lib/usageTracker';
-import { useAuth } from '../contexts/AuthContext';
-import UpgradeModal from './UpgradeModal';
+import { Vehicle } from '../types';
 
 interface DiagnosticChatProps {
     vehicle?: Vehicle;
@@ -24,21 +21,11 @@ interface Message {
 const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, initialProblem: initialProblemProp }) => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { user } = useAuth();
     const [messages, setMessages] = useState<Message[]>([]);
     const [typing, setTyping] = useState(false);
     const [chatSession, setChatSession] = useState<Chat | null>(null);
     const [userInput, setUserInput] = useState('');
-    const [limitReached, setLimitReached] = useState(false);
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-    const [messageCount, setMessageCount] = useState(0);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-
-    // Determine pro status from Supabase (via AuthContext) — NOT localStorage
-    const isPro = user?.tier === SubscriptionTier.Pro || user?.tier === SubscriptionTier.ProPlus;
-
-    // Free users get 1 diagnostic session (tracked on first message send)
-    const FREE_MESSAGE_LIMIT = 6; // Allow a few back-and-forth messages per session
 
     const vehicle = vehicleProp || (searchParams.get('year') && searchParams.get('make') && searchParams.get('model')
         ? { year: searchParams.get('year')!, make: searchParams.get('make')!, model: searchParams.get('model')! }
@@ -105,27 +92,6 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const handleUserResponse = async (text: string, activeChat = chatSession) => {
         if (!text.trim() || !activeChat) return;
 
-        // Check usage limits for free users (isPro sourced from Supabase via AuthContext)
-        if (!isPro) {
-            // On first user message, track the diagnosis use
-            if (messageCount === 0) {
-                const { allowed } = trackDiagnosisUse();
-                if (!allowed) {
-                    setLimitReached(true);
-                    setShowUpgradeModal(true);
-                    return;
-                }
-            }
-
-            // Limit conversation length for free users
-            if (messageCount >= FREE_MESSAGE_LIMIT) {
-                setLimitReached(true);
-                setShowUpgradeModal(true);
-                return;
-            }
-            setMessageCount(prev => prev + 1);
-        }
-
         // If it's the initial auto-send, we don't need to duplicate the user message visually if we don't want to,
         // but it's consistent to show what the "user" said (or passed in).
         // For initialProblem, we might skip adding it to 'messages' if we want it to feel like the context was pre-loaded.
@@ -187,18 +153,6 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                     <h3 className="text-neon-cyan font-mono tracking-widest text-sm">AI DIAGNOSTIC CORE v3.0 // {vehicle?.model || 'UNLINKED'}</h3>
                 </div>
                 <div className="flex items-center gap-3">
-                    {/* Free user message counter */}
-                    {!isPro && (
-                        <button
-                            onClick={() => setShowUpgradeModal(true)}
-                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
-                        >
-                            <Zap className="w-3 h-3 text-amber-400" />
-                            <span className="text-amber-400 font-mono text-[10px] tracking-wider">
-                                {Math.max(0, FREE_MESSAGE_LIMIT - messageCount)}/{FREE_MESSAGE_LIMIT} FREE
-                            </span>
-                        </button>
-                    )}
                     <Cpu className="text-neon-cyan/50 w-5 h-5" />
                 </div>
             </div>
@@ -251,63 +205,36 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
 
             {/* Input Area */}
             <div className="p-4 border-t border-neon-cyan/20 bg-black/60 z-10">
-                {limitReached ? (
-                    <div className="text-center py-3">
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                            <Lock className="w-4 h-4 text-amber-400" />
-                            <span className="text-amber-400 font-mono text-sm">FREE DIAGNOSTIC LIMIT REACHED</span>
-                        </div>
-                        <p className="text-gray-400 text-xs mb-3">
-                            Upgrade to Pro for unlimited AI diagnostics and repair guides.
-                        </p>
-                        <button
-                            onClick={() => setShowUpgradeModal(true)}
-                            className="bg-neon-cyan text-black font-bold py-2 px-6 rounded-lg text-sm hover:bg-cyan-400 transition-all"
-                        >
-                            Upgrade to Pro — $9.99/mo
-                        </button>
-                    </div>
-                ) : (
-                    <>
-                        <form onSubmit={onSubmit} className="flex gap-3 relative">
-                            <div className="absolute inset-0 bg-neon-cyan/5 blur-xl -z-10"></div>
-                            <input
-                                type="text"
-                                value={userInput}
-                                onChange={(e) => setUserInput(e.target.value)}
-                                placeholder={typing ? "Awaiting System Response..." : "Enter symptoms, codes, or observations..."}
-                                className="flex-1 bg-black/50 border border-neon-cyan/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-cyan focus:shadow-glow-cyan font-mono text-sm transition-all"
-                                disabled={typing}
-                                autoFocus
-                            />
-                            <button
-                                type="submit"
-                                disabled={typing || !userInput.trim()}
-                                className="bg-neon-cyan/10 hover:bg-neon-cyan/20 border border-neon-cyan text-neon-cyan px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow-cyan flex items-center justify-center"
-                            >
-                                <Send className="w-5 h-5" />
-                            </button>
-                            <button
-                                type="button"
-                                className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600 text-gray-400 px-3 rounded-lg transition-colors"
-                                title="Upload Image (Coming Soon)"
-                            >
-                                <Camera className="w-5 h-5" />
-                            </button>
-                        </form>
-                        <div className="text-center mt-2">
-                            <span className="text-[10px] text-gray-500 font-mono">POWERED BY GEMINI 2.0 // FACTORY MANUAL PROTOCOL ENABLED</span>
-                        </div>
-                    </>
-                )}
+                <form onSubmit={onSubmit} className="flex gap-3 relative">
+                    <div className="absolute inset-0 bg-neon-cyan/5 blur-xl -z-10"></div>
+                    <input
+                        type="text"
+                        value={userInput}
+                        onChange={(e) => setUserInput(e.target.value)}
+                        placeholder={typing ? "Awaiting System Response..." : "Enter symptoms, codes, or observations..."}
+                        className="flex-1 bg-black/50 border border-neon-cyan/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-cyan focus:shadow-glow-cyan font-mono text-sm transition-all"
+                        disabled={typing}
+                        autoFocus
+                    />
+                    <button
+                        type="submit"
+                        disabled={typing || !userInput.trim()}
+                        className="bg-neon-cyan/10 hover:bg-neon-cyan/20 border border-neon-cyan text-neon-cyan px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow-cyan flex items-center justify-center"
+                    >
+                        <Send className="w-5 h-5" />
+                    </button>
+                    <button
+                        type="button"
+                        className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600 text-gray-400 px-3 rounded-lg transition-colors"
+                        title="Upload Image (Coming Soon)"
+                    >
+                        <Camera className="w-5 h-5" />
+                    </button>
+                </form>
+                <div className="text-center mt-2">
+                    <span className="text-[10px] text-gray-500 font-mono">POWERED BY GEMINI 2.0 // FACTORY MANUAL PROTOCOL ENABLED</span>
+                </div>
             </div>
-            {/* Upgrade Modal */}
-            <UpgradeModal
-                isOpen={showUpgradeModal}
-                onClose={() => setShowUpgradeModal(false)}
-                onAuthClick={() => router.push('/auth')}
-                trigger="diagnosis-limit"
-            />
         </div>
     );
 };

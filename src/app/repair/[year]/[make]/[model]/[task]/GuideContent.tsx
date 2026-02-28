@@ -3,15 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ServiceManualGuide from '@/components/ServiceManualGuide';
-import LoadingIndicator from '@/components/LoadingIndicator';
 import { generateFullRepairGuide } from '@/services/apiClient';
 import { saveGuide, getGuideById } from '@/services/storageService';
-import { RepairGuide, SubscriptionTier } from '@/types';
-import { trackGuideGenerated, trackRepairPageView, trackUpgradeModalShown } from '@/lib/analytics';
-import { trackGuideUse, isFirstFreeGuideUsed, getUsageStatus } from '@/lib/usageTracker';
-import { useAuth } from '@/contexts/AuthContext';
+import { RepairGuide } from '@/types';
+import { trackGuideGenerated, trackRepairPageView } from '@/lib/analytics';
 import VehicleHealthSnapshot from '@/components/VehicleHealthSnapshot';
-import UpgradeModal from '@/components/UpgradeModal';
+import { useT } from '@/lib/translations';
 
 interface GuideContentProps {
     params: {
@@ -26,46 +23,17 @@ const guideCache = new Map<string, RepairGuide>();
 
 export default function GuideContent({ params }: GuideContentProps) {
     const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
     const { year, make, model, task } = params;
 
     const [guide, setGuide] = useState<RepairGuide | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [isPremiumGated, setIsPremiumGated] = useState(false);
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
-    // Determine pro status from Supabase (via AuthContext) — NOT localStorage
-    const isPro = user?.tier === SubscriptionTier.Pro || user?.tier === SubscriptionTier.ProPlus;
+    const t = useT();
 
     useEffect(() => {
-        // Wait until auth state is resolved before proceeding
-        if (authLoading) return;
-
-        // Anonymous users are allowed — guide generation is public up to the
-        // free limit tracked by localStorage (usageTracker). No auth redirect here.
-
         const fetchGuide = async () => {
             setError(null);
             setLoading(true);
-
-            // Determine if this guide should show blurred premium content
-            // Pro users: never gated
-            // Free users: 1st guide = full access, 2nd+ guide = blurred specs
-            let shouldGate = false;
-            if (!isPro) {
-                // Check if they've already used their free guide BEFORE tracking this one
-                const alreadyUsedFreeGuide = isFirstFreeGuideUsed();
-
-                if (alreadyUsedFreeGuide) {
-                    // This is guide 2+, show blurred content
-                    shouldGate = true;
-                } else {
-                    // This is their first guide, track it and give full access
-                    trackGuideUse();
-                }
-            }
-            setIsPremiumGated(shouldGate);
 
             try {
                 const cleanTask = task.replace(/-/g, ' ');
@@ -96,17 +64,7 @@ export default function GuideContent({ params }: GuideContentProps) {
                 });
                 trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
                 setGuide(generatedGuide);
-
-                // Show Founding Member upgrade modal 3 seconds after guide loads for free users
-                if (!isPro) {
-                    setTimeout(() => setShowUpgradeModal(true), 3000);
-                }
             } catch (err: any) {
-                // Handle 401 specifically — redirect to auth
-                if (err.message?.includes('Authentication required') || err.message?.includes('401')) {
-                    router.push(`/auth?redirect=${encodeURIComponent(window.location.pathname)}`);
-                    return;
-                }
                 setError(err instanceof Error ? err.message : "Failed to generate guide.");
             } finally {
                 setLoading(false);
@@ -114,17 +72,17 @@ export default function GuideContent({ params }: GuideContentProps) {
         };
 
         fetchGuide();
-    }, [year, make, model, task, authLoading, user, isPro]);
+    }, [year, make, model, task]);
 
-    if (authLoading || loading) return (
+    if (loading) return (
         <div className="min-h-[60vh] flex flex-col items-center justify-center p-4 bg-[#f8f6f1]">
             <div className="text-center">
                 <div className="inline-block w-12 h-12 border-4 border-[#1e3a5f] border-t-transparent rounded-full animate-spin mb-4"></div>
                 <p className="text-[#1e3a5f] font-serif text-lg">
-                    Consulting service manuals...
+                    {t('guide.consulting')}
                 </p>
                 <p className="text-[#666] text-sm mt-2">
-                    Generating your personalized repair guide
+                    {t('guide.generating')}
                 </p>
             </div>
         </div>
@@ -133,7 +91,7 @@ export default function GuideContent({ params }: GuideContentProps) {
     if (error) return (
         <div className="max-w-xl mx-auto my-16 p-8 bg-black/80 border border-red-500/30 rounded-xl shadow-lg text-center">
             <div className="text-red-500 text-4xl mb-4">⚠️</div>
-            <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Guide</h2>
+            <h2 className="text-xl font-bold text-red-400 mb-2">{t('guide.errorTitle')}</h2>
             <p className="text-gray-400 mb-6">{error}</p>
             <div className="flex gap-3 justify-center">
                 <button
@@ -153,10 +111,6 @@ export default function GuideContent({ params }: GuideContentProps) {
                             });
                             setGuide(generatedGuide);
                         } catch (e: any) {
-                            if (e.message?.includes('Authentication required') || e.message?.includes('401')) {
-                                router.push(`/auth?redirect=${encodeURIComponent(window.location.pathname)}`);
-                                return;
-                            }
                             setError(e instanceof Error ? e.message : 'Failed to generate guide.');
                         } finally {
                             setLoading(false);
@@ -164,13 +118,13 @@ export default function GuideContent({ params }: GuideContentProps) {
                     }}
                     className="px-6 py-2 bg-brand-cyan text-black rounded-lg font-semibold hover:bg-brand-cyan-light transition-colors"
                 >
-                    Try Again
+                    {t('guide.tryAgain')}
                 </button>
                 <button
                     onClick={() => router.push('/')}
                     className="px-6 py-2 bg-white/10 text-white border border-white/20 rounded-lg font-semibold hover:bg-white/20 transition-colors"
                 >
-                    Return Home
+                    {t('guide.returnHome')}
                 </button>
             </div>
         </div>
@@ -186,16 +140,9 @@ export default function GuideContent({ params }: GuideContentProps) {
                     <ServiceManualGuide
                         guide={guide}
                         onReset={() => router.push('/')}
-                        isPremiumGated={isPremiumGated}
                     />
                 </>
             )}
-            <UpgradeModal
-                isOpen={showUpgradeModal}
-                onClose={() => setShowUpgradeModal(false)}
-                onAuthClick={() => router.push(`/auth?redirect=${encodeURIComponent(window.location.pathname)}`)}
-                trigger="guide-limit"
-            />
         </div>
     );
 }

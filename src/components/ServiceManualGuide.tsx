@@ -5,78 +5,13 @@ import type { RepairGuide } from '../types';
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
 import { trackAffiliateClick, trackToolClick } from '../lib/analytics';
 import { motion, AnimatePresence } from 'framer-motion';
-import ProBadge from './ProBadge';
-import GatedUpgradeBanner from './GatedUpgradeBanner';
 
 interface ServiceManualGuideProps {
     guide: RepairGuide;
     onReset: () => void;
-    isPremiumGated?: boolean;
 }
 
-// Regex patterns for detecting premium content
-const PART_NUMBER_PATTERN = /\b([A-Z]{2,4}[-\s]?\d{3,}[-\s]?[A-Z0-9]*|\d{4,}[-\s]?[A-Z0-9]+)\b/gi;
-const TORQUE_PATTERN = /\b(\d+(?:\.\d+)?)\s*(ft[-\s]?lb|lb[-\s]?ft|nm|n·m|foot[-\s]?pounds?)/gi;
-const FLUID_CAPACITY_PATTERN = /\b(\d+(?:\.\d+)?)\s*(quarts?|qts?|liters?|L|gallons?|gal|oz|ounces?|ml|pints?|pts?)\b/gi;
-const MEASUREMENT_PATTERN = /\b(\d+(?:\/\d+)?(?:\.\d+)?)\s*(mm|cm|inches?|in|"|')\b/gi;
-
-// Helper to blur premium content in text
-function blurPremiumContent(text: string, isPremiumGated: boolean): React.ReactNode {
-    if (!isPremiumGated) return text;
-
-    let result: React.ReactNode[] = [];
-    let lastIndex = 0;
-    let key = 0;
-
-    // Combined pattern
-    const allPatterns = new RegExp(
-        `(${PART_NUMBER_PATTERN.source})|(${TORQUE_PATTERN.source})|(${FLUID_CAPACITY_PATTERN.source})|(${MEASUREMENT_PATTERN.source})`,
-        'gi'
-    );
-
-    let match;
-    while ((match = allPatterns.exec(text)) !== null) {
-        // Add text before match
-        if (match.index > lastIndex) {
-            result.push(text.slice(lastIndex, match.index));
-        }
-
-        // Add blurred span
-        result.push(
-            <span key={key++} className="premium-blur-wrapper">
-                <span className="premium-blurred">{match[0]}</span>
-                <ProBadge size="sm" className="ml-1" />
-            </span>
-        );
-
-        lastIndex = match.index + match[0].length;
-    }
-
-    // Add remaining text
-    if (lastIndex < text.length) {
-        result.push(text.slice(lastIndex));
-    }
-
-    return result.length > 0 ? result : text;
-}
-
-// Helper to create blurred placeholder for part numbers
-function blurPartNumber(partName: string, isPremiumGated: boolean): React.ReactNode {
-    if (!isPremiumGated) return null;
-
-    // Check if part name contains a part number pattern
-    if (PART_NUMBER_PATTERN.test(partName)) {
-        return (
-            <span className="premium-blur-wrapper inline-flex items-center gap-1.5 mt-1">
-                <span className="premium-blurred text-xs">XXXX-XXXX</span>
-                <ProBadge size="sm" />
-            </span>
-        );
-    }
-    return null;
-}
-
-const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset, isPremiumGated = false }) => {
+const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset }) => {
     const [activeStep, setActiveStep] = useState<number | null>(null);
 
     const partsWithLinks = generateAllPartsWithLinks(guide.parts || [], guide.vehicle);
@@ -209,12 +144,6 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
                                             <div className="part-featured-badge">Major Component</div>
                                         )}
                                         <div className="part-card-name">{part.name}</div>
-                                        {isPremiumGated && (
-                                            <div className="part-number-gated">
-                                                <span className="premium-blurred text-xs text-gray-500">Part #: XXXX-XXXX</span>
-                                                <ProBadge size="sm" className="ml-1.5" />
-                                            </div>
-                                        )}
                                         {part.links.map((link, linkIdx) => (
                                             <a
                                                 key={linkIdx}
@@ -313,7 +242,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
                                             {step.step}
                                         </motion.div>
                                         <div className="step-instruction">
-                                            {blurPremiumContent(step.instruction, isPremiumGated)}
+                                            {step.instruction}
                                         </div>
                                     </div>
 
@@ -378,38 +307,8 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
                         </motion.section>
                     )}
 
-                    {/* Upgrade Banner */}
-                    <motion.section
-                        className="manual-page upgrade-banner"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <div className="upgrade-inner">
-                            <div className="upgrade-icon">&#9889;</div>
-                            <h3 className="upgrade-title">Get Unlimited Repair Guides</h3>
-                            <p className="upgrade-desc">
-                                Save hundreds per repair with step-by-step guides for any vehicle.
-                                Plus OBD-II scanner integration, PDF downloads, and priority support.
-                            </p>
-                            <a
-                                href="https://buy.stripe.com/cNi14na6t8iycykeo718c08"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="upgrade-btn"
-                            >
-                                Upgrade to Pro &mdash; $9.99/mo
-                            </a>
-                            <p className="upgrade-sub">Less than a single mechanic diagnostic fee. Cancel anytime.</p>
-                        </div>
-                    </motion.section>
-
                 </div>
             </main>
-
-            {/* Gated Upgrade Banner - shows at bottom for premium-gated guides */}
-            {isPremiumGated && <GatedUpgradeBanner />}
 
             {/* Inline Styles for Service Manual Look */}
             <style jsx>{`
@@ -933,95 +832,6 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
                     text-decoration: underline;
                 }
 
-                /* Upgrade Banner */
-                .upgrade-banner {
-                    border-bottom: none !important;
-                }
-
-                .upgrade-inner {
-                    background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
-                    border-radius: 16px;
-                    padding: 2.5rem 2rem;
-                    text-align: center;
-                    border: 2px solid rgba(0,212,255,0.2);
-                }
-
-                .upgrade-icon {
-                    font-size: 2.5rem;
-                    margin-bottom: 0.75rem;
-                }
-
-                .upgrade-title {
-                    color: white;
-                    font-family: 'Arial Black', sans-serif;
-                    font-size: 1.5rem;
-                    margin: 0 0 0.5rem 0;
-                }
-
-                .upgrade-desc {
-                    color: #94a3b8;
-                    font-size: 0.95rem;
-                    line-height: 1.6;
-                    max-width: 500px;
-                    margin: 0 auto 1.5rem;
-                }
-
-                .upgrade-btn {
-                    display: inline-block;
-                    padding: 1rem 2rem;
-                    background: #06b6d4;
-                    color: #000;
-                    font-family: 'Arial Black', sans-serif;
-                    font-size: 1rem;
-                    font-weight: 900;
-                    border-radius: 12px;
-                    text-decoration: none;
-                    transition: all 0.2s;
-                }
-
-                .upgrade-btn:hover {
-                    background: #22d3ee;
-                    box-shadow: 0 0 30px rgba(6,182,212,0.4);
-                    transform: translateY(-2px);
-                }
-
-                .upgrade-sub {
-                    color: #64748b;
-                    font-size: 0.75rem;
-                    margin-top: 0.75rem;
-                }
-
-                /* Premium Gated Content Styles */
-                .premium-blur-wrapper {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 4px;
-                }
-
-                .premium-blurred {
-                    filter: blur(4px);
-                    user-select: none;
-                    pointer-events: none;
-                    opacity: 0.7;
-                    background: rgba(6, 182, 212, 0.1);
-                    padding: 0 4px;
-                    border-radius: 4px;
-                    transition: filter 0.2s;
-                }
-
-                .premium-blur-wrapper:hover .premium-blurred {
-                    filter: blur(3px);
-                }
-
-                .part-number-gated {
-                    display: flex;
-                    align-items: center;
-                    margin-top: 4px;
-                    padding: 4px 8px;
-                    background: rgba(6, 182, 212, 0.05);
-                    border: 1px dashed rgba(6, 182, 212, 0.3);
-                    border-radius: 6px;
-                }
             `}</style>
         </div>
     );

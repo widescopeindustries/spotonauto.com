@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, ArrowRight, Shield, Clock, CheckCircle2, DollarSign } from 'lucide-react';
+import { Zap, ArrowRight, Shield, Clock, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useT } from '@/lib/translations';
 
 const CTASection = () => {
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
+  const t = useT();
 
   return (
     <section className="relative py-24 overflow-hidden">
@@ -25,14 +27,14 @@ const CTASection = () => {
           className="text-center"
         >
           <h2 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
-            READY TO FIX
+            {t('cta.readyToFix')}
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200 glow-text">
-              YOUR RIDE?
+              {t('cta.yourRide')}
             </span>
           </h2>
           <p className="font-body text-lg text-gray-400 mb-10 max-w-xl mx-auto">
-            Join 50,000+ DIY mechanics saving $200–$500 per repair with AI-powered diagnoses and step-by-step guides.
+            {t('cta.joinMechanics')}
           </p>
 
           {/* Dual CTAs */}
@@ -63,21 +65,21 @@ const CTASection = () => {
               >
                 <Zap className="w-6 h-6" />
                 <span className="font-display font-bold tracking-wider">
-                  {isHovered ? 'GO!' : 'START AI DIAGNOSIS'}
+                  {isHovered ? t('cta.go') : t('cta.startDiagnosis')}
                 </span>
                 <ArrowRight className="w-6 h-6" />
               </motion.button>
             </motion.div>
 
-            {/* Secondary — Pricing */}
+            {/* Secondary — Guides */}
             <motion.button
-              onClick={() => router.push('/pricing')}
+              onClick={() => router.push('/guides')}
               className="flex items-center gap-2 px-8 py-5 rounded-xl border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all font-bold text-base"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
-              <DollarSign className="w-5 h-5" />
-              View Pro Plans — from $9.99/mo
+              <CheckCircle2 className="w-5 h-5" />
+              {t('cta.browseGuides')}
             </motion.button>
           </div>
 
@@ -91,15 +93,15 @@ const CTASection = () => {
           >
             <div className="flex items-center gap-2 text-gray-400">
               <Shield className="w-5 h-5 text-cyan-400" />
-              <span className="font-body text-sm">100% Free to Try</span>
+              <span className="font-body text-sm">{t('cta.freeNoSignup')}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-400">
               <Clock className="w-5 h-5 text-cyan-400" />
-              <span className="font-body text-sm">Results in 30 Seconds</span>
+              <span className="font-body text-sm">{t('cta.resultsIn30s')}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-400">
               <CheckCircle2 className="w-5 h-5 text-cyan-400" />
-              <span className="font-body text-sm">14-Day Money-Back Guarantee</span>
+              <span className="font-body text-sm">{t('cta.languagesSupported')}</span>
             </div>
           </motion.div>
         </motion.div>
