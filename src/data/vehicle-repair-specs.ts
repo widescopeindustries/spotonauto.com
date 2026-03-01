@@ -839,7 +839,7 @@ export const VEHICLE_REPAIR_SPECS: Record<VehicleTaskKey, VehicleRepairSpec> = {
 
   // ─── Honda CR-V (2002-2011, 2.4L K24) ────────────────────────────────────
 
-  "honda-crv::battery-replacement": {
+  "honda-cr-v::battery-replacement": {
     difficulty: "Easy",
     time: "15 minutes",
     parts: [
@@ -863,7 +863,7 @@ export const VEHICLE_REPAIR_SPECS: Record<VehicleTaskKey, VehicleRepairSpec> = {
     torqueSpecs: "Terminal bolts: 4-6 ft-lbs",
   },
 
-  "honda-crv::oil-change": {
+  "honda-cr-v::oil-change": {
     difficulty: "Easy",
     time: "20-25 minutes",
     parts: [

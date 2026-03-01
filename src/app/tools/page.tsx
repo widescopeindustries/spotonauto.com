@@ -112,11 +112,11 @@ const TOOLS = [
 const POPULAR_SEARCHES = [
     { query: 'toyota camry oil type', href: '/tools/toyota-camry-oil-type' },
     { query: 'honda civic battery location', href: '/tools/honda-civic-battery-location' },
-    { query: 'ford f150 tire size', href: '/tools/ford-f150-tire-size' },
+    { query: 'ford f150 tire size', href: '/tools/ford-f-150-tire-size' },
     { query: 'bmw x3 battery location', href: '/tools/bmw-x3-battery-location' },
     { query: 'jeep wrangler tire size', href: '/tools/jeep-wrangler-tire-size' },
     { query: 'toyota rav4 oil type', href: '/tools/toyota-rav4-oil-type' },
-    { query: 'honda crv oil type', href: '/tools/honda-crv-oil-type' },
+    { query: 'honda crv oil type', href: '/tools/honda-cr-v-oil-type' },
     { query: 'check engine light p0300', href: '/diagnose' },
 ];
 
