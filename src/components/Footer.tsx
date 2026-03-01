@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Cpu, Zap, Car, Bluetooth, DollarSign, BookOpen, Shield, Mail } from 'lucide-react';
+import { Cpu, Zap, Car, BookOpen, Shield, Mail } from 'lucide-react';
 
 const Footer: React.FC = () => {
     return (
@@ -21,13 +21,9 @@ const Footer: React.FC = () => {
                         <p className="font-body text-sm text-gray-500 leading-relaxed mb-4">
                             AI-powered auto repair guides. Save $200–$500 per repair with step-by-step instructions tailored to your exact vehicle.
                         </p>
-                        <Link
-                            href="/pricing"
-                            className="inline-flex items-center gap-1.5 text-xs font-bold text-black bg-cyan-400 hover:bg-cyan-300 transition-colors px-3 py-1.5 rounded-full"
-                        >
-                            <DollarSign className="w-3 h-3" />
-                            View Plans — from $9.99/mo
-                        </Link>
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-black bg-cyan-400 px-3 py-1.5 rounded-full">
+                            100% Free
+                        </span>
                     </div>
 
                     {/* Tools */}
@@ -38,7 +34,6 @@ const Footer: React.FC = () => {
                                 { href: '/diagnose', label: 'AI Diagnostic Chat', icon: Zap, accent: true },
                                 { href: '/guides', label: 'Repair Guides', icon: BookOpen },
                                 { href: '/parts', label: 'Parts Finder', icon: Car },
-                                { href: '/scanner', label: 'OBD-II Scanner', icon: Bluetooth },
                                 { href: '/cel', label: 'Check Engine Light', icon: Shield },
                             ].map((item) => (
                                 <li key={item.href}>
@@ -87,7 +82,6 @@ const Footer: React.FC = () => {
                         <ul className="space-y-3">
                             {[
                                 { href: '/about', label: 'About Us' },
-                                { href: '/pricing', label: 'Pricing & Plans' },
                                 { href: '/auth', label: 'Sign In / Sign Up' },
                                 { href: '/privacy', label: 'Privacy Policy' },
                                 { href: '/terms', label: 'Terms of Service' },

@@ -1,9 +1,9 @@
 /**
- * Subscription Service - Handles tier checks, usage tracking, and limits
+ * Subscription Service - Everything is free and unlimited
  */
 
 import { supabase } from '@/lib/supabaseClient';
-import { Subscription, UserUsage, TIER_LIMITS, SubscriptionTier } from '@/types/subscription';
+import { Subscription, UserUsage } from '@/types/subscription';
 
 export class SubscriptionService {
   private userId: string;
@@ -14,9 +14,6 @@ export class SubscriptionService {
     this.userId = userId;
   }
 
-  /**
-   * Get user's current subscription
-   */
   async getSubscription(): Promise<Subscription | null> {
     if (this.cachedSubscription) return this.cachedSubscription;
 
@@ -35,9 +32,6 @@ export class SubscriptionService {
     return data;
   }
 
-  /**
-   * Get user's current usage for this month
-   */
   async getUsage(): Promise<UserUsage | null> {
     if (this.cachedUsage) return this.cachedUsage;
 
@@ -53,69 +47,18 @@ export class SubscriptionService {
     return data;
   }
 
-  /**
-   * Check if user can perform AI diagnosis
-   */
   async canUseAiDiagnosis(): Promise<{ allowed: boolean; remaining: number; limit: number }> {
-    const [subscription, usage] = await Promise.all([
-      this.getSubscription(),
-      this.getUsage()
-    ]);
-
-    if (!subscription || !usage) {
-      return { allowed: false, remaining: 0, limit: 0 };
-    }
-
-    const tier = subscription.tier as SubscriptionTier;
-    const limit = TIER_LIMITS[tier].aiDiagnosesPerMonth;
-    const used = (usage as any).ai_diagnoses_used;
-    const remaining = limit === Infinity ? 999 : Math.max(0, limit - used);
-
-    return {
-      allowed: used < limit,
-      remaining,
-      limit: limit === Infinity ? 999 : limit
-    };
+    return { allowed: true, remaining: 999, limit: 999 };
   }
 
-  /**
-   * Check if user can add vehicle to garage
-   */
-  async canAddVehicle(currentVehicleCount: number): Promise<boolean> {
-    const subscription = await this.getSubscription();
-    if (!subscription) return false;
-
-    const tier = subscription.tier as SubscriptionTier;
-    const limit = TIER_LIMITS[tier].garageVehicles;
-    
-    return limit === Infinity || currentVehicleCount < limit;
+  async canAddVehicle(): Promise<boolean> {
+    return true;
   }
 
-  /**
-   * Check if user can use OBD scanner
-   */
-  async canUseOBD(): Promise<boolean> {
-    const subscription = await this.getSubscription();
-    if (!subscription) return false;
-
-    const tier = subscription.tier as SubscriptionTier;
-    return TIER_LIMITS[tier].obdScansPerMonth > 0;
-  }
-
-  /**
-   * Check if user can download PDF
-   */
   async canDownloadPdf(): Promise<boolean> {
-    const subscription = await this.getSubscription();
-    if (!subscription) return false;
-
-    const tier = subscription.tier as SubscriptionTier;
-    return TIER_LIMITS[tier].pdfDownloads;
+    return true;
   }
 
-  /**
-   * Record AI diagnosis usage
-   */
   async recordAiDiagnosis(): Promise<boolean> {
     const { data, error } = await supabase
       .rpc('increment_ai_diagnosis', { p_user_id: this.userId });
@@ -125,72 +68,54 @@ export class SubscriptionService {
       return false;
     }
 
-    // Clear cache
     this.cachedUsage = null;
     return data;
   }
 
-  /**
-   * Get feature comparison for UI
-   */
   async getFeatureComparison() {
-    const subscription = await this.getSubscription();
-    const tier = (subscription?.tier || 'free') as SubscriptionTier;
-    const usage = await this.getUsage();
-
     return {
-      currentTier: tier,
+      currentTier: 'free' as const,
       features: [
         {
           name: 'AI Diagnoses',
-          free: '3/month',
+          free: 'Unlimited',
           pro: 'Unlimited',
           proPlus: 'Unlimited',
-          current: tier === 'free' 
-            ? `${(usage as any)?.ai_diagnoses_used || 0}/3 used`
-            : 'Unlimited'
+          current: 'Unlimited'
         },
         {
           name: 'Repair Guides',
-          free: '5/month',
+          free: 'Unlimited',
           pro: 'Unlimited',
           proPlus: 'Unlimited',
-          current: tier === 'free' ? '5/month' : 'Unlimited'
+          current: 'Unlimited'
         },
         {
           name: 'Garage Vehicles',
-          free: '1 vehicle',
-          pro: '10 vehicles',
+          free: 'Unlimited',
+          pro: 'Unlimited',
           proPlus: 'Unlimited',
-          current: `${TIER_LIMITS[tier].garageVehicles} vehicles`
-        },
-        {
-          name: 'OBD-II Scanner',
-          free: '—',
-          pro: '✓',
-          proPlus: '✓',
-          current: TIER_LIMITS[tier].obdScansPerMonth > 0 ? '✓' : '—'
+          current: 'Unlimited'
         },
         {
           name: 'PDF Downloads',
-          free: '—',
+          free: '✓',
           pro: '✓',
           proPlus: '✓',
-          current: TIER_LIMITS[tier].pdfDownloads ? '✓' : '—'
+          current: '✓'
         },
         {
           name: 'Priority Support',
-          free: '—',
+          free: '✓',
           pro: '✓',
           proPlus: '✓',
-          current: TIER_LIMITS[tier].prioritySupport ? '✓' : '—'
+          current: '✓'
         }
       ]
     };
   }
 }
 
-// Hook for React components
 export function useSubscription(userId: string) {
   return new SubscriptionService(userId);
 }

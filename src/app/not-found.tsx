@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Zap, Wrench, Car, Search, ArrowLeft, Bluetooth, BookOpen } from 'lucide-react';
+import { Zap, Wrench, Car, Search, ArrowLeft, BookOpen } from 'lucide-react';
 
 const POPULAR_GUIDES = [
     { href: '/repair/2013/bmw/x3/battery-replacement', label: 'BMW X3 Battery Replacement' },
@@ -90,11 +90,11 @@ export default function NotFound() {
                         AI Diagnostic Chat
                     </button>
                     <button
-                        onClick={() => router.push('/pricing')}
+                        onClick={() => router.push('/guides')}
                         className="flex items-center justify-center gap-2 px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-semibold text-white transition-all"
                     >
-                        <Car className="w-5 h-5" />
-                        View Pricing Plans
+                        <BookOpen className="w-5 h-5" />
+                        Browse Repair Guides
                     </button>
                 </motion.div>
 

@@ -33,7 +33,7 @@ const faqSchema = {
       name: 'Is the 2nd opinion tool free?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes! You get 1 free quote check per day. Pro users get unlimited checks plus zip code-specific pricing, detailed parts breakdowns, and the ability to save and compare quotes.',
+        text: "Yes! It's completely free with unlimited checks for all users.",
       },
     },
     {
@@ -41,7 +41,7 @@ const faqSchema = {
       name: 'How accurate is the AI mechanic quote analysis?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Our AI analyzes thousands of data points including average repair costs, regional labor rates ($80-$150/hr), OEM vs aftermarket parts pricing, and common mechanic upsells. While not a substitute for a professional inspection, it helps you know the right questions to ask.',
+        text: 'Our AI analyzes thousands of data points including average repair costs, regional labor rates ($80-$150/hr), OEM vs aftermarket parts pricing, and common mechanic upsells. While not a substitute for a professional inspection, it helps you know the right questions to ask. All features are available to every user for free.',
       },
     },
     {

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   Car, 
   Wrench, 
@@ -15,7 +15,6 @@ import {
   Settings
 } from 'lucide-react';
 import { garageService, GarageVehicle, DiagnosisRecord } from '@/services/garageService';
-import { SubscriptionService } from '@/services/subscriptionService';
 import Link from 'next/link';
 
 interface MyGarageProps {
@@ -33,10 +32,6 @@ export default function MyGarage({ userId }: MyGarageProps) {
   });
   const [loading, setLoading] = useState(true);
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
-  const [subscriptionTier, setSubscriptionTier] = useState('free');
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
-  const subscriptionService = new SubscriptionService(userId);
 
   useEffect(() => {
     loadGarageData();
@@ -45,17 +40,15 @@ export default function MyGarage({ userId }: MyGarageProps) {
   async function loadGarageData() {
     try {
       setLoading(true);
-      const [garageVehicles, diagnosisHistory, garageStats, subscription] = await Promise.all([
+      const [garageVehicles, diagnosisHistory, garageStats] = await Promise.all([
         garageService.getGarage(userId),
         garageService.getDiagnosisHistory(userId),
         garageService.getGarageStats(userId),
-        subscriptionService.getSubscription()
       ]);
 
       setVehicles(garageVehicles);
       setDiagnoses(diagnosisHistory);
       setStats(garageStats);
-      setSubscriptionTier(subscription?.tier || 'free');
     } catch (error) {
       console.error('Error loading garage:', error);
     } finally {
@@ -165,16 +158,6 @@ export default function MyGarage({ userId }: MyGarageProps) {
             </div>
           )}
 
-          {subscriptionTier === 'free' && vehicles.length >= 1 && (
-            <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-              <p className="text-sm text-yellow-400">
-                Free plan: 1 vehicle max. 
-                <Link href="/pricing" className="underline ml-1 hover:text-yellow-300">
-                  Upgrade to Pro
-                </Link>
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Recent Diagnoses */}
@@ -237,45 +220,6 @@ export default function MyGarage({ userId }: MyGarageProps) {
         </motion.div>
       )}
 
-      {/* Upgrade Modal */}
-      <AnimatePresence>
-        {showUpgradeModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={() => setShowUpgradeModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-md w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-xl font-bold text-white mb-2">Vehicle Limit Reached</h3>
-              <p className="text-gray-400 mb-6">
-                Your free plan includes 1 vehicle. Upgrade to Pro for up to 10 vehicles.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowUpgradeModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  Maybe Later
-                </button>
-                <Link
-                  href="/pricing"
-                  className="flex-1 px-4 py-2 bg-neon-cyan text-black font-semibold rounded-lg hover:bg-cyan-400 transition-colors text-center"
-                >
-                  Upgrade to Pro
-                </Link>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

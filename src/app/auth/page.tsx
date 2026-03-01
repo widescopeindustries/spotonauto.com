@@ -10,7 +10,7 @@ function AuthPageInner() {
     const searchParams = useSearchParams();
     const { user, loading } = useAuth();
 
-    // Honour ?redirect= param so pricing → auth → pricing flow works
+    // Honour ?redirect= param so post-auth redirect works
     const redirectTo = searchParams.get('redirect') || '/';
 
     useEffect(() => {

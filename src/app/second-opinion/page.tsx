@@ -12,14 +12,12 @@ import {
   HelpCircle,
   Search,
   Lightbulb,
-  Lock,
   Loader2,
   CheckCircle2,
   XCircle,
   TrendingDown,
 } from 'lucide-react';
 import { getYears, COMMON_MAKES, fetchModels } from '@/services/vehicleData';
-import { useAuth } from '@/contexts/AuthContext';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface SecondOpinionResult {
@@ -223,22 +221,6 @@ function VerdictCard({ result }: { result: SecondOpinionResult }) {
         </div>
       )}
 
-      {/* Pro Upgrade CTA */}
-      <div className="bg-gradient-to-r from-cyan-500/5 to-purple-500/5 border border-cyan-500/20 rounded-2xl p-6 text-center">
-        <Lock className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
-        <h3 className="font-display text-lg text-white mb-1">Want More Detail?</h3>
-        <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
-          Upgrade to Pro for zip code-specific pricing, detailed parts breakdown, save &amp; compare quotes, and unlimited checks.
-        </p>
-        <a
-          href="/pricing"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl transition-all text-sm"
-        >
-          Upgrade to Pro — $9.99/mo
-          <ArrowRight className="w-4 h-4" />
-        </a>
-      </div>
-
       {/* New Check button */}
       <div className="text-center pt-2">
         <button
@@ -254,7 +236,6 @@ function VerdictCard({ result }: { result: SecondOpinionResult }) {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function SecondOpinionPage() {
-  const { user } = useAuth();
   const resultRef = useRef<HTMLDivElement>(null);
 
   // Vehicle selector state
@@ -303,17 +284,6 @@ export default function SecondOpinionPage() {
   const handleSubmit = async () => {
     if (!canSubmit) return;
 
-    // Free tier: 1 check per day
-    if (!user || user.tier === 'free') {
-      const todayKey = `spoton_2nd_opinion_${new Date().toISOString().slice(0, 10)}`;
-      const used = localStorage.getItem(todayKey);
-      if (used) {
-        setError('You\'ve used your free check today. Upgrade to Pro for unlimited checks.');
-        return;
-      }
-      localStorage.setItem(todayKey, 'true');
-    }
-
     setLoading(true);
     setError('');
     setResult(null);
@@ -341,11 +311,6 @@ export default function SecondOpinionPage() {
       setResult(data);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
-      // Undo daily limit on error
-      if (!user || user.tier === 'free') {
-        const todayKey = `spoton_2nd_opinion_${new Date().toISOString().slice(0, 10)}`;
-        localStorage.removeItem(todayKey);
-      }
     } finally {
       setLoading(false);
     }
@@ -511,7 +476,7 @@ export default function SecondOpinionPage() {
         </button>
 
         <p className="text-center text-xs text-gray-600">
-          Free &middot; 1 check per day &middot; Powered by AI
+          100% Free &middot; Unlimited checks &middot; Powered by AI
         </p>
       </motion.div>
 

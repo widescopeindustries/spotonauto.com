@@ -141,40 +141,6 @@ export function trackVinDecode(vin: string, success: boolean): void {
 }
 
 /**
- * Track when the upgrade modal is shown
- */
-export function trackUpgradeModalShown(): void {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'upgrade_modal_shown', {
-      event_category: 'monetization',
-      event_label: 'paywall_hit',
-    });
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[Analytics] Upgrade modal shown');
-  }
-}
-
-/**
- * Track upgrade button click (Stripe checkout initiated)
- */
-export function trackUpgradeClick(isLoggedIn: boolean): void {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'begin_checkout', {
-      event_category: 'monetization',
-      event_label: isLoggedIn ? 'checkout_started' : 'auth_redirect',
-      currency: 'USD',
-      value: 9.99,
-    });
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[Analytics] Upgrade click, logged in:', isLoggedIn);
-  }
-}
-
-/**
  * Track tool affiliate link clicks from repair guides
  */
 export function trackToolClick(toolName: string, vehicle: string): void {

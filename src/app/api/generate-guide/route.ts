@@ -33,22 +33,6 @@ async function getAuthenticatedUser(req: NextRequest) {
   return user;
 }
 
-/**
- * Check if a user has an active Pro or Pro+ subscription.
- */
-async function isProUser(userId: string): Promise<boolean> {
-  const { data: subscription } = await supabaseAdmin
-    .from('subscriptions')
-    .select('tier, status')
-    .eq('user_id', userId)
-    .single();
-
-  return (
-    subscription?.status === 'active' &&
-    (subscription?.tier === 'pro' || subscription?.tier === 'pro_plus')
-  );
-}
-
 export async function POST(req: NextRequest) {
   if (!process.env.GEMINI_API_KEY) {
     console.error("SERVER ERROR: GEMINI_API_KEY is not set.");
@@ -59,12 +43,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { action, payload, stream } = body;
 
-    // ── Authentication guard ──────────────────────────────────────────────────
-    // All actions are public — anonymous users can generate guides up to the
-    // client-side free limit (tracked in localStorage by usageTracker).
-    // Auth is only used to check Pro status for unlimited access.
+    // All actions are public — no limits
     const user = await getAuthenticatedUser(req);
-    // ─────────────────────────────────────────────────────────────────────────
 
     console.log(`API Request [user:${user?.id ?? 'anonymous'}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);
 
@@ -90,12 +70,6 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // ── Server-side Pro check for generate-guide (anonymous users allowed) ─
-      if (action === 'generate-guide' && user) {
-        const userIsPro = await isProUser(user.id);
-        console.log(`[API] generate-guide: user=${user.id}, isPro=${userIsPro}`);
-      }
-      // ────────────────────────────────────────────────────────────────────
     }
 
     let result;

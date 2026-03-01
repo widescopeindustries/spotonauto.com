@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Cpu, Car, Menu, X, History, LogOut, Bluetooth, Zap, Shield, Bookmark } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, Zap, Shield, Bookmark } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useT } from '@/lib/translations';
@@ -95,13 +95,6 @@ const Header: React.FC = () => {
                         >
                             <Shield className="w-4 h-4" />
                             <span className="font-body text-sm">{t('nav.secondOpinion')}</span>
-                        </button>
-                        <button
-                            onClick={() => router.push('/scanner')}
-                            className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-all duration-200 hover:scale-105 active:scale-95"
-                        >
-                            <Bluetooth className="w-4 h-4" />
-                            <span className="font-body text-sm">{t('nav.scanner')}</span>
                         </button>
                         <button
                             onClick={() => router.push('/parts')}
@@ -207,13 +200,6 @@ const Header: React.FC = () => {
                         >
                             <Car className="w-4 h-4" />
                             <span className="font-body">{t('nav.partsFinder')}</span>
-                        </button>
-                        <button
-                            onClick={() => { router.push('/scanner'); setIsMobileMenuOpen(false); }}
-                            className="flex items-center gap-2 text-gray-300"
-                        >
-                            <Bluetooth className="w-4 h-4" />
-                            <span className="font-body">{t('nav.scanner')}</span>
                         </button>
 
                         {user ? (

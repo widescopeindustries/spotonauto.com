@@ -10,7 +10,7 @@ const en = {
   'nav.repairGuides': 'Repair Guides',
   'nav.diagnose': 'Diagnose',
   'nav.secondOpinion': '2nd Opinion',
-  'nav.scanner': 'Scanner',
+
   'nav.parts': 'Parts',
   'nav.signIn': 'Sign In',
   'nav.signUp': 'Sign In / Sign Up',
@@ -97,7 +97,7 @@ const es: Record<string, string> = {
   'nav.repairGuides': 'Guías de Reparación',
   'nav.diagnose': 'Diagnosticar',
   'nav.secondOpinion': '2da Opinión',
-  'nav.scanner': 'Escáner',
+
   'nav.parts': 'Repuestos',
   'nav.signIn': 'Iniciar Sesión',
   'nav.signUp': 'Iniciar Sesión / Registrarse',
@@ -172,7 +172,7 @@ const fr: Record<string, string> = {
   'nav.repairGuides': 'Guides de Réparation',
   'nav.diagnose': 'Diagnostiquer',
   'nav.secondOpinion': '2e Avis',
-  'nav.scanner': 'Scanner',
+
   'nav.parts': 'Pièces',
   'nav.signIn': 'Connexion',
   'nav.signUp': 'Connexion / Inscription',
@@ -247,7 +247,7 @@ const de: Record<string, string> = {
   'nav.repairGuides': 'Reparaturanleitungen',
   'nav.diagnose': 'Diagnose',
   'nav.secondOpinion': 'Zweitmeinung',
-  'nav.scanner': 'Scanner',
+
   'nav.parts': 'Teile',
   'nav.signIn': 'Anmelden',
   'nav.signUp': 'Anmelden / Registrieren',
@@ -322,7 +322,7 @@ const pt: Record<string, string> = {
   'nav.repairGuides': 'Guias de Reparo',
   'nav.diagnose': 'Diagnosticar',
   'nav.secondOpinion': '2ª Opinião',
-  'nav.scanner': 'Scanner',
+
   'nav.parts': 'Peças',
   'nav.signIn': 'Entrar',
   'nav.signUp': 'Entrar / Cadastrar',
@@ -397,7 +397,7 @@ const pl: Record<string, string> = {
   'nav.repairGuides': 'Poradniki Napraw',
   'nav.diagnose': 'Diagnozuj',
   'nav.secondOpinion': 'Druga Opinia',
-  'nav.scanner': 'Skaner',
+
   'nav.parts': 'Części',
   'nav.signIn': 'Zaloguj się',
   'nav.signUp': 'Zaloguj / Zarejestruj',
@@ -444,7 +444,7 @@ const it: Record<string, string> = {
   'nav.repairGuides': 'Guide di Riparazione',
   'nav.diagnose': 'Diagnostica',
   'nav.secondOpinion': '2° Parere',
-  'nav.scanner': 'Scanner',
+
   'nav.parts': 'Ricambi',
   'nav.signIn': 'Accedi',
   'nav.signUp': 'Accedi / Registrati',
@@ -491,7 +491,7 @@ const nl: Record<string, string> = {
   'nav.repairGuides': 'Reparatiehandleidingen',
   'nav.diagnose': 'Diagnose',
   'nav.secondOpinion': 'Tweede Mening',
-  'nav.scanner': 'Scanner',
+
   'nav.parts': 'Onderdelen',
   'nav.signIn': 'Inloggen',
   'nav.signUp': 'Inloggen / Registreren',
@@ -521,7 +521,7 @@ const ja: Record<string, string> = {
   'nav.repairGuides': '修理ガイド',
   'nav.diagnose': '診断',
   'nav.secondOpinion': 'セカンドオピニオン',
-  'nav.scanner': 'スキャナー',
+
   'nav.parts': 'パーツ',
   'nav.signIn': 'ログイン',
   'nav.signUp': 'ログイン / 登録',
@@ -568,7 +568,7 @@ const ko: Record<string, string> = {
   'nav.repairGuides': '수리 가이드',
   'nav.diagnose': '진단',
   'nav.secondOpinion': '세컨드 오피니언',
-  'nav.scanner': '스캐너',
+
   'nav.parts': '부품',
   'nav.signIn': '로그인',
   'nav.signUp': '로그인 / 회원가입',
