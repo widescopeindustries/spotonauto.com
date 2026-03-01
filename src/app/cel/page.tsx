@@ -302,21 +302,37 @@ export default function CELLandingPage() {
                                                 <p className="text-white font-bold text-sm">{item.commonFix}</p>
                                             </div>
                                         </div>
-                                        <button
-                                            onClick={() => handleGetGuide(item.code)}
-                                            className="w-full py-3 rounded-lg font-display font-bold text-xs tracking-widest uppercase bg-cyan-500 text-black hover:bg-cyan-400 transition-all"
-                                        >
-                                            GET FREE REPAIR GUIDE FOR {item.code}
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <Link
+                                                href={`/codes/${item.code.toLowerCase()}`}
+                                                className="flex-1 py-3 rounded-lg font-display font-bold text-xs tracking-widest uppercase text-center border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all"
+                                            >
+                                                FULL {item.code} DETAILS
+                                            </Link>
+                                            <button
+                                                onClick={() => handleGetGuide(item.code)}
+                                                className="flex-1 py-3 rounded-lg font-display font-bold text-xs tracking-widest uppercase bg-cyan-500 text-black hover:bg-cyan-400 transition-all"
+                                            >
+                                                GET REPAIR GUIDE
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
                             </div>
                         ))}
                     </div>
 
-                    <p className="text-center text-gray-600 font-body text-xs mt-6">
-                        Don&apos;t see your code? Enter it above for an instant AI diagnosis.
-                    </p>
+                    <div className="text-center mt-6 space-y-2">
+                        <p className="text-gray-600 font-body text-xs">
+                            Don&apos;t see your code? Enter it above for an instant AI diagnosis.
+                        </p>
+                        <Link
+                            href="/codes"
+                            className="inline-block text-cyan-400 hover:text-cyan-300 font-body text-sm font-semibold transition-colors"
+                        >
+                            View all 300+ DTC codes →
+                        </Link>
+                    </div>
                 </div>
             </section>
 

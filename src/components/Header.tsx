@@ -56,6 +56,7 @@ const Header: React.FC = () => {
                             { key: 'nav.features', href: '/#features' },
                             { key: 'nav.howItWorks', href: '/#how-it-works' },
                             { key: 'nav.guides', href: '/guides' },
+                            { key: 'nav.codes', href: '/codes' },
                             { key: 'nav.community', href: '/community' },
                         ].map((item) => (
                             <Link
@@ -154,6 +155,7 @@ const Header: React.FC = () => {
                         { key: 'nav.features', href: '/#features' },
                         { key: 'nav.howItWorks', href: '/#how-it-works' },
                         { key: 'nav.repairGuides', href: '/guides' },
+                        { key: 'nav.codes', href: '/codes' },
                         { key: 'nav.community', href: '/community' },
                     ].map((item) => (
                         <Link

@@ -283,6 +283,204 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
             `${make} ${model} fluid specs`.toLowerCase(),
         ],
     },
+    'spark-plug-type': {
+        label: 'Spark Plug Type',
+        slugSuffix: 'spark-plug-type',
+        titleTemplate: '{make} {model} Spark Plug Type & Gap | All Years Guide',
+        descTemplate: 'Find the correct spark plug type, gap size, and replacement interval for your {make} {model}. Covers all model years with torque specs.',
+        quickAnswerTemplate: 'The {make} {model} typically uses iridium or platinum spark plugs. Newer models (2010+) use long-life iridium plugs rated for 60,000-100,000 miles. Check below for your specific year.',
+        specsForGen: (make, model, gen) => {
+            if (gen.endYear >= 2015) return {
+                'Spark Plug Type': 'Iridium (long-life)',
+                'Plug Gap': '0.039" - 0.043" (1.0 - 1.1mm)',
+                'Replacement Interval': '60,000 - 100,000 miles',
+                'Torque Spec': '15 - 22 ft-lbs (check manual)',
+                'Quantity': '4 (inline-4) or 6 (V6)',
+            };
+            if (gen.endYear >= 2005) return {
+                'Spark Plug Type': 'Platinum or Iridium',
+                'Plug Gap': '0.039" - 0.044" (1.0 - 1.1mm)',
+                'Replacement Interval': '30,000 - 60,000 miles',
+                'Torque Spec': '13 - 20 ft-lbs',
+                'Quantity': '4 (inline-4) or 6 (V6)',
+            };
+            return {
+                'Spark Plug Type': 'Copper or Platinum',
+                'Plug Gap': '0.028" - 0.044" (0.7 - 1.1mm)',
+                'Replacement Interval': '30,000 miles',
+                'Torque Spec': '13 - 18 ft-lbs',
+                'Quantity': '4-8 (varies by engine)',
+            };
+        },
+        notesForGen: (make, model, gen) => {
+            const tips = [];
+            if (gen.endYear >= 2010) tips.push('Iridium plugs last longer but cost more — do NOT re-gap iridium plugs');
+            tips.push('Use a torque wrench — over-tightened plugs can strip aluminum heads');
+            tips.push('Apply a thin coat of anti-seize to threads (unless plug is pre-coated)');
+            if (gen.endYear >= 2005) tips.push('Use a spark plug socket with rubber insert to avoid cracking the ceramic insulator');
+            return tips;
+        },
+        faqTemplates: (make, model) => [
+            { q: `What spark plugs does a ${make} ${model} use?`, a: `The ${make} ${model} spark plug type varies by year and engine. Newer models (2010+) typically use iridium plugs for longer service life. Older models may use platinum or copper. Check the specs below for your exact year.` },
+            { q: `How often should I change spark plugs on a ${make} ${model}?`, a: `Modern ${make} ${model} models with iridium plugs can go 60,000-100,000 miles between changes. Older models with copper plugs need replacement every 30,000 miles. Replace sooner if you notice misfires, rough idle, or poor fuel economy.` },
+            { q: `What is the spark plug gap for a ${make} ${model}?`, a: `Most ${make} ${model} models use a spark plug gap between 0.039" and 0.044" (1.0-1.1mm). Pre-gapped plugs from the OEM are recommended. Do not re-gap iridium-tip plugs as it can damage the electrode.` },
+            { q: `Can I upgrade to iridium spark plugs in my ${make} ${model}?`, a: `Yes, upgrading from copper or platinum to iridium is generally safe and beneficial. Iridium plugs offer better ignitability, longer life, and improved fuel economy. Just match the correct heat range and gap for your engine.` },
+        ],
+        keywordTemplates: (make, model) => [
+            `${make} ${model} spark plug`.toLowerCase(),
+            `${make} ${model} spark plug type`.toLowerCase(),
+            `${make} ${model} spark plug gap`.toLowerCase(),
+            `${make} ${model} spark plug replacement`.toLowerCase(),
+            `what spark plugs for ${make} ${model}`.toLowerCase(),
+        ],
+    },
+
+    'wiper-blade-size': {
+        label: 'Wiper Blade Size',
+        slugSuffix: 'wiper-blade-size',
+        titleTemplate: '{make} {model} Wiper Blade Size | All Years Guide',
+        descTemplate: 'Find the correct wiper blade sizes for your {make} {model}. Covers driver, passenger, and rear wiper for all model years.',
+        quickAnswerTemplate: 'The {make} {model} wiper blade sizes vary by model year. Most recent models use 24"-26" driver side, 16"-20" passenger side, and 10"-14" rear (if equipped). See the year-by-year breakdown below.',
+        specsForGen: (make, model, gen) => {
+            if (gen.endYear >= 2015) return {
+                'Driver Side': '24" or 26"',
+                'Passenger Side': '16" or 18"',
+                'Rear (if equipped)': '10" - 14"',
+                'Wiper Arm Type': 'J-hook or pinch tab (varies by model)',
+                'Recommended Type': 'Beam (bracketless) blades for best performance',
+            };
+            return {
+                'Driver Side': '22" or 24"',
+                'Passenger Side': '16" or 17"',
+                'Rear (if equipped)': '10" - 14"',
+                'Wiper Arm Type': 'J-hook (most common)',
+                'Recommended Type': 'Beam or hybrid blades',
+            };
+        },
+        notesForGen: (make, model, gen) => {
+            const tips = [];
+            tips.push('Replace wiper blades every 6-12 months for best visibility');
+            if (gen.endYear >= 2015) tips.push('Beam-style blades outperform traditional bracket blades in rain and snow');
+            tips.push('Lift the wiper arm carefully — letting it snap back can crack the windshield');
+            tips.push('Clean the windshield with glass cleaner before installing new blades');
+            return tips;
+        },
+        faqTemplates: (make, model) => [
+            { q: `What size wiper blades does a ${make} ${model} use?`, a: `The ${make} ${model} wiper blade sizes depend on the model year. Check the year-specific breakdown below for exact driver, passenger, and rear wiper sizes for your vehicle.` },
+            { q: `How often should I replace ${make} ${model} wiper blades?`, a: `Replace your ${make} ${model} wiper blades every 6-12 months, or when you notice streaking, skipping, or squeaking. Blades degrade faster in extreme heat and UV exposure.` },
+            { q: `What type of wiper blades are best for a ${make} ${model}?`, a: `Beam (bracketless) blades like the Bosch Icon or Rain-X Latitude provide the best all-weather performance for the ${make} ${model}. They conform better to curved windshields and resist ice buildup.` },
+            { q: `Can I use different size wiper blades on my ${make} ${model}?`, a: `Stick with the manufacturer-recommended sizes for optimal coverage. Going 1" longer on the driver side is sometimes possible but may cause the blades to hit each other. Never go shorter than OEM spec.` },
+        ],
+        keywordTemplates: (make, model) => [
+            `${make} ${model} wiper blade size`.toLowerCase(),
+            `${make} ${model} windshield wiper size`.toLowerCase(),
+            `${make} ${model} wiper replacement`.toLowerCase(),
+            `what size wipers for ${make} ${model}`.toLowerCase(),
+            `${make} ${model} rear wiper size`.toLowerCase(),
+        ],
+    },
+
+    'coolant-type': {
+        label: 'Coolant Type',
+        slugSuffix: 'coolant-type',
+        titleTemplate: '{make} {model} Coolant Type & Capacity | All Years Guide',
+        descTemplate: 'Find the correct coolant type, color, and capacity for your {make} {model}. Covers all years with flush intervals and mixing compatibility.',
+        quickAnswerTemplate: 'The {make} {model} uses manufacturer-specific coolant — typically long-life OAT or HOAT formula. Never mix different coolant types. Check the year breakdown below for your specific coolant color and capacity.',
+        specsForGen: (make, model, gen) => {
+            if (gen.endYear >= 2015) return {
+                'Coolant Type': 'OAT or HOAT (long-life)',
+                'Coolant Color': 'Pink, blue, or orange (manufacturer-specific)',
+                'Total Capacity': '6.0 - 10.0 quarts (varies by engine)',
+                'Drain & Fill Volume': '3.0 - 5.0 quarts',
+                'Change Interval': '100,000 miles or 10 years (first), then every 50,000',
+                'Concentration': '50/50 pre-mixed or concentrate mixed 50/50 with distilled water',
+            };
+            if (gen.endYear >= 2005) return {
+                'Coolant Type': 'HOAT or IAT',
+                'Coolant Color': 'Green, orange, or pink',
+                'Total Capacity': '6.0 - 10.0 quarts',
+                'Drain & Fill Volume': '3.0 - 5.0 quarts',
+                'Change Interval': '60,000 miles or 5 years',
+                'Concentration': '50/50 with distilled water',
+            };
+            return {
+                'Coolant Type': 'IAT (traditional green)',
+                'Coolant Color': 'Green',
+                'Total Capacity': '6.0 - 10.0 quarts',
+                'Drain & Fill Volume': '3.0 - 5.0 quarts',
+                'Change Interval': '30,000 miles or 2 years',
+                'Concentration': '50/50 with distilled water',
+            };
+        },
+        notesForGen: (make, model, gen) => {
+            const tips = [];
+            tips.push('NEVER mix different coolant types or colors — flush completely when changing brands');
+            tips.push('Always use distilled water, not tap water, when mixing coolant concentrate');
+            if (gen.endYear >= 2015) tips.push('Modern OAT/HOAT coolants last much longer than traditional green coolant');
+            tips.push('Check coolant level when engine is COLD — opening the radiator cap when hot causes severe burns');
+            return tips;
+        },
+        faqTemplates: (make, model) => [
+            { q: `What type of coolant does a ${make} ${model} use?`, a: `The ${make} ${model} coolant type depends on the model year. Newer models use long-life OAT or HOAT coolant (often pink, blue, or orange). Older models use traditional green IAT coolant. Never mix types — check the specs below for your year.` },
+            { q: `How much coolant does a ${make} ${model} hold?`, a: `The ${make} ${model} cooling system typically holds 6-10 quarts total. A drain-and-fill replaces about 50-60% of the coolant. For a full system flush, you'll need the complete capacity amount plus extra for bleeding.` },
+            { q: `Can I mix coolant colors in my ${make} ${model}?`, a: `No — mixing different coolant types can cause gel formation, clogged passages, and overheating. If you don't know what's in the system, do a complete flush before adding new coolant. Use only the manufacturer-specified type.` },
+            { q: `How often should I change coolant in my ${make} ${model}?`, a: `Modern ${make} ${model} models with long-life coolant can go 100,000 miles or 10 years before the first change, then every 50,000 miles. Older models with green coolant need changes every 30,000 miles or 2 years.` },
+        ],
+        keywordTemplates: (make, model) => [
+            `${make} ${model} coolant type`.toLowerCase(),
+            `${make} ${model} antifreeze type`.toLowerCase(),
+            `${make} ${model} coolant color`.toLowerCase(),
+            `${make} ${model} coolant capacity`.toLowerCase(),
+            `what coolant for ${make} ${model}`.toLowerCase(),
+        ],
+    },
+
+    'transmission-fluid-type': {
+        label: 'Transmission Fluid',
+        slugSuffix: 'transmission-fluid-type',
+        titleTemplate: '{make} {model} Transmission Fluid Type & Capacity | Guide',
+        descTemplate: 'Find the correct transmission fluid type and capacity for your {make} {model}. Covers automatic and manual transmissions for all years.',
+        quickAnswerTemplate: 'The {make} {model} transmission fluid type depends on your transmission — automatic models typically use ATF WS, Dexron, or manufacturer-specific fluid. Manual transmissions use gear oil. See the year breakdown below.',
+        specsForGen: (make, model, gen) => {
+            if (gen.endYear >= 2015) return {
+                'Automatic Fluid Type': 'ATF WS, Dexron VI, or manufacturer-specific (varies)',
+                'Auto Drain & Fill': '3.5 - 4.0 quarts',
+                'Auto Total Capacity': '7.0 - 12.0 quarts',
+                'Manual Fluid Type': '75W-90 gear oil or MTF (if equipped)',
+                'Manual Capacity': '2.0 - 3.0 quarts',
+                'Change Interval': '60,000 - 100,000 miles (auto), 30,000 - 60,000 (manual)',
+            };
+            return {
+                'Automatic Fluid Type': 'Dexron III/VI or manufacturer-specific ATF',
+                'Auto Drain & Fill': '3.0 - 4.0 quarts',
+                'Auto Total Capacity': '7.0 - 12.0 quarts',
+                'Manual Fluid Type': '75W-90 gear oil',
+                'Manual Capacity': '2.0 - 3.0 quarts',
+                'Change Interval': '30,000 - 60,000 miles',
+            };
+        },
+        notesForGen: (make, model, gen) => {
+            const tips = [];
+            tips.push('Use ONLY the manufacturer-specified fluid — wrong ATF can damage the transmission');
+            tips.push('Check transmission fluid level with engine running and at operating temperature');
+            if (gen.endYear >= 2015) tips.push('Many modern transmissions are "sealed" — fluid checks require removing a fill plug underneath');
+            tips.push('Dark, burnt-smelling fluid indicates overheating — change immediately');
+            return tips;
+        },
+        faqTemplates: (make, model) => [
+            { q: `What transmission fluid does a ${make} ${model} use?`, a: `The ${make} ${model} transmission fluid type depends on the year and transmission. Automatic transmissions use ATF WS, Dexron VI, or manufacturer-specific fluid. Manual transmissions use 75W-90 gear oil. See below for your specific year.` },
+            { q: `How much transmission fluid does a ${make} ${model} take?`, a: `A drain-and-fill on the ${make} ${model} automatic transmission typically takes 3.5-4.0 quarts. The total system capacity is 7-12 quarts. For a complete fluid exchange, you'll need the full capacity amount.` },
+            { q: `How often should I change transmission fluid in my ${make} ${model}?`, a: `Change your ${make} ${model} automatic transmission fluid every 60,000-100,000 miles under normal conditions. For severe duty (towing, mountain driving, hot climates), change every 30,000-60,000 miles.` },
+            { q: `Does the ${make} ${model} have a transmission dipstick?`, a: `Many 2010+ ${make} ${model} models have sealed transmissions with no dipstick. Fluid level is checked via a fill plug underneath the vehicle. Older models typically have a traditional dipstick under the hood.` },
+        ],
+        keywordTemplates: (make, model) => [
+            `${make} ${model} transmission fluid`.toLowerCase(),
+            `${make} ${model} transmission fluid type`.toLowerCase(),
+            `${make} ${model} atf type`.toLowerCase(),
+            `${make} ${model} transmission fluid capacity`.toLowerCase(),
+            `${make} ${model} transmission fluid change`.toLowerCase(),
+        ],
+    },
 };
 
 // ── The Machine ──────────────────────────────────────────────────────

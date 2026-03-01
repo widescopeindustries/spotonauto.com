@@ -4,6 +4,7 @@ import GuideContent from './GuideContent';
 import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
+import AdUnit from '@/components/AdUnit';
 import { isValidVehicleCombination, getDisplayName, VALID_TASKS } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 
@@ -474,6 +475,9 @@ export default async function Page({ params }: PageProps) {
                     </ul>
                 </section>
 
+                {/* Ad: After Safety Warnings */}
+                <AdUnit slot="repair-after-safety" format="horizontal" />
+
                 {/* Tools Required */}
                 <section className="mb-8">
                     <h2 className="text-xl font-bold text-white mb-4">Tools Required</h2>
@@ -547,6 +551,9 @@ export default async function Page({ params }: PageProps) {
                     </div>
                 </section>
 
+                {/* Ad: After Parts List */}
+                <AdUnit slot="repair-after-parts" format="rectangle" />
+
                 {/* Basic Steps */}
                 <section className="mb-8">
                     <h2 className="text-xl font-bold text-white mb-4">Basic Procedure Overview</h2>
@@ -578,6 +585,9 @@ export default async function Page({ params }: PageProps) {
                         ))}
                     </dl>
                 </section>
+
+                {/* Ad: After FAQ */}
+                <AdUnit slot="repair-after-faq" format="horizontal" />
 
                 {/* CTA to AI Guide */}
                 <div className="bg-gradient-to-r from-brand-cyan/10 to-purple-500/10 rounded-2xl p-8 text-center border border-brand-cyan/30 mb-8">

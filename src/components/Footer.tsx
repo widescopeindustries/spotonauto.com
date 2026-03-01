@@ -35,6 +35,7 @@ const Footer: React.FC = () => {
                                 { href: '/guides', label: 'Repair Guides', icon: BookOpen },
                                 { href: '/parts', label: 'Parts Finder', icon: Car },
                                 { href: '/cel', label: 'Check Engine Light', icon: Shield },
+                                { href: '/codes', label: 'DTC Code Lookup', icon: BookOpen },
                                 { href: '/community', label: 'Community Forum', icon: MessageSquare },
                             ].map((item) => (
                                 <li key={item.href}>

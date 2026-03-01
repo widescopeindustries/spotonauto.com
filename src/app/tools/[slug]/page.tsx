@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { TOOL_PAGES, getToolPage, TOOL_TYPE_META } from '@/data/tools-pages';
+import AdUnit from '@/components/AdUnit';
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -167,6 +168,9 @@ export default async function ToolPage({ params }: PageProps) {
                     ))}
                 </div>
 
+                {/* Ad: After Generation Breakdown */}
+                <AdUnit slot="tool-after-specs" />
+
                 {/* FAQ Section */}
                 <section className="mb-12 max-w-3xl mx-auto">
                     <h2 className="text-2xl font-bold text-white mb-6">Frequently Asked Questions</h2>
@@ -179,6 +183,9 @@ export default async function ToolPage({ params }: PageProps) {
                         ))}
                     </dl>
                 </section>
+
+                {/* Ad: After FAQ */}
+                <AdUnit slot="tool-after-faq" format="horizontal" />
 
                 {/* Related Tools */}
                 <section className="mb-12">

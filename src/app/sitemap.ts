@@ -7,31 +7,14 @@ function slugify(s: string) {
     return s.toLowerCase().replace(/\s+/g, '-');
 }
 
-/** Top 15 repair tasks by search volume */
-const TOP_REPAIR_TASKS = [
-    'oil-change',
-    'brake-pad-replacement',
-    'battery-replacement',
-    'spark-plug-replacement',
-    'brake-rotor-replacement',
-    'serpentine-belt-replacement',
-    'cabin-air-filter-replacement',
-    'engine-air-filter-replacement',
-    'alternator-replacement',
-    'starter-replacement',
-    'headlight-bulb-replacement',
-    'thermostat-replacement',
-    'radiator-replacement',
-    'water-pump-replacement',
-    'timing-belt-replacement',
-];
-
 /** Stable date for sitemap lastmod — avoids build-time clock drift */
-const LAST_MOD = '2026-02-28';
+const LAST_MOD = '2026-03-01';
 
 /**
- * Single flat sitemap — includes static pages, all tool pages, guide pages,
- * and top repair pages. Stays well under the 50,000 URL / 50 MB limit.
+ * Main sitemap — static pages, tool pages, guide pages, community.
+ * Repair pages are in their own sub-sitemap at /repair/sitemap.xml.
+ * DTC code pages are in /codes/sitemap.xml.
+ * Next.js auto-generates a sitemap index at /sitemap.xml.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://spotonauto.com';
@@ -62,7 +45,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         });
     }
 
-    // ── Tool pages (all ~1,854) ──────────────────────────────────────
+    // ── Tool pages (all ~3,000+) ─────────────────────────────────────
     for (const tp of TOOL_PAGES) {
         if (!tp?.slug) continue;
         entries.push({
@@ -95,27 +78,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
                 changeFrequency: 'weekly',
                 priority: 0.7,
             });
-        }
-    }
-
-    // ── Repair pages — top 15 tasks × all models (newest year) ──────
-    for (const make of allMakes) {
-        const models = VEHICLE_PRODUCTION_YEARS[make];
-        if (!models) continue;
-        const makeSlug = slugify(make);
-
-        for (const [model, years] of Object.entries(models)) {
-            const modelSlug = slugify(model);
-            const latestYear = years.end;
-
-            for (const task of TOP_REPAIR_TASKS) {
-                entries.push({
-                    url: `${baseUrl}/repair/${latestYear}/${makeSlug}/${modelSlug}/${task}`,
-                    lastModified: LAST_MOD,
-                    changeFrequency: 'monthly',
-                    priority: 0.7,
-                });
-            }
         }
     }
 

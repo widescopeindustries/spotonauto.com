@@ -4,6 +4,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { CheckCircle2 } from 'lucide-react';
 import PopularGuidesSection from '@/components/PopularGuidesSection';
+import AdUnit from '@/components/AdUnit';
 import { useT } from '@/lib/translations';
 
 // No Framer Motion in hero — CSS animations only (LCP fix)
@@ -187,9 +188,11 @@ export default function ClientHome() {
                 <HeroSection />
                 <FreeForTheWorldBanner />
                 <PopularGuidesSection />
+                <AdUnit slot="home-mid-content" format="horizontal" className="max-w-7xl" />
                 <FeaturesSection />
                 <HowItWorksSection />
                 <TestimonialsSection />
+                <AdUnit slot="home-bottom" className="max-w-7xl" />
                 <CTASection />
             </main>
         </div>

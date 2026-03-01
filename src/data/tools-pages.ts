@@ -20,7 +20,7 @@ export interface ToolPage {
     slug: string;
     make: string;
     model: string;
-    toolType: 'oil-type' | 'battery-location' | 'tire-size' | 'serpentine-belt' | 'headlight-bulb' | 'fluid-capacity';
+    toolType: 'oil-type' | 'battery-location' | 'tire-size' | 'serpentine-belt' | 'headlight-bulb' | 'fluid-capacity' | 'spark-plug-type' | 'wiper-blade-size' | 'coolant-type' | 'transmission-fluid-type';
     title: string;
     description: string;
     keywords: string[];
@@ -37,6 +37,10 @@ export const TOOL_TYPE_META: Record<string, { label: string; icon: string; color
     'serpentine-belt': { label: 'Serpentine Belt', icon: '⚙️', color: 'purple' },
     'headlight-bulb': { label: 'Headlight Bulb Size', icon: '💡', color: 'yellow' },
     'fluid-capacity': { label: 'Fluid Capacities', icon: '🧪', color: 'cyan' },
+    'spark-plug-type': { label: 'Spark Plug Type', icon: '⚡', color: 'orange' },
+    'wiper-blade-size': { label: 'Wiper Blade Size', icon: '🌧️', color: 'sky' },
+    'coolant-type': { label: 'Coolant Type', icon: '❄️', color: 'teal' },
+    'transmission-fluid-type': { label: 'Transmission Fluid', icon: '⚙️', color: 'rose' },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -79,23 +83,6 @@ const oilPages: ToolPage[] = [
         faq: [
             { q: 'Does the Honda Civic 1.5 turbo have oil dilution problems?', a: 'Some 2016-2020 1.5T Civics experienced fuel-oil dilution in cold climates. Honda issued a software update. Check your oil level regularly and change oil every 5,000-7,500 miles if you notice the level rising.' },
             { q: 'How often should I change oil in my Honda Civic?', a: 'Follow the Maintenance Minder system on your dashboard. Typically every 7,500-10,000 miles with synthetic oil. In severe conditions, every 5,000 miles.' },
-        ],
-    },
-    {
-        slug: 'ford-f150-oil-type',
-        make: 'Ford', model: 'F-150', toolType: 'oil-type',
-        title: 'Ford F-150 Oil Type & Capacity | All Years Guide',
-        description: 'Find the correct oil type, weight, and capacity for your Ford F-150. Covers all engines from EcoBoost to Coyote V8.',
-        keywords: ['ford f150 oil type', 'f150 oil capacity', 'ford f-150 oil weight', 'f150 5.0 oil capacity'],
-        quickAnswer: 'The 2018-2024 Ford F-150 5.0L V8 uses 5W-20 synthetic blend (8.0 quarts). The 3.5L EcoBoost uses 5W-30 full synthetic (6.0 quarts).',
-        generations: [
-            { name: '14th Gen (2021-2024)', years: '2021-2024', specs: { 'Oil Type (2.7L EB)': '5W-30 Full Synthetic', 'Capacity (2.7L EB)': '6.0 quarts with filter', 'Oil Type (3.5L EB)': '5W-30 Full Synthetic', 'Capacity (3.5L EB)': '6.0 quarts with filter', 'Oil Type (5.0L V8)': '5W-20 Synthetic Blend', 'Capacity (5.0L V8)': '8.0 quarts with filter', 'Filter (V8)': 'Motorcraft FL-820-S' }, notes: ['PowerBoost hybrid uses same oil as 3.5L EcoBoost'] },
-            { name: '13th Gen (2015-2020)', years: '2015-2020', specs: { 'Oil Type (2.7L EB)': '5W-30 Full Synthetic', 'Capacity (2.7L EB)': '6.0 quarts with filter', 'Oil Type (3.5L EB)': '5W-30 Full Synthetic', 'Capacity (3.5L EB)': '6.0 quarts with filter', 'Oil Type (5.0L V8)': '5W-20', 'Capacity (5.0L V8)': '8.0 quarts with filter' }, notes: ['First aluminum body F-150 generation'] },
-            { name: '12th Gen (2009-2014)', years: '2009-2014', specs: { 'Oil Type (3.5L V6)': '5W-20', 'Capacity (3.5L)': '6.0 quarts', 'Oil Type (5.0L V8)': '5W-20', 'Capacity (5.0L)': '7.7 quarts', 'Oil Type (6.2L V8)': '5W-20', 'Capacity (6.2L)': '7.7 quarts' } },
-        ],
-        faq: [
-            { q: 'Can I use full synthetic in my F-150 5.0L?', a: 'Yes. Ford recommends synthetic blend but full synthetic exceeds the spec and provides better protection, especially for towing. Just use the correct 5W-20 weight.' },
-            { q: 'Why does the F-150 V8 use so much oil?', a: 'The 5.0L Coyote V8 has a large oil capacity (8 quarts) because of its dual overhead cam design and larger oil passages. This is normal and actually beneficial for engine longevity.' },
         ],
     },
     {
@@ -178,23 +165,6 @@ const oilPages: ToolPage[] = [
         ],
         faq: [
             { q: 'What happens if I use 5W-30 instead of 0W-20 in my 2020 Altima?', a: 'Using 5W-30 in a newer Altima won\'t cause immediate damage but may reduce fuel economy and cold-start protection. The engine was designed for 0W-20 viscosity. Use the correct weight.' },
-        ],
-    },
-    {
-        slug: 'honda-crv-oil-type',
-        make: 'Honda', model: 'CR-V', toolType: 'oil-type',
-        title: 'Honda CR-V Oil Type & Capacity | All Years Guide',
-        description: 'Find the correct oil type and capacity for your Honda CR-V. Covers all years 1997-2024 including turbo and hybrid models.',
-        keywords: ['honda crv oil type', 'cr-v oil capacity', 'honda crv oil weight', 'crv 1.5 turbo oil'],
-        quickAnswer: 'The 2017-2024 Honda CR-V 1.5T uses 0W-20 full synthetic oil with a capacity of 3.7 quarts with filter.',
-        generations: [
-            { name: '6th Gen (2023-2024)', years: '2023-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity (1.5T)': '3.7 quarts with filter', 'Capacity (Hybrid)': '3.7 quarts with filter', 'Filter': 'Honda 15400-PLM-A02' } },
-            { name: '5th Gen (2017-2022)', years: '2017-2022', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity (1.5T)': '3.7 quarts with filter', 'Filter': 'Honda 15400-PLM-A02' }, notes: ['Monitor oil level on 1.5T — fuel dilution possible in cold climates'] },
-            { name: '4th Gen (2012-2016)', years: '2012-2016', specs: { 'Oil Type': '0W-20 Synthetic', 'Capacity': '4.4 quarts with filter' } },
-            { name: '3rd Gen (2007-2011)', years: '2007-2011', specs: { 'Oil Type': '5W-20', 'Capacity': '4.4 quarts with filter' } },
-        ],
-        faq: [
-            { q: 'Does the CR-V 1.5T have oil problems?', a: 'Some 2017-2019 CR-V 1.5T models experienced oil dilution from fuel in cold climates. Honda issued a software update and extended warranty for affected VINs. Check with your dealer.' },
         ],
     },
     {
@@ -330,23 +300,6 @@ const batteryPages: ToolPage[] = [
         ],
         faq: [
             { q: 'Why is the Civic battery so small?', a: 'Honda uses a Group 51R battery which is smaller than many competitors. This is fine for the Civic\'s electrical demands. If you want more starting power in cold climates, look for a 51R with higher CCA (500+).' },
-        ],
-    },
-    {
-        slug: 'ford-f150-battery-location',
-        make: 'Ford', model: 'F-150', toolType: 'battery-location',
-        title: 'Ford F-150 Battery Location | Where Is It? All Years',
-        description: 'Find exactly where the battery is in your Ford F-150. Some models have two batteries. Includes size and replacement guide.',
-        keywords: ['ford f150 battery location', 'where is f150 battery', 'f150 battery size', 'f150 two batteries'],
-        quickAnswer: 'The Ford F-150 battery is under the hood on the passenger side. Some 2021+ models with PowerBoost hybrid have a second battery under the load floor.',
-        generations: [
-            { name: '14th Gen (2021-2024)', years: '2021-2024', specs: { 'Location': 'Under hood, passenger side', 'Battery Size': 'Group 65 (BXT-65-850)', 'CCA': '850 CCA', 'Type': 'AGM for vehicles with auto start-stop', 'Difficulty': 'Easy — 20 min' }, notes: ['PowerBoost hybrid has a second 48V battery under the load floor', 'Requires AGM battery if equipped with start-stop'] },
-            { name: '13th Gen (2015-2020)', years: '2015-2020', specs: { 'Location': 'Under hood, passenger side', 'Battery Size': 'Group 65', 'CCA': '750-850 CCA', 'Type': 'Standard or AGM', 'Difficulty': 'Easy — 15 min' } },
-            { name: '12th Gen (2009-2014)', years: '2009-2014', specs: { 'Location': 'Under hood, passenger side', 'Battery Size': 'Group 65', 'CCA': '750 CCA', 'Difficulty': 'Easy — 15 min' } },
-        ],
-        faq: [
-            { q: 'Does the F-150 have two batteries?', a: 'Only the 2021+ PowerBoost hybrid has two batteries (a 12V under the hood and a 48V lithium-ion under the load floor). Standard F-150s have one battery under the hood.' },
-            { q: 'Do I need an AGM battery for my F-150?', a: 'If your F-150 has auto start-stop (2017+), Ford recommends an AGM battery. Standard lead-acid batteries degrade faster under the frequent cycling of start-stop systems.' },
         ],
     },
     {
@@ -546,21 +499,6 @@ const tirePages: ToolPage[] = [
         ],
     },
     {
-        slug: 'ford-f150-tire-size',
-        make: 'Ford', model: 'F-150', toolType: 'tire-size',
-        title: 'Ford F-150 Tire Size | All Years & Trims Guide',
-        description: 'Find the correct tire size for your Ford F-150. Covers XL through Raptor with all wheel and tire combinations.',
-        keywords: ['ford f150 tire size', 'f150 tire pressure', 'f150 wheel size', 'f150 raptor tire size'],
-        quickAnswer: 'The most common 2021-2024 Ford F-150 tire sizes are 265/70R17 (XL/XLT), 275/65R18 (Lariat/King Ranch), and 315/70R17 (Raptor).',
-        generations: [
-            { name: '14th Gen (2021-2024)', years: '2021-2024', specs: { 'XL/XLT': '265/70R17', 'Lariat/King Ranch': '275/65R18', 'Platinum/Limited': '275/55R20', 'Tremor': '285/65R18', 'Raptor': '315/70R17 (37") or 285/70R17 (35")', 'Tire Pressure': '35 PSI front / 35 PSI rear (varies by load)', 'Bolt Pattern': '6x135' } },
-            { name: '13th Gen (2015-2020)', years: '2015-2020', specs: { 'XL/XLT': '265/70R17', 'Lariat': '275/65R18', 'Platinum/Limited': '275/55R20', 'Raptor': '315/70R17', 'Bolt Pattern': '6x135' } },
-        ],
-        faq: [
-            { q: 'Can I put 35-inch tires on a stock F-150?', a: 'The Raptor comes with 35" tires from the factory. On a standard F-150, 33" tires (285/70R17) fit without a lift. 35" tires usually require a 2-3" leveling kit and may rub on turns.' },
-        ],
-    },
-    {
         slug: 'toyota-rav4-tire-size',
         make: 'Toyota', model: 'RAV4', toolType: 'tire-size',
         title: 'Toyota RAV4 Tire Size | All Years & Trims Guide',
@@ -573,22 +511,6 @@ const tirePages: ToolPage[] = [
         ],
         faq: [
             { q: 'Can I put all-terrain tires on my RAV4?', a: 'Yes, the RAV4 Adventure and TRD Off-Road are popular candidates. In 225/65R17, the Falken Wildpeak AT3W and Toyo Open Country AT3 are popular choices that maintain ride comfort.' },
-        ],
-    },
-    {
-        slug: 'honda-crv-tire-size',
-        make: 'Honda', model: 'CR-V', toolType: 'tire-size',
-        title: 'Honda CR-V Tire Size | All Years & Trims Guide',
-        description: 'Find the correct tire size for your Honda CR-V. All years with pressure specs.',
-        keywords: ['honda crv tire size', 'cr-v tire pressure', 'crv wheel size'],
-        quickAnswer: 'The 2023-2024 Honda CR-V uses 225/65R17 (LX/EX-L) or 225/60R18 (Sport/Sport Touring). The Hybrid uses the same sizes.',
-        generations: [
-            { name: '6th Gen (2023-2024)', years: '2023-2024', specs: { 'LX/EX-L': '225/65R17', 'Sport/Sport Touring': '225/60R18', 'Tire Pressure': '35 PSI all around', 'Bolt Pattern': '5x114.3' } },
-            { name: '5th Gen (2017-2022)', years: '2017-2022', specs: { 'LX/EX': '235/65R17', 'EX-L/Touring': '235/60R18', 'Tire Pressure': '35 PSI' } },
-            { name: '4th Gen (2012-2016)', years: '2012-2016', specs: { 'LX': '225/65R17', 'EX/EX-L/Touring': '225/65R17', 'Tire Pressure': '32 PSI' } },
-        ],
-        faq: [
-            { q: 'What PSI should Honda CR-V tires be?', a: 'Most 2017+ CR-V models recommend 35 PSI for all four tires. Check the sticker on the driver\'s door jamb. In cold weather, tires lose about 1 PSI per 10°F drop.' },
         ],
     },
     {
