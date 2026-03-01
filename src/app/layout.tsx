@@ -78,6 +78,7 @@ export default function RootLayout({
     <html lang="en" className={`${orbitron.variable} ${rajdhani.variable} ${inter.variable} ${shareTechMono.variable}`}>
       <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3105584943212740" crossOrigin="anonymous"></script>
+        <script async src="https://analytics.ahrefs.com/analytics.js" data-key="Id9DIK0mrHJtsEHStxIWNA"></script>
       </head>
       <body className="bg-[#050505] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-cyan-400 selection:text-black">
         {/* Google Analytics */}
