@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Cpu, Zap, Car, BookOpen, Shield, Mail } from 'lucide-react';
+import { Cpu, Zap, Car, BookOpen, Shield, Mail, MessageSquare } from 'lucide-react';
 
 const Footer: React.FC = () => {
     return (
@@ -35,6 +35,7 @@ const Footer: React.FC = () => {
                                 { href: '/guides', label: 'Repair Guides', icon: BookOpen },
                                 { href: '/parts', label: 'Parts Finder', icon: Car },
                                 { href: '/cel', label: 'Check Engine Light', icon: Shield },
+                                { href: '/community', label: 'Community Forum', icon: MessageSquare },
                             ].map((item) => (
                                 <li key={item.href}>
                                     <Link
