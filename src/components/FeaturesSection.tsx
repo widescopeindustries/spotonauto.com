@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Activity, Zap, BookOpen, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -41,11 +40,7 @@ const FeaturesSection = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+        <div
           className="text-center mb-16"
         >
           <span className="font-body text-xs tracking-[0.3em] text-cyan-400 uppercase mb-4 block">
@@ -55,17 +50,13 @@ const FeaturesSection = () => {
             WHY <span className="text-cyan-400">SPOTON</span> AUTO?
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto" />
-        </motion.div>
+        </div>
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <motion.div
+            <div
               key={feature.title}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
               className="group"
             >
               <div className="glass rounded-2xl p-8 h-full card-hover border border-cyan-500/10 hover:border-cyan-500/30 transition-all duration-500 flex flex-col">
@@ -105,7 +96,7 @@ const FeaturesSection = () => {
                   </Link>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

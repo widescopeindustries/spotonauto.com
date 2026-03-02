@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { DollarSign, Clock, Wrench, ShieldCheck, Zap, BookOpen } from 'lucide-react';
 
 const TestimonialsSection = () => {
@@ -43,11 +42,7 @@ const TestimonialsSection = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+        <div
           className="text-center mb-16"
         >
           <span className="font-body text-xs tracking-[0.3em] text-cyan-400 uppercase mb-4 block">
@@ -56,40 +51,32 @@ const TestimonialsSection = () => {
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-white mb-4">
             STOP <span className="text-cyan-400">OVERPAYING</span> FOR REPAIRS
           </h2>
-        </motion.div>
+        </div>
 
         {/* Cost Comparison */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+        <div
           className="glass rounded-2xl p-8 border border-cyan-500/20 mb-16 max-w-2xl mx-auto"
         >
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="font-display font-bold text-2xl text-red-400">$100-$150</div>
-              <div className="font-body text-xs text-gray-500 uppercase tracking-wider mt-1">Mechanic Diagnostic</div>
+              <div className="font-body text-xs text-gray-400 uppercase tracking-wider mt-1">Mechanic Diagnostic</div>
             </div>
             <div className="flex items-center justify-center">
-              <div className="font-body text-gray-500 text-2xl">vs.</div>
+              <div className="font-body text-gray-400 text-2xl">vs.</div>
             </div>
             <div>
               <div className="font-display font-bold text-2xl text-cyan-400">FREE</div>
-              <div className="font-body text-xs text-gray-500 uppercase tracking-wider mt-1">SpotOn Diagnosis</div>
+              <div className="font-body text-xs text-gray-400 uppercase tracking-wider mt-1">SpotOn Diagnosis</div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Value Props Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {valueProps.map((prop, index) => (
-            <motion.div
+            <div
               key={prop.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
               className="glass rounded-xl p-6 border border-cyan-500/10 hover:border-cyan-500/30 transition-all duration-300"
             >
               <div className="w-12 h-12 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-4">
@@ -101,7 +88,7 @@ const TestimonialsSection = () => {
               <p className="font-body text-gray-400 text-sm">
                 {prop.description}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

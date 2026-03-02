@@ -77,9 +77,9 @@ const HeroSection = () => {
                             {/* Panel Header */}
                             <div className="flex items-center justify-between mb-6">
                                 <div>
-                                    <h3 className="font-display font-bold text-xl text-white">
+                                    <h2 className="font-display font-bold text-xl text-white">
                                         {t('hero.configPanel')}
-                                    </h3>
+                                    </h2>
                                     <p className="font-body text-sm text-gray-400 mt-1">
                                         {t('hero.configDesc')}
                                     </p>

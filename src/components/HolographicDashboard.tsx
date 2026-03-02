@@ -85,10 +85,10 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
         <div className="w-full">
             {/* Header / Instructions */}
             <div className="mb-6 flex items-center justify-between">
-                <h3 className="text-xs font-bold text-brand-cyan uppercase tracking-widest mb-2 flex items-center gap-2">
+                <h2 className="text-xs font-bold text-brand-cyan uppercase tracking-widest mb-2 flex items-center gap-2">
                     <span className="w-2 h-2 bg-brand-cyan rounded-full animate-pulse"></span>
                     {t('form.step1')}
-                </h3>
+                </h2>
             </div>
 
             {/* VIN Decoder Section */}

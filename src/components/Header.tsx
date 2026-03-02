@@ -37,9 +37,10 @@ const Header: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16 md:h-20">
                     {/* Logo */}
-                    <div
-                        className="flex items-center gap-2 cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95"
-                        onClick={() => router.push('/')}
+                    <Link
+                        href="/"
+                        className="flex items-center gap-2 transition-transform duration-200 hover:scale-105 active:scale-95"
+                        aria-label="SpotOnAuto Home"
                     >
                         <div className="relative w-10 h-10 flex items-center justify-center">
                             <div className="absolute inset-0 bg-cyan-500/20 rounded-lg animate-pulse-glow" />
@@ -48,7 +49,7 @@ const Header: React.FC = () => {
                         <span className="font-display font-bold text-xl tracking-wider text-white">
                             SPOTON<span className="text-cyan-400">AUTO</span>
                         </span>
-                    </div>
+                    </Link>
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-6">
