@@ -1,11 +1,11 @@
 ﻿import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import GuideContent from './GuideContent';
 import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
-import { isValidVehicleCombination, getDisplayName, VALID_TASKS } from '@/data/vehicles';
+import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
@@ -154,44 +154,130 @@ const DEFAULT_REPAIR = {
     steps: ['Research procedure for your specific vehicle', 'Gather required tools and parts', 'Follow manufacturer service procedures', 'Test repair before returning vehicle to service']
 };
 
+// Task-specific title and description overrides — tuned for SERP click intent.
+// Titles target ~50 chars to avoid truncation; descriptions target searcher intent.
+const TASK_META: Record<string, { title: string; description: string; extraKeywords: string[] }> = {
+    'serpentine-belt-replacement': {
+        title: 'Serpentine Belt Diagram & Replacement',
+        description: 'Serpentine belt routing diagram, OEM part number, and step-by-step replacement for your {v}. Tensioner inspection, common failure signs. 15–30 min DIY.',
+        extraKeywords: ['serpentine belt diagram', 'belt routing diagram', 'belt replacement cost'],
+    },
+    'timing-belt-replacement': {
+        title: 'Timing Belt Diagram & Replacement',
+        description: 'Timing belt replacement guide for your {v} with timing marks diagram, water pump tips, and torque specs. Interference engine warning included.',
+        extraKeywords: ['timing belt diagram', 'timing marks', 'timing belt cost'],
+    },
+    'battery-replacement': {
+        title: 'Battery Location, Size & Replacement',
+        description: 'Battery group size, CCA rating, and location for your {v}. Terminal removal order, hold-down specs, and module reset tips. 15–30 min job.',
+        extraKeywords: ['battery location', 'battery group size', 'battery replacement cost'],
+    },
+    'oil-change': {
+        title: 'Oil Type, Capacity & Filter Guide',
+        description: 'Correct oil viscosity, capacity, and filter part number for your {v}. Drain plug torque, change interval, and approved brands. Save $50–$120 vs. shop.',
+        extraKeywords: ['oil type', 'oil capacity', 'oil weight', 'oil change cost'],
+    },
+    'spark-plug-replacement': {
+        title: 'Spark Plug Type, Gap & Torque Specs',
+        description: 'Spark plug part number, gap setting, and torque spec for your {v}. Coil-on-plug vs. wire type, change interval, anti-seize tip, and cost.',
+        extraKeywords: ['spark plug gap', 'spark plug torque', 'coil on plug', 'spark plug type'],
+    },
+    'headlight-bulb-replacement': {
+        title: 'Headlight Bulb Size & Replacement',
+        description: 'Correct headlight bulb size, type, and step-by-step replacement for your {v}. High beam, low beam, and DRL fitment guide. 10–30 min job.',
+        extraKeywords: ['headlight bulb size', 'headlight bulb type', 'headlight replacement cost'],
+    },
+    'alternator-replacement': {
+        title: 'Alternator Symptoms, Testing & Cost',
+        description: 'How to test and replace the alternator on your {v}. Failure symptoms, output specs, serpentine belt tips, and estimated replacement cost.',
+        extraKeywords: ['alternator symptoms', 'alternator cost', 'alternator testing'],
+    },
+    'starter-replacement': {
+        title: 'Starter Symptoms & DIY Replacement',
+        description: 'Starter motor failure symptoms, location, and step-by-step replacement for your {v}. Solenoid wiring, torque specs, and cost included.',
+        extraKeywords: ['starter symptoms', 'starter location', 'starter replacement cost'],
+    },
+    'brake-pad-replacement': {
+        title: 'Brake Pad Size, Cost & Replacement',
+        description: 'Correct brake pad part number and step-by-step replacement for your {v}. Caliper piston direction, torque specs, and bed-in procedure. Save $80–$200.',
+        extraKeywords: ['brake pad size', 'brake pad cost', 'brake pad replacement steps'],
+    },
+    'brake-rotor-replacement': {
+        title: 'Brake Rotor Size, Cost & Replacement',
+        description: 'Correct rotor diameter and thickness for your {v}, plus step-by-step replacement guide. Hub cleaning tips, torque specs. Always replace in pairs.',
+        extraKeywords: ['brake rotor size', 'rotor replacement cost', 'brake rotor thickness'],
+    },
+    'water-pump-replacement': {
+        title: 'Water Pump Symptoms & Replacement',
+        description: 'Water pump failure signs and step-by-step replacement for your {v}. Gasket vs. O-ring, coolant type, belt-driven vs. chain-driven tips.',
+        extraKeywords: ['water pump symptoms', 'water pump cost', 'water pump replacement steps'],
+    },
+    'thermostat-replacement': {
+        title: 'Thermostat Location & Replacement',
+        description: 'Thermostat location, coolant type, and step-by-step replacement for your {v}. Overheating causes, housing torque, and air bleed procedure.',
+        extraKeywords: ['thermostat location', 'thermostat replacement cost', 'overheating fix'],
+    },
+    'radiator-replacement': {
+        title: 'Radiator Replacement Cost & DIY',
+        description: 'Step-by-step radiator replacement for your {v}. Drain procedure, hose clamp tips, transmission cooler line info, and coolant flush guide.',
+        extraKeywords: ['radiator replacement cost', 'radiator flush', 'coolant leak fix'],
+    },
+    'cabin-air-filter-replacement': {
+        title: 'Cabin Air Filter Size & Replacement',
+        description: 'Correct cabin air filter size and step-by-step replacement for your {v}. Behind glove box or dash location, filter direction, and change interval.',
+        extraKeywords: ['cabin air filter size', 'cabin filter location', 'cabin filter replacement'],
+    },
+    'engine-air-filter-replacement': {
+        title: 'Engine Air Filter Size & Replacement',
+        description: 'Correct engine air filter part number and replacement for your {v}. Airbox location, clamp removal, change interval, and performance filter tips.',
+        extraKeywords: ['engine air filter size', 'air filter part number', 'air filter replacement'],
+    },
+};
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { year, make, model, task } = await params;
-    const cleanTask = task.replace(/-/g, ' ');
 
+    // Return generic metadata for invalid combos — page will 404/redirect anyway
+    if (!isValidVehicleCombination(year, make, model, task)) {
+        return { title: 'Page Not Found | SpotOnAuto' };
+    }
+
+    const cleanTask = task.replace(/-/g, ' ');
     const displayMake = getDisplayName(make, 'make') || toTitleCase(make);
     const displayModel = getDisplayName(model, 'model') || toTitleCase(model);
     const vehicleName = `${year} ${displayMake} ${displayModel}`;
 
-    // Title-case the task (e.g. "oil change" → "Oil Change")
-    const titleTask = cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const taskMeta = TASK_META[task];
+    const title = taskMeta
+        ? `${vehicleName} ${taskMeta.title} | SpotOnAuto`
+        : `${vehicleName} ${cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Guide | SpotOnAuto`;
+    const description = taskMeta
+        ? taskMeta.description.replace('{v}', vehicleName)
+        : `DIY ${cleanTask} for your ${vehicleName}. Step-by-step guide with tools, parts list, and safety tips. Save $100–$400 vs. the shop.`;
 
-    // Keyword-first title, hard cap ~55 chars for no truncation in SERPs
-    // Pattern: "[Year] [Make] [Model] [Task] Guide | SpotOnAuto"
-    const title = `${vehicleName} ${titleTask} Guide | SpotOnAuto`;
-
-    // Under 160 chars, action-oriented
-    const description = `DIY ${cleanTask} for your ${vehicleName}. Step-by-step guide with tools, parts list, and safety tips. Save $100–$400 vs. the shop.`;
+    const baseKeywords = [
+        `${year} ${displayMake} ${displayModel} ${cleanTask}`,
+        `${displayMake} ${displayModel} ${cleanTask}`,
+        `how to ${cleanTask} ${displayMake} ${displayModel}`,
+        `${cleanTask} ${displayMake} ${displayModel} DIY`,
+        `${year} ${displayMake} ${cleanTask}`,
+    ];
+    const keywords = taskMeta ? [...baseKeywords, ...taskMeta.extraKeywords] : baseKeywords;
 
     return {
         title,
         description,
-        keywords: [
-            `${year} ${displayMake} ${displayModel} ${cleanTask}`,
-            `${displayMake} ${displayModel} ${cleanTask}`,
-            `how to ${cleanTask} ${displayMake} ${displayModel}`,
-            `${cleanTask} ${displayMake} ${displayModel} DIY`,
-            `${year} ${displayMake} ${cleanTask}`,
-        ],
+        keywords,
         openGraph: {
-            title: `${vehicleName} ${titleTask} Guide`,
-            description: `Step-by-step ${cleanTask} guide for the ${vehicleName}. Tools, parts & safety tips included.`,
+            title,
+            description,
             type: 'article',
             url: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}`,
         },
         twitter: {
             card: 'summary',
-            title: `${vehicleName} ${titleTask} Guide`,
-            description: `DIY guide — save $100–$400 vs. the shop. Tools, parts & steps.`,
+            title,
+            description,
         },
         alternates: {
             canonical: `https://spotonauto.com/repair/${year}/${make.toLowerCase()}/${model.toLowerCase()}/${task.toLowerCase()}`,
@@ -203,7 +289,14 @@ export default async function Page({ params }: PageProps) {
     const resolvedParams = await params;
     const { year, make, model, task } = resolvedParams;
 
-    // Validate vehicle/year combination - return 404 for invalid combinations
+    // For known vehicles outside their production range, redirect to nearest valid year
+    // so users land on useful content and Google updates its index via 301.
+    const clampedYear = getClampedYear(year, make, model);
+    if (clampedYear !== null) {
+        redirect(`/repair/${clampedYear}/${make}/${model}/${task}`);
+    }
+
+    // For truly unknown make/model/task combos, return 404
     if (!isValidVehicleCombination(year, make, model, task)) {
         notFound();
     }

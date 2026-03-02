@@ -511,6 +511,38 @@ export function isValidVehicleCombination(
 }
 
 /**
+ * For a known make/model that is out of production range, returns the nearest
+ * valid year (start if too early, end if too late). Returns null if the year
+ * is already valid OR if the make/model is not in our database.
+ */
+export function getClampedYear(
+    year: string | number,
+    make: string,
+    model: string
+): number | null {
+    const yearNum = typeof year === 'string' ? parseInt(year, 10) : year;
+    if (isNaN(yearNum)) return null;
+
+    const makeEntry = Object.entries(VEHICLE_PRODUCTION_YEARS).find(
+        ([m]) => m.toLowerCase() === make.trim().toLowerCase()
+    );
+    if (!makeEntry) return null;
+
+    const [, models] = makeEntry;
+    const modelEntry = Object.entries(models).find(([m]) => {
+        const normalizedDbModel = m.toLowerCase().replace(/\s+/g, '-');
+        const normalizedInputModel = model.trim().toLowerCase().replace(/\s+/g, '-');
+        return normalizedDbModel === normalizedInputModel;
+    });
+    if (!modelEntry) return null;
+
+    const [, { start, end }] = modelEntry;
+    if (yearNum < start) return start;
+    if (yearNum > end) return end;
+    return null; // year is already valid
+}
+
+/**
  * Get display name from slug
  * Fallback: Capitalize words if not found in lookup table
  */
