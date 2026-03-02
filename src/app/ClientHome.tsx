@@ -9,7 +9,7 @@ import { useT } from '@/lib/translations';
 
 // No Framer Motion in hero — CSS animations only (LCP fix)
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
-const HolographicDashboard = dynamic(() => import('@/components/HolographicDashboard'), { ssr: false, loading: () => <div className="h-64 rounded-2xl bg-white/[0.02] animate-pulse" /> });
+const HolographicDashboard = dynamic(() => import('@/components/HolographicDashboard'));
 const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'));
 const HowItWorksSection = dynamic(() => import('@/components/HowItWorksSection'));
 const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'));
