@@ -80,6 +80,7 @@ const Header: React.FC = () => {
                             }}
                             className="flex items-center gap-1.5 text-gray-300 hover:text-cyan-400 transition-all duration-200 hover:scale-105 active:scale-95"
                             title="Bookmark this page"
+                            aria-label="Bookmark this page"
                         >
                             <Bookmark className="w-4 h-4" />
                             <span className="font-body text-sm">{t('nav.bookmark') || 'Bookmark'}</span>

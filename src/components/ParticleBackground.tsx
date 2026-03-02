@@ -19,6 +19,9 @@ const ParticleBackground = () => {
     resize();
     window.addEventListener('resize', resize);
 
+    const isMobile = window.innerWidth < 768;
+    const count = isMobile ? 20 : 35;
+
     const particles: Array<{
       x: number;
       y: number;
@@ -28,7 +31,7 @@ const ParticleBackground = () => {
       alpha: number;
     }> = [];
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < count; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -58,19 +61,21 @@ const ParticleBackground = () => {
         ctx.fillStyle = `rgba(0, 212, 255, ${p.alpha})`;
         ctx.fill();
 
-        // Draw connections
-        particles.slice(i + 1).forEach((p2) => {
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(0, 212, 255, ${0.1 * (1 - dist / 150)})`;
-            ctx.stroke();
-          }
-        });
+        // Skip O(n²) connection drawing on mobile — too expensive on low-end devices
+        if (!isMobile) {
+          particles.slice(i + 1).forEach((p2) => {
+            const dx = p.x - p2.x;
+            const dy = p.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = `rgba(0, 212, 255, ${0.1 * (1 - dist / 150)})`;
+              ctx.stroke();
+            }
+          });
+        }
       });
 
       animationId = requestAnimationFrame(animate);
