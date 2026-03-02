@@ -101,7 +101,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         // We need to differentiate if we are adding to UI or just sending.
         // Let's add to UI for clarity.
 
-        const isInitial = text === initialProblem && messages.length === 1; // Rough check
+        const isInitial = text === initialProblem && activeChat !== chatSession;
 
         if (!isInitial) {
             const userMsg: Message = {

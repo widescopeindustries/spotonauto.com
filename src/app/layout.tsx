@@ -121,7 +121,7 @@ export default function RootLayout({
                 name: "SpotOnAuto",
                 url: "https://spotonauto.com",
                 description: "Free AI-powered DIY auto repair guides. OEM-level service data for every vehicle.",
-                foundingDate: "2025",
+                foundingDate: "2026",
                 contactPoint: {
                   "@type": "ContactPoint",
                   url: "https://spotonauto.com/contact",

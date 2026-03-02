@@ -221,7 +221,7 @@ export default function DiagnosticPage() {
                     operatingSystem: "Web",
                     description: "Free AI-powered automotive diagnostic tool. Describe symptoms or enter a trouble code to get instant diagnosis and repair guidance for any vehicle.",
                     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-                    author: { "@id": "https://spotonauto.com/#organization" },
+                    author: { "@type": "Organization", "@id": "https://spotonauto.com/#organization" },
                 }) }}
             />
             <Suspense fallback={

@@ -20,10 +20,13 @@ export default function Providers({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Defer heavy auth+supabase bundle until after paint
-    const id = requestIdleCallback?.(() => setMounted(true)) ?? setTimeout(() => setMounted(true), 50);
-    return () => {
-      if (typeof id === 'number' && cancelIdleCallback) cancelIdleCallback(id);
-    };
+    if (typeof requestIdleCallback !== 'undefined') {
+      const id = requestIdleCallback(() => setMounted(true));
+      return () => cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(() => setMounted(true), 50);
+      return () => clearTimeout(id);
+    }
   }, []);
 
   if (!mounted) {

@@ -128,12 +128,12 @@ export default function CodePageClient({ code }: { code: DTCCode }) {
                 <div className="mb-8 bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-6 text-center">
                     <p className="text-cyan-200 text-sm mb-3">Ready to fix it yourself?</p>
                     <Link
-                        href={`/repair/2024/toyota/camry/${code.repairTaskSlug}`}
+                        href={`/repair`}
                         className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-black text-sm font-bold rounded-lg hover:bg-cyan-400 transition"
                     >
-                        View Step-by-Step Repair Guide →
+                        Find My Vehicle Repair Guide →
                     </Link>
-                    <p className="text-gray-600 text-xs mt-2">Select your exact vehicle for a personalized guide</p>
+                    <p className="text-gray-600 text-xs mt-2">Select your exact vehicle for a personalized step-by-step guide</p>
                 </div>
             )}
 

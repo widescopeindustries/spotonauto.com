@@ -20,9 +20,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://spotonauto.com';
     const entries: MetadataRoute.Sitemap = [];
 
-    // ── Static pages (5) ─────────────────────────────────────────────
+    // ── Static pages ──────────────────────────────────────────────────
     entries.push(
         { url: baseUrl, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 1 },
+        { url: `${baseUrl}/diagnose`, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 0.9 },
+        { url: `${baseUrl}/tools`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.85 },
+        { url: `${baseUrl}/guides`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.8 },
+        { url: `${baseUrl}/cel`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
+        { url: `${baseUrl}/second-opinion`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
+        { url: `${baseUrl}/parts`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.65 },
         { url: `${baseUrl}/about`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
         { url: `${baseUrl}/contact`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.4 },
         { url: `${baseUrl}/privacy`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
@@ -45,7 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         });
     }
 
-    // ── Tool pages (all ~3,000+) ─────────────────────────────────────
+    // ── Tool pages (~1,850) ───────────────────────────────────────────
     for (const tp of TOOL_PAGES) {
         if (!tp?.slug) continue;
         entries.push({

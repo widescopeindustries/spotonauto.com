@@ -149,7 +149,8 @@ export const streamRepairGuide = async (
     }
   }
 
-  return fullGuide!;
+  if (!fullGuide) throw new Error('Stream ended without a complete guide response');
+  return fullGuide;
 };
 
 /**

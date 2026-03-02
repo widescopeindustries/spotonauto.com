@@ -95,7 +95,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Guides", item: "https://spotonauto.com/guides" },
             { "@type": "ListItem", position: 2, name: originalMake, item: `https://spotonauto.com/guides/${make}` },
-            { "@type": "ListItem", position: 3, name: `${originalMake} ${originalModel}` },
+            { "@type": "ListItem", position: 3, name: `${originalMake} ${originalModel}`, item: `https://spotonauto.com/guides/${make}/${model}` },
           ],
         }) }}
       />

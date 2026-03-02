@@ -156,7 +156,7 @@ export default async function ThreadPage({ params }: PageProps) {
                     itemListElement: [
                         { "@type": "ListItem", position: 1, name: "Community", item: "https://spotonauto.com/community" },
                         { "@type": "ListItem", position: 2, name: cat.name, item: `https://spotonauto.com/community/${catSlug}` },
-                        { "@type": "ListItem", position: 3, name: thread.title },
+                        { "@type": "ListItem", position: 3, name: thread.title, item: `https://spotonauto.com/community/${catSlug}/${slug}` },
                     ],
                 }) }}
             />

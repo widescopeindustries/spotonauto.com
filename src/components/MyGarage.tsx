@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
   Car, 
@@ -22,6 +23,7 @@ interface MyGarageProps {
 }
 
 export default function MyGarage({ userId }: MyGarageProps) {
+  const router = useRouter();
   const [vehicles, setVehicles] = useState<GarageVehicle[]>([]);
   const [diagnoses, setDiagnoses] = useState<DiagnosisRecord[]>([]);
   const [stats, setStats] = useState({
@@ -67,9 +69,8 @@ export default function MyGarage({ userId }: MyGarageProps) {
     }
   }
 
-  async function handleAddVehicle() {
-    // Navigate to VIN decoder or manual entry
-    window.location.href = '/?addVehicle=true';
+  function handleAddVehicle() {
+    router.push('/?addVehicle=true');
   }
 
   const activeDiagnoses = diagnoses.filter(d => d.status === 'active');

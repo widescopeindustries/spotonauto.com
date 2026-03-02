@@ -86,7 +86,7 @@ export default async function CodePage({ params }: PageProps) {
                     "@type": "BreadcrumbList",
                     itemListElement: [
                         { "@type": "ListItem", position: 1, name: "DTC Codes", item: "https://spotonauto.com/codes" },
-                        { "@type": "ListItem", position: 2, name: `${dtc.code}: ${dtc.title}` },
+                        { "@type": "ListItem", position: 2, name: `${dtc.code}: ${dtc.title}`, item: `https://spotonauto.com/codes/${dtc.code.toLowerCase()}` },
                     ],
                 }) }}
             />

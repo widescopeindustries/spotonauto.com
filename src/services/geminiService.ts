@@ -335,7 +335,7 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
     contents: prompt,
     config: {
       responseMimeType: "application/json",
-      responseSchema: vehicleSchema,
+      responseSchema: vehicleInfoSchema,
     },
   });
 
