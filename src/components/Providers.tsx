@@ -5,13 +5,9 @@ import dynamic from 'next/dynamic';
 import { LocaleProvider } from '@/lib/localeContext';
 
 // Phase 1: Render children immediately with no auth context
-// Phase 2: After first paint, load AuthProvider + SpotOnGuide
+// Phase 2: After first paint, load AuthProvider
 const AuthProvider = dynamic(
   () => import('@/contexts/AuthContext').then((m) => m.AuthProvider),
-  { ssr: false }
-);
-const SpotOnGuide = dynamic(
-  () => import('@/components/SpotOnGuide').then((m) => m.SpotOnGuide),
   { ssr: false }
 );
 
@@ -38,7 +34,6 @@ export default function Providers({ children }: { children: ReactNode }) {
     <LocaleProvider>
       <AuthProvider>
         {children}
-        <SpotOnGuide />
       </AuthProvider>
     </LocaleProvider>
   );
