@@ -171,11 +171,45 @@ export default function CodePageClient({ code }: { code: DTCCode }) {
             {/* Ad after FAQ */}
             <AdUnit slot="code-after-faq" format="horizontal" />
 
+            {/* Related Repair Guides — cross-links to repair pages */}
+            {code.repairTaskSlug && (
+                <section className="mb-12">
+                    <h3 className="text-xl font-bold text-white mb-4">Related Repair Guides</h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                        If your vehicle has triggered {code.code}, these DIY repair guides may help:
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                        {[
+                            { y: '2013', mk: 'toyota', mo: 'camry', label: 'Toyota Camry' },
+                            { y: '2013', mk: 'honda', mo: 'civic', label: 'Honda Civic' },
+                            { y: '2013', mk: 'ford', mo: 'f-150', label: 'Ford F-150' },
+                            { y: '2013', mk: 'chevrolet', mo: 'silverado', label: 'Chevy Silverado' },
+                            { y: '2013', mk: 'nissan', mo: 'altima', label: 'Nissan Altima' },
+                            { y: '2013', mk: 'hyundai', mo: 'sonata', label: 'Hyundai Sonata' },
+                        ].map(v => (
+                            <Link
+                                key={`${v.mk}-${v.mo}`}
+                                href={`/repair/${v.y}/${v.mk}/${v.mo}/${code.repairTaskSlug!}`}
+                                className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
+                                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
+                                    {v.y} {v.label} {code.repairTaskSlug!.replace(/-/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase())}
+                                </span>
+                            </Link>
+                        ))}
+                    </div>
+                    <Link href="/guides" className="inline-block mt-4 text-cyan-400 text-sm hover:underline">
+                        Browse all vehicle repair guides →
+                    </Link>
+                </section>
+            )}
+
             {/* Bottom CTA */}
             <div className="text-center py-8 border-t border-white/10 mt-8">
                 <p className="text-gray-400 mb-4">Need a diagnosis for your specific vehicle?</p>
                 <Link
-                    href="/"
+                    href="/diagnose"
                     className="inline-flex items-center gap-2 px-8 py-4 bg-cyan-500 text-black font-bold rounded-xl hover:bg-cyan-400 transition text-lg"
                 >
                     Start Free AI Diagnosis →

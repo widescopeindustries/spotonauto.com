@@ -5,7 +5,7 @@ import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircle
 import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
-import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS } from '@/data/vehicles';
+import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
@@ -268,6 +268,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title,
         description,
         keywords,
+        ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
         openGraph: {
             title,
             description,
@@ -465,6 +466,19 @@ export default async function Page({ params }: PageProps) {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchemaData) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", position: 1, name: "Guides", item: "https://spotonauto.com/guides" },
+                        { "@type": "ListItem", position: 2, name: displayMake, item: `https://spotonauto.com/guides/${make}` },
+                        { "@type": "ListItem", position: 3, name: displayModel, item: `https://spotonauto.com/guides/${make}/${model}` },
+                        { "@type": "ListItem", position: 4, name: `${year} ${cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)}` },
+                    ],
+                }) }}
             />
 
             {/* SEO Content - Renders server-side for Google */}
@@ -734,6 +748,61 @@ export default async function Page({ params }: PageProps) {
                     </Link>
                 </div>
             </section>
+
+            {/* ── Related Specs & Tools ──────────────────────────────────── */}
+            {(() => {
+                const TASK_TO_TOOLS: Record<string, string[]> = {
+                    'oil-change': ['oil-type'],
+                    'battery-replacement': ['battery-location'],
+                    'serpentine-belt-replacement': ['serpentine-belt'],
+                    'headlight-bulb-replacement': ['headlight-bulb'],
+                    'spark-plug-replacement': ['spark-plug-type'],
+                    'tire-rotation': ['tire-size'],
+                    'cabin-air-filter-replacement': ['wiper-blade-size'],
+                    'radiator-replacement': ['coolant-type'],
+                    'thermostat-replacement': ['coolant-type'],
+                    'water-pump-replacement': ['coolant-type'],
+                };
+                const relatedToolTypes = TASK_TO_TOOLS[task] || [];
+                const toolLinks = relatedToolTypes.map(toolType => ({
+                    slug: `${make}-${model}-${toolType}`,
+                    label: toolType.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                }));
+                // Also always link to oil-type and tire-size as universal specs
+                const universalLinks = ['oil-type', 'battery-location', 'tire-size']
+                    .filter(tt => !relatedToolTypes.includes(tt))
+                    .slice(0, 2)
+                    .map(toolType => ({
+                        slug: `${make}-${model}-${toolType}`,
+                        label: toolType.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                    }));
+                const allLinks = [...toolLinks, ...universalLinks];
+
+                return allLinks.length > 0 ? (
+                    <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
+                        <h2 className="text-lg font-bold text-white mb-4">
+                            {displayMake} {displayModel} Specs & Reference
+                        </h2>
+                        <div className="flex flex-wrap gap-3">
+                            {allLinks.map(link => (
+                                <Link
+                                    key={link.slug}
+                                    href={`/tools/${link.slug}`}
+                                    className="px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm hover:bg-cyan-500/20 hover:border-cyan-500/40 transition-all"
+                                >
+                                    {displayMake} {displayModel} {link.label} →
+                                </Link>
+                            ))}
+                            <Link
+                                href={`/codes`}
+                                className="px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm hover:bg-amber-500/20 hover:border-amber-500/40 transition-all"
+                            >
+                                DTC Trouble Code Lookup →
+                            </Link>
+                        </div>
+                    </section>
+                ) : null;
+            })()}
 
             {/* ── Related Repairs ─────────────────────────────────────────── */}
             {/* This section provides internal links so Google can crawl between */}

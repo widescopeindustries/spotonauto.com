@@ -188,20 +188,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Arkana: { start: 2021, end: 2024 },
         Duster: { start: 2010, end: 2024 },
     },
-    Peugeot: {
-        '108': { start: 2014, end: 2024 },
-        '208': { start: 2012, end: 2024 },
-        '308': { start: 2008, end: 2024 },
-        '508': { start: 2011, end: 2024 },
-        '2008': { start: 2013, end: 2024 },
-        '3008': { start: 2009, end: 2024 },
-        '5008': { start: 2009, end: 2024 },
-        Partner: { start: 1996, end: 2024 },
-        '206': { start: 1998, end: 2012 },
-        '207': { start: 2006, end: 2014 },
-        '307': { start: 2001, end: 2008 },
-        '407': { start: 2004, end: 2011 },
-    },
+    // Peugeot removed — exited US market 1991, 0 GSC impressions
     Fiat: {
         '500': { start: 2007, end: 2024 },
         Panda: { start: 1980, end: 2024 },
@@ -258,10 +245,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         ForTwo: { start: 1998, end: 2024 },
         ForFour: { start: 2004, end: 2024 },
     },
-    Saab: {
-        '9-3': { start: 1998, end: 2012 },
-        '9-5': { start: 1997, end: 2012 },
-    },
+    // Saab removed — defunct 2012, 0 GSC impressions
     // ── US LEGACY / OTHER ──────────────────────────────────────────────
     Jeep: {
         'Grand Cherokee': { start: 1993, end: 2024 },
@@ -349,11 +333,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Rodeo: { start: 1989, end: 2004 },
         Trooper: { start: 1981, end: 2002 },
     },
-    Daihatsu: {
-        Terios: { start: 1997, end: 2024 },
-        Sirion: { start: 1998, end: 2024 },
-        Rocky: { start: 2019, end: 2024 },
-    },
+    // Daihatsu removed — not sold in US, 0 GSC impressions
     // ── DEFUNCT / CLASSIC ──────────────────────────────────────────────
     Pontiac: {
         'Grand Am': { start: 1973, end: 2005 },
@@ -403,11 +383,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         H2: { start: 2003, end: 2009 },
         H3: { start: 2006, end: 2010 },
     },
-    Daewoo: {
-        Lanos: { start: 1997, end: 2002 },
-        Nubira: { start: 1998, end: 2002 },
-        Leganza: { start: 1997, end: 2002 },
-    },
+    // Daewoo removed — defunct 2002, 0 GSC impressions
 };
 
 export const VALID_TASKS = [
@@ -457,6 +433,11 @@ export const VALID_TASKS = [
     'crankshaft-sensor-replacement',
     'camshaft-sensor-replacement',
 ];
+
+/** Brands with minimal US search volume — noindex to save crawl budget */
+export const NOINDEX_MAKES = new Set([
+    'renault', 'fiat', 'smart', 'isuzu',
+]);
 
 /**
  * Validates if a vehicle/year combination is valid.

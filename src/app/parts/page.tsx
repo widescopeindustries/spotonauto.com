@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     }
 };
 
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'aiautorepair-20';
+const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
 
 // Popular parts categories with search queries
 const PARTS_CATEGORIES = [

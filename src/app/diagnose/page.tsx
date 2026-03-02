@@ -210,12 +210,27 @@ function DiagnosticPageInner() {
 
 export default function DiagnosticPage() {
     return (
-        <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-cyan-400 font-mono animate-pulse">Loading...</div>
-            </div>
-        }>
-            <DiagnosticPageInner />
-        </Suspense>
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "SoftwareApplication",
+                    name: "SpotOnAuto AI Diagnostic Tool",
+                    applicationCategory: "UtilityApplication",
+                    operatingSystem: "Web",
+                    description: "Free AI-powered automotive diagnostic tool. Describe symptoms or enter a trouble code to get instant diagnosis and repair guidance for any vehicle.",
+                    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+                    author: { "@id": "https://spotonauto.com/#organization" },
+                }) }}
+            />
+            <Suspense fallback={
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="text-cyan-400 font-mono animate-pulse">Loading...</div>
+                </div>
+            }>
+                <DiagnosticPageInner />
+            </Suspense>
+        </>
     );
 }

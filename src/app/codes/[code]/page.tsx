@@ -79,6 +79,17 @@ export default async function CodePage({ params }: PageProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    itemListElement: [
+                        { "@type": "ListItem", position: 1, name: "DTC Codes", item: "https://spotonauto.com/codes" },
+                        { "@type": "ListItem", position: 2, name: `${dtc.code}: ${dtc.title}` },
+                    ],
+                }) }}
+            />
             <CodePageClient code={dtc} />
         </div>
     );

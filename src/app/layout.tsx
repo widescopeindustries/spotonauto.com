@@ -109,6 +109,45 @@ export default function RootLayout({
           strategy="lazyOnload"
         />
 
+        {/* Organization + WebSite schema — global site identity for Google */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "@id": "https://spotonauto.com/#organization",
+                name: "SpotOnAuto",
+                url: "https://spotonauto.com",
+                description: "Free AI-powered DIY auto repair guides. OEM-level service data for every vehicle.",
+                foundingDate: "2025",
+                contactPoint: {
+                  "@type": "ContactPoint",
+                  url: "https://spotonauto.com/contact",
+                  contactType: "Customer Service",
+                },
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "@id": "https://spotonauto.com/#website",
+                name: "SpotOnAuto",
+                url: "https://spotonauto.com",
+                publisher: { "@id": "https://spotonauto.com/#organization" },
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: {
+                    "@type": "EntryPoint",
+                    urlTemplate: "https://spotonauto.com/diagnose?q={search_term_string}",
+                  },
+                  "query-input": "required name=search_term_string",
+                },
+              },
+            ]),
+          }}
+        />
+
         <Providers>
           <div className="min-h-screen w-full flex flex-col">
             <Header />

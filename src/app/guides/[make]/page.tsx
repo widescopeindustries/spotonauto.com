@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
 interface PageProps {
@@ -16,6 +16,7 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${displayName} Repair Guides | SpotOnAuto`,
     description: `Browse DIY repair guides for ${displayName} vehicles. Step-by-step instructions for maintenance and repairs.`,
+    ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

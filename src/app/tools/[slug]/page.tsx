@@ -90,6 +90,18 @@ export default async function ToolPage({ params }: PageProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    itemListElement: [
+                        { "@type": "ListItem", position: 1, name: "Guides", item: "https://spotonauto.com/guides" },
+                        { "@type": "ListItem", position: 2, name: page.make, item: `https://spotonauto.com/guides/${page.make.toLowerCase()}` },
+                        { "@type": "ListItem", position: 3, name: `${page.make} ${page.model} ${meta.label}` },
+                    ],
+                }) }}
+            />
 
             {/* Hero */}
             <section className="py-16 px-4 max-w-6xl mx-auto">

@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
 import { TOOL_PAGES } from '@/data/tools-pages';
 import { FORUM_CATEGORIES } from '@/data/forumCategories';
 
@@ -59,7 +59,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ── Guide directory — make and model level pages ─────────────────
     const allMakes = Object.keys(VEHICLE_PRODUCTION_YEARS);
     for (const make of allMakes) {
-        if (!make) continue;
+        if (!make || NOINDEX_MAKES.has(make.toLowerCase())) continue;
         const makeSlug = slugify(make);
         entries.push({
             url: `${baseUrl}/guides/${makeSlug}`,

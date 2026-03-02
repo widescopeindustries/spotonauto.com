@@ -148,6 +148,18 @@ export default async function ThreadPage({ params }: PageProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(qaSchema) }}
             />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    itemListElement: [
+                        { "@type": "ListItem", position: 1, name: "Community", item: "https://spotonauto.com/community" },
+                        { "@type": "ListItem", position: 2, name: cat.name, item: `https://spotonauto.com/community/${catSlug}` },
+                        { "@type": "ListItem", position: 3, name: thread.title },
+                    ],
+                }) }}
+            />
             <ThreadPageClient
                 thread={thread}
                 posts={posts}

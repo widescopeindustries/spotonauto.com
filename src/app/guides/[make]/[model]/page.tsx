@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Wrench } from 'lucide-react';
 
@@ -19,6 +19,7 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${displayMake} ${displayModel} DIY Repair Guides | SpotOnAuto`,
     description: `Complete step-by-step DIY repair guides for the ${displayMake} ${displayModel}. Fix common issues yourself and save.`,
+    ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -85,6 +86,18 @@ export default async function ModelGuidesPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchemaData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Guides", item: "https://spotonauto.com/guides" },
+            { "@type": "ListItem", position: 2, name: originalMake, item: `https://spotonauto.com/guides/${make}` },
+            { "@type": "ListItem", position: 3, name: `${originalMake} ${originalModel}` },
+          ],
+        }) }}
       />
       <div className="max-w-7xl mx-auto px-4 py-12">
         <FadeInUp>
