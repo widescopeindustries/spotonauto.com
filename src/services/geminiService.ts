@@ -140,7 +140,7 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
 // We fetch live at query time — no local copy stored.
 // For 2014+ vehicles we fall back silently to AI-only.
 
-const CHARM_BASE = 'https://charm.li';
+const CHARM_BASE = 'https://data.spotonauto.com';
 const CHARM_FETCH_OPTS = {
   headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' },
   signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined,
