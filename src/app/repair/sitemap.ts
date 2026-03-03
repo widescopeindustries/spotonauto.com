@@ -6,25 +6,21 @@ function slugify(s: string) {
 }
 
 const LAST_MOD = '2026-03-01';
-const YEAR_STEP = 5; // Sample every 5th year across production range
+const YEAR_STEP = 5;
+const URLS_PER_SITEMAP = 45000;
 
-/**
- * Repair sub-sitemap — ALL 46 repair tasks × ~310 models × sampled years.
- * Samples: start year, every 5th year, and end year for each model.
- * ~50,000–70,000 URLs. Next.js includes this in the sitemap index automatically.
- */
-export default function sitemap(): MetadataRoute.Sitemap {
+/** Build all repair URLs once, then slice per sitemap chunk */
+function buildAllEntries(): MetadataRoute.Sitemap {
     const baseUrl = 'https://spotonauto.com';
     const entries: MetadataRoute.Sitemap = [];
 
     for (const [make, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
-        if (NOINDEX_MAKES.has(make.toLowerCase())) continue; // Skip low-relevance brands
+        if (NOINDEX_MAKES.has(make.toLowerCase())) continue;
         const makeSlug = slugify(make);
 
         for (const [model, years] of Object.entries(models)) {
             const modelSlug = slugify(model);
 
-            // Build sampled years: start, every 5th, and end
             const sampledYears = new Set<number>();
             sampledYears.add(years.start);
             sampledYears.add(years.end);
@@ -46,4 +42,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
 
     return entries;
+}
+
+/**
+ * Tell Next.js how many sitemap chunks we need.
+ * Generates /repair/sitemap/0.xml, /repair/sitemap/1.xml, etc.
+ */
+export async function generateSitemaps() {
+    const total = buildAllEntries().length;
+    const count = Math.ceil(total / URLS_PER_SITEMAP);
+    return Array.from({ length: count }, (_, i) => ({ id: i }));
+}
+
+/**
+ * Return the URLs for a specific sitemap chunk.
+ */
+export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
+    const all = buildAllEntries();
+    const start = id * URLS_PER_SITEMAP;
+    return all.slice(start, start + URLS_PER_SITEMAP);
 }
