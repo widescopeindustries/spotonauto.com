@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Cpu, Car, Menu, X, History, LogOut, Zap, Shield, Bookmark, MessageCircle } from 'lucide-react';
+import { trackBookmarkClick } from '@/lib/analytics';
 import { useAuth } from '@/contexts/AuthContext';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useT } from '@/lib/translations';
@@ -75,6 +76,7 @@ const Header: React.FC = () => {
                     <div className="hidden md:flex items-center gap-3">
                         <button
                             onClick={() => {
+                                trackBookmarkClick(window.location.pathname);
                                 const key = navigator.userAgent.toLowerCase().includes('mac') ? 'Cmd' : 'Ctrl';
                                 alert(`Press ${key}+D to bookmark this page`);
                             }}
@@ -177,6 +179,7 @@ const Header: React.FC = () => {
                         </div>
                         <button
                             onClick={() => {
+                                trackBookmarkClick(window.location.pathname);
                                 const key = navigator.userAgent.toLowerCase().includes('mac') ? 'Cmd' : 'Ctrl';
                                 alert(`Press ${key}+D to bookmark this page`);
                                 setIsMobileMenuOpen(false);

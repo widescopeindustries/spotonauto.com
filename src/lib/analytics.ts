@@ -167,6 +167,23 @@ export function trackAuth(method: 'google' | 'email', action: 'login' | 'signup'
 }
 
 /**
+ * Track bookmark button clicks
+ */
+export function trackBookmarkClick(page: string): void {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'bookmark_click', {
+      event_category: 'engagement',
+      event_label: page,
+      page,
+    });
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Analytics] Bookmark click:', page);
+  }
+}
+
+/**
  * Capture UTM parameters from URL and set as GA4 user properties
  */
 export function captureUtmParams(): void {
