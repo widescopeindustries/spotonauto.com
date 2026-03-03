@@ -57,7 +57,8 @@ export async function generateSitemaps() {
 /**
  * Return the URLs for a specific sitemap chunk.
  */
-export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
+export default async function sitemap(props: { id: Promise<string> }): Promise<MetadataRoute.Sitemap> {
+    const id = Number(await props.id);
     const all = buildAllEntries();
     const start = id * URLS_PER_SITEMAP;
     return all.slice(start, start + URLS_PER_SITEMAP);
