@@ -1,4 +1,17 @@
 {
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.spotonauto.com"
+        }
+      ],
+      "destination": "https://spotonauto.com/$1",
+      "permanent": true
+    }
+  ]
 }
