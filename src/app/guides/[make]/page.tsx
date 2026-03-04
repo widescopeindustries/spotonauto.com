@@ -10,12 +10,23 @@ interface PageProps {
   }>;
 }
 
+function slugifyPart(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, '-');
+}
+
 export async function generateMetadata({ params }: PageProps) {
   const { make } = await params;
-  const displayName = make.charAt(0).toUpperCase() + make.slice(1).replace(/-/g, ' ');
+  const originalMake = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
+    (m) => slugifyPart(m) === make.toLowerCase()
+  );
+  const canonicalMake = originalMake ? slugifyPart(originalMake) : make.toLowerCase();
+  const displayName = originalMake || make.charAt(0).toUpperCase() + make.slice(1).replace(/-/g, ' ');
   return {
     title: `${displayName} Repair Guides | SpotOnAuto`,
     description: `Browse DIY repair guides for ${displayName} vehicles. Step-by-step instructions for maintenance and repairs.`,
+    alternates: {
+      canonical: `https://spotonauto.com/guides/${canonicalMake}`,
+    },
     ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
   };
 }
@@ -25,7 +36,7 @@ export default async function MakeGuidesPage({ params }: PageProps) {
   
   // Find matching make in our data
   const originalMake = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
-    m => m.toLowerCase().replace(/\s+/g, '-') === make.toLowerCase()
+    m => slugifyPart(m) === make.toLowerCase()
   );
 
   if (!originalMake) {
@@ -52,7 +63,7 @@ export default async function MakeGuidesPage({ params }: PageProps) {
         {models.map((model) => (
           <StaggerItem key={model}>
             <Link
-              href={`/guides/${make}/${model.toLowerCase().replace(/\s+/g, '-')}`}
+              href={`/guides/${make}/${slugifyPart(model)}`}
               className="block glass p-6 hover:border-cyan-400/50 transition-all group"
             >
               <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">

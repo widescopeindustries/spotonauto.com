@@ -1,11 +1,15 @@
+import type { Metadata } from 'next';
 import React from 'react';
 import Link from 'next/link';
 import { NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Repair Guide Directory | Browse by Make | SpotOnAuto',
   description: 'Select your vehicle manufacturer to browse our comprehensive library of AI-powered DIY repair guides.',
+  alternates: {
+    canonical: 'https://spotonauto.com/guides',
+  },
 };
 
 export default function GuidesPage() {

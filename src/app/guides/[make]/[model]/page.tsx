@@ -13,13 +13,28 @@ interface PageProps {
   }>;
 }
 
+function slugifyPart(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, '-');
+}
+
 export async function generateMetadata({ params }: PageProps) {
   const { make, model } = await params;
-  const displayMake = make.charAt(0).toUpperCase() + make.slice(1).replace(/-/g, ' ');
-  const displayModel = model.charAt(0).toUpperCase() + model.slice(1).replace(/-/g, ' ');
+  const originalMake = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
+    (m) => slugifyPart(m) === make.toLowerCase()
+  );
+  const originalModel = originalMake
+    ? Object.keys(VEHICLE_PRODUCTION_YEARS[originalMake]).find((m) => slugifyPart(m) === model.toLowerCase())
+    : null;
+  const canonicalMake = originalMake ? slugifyPart(originalMake) : make.toLowerCase();
+  const canonicalModel = originalModel ? slugifyPart(originalModel) : model.toLowerCase();
+  const displayMake = originalMake || make.charAt(0).toUpperCase() + make.slice(1).replace(/-/g, ' ');
+  const displayModel = originalModel || model.charAt(0).toUpperCase() + model.slice(1).replace(/-/g, ' ');
   return {
     title: `${displayMake} ${displayModel} DIY Repair Guides | SpotOnAuto`,
     description: `Complete step-by-step DIY repair guides for the ${displayMake} ${displayModel}. Fix common issues yourself and save.`,
+    alternates: {
+      canonical: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}`,
+    },
     ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
   };
 }
@@ -29,14 +44,14 @@ export default async function ModelGuidesPage({ params }: PageProps) {
   
   // Find matching make in our data
   const originalMake = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
-    m => m.toLowerCase().replace(/\s+/g, '-') === make.toLowerCase()
+    m => slugifyPart(m) === make.toLowerCase()
   );
 
   if (!originalMake) notFound();
 
   // Find matching model
   const originalModel = Object.keys(VEHICLE_PRODUCTION_YEARS[originalMake]).find(
-    m => m.toLowerCase().replace(/\s+/g, '-') === model.toLowerCase()
+    m => slugifyPart(m) === model.toLowerCase()
   );
 
   if (!originalModel) notFound();
