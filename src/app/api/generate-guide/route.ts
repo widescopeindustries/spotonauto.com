@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { checkRateLimit } from '@/lib/rateLimit';
 import {
   decodeVin,
   getVehicleInfo,
@@ -43,8 +44,18 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { action, payload, stream } = body;
 
-    // All actions are public — no limits
+    const limited = checkRateLimit(req, 10, 60_000); // 10 actions/min per IP
+    if (limited) return limited;
+
     const user = await getAuthenticatedUser(req);
+
+    // Expensive actions require authentication
+    if (['generate-guide', 'diagnostic-chat'].includes(action) && !user) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in to use this feature.' },
+        { status: 401 }
+      );
+    }
 
     console.log(`API Request [user:${user?.id ?? 'anonymous'}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);
 

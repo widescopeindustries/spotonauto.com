@@ -2,8 +2,11 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getVehicleNHTSAData } from '@/services/nhtsaService';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export async function GET(req: NextRequest) {
+  const limited = checkRateLimit(req, 30, 60_000); // 30 lookups/min per IP
+  if (limited) return limited;
   const { searchParams } = new URL(req.url);
   const year  = searchParams.get('year')  ?? '';
   const make  = searchParams.get('make')  ?? '';

@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateRepairStepImage } from '@/services/geminiService';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
+  const limited = checkRateLimit(req, 5, 60_000); // 5 images/min per IP
+  if (limited) return limited;
+
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json({ error: 'Missing API Key' }, { status: 500 });
   }

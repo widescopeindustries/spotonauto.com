@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
@@ -32,6 +33,9 @@ When someone expresses clear upgrade intent, include at end of your message (NOT
 [UPGRADE_INTENT: reason="pdf|unlimited-diagnostics|garage"]`;
 
 export async function POST(req: NextRequest) {
+  const limited = checkRateLimit(req, 20, 60_000); // 20 chat msgs/min per IP
+  if (limited) return limited;
+
   try {
     const { messages, sessionId, sourcePage } = await req.json();
 

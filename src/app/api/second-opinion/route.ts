@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI, Type } from '@google/genai';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
@@ -76,6 +77,9 @@ const secondOpinionSchema = {
 };
 
 export async function POST(req: NextRequest) {
+  const limited = checkRateLimit(req, 5, 60_000); // 5 quotes/min per IP
+  if (limited) return limited;
+
   if (!apiKey) {
     return NextResponse.json(
       { error: 'Server configuration error: Missing API Key' },
