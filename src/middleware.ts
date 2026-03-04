@@ -9,10 +9,23 @@ const ALLOWED_ORIGINS = [
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Sitemap routes — override Vary header to prevent RSC cache poisoning
-    if (pathname.includes('/sitemap/') && pathname.endsWith('.xml')) {
+    // Crawler endpoints — force plain cache/Vary semantics (no RSC vary headers)
+    // so search engines consistently parse robots + sitemap responses.
+    const isRootOrNestedSitemap =
+        pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
+    const isRepairSitemapChunk =
+        pathname.startsWith('/repair/sitemap/') && pathname.endsWith('.xml');
+    const isRobots = pathname === '/robots.txt';
+
+    if (isRootOrNestedSitemap || isRepairSitemapChunk || isRobots) {
         const response = NextResponse.next();
         response.headers.set('Vary', 'Accept-Encoding');
+        response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');
+        if (isRobots) {
+            response.headers.set('Content-Type', 'text/plain; charset=utf-8');
+        } else {
+            response.headers.set('Content-Type', 'application/xml; charset=utf-8');
+        }
         return response;
     }
 
@@ -37,5 +50,11 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/api/:path*', '/repair/sitemap/:path*', '/:path*/sitemap/:file*'],
+    matcher: [
+        '/api/:path*',
+        '/robots.txt',
+        '/sitemap.xml',
+        '/:path*/sitemap.xml',
+        '/repair/sitemap/:path*',
+    ],
 };
