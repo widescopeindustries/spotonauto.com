@@ -86,6 +86,7 @@ export async function GET(
         headers: {
             'Content-Type': 'application/xml',
             'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+            'Vary': 'Accept-Encoding',
         },
     });
 }

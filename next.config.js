@@ -44,6 +44,15 @@ const nextConfig = {
         ],
       },
       {
+        // Strip RSC Vary headers from sitemaps — prevents Vercel CDN cache variants
+        // that intermittently serve CSS/JS instead of XML to Googlebot
+        source: '/:path*/sitemap/:file*.xml',
+        headers: [
+          { key: 'Vary', value: 'Accept-Encoding' },
+          { key: 'Cache-Control', value: 'public, max-age=86400, s-maxage=86400' },
+        ],
+      },
+      {
         source: '/_next/static/:path*',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
