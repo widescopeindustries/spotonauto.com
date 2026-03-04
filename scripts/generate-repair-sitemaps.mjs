@@ -10,14 +10,25 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const OUT_DIR = join(ROOT, 'public', 'repair', 'sitemap');
+const INDEX_PATH = join(ROOT, 'public', 'repair', 'sitemap.xml');
 
 const LAST_MOD = '2026-03-01';
 const YEAR_STEP = 5;
-const URLS_PER_SITEMAP = 45000;
+// Keep chunks small and stable for crawler fetch reliability.
+const URLS_PER_SITEMAP = 10000;
 const BASE_URL = 'https://spotonauto.com';
 
 function slugify(s) {
     return s.toLowerCase().replace(/\s+/g, '-');
+}
+
+function escapeXml(s) {
+    return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
 }
 
 // Inline the vehicle data and tasks to avoid TS import issues
@@ -77,7 +88,7 @@ for (let i = 0; i < chunkCount; i++) {
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
         ...chunk.map(
             (e) =>
-                `<url><loc>${e.url}</loc><lastmod>${e.lastmod}</lastmod><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`
+                `<url><loc>${escapeXml(e.url)}</loc><lastmod>${e.lastmod}</lastmod><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`
         ),
         '</urlset>',
     ].join('\n');
@@ -87,4 +98,20 @@ for (let i = 0; i < chunkCount; i++) {
     console.log(`✓ ${outPath} — ${chunk.length} URLs`);
 }
 
-console.log(`\nGenerated ${chunkCount} sitemap(s) with ${all.length} total URLs`);
+// Generate repair sitemap index so robots only needs one stable entry point.
+const indexXml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...Array.from({ length: chunkCount }, (_, i) => [
+        '<sitemap>',
+        `<loc>${BASE_URL}/repair/sitemap/${i}.xml</loc>`,
+        `<lastmod>${LAST_MOD}</lastmod>`,
+        '</sitemap>',
+    ].join('')),
+    '</sitemapindex>',
+].join('\n');
+
+writeFileSync(INDEX_PATH, indexXml, 'utf-8');
+console.log(`✓ ${INDEX_PATH} — ${chunkCount} child sitemaps`);
+
+console.log(`\nGenerated ${chunkCount} repair sitemap chunks with ${all.length} total URLs`);

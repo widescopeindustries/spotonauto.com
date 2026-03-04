@@ -15,8 +15,7 @@ const LAST_MOD = '2026-03-01';
  * Sub-sitemaps (served separately, discovered via robots.txt):
  *   /codes/sitemap.xml         — ~300 DTC code pages
  *   /community/sitemap.xml     — community category + thread pages
- *   /repair/sitemap/0.xml      — repair guides chunk 0  (~45k URLs)
- *   /repair/sitemap/1.xml      — repair guides chunk 1  (~remaining URLs)
+ *   /repair/sitemap.xml        — repair sitemap index -> chunked child files
  *
  * NOTE: /diagnose intentionally omitted — it sets canonical to /
  * and including it in the sitemap confuses crawlers.
