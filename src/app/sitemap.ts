@@ -1,7 +1,6 @@
 import { MetadataRoute } from 'next'
 import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
 import { TOOL_PAGES } from '@/data/tools-pages';
-import { FORUM_CATEGORIES } from '@/data/forumCategories';
 
 function slugify(s: string) {
     return s.toLowerCase().replace(/\s+/g, '-');
@@ -11,10 +10,16 @@ function slugify(s: string) {
 const LAST_MOD = '2026-03-01';
 
 /**
- * Main sitemap — static pages, tool pages, guide pages, community.
- * Repair pages are in their own sub-sitemap at /repair/sitemap.xml.
- * DTC code pages are in /codes/sitemap.xml.
- * Next.js auto-generates a sitemap index at /sitemap.xml.
+ * Main sitemap — static pages, tool pages, guide pages.
+ *
+ * Sub-sitemaps (served separately, discovered via robots.txt):
+ *   /codes/sitemap.xml         — ~300 DTC code pages
+ *   /community/sitemap.xml     — community category + thread pages
+ *   /repair/sitemap/0.xml      — repair guides chunk 0  (~45k URLs)
+ *   /repair/sitemap/1.xml      — repair guides chunk 1  (~remaining URLs)
+ *
+ * NOTE: /diagnose intentionally omitted — it sets canonical to /
+ * and including it in the sitemap confuses crawlers.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://spotonauto.com';
@@ -23,33 +28,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ── Static pages ──────────────────────────────────────────────────
     entries.push(
         { url: baseUrl, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 1 },
-        { url: `${baseUrl}/diagnose`, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 0.9 },
         { url: `${baseUrl}/tools`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.85 },
         { url: `${baseUrl}/guides`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.8 },
         { url: `${baseUrl}/cel`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
         { url: `${baseUrl}/second-opinion`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
         { url: `${baseUrl}/parts`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.65 },
+        { url: `${baseUrl}/community`, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 0.7 },
         { url: `${baseUrl}/about`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
         { url: `${baseUrl}/contact`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.4 },
         { url: `${baseUrl}/privacy`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
         { url: `${baseUrl}/terms`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
     );
-
-    // ── Community forum ────────────────────────────────────────────────
-    entries.push({
-        url: `${baseUrl}/community`,
-        lastModified: LAST_MOD,
-        changeFrequency: 'daily',
-        priority: 0.7,
-    });
-    for (const cat of FORUM_CATEGORIES) {
-        entries.push({
-            url: `${baseUrl}/community/${cat.slug}`,
-            lastModified: LAST_MOD,
-            changeFrequency: 'daily',
-            priority: 0.6,
-        });
-    }
 
     // ── Tool pages (~1,850) ───────────────────────────────────────────
     for (const tp of TOOL_PAGES) {
