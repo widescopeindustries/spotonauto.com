@@ -9,7 +9,7 @@
  * (they have richer, manually researched specs).
  */
 
-import { VEHICLE_PRODUCTION_YEARS } from './vehicles';
+import { NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from './vehicles';
 import type { ToolPage, ToolGeneration, ToolFAQ } from './tools-pages';
 
 // ── Helpers ───────────────────────────────────────────────────────────
@@ -531,6 +531,9 @@ export function generateAllToolPages(): ToolPage[] {
     const toolTypes = Object.keys(TEMPLATES);
 
     for (const [make, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
+        // Skip low-volume brands that are intentionally noindex in US SEO strategy.
+        if (NOINDEX_MAKES.has(make.toLowerCase())) continue;
+
         for (const model of Object.keys(models)) {
             for (const typeKey of toolTypes) {
                 const page = generateToolPage(make, model, typeKey);

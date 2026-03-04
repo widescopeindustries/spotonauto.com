@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
-import { TOOL_PAGES } from '@/data/tools-pages';
+import { TOOL_PAGES, TOOL_TYPE_META } from '@/data/tools-pages';
 
 function slugify(s: string) {
     return s.toLowerCase().replace(/\s+/g, '-');
@@ -38,6 +38,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/privacy`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
         { url: `${baseUrl}/terms`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
     );
+
+    // ── Tool pages (~1,850) ───────────────────────────────────────────
+    for (const toolType of Object.keys(TOOL_TYPE_META)) {
+        entries.push({
+            url: `${baseUrl}/tools/type/${toolType}`,
+            lastModified: LAST_MOD,
+            changeFrequency: 'weekly',
+            priority: 0.7,
+        });
+    }
 
     // ── Tool pages (~1,850) ───────────────────────────────────────────
     for (const tp of TOOL_PAGES) {

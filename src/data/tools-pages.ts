@@ -531,19 +531,397 @@ const tirePages: ToolPage[] = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════
+//  HIGH-INTENT PAGES FROM LIVE GSC QUERY GAPS
+// ═══════════════════════════════════════════════════════════════════
+
+const highIntentPages: ToolPage[] = [
+    {
+        slug: 'bmw-x3-oil-type',
+        make: 'BMW',
+        model: 'X3',
+        toolType: 'oil-type',
+        title: 'BMW X3 Oil Type, Capacity & Filter | All Years',
+        description: 'BMW X3 oil type and oil capacity by generation. Includes 20i/30i and xDrive models, filter guidance, and service interval notes.',
+        keywords: [
+            'bmw x3 oil type',
+            'bmw x3 oil capacity',
+            'bmw x3 oil change',
+            'bmw x3 oil filter',
+            'what oil does bmw x3 use',
+        ],
+        quickAnswer: 'Most modern BMW X3 models use full synthetic oil that meets BMW Longlife specs. Oil capacity is typically around 5 to 7 quarts depending on engine.',
+        generations: [
+            {
+                name: 'G01 (2018-2024)',
+                years: '2018-2024',
+                specs: {
+                    'Recommended Oil': '0W-20 or 0W-30 Full Synthetic (BMW LL spec)',
+                    'Oil Capacity (with filter)': '~5.3 - 6.9 quarts (engine-dependent)',
+                    'Filter Type': 'Cartridge filter element',
+                    'Service Interval': 'Approx. 7,500 - 10,000 miles (or CBS monitor)',
+                },
+                notes: ['Use oil that explicitly meets BMW Longlife spec for your engine', 'Turbo engines benefit from shorter intervals under heavy city driving'],
+            },
+            {
+                name: 'F25 (2011-2017)',
+                years: '2011-2017',
+                specs: {
+                    'Recommended Oil': '5W-30 or 0W-30 Full Synthetic (BMW LL-01/LL-04)',
+                    'Oil Capacity (with filter)': '~5.0 - 6.9 quarts',
+                    'Filter Type': 'Cartridge filter element',
+                    'Service Interval': 'Approx. 7,500 miles for best long-term reliability',
+                },
+            },
+            {
+                name: 'E83 (2004-2010)',
+                years: '2004-2010',
+                specs: {
+                    'Recommended Oil': '5W-30 Full Synthetic (BMW-approved)',
+                    'Oil Capacity (with filter)': '~6.5 - 7.0 quarts',
+                    'Filter Type': 'Cartridge filter element',
+                    'Service Interval': '5,000 - 7,500 miles (age and mileage dependent)',
+                },
+            },
+        ],
+        faq: [
+            { q: 'What oil does a BMW X3 use?', a: 'Most BMW X3 engines use full synthetic oil meeting BMW Longlife specs. Viscosity is commonly 0W-20, 0W-30, or 5W-30 depending on year and engine.' },
+            { q: 'How much oil does a BMW X3 take?', a: 'BMW X3 oil capacity usually lands in the 5 to 7 quart range with filter, depending on displacement and generation.' },
+            { q: 'Can I run 5W-30 in my BMW X3?', a: 'Many X3 engines allow 5W-30 if it meets BMW spec, but newer models may call for 0W-20 or 0W-30. Always follow the oil cap and owner manual.' },
+        ],
+    },
+    {
+        slug: 'bmw-x3-battery-location',
+        make: 'BMW',
+        model: 'X3',
+        toolType: 'battery-location',
+        title: 'BMW X3 Battery Location, Size & Registration | Guide',
+        description: 'BMW X3 battery location by generation, common AGM battery sizes, and battery registration steps after replacement.',
+        keywords: [
+            'bmw x3 battery location',
+            'battery location bmw x3',
+            'bmw x3 battery size',
+            'bmw x3 battery registration',
+            'bmw x3 battery replacement',
+        ],
+        quickAnswer: 'Most BMW X3 models place the 12V battery in the rear cargo area under the floor panel. AGM replacement and battery registration are usually required.',
+        generations: [
+            {
+                name: 'G01 (2018-2024)',
+                years: '2018-2024',
+                specs: {
+                    'Battery Location': 'Rear cargo compartment under floor panel',
+                    'Battery Type': 'AGM',
+                    'Common Size': 'H7/H8 class (varies by options)',
+                    'Registration Required': 'Yes, recommended after replacement',
+                },
+                notes: ['Register the new battery with a BMW-capable scan tool', 'Incorrect battery coding can reduce battery life and charging performance'],
+            },
+            {
+                name: 'F25 (2011-2017)',
+                years: '2011-2017',
+                specs: {
+                    'Battery Location': 'Rear cargo compartment (right side/under panel)',
+                    'Battery Type': 'AGM (most trims)',
+                    'Common Size': 'H7/H8 class',
+                    'Registration Required': 'Yes',
+                },
+            },
+            {
+                name: 'E83 (2004-2010)',
+                years: '2004-2010',
+                specs: {
+                    'Battery Location': 'Rear cargo area under trim panel',
+                    'Battery Type': 'Standard lead-acid or AGM (trim dependent)',
+                    'Common Size': 'Group 49 / H8 class',
+                    'Registration Required': 'Recommended on later models',
+                },
+            },
+        ],
+        faq: [
+            { q: 'Where is the battery in a BMW X3?', a: 'On most BMW X3 generations, the main 12V battery sits in the rear cargo compartment beneath a trim or floor cover.' },
+            { q: 'Does BMW X3 battery replacement need coding?', a: 'Yes. BMW X3 battery registration/coding is strongly recommended after replacement so the charging system adapts correctly.' },
+            { q: 'What battery type should I use in a BMW X3?', a: 'Use the same chemistry as factory fitment, typically AGM, with matching capacity and CCA rating.' },
+        ],
+    },
+    {
+        slug: 'bmw-x3-serpentine-belt',
+        make: 'BMW',
+        model: 'X3',
+        toolType: 'serpentine-belt',
+        title: 'BMW X3 Serpentine Belt Diagram & Replacement | Guide',
+        description: 'BMW X3 serpentine belt routing guidance, replacement intervals, and tensioner checks for common generations.',
+        keywords: [
+            'bmw x3 serpentine belt diagram',
+            'bmw x3 belt routing',
+            'bmw x3 serpentine belt replacement',
+            'bmw x3 drive belt',
+            'bmw x3 belt size',
+        ],
+        quickAnswer: 'BMW X3 belt routing varies by engine, but most models use one main serpentine belt for alternator and A/C accessories. Inspect tensioner and idler pulleys during replacement.',
+        generations: [
+            {
+                name: 'G01 (2018-2024)',
+                years: '2018-2024',
+                specs: {
+                    'Belt Type': 'Multi-rib serpentine belt',
+                    'Routing': 'Crank pulley → alternator → A/C compressor → tensioner/idlers',
+                    'Typical Interval': '60,000 - 90,000 miles',
+                    'Tensioner': 'Automatic spring-loaded',
+                },
+                notes: ['Confirm under-hood routing diagram before belt removal', 'Inspect tensioner wobble and pulley bearing noise while belt is off'],
+            },
+            {
+                name: 'F25 (2011-2017)',
+                years: '2011-2017',
+                specs: {
+                    'Belt Type': 'Multi-rib serpentine belt',
+                    'Routing': 'Engine-dependent; verify by VIN/engine code',
+                    'Typical Interval': '60,000 - 100,000 miles',
+                    'Tensioner': 'Automatic',
+                },
+            },
+        ],
+        faq: [
+            { q: 'Is there a serpentine belt diagram for BMW X3?', a: 'Yes. BMW provides routing stickers on many models, and routing can also be confirmed in a service manual for your exact engine code.' },
+            { q: 'When should I replace a BMW X3 serpentine belt?', a: 'A practical interval is 60,000 to 90,000 miles, or sooner if cracks, glazing, squeal, or fraying appear.' },
+            { q: 'Should I replace the tensioner with the belt?', a: 'If the tensioner or idler pulley shows noise, wobble, or weak tension, replacing it with the belt is recommended.' },
+        ],
+    },
+    {
+        slug: 'nissan-pathfinder-serpentine-belt',
+        make: 'Nissan',
+        model: 'Pathfinder',
+        toolType: 'serpentine-belt',
+        title: 'Nissan Pathfinder Serpentine Belt Diagram & Routing',
+        description: 'Nissan Pathfinder serpentine belt diagram guidance for 2005+ generations, with routing, interval, and tensioner checks.',
+        keywords: [
+            'nissan pathfinder serpentine belt diagram',
+            '2007 nissan pathfinder serpentine belt diagram',
+            '2006 nissan pathfinder belt diagram',
+            'nissan pathfinder belt routing',
+            'pathfinder serpentine belt replacement',
+        ],
+        quickAnswer: 'Most Nissan Pathfinder models use a single serpentine belt with an automatic tensioner. Confirm routing before removal and inspect the tensioner pulley while replacing the belt.',
+        generations: [
+            {
+                name: 'R53 (2022-2024)',
+                years: '2022-2024',
+                specs: {
+                    'Belt Type': 'Single serpentine drive belt',
+                    'Routing': 'Crank → alternator → A/C → idlers/tensioner',
+                    'Interval': 'Inspect at every major service, replace when worn',
+                    'Tensioner': 'Automatic spring-loaded',
+                },
+            },
+            {
+                name: 'R52 (2013-2020)',
+                years: '2013-2020',
+                specs: {
+                    'Belt Type': 'Single serpentine drive belt',
+                    'Routing': 'Engine-specific routing; verify under-hood diagram',
+                    'Interval': '60,000 - 90,000 miles typical',
+                    'Tensioner': 'Automatic',
+                },
+            },
+            {
+                name: 'R51 (2005-2012)',
+                years: '2005-2012',
+                specs: {
+                    'Belt Type': 'Single serpentine drive belt',
+                    'Routing': 'Uses factory routing path per engine option',
+                    'Interval': '60,000 - 90,000 miles',
+                    'Tensioner': 'Automatic',
+                },
+            },
+        ],
+        faq: [
+            { q: 'Where can I find the Pathfinder belt diagram?', a: 'Most Pathfinder models include the routing diagram on an under-hood sticker. If missing, use a service manual for your engine layout.' },
+            { q: 'How long does a Pathfinder serpentine belt last?', a: 'Many belts last about 60,000 to 90,000 miles, but heat and contamination can shorten life.' },
+            { q: 'Can a bad tensioner mimic belt noise?', a: 'Yes. A noisy or weak tensioner can cause chirping or squeal even with a new belt.' },
+        ],
+    },
+    {
+        slug: 'honda-fit-serpentine-belt',
+        make: 'Honda',
+        model: 'Fit',
+        toolType: 'serpentine-belt',
+        title: 'Honda Fit Serpentine Belt Diagram & Replacement',
+        description: 'Honda Fit serpentine belt routing guidance by generation, with tensioner access tips and replacement intervals.',
+        keywords: [
+            '2007 honda fit serpentine belt diagram',
+            'honda fit serpentine belt diagram',
+            'honda fit belt routing',
+            'honda fit serpentine belt replacement',
+            'honda fit drive belt',
+        ],
+        quickAnswer: 'Honda Fit belt routing is compact and engine-bay access can be tight. Use the routing diagram before removal and verify rib alignment on every pulley during install.',
+        generations: [
+            {
+                name: 'GK (2015-2020)',
+                years: '2015-2020',
+                specs: {
+                    'Belt Type': 'Single serpentine/drive belt',
+                    'Routing': 'Crank → alternator → A/C → tensioner',
+                    'Interval': 'Inspect at service; replace if cracked/noisy',
+                    'Access Notes': 'Tight packaging near passenger side',
+                },
+            },
+            {
+                name: 'GE (2009-2014)',
+                years: '2009-2014',
+                specs: {
+                    'Belt Type': 'Single drive belt',
+                    'Routing': 'Factory routing by accessory package',
+                    'Interval': '60,000 - 90,000 miles typical',
+                    'Access Notes': 'Often easier with wheel-well access',
+                },
+            },
+            {
+                name: 'GD (2007-2008)',
+                years: '2007-2008',
+                specs: {
+                    'Belt Type': 'Single drive belt',
+                    'Routing': 'Verify routing sticker/manual before removal',
+                    'Interval': '60,000 miles inspection benchmark',
+                    'Access Notes': 'Confirm tensioner travel before installation',
+                },
+            },
+        ],
+        faq: [
+            { q: 'Is there a belt diagram for the Honda Fit?', a: 'Yes. Check the under-hood label first, then confirm with a service manual if the sticker is missing or unreadable.' },
+            { q: 'How do I know the Honda Fit belt is worn?', a: 'Look for cracks, glazing, fraying, or chirping noises at startup and under load.' },
+            { q: 'Should I replace the tensioner too?', a: 'If the tensioner bearing is noisy or spring tension is weak, replace it with the belt for longer service life.' },
+        ],
+    },
+];
+
+// ═══════════════════════════════════════════════════════════════════
 //  THE MACHINE — merge hand-crafted (rich) + auto-generated (scale)
 // ═══════════════════════════════════════════════════════════════════
 
 import { generateAllToolPages } from './tool-machine';
+import { VALID_TASKS, VEHICLE_PRODUCTION_YEARS } from './vehicles';
+
+export type ToolType = ToolPage['toolType'];
+
+export interface ToolRepairLink {
+    task: string;
+    label: string;
+    href: string;
+}
+
+export interface RelatedToolLink {
+    slug: string;
+    href: string;
+    toolType: ToolType;
+    label: string;
+}
+
+const TOOL_TO_REPAIR_TASKS: Record<ToolType, string[]> = {
+    'oil-type': ['oil-change', 'engine-air-filter-replacement', 'transmission-fluid-change'],
+    'battery-location': ['battery-replacement', 'alternator-replacement', 'starter-replacement'],
+    'tire-size': ['wheel-bearing-replacement', 'tie-rod-replacement', 'ball-joint-replacement'],
+    'serpentine-belt': ['serpentine-belt-replacement', 'water-pump-replacement', 'alternator-replacement'],
+    'headlight-bulb': ['headlight-bulb-replacement', 'tail-light-replacement', 'battery-replacement'],
+    'fluid-capacity': ['coolant-flush', 'transmission-fluid-change', 'brake-fluid-flush'],
+    'spark-plug-type': ['spark-plug-replacement', 'ignition-coil-replacement', 'oxygen-sensor-replacement'],
+    'wiper-blade-size': ['windshield-wiper-replacement', 'headlight-bulb-replacement', 'battery-replacement'],
+    'coolant-type': ['coolant-flush', 'thermostat-replacement', 'radiator-replacement'],
+    'transmission-fluid-type': ['transmission-fluid-change', 'differential-fluid-change', 'clutch-replacement'],
+};
+
+const TASK_TO_TOOL_TYPES: Partial<Record<string, ToolType[]>> = {
+    'oil-change': ['oil-type'],
+    'battery-replacement': ['battery-location'],
+    'serpentine-belt-replacement': ['serpentine-belt'],
+    'headlight-bulb-replacement': ['headlight-bulb'],
+    'spark-plug-replacement': ['spark-plug-type'],
+    'radiator-replacement': ['coolant-type', 'fluid-capacity'],
+    'thermostat-replacement': ['coolant-type', 'fluid-capacity'],
+    'water-pump-replacement': ['coolant-type', 'fluid-capacity'],
+    'transmission-fluid-change': ['transmission-fluid-type', 'fluid-capacity'],
+    'coolant-flush': ['coolant-type', 'fluid-capacity'],
+    'engine-air-filter-replacement': ['oil-type'],
+    'windshield-wiper-replacement': ['wiper-blade-size'],
+    'brake-fluid-flush': ['fluid-capacity'],
+};
+
+const UNIVERSAL_TOOL_TYPES: ToolType[] = ['oil-type', 'battery-location', 'tire-size'];
+
+const PRIORITY_MAKES = [
+    'Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'Hyundai',
+    'Kia', 'Jeep', 'Subaru', 'BMW', 'Dodge', 'GMC', 'Mazda',
+    'Volkswagen', 'Lexus', 'Mercedes',
+];
+const HIGH_DEMAND_MODELS = new Set([
+    'Camry', 'Corolla', 'RAV4', 'Tacoma', 'F-150', 'Escape', 'Focus', 'Fusion',
+    'Civic', 'Accord', 'CR-V', 'Odyssey', 'Pathfinder', 'Rogue', 'Altima', 'Sentra',
+    'X3', 'X5', 'Grand Cherokee', 'Wrangler', 'Elantra', 'Sonata', 'Tucson',
+    'Santa Fe', 'Soul', 'Sportage', 'Malibu', 'Silverado', 'Explorer', 'Pilot',
+]);
+const TOOL_TYPE_PRIORITY_SCORES: Record<ToolType, number> = {
+    'serpentine-belt': 44,
+    'battery-location': 38,
+    'oil-type': 36,
+    'headlight-bulb': 32,
+    'spark-plug-type': 30,
+    'coolant-type': 24,
+    'transmission-fluid-type': 22,
+    'fluid-capacity': 20,
+    'tire-size': 18,
+    'wiper-blade-size': 14,
+};
+const PRIORITY_MAKE_RANK = new Map(PRIORITY_MAKES.map((m, i) => [m, i]));
+const VALID_TASK_SET = new Set(VALID_TASKS);
+
+function slugVehiclePart(s: string): string {
+    return s.toLowerCase().replace(/\s+/g, '-');
+}
+
+function normalizeVehicleToken(s: string): string {
+    return s.toLowerCase().trim().replace(/[-_\s]+/g, ' ');
+}
+
+function vehicleKey(make: string, model: string): string {
+    return `${normalizeVehicleToken(make)}::${normalizeVehicleToken(model)}`;
+}
+
+function makeRank(make: string): number {
+    return PRIORITY_MAKE_RANK.get(make) ?? 999;
+}
+
+function toTaskLabel(task: string): string {
+    return task.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function toToolLabel(toolType: ToolType): string {
+    return TOOL_TYPE_META[toolType]?.label
+        ?? toolType.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function getPrimaryRepairYear(make: string, model: string): string {
+    const prod = VEHICLE_PRODUCTION_YEARS[make]?.[model];
+    if (!prod) return '2013';
+    return String(Math.min(2013, prod.end));
+}
 
 /** Hand-crafted pages with real researched specs — these always win */
 const HAND_CRAFTED: ToolPage[] = [
     ...oilPages,
     ...batteryPages,
     ...tirePages,
+    ...highIntentPages,
 ];
 
 const handCraftedSlugs = new Set(HAND_CRAFTED.map(p => p.slug));
+
+function getToolPriorityScore(page: ToolPage): number {
+    const makeScore = Math.max(0, 55 - (makeRank(page.make) * 3));
+    const toolTypeScore = TOOL_TYPE_PRIORITY_SCORES[page.toolType] ?? 0;
+    const modelScore = HIGH_DEMAND_MODELS.has(page.model) ? 16 : 0;
+    const handCraftedScore = handCraftedSlugs.has(page.slug) ? 1000 : 0;
+    return handCraftedScore + makeScore + toolTypeScore + modelScore;
+}
 
 /** All pages: hand-crafted first, then machine-generated for everything else */
 export const TOOL_PAGES: ToolPage[] = [
@@ -551,7 +929,119 @@ export const TOOL_PAGES: ToolPage[] = [
     ...generateAllToolPages().filter(p => !handCraftedSlugs.has(p.slug)),
 ];
 
+const TOOL_PAGES_BY_SLUG = new Map(TOOL_PAGES.map((p) => [p.slug, p]));
+
+const TOOL_PAGES_BY_VEHICLE = new Map<string, ToolPage[]>();
+const TOOL_PAGES_BY_TYPE = new Map<ToolType, ToolPage[]>();
+for (const page of TOOL_PAGES) {
+    const key = vehicleKey(page.make, page.model);
+    if (!TOOL_PAGES_BY_VEHICLE.has(key)) TOOL_PAGES_BY_VEHICLE.set(key, []);
+    TOOL_PAGES_BY_VEHICLE.get(key)!.push(page);
+
+    if (!TOOL_PAGES_BY_TYPE.has(page.toolType)) TOOL_PAGES_BY_TYPE.set(page.toolType, []);
+    TOOL_PAGES_BY_TYPE.get(page.toolType)!.push(page);
+}
+
+for (const pages of TOOL_PAGES_BY_VEHICLE.values()) {
+    pages.sort((a, b) => a.title.localeCompare(b.title));
+}
+for (const pages of TOOL_PAGES_BY_TYPE.values()) {
+    pages.sort((a, b) => {
+        const byMake = makeRank(a.make) - makeRank(b.make);
+        if (byMake !== 0) return byMake;
+        const makeCmp = a.make.localeCompare(b.make);
+        if (makeCmp !== 0) return makeCmp;
+        return a.model.localeCompare(b.model);
+    });
+}
+
 // Quick lookup by slug
 export function getToolPage(slug: string): ToolPage | undefined {
-    return TOOL_PAGES.find(tp => tp.slug === slug);
+    return TOOL_PAGES_BY_SLUG.get(slug);
+}
+
+export function getToolPagesForVehicle(make: string, model: string, excludeSlug?: string): ToolPage[] {
+    const pages = TOOL_PAGES_BY_VEHICLE.get(vehicleKey(make, model)) ?? [];
+    return excludeSlug ? pages.filter((p) => p.slug !== excludeSlug) : pages;
+}
+
+export function getToolPagesForType(toolType: ToolType, excludeSlug?: string): ToolPage[] {
+    const pages = TOOL_PAGES_BY_TYPE.get(toolType) ?? [];
+    return excludeSlug ? pages.filter((p) => p.slug !== excludeSlug) : pages;
+}
+
+export function getHighPriorityToolPages(limit = 320): ToolPage[] {
+    const max = Math.max(1, limit);
+    return [...TOOL_PAGES]
+        .sort((a, b) => {
+            const scoreDiff = getToolPriorityScore(b) - getToolPriorityScore(a);
+            if (scoreDiff !== 0) return scoreDiff;
+            const byMake = makeRank(a.make) - makeRank(b.make);
+            if (byMake !== 0) return byMake;
+            const byModel = a.model.localeCompare(b.model);
+            if (byModel !== 0) return byModel;
+            return a.toolType.localeCompare(b.toolType);
+        })
+        .slice(0, max);
+}
+
+export function getRelatedRepairLinks(page: ToolPage, limit = 3): ToolRepairLink[] {
+    const makeSlug = slugVehiclePart(page.make);
+    const modelSlug = slugVehiclePart(page.model);
+    const year = getPrimaryRepairYear(page.make, page.model);
+    const taskCandidates = TOOL_TO_REPAIR_TASKS[page.toolType] ?? ['oil-change', 'battery-replacement', 'spark-plug-replacement'];
+
+    return taskCandidates
+        .filter((task) => VALID_TASK_SET.has(task))
+        .slice(0, Math.max(1, limit))
+        .map((task) => ({
+            task,
+            label: toTaskLabel(task),
+            href: `/repair/${year}/${makeSlug}/${modelSlug}/${task}`,
+        }));
+}
+
+export function getRelatedToolLinksForRepair(make: string, model: string, task: string, limit = 4): RelatedToolLink[] {
+    const max = Math.max(1, limit);
+    const vehiclePages = getToolPagesForVehicle(make, model);
+    if (vehiclePages.length === 0) return [];
+
+    const links: RelatedToolLink[] = [];
+    const seen = new Set<string>();
+    const pageByType = new Map<ToolType, ToolPage>();
+    for (const page of vehiclePages) {
+        if (!pageByType.has(page.toolType)) pageByType.set(page.toolType, page);
+    }
+
+    const preferredTypes = [
+        ...(TASK_TO_TOOL_TYPES[task] ?? []),
+        ...UNIVERSAL_TOOL_TYPES,
+    ];
+
+    for (const toolType of preferredTypes) {
+        const page = pageByType.get(toolType);
+        if (!page || seen.has(page.slug)) continue;
+        links.push({
+            slug: page.slug,
+            href: `/tools/${page.slug}`,
+            toolType: page.toolType,
+            label: toToolLabel(page.toolType),
+        });
+        seen.add(page.slug);
+        if (links.length >= max) return links;
+    }
+
+    for (const page of vehiclePages) {
+        if (seen.has(page.slug)) continue;
+        links.push({
+            slug: page.slug,
+            href: `/tools/${page.slug}`,
+            toolType: page.toolType,
+            label: toToolLabel(page.toolType),
+        });
+        seen.add(page.slug);
+        if (links.length >= max) break;
+    }
+
+    return links;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
+import { NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
 export const metadata = {
@@ -9,7 +9,9 @@ export const metadata = {
 };
 
 export default function GuidesPage() {
-  const makes = Object.keys(VEHICLE_PRODUCTION_YEARS).sort();
+  const makes = Object.keys(VEHICLE_PRODUCTION_YEARS)
+    .filter((make) => !NOINDEX_MAKES.has(make.toLowerCase()))
+    .sort();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">

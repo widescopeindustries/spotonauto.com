@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES } from '@/data/vehicles';
+import { getToolPagesForVehicle, TOOL_TYPE_META } from '@/data/tools-pages';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Wrench } from 'lucide-react';
 
@@ -41,6 +42,8 @@ export default async function ModelGuidesPage({ params }: PageProps) {
   if (!originalModel) notFound();
 
   const production = VEHICLE_PRODUCTION_YEARS[originalMake][originalModel];
+  const toolPages = getToolPagesForVehicle(originalMake, originalModel);
+  const featuredToolPages = toolPages.slice(0, 8);
   
   // We'll link to 2013 as a representative year or the latest year available in our sitemap range
   const targetYear = Math.min(2013, production.end);
@@ -132,6 +135,37 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             </StaggerItem>
           ))}
         </StaggerContainer>
+
+        {featuredToolPages.length > 0 && (
+          <section className="mt-16">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <h2 className="text-xl font-bold text-white">
+                {originalMake} {originalModel} Specs & Fitment
+              </h2>
+              <Link href="/tools" className="text-sm text-cyan-400 hover:underline">
+                Browse all spec pages →
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {featuredToolPages.map((page) => {
+                const meta = TOOL_TYPE_META[page.toolType] || { label: 'Guide', icon: '🔧' };
+                return (
+                  <Link
+                    key={page.slug}
+                    href={`/tools/${page.slug}`}
+                    className="block p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40 transition group"
+                  >
+                    <p className="text-sm text-cyan-400 mb-1">{meta.icon} {meta.label}</p>
+                    <h3 className="text-sm font-semibold text-gray-200 group-hover:text-white transition">
+                      {originalMake} {originalModel}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">Spec page →</p>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Frequently Asked Questions — GEO optimized for AI search citation */}
         <section className="mt-16">

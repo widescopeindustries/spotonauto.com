@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { TOOL_PAGES, TOOL_TYPE_META } from '@/data/tools-pages';
+import { getToolPagesForType, TOOL_TYPE_META, type ToolType } from '@/data/tools-pages';
 
 export const metadata: Metadata = {
     title: 'Free Auto Repair Tools | SpotOnAuto',
@@ -183,16 +183,24 @@ export default function ToolsPage() {
 
                 {/* Vehicle Spec Guides — programmatic pages */}
                 {Object.entries(TOOL_TYPE_META).map(([type, meta]) => {
-                    const pages = TOOL_PAGES.filter(tp => tp.toolType === type);
+                    const typedToolType = type as ToolType;
+                    const pages = getToolPagesForType(typedToolType);
                     if (pages.length === 0) return null;
+                    const featuredPages = pages.slice(0, 36);
                     return (
                         <div key={type} className="mb-12">
                             <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
                                 <span>{meta.icon}</span>
                                 {meta.label} Guides
+                                <Link
+                                    href={`/tools/type/${type}`}
+                                    className="ml-auto text-sm text-cyan-400 hover:underline font-normal"
+                                >
+                                    View all {pages.length} →
+                                </Link>
                             </h2>
                             <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                {pages.map(tp => (
+                                {featuredPages.map(tp => (
                                     <Link
                                         key={tp.slug}
                                         href={`/tools/${tp.slug}`}
@@ -204,6 +212,17 @@ export default function ToolsPage() {
                                         <p className="text-gray-500 text-xs mt-1">{meta.label}</p>
                                     </Link>
                                 ))}
+                                {pages.length > featuredPages.length && (
+                                    <Link
+                                        href={`/tools/type/${type}`}
+                                        className="block bg-cyan-500/10 rounded-xl p-4 border border-cyan-500/30 hover:bg-cyan-500/20 transition group"
+                                    >
+                                        <h3 className="font-semibold text-sm text-cyan-300 group-hover:text-cyan-200 transition">
+                                            Browse all {meta.label} pages
+                                        </h3>
+                                        <p className="text-cyan-500 text-xs mt-1">{pages.length} total pages →</p>
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     );

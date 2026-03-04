@@ -1,7 +1,14 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { TOOL_PAGES, getToolPage, TOOL_TYPE_META } from '@/data/tools-pages';
+import {
+    getHighPriorityToolPages,
+    getToolPage,
+    TOOL_TYPE_META,
+    getToolPagesForType,
+    getToolPagesForVehicle,
+    getRelatedRepairLinks,
+} from '@/data/tools-pages';
 import AdUnit from '@/components/AdUnit';
 
 interface PageProps {
@@ -9,20 +16,14 @@ interface PageProps {
 }
 
 /**
- * Pre-render the top ~200 pages at build time (highest search volume).
- * The remaining ~1,600 pages are ISR — rendered on first visit, then cached.
- * dynamicParams defaults to true, so non-pre-rendered slugs still work.
+ * Pre-render only the highest-priority pages for faster builds and stronger
+ * crawl freshness on pages with the highest search intent.
+ * Remaining pages are ISR-rendered on first request and then cached.
  */
-const TOP_MAKES = new Set([
-    'Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'Hyundai',
-    'Kia', 'Jeep', 'Subaru', 'BMW', 'Dodge', 'GMC', 'Mazda',
-    'Volkswagen', 'Lexus', 'Mercedes',
-]);
+const TOOL_PREBUILD_LIMIT = 320;
 
 export async function generateStaticParams() {
-    return TOOL_PAGES
-        .filter(tp => TOP_MAKES.has(tp.make))
-        .map(tp => ({ slug: tp.slug }));
+    return getHighPriorityToolPages(TOOL_PREBUILD_LIMIT).map((tp) => ({ slug: tp.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -58,6 +59,16 @@ export default async function ToolPage({ params }: PageProps) {
     const page = getToolPage(slug);
     if (!page) notFound();
 
+    const makeSlug = page.make.toLowerCase().replace(/\s+/g, '-');
+    const modelSlug = page.model.toLowerCase().replace(/\s+/g, '-');
+
+    const sameVehicleTools = getToolPagesForVehicle(page.make, page.model, page.slug).slice(0, 6);
+    const sameTypeTools = getToolPagesForType(page.toolType, page.slug)
+        .filter((tp) => !(tp.make === page.make && tp.model === page.model))
+        .slice(0, 9);
+    const repairLinks = getRelatedRepairLinks(page, 4);
+    const primaryRepairTask = repairLinks[0]?.task ?? 'oil-change';
+
     const meta = TOOL_TYPE_META[page.toolType] || { label: 'Guide', icon: '🔧', color: 'cyan' };
     const colorMap: Record<string, string> = {
         amber: 'text-amber-400 border-amber-500/30 bg-amber-500/5',
@@ -66,6 +77,10 @@ export default async function ToolPage({ params }: PageProps) {
         purple: 'text-purple-400 border-purple-500/30 bg-purple-500/5',
         yellow: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/5',
         cyan: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/5',
+        orange: 'text-orange-400 border-orange-500/30 bg-orange-500/5',
+        sky: 'text-sky-400 border-sky-500/30 bg-sky-500/5',
+        teal: 'text-teal-400 border-teal-500/30 bg-teal-500/5',
+        rose: 'text-rose-400 border-rose-500/30 bg-rose-500/5',
     };
     const colorClasses = colorMap[meta.color] || colorMap.cyan;
 
@@ -106,7 +121,7 @@ export default async function ToolPage({ params }: PageProps) {
             {/* Hero */}
             <section className="py-16 px-4 max-w-6xl mx-auto">
                 <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-6 text-sm font-semibold uppercase tracking-wider ${colorClasses}">
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-6 text-sm font-semibold uppercase tracking-wider ${colorClasses}`}>
                         <span>{meta.icon}</span>
                         <span className={colorClasses.split(' ')[0]}>{meta.label}</span>
                     </div>
@@ -169,7 +184,7 @@ export default async function ToolPage({ params }: PageProps) {
                                         Shop on Amazon →
                                     </a>
                                     <Link
-                                        href={`/repair/${gen.years.split('-')[0]}/${page.make.toLowerCase().replace(/\s+/g, '-')}/${page.model.toLowerCase().replace(/\s+/g, '-')}/${page.toolType === 'oil-type' ? 'oil-change' : page.toolType === 'battery-location' ? 'battery-replacement' : page.toolType === 'tire-size' ? 'wheel-bearing-replacement' : page.toolType === 'serpentine-belt' ? 'serpentine-belt-replacement' : 'brake-pad-replacement'}`}
+                                        href={`/repair/${gen.years.split('-')[0]}/${makeSlug}/${modelSlug}/${primaryRepairTask}`}
                                         className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 text-cyan-400 text-sm font-semibold rounded-lg border border-cyan-500/30 hover:bg-cyan-500/20 transition"
                                     >
                                         Full Repair Guide →
@@ -199,16 +214,47 @@ export default async function ToolPage({ params }: PageProps) {
                 {/* Ad: After FAQ */}
                 <AdUnit slot="tool-after-faq" format="horizontal" />
 
-                {/* Related Tools */}
+                {/* Repair Task Cluster — strengthens internal links to high-intent repair pages */}
                 <section className="mb-12">
                     <h2 className="text-xl font-bold text-white mb-6">
-                        More {page.make} {page.model} Guides
+                        {page.make} {page.model} Repair Guides
                     </h2>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        {repairLinks.map((link) => (
+                            <Link
+                                key={link.task}
+                                href={link.href}
+                                className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 transition group"
+                            >
+                                <span className="text-cyan-400">→</span>
+                                <span className="text-gray-300 text-sm group-hover:text-white transition">
+                                    {page.make} {page.model} {link.label}
+                                </span>
+                            </Link>
+                        ))}
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-4 text-sm">
+                        <Link href={`/guides/${makeSlug}`} className="text-cyan-400 hover:underline">
+                            Browse all {page.make} guides →
+                        </Link>
+                        <Link href={`/guides/${makeSlug}/${modelSlug}`} className="text-cyan-400 hover:underline">
+                            Browse all {page.make} {page.model} guides →
+                        </Link>
+                    </div>
+                </section>
+
+                {/* Related Tools */}
+                <section className="mb-12">
+                    <div className="flex items-center justify-between gap-4 mb-6">
+                        <h2 className="text-xl font-bold text-white">
+                            More {page.make} {page.model} Guides
+                        </h2>
+                        <Link href={`/tools/type/${page.toolType}`} className="text-sm text-cyan-400 hover:underline">
+                            Browse all {meta.label} pages →
+                        </Link>
+                    </div>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {TOOL_PAGES
-                            .filter(tp => tp.slug !== page.slug && (tp.make === page.make && tp.model === page.model))
-                            .slice(0, 3)
-                            .map(tp => (
+                        {sameVehicleTools.map(tp => (
                                 <Link
                                     key={tp.slug}
                                     href={`/tools/${tp.slug}`}
@@ -219,10 +265,7 @@ export default async function ToolPage({ params }: PageProps) {
                                 </Link>
                             ))
                         }
-                        {TOOL_PAGES
-                            .filter(tp => tp.slug !== page.slug && tp.toolType === page.toolType && tp.make !== page.make)
-                            .slice(0, 6)
-                            .map(tp => (
+                        {sameTypeTools.map(tp => (
                                 <Link
                                     key={tp.slug}
                                     href={`/tools/${tp.slug}`}
