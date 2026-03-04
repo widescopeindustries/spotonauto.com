@@ -38,6 +38,9 @@ src/apikeys.txt
 /credentials/
 service-account.json
 
+# generated repair sitemaps (built during CI, not committed)
+public/repair/sitemap/
+
 # indexing script progress
 scripts/indexing-progress.json
 
