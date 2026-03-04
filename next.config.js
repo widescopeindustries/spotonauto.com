@@ -44,11 +44,17 @@ const nextConfig = {
         ],
       },
       {
-        // Strip RSC Vary headers from all sitemaps — prevents Vercel CDN cache variants
-        // that intermittently serve CSS/JS instead of XML to Googlebot.
-        // Matches: /sitemap.xml, /codes/sitemap.xml, /community/sitemap.xml,
-        //          /repair/sitemap/0.xml, /repair/sitemap/1.xml
-        source: '/:path*sitemap:suffix*.xml',
+        // Matches: /sitemap.xml, /codes/sitemap.xml, /community/sitemap.xml
+        source: '/:path*/sitemap.xml',
+        headers: [
+          { key: 'Content-Type', value: 'application/xml; charset=utf-8' },
+          { key: 'Vary', value: 'Accept-Encoding' },
+          { key: 'Cache-Control', value: 'public, max-age=86400, s-maxage=86400' },
+        ],
+      },
+      {
+        // Matches: /repair/sitemap/0.xml, /repair/sitemap/1.xml (static public files)
+        source: '/:path*/sitemap/:file.xml',
         headers: [
           { key: 'Content-Type', value: 'application/xml; charset=utf-8' },
           { key: 'Vary', value: 'Accept-Encoding' },
