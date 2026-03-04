@@ -6,30 +6,30 @@ const ALLOWED_ORIGINS = [
     'https://www.spotonauto.com',
 ];
 
-/**
- * Block external origins from hitting /api/* routes.
- * Browser requests from the site include Origin or Referer headers
- * that match our domain. External scripts/curl won't match.
- */
 export function middleware(request: NextRequest) {
-    // Only guard API routes
-    if (!request.nextUrl.pathname.startsWith('/api/')) {
-        return NextResponse.next();
+    const { pathname } = request.nextUrl;
+
+    // Sitemap routes — override Vary header to prevent RSC cache poisoning
+    if (pathname.includes('/sitemap/') && pathname.endsWith('.xml')) {
+        const response = NextResponse.next();
+        response.headers.set('Vary', 'Accept-Encoding');
+        return response;
     }
 
-    const origin = request.headers.get('origin');
-    const referer = request.headers.get('referer');
+    // API routes — block external origins
+    if (pathname.startsWith('/api/')) {
+        const origin = request.headers.get('origin');
+        const referer = request.headers.get('referer');
 
-    // Allow requests with no origin/referer (server-side calls, same-origin fetch in some browsers)
-    // but block if they come from a foreign origin
-    if (origin && !ALLOWED_ORIGINS.includes(origin)) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
-    if (!origin && referer) {
-        const refererOrigin = new URL(referer).origin;
-        if (!ALLOWED_ORIGINS.includes(refererOrigin)) {
+        if (origin && !ALLOWED_ORIGINS.includes(origin)) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        if (!origin && referer) {
+            const refererOrigin = new URL(referer).origin;
+            if (!ALLOWED_ORIGINS.includes(refererOrigin)) {
+                return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+            }
         }
     }
 
@@ -37,5 +37,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: '/api/:path*',
+    matcher: ['/api/:path*', '/repair/sitemap/:path*', '/:path*/sitemap/:file*'],
 };
