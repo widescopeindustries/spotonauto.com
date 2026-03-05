@@ -11,14 +11,14 @@ import Providers from "@/components/Providers";
 const orbitron = Orbitron({
   subsets: ["latin"],
   variable: "--font-display",
-  display: "swap",
+  display: "optional",
   adjustFontFallback: true, // Auto-generates size-adjust/ascent-override to prevent font-swap LCP re-evaluation
 });
 const rajdhani = Rajdhani({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-body",
-  display: "swap",
+  display: "optional",
   adjustFontFallback: true,
 });
 const inter = Inter({

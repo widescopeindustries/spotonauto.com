@@ -402,6 +402,11 @@ input::placeholder, textarea::placeholder {
   .font-display {
     letter-spacing: -0.02em;
   }
+
+  /* Reduce expensive text painting on mobile LCP candidates */
+  .glow-text {
+    text-shadow: none;
+  }
 }
 
 /* Hero CSS animations — replace Framer Motion on critical path (LCP fix) */

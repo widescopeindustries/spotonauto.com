@@ -9,7 +9,17 @@ import { useT } from '@/lib/translations';
 
 // No Framer Motion in hero — CSS animations only (LCP fix)
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
-const HolographicDashboard = dynamic(() => import('@/components/HolographicDashboard'));
+const HolographicDashboard = dynamic(() => import('@/components/HolographicDashboard'), {
+    ssr: false,
+    loading: () => (
+        <div className="space-y-4" aria-hidden="true">
+            <div className="h-10 rounded-lg bg-white/10 animate-pulse" />
+            <div className="h-10 rounded-lg bg-white/10 animate-pulse" />
+            <div className="h-10 rounded-lg bg-white/10 animate-pulse" />
+            <div className="h-12 rounded-lg bg-cyan-500/20 animate-pulse" />
+        </div>
+    ),
+});
 const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'));
 const HowItWorksSection = dynamic(() => import('@/components/HowItWorksSection'));
 const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'));
@@ -24,8 +34,8 @@ const HeroSection = () => {
         <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden">
             {/* Background Effects */}
             <div className="absolute inset-0 hex-pattern opacity-50" />
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px]" />
-            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/5 rounded-full blur-[100px]" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] hidden md:block" />
+            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/5 rounded-full blur-[100px] hidden md:block" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -180,8 +190,8 @@ export default function ClientHome() {
         <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden">
             {/* Background Effects */}
             <ParticleBackground />
-            <div className="noise-overlay" />
-            <div className="scanline-overlay" />
+            <div className="noise-overlay hidden lg:block" />
+            <div className="scanline-overlay hidden lg:block" />
 
             {/* Main Content */}
             <main className="relative z-10">

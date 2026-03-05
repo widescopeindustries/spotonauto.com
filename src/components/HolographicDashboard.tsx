@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Car, Search, Zap, AlertTriangle, ScanLine, Wrench } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Search, Zap, AlertTriangle, ScanLine, Wrench } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { decodeVin } from '../services/apiClient';
 import { getYears, COMMON_MAKES, fetchModels } from '../services/vehicleData';
-import { useEffect } from 'react';
 import { trackVehicleSearch, trackVinDecode } from '../lib/analytics';
 import { useT } from '@/lib/translations';
 
