@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import Link from 'next/link';
-import { Analytics, captureUTMParams } from '@/services/analytics';
+import { Analytics, captureUTMParams } from '@/lib/analytics';
 
 const makes = Object.keys(VEHICLE_PRODUCTION_YEARS).sort();
 
