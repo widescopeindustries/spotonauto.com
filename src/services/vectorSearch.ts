@@ -53,7 +53,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // ─── Configuration ───────────────────────────────────────────────────────────
 
-const EMBEDDING_MODEL = 'text-embedding-004';
+const EMBEDDING_MODEL = 'gemini-embedding-001';
 
 // Initialize Gemini client (reuses the same API key as geminiService.ts)
 const geminiApiKey = process.env.GEMINI_API_KEY || '';
@@ -98,6 +98,7 @@ async function generateQueryEmbedding(query: string): Promise<number[] | null> {
       contents: query,
       config: {
         taskType: 'RETRIEVAL_QUERY',
+        outputDimensionality: 768,
       },
     });
 
@@ -211,6 +212,7 @@ export async function generateDocumentEmbedding(text: string): Promise<number[] 
       contents: text,
       config: {
         taskType: 'RETRIEVAL_DOCUMENT',
+        outputDimensionality: 768,
       },
     });
 

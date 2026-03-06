@@ -34,9 +34,15 @@ import * as path from 'path';
 // ─── Load environment variables from .env.local ─────────────────────────────
 
 function loadEnv(): void {
-  const envPath = path.resolve(__dirname, '..', '.env.local');
-  if (!fs.existsSync(envPath)) {
-    console.error('ERROR: .env.local not found at', envPath);
+  // Try multiple possible locations for .env.local
+  const candidates = [
+    path.resolve(process.cwd(), '.env.local'),
+    path.resolve(__dirname, '..', '.env.local'),
+    path.resolve(__dirname, '.env.local'),
+  ];
+  const envPath = candidates.find(p => fs.existsSync(p));
+  if (!envPath) {
+    console.error('ERROR: .env.local not found. Tried:', candidates.join(', '));
     process.exit(1);
   }
   const content = fs.readFileSync(envPath, 'utf-8');
@@ -58,7 +64,7 @@ loadEnv();
 // ─── Configuration ───────────────────────────────────────────────────────────
 
 const CHARM_BASE = 'https://data.spotonauto.com';
-const EMBEDDING_MODEL = 'text-embedding-004';
+const EMBEDDING_MODEL = 'gemini-embedding-001';
 const MAX_CONTENT_LENGTH = 8000;     // Max chars of content to store per section
 const CONTENT_PREVIEW_LENGTH = 500;  // Chars for content_preview column
 const MAX_SECTION_DEPTH = 2;         // How deep to crawl into sub-sections
@@ -208,6 +214,7 @@ async function generateEmbedding(text: string): Promise<number[] | null> {
       contents: truncated,
       config: {
         taskType: 'RETRIEVAL_DOCUMENT',
+        outputDimensionality: 768,
       },
     });
 
@@ -437,28 +444,33 @@ async function processYear(make: string, year: number): Promise<void> {
     return;
   }
 
-  // Extract variant links
+  // Extract variant links — CHARM returns relative hrefs (e.g., "Camry%20L4-2.5L/")
   const allLinks = extractLinks(yearHtml);
-  const variantLinks = allLinks.filter(l =>
-    l.startsWith(`/${make}/`) && l.split('/').filter(Boolean).length === 3
-  );
+  const variantLinks: string[] = [];
+
+  for (const link of allLinks) {
+    if (link.startsWith('/')) {
+      // Absolute link — check if it's a variant (3 segments: /Make/Year/Variant/)
+      const segments = link.split('/').filter(Boolean);
+      if (segments.length === 3) {
+        variantLinks.push(link);
+      }
+    } else if (!link.startsWith('http') && link.endsWith('/')) {
+      // Relative link (e.g., "Camry%20L4-2.5L%20%282AR-FE%29/") — convert to absolute
+      // Skip nav links like style.css, breadcrumb links starting with /
+      const segments = link.split('/').filter(Boolean);
+      if (segments.length === 1) {
+        variantLinks.push(`${yearPath}${link}`);
+      }
+    }
+  }
 
   if (variantLinks.length === 0) {
-    // Try URL-encoded make name
-    const encodedMake = encodeURIComponent(make);
-    const variantLinksEncoded = allLinks.filter(l =>
-      l.startsWith(`/${encodedMake}/`) && l.split('/').filter(Boolean).length === 3
-    );
-    if (variantLinksEncoded.length === 0) {
-      console.warn(`  [SKIP] No variants found for ${make}/${year}`);
-      return;
-    }
-    for (const vLink of variantLinksEncoded) {
-      await processVariant(make, year, vLink, indexedPaths);
-    }
+    console.warn(`  [SKIP] No variants found for ${make}/${year}`);
     return;
   }
 
+  console.log(`  Found ${variantLinks.length} variant(s)`);
   for (const variantLink of variantLinks) {
     await processVariant(make, year, variantLink, indexedPaths);
   }
