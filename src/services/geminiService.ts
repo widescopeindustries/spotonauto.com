@@ -162,8 +162,17 @@ const TASK_KEYWORDS: Record<string, string[]> = {
   'shock':        ['Shock', 'Strut', 'Suspension', 'Spring'],
 };
 
-function extractText(html: string): string {
-  return html
+function extractText(html: string, baseUrl: string = ''): string {
+  // Replace <img> tags with a text marker including the absolute URL
+  const htmlWithImages = html.replace(/<img[^>]+src=["']([^"']+)["'][^>]*>/gi, (match, src) => {
+    // If baseUrl is provided, make sure the src is absolute
+    const absoluteSrc = baseUrl && !src.startsWith('http') 
+      ? new URL(src, baseUrl).href 
+      : src;
+    return ` [IMAGE: ${absoluteSrc}] `;
+  });
+
+  return htmlWithImages
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
     .replace(/<[^>]+>/g, ' ')
@@ -263,7 +272,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
 
     if (!relevantSections.length) {
       // Return just the section index as context
-      return `=== charm.li: ${year} ${make} ${variantDecoded} — Repair & Diagnosis Index ===\n${extractText(rdHtml).slice(0, 4000)}`;
+      return `=== charm.li: ${year} ${make} ${variantDecoded} — Repair & Diagnosis Index ===\n${extractText(rdHtml, rdUrl).slice(0, 4000)}`;
     }
 
     // Step 5: Fetch up to 3 relevant section pages in parallel
@@ -274,7 +283,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
           const resp = await fetch(sectionUrl, CHARM_FETCH_OPTS);
           if (!resp.ok) return null;
           const html = await resp.text();
-          const text = extractText(html).slice(0, 3000);
+          const text = extractText(html, sectionUrl).slice(0, 3000);
           const sectionName = decodeURIComponent(section.split('/').filter(Boolean).pop() ?? section);
           return `=== ${sectionName} ===\n${text}`;
         } catch { return null; }
@@ -396,7 +405,8 @@ INSTRUCTIONS:
 2. Extract the specific procedure for "${task}" on this exact vehicle
 3. Include exact torque specs, part numbers from the manual
 4. IMPORTANT: Use the NHTSA recall data above as safety warnings — these are REAL and must be included
-5. Do not invent information not present in the sources above
+5. IMAGES: If you see an image marker like [IMAGE: https://...] near a procedure in the source text, include that exact URL in the \`imageUrl\` field for that specific step. Do not invent image URLs.
+6. Do not invent information not present in the sources above
 ${locale && locale !== 'en' ? `\nLANGUAGE: Generate ALL content (title, safety warnings, tools, parts, step instructions) in ${LOCALE_NAMES[locale] || 'English'}. Use the native language for everything except proper nouns, part numbers, and technical specifications.` : ''}
 
 Return JSON with title, vehicle, safetyWarnings, tools, parts, steps.`
@@ -435,7 +445,8 @@ Keep instructions concise and practical.`;
           type: Type.OBJECT,
           properties: {
             step: { type: Type.INTEGER },
-            instruction: { type: Type.STRING }
+            instruction: { type: Type.STRING },
+            imageUrl: { type: Type.STRING, description: "If an [IMAGE: url] marker appears near this step in the source text, include the exact URL here." }
           },
           required: ["step", "instruction"]
         }
@@ -469,7 +480,7 @@ Keep instructions concise and practical.`;
   const stepsWithImages = data.steps.map((step: any, idx: number) => ({
     step: idx + 1,
     instruction: step.instruction,
-    imageUrl: ""
+    imageUrl: step.imageUrl || ""
   }));
 
   // Prepend real NHTSA recall warnings — these override AI-generated ones
