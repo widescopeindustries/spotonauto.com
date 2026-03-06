@@ -15,8 +15,8 @@ import { isValidVehicleCombination } from '@/data/vehicles';
 
 // Admin client used solely to verify JWT tokens server-side (no user-context queries)
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder',
   { auth: { persistSession: false } }
 );
 

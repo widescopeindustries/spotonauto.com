@@ -5,7 +5,7 @@ import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircle
 import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
-import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES } from '@/data/vehicles';
+import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair, TOOL_TYPE_META } from '@/data/tools-pages';
 
@@ -520,13 +520,28 @@ export default async function Page({ params }: PageProps) {
                     "@context": "https://schema.org",
                     "@type": "BreadcrumbList",
                     "itemListElement": [
-                        { "@type": "ListItem", position: 1, name: "Guides", item: "https://spotonauto.com/guides" },
-                        { "@type": "ListItem", position: 2, name: displayMake, item: `https://spotonauto.com/guides/${make}` },
-                        { "@type": "ListItem", position: 3, name: displayModel, item: `https://spotonauto.com/guides/${make}/${model}` },
-                        { "@type": "ListItem", position: 4, name: `${year} ${cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)}`, item: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}` },
+                        { "@type": "ListItem", position: 1, name: "Repairs", item: "https://spotonauto.com/repairs" },
+                        { "@type": "ListItem", position: 2, name: cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1), item: `https://spotonauto.com/repairs/${task}` },
+                        { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com/guides/${make}/${model}` },
+                        { "@type": "ListItem", position: 4, name: `${year}`, item: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}` },
                     ],
                 }) }}
             />
+
+            {/* Visible breadcrumb navigation */}
+            <nav className="max-w-6xl mx-auto px-4 pt-6 text-sm text-gray-500">
+                <Link href="/" className="hover:text-cyan-400 transition-colors">Home</Link>
+                <span className="mx-2">/</span>
+                <Link href="/repairs" className="hover:text-cyan-400 transition-colors">Repairs</Link>
+                <span className="mx-2">/</span>
+                <Link href={`/repairs/${task}`} className="hover:text-cyan-400 transition-colors capitalize">{cleanTask}</Link>
+                <span className="mx-2">/</span>
+                <Link href={`/guides/${make}`} className="hover:text-cyan-400 transition-colors">{displayMake}</Link>
+                <span className="mx-2">/</span>
+                <Link href={`/guides/${make}/${model}`} className="hover:text-cyan-400 transition-colors">{displayModel}</Link>
+                <span className="mx-2">/</span>
+                <span className="text-gray-300">{year}</span>
+            </nav>
 
             {/* SEO Content - Renders server-side for Google */}
             <article className="max-w-6xl mx-auto px-4 py-8">
@@ -829,14 +844,13 @@ export default async function Page({ params }: PageProps) {
             )}
 
             {/* ── Related Repairs ─────────────────────────────────────────── */}
-            {/* This section provides internal links so Google can crawl between */}
-            {/* repair pages, solving the orphan-page problem. */}
+            {/* Internal links between repair pages — solves orphan-page problem */}
             <section className="max-w-6xl mx-auto px-4 py-10 border-t border-white/10">
                 <h2 className="text-xl font-bold text-white mb-6">Related Repairs for Your {displayMake} {displayModel}</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {VALID_TASKS
                         .filter(t => t !== task)
-                        .slice(0, 6)
+                        .slice(0, 9)
                         .map(relTask => (
                             <Link
                                 key={relTask}
@@ -856,44 +870,66 @@ export default async function Page({ params }: PageProps) {
                     {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides for Other Vehicles
                 </h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {[
-                        { y: '2013', mk: 'bmw', mo: 'x3' },
-                        { y: '2009', mk: 'bmw', mo: 'x5' },
-                        { y: '2013', mk: 'toyota', mo: 'corolla' },
-                        { y: '2013', mk: 'honda', mo: 'odyssey' },
-                        { y: '2013', mk: 'nissan', mo: 'rogue' },
-                        { y: '2012', mk: 'nissan', mo: 'sentra' },
-                        { y: '2012', mk: 'chevrolet', mo: 'malibu' },
-                        { y: '2012', mk: 'kia', mo: 'soul' },
-                        { y: '2011', mk: 'subaru', mo: 'forester' },
-                    ]
-                        .filter(v => !(v.y === year && v.mk === make.toLowerCase() && v.mo === model.toLowerCase()))
-                        .slice(0, 6)
-                        .map(v => {
-                            const relMake = getDisplayName(v.mk, 'make') || toTitleCase(v.mk);
-                            const relModel = getDisplayName(v.mo, 'model') || toTitleCase(v.mo);
-                            return (
-                                <Link
-                                    key={`${v.y}-${v.mk}-${v.mo}`}
-                                    href={`/repair/${v.y}/${v.mk}/${v.mo}/${task}`}
-                                    className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
-                                >
-                                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
-                                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                                        {v.y} {relMake} {relModel} {toTitleCase(task)}
-                                    </span>
-                                </Link>
-                            );
-                        })
-                    }
+                    {(() => {
+                        // Build dynamic cross-vehicle links based on the current vehicle
+                        const currentMakeLower = make.toLowerCase();
+                        const currentModelLower = model.toLowerCase();
+                        const crossVehicles: { y: string; mk: string; mo: string; display: string }[] = [];
+
+                        // Deterministic shuffle based on task+make so each page gets different vehicles
+                        const seed = (task + make).split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+                        const makes = Object.entries(VEHICLE_PRODUCTION_YEARS)
+                            .filter(([m]) => !NOINDEX_MAKES.has(m.toLowerCase()));
+
+                        // Collect candidates: 1 from same make (different model), rest from other makes
+                        for (const [m, models] of makes) {
+                            const mSlug = m.toLowerCase().replace(/\s+/g, '-');
+                            for (const [mo, years] of Object.entries(models)) {
+                                const moSlug = mo.toLowerCase().replace(/\s+/g, '-');
+                                if (mSlug === currentMakeLower && moSlug === currentModelLower) continue;
+                                const targetYear = years.end >= 2013 && years.start <= 2013 ? 2013 : years.end;
+                                crossVehicles.push({ y: String(targetYear), mk: mSlug, mo: moSlug, display: `${targetYear} ${m} ${mo}` });
+                            }
+                        }
+
+                        // Deterministic pick: sort then offset by seed
+                        crossVehicles.sort((a, b) => a.display.localeCompare(b.display));
+                        const offset = seed % Math.max(crossVehicles.length - 9, 1);
+                        const picked = crossVehicles.slice(offset, offset + 9);
+
+                        return picked.map(v => (
+                            <Link
+                                key={`${v.mk}-${v.mo}`}
+                                href={`/repair/${v.y}/${v.mk}/${v.mo}/${task}`}
+                                className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
+                                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
+                                    {v.display} {toTitleCase(task)}
+                                </span>
+                            </Link>
+                        ));
+                    })()}
                 </div>
 
-                <div className="mt-8">
+                <div className="mt-8 flex flex-wrap gap-4">
                     <Link
-                        href="/#popular-guides"
+                        href={`/repairs/${task}`}
                         className="inline-flex items-center gap-2 text-cyan-500 hover:text-cyan-400 text-sm font-medium transition-colors"
                     >
-                        ← View All Popular Repair Guides
+                        View All {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides →
+                    </Link>
+                    <Link
+                        href={`/guides/${make}/${model}`}
+                        className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 text-sm font-medium transition-colors"
+                    >
+                        All {displayMake} {displayModel} Guides →
+                    </Link>
+                    <Link
+                        href="/repairs"
+                        className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-400 text-sm font-medium transition-colors"
+                    >
+                        Browse All Repair Categories →
                     </Link>
                 </div>
             </section>

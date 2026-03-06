@@ -182,6 +182,31 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           </section>
         )}
 
+        {/* Cross-link to repair category hubs */}
+        <section className="mt-16">
+          <h2 className="text-xl font-bold text-white mb-4">Browse by Repair Type</h2>
+          <p className="text-gray-400 text-sm mb-4">
+            See how {originalMake} {originalModel} compares to other vehicles for each repair:
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {VALID_TASKS.slice(0, 12).map((task) => (
+              <Link
+                key={task}
+                href={`/repairs/${task}`}
+                className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-all capitalize"
+              >
+                {task.replace(/-/g, ' ')}
+              </Link>
+            ))}
+            <Link
+              href="/repairs"
+              className="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-400 hover:bg-cyan-500/20 transition-all"
+            >
+              All Categories
+            </Link>
+          </div>
+        </section>
+
         {/* Frequently Asked Questions — GEO optimized for AI search citation */}
         <section className="mt-16">
           <h2 className="text-xl font-bold text-white mb-4">Frequently Asked Questions</h2>

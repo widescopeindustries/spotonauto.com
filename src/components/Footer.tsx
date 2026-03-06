@@ -54,17 +54,18 @@ const Footer: React.FC = () => {
                         </ul>
                     </div>
 
-                    {/* Popular Guides */}
+                    {/* Popular Repairs */}
                     <div>
-                        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Popular Guides</h3>
+                        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Popular Repairs</h3>
                         <ul className="space-y-3">
                             {[
-                                { href: '/repair/2013/bmw/x3/battery-replacement', label: 'BMW X3 Battery' },
-                                { href: '/repair/2009/bmw/x5/serpentine-belt-replacement', label: 'BMW X5 Serpentine Belt' },
-                                { href: '/repair/2013/toyota/corolla/oil-change', label: 'Toyota Corolla Oil Change' },
-                                { href: '/repair/2009/honda/fit/brake-rotor-replacement', label: 'Honda Fit Brake Rotors' },
-                                { href: '/repair/2013/nissan/rogue/serpentine-belt-replacement', label: 'Nissan Rogue Belt' },
-                                { href: '/guides', label: 'Browse All 57 Guides →' },
+                                { href: '/repairs/oil-change', label: 'Oil Change Guides' },
+                                { href: '/repairs/brake-pad-replacement', label: 'Brake Pad Guides' },
+                                { href: '/repairs/battery-replacement', label: 'Battery Guides' },
+                                { href: '/repairs/spark-plug-replacement', label: 'Spark Plug Guides' },
+                                { href: '/repairs/serpentine-belt-replacement', label: 'Serpentine Belt Guides' },
+                                { href: '/repairs/alternator-replacement', label: 'Alternator Guides' },
+                                { href: '/repairs', label: 'All Repair Categories →' },
                             ].map((item) => (
                                 <li key={item.href}>
                                     <Link
