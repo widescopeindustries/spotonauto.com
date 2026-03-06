@@ -249,12 +249,26 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
   });
 
   if (vectorResults && vectorResults.length > 0) {
-    const header = `=== Factory Service Manual (Vector Search): ${year} ${make} ${model} ===\n`;
-    const content = vectorResults
-      .map(r => `=== ${r.sectionTitle} (relevance: ${(r.similarity * 100).toFixed(0)}%) ===\n${r.contentFull}`)
-      .join('\n\n');
     console.log(`[VECTOR] Found ${vectorResults.length} sections for "${task}" (best: ${(vectorResults[0].similarity * 100).toFixed(1)}%)`);
-    return header + content;
+
+    // Fetch the actual CHARM pages for top results to get image-enriched content
+    const enrichedPages = await Promise.all(
+      vectorResults.slice(0, 3).map(async (r) => {
+        try {
+          const pageUrl = `${CHARM_BASE}/${r.path}`;
+          const resp = await fetch(pageUrl, charmFetchOpts());
+          if (!resp.ok) return `=== ${r.sectionTitle} ===\n${r.contentFull}`;
+          const html = await resp.text();
+          return `=== ${r.sectionTitle} (relevance: ${(r.similarity * 100).toFixed(0)}%) ===\n${extractText(html, pageUrl)}`;
+        } catch {
+          // Fall back to stored text if CHARM fetch fails
+          return `=== ${r.sectionTitle} ===\n${r.contentFull}`;
+        }
+      })
+    );
+
+    const header = `=== Factory Service Manual: ${year} ${make} ${model} ===\n`;
+    return header + enrichedPages.join('\n\n');
   }
 
   // Fall through to CHARM scraping if vector search returned nothing
