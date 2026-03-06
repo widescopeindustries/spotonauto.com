@@ -3,6 +3,7 @@ import { GoogleGenAI, Type } from '@google/genai';
 import { Vehicle, VehicleInfo, RepairGuide, ChatMessage } from '../types';
 import { isValidVehicleCombination } from '@/data/vehicles';
 import { getVehicleNHTSAData, nhtsaToPromptContext, recallsToSafetyWarnings } from './nhtsaService';
+import { searchManualSections } from './vectorSearch';
 
 // NOTE: This service is now only used server-side (e.g., in api/ folder).
 // Client-side code should use apiClient.ts instead to make secure API requests.
@@ -141,10 +142,14 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
 // For 2014+ vehicles we fall back silently to AI-only.
 
 const CHARM_BASE = 'https://data.spotonauto.com';
-const CHARM_FETCH_OPTS = {
-  headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' },
-  signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined,
-};
+const CHARM_HEADERS = { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' };
+
+function charmFetchOpts(): RequestInit {
+  return {
+    headers: CHARM_HEADERS,
+    signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined,
+  };
+}
 
 /** Keywords mapping common repair tasks to relevant charm.li path segments */
 const TASK_KEYWORDS: Record<string, string[]> = {
@@ -236,10 +241,27 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     return null;
   }
 
+  // Try RAG vector search first (single DB query vs 4-5 HTTP fetches)
+  const vectorResults = await searchManualSections(task ?? '', {
+    make,
+    year: yearNum,
+    model,
+  });
+
+  if (vectorResults && vectorResults.length > 0) {
+    const header = `=== Factory Service Manual (Vector Search): ${year} ${make} ${model} ===\n`;
+    const content = vectorResults
+      .map(r => `=== ${r.sectionTitle} (relevance: ${(r.similarity * 100).toFixed(0)}%) ===\n${r.contentFull}`)
+      .join('\n\n');
+    console.log(`[VECTOR] Found ${vectorResults.length} sections for "${task}" (best: ${(vectorResults[0].similarity * 100).toFixed(1)}%)`);
+    return header + content;
+  }
+
+  // Fall through to CHARM scraping if vector search returned nothing
   try {
     // Step 1: Get year page to find vehicle variants
     const yearUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`;
-    const yearResp = await fetch(yearUrl, CHARM_FETCH_OPTS);
+    const yearResp = await fetch(yearUrl, charmFetchOpts());
     if (!yearResp.ok) { console.warn(`[CHARM.LI] Make/year not found: ${make}/${year}`); return null; }
     const yearHtml = await yearResp.text();
 
@@ -262,7 +284,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
 
     // Step 3: Fetch Repair and Diagnosis index
     const rdUrl = `${variantBase}Repair%20and%20Diagnosis/`;
-    const rdResp = await fetch(rdUrl, CHARM_FETCH_OPTS);
+    const rdResp = await fetch(rdUrl, charmFetchOpts());
     if (!rdResp.ok) { console.warn(`[CHARM.LI] No Repair+Diagnosis for ${variantDecoded}`); return null; }
     const rdHtml = await rdResp.text();
 
@@ -280,7 +302,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
       relevantSections.slice(0, 3).map(async section => {
         try {
           const sectionUrl = `${rdUrl}${section}`;
-          const resp = await fetch(sectionUrl, CHARM_FETCH_OPTS);
+          const resp = await fetch(sectionUrl, charmFetchOpts());
           if (!resp.ok) return null;
           const html = await resp.text();
           const sectionName = decodeURIComponent(section.split('/').filter(Boolean).pop() ?? section);
@@ -297,7 +319,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
                 const subUrl = subLink.startsWith('http') ? subLink
                   : subLink.startsWith('/') ? `${CHARM_BASE}${subLink}`
                   : `${sectionUrl}${subLink}`;
-                const subResp = await fetch(subUrl, CHARM_FETCH_OPTS);
+                const subResp = await fetch(subUrl, charmFetchOpts());
                 if (!subResp.ok) return null;
                 const subHtml = await subResp.text();
                 return extractText(subHtml, subUrl);

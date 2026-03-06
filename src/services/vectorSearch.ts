@@ -49,7 +49,7 @@
  */
 
 import { GoogleGenAI } from '@google/genai';
-import { createClient } from '@supabase/supabase-js';
+import { Pool } from 'pg';
 
 // ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -59,11 +59,12 @@ const EMBEDDING_MODEL = 'gemini-embedding-001';
 const geminiApiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenAI({ apiKey: geminiApiKey });
 
-// Initialize Supabase client with anon key for read-only vector search.
-// The anon key is sufficient because the RLS policy allows public SELECT.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// VPS PostgreSQL with pgvector — same server as CHARM data
+const vpsPool = new Pool({
+  connectionString: process.env.VPS_DATABASE_URL || '',
+  ssl: process.env.VPS_DATABASE_URL ? { rejectUnauthorized: false } : undefined,
+  max: 3,
+});
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -138,7 +139,7 @@ export async function searchManualSections(
   threshold: number = 0.3
 ): Promise<VectorSearchResult[] | null> {
   // Guard: don't attempt if env vars are missing
-  if (!supabaseUrl || !supabaseAnonKey || !geminiApiKey) {
+  if (!process.env.VPS_DATABASE_URL || !geminiApiKey) {
     console.warn('[VECTOR] Missing environment variables, skipping vector search');
     return null;
   }
@@ -153,36 +154,35 @@ export async function searchManualSections(
       return null;
     }
 
-    // Step 2: Call the Supabase match_manual_sections function
-    const { data, error } = await supabase.rpc('match_manual_sections', {
-      query_embedding: JSON.stringify(embedding),
-      filter_make: vehicle.make,
-      filter_year: vehicle.year,
-      match_count: maxResults,
-      match_threshold: threshold,
-    });
+    // Step 2: Query VPS PostgreSQL with pgvector cosine similarity
+    const embeddingStr = `[${embedding.join(',')}]`;
+    const { rows } = await vpsPool.query(
+      `SELECT id, path, make, year, model, section_title, content_preview, content_full,
+              1 - (embedding <=> $1::vector) AS similarity
+       FROM manual_embeddings
+       WHERE make = $2 AND year = $3
+         AND 1 - (embedding <=> $1::vector) > $4
+       ORDER BY embedding <=> $1::vector
+       LIMIT $5`,
+      [embeddingStr, vehicle.make, vehicle.year, threshold, maxResults]
+    );
 
-    if (error) {
-      console.error('[VECTOR] Supabase RPC error:', error.message);
-      return null;
-    }
-
-    if (!data || data.length === 0) {
+    if (!rows || rows.length === 0) {
       console.log(`[VECTOR] No matches above threshold ${threshold} for "${query}" (${vehicle.make}/${vehicle.year})`);
       return null;
     }
 
     // Step 3: Map database rows to typed results
-    const results: VectorSearchResult[] = data.map((row: Record<string, unknown>) => ({
-      id: row.id as string,
-      path: row.path as string,
-      make: row.make as string,
-      year: row.year as number,
-      model: row.model as string,
-      sectionTitle: row.section_title as string,
-      contentPreview: row.content_preview as string,
-      contentFull: row.content_full as string,
-      similarity: row.similarity as number,
+    const results: VectorSearchResult[] = rows.map((row) => ({
+      id: String(row.id),
+      path: row.path,
+      make: row.make,
+      year: row.year,
+      model: row.model || '',
+      sectionTitle: row.section_title || '',
+      contentPreview: row.content_preview || '',
+      contentFull: row.content_full || '',
+      similarity: parseFloat(row.similarity),
     }));
 
     console.log(
