@@ -55,10 +55,11 @@ export default function WiringDiagramLibrary() {
 
   // Fetch years when make changes
   useEffect(() => {
-    if (!selectedMake) { setYears([]); return; }
+    if (!selectedMake) { setYears([]); setSelectedYear(''); setSelectedVariant(''); setDiagramData(null); return; }
     setLoadingYears(true);
     setSelectedYear('');
     setSelectedVariant('');
+    setVariants([]);
     setDiagramData(null);
     fetch(`/api/wiring?action=years&make=${encodeURIComponent(selectedMake)}`)
       .then(r => r.json())
@@ -66,9 +67,9 @@ export default function WiringDiagramLibrary() {
       .catch(() => setLoadingYears(false));
   }, [selectedMake]);
 
-  // Fetch variants when year changes
+  // Fetch variants when make + year both selected
   useEffect(() => {
-    if (!selectedMake || !selectedYear) { setVariants([]); return; }
+    if (!selectedMake || !selectedYear) { setVariants([]); setSelectedVariant(''); return; }
     setLoadingVariants(true);
     setSelectedVariant('');
     setDiagramData(null);
@@ -291,32 +292,28 @@ export default function WiringDiagramLibrary() {
         .wiring-library {
           max-width: 1200px;
           margin: 0 auto;
-          font-family: 'Georgia', 'Times New Roman', serif;
-          background: #f8f6f1;
-          color: #1a1a1a;
           min-height: 100vh;
         }
 
         .wl-header {
-          background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
-          color: white;
-          padding: 3rem 2rem;
-          border-bottom: 4px solid #ffd700;
           text-align: center;
+          padding: 3rem 2rem;
+          border-bottom: 1px solid rgba(0, 255, 255, 0.1);
         }
 
         .wl-header-inner { max-width: 700px; margin: 0 auto; }
 
         .wl-badge {
           display: inline-block;
-          background: #ffd700;
-          color: #0d1b2a;
-          font-family: 'Arial Black', sans-serif;
+          background: rgba(0, 255, 255, 0.1);
+          color: #00e5ff;
           font-size: 0.7rem;
           font-weight: 900;
           padding: 0.4rem 1.25rem;
           letter-spacing: 0.2em;
           margin-bottom: 1rem;
+          border: 1px solid rgba(0, 255, 255, 0.2);
+          border-radius: 4px;
         }
 
         .wl-title {
@@ -325,11 +322,12 @@ export default function WiringDiagramLibrary() {
           margin: 0 0 0.75rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
+          color: white;
         }
 
         .wl-subtitle {
           font-size: 1rem;
-          opacity: 0.85;
+          color: rgba(255, 255, 255, 0.6);
           line-height: 1.6;
           margin: 0;
         }
@@ -338,19 +336,20 @@ export default function WiringDiagramLibrary() {
 
         /* Vehicle Selector */
         .wl-selector {
-          background: white;
-          border: 1px solid #d0ccc4;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 12px;
           padding: 2rem;
           margin-bottom: 2rem;
+          backdrop-filter: blur(8px);
         }
 
         .wl-selector-title {
-          font-family: 'Arial Black', sans-serif;
           font-size: 1rem;
+          font-weight: 800;
           text-transform: uppercase;
           letter-spacing: 0.1em;
-          color: #1e3a5f;
+          color: #00e5ff;
           margin: 0 0 1.25rem;
         }
 
@@ -363,42 +362,51 @@ export default function WiringDiagramLibrary() {
         .wl-dropdown-group { display: flex; flex-direction: column; gap: 0.375rem; }
 
         .wl-label {
-          font-family: 'Arial', sans-serif;
           font-size: 0.75rem;
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.1em;
-          color: #666;
+          color: rgba(255, 255, 255, 0.5);
         }
 
         .wl-select {
           padding: 0.75rem 1rem;
-          border: 2px solid #d0ccc4;
+          border: 1px solid rgba(255, 255, 255, 0.15);
           border-radius: 8px;
           font-size: 1rem;
-          font-family: inherit;
-          background: #f8f6f1;
-          color: #1a1a1a;
+          background: rgba(0, 0, 0, 0.3);
+          color: white;
           cursor: pointer;
           transition: border-color 0.2s;
+          -webkit-appearance: none;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300e5ff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 12px center;
+          padding-right: 2.5rem;
         }
 
-        .wl-select:focus { border-color: #1e3a5f; outline: none; }
-        .wl-select:disabled { opacity: 0.5; cursor: not-allowed; }
+        .wl-select option {
+          background: #111;
+          color: white;
+        }
+
+        .wl-select:focus { border-color: #00e5ff; outline: none; box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.3); }
+        .wl-select:disabled { opacity: 0.4; cursor: not-allowed; }
 
         /* Loading */
         .wl-loading {
           text-align: center;
           padding: 3rem;
-          color: #666;
+          color: rgba(255, 255, 255, 0.5);
         }
 
         .wl-spinner {
           display: inline-block;
           width: 32px;
           height: 32px;
-          border: 3px solid #d0ccc4;
-          border-top-color: #1e3a5f;
+          border: 3px solid rgba(255, 255, 255, 0.1);
+          border-top-color: #00e5ff;
           border-radius: 50%;
           animation: spin 0.8s linear infinite;
           margin-bottom: 0.75rem;
@@ -408,8 +416,8 @@ export default function WiringDiagramLibrary() {
 
         /* Browser */
         .wl-browser {
-          background: white;
-          border: 1px solid #d0ccc4;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 12px;
           overflow: hidden;
         }
@@ -420,14 +428,14 @@ export default function WiringDiagramLibrary() {
           align-items: center;
           gap: 1rem;
           padding: 1.5rem 2rem;
-          border-bottom: 2px solid #1e3a5f;
+          border-bottom: 1px solid rgba(0, 229, 255, 0.2);
           flex-wrap: wrap;
         }
 
         .wl-browser-title {
-          font-family: 'Arial Black', sans-serif;
           font-size: 1.25rem;
-          color: #1e3a5f;
+          font-weight: 800;
+          color: white;
           margin: 0;
           text-transform: uppercase;
           letter-spacing: 0.03em;
@@ -435,7 +443,7 @@ export default function WiringDiagramLibrary() {
 
         .wl-browser-count {
           font-size: 0.875rem;
-          color: #666;
+          color: rgba(255, 255, 255, 0.5);
           margin: 0.25rem 0 0;
         }
 
@@ -443,15 +451,17 @@ export default function WiringDiagramLibrary() {
 
         .wl-search {
           padding: 0.625rem 2.5rem 0.625rem 1rem;
-          border: 2px solid #d0ccc4;
+          border: 1px solid rgba(255, 255, 255, 0.15);
           border-radius: 8px;
           font-size: 0.9rem;
-          font-family: inherit;
           min-width: 250px;
+          background: rgba(0, 0, 0, 0.3);
+          color: white;
           transition: border-color 0.2s;
         }
 
-        .wl-search:focus { border-color: #1e3a5f; outline: none; }
+        .wl-search::placeholder { color: rgba(255, 255, 255, 0.35); }
+        .wl-search:focus { border-color: #00e5ff; outline: none; box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.3); }
 
         .wl-search-clear {
           position: absolute;
@@ -461,15 +471,13 @@ export default function WiringDiagramLibrary() {
           background: none;
           border: none;
           font-size: 1.25rem;
-          color: #999;
+          color: rgba(255, 255, 255, 0.5);
           cursor: pointer;
           padding: 0 0.25rem;
         }
 
         /* Systems Accordion */
-        .wl-systems { }
-
-        .wl-system { border-bottom: 1px solid #e8e4dc; }
+        .wl-system { border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
         .wl-system:last-child { border-bottom: none; }
 
         .wl-system-header {
@@ -480,23 +488,22 @@ export default function WiringDiagramLibrary() {
           padding: 1rem 2rem;
           background: none;
           border: none;
-          font-family: 'Arial', sans-serif;
           font-size: 1rem;
           font-weight: 700;
-          color: #1a1a1a;
+          color: rgba(255, 255, 255, 0.9);
           cursor: pointer;
           text-align: left;
           transition: background 0.15s;
         }
 
-        .wl-system-header:hover { background: #f0ede6; }
-        .wl-system-header.expanded { background: #e8e4dc; }
+        .wl-system-header:hover { background: rgba(255, 255, 255, 0.04); }
+        .wl-system-header.expanded { background: rgba(0, 229, 255, 0.05); }
 
         .wl-system-name { flex: 1; }
 
         .wl-system-count {
-          background: #1e3a5f;
-          color: white;
+          background: rgba(0, 229, 255, 0.15);
+          color: #00e5ff;
           font-size: 0.7rem;
           font-weight: 900;
           padding: 0.2rem 0.6rem;
@@ -507,7 +514,7 @@ export default function WiringDiagramLibrary() {
 
         .wl-system-arrow {
           font-size: 0.75rem;
-          color: #999;
+          color: rgba(255, 255, 255, 0.3);
         }
 
         /* Diagram List */
@@ -521,32 +528,30 @@ export default function WiringDiagramLibrary() {
           gap: 0.75rem;
           width: 100%;
           padding: 0.75rem 1rem;
-          background: #f8f6f1;
+          background: rgba(255, 255, 255, 0.02);
           border: 1px solid transparent;
           border-radius: 6px;
           cursor: pointer;
           text-align: left;
-          font-family: inherit;
           font-size: 0.9rem;
-          color: #1a1a1a;
+          color: rgba(255, 255, 255, 0.75);
           margin-bottom: 0.375rem;
           transition: all 0.15s;
         }
 
         .wl-diagram-item:hover {
-          background: white;
-          border-color: #1e3a5f;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          background: rgba(0, 229, 255, 0.05);
+          border-color: rgba(0, 229, 255, 0.2);
+          color: white;
         }
 
-        .wl-diagram-icon { color: #1e3a5f; flex-shrink: 0; }
+        .wl-diagram-icon { color: #00e5ff; flex-shrink: 0; }
         .wl-diagram-name { flex: 1; }
 
         .wl-diagram-view {
-          font-family: 'Arial', sans-serif;
           font-size: 0.75rem;
           font-weight: 700;
-          color: #1e3a5f;
+          color: #00e5ff;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           opacity: 0;
@@ -558,7 +563,7 @@ export default function WiringDiagramLibrary() {
         .wl-empty {
           padding: 2rem;
           text-align: center;
-          color: #999;
+          color: rgba(255, 255, 255, 0.4);
           font-style: italic;
         }
 
@@ -566,7 +571,7 @@ export default function WiringDiagramLibrary() {
         .wl-modal-overlay {
           position: fixed;
           inset: 0;
-          background: rgba(0,0,0,0.8);
+          background: rgba(0, 0, 0, 0.85);
           z-index: 1000;
           display: flex;
           align-items: center;
@@ -575,7 +580,8 @@ export default function WiringDiagramLibrary() {
         }
 
         .wl-modal {
-          background: #f8f6f1;
+          background: #0a0a0a;
+          border: 1px solid rgba(0, 229, 255, 0.2);
           border-radius: 12px;
           max-width: 95vw;
           max-height: 95vh;
@@ -583,7 +589,7 @@ export default function WiringDiagramLibrary() {
           display: flex;
           flex-direction: column;
           overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
         }
 
         .wl-modal-header {
@@ -591,32 +597,31 @@ export default function WiringDiagramLibrary() {
           justify-content: space-between;
           align-items: center;
           padding: 1.25rem 1.5rem;
-          background: #1e3a5f;
-          color: white;
+          background: rgba(0, 229, 255, 0.08);
+          border-bottom: 1px solid rgba(0, 229, 255, 0.15);
         }
 
         .wl-modal-title {
-          font-family: 'Arial', sans-serif;
           font-size: 1rem;
           font-weight: 700;
           margin: 0;
           flex: 1;
           padding-right: 1rem;
+          color: white;
         }
 
         .wl-modal-close {
           background: none;
           border: none;
-          color: white;
+          color: rgba(255, 255, 255, 0.7);
           font-size: 1.75rem;
           cursor: pointer;
           padding: 0;
           line-height: 1;
-          opacity: 0.8;
-          transition: opacity 0.15s;
+          transition: color 0.15s;
         }
 
-        .wl-modal-close:hover { opacity: 1; }
+        .wl-modal-close:hover { color: #00e5ff; }
 
         .wl-modal-body {
           padding: 1.5rem;
@@ -626,7 +631,6 @@ export default function WiringDiagramLibrary() {
 
         .wl-modal-img-wrap {
           background: white;
-          border: 1px solid #d0ccc4;
           border-radius: 8px;
           padding: 1rem;
           margin-bottom: 1rem;
@@ -640,13 +644,13 @@ export default function WiringDiagramLibrary() {
 
         .wl-modal-footer {
           padding: 0.75rem 1.5rem;
-          border-top: 1px solid #d0ccc4;
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
           text-align: right;
         }
 
         .wl-modal-source {
           font-size: 0.75rem;
-          color: #999;
+          color: rgba(255, 255, 255, 0.35);
           font-style: italic;
         }
 

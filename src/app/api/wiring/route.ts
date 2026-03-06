@@ -7,7 +7,7 @@ const CHARM_FETCH_OPTS = {
 };
 
 function extractLinks(html: string): string[] {
-  const matches = html.matchAll(/href='([^']+)'/g);
+  const matches = html.matchAll(/href=['"]([^'"]+)['"]/g);
   return [...matches].map(m => m[1]);
 }
 
@@ -61,18 +61,14 @@ export async function GET(req: NextRequest) {
       if (!resp.ok) return NextResponse.json({ error: 'Year not found' }, { status: 404 });
       const html = await resp.text();
       const links = extractLinks(html);
-      // Variant links are relative (one segment) or absolute with 3 segments
+      // Variant links are relative (one segment like "Camry%20L4-2.4L/") — exclude nav/breadcrumb links
       const variants = links
         .filter(l => {
-          if (l.startsWith('/')) {
-            return l.split('/').filter(Boolean).length === 3;
-          }
-          return !l.startsWith('http') && l.endsWith('/') && l.split('/').filter(Boolean).length === 1;
+          if (l.startsWith('/') || l.startsWith('http') || l.includes('.css') || l.includes('.js')) return false;
+          const segs = l.split('/').filter(Boolean);
+          return segs.length === 1 && l.endsWith('/');
         })
-        .map(l => {
-          const seg = l.startsWith('/') ? l.split('/').filter(Boolean)[2] : l.split('/').filter(Boolean)[0];
-          return decodeSegment(seg);
-        })
+        .map(l => decodeSegment(l.split('/').filter(Boolean)[0]))
         .sort();
       return NextResponse.json({ variants }, { headers: { 'Cache-Control': 'public, max-age=86400' } });
     }
@@ -134,7 +130,7 @@ export async function GET(req: NextRequest) {
       const resp = await fetch(url, CHARM_FETCH_OPTS);
       if (!resp.ok) return NextResponse.json({ error: 'Page not found' }, { status: 404 });
       const html = await resp.text();
-      const imgMatches = html.matchAll(/<img[^>]+class='big-img'[^>]+src='([^']+)'/g);
+      const imgMatches = html.matchAll(/<img[^>]+class=['"]big-img['"][^>]+src=['"]([^'"]+)['"]/g);
       const images = [...imgMatches].map(m => `${CHARM_BASE}${m[1]}`);
       // Extract page title
       const titleMatch = html.match(/<h1>([^<]+)<\/h1>/);
