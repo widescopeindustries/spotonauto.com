@@ -23,13 +23,15 @@ interface DiagramImage {
   title: string;
 }
 
+// Static year range — CHARM covers 1982-2013
+const YEARS = Array.from({ length: 2013 - 1982 + 1 }, (_, i) => 2013 - i);
+
 export default function WiringDiagramLibrary() {
-  // Vehicle selection state
+  // Vehicle selection state — Year → Make → Model
   const [makes, setMakes] = useState<string[]>([]);
-  const [years, setYears] = useState<number[]>([]);
   const [variants, setVariants] = useState<string[]>([]);
-  const [selectedMake, setSelectedMake] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
+  const [selectedMake, setSelectedMake] = useState('');
   const [selectedVariant, setSelectedVariant] = useState('');
 
   // Diagram state
@@ -40,12 +42,11 @@ export default function WiringDiagramLibrary() {
 
   // Loading states
   const [loadingMakes, setLoadingMakes] = useState(true);
-  const [loadingYears, setLoadingYears] = useState(false);
   const [loadingVariants, setLoadingVariants] = useState(false);
   const [loadingDiagrams, setLoadingDiagrams] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
 
-  // Fetch makes on mount
+  // Fetch makes on mount (independent of year)
   useEffect(() => {
     fetch('/api/wiring?action=makes')
       .then(r => r.json())
@@ -53,19 +54,21 @@ export default function WiringDiagramLibrary() {
       .catch(() => setLoadingMakes(false));
   }, []);
 
-  // Fetch years when make changes
-  useEffect(() => {
-    if (!selectedMake) { setYears([]); setSelectedYear(''); setSelectedVariant(''); setDiagramData(null); return; }
-    setLoadingYears(true);
-    setSelectedYear('');
+  // Clear downstream when year changes
+  const handleYearChange = useCallback((year: string) => {
+    setSelectedYear(year);
     setSelectedVariant('');
     setVariants([]);
     setDiagramData(null);
-    fetch(`/api/wiring?action=years&make=${encodeURIComponent(selectedMake)}`)
-      .then(r => r.json())
-      .then(d => { setYears(d.years || []); setLoadingYears(false); })
-      .catch(() => setLoadingYears(false));
-  }, [selectedMake]);
+  }, []);
+
+  // Clear downstream when make changes
+  const handleMakeChange = useCallback((make: string) => {
+    setSelectedMake(make);
+    setSelectedVariant('');
+    setVariants([]);
+    setDiagramData(null);
+  }, []);
 
   // Fetch variants when make + year both selected
   useEffect(() => {
@@ -136,28 +139,27 @@ export default function WiringDiagramLibrary() {
           <h2 className="wl-selector-title">Select Your Vehicle</h2>
           <div className="wl-dropdowns">
             <div className="wl-dropdown-group">
-              <label className="wl-label">Make</label>
-              <select
-                className="wl-select"
-                value={selectedMake}
-                onChange={e => setSelectedMake(e.target.value)}
-                disabled={loadingMakes}
-              >
-                <option value="">{loadingMakes ? 'Loading...' : 'Select Make'}</option>
-                {makes.map(m => <option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
-
-            <div className="wl-dropdown-group">
               <label className="wl-label">Year</label>
               <select
                 className="wl-select"
                 value={selectedYear}
-                onChange={e => setSelectedYear(e.target.value)}
-                disabled={!selectedMake || loadingYears}
+                onChange={e => handleYearChange(e.target.value)}
               >
-                <option value="">{loadingYears ? 'Loading...' : 'Select Year'}</option>
-                {years.map(y => <option key={y} value={y}>{y}</option>)}
+                <option value="">Select Year</option>
+                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+
+            <div className="wl-dropdown-group">
+              <label className="wl-label">Make</label>
+              <select
+                className="wl-select"
+                value={selectedMake}
+                onChange={e => handleMakeChange(e.target.value)}
+                disabled={loadingMakes}
+              >
+                <option value="">{loadingMakes ? 'Loading...' : 'Select Make'}</option>
+                {makes.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
@@ -167,7 +169,7 @@ export default function WiringDiagramLibrary() {
                 className="wl-select"
                 value={selectedVariant}
                 onChange={e => setSelectedVariant(e.target.value)}
-                disabled={!selectedYear || loadingVariants}
+                disabled={!selectedYear || !selectedMake || loadingVariants}
               >
                 <option value="">{loadingVariants ? 'Loading...' : 'Select Model'}</option>
                 {variants.map(v => <option key={v} value={v}>{v}</option>)}
