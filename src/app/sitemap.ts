@@ -32,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/cel`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
         { url: `${baseUrl}/second-opinion`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
         { url: `${baseUrl}/parts`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.65 },
+        { url: `${baseUrl}/wiring`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.8 },
         { url: `${baseUrl}/community`, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 0.7 },
         { url: `${baseUrl}/about`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
         { url: `${baseUrl}/contact`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.4 },
