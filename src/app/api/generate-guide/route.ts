@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     const user = await getAuthenticatedUser(req);
 
     // Expensive actions require authentication
-    if (['generate-guide', 'diagnostic-chat'].includes(action) && !user) {
+    if (['diagnostic-chat'].includes(action) && !user) {
       return NextResponse.json(
         { error: 'Authentication required. Please sign in to use this feature.' },
         { status: 401 }
