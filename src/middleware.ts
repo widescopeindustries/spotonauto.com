@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 const ALLOWED_ORIGINS = [
     'https://spotonauto.com',
     'https://www.spotonauto.com',
+    ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
 ];
 
 export function middleware(request: NextRequest) {
