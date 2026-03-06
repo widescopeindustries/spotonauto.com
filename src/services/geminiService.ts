@@ -275,7 +275,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
       return `=== charm.li: ${year} ${make} ${variantDecoded} — Repair & Diagnosis Index ===\n${extractText(rdHtml, rdUrl).slice(0, 4000)}`;
     }
 
-    // Step 5: Fetch up to 3 relevant section pages in parallel
+    // Step 5: Fetch up to 3 relevant section pages + their sub-pages (where images live)
     const contentPages = await Promise.all(
       relevantSections.slice(0, 3).map(async section => {
         try {
@@ -283,9 +283,33 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
           const resp = await fetch(sectionUrl, CHARM_FETCH_OPTS);
           if (!resp.ok) return null;
           const html = await resp.text();
-          const text = extractText(html, sectionUrl).slice(0, 3000);
           const sectionName = decodeURIComponent(section.split('/').filter(Boolean).pop() ?? section);
-          return `=== ${sectionName} ===\n${text}`;
+
+          // Check for sub-pages (Testing and Inspection, Diagrams, Locations)
+          // These contain the actual procedure text and factory manual diagrams
+          const subLinks = extractLinks(html);
+          const imageSubPages = ['Testing%20and%20Inspection/', 'Diagrams/', 'Locations/'];
+          const subPageFetches = subLinks
+            .filter(l => imageSubPages.some(sp => l.includes(sp) || decodeURIComponent(l).includes(decodeURIComponent(sp))))
+            .slice(0, 3)
+            .map(async subLink => {
+              try {
+                const subUrl = subLink.startsWith('http') ? subLink
+                  : subLink.startsWith('/') ? `${CHARM_BASE}${subLink}`
+                  : `${sectionUrl}${subLink}`;
+                const subResp = await fetch(subUrl, CHARM_FETCH_OPTS);
+                if (!subResp.ok) return null;
+                const subHtml = await subResp.text();
+                return extractText(subHtml, subUrl);
+              } catch { return null; }
+            });
+
+          const subResults = await Promise.all(subPageFetches);
+          const subContent = subResults.filter(Boolean).join('\n');
+
+          const mainText = extractText(html, sectionUrl).slice(0, 2000);
+          const combined = `=== ${sectionName} ===\n${mainText}${subContent ? '\n' + subContent : ''}`;
+          return combined.slice(0, 4000);
         } catch { return null; }
       })
     );

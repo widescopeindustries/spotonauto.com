@@ -246,6 +246,18 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                         </div>
                                     </div>
 
+                                    {step.imageUrl && (
+                                        <div className="step-image-container">
+                                            <img
+                                                src={step.imageUrl}
+                                                alt={`Diagram for step ${step.step}`}
+                                                className="step-image"
+                                                loading="lazy"
+                                            />
+                                            <p className="image-caption">Fig. {step.step} — Reference diagram</p>
+                                        </div>
+                                    )}
+
 
                                     {idx < (guide.steps?.length || 0) - 1 && (
                                         <div className="step-connector">
