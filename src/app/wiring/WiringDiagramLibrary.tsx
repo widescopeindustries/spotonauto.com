@@ -97,10 +97,13 @@ export default function WiringDiagramLibrary() {
 
   const openDiagram = useCallback(async (entry: DiagramEntry) => {
     setLoadingImage(true);
+    setSelectedDiagram({ entry, images: { images: [], title: entry.name } });
     try {
       const resp = await fetch(`/api/wiring?action=image&url=${encodeURIComponent(entry.url)}`);
       const data = await resp.json();
-      setSelectedDiagram({ entry, images: data });
+      const images = Array.isArray(data.images) ? data.images : [];
+      const title = data.title || entry.name;
+      setSelectedDiagram({ entry, images: { images, title } });
     } catch {
       setSelectedDiagram({ entry, images: { images: [], title: entry.name } });
     }

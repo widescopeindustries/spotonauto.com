@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const CHARM_BASE = 'https://data.spotonauto.com';
-const CHARM_FETCH_OPTS = {
-  headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) wiring-diagrams' },
-  signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined,
-};
+const CHARM_HEADERS = { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) wiring-diagrams' };
+
+function charmFetchOpts(): RequestInit {
+  return {
+    headers: CHARM_HEADERS,
+    signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
+  };
+}
 
 function extractLinks(html: string): string[] {
   const matches = html.matchAll(/href=['"]([^'"]+)['"]/g);
@@ -22,7 +26,7 @@ export async function GET(req: NextRequest) {
 
   try {
     if (action === 'makes') {
-      const resp = await fetch(`${CHARM_BASE}/`, CHARM_FETCH_OPTS);
+      const resp = await fetch(`${CHARM_BASE}/`, charmFetchOpts());
       if (!resp.ok) return NextResponse.json({ error: 'Cannot reach data source' }, { status: 502 });
       const html = await resp.text();
       const links = extractLinks(html);
@@ -39,7 +43,7 @@ export async function GET(req: NextRequest) {
     if (action === 'years') {
       const make = searchParams.get('make');
       if (!make) return NextResponse.json({ error: 'make required' }, { status: 400 });
-      const resp = await fetch(`${CHARM_BASE}/${encodeURIComponent(make)}/`, CHARM_FETCH_OPTS);
+      const resp = await fetch(`${CHARM_BASE}/${encodeURIComponent(make)}/`, charmFetchOpts());
       if (!resp.ok) return NextResponse.json({ error: 'Make not found' }, { status: 404 });
       const html = await resp.text();
       const links = extractLinks(html);
@@ -57,7 +61,7 @@ export async function GET(req: NextRequest) {
       const make = searchParams.get('make');
       const year = searchParams.get('year');
       if (!make || !year) return NextResponse.json({ error: 'make and year required' }, { status: 400 });
-      const resp = await fetch(`${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`, CHARM_FETCH_OPTS);
+      const resp = await fetch(`${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`, charmFetchOpts());
       if (!resp.ok) return NextResponse.json({ error: 'Year not found' }, { status: 404 });
       const html = await resp.text();
       const links = extractLinks(html);
@@ -81,7 +85,7 @@ export async function GET(req: NextRequest) {
 
       // Fetch the Repair and Diagnosis index — full tree is pre-rendered in HTML
       const rdUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${encodeURIComponent(variant)}/Repair%20and%20Diagnosis/`;
-      const rdResp = await fetch(rdUrl, CHARM_FETCH_OPTS);
+      const rdResp = await fetch(rdUrl, charmFetchOpts());
       if (!rdResp.ok) return NextResponse.json({ error: 'Repair data not found' }, { status: 404 });
       const rdHtml = await rdResp.text();
 
@@ -127,7 +131,7 @@ export async function GET(req: NextRequest) {
       const url = searchParams.get('url');
       if (!url) return NextResponse.json({ error: 'url required' }, { status: 400 });
       // Fetch the diagram page and extract image URLs
-      const resp = await fetch(url, CHARM_FETCH_OPTS);
+      const resp = await fetch(url, charmFetchOpts());
       if (!resp.ok) return NextResponse.json({ error: 'Page not found' }, { status: 404 });
       const html = await resp.text();
       const imgMatches = html.matchAll(/<img[^>]+class=['"]big-img['"][^>]+src=['"]([^'"]+)['"]/g);
