@@ -7,7 +7,7 @@ function slugify(s: string) {
 }
 
 /** Stable date for sitemap lastmod — avoids build-time clock drift */
-const LAST_MOD = '2026-03-01';
+const LAST_MOD = '2026-03-06';
 
 /**
  * Main sitemap — static pages, tool pages, guide pages.
