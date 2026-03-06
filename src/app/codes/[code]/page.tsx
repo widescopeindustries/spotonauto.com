@@ -52,9 +52,12 @@ export default async function CodePage({ params }: PageProps) {
         mainEntity: {
             '@type': 'Question',
             name: `What does ${dtc.code} mean?`,
+            text: `${dtc.code} — ${dtc.title}. ${dtc.description}`,
+            answerCount: 1,
             acceptedAnswer: {
                 '@type': 'Answer',
                 text: `${dtc.code} — ${dtc.title}. ${dtc.description} Common fix: ${dtc.commonFix}. Estimated cost: ${dtc.estimatedCostRange}.`,
+                url: `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`,
             },
         },
     };
