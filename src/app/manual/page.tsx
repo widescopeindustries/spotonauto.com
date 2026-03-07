@@ -7,7 +7,7 @@ export const revalidate = 86400; // 1 day ISR
 export const metadata: Metadata = {
   title: 'Factory Service Manuals | 82 Makes, 1982-2013 | SpotOnAuto',
   description:
-    'Browse free factory service manuals for 82 makes of cars and trucks (1982-2013). Includes repair procedures, torque specs, wiring diagrams, TSBs, and parts information.',
+    'Browse free factory service manuals for 82 makes of cars and trucks (1982-2013). Repair procedures, torque specs, wiring diagrams, and TSBs.',
   alternates: {
     canonical: 'https://spotonauto.com/manual',
   },

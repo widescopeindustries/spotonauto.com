@@ -160,6 +160,7 @@ export default function CELLandingPage() {
 
                     <h1 className="font-display font-black text-3xl sm:text-4xl md:text-5xl leading-tight mb-3">
                         <span className="text-white">Find Out What&apos;s Wrong</span>
+                        {' '}
                         <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">In 30 Seconds</span>
                     </h1>
@@ -172,7 +173,9 @@ export default function CELLandingPage() {
                     <div className="max-w-md mx-auto space-y-3">
                         {/* OBD Code entry - primary path */}
                         <form onSubmit={handleCodeSearch} className="flex gap-2">
+                            <label htmlFor="obd-code-input" className="sr-only">Enter OBD2 trouble code</label>
                             <input
+                                id="obd-code-input"
                                 type="text"
                                 value={codeInput}
                                 onChange={(e) => setCodeInput(e.target.value.toUpperCase())}

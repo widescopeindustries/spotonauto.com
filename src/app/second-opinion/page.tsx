@@ -329,7 +329,7 @@ export default function SecondOpinionPage() {
           <span className="text-cyan-400 font-mono text-xs tracking-widest uppercase">Quote Shield Active</span>
         </div>
         <h1 className="font-display font-black text-3xl sm:text-4xl text-white mb-3">
-          Get a Free<br />
+          Get a Free <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">2nd Opinion</span>
         </h1>
         <p className="text-gray-400 font-body max-w-md mx-auto">
@@ -352,8 +352,9 @@ export default function SecondOpinionPage() {
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs text-gray-500 font-mono uppercase tracking-wider mb-1.5">Year</label>
+              <label htmlFor="vehicle-year" className="block text-xs text-gray-500 font-mono uppercase tracking-wider mb-1.5">Year</label>
               <select
+                id="vehicle-year"
                 value={vehicle.year}
                 onChange={e => setVehicle({ ...vehicle, year: e.target.value, model: '' })}
                 className="w-full bg-gray-900/80 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-200 focus:outline-none focus:border-cyan-500 text-sm appearance-none"
@@ -363,8 +364,9 @@ export default function SecondOpinionPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-500 font-mono uppercase tracking-wider mb-1.5">Make</label>
+              <label htmlFor="vehicle-make" className="block text-xs text-gray-500 font-mono uppercase tracking-wider mb-1.5">Make</label>
               <select
+                id="vehicle-make"
                 value={vehicle.make}
                 onChange={e => setVehicle({ ...vehicle, make: e.target.value, model: '' })}
                 disabled={!vehicle.year}
@@ -375,8 +377,9 @@ export default function SecondOpinionPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-500 font-mono uppercase tracking-wider mb-1.5">Model</label>
+              <label htmlFor="vehicle-model" className="block text-xs text-gray-500 font-mono uppercase tracking-wider mb-1.5">Model</label>
               <select
+                id="vehicle-model"
                 value={vehicle.model}
                 onChange={e => setVehicle({ ...vehicle, model: e.target.value })}
                 disabled={!vehicle.make || loadingModels}
@@ -395,7 +398,9 @@ export default function SecondOpinionPage() {
             <span className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-xs font-bold">2</span>
             <span className="font-display text-sm tracking-widest text-gray-300 uppercase">Mechanic's Diagnosis</span>
           </div>
+          <label htmlFor="mechanic-diagnosis" className="sr-only">Mechanic&apos;s Diagnosis</label>
           <textarea
+            id="mechanic-diagnosis"
             value={mechanicDiagnosis}
             onChange={e => setMechanicDiagnosis(e.target.value)}
             placeholder="e.g. Catalytic converter needs replacement, front brake pads and rotors, alternator is failing..."
@@ -412,7 +417,9 @@ export default function SecondOpinionPage() {
           </div>
           <div className="relative">
             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <label htmlFor="quoted-price" className="sr-only">Quoted Price</label>
             <input
+              id="quoted-price"
               type="text"
               inputMode="decimal"
               value={quotedPrice}
@@ -431,7 +438,9 @@ export default function SecondOpinionPage() {
               Symptoms You Noticed <span className="text-gray-600 normal-case tracking-normal">(optional)</span>
             </span>
           </div>
+          <label htmlFor="symptoms" className="sr-only">Symptoms You Noticed</label>
           <input
+            id="symptoms"
             type="text"
             value={symptoms}
             onChange={e => setSymptoms(e.target.value)}

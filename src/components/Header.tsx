@@ -53,7 +53,7 @@ const Header: React.FC = () => {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-6">
+                    <nav aria-label="Main navigation" className="hidden md:flex items-center gap-6">
                         {[
                             { key: 'nav.features', href: '/#features' },
                             { key: 'nav.howItWorks', href: '/#how-it-works' },
@@ -70,7 +70,7 @@ const Header: React.FC = () => {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
                             </Link>
                         ))}
-                    </div>
+                    </nav>
 
                     {/* CTA Buttons */}
                     <div className="hidden md:flex items-center gap-3">
@@ -149,7 +149,8 @@ const Header: React.FC = () => {
             </div>
 
             {/* Mobile Menu */}
-            <div
+            <nav
+                aria-label="Mobile navigation"
                 className={`md:hidden glass-strong border-t border-cyan-500/20 overflow-hidden transition-all duration-300 ease-in-out ${
                     isMobileMenuOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
@@ -238,7 +239,7 @@ const Header: React.FC = () => {
                         )}
                     </div>
                 </div>
-            </div>
+            </nav>
         </header>
     );
 };

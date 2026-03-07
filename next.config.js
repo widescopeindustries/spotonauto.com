@@ -24,6 +24,7 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
           { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
           {
             key: 'Content-Security-Policy',
             value: [
@@ -76,6 +77,10 @@ const nextConfig = {
       { source: '/tools/ford-f150-tire-size', destination: '/tools/ford-f-150-tire-size', permanent: true },
       { source: '/tools/honda-crv-oil-type', destination: '/tools/honda-cr-v-oil-type', permanent: true },
       { source: '/tools/honda-crv-tire-size', destination: '/tools/honda-cr-v-tire-size', permanent: true },
+      { source: '/login', destination: '/auth', permanent: true },
+      { source: '/signup', destination: '/auth', permanent: true },
+      { source: '/blog', destination: '/', permanent: false },
+      { source: '/pricing', destination: '/', permanent: false },
     ];
   },
 }
