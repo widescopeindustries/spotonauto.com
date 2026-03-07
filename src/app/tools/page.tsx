@@ -17,6 +17,7 @@ export const metadata: Metadata = {
         title: 'Free Auto Repair Tools | SpotOnAuto',
         description: 'Save money with our free DIY auto repair tools. No signup required.',
         type: 'website',
+        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
     },
     alternates: {
         canonical: 'https://spotonauto.com/tools',

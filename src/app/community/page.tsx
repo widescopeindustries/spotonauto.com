@@ -15,6 +15,7 @@ export const metadata: Metadata = {
         description: 'Join the SpotOnAuto community. Ask questions, share tips, and help fellow DIY mechanics.',
         url: 'https://spotonauto.com/community',
         type: 'website',
+        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
     },
     alternates: { canonical: 'https://spotonauto.com/community' },
 };

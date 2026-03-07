@@ -11,6 +11,7 @@ export const metadata: Metadata = {
         description: 'Free OBD2 trouble code lookup. 300+ codes explained in plain English with symptoms, causes, and fixes.',
         type: 'website',
         url: 'https://spotonauto.com/codes',
+        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
     },
     alternates: {
         canonical: 'https://spotonauto.com/codes',

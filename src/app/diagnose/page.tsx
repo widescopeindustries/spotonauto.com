@@ -53,10 +53,10 @@ function VehicleSelector() {
                     <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
                     <span className="text-amber-400 font-mono text-xs tracking-widest uppercase">AI Diagnostic Core Online</span>
                 </div>
-                <h1 className="font-display font-black text-3xl sm:text-4xl text-white mb-3">
+                <h2 className="font-display font-black text-3xl sm:text-4xl text-white mb-3">
                     What's wrong with<br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">your vehicle?</span>
-                </h1>
+                </h2>
                 <p className="text-gray-400 font-body max-w-md mx-auto">
                     Select your car and describe the problem. Our AI will diagnose it and guide you through the fix — for free.
                 </p>
@@ -198,9 +198,9 @@ function DiagnosticPageInner() {
 
     return (
         <div className="p-4 md:p-8 flex flex-col items-center w-full min-h-[calc(100vh-80px)]">
-            <h1 className="text-2xl font-mono text-neon-cyan mb-8 tracking-widest uppercase">
+            <h2 className="text-2xl font-mono text-neon-cyan mb-8 tracking-widest uppercase">
                 SYSTEM DIAGNOSTICS
-            </h1>
+            </h2>
             <Suspense fallback={<div className="text-neon-cyan font-mono">Initializing Diagnostic Core...</div>}>
                 <DiagnosticContent />
             </Suspense>
@@ -211,6 +211,7 @@ function DiagnosticPageInner() {
 export default function DiagnosticPage() {
     return (
         <>
+            <h1 className="text-2xl font-display font-bold text-white mb-4 text-center pt-24">AI Car Diagnosis</h1>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify({

@@ -13,6 +13,7 @@ export const metadata: Metadata = {
       'Is your mechanic overcharging you? Get an AI-powered 2nd opinion on any auto repair quote. Free instant analysis for your specific vehicle.',
     url: 'https://spotonauto.com/second-opinion',
     type: 'website',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
   },
 };
 

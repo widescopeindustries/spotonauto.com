@@ -79,8 +79,8 @@ const nextConfig = {
       { source: '/tools/honda-crv-tire-size', destination: '/tools/honda-cr-v-tire-size', permanent: true },
       { source: '/login', destination: '/auth', permanent: true },
       { source: '/signup', destination: '/auth', permanent: true },
-      { source: '/blog', destination: '/', permanent: false },
-      { source: '/pricing', destination: '/', permanent: false },
+      { source: '/blog', destination: '/', permanent: true },
+      { source: '/pricing', destination: '/', permanent: true },
     ];
   },
 }

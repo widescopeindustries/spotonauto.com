@@ -17,6 +17,7 @@ export const metadata: Metadata = {
       'Browse OEM repair manuals for 82 makes of vehicles. Torque specs, wiring diagrams, step-by-step procedures, and more.',
     type: 'website',
     url: 'https://spotonauto.com/manual',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
   },
 };
 

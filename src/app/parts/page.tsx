@@ -21,6 +21,7 @@ export const metadata: Metadata = {
         description: 'Find auto parts prices from Amazon. Find the best deals on OEM and aftermarket parts.',
         type: 'website',
         url: 'https://spotonauto.com/parts',
+        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
     },
     alternates: {
         canonical: 'https://spotonauto.com/parts'
@@ -96,6 +97,10 @@ export default function PartsPage() {
                         </h1>
                         <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
                             Find the best deals on OEM and aftermarket parts for your vehicle on Amazon.
+                        </p>
+
+                        <p className="text-xs text-gray-500 text-center mb-4">
+                            As an Amazon Associate, SpotOnAuto earns from qualifying purchases at no additional cost to you.
                         </p>
 
                         {/* Quick search CTA */}

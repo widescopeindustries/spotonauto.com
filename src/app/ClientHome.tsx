@@ -57,10 +57,12 @@ const HeroSection = () => {
                         {/* Heading — no animation wrapper: renders at full opacity for fast LCP */}
                         <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight">
                             <span className="text-white">{t('hero.silenceThe')}</span>
+                            {' '}
                             <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200 glow-text">
                                 {t('hero.checkEngine')}
                             </span>
+                            {' '}
                             <br />
                             <span className="text-white">{t('hero.light')}</span>
                         </h1>

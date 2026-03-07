@@ -548,8 +548,7 @@ export default async function Page({ params }: PageProps) {
                 {/* Hero */}
                 <header className="mb-8 text-center">
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                        {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guide
-                        <span className="block text-xl md:text-2xl text-brand-cyan mt-2">{vehicleName}</span>
+                        {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guide {'\u2014'} {vehicleName}
                     </h1>
                     <p className="text-gray-400 max-w-2xl mx-auto">
                         Complete DIY repair guide with step-by-step instructions. Find exact parts on Amazon for your vehicle.
