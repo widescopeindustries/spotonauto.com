@@ -49,3 +49,9 @@ scripts/indexing-progress.json
 
 .vercel
 .env*.local
+
+# local backup env snapshots
+.env.local.save*
+
+# generated SEO exports/reports
+scripts/seo-reports/

@@ -24,6 +24,7 @@ class SearchConsoleService {
     constructor() {
         this.auth = null;
         this.webmasters = null;
+        this.customDateRange = null;
     }
 
     async initialize() {
@@ -47,6 +48,10 @@ class SearchConsoleService {
     }
 
     getDateRange(days = 28) {
+        if (this.customDateRange) {
+            return this.customDateRange;
+        }
+
         const end = new Date();
         end.setDate(end.getDate() - 1); // Yesterday (data isn't available for today)
         const start = new Date(end);
@@ -56,6 +61,10 @@ class SearchConsoleService {
             startDate: start.toISOString().split('T')[0],
             endDate: end.toISOString().split('T')[0],
         };
+    }
+
+    setDateRange(startDate, endDate) {
+        this.customDateRange = { startDate, endDate };
     }
 
     async getSearchAnalytics(options = {}) {
@@ -291,11 +300,24 @@ async function main() {
     const args = process.argv.slice(2);
     const daysArg = args.findIndex(a => a === '--days');
     const days = daysArg !== -1 ? parseInt(args[daysArg + 1]) || 28 : 28;
+    const startArg = args.findIndex(a => a === '--start');
+    const endArg = args.findIndex(a => a === '--end');
+    const startDate = startArg !== -1 ? args[startArg + 1] : null;
+    const endDate = endArg !== -1 ? args[endArg + 1] : null;
 
     const service = new SearchConsoleService();
 
     try {
         await service.initialize();
+
+        if ((startDate && !endDate) || (!startDate && endDate)) {
+            throw new Error('Use --start YYYY-MM-DD and --end YYYY-MM-DD together');
+        }
+
+        if (startDate && endDate) {
+            service.setDateRange(startDate, endDate);
+            console.log(`Using custom date range: ${startDate} to ${endDate}\n`);
+        }
 
         if (args.includes('--opportunities')) {
             const opps = await service.findOpportunities(days);
