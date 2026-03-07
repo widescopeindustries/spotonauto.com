@@ -1,9 +1,7 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
 import type { DTCCode } from '@/data/dtc-codes-data';
 import AdUnit from '@/components/AdUnit';
+import LiveDtcFlowchart from '@/components/LiveDtcFlowchart';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -106,6 +104,8 @@ export default function CodePageClient({ code }: { code: DTCCode }) {
                     ))}
                 </ol>
             </div>
+
+            <LiveDtcFlowchart code={code.code} />
 
             {/* Ad placement */}
             <AdUnit slot="code-after-diagnosis" />

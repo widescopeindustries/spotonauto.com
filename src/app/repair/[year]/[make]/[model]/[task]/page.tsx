@@ -1,6 +1,6 @@
 ﻿import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
-import GuideContent from './GuideContent';
+import DeferredGuideContent from './DeferredGuideContent';
 import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
@@ -775,7 +775,7 @@ export default async function Page({ params }: PageProps) {
             </article>
 
             {/* Client-side AI Guide */}
-            <GuideContent params={resolvedParams} />
+            <DeferredGuideContent params={resolvedParams} />
 
             {/* More SEO Content */}
             <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">

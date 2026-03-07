@@ -1,28 +1,49 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Cpu, Car, Menu, X, History, LogOut, Zap, Shield, Bookmark, MessageCircle } from 'lucide-react';
+import { Cpu, Car, Menu, X, History, LogOut, Zap, Shield, Bookmark } from 'lucide-react';
 import { trackBookmarkClick } from '@/lib/analytics';
 import { useAuth } from '@/contexts/AuthContext';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useT } from '@/lib/translations';
 
 const Header: React.FC = () => {
-    const router = useRouter();
-    const { user, logout, loading } = useAuth();
+    const { user, logout } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [bookmarkHint, setBookmarkHint] = useState<string | null>(null);
     const t = useT();
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
+        let ticking = false;
+        let last = false;
+
+        const update = () => {
+            ticking = false;
+            const next = window.scrollY > 50;
+            if (next !== last) {
+                last = next;
+                setIsScrolled(next);
+            }
         };
+
+        const handleScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        };
+
+        update();
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        if (!bookmarkHint) return;
+        const timer = window.setTimeout(() => setBookmarkHint(null), 2500);
+        return () => window.clearTimeout(timer);
+    }, [bookmarkHint]);
 
     const handleLogout = async () => {
         await logout();
@@ -78,7 +99,7 @@ const Header: React.FC = () => {
                             onClick={() => {
                                 trackBookmarkClick(window.location.pathname);
                                 const key = navigator.userAgent.toLowerCase().includes('mac') ? 'Cmd' : 'Ctrl';
-                                alert(`Press ${key}+D to bookmark this page`);
+                                setBookmarkHint(`Press ${key}+D to bookmark this page`);
                             }}
                             className="flex items-center gap-1.5 text-gray-300 hover:text-cyan-400 transition-all duration-200 hover:scale-105 active:scale-95"
                             title="Bookmark this page"
@@ -88,37 +109,37 @@ const Header: React.FC = () => {
                             <span className="font-body text-sm">{t('nav.bookmark') || 'Bookmark'}</span>
                         </button>
                         <LanguageSelector />
-                        <button
-                            onClick={() => router.push('/diagnose')}
+                        <Link
+                            href="/diagnose"
                             className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-all duration-200 hover:scale-105 active:scale-95"
                         >
                             <Zap className="w-4 h-4" />
                             <span className="font-body text-sm">{t('nav.diagnose')}</span>
-                        </button>
-                        <button
-                            onClick={() => router.push('/second-opinion')}
+                        </Link>
+                        <Link
+                            href="/second-opinion"
                             className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-all duration-200 hover:scale-105 active:scale-95"
                         >
                             <Shield className="w-4 h-4" />
                             <span className="font-body text-sm">{t('nav.secondOpinion')}</span>
-                        </button>
-                        <button
-                            onClick={() => router.push('/parts')}
+                        </Link>
+                        <Link
+                            href="/parts"
                             className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-all duration-200 hover:scale-105 active:scale-95"
                         >
                             <Car className="w-4 h-4" />
                             <span className="font-body text-sm">{t('nav.parts')}</span>
-                        </button>
+                        </Link>
 
                         {user ? (
                             <div className="flex items-center gap-3">
-                                <button
-                                    onClick={() => router.push('/history')}
+                                <Link
+                                    href="/history"
                                     className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition-all duration-200 hover:scale-105 active:scale-95"
                                 >
                                     <History className="w-4 h-4" />
                                     <span className="font-body text-sm">{t('nav.history')}</span>
-                                </button>
+                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="btn-cyber flex items-center gap-2 py-2 px-4 hover:scale-105 active:scale-95 transition-transform duration-200"
@@ -128,12 +149,12 @@ const Header: React.FC = () => {
                                 </button>
                             </div>
                         ) : (
-                            <button
-                                onClick={() => router.push('/auth')}
+                            <Link
+                                href="/auth"
                                 className="btn-cyber hover:scale-105 active:scale-95 transition-transform duration-200"
                             >
                                 {t('nav.signIn')}
-                            </button>
+                            </Link>
                         )}
                     </div>
 
@@ -182,7 +203,7 @@ const Header: React.FC = () => {
                             onClick={() => {
                                 trackBookmarkClick(window.location.pathname);
                                 const key = navigator.userAgent.toLowerCase().includes('mac') ? 'Cmd' : 'Ctrl';
-                                alert(`Press ${key}+D to bookmark this page`);
+                                setBookmarkHint(`Press ${key}+D to bookmark this page`);
                                 setIsMobileMenuOpen(false);
                             }}
                             className="flex items-center gap-2 text-gray-300 w-full"
@@ -190,37 +211,41 @@ const Header: React.FC = () => {
                             <Bookmark className="w-4 h-4" />
                             <span className="font-body">{t('nav.bookmark') || 'Bookmark'}</span>
                         </button>
-                        <button
-                            onClick={() => { router.push('/diagnose'); setIsMobileMenuOpen(false); }}
+                        <Link
+                            href="/diagnose"
+                            onClick={() => { setIsMobileMenuOpen(false); }}
                             className="flex items-center gap-2 text-amber-400 w-full font-semibold"
                         >
                             <Zap className="w-4 h-4" />
                             <span className="font-body">{t('nav.diagnoseMycar')}</span>
-                        </button>
-                        <button
-                            onClick={() => { router.push('/second-opinion'); setIsMobileMenuOpen(false); }}
+                        </Link>
+                        <Link
+                            href="/second-opinion"
+                            onClick={() => { setIsMobileMenuOpen(false); }}
                             className="flex items-center gap-2 text-cyan-400 w-full font-semibold"
                         >
                             <Shield className="w-4 h-4" />
                             <span className="font-body">{t('nav.secondOpinion')}</span>
-                        </button>
-                        <button
-                            onClick={() => { router.push('/parts'); setIsMobileMenuOpen(false); }}
+                        </Link>
+                        <Link
+                            href="/parts"
+                            onClick={() => { setIsMobileMenuOpen(false); }}
                             className="flex items-center gap-2 text-gray-300"
                         >
                             <Car className="w-4 h-4" />
                             <span className="font-body">{t('nav.partsFinder')}</span>
-                        </button>
+                        </Link>
 
                         {user ? (
                             <>
-                                <button
-                                    onClick={() => { router.push('/history'); setIsMobileMenuOpen(false); }}
+                                <Link
+                                    href="/history"
+                                    onClick={() => { setIsMobileMenuOpen(false); }}
                                     className="flex items-center gap-2 text-gray-300 w-full"
                                 >
                                     <History className="w-4 h-4" />
                                     <span className="font-body">{t('nav.myHistory')}</span>
-                                </button>
+                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="btn-cyber w-full flex items-center justify-center gap-2"
@@ -230,16 +255,23 @@ const Header: React.FC = () => {
                                 </button>
                             </>
                         ) : (
-                            <button
-                                onClick={() => { router.push('/auth'); setIsMobileMenuOpen(false); }}
-                                className="btn-cyber w-full"
+                            <Link
+                                href="/auth"
+                                onClick={() => { setIsMobileMenuOpen(false); }}
+                                className="btn-cyber block w-full text-center"
                             >
                                 {t('nav.signUp')}
-                            </button>
+                            </Link>
                         )}
                     </div>
                 </div>
             </nav>
+
+            {bookmarkHint && (
+                <div className="fixed top-20 right-4 z-[70] rounded-lg border border-cyan-500/30 bg-black/85 px-3 py-2 text-xs text-cyan-200 shadow-lg">
+                    {bookmarkHint}
+                </div>
+            )}
         </header>
     );
 };

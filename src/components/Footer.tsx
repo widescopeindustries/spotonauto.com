@@ -1,10 +1,9 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
 import { Cpu, Zap, Car, BookOpen, Shield, Mail, MessageSquare } from 'lucide-react';
 
-const Footer: React.FC = () => {
+const Footer = () => {
+    const year = new Date().getFullYear();
+
     return (
         <footer className="relative border-t border-cyan-500/10 bg-black/40">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -135,7 +134,7 @@ const Footer: React.FC = () => {
                 {/* Bottom bar */}
                 <div className="mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="font-body text-xs text-gray-600">
-                        © {new Date().getFullYear()} SpotOn Auto. All rights reserved. AI-generated content is for informational purposes only.
+                        © {year} SpotOn Auto. All rights reserved. AI-generated content is for informational purposes only.
                     </p>
                     <div className="flex items-center gap-4">
                         <span className="text-xs text-gray-700 font-mono">Powered by Gemini 2.0</span>

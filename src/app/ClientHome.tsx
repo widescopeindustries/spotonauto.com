@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { CheckCircle2 } from 'lucide-react';
 import PopularGuidesSection from '@/components/PopularGuidesSection';
 import AdUnit from '@/components/AdUnit';
+import DeferredRender from '@/components/DeferredRender';
 import { useT } from '@/lib/translations';
 
 // No Framer Motion in hero — CSS animations only (LCP fix)
@@ -199,13 +200,23 @@ export default function ClientHome() {
             <main className="relative z-10">
                 <HeroSection />
                 <FreeForTheWorldBanner />
-                <PopularGuidesSection />
+                <DeferredRender placeholderClassName="min-h-[380px]">
+                    <PopularGuidesSection />
+                </DeferredRender>
                 <AdUnit slot="home-mid-content" format="horizontal" className="max-w-7xl" />
-                <FeaturesSection />
-                <HowItWorksSection />
-                <TestimonialsSection />
+                <DeferredRender placeholderClassName="min-h-[520px]">
+                    <FeaturesSection />
+                </DeferredRender>
+                <DeferredRender placeholderClassName="min-h-[520px]">
+                    <HowItWorksSection />
+                </DeferredRender>
+                <DeferredRender placeholderClassName="min-h-[420px]">
+                    <TestimonialsSection />
+                </DeferredRender>
                 <AdUnit slot="home-bottom" className="max-w-7xl" />
-                <CTASection />
+                <DeferredRender placeholderClassName="min-h-[300px]">
+                    <CTASection />
+                </DeferredRender>
             </main>
         </div>
     );

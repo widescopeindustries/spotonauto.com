@@ -448,6 +448,11 @@ input::placeholder, textarea::placeholder {
 
 /* Responsive */
 @media (max-width: 768px) {
+  body {
+    /* Lighter mobile paint path: drop expensive layered radial backgrounds */
+    background-image: linear-gradient(to bottom, #050505, #0a0a0a);
+  }
+
   .font-display {
     letter-spacing: -0.02em;
   }
@@ -455,6 +460,32 @@ input::placeholder, textarea::placeholder {
   /* Reduce expensive text painting on mobile LCP candidates */
   .glow-text {
     text-shadow: none;
+  }
+
+  .glow-border,
+  .glow-button,
+  .glass,
+  .glass-strong {
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .noise-overlay,
+  .scanline-overlay {
+    display: none !important;
+  }
+
+  .animate-pulse-glow,
+  .animate-float,
+  .animate-text-flicker,
+  .animate-marquee-left,
+  .animate-marquee-right,
+  .animate-fade-in-right,
+  .animate-fade-in-up,
+  .animate-scale-in,
+  .header-slide-in {
+    animation: none !important;
   }
 }
 

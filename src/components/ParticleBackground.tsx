@@ -20,7 +20,18 @@ const ParticleBackground = () => {
     window.addEventListener('resize', resize);
 
     const isMobile = window.innerWidth < 768;
-    const count = isMobile ? 20 : 35;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Avoid constant animation on mobile/reduced-motion devices (INP + battery).
+    if (isMobile || prefersReducedMotion) {
+      ctx.fillStyle = '#050505';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      return () => {
+        window.removeEventListener('resize', resize);
+      };
+    }
+
+    const count = 35;
 
     const particles: Array<{
       x: number;
@@ -61,21 +72,18 @@ const ParticleBackground = () => {
         ctx.fillStyle = `rgba(0, 212, 255, ${p.alpha})`;
         ctx.fill();
 
-        // Skip O(n²) connection drawing on mobile — too expensive on low-end devices
-        if (!isMobile) {
-          particles.slice(i + 1).forEach((p2) => {
-            const dx = p.x - p2.x;
-            const dy = p.y - p2.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 150) {
-              ctx.beginPath();
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = `rgba(0, 212, 255, ${0.1 * (1 - dist / 150)})`;
-              ctx.stroke();
-            }
-          });
-        }
+        particles.slice(i + 1).forEach((p2) => {
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(0, 212, 255, ${0.1 * (1 - dist / 150)})`;
+            ctx.stroke();
+          }
+        });
       });
 
       animationId = requestAnimationFrame(animate);

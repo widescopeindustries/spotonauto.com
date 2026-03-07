@@ -38,6 +38,7 @@ const shareTechMono = Share_Tech_Mono({
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-WNFX6CY9RN';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://spotonauto.com'),
   title: "SpotOnAuto | Free DIY Auto Repair Guides for Your Car",
   description: "Save hundreds on auto repairs. Get instant AI-generated repair guides for your exact vehicle — step-by-step instructions, parts lists, and pro tips. Skip the shop, fix it yourself.",
   keywords: [
@@ -97,19 +98,27 @@ export default function RootLayout({
           </>
         )}
 
-        {/* AdSense — lazyOnload to avoid competing with LCP on mobile */}
-        <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3105584943212740"
-          crossOrigin="anonymous"
-          strategy="lazyOnload"
-        />
-
-        {/* Ahrefs Web Analytics — lazyOnload */}
-        <Script
-          src="https://analytics.ahrefs.com/analytics.js"
-          data-key="Id9DIK0mrHJtsEHStxIWNA"
-          strategy="lazyOnload"
-        />
+        {/* Ahrefs Web Analytics — idle/deferred to protect mobile INP */}
+        <Script id="ahrefs-deferred" strategy="lazyOnload">
+          {`
+            (function () {
+              function loadAhrefs() {
+                if (document.querySelector('script[data-ahrefs-analytics]')) return;
+                var s = document.createElement('script');
+                s.src = 'https://analytics.ahrefs.com/analytics.js';
+                s.dataset.key = 'Id9DIK0mrHJtsEHStxIWNA';
+                s.dataset.ahrefsAnalytics = 'true';
+                s.defer = true;
+                document.head.appendChild(s);
+              }
+              if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadAhrefs, { timeout: 10000 });
+              } else {
+                setTimeout(loadAhrefs, 6000);
+              }
+            })();
+          `}
+        </Script>
 
         {/* Organization + WebSite schema — global site identity for Google */}
         <script
