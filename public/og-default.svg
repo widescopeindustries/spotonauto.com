@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="SpotOnAuto social preview">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#050505" />
+      <stop offset="100%" stop-color="#0a0f16" />
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0" />
+      <stop offset="50%" stop-color="#00d4ff" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="80" y="88" width="1040" height="454" rx="24" fill="none" stroke="#00d4ff" stroke-opacity="0.35" />
+  <line x1="120" y1="194" x2="1080" y2="194" stroke="url(#line)" stroke-width="2" />
+  <line x1="120" y1="452" x2="1080" y2="452" stroke="url(#line)" stroke-width="2" />
+  <text x="120" y="266" fill="#00d4ff" font-size="68" font-family="Orbitron, Rajdhani, Arial, sans-serif" font-weight="700" letter-spacing="3">SPOTONAUTO</text>
+  <text x="120" y="334" fill="#ffffff" font-size="44" font-family="Rajdhani, Arial, sans-serif" font-weight="600">Free AI-Powered DIY Auto Repair</text>
+  <text x="120" y="392" fill="#9ca3af" font-size="30" font-family="Rajdhani, Arial, sans-serif">Diagnose faster. Fix smarter. Save money.</text>
+</svg>

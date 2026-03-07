@@ -7,7 +7,9 @@
     "prebuild": "npx tsx scripts/generate-repair-sitemaps.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "smoke:prod": "node scripts/smoke-prod.mjs",
+    "smoke:local": "BASE_URL=http://localhost:3000 node scripts/smoke-prod.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.20.0",

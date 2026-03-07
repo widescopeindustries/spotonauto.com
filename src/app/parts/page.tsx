@@ -131,7 +131,7 @@ export default function PartsPage() {
                                 key={retailer.name}
                                 href={retailer.url}
                                 target="_blank"
-                                rel="noopener noreferrer"
+                                rel="noopener noreferrer sponsored"
                                 className="group bg-white/[0.02] border border-white/10 rounded-2xl p-6 hover:bg-white/[0.05] hover:border-white/20 transition-all hover:scale-105 max-w-md w-full"
                             >
                                 <div className="flex items-center gap-4 mb-4">
@@ -178,7 +178,7 @@ export default function PartsPage() {
                                             <a
                                                 href={`https://www.amazon.com/s?k=${encodeURIComponent(part)}&i=automotive&tag=${AMAZON_TAG}`}
                                                 target="_blank"
-                                                rel="noopener noreferrer"
+                                                rel="noopener noreferrer sponsored"
                                                 className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors group"
                                             >
                                                 <span className="text-gray-300 group-hover:text-white transition-colors">{part}</span>

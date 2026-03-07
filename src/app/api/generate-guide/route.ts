@@ -42,26 +42,17 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { action, payload, stream } = body;
+    const { action, payload = {}, stream } = body;
 
     const limited = checkRateLimit(req, 10, 60_000); // 10 actions/min per IP
     if (limited) return limited;
 
-    const user = await getAuthenticatedUser(req);
-
-    // Expensive actions require authentication
-    if (['diagnostic-chat'].includes(action) && !user) {
-      return NextResponse.json(
-        { error: 'Authentication required. Please sign in to use this feature.' },
-        { status: 401 }
-      );
-    }
-
-    console.log(`API Request [user:${user?.id ?? 'anonymous'}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);
-
     if (!action) {
       return NextResponse.json({ error: 'Missing action' }, { status: 400 });
     }
+
+    const user = await getAuthenticatedUser(req);
+    console.log(`API Request [user:${user?.id ?? 'anonymous'}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);
 
     // Validate vehicle for actions that require it
     if (['vehicle-info', 'generate-guide', 'diagnostic-chat'].includes(action)) {

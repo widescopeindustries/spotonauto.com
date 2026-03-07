@@ -11,6 +11,7 @@ interface AuthContextType {
   loginWithGoogle: (redirectAfter?: string) => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -107,6 +108,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (error) { console.error('Signup failed:', error.message); throw error; }
   };
 
+  const resetPassword = async (email: string) => {
+    const redirectTo = typeof window !== 'undefined'
+      ? `${window.location.origin}/auth`
+      : undefined;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) { console.error('Password reset failed:', error.message); throw error; }
+  };
+
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) { console.error('Logout failed:', error.message); }
@@ -122,7 +131,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithEmail, signup, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithEmail, signup, resetPassword, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
@@ -136,6 +145,7 @@ const defaultAuth: AuthContextType = {
   loginWithGoogle: noop,
   loginWithEmail: noop,
   signup: noop,
+  resetPassword: noop,
   logout: noop,
   refreshUser: noop,
 };

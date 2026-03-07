@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     type: 'website',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
   },
+  twitter: {
+    images: ['/opengraph-image'],
+  },
 };
 
 const faqSchema = {

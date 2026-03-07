@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Cpu, Activity, ImageIcon, Camera } from 'lucide-react';
 import { createDiagnosticChat, sendDiagnosticMessage, Chat } from '../services/apiClient';
@@ -20,11 +20,11 @@ interface Message {
 
 const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, initialProblem: initialProblemProp }) => {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const [messages, setMessages] = useState<Message[]>([]);
     const [typing, setTyping] = useState(false);
     const [chatSession, setChatSession] = useState<Chat | null>(null);
     const [userInput, setUserInput] = useState('');
+    const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const vehicle = vehicleProp || (searchParams.get('year') && searchParams.get('make') && searchParams.get('model')
@@ -114,9 +114,15 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
 
         setUserInput('');
         setTyping(true);
+        setStatusMessage(null);
 
         try {
-            const response = await sendDiagnosticMessage(activeChat, text);
+            const response = await Promise.race([
+                sendDiagnosticMessage(activeChat, text),
+                new Promise<never>((_, reject) =>
+                    setTimeout(() => reject(new Error('REQUEST_TIMEOUT')), 20000)
+                ),
+            ]);
 
             const systemMsg: Message = {
                 id: (Date.now() + 1).toString(),
@@ -126,12 +132,20 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
             };
 
             setMessages(prev => [...prev, systemMsg]);
-        } catch (error) {
+        } catch (error: any) {
+            let message = "Unable to complete diagnosis right now. Please try again.";
+            const errorText = String(error?.message || '');
+            if (errorText.includes('REQUEST_TIMEOUT')) {
+                message = "Diagnosis timed out after 20 seconds. Please retry, or shorten your symptom description.";
+            } else if (errorText.toLowerCase().includes('authentication required')) {
+                message = "Please sign in, then try diagnosis again.";
+            }
             setMessages(prev => [...prev, {
                 id: (Date.now() + 1).toString(),
                 type: 'system',
-                text: "Communication Error. Re-establishing link..."
+                text: message
             }]);
+            setStatusMessage(message);
         } finally {
             setTyping(false);
         }
@@ -234,10 +248,12 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                 <div className="text-center mt-2">
                     <span className="text-[10px] text-gray-500 font-mono">POWERED BY GEMINI 2.0 // FACTORY MANUAL PROTOCOL ENABLED</span>
                 </div>
+                {statusMessage && (
+                    <p className="text-center mt-2 text-xs text-amber-400 font-mono">{statusMessage}</p>
+                )}
             </div>
         </div>
     );
 };
 
 export default DiagnosticChat;
-

@@ -13,11 +13,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, redirectAfter }) => 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { loginWithEmail, signup, loginWithGoogle } = useAuth();
+  const [resetNotice, setResetNotice] = useState<string | null>(null);
+  const { loginWithEmail, signup, loginWithGoogle, resetPassword } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setResetNotice(null);
     try {
       if (isLogin) {
         await loginWithEmail(email, password);
@@ -32,10 +34,27 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, redirectAfter }) => 
 
   const handleGoogleLogin = async () => {
       try {
+          setResetNotice(null);
           // Pass the intended destination so callback can redirect there after OAuth
           await loginWithGoogle(redirectAfter);
       } catch (err: any) {
           setError(err.message || 'Google Login failed');
+      }
+  };
+
+  const handleResetPassword = async () => {
+      setError(null);
+      setResetNotice(null);
+      if (!email.trim()) {
+          setError('Enter your email address first, then click Forgot password.');
+          return;
+      }
+
+      try {
+          await resetPassword(email.trim());
+          setResetNotice('Password reset email sent. Check your inbox.');
+      } catch (err: any) {
+          setError(err.message || 'Unable to send reset email.');
       }
   };
 
@@ -53,6 +72,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, redirectAfter }) => 
 
         <form onSubmit={handleSubmit} className="glass p-8 rounded-xl space-y-6">
             {error && <div className="text-red-400 text-sm text-center bg-red-900/20 p-2 rounded border border-red-500/50">{error}</div>}
+            {resetNotice && <div className="text-green-400 text-sm text-center bg-green-900/20 p-2 rounded border border-green-500/50">{resetNotice}</div>}
 
             <div className="space-y-4">
                  <div>
@@ -77,6 +97,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, redirectAfter }) => 
                         required
                         minLength={6}
                     />
+                    {isLogin && (
+                        <div className="mt-2 text-right">
+                            <button
+                                type="button"
+                                onClick={handleResetPassword}
+                                className="text-xs text-cyan-400 hover:underline"
+                            >
+                                Forgot password?
+                            </button>
+                        </div>
+                    )}
                  </div>
             </div>
 

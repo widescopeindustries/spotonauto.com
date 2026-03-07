@@ -27,6 +27,10 @@ export default function AdUnit({
   useEffect(() => {
     if (initialized.current) return;
     if (!adRef.current) return;
+    if (adRef.current.dataset.adStatus === 'done') {
+      initialized.current = true;
+      return;
+    }
 
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
