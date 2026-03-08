@@ -2,10 +2,10 @@
 /**
  * SpotOnAuto Smoke Test — run before every deploy
  * Usage: node scripts/smoke-test.js [base_url]
- * Default: https://www.spotonauto.com
+ * Default: https://spotonauto.com
  */
 
-const BASE = process.argv[2] || 'https://www.spotonauto.com';
+const BASE = process.argv[2] || 'https://spotonauto.com';
 let passed = 0;
 let failed = 0;
 const results = [];
