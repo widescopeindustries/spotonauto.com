@@ -21,6 +21,7 @@ import {
   getCodeLinksForWiringSystem,
   getRepairLinksForWiringVehicle,
 } from '@/lib/diagnosticCrossLinks';
+import { getManualSectionLinksForWiringVehicle } from '@/lib/manualSectionLinks';
 
 export const revalidate = 21600;
 
@@ -182,6 +183,7 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
     .slice(0, 8);
   const relatedRepairLinks = getRepairLinksForWiringVehicle(vehicle, systemSlug, 4);
   const relatedCodeLinks = getCodeLinksForWiringSystem(systemSlug, 6);
+  const manualSectionLinks = await getManualSectionLinksForWiringVehicle(vehicle, systemSlug, 4);
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -286,8 +288,34 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 pb-16 grid lg:grid-cols-2 gap-6">
-        {(relatedRepairLinks.length > 0 || relatedCodeLinks.length > 0) && (
+        {(manualSectionLinks.length > 0 || relatedRepairLinks.length > 0 || relatedCodeLinks.length > 0) && (
           <>
+            {manualSectionLinks.length > 0 && (
+              <div className="rounded-2xl border border-slate-500/20 bg-slate-500/10 p-6">
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <h3 className="text-xl font-bold text-slate-200">OEM Manual Evidence</h3>
+                  <Link href="/manual" className="text-xs text-slate-300 hover:underline">
+                    Browse manuals →
+                  </Link>
+                </div>
+                <div className="grid gap-3">
+                  {manualSectionLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="rounded-xl border border-slate-500/20 bg-black/20 px-4 py-3 hover:border-slate-400/40 hover:bg-black/30 transition"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-semibold text-white">{link.label}</span>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">{link.badge}</span>
+                      </div>
+                      <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {relatedRepairLinks.length > 0 && (
               <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
                 <div className="flex items-center justify-between gap-3 mb-4">

@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { DTC_CODES, DTC_CODES_MAP } from '@/data/dtc-codes-data';
 import CodePageClient from './CodePageClient';
+import { getManualSectionLinksForCode } from '@/lib/manualSectionLinks';
 
 interface PageProps {
     params: Promise<{ code: string }>;
@@ -45,6 +46,7 @@ export default async function CodePage({ params }: PageProps) {
     const { code: slug } = await params;
     const dtc = DTC_CODES_MAP.get(slug.toUpperCase());
     if (!dtc) notFound();
+    const manualLinks = await getManualSectionLinksForCode(dtc, 4);
     const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
     const schemaDate = '2026-03-05';
     const schemaAuthor = {
@@ -106,7 +108,7 @@ export default async function CodePage({ params }: PageProps) {
                     ],
                 }) }}
             />
-            <CodePageClient code={dtc} />
+            <CodePageClient code={dtc} manualLinks={manualLinks} />
         </div>
     );
 }

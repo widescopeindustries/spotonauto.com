@@ -3,6 +3,7 @@ import type { DTCCode } from '@/data/dtc-codes-data';
 import AdUnit from '@/components/AdUnit';
 import LiveDtcFlowchart from '@/components/LiveDtcFlowchart';
 import {
+    type DiagnosticCrossLink,
     getRelatedCodeLinks,
     getRepairLinksForCode,
     getWiringLinksForCode,
@@ -23,7 +24,13 @@ const LIKELIHOOD_BADGE: Record<string, string> = {
 
 const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
 
-export default function CodePageClient({ code }: { code: DTCCode }) {
+export default function CodePageClient({
+    code,
+    manualLinks = [],
+}: {
+    code: DTCCode;
+    manualLinks?: DiagnosticCrossLink[];
+}) {
     const sev = SEVERITY_CONFIG[code.severity] || SEVERITY_CONFIG.medium;
     const repairLinks = getRepairLinksForCode(code, 6);
     const wiringLinks = getWiringLinksForCode(code, 6);
@@ -146,7 +153,7 @@ export default function CodePageClient({ code }: { code: DTCCode }) {
             )}
 
             {/* Reverse knowledge graph */}
-            {(repairLinks.length > 0 || wiringLinks.length > 0) && (
+            {(manualLinks.length > 0 || repairLinks.length > 0 || wiringLinks.length > 0) && (
                 <section className="mb-12">
                     <div className="mb-5">
                         <h3 className="text-xl font-bold text-white mb-2">Knowledge Paths from This Code</h3>
@@ -156,6 +163,32 @@ export default function CodePageClient({ code }: { code: DTCCode }) {
                     </div>
 
                     <div className="grid lg:grid-cols-2 gap-6">
+                        {manualLinks.length > 0 && (
+                            <div className="rounded-2xl border border-slate-500/20 bg-slate-500/10 p-5">
+                                <div className="flex items-center justify-between gap-3 mb-4">
+                                    <h4 className="text-base font-bold text-slate-200">OEM Manual Evidence</h4>
+                                    <Link href="/manual" className="text-xs text-slate-300 hover:underline">
+                                        Browse manuals →
+                                    </Link>
+                                </div>
+                                <div className="space-y-3">
+                                    {manualLinks.map((link) => (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            className="block rounded-xl border border-slate-500/20 bg-black/20 p-4 hover:border-slate-400/40 hover:bg-black/30 transition-all"
+                                        >
+                                            <div className="flex items-center justify-between gap-3">
+                                                <span className="font-semibold text-white">{link.label}</span>
+                                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">{link.badge}</span>
+                                            </div>
+                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {repairLinks.length > 0 && (
                             <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
                                 <div className="flex items-center justify-between gap-3 mb-4">

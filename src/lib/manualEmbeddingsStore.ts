@@ -35,6 +35,15 @@ export interface ManualEmbeddingSearchRow {
   similarity: number;
 }
 
+export interface ManualSectionMatchRow {
+  path: string;
+  make: string;
+  year: number;
+  model: string;
+  sectionTitle: string;
+  contentPreview: string;
+}
+
 export interface ManualEmbeddingsHealth {
   backend: ManualEmbeddingsBackend;
   ok: boolean;
@@ -142,6 +151,40 @@ function sortByModelHints(rows: ManualEmbeddingSearchRow[], model?: string): Man
     if (rankDiff !== 0) return rankDiff;
     return b.similarity - a.similarity;
   });
+}
+
+function sortSectionMatchesByModelHints(rows: ManualSectionMatchRow[], model?: string): ManualSectionMatchRow[] {
+  const { exact, prefix } = getModelHints(model);
+  if (!exact) return rows;
+
+  const lcExact = exact.toLowerCase();
+  const lcPrefix = prefix.toLowerCase();
+
+  const rank = (rowModel: string): number => {
+    const normalized = rowModel.toLowerCase();
+    if (normalized === lcExact) return 0;
+    if (normalized.includes(lcExact)) return 1;
+    if (lcPrefix && normalized.startsWith(lcPrefix)) return 2;
+    if (lcPrefix && normalized.includes(lcPrefix)) return 3;
+    return 4;
+  };
+
+  return [...rows].sort((a, b) => {
+    const rankDiff = rank(a.model) - rank(b.model);
+    if (rankDiff !== 0) return rankDiff;
+    return a.sectionTitle.localeCompare(b.sectionTitle);
+  });
+}
+
+function mapSectionRows<T extends QueryResultRow>(rows: T[]): ManualSectionMatchRow[] {
+  return rows.map((row) => ({
+    path: String(row.path || ''),
+    make: String(row.make || ''),
+    year: Number(row.year || 0),
+    model: String(row.model || ''),
+    sectionTitle: String(row.section_title || ''),
+    contentPreview: String(row.content_preview || ''),
+  }));
 }
 
 export async function testManualEmbeddingsConnection(): Promise<ManualEmbeddingsHealth> {
@@ -379,6 +422,121 @@ export async function searchManualEmbeddings(params: ManualEmbeddingSearchParams
   return [];
 }
 
+export async function findManualSectionsByTerms(args: {
+  make: string;
+  year: number;
+  model?: string;
+  terms: string[];
+  limit: number;
+}): Promise<ManualSectionMatchRow[]> {
+  const backend = getConfiguredBackend();
+  const normalizedTerms = [...new Set(args.terms.map((term) => term.trim().toLowerCase()).filter(Boolean))];
+  if (normalizedTerms.length === 0) return [];
+
+  if (backend === 'vps') {
+    const pool = getVpsPool();
+    if (!pool) return [];
+
+    const { exact, prefix } = getModelHints(args.model);
+    const params: Array<string | number> = [args.make, args.year, Math.max(1, args.limit), exact, prefix];
+    const relevanceParts: string[] = [];
+    const filterParts: string[] = [];
+
+    for (const term of normalizedTerms) {
+      params.push(`%${term}%`);
+      const idx = params.length;
+      relevanceParts.push(`
+        CASE WHEN lower(section_title) LIKE $${idx} THEN 9 ELSE 0 END +
+        CASE WHEN lower(content_preview) LIKE $${idx} THEN 5 ELSE 0 END +
+        CASE WHEN lower(content_full) LIKE $${idx} THEN 2 ELSE 0 END
+      `);
+      filterParts.push(`(
+        lower(section_title) LIKE $${idx}
+        OR lower(content_preview) LIKE $${idx}
+        OR lower(content_full) LIKE $${idx}
+      )`);
+    }
+
+    const relevanceExpr = relevanceParts.join(' + ');
+    const filterExpr = filterParts.join(' OR ');
+    const { rows } = await pool.query(
+      `SELECT
+         path,
+         make,
+         year,
+         model,
+         section_title,
+         content_preview,
+         (${relevanceExpr}) AS relevance
+       FROM manual_embeddings
+       WHERE make = $1
+         AND year = $2
+         AND (${filterExpr})
+       ORDER BY
+         CASE
+           WHEN $4::text <> '' AND lower(model) = lower($4) THEN 0
+           WHEN $4::text <> '' AND lower(model) LIKE lower('%' || $4 || '%') THEN 1
+           WHEN $5::text <> '' AND lower(model) LIKE lower($5 || '%') THEN 2
+           WHEN $5::text <> '' AND lower(model) LIKE lower('%' || $5 || '%') THEN 3
+           ELSE 4
+         END,
+         relevance DESC,
+         section_title ASC
+       LIMIT $3`,
+      params,
+    );
+
+    return mapSectionRows(rows);
+  }
+
+  if (backend === 'supabase') {
+    const client = getSupabaseAdmin();
+    if (!client) return [];
+
+    const { data, error } = await client
+      .from('manual_embeddings')
+      .select('path, make, year, model, section_title, content_preview, content_full')
+      .eq('make', args.make)
+      .eq('year', args.year)
+      .limit(400);
+
+    if (error) throw error;
+
+    const filtered = (data || [])
+      .map((row) => ({
+        path: String(row.path || ''),
+        make: String(row.make || ''),
+        year: Number(row.year || 0),
+        model: String(row.model || ''),
+        sectionTitle: String(row.section_title || ''),
+        contentPreview: String(row.content_preview || ''),
+        contentFull: String((row as { content_full?: string }).content_full || ''),
+      }))
+      .map((row) => {
+        const haystack = `${row.sectionTitle} ${row.contentPreview} ${row.contentFull}`.toLowerCase();
+        let score = 0;
+        for (const term of normalizedTerms) {
+          if (haystack.includes(term)) score += 1;
+        }
+        return { row, score };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ row }) => ({
+        path: row.path,
+        make: row.make,
+        year: row.year,
+        model: row.model,
+        sectionTitle: row.sectionTitle,
+        contentPreview: row.contentPreview,
+      }));
+
+    return sortSectionMatchesByModelHints(filtered, args.model).slice(0, args.limit);
+  }
+
+  return [];
+}
+
 export async function findDiagnosticTroubleCodeIndexes(code: string, limit: number): Promise<Array<{
   path: string;
   make: string;
@@ -429,6 +587,56 @@ export async function findDiagnosticTroubleCodeIndexes(code: string, limit: numb
       year: Number(row.year || 0),
       model: String(row.model || ''),
     }));
+  }
+
+  return [];
+}
+
+export async function findDiagnosticTroubleCodeSections(code: string, limit: number): Promise<ManualSectionMatchRow[]> {
+  const backend = getConfiguredBackend();
+
+  if (backend === 'vps') {
+    const pool = getVpsPool();
+    if (!pool) return [];
+
+    const { rows } = await pool.query(
+      `SELECT
+         path,
+         make,
+         year,
+         model,
+         section_title,
+         content_preview
+       FROM manual_embeddings
+       WHERE content_full ILIKE $1
+         AND (
+           section_title ILIKE '%Diagnostic Trouble Codes%'
+           OR section_title ILIKE '%Trouble Code%'
+           OR section_title ILIKE '%DTC%'
+         )
+       ORDER BY year DESC, make ASC, model ASC
+       LIMIT $2`,
+      [`%${code.toUpperCase()}%`, Math.max(1, limit)],
+    );
+
+    return mapSectionRows(rows);
+  }
+
+  if (backend === 'supabase') {
+    const client = getSupabaseAdmin();
+    if (!client) return [];
+
+    const { data, error } = await client
+      .from('manual_embeddings')
+      .select('path, make, year, model, section_title, content_preview')
+      .ilike('content_full', `%${code.toUpperCase()}%`)
+      .or('section_title.ilike.%Diagnostic Trouble Codes%,section_title.ilike.%Trouble Code%,section_title.ilike.%DTC%')
+      .order('year', { ascending: false })
+      .limit(Math.max(1, limit));
+
+    if (error) throw error;
+
+    return mapSectionRows((data || []) as QueryResultRow[]);
   }
 
   return [];
