@@ -2,7 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { fetchCharmPage } from '@/lib/charmParser';
 
-export const revalidate = 86400; // 1 day ISR
+// The CHARM index is fetched from the live manual backend and can time out during
+// static prerender on Vercel. Keep the route dynamic so production builds do not
+// block on the upstream manual index.
+export const dynamic = 'force-dynamic';
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: 'Factory Service Manuals | 82 Makes, 1982-2013 | SpotOnAuto',
