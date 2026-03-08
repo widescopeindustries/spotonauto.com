@@ -13,6 +13,8 @@ import {
   type WiringSystemSlug,
 } from '@/data/wiring-seo-cluster';
 import { fetchCharmPage, type CharmLink } from '@/lib/charmParser';
+import { getManualSectionLinksForRepair } from '@/lib/manualSectionLinks';
+import { getRepairTaskProfile, type RepairTaskProfile } from '@/lib/repairTaskProfiles';
 
 export type RepairKnowledgeKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc';
 export type RepairKnowledgeTheme = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
@@ -39,90 +41,11 @@ export interface RepairKnowledgeGraph {
   totalNodes: number;
 }
 
-interface TaskProfile {
-  wiringSystems: WiringSystemSlug[];
-  dtcSystems: string[];
-  keywords: string[];
-}
-
 interface ManualCandidate {
   href: string;
   label: string;
   fullLabel: string;
 }
-
-const TASK_PROFILES: Partial<Record<string, TaskProfile>> = {
-  'alternator-replacement': {
-    wiringSystems: ['alternator'],
-    dtcSystems: ['Electrical', 'Body/Electrical'],
-    keywords: ['alternator', 'charging', 'battery', 'generator', 'voltage regulator'],
-  },
-  'battery-replacement': {
-    wiringSystems: ['alternator', 'starter'],
-    dtcSystems: ['Electrical', 'Body/Electrical'],
-    keywords: ['battery', 'charging', 'voltage', 'slow cranking', 'low voltage'],
-  },
-  'starter-replacement': {
-    wiringSystems: ['starter'],
-    dtcSystems: ['Electrical', 'Engine'],
-    keywords: ['starter', 'crank', 'starting', 'no start', 'solenoid'],
-  },
-  'fuel-pump-replacement': {
-    wiringSystems: ['fuel-pump'],
-    dtcSystems: ['Fuel'],
-    keywords: ['fuel pump', 'fuel pressure', 'fuel rail', 'no start', 'stalling'],
-  },
-  'spark-plug-replacement': {
-    wiringSystems: [],
-    dtcSystems: ['Ignition', 'Fuel', 'Engine'],
-    keywords: ['spark plug', 'misfire', 'ignition coil', 'coil', 'rough idle'],
-  },
-  'ignition-coil-replacement': {
-    wiringSystems: [],
-    dtcSystems: ['Ignition', 'Engine'],
-    keywords: ['ignition coil', 'misfire', 'coil', 'rough idle'],
-  },
-  'oxygen-sensor-replacement': {
-    wiringSystems: [],
-    dtcSystems: ['Emissions'],
-    keywords: ['oxygen sensor', 'o2 sensor', 'heater circuit', 'emissions'],
-  },
-  'thermostat-replacement': {
-    wiringSystems: [],
-    dtcSystems: ['Cooling'],
-    keywords: ['thermostat', 'coolant temp', 'overheating', 'warm-up'],
-  },
-  'radiator-replacement': {
-    wiringSystems: [],
-    dtcSystems: ['Cooling'],
-    keywords: ['radiator', 'cooling fan', 'coolant leak', 'overheating'],
-  },
-  'water-pump-replacement': {
-    wiringSystems: [],
-    dtcSystems: ['Cooling'],
-    keywords: ['water pump', 'coolant leak', 'overheating', 'bearing noise'],
-  },
-  'transmission-fluid-change': {
-    wiringSystems: [],
-    dtcSystems: ['Transmission'],
-    keywords: ['transmission fluid', 'shifting', 'torque converter', 'slipping'],
-  },
-  'coolant-flush': {
-    wiringSystems: [],
-    dtcSystems: ['Cooling'],
-    keywords: ['coolant', 'overheating', 'temperature', 'cooling system'],
-  },
-  'crankshaft-sensor-replacement': {
-    wiringSystems: [],
-    dtcSystems: ['Engine'],
-    keywords: ['crankshaft sensor', 'no start', 'stalling', 'timing'],
-  },
-  'camshaft-sensor-replacement': {
-    wiringSystems: [],
-    dtcSystems: ['Engine'],
-    keywords: ['camshaft sensor', 'timing', 'hard start', 'stalling'],
-  },
-};
 
 const DTC_SEVERITY_RANK: Record<DTCCode['severity'], number> = {
   critical: 0,
@@ -139,18 +62,6 @@ function tokenize(value: string): string[] {
   return normalizeText(value)
     .split(/\s+/)
     .filter((token) => token.length > 2);
-}
-
-function buildTaskProfile(task: string): TaskProfile {
-  const explicit = TASK_PROFILES[task];
-  if (explicit) return explicit;
-
-  const words = task.split('-').filter((word) => word !== 'replacement' && word !== 'change');
-  return {
-    wiringSystems: [],
-    dtcSystems: [],
-    keywords: words,
-  };
 }
 
 function matchesVehicle(
@@ -205,7 +116,7 @@ function getWiringNodes(args: {
   displayModel: string;
   task: string;
 }): RepairKnowledgeNode[] {
-  const profile = buildTaskProfile(args.task);
+  const profile = getRepairTaskProfile(args.task);
   if (!profile.wiringSystems.length) return [];
 
   const exactVehicle = getExactWiringVehicle(
@@ -234,7 +145,7 @@ function getWiringNodes(args: {
   });
 }
 
-function scoreDtc(code: DTCCode, task: string, profile: TaskProfile): number {
+function scoreDtc(code: DTCCode, task: string, profile: RepairTaskProfile): number {
   let score = 0;
   if (code.repairTaskSlug === task) score += 100;
   if (profile.dtcSystems.includes(code.affectedSystem)) score += 24;
@@ -258,7 +169,7 @@ function scoreDtc(code: DTCCode, task: string, profile: TaskProfile): number {
 }
 
 function getDtcNodes(task: string, limit: number): RepairKnowledgeNode[] {
-  const profile = buildTaskProfile(task);
+  const profile = getRepairTaskProfile(task);
 
   return DTC_CODES
     .map((code) => ({ code, score: scoreDtc(code, task, profile) }))
@@ -403,10 +314,32 @@ async function getManualNodes(args: {
   displayMake: string;
   model: string;
   displayModel: string;
+  task: string;
 }): Promise<RepairKnowledgeNode[]> {
   const nodes: RepairKnowledgeNode[] = [];
   const makeCandidates = [args.displayMake, `${args.displayMake} Truck`];
-  const yearHrefFallback = buildManualHref(args.displayMake, args.year);
+  const evidenceLinks = await getManualSectionLinksForRepair({
+    make: args.make,
+    year: Number(args.year),
+    model: args.model,
+    task: args.task,
+    displayMake: args.displayMake,
+    displayModel: args.displayModel,
+    limit: 4,
+  });
+  const seenHrefs = new Set<string>();
+
+  for (const [index, link] of evidenceLinks.entries()) {
+    nodes.push({
+      kind: 'manual',
+      href: link.href,
+      label: link.label,
+      description: link.description,
+      badge: index === 0 ? 'OEM Evidence' : link.badge,
+      score: 120 - index,
+    });
+    seenHrefs.add(link.href);
+  }
 
   let matchedMake = args.displayMake;
   let exactVariant: ManualCandidate | null = null;
@@ -433,33 +366,44 @@ async function getManualNodes(args: {
   }
 
   if (exactVariant) {
-    nodes.push({
+    const node: RepairKnowledgeNode = {
       kind: 'manual',
       href: exactVariant.href,
       label: `Factory Manual: ${exactVariant.label}`,
       description: `Open the closest matching OEM manual branch for ${args.year} ${args.displayMake} ${args.displayModel}.`,
       badge: 'Exact Branch',
       score: 100,
-    });
+    };
+    if (!seenHrefs.has(node.href)) {
+      nodes.push(node);
+      seenHrefs.add(node.href);
+    }
   }
 
-  nodes.push({
-    kind: 'manual',
-    href: buildManualHref(matchedMake, args.year),
-    label: `${args.year} ${args.displayMake} Manual Index`,
-    description: `Browse the ${args.year} factory manual tree and pick the exact variant before drilling into procedures.`,
-    badge: 'Year Index',
-    score: 82,
-  });
+  const yearIndexHref = buildManualHref(matchedMake, args.year);
+  if (!seenHrefs.has(yearIndexHref)) {
+    nodes.push({
+      kind: 'manual',
+      href: yearIndexHref,
+      label: `${args.year} ${args.displayMake} Manual Index`,
+      description: `Browse the ${args.year} factory manual tree and pick the exact variant before drilling into procedures.`,
+      badge: 'Year Index',
+      score: 82,
+    });
+    seenHrefs.add(yearIndexHref);
+  }
 
-  nodes.push({
-    kind: 'manual',
-    href: buildManualHref(matchedMake),
-    label: `${args.displayMake} Factory Manual Library`,
-    description: `Open the OEM manual library for ${args.displayMake}, including service procedures, wiring, and diagnostics.`,
-    badge: 'OEM Source',
-    score: 74,
-  });
+  const libraryHref = buildManualHref(matchedMake);
+  if (!seenHrefs.has(libraryHref)) {
+    nodes.push({
+      kind: 'manual',
+      href: libraryHref,
+      label: `${args.displayMake} Factory Manual Library`,
+      description: `Open the OEM manual library for ${args.displayMake}, including service procedures, wiring, and diagnostics.`,
+      badge: 'OEM Source',
+      score: 74,
+    });
+  }
 
   return nodes;
 }
@@ -474,7 +418,7 @@ function getGroups(args: {
   const groups: RepairKnowledgeGroup[] = [
     {
       kind: 'manual',
-      title: 'Factory Manual Paths',
+      title: 'OEM Manual Evidence & Paths',
       browseHref: '/manual',
       theme: 'slate',
       nodes: args.manualNodes,

@@ -7,6 +7,7 @@ import {
   type WiringSystemSlug,
 } from '@/data/wiring-seo-cluster';
 import type { DiagnosticCrossLink } from '@/lib/diagnosticCrossLinks';
+import { getRepairTaskProfile } from '@/lib/repairTaskProfiles';
 import {
   findDiagnosticTroubleCodeSections,
   findManualSectionsByTerms,
@@ -52,6 +53,33 @@ export async function getManualSectionLinksForWiringVehicle(
     href: buildManualUrl(row.path),
     label: `${vehicle.year} ${vehicle.make} ${vehicle.model} ${row.sectionTitle}`,
     description: clip(row.contentPreview || `${systemMeta.shortLabel} references from the OEM service manual for this vehicle.`),
+    badge: 'OEM Manual',
+  }));
+}
+
+export async function getManualSectionLinksForRepair(args: {
+  make: string;
+  year: number;
+  model: string;
+  task: string;
+  displayMake: string;
+  displayModel: string;
+  limit?: number;
+}): Promise<DiagnosticCrossLink[]> {
+  const profile = getRepairTaskProfile(args.task);
+  const taskLabel = args.task.replace(/-/g, ' ');
+  const rows = await findManualSectionsByTerms({
+    make: args.displayMake,
+    year: args.year,
+    model: args.displayModel,
+    terms: [...profile.keywords, taskLabel],
+    limit: args.limit || 4,
+  });
+
+  return rows.map((row) => ({
+    href: buildManualUrl(row.path),
+    label: `${args.year} ${args.displayMake} ${args.displayModel} ${row.sectionTitle}`,
+    description: clip(row.contentPreview || `${taskLabel} procedures from the OEM service manual for this vehicle.`),
     badge: 'OEM Manual',
   }));
 }

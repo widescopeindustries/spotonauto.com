@@ -7,6 +7,7 @@ import {
   type WiringSeoVehicle,
   type WiringSystemSlug,
 } from '@/data/wiring-seo-cluster';
+import { getRepairTaskProfile } from '@/lib/repairTaskProfiles';
 
 export interface DiagnosticCrossLink {
   href: string;
@@ -46,13 +47,6 @@ const PRIORITY_MAKES = [
 ];
 
 const PRIORITY_MAKE_RANK = new Map(PRIORITY_MAKES.map((make, index) => [make, index]));
-
-const TASK_TO_WIRING_SYSTEMS: Partial<Record<string, WiringSystemSlug[]>> = {
-  'alternator-replacement': ['alternator'],
-  'battery-replacement': ['alternator', 'starter'],
-  'starter-replacement': ['starter'],
-  'fuel-pump-replacement': ['fuel-pump'],
-};
 
 const WIRING_SYSTEM_TO_REPAIR_TASKS: Record<WiringSystemSlug, string[]> = {
   alternator: ['alternator-replacement', 'battery-replacement', 'serpentine-belt-replacement'],
@@ -125,7 +119,7 @@ function hasVehicleTask(vehicle: WiringSeoVehicle, task: string): boolean {
 
 function scoreCodeForSystem(code: DTCCode, system: WiringSystemSlug): number {
   let score = 0;
-  if (code.repairTaskSlug && TASK_TO_WIRING_SYSTEMS[code.repairTaskSlug]?.includes(system)) score += 70;
+  if (code.repairTaskSlug && getRepairTaskProfile(code.repairTaskSlug).wiringSystems.includes(system)) score += 70;
 
   const haystack = `${code.title} ${code.description} ${code.commonFix} ${code.affectedSystem} ${code.symptoms.join(' ')} ${code.diagnosticSteps.join(' ')}`.toLowerCase();
   for (const term of WIRING_SYSTEM_TO_SEARCH_TERMS[system]) {
@@ -151,7 +145,7 @@ export function getRepairLinksForCode(code: DTCCode, limit = 6): DiagnosticCross
 }
 
 export function getWiringLinksForCode(code: DTCCode, limit = 6): DiagnosticCrossLink[] {
-  const systems = code.repairTaskSlug ? TASK_TO_WIRING_SYSTEMS[code.repairTaskSlug] || [] : [];
+  const systems = code.repairTaskSlug ? getRepairTaskProfile(code.repairTaskSlug).wiringSystems : [];
   if (!systems.length) return [];
 
   const links: Array<DiagnosticCrossLink & { score: number }> = [];
