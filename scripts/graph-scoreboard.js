@@ -6,6 +6,7 @@
  * Usage:
  *   node scripts/graph-scoreboard.js
  *   node scripts/graph-scoreboard.js --start 2026-03-01 --end 2026-03-31 --export
+ *   node scripts/graph-scoreboard.js --input scripts/seo-reports/knowledge-graph-overrides-recommended-2026-03-01-to-2026-03-31.json --apply-live
  */
 
 const { google } = require('googleapis');
@@ -14,6 +15,7 @@ const path = require('path');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
 const GA_PROPERTY_ID = '520432705';
+const LIVE_OVERRIDE_PATH = path.join(__dirname, '..', 'src', 'data', 'knowledge-graph-overrides.json');
 const DEFAULT_SURFACE_BASE = {
   repair: { manual: 90, spec: 80, tool: 60, wiring: 50, dtc: 40, repair: 30 },
   code: { manual: 90, repair: 80, wiring: 70, dtc: 50, tool: 30, spec: 20 },
@@ -84,6 +86,37 @@ async function runReport(analyticsdata, requestBody) {
   return response.data.rows || [];
 }
 
+function loadJsonFile(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+function normalizeOverridesPayload(payload) {
+  if (payload && payload.recommendedOverrides) {
+    return payload.recommendedOverrides;
+  }
+  return payload;
+}
+
+function writeLiveOverrides(recommendedOverrides, meta = {}) {
+  const outDir = path.join(__dirname, 'seo-reports');
+  fs.mkdirSync(outDir, { recursive: true });
+
+  if (fs.existsSync(LIVE_OVERRIDE_PATH)) {
+    const backupStamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const backupPath = path.join(outDir, `knowledge-graph-overrides-backup-${backupStamp}.json`);
+    fs.copyFileSync(LIVE_OVERRIDE_PATH, backupPath);
+    console.log(`Backed up live overrides to ${backupPath}`);
+  }
+
+  fs.writeFileSync(LIVE_OVERRIDE_PATH, JSON.stringify(recommendedOverrides, null, 2) + '\n');
+  console.log(`Applied live overrides to ${LIVE_OVERRIDE_PATH}`);
+
+  if (meta.startDate && meta.endDate) {
+    console.log(`Applied overrides generated from ${meta.startDate} to ${meta.endDate}`);
+  }
+  console.log('');
+}
+
 function buildRecommendedOverrides(groupRows) {
   const groupedBySurface = {};
   for (const row of groupRows) {
@@ -116,57 +149,72 @@ async function main() {
   const endDate = getArg('end', addDays(today, -1));
   const startDate = getArg('start', addDays(endDate, -6));
   const shouldExport = hasFlag('export');
+  const shouldApplyLive = hasFlag('apply-live');
+  const inputPath = getArg('input');
 
-  const analyticsdata = await buildClient();
-  const rows = await runReport(analyticsdata, {
-    dateRanges: [{ startDate, endDate }],
-    dimensions: [
-      { name: 'eventName' },
-      { name: 'customEvent:graph_surface' },
-      { name: 'customEvent:graph_group' },
-    ],
-    metrics: [{ name: 'eventCount' }],
-    dimensionFilter: {
-      filter: {
-        fieldName: 'eventName',
-        inListFilter: {
-          values: ['knowledge_graph_impression', 'knowledge_graph_click'],
+  let scoreRows = [];
+  let recommendedOverrides = { surfaces: {} };
+
+  if (inputPath) {
+    const resolvedInput = path.isAbsolute(inputPath) ? inputPath : path.join(process.cwd(), inputPath);
+    if (!fs.existsSync(resolvedInput)) {
+      throw new Error(`Input file not found at ${resolvedInput}`);
+    }
+    const payload = normalizeOverridesPayload(loadJsonFile(resolvedInput));
+    recommendedOverrides = payload;
+    console.log(`Loaded recommended overrides from ${resolvedInput}\n`);
+  } else {
+    const analyticsdata = await buildClient();
+    const rows = await runReport(analyticsdata, {
+      dateRanges: [{ startDate, endDate }],
+      dimensions: [
+        { name: 'eventName' },
+        { name: 'customEvent:graph_surface' },
+        { name: 'customEvent:graph_group' },
+      ],
+      metrics: [{ name: 'eventCount' }],
+      dimensionFilter: {
+        filter: {
+          fieldName: 'eventName',
+          inListFilter: {
+            values: ['knowledge_graph_impression', 'knowledge_graph_click'],
+          },
         },
       },
-    },
-    orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
-    limit: 200,
-  });
+      orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+      limit: 200,
+    });
 
-  const grouped = {};
-  for (const row of rows) {
-    const eventName = row.dimensionValues?.[0]?.value || '';
-    const surface = row.dimensionValues?.[1]?.value || '(not set)';
-    const group = row.dimensionValues?.[2]?.value || '(not set)';
-    const count = Number(row.metricValues?.[0]?.value || 0);
-    const key = `${surface}::${group}`;
-    if (!grouped[key]) grouped[key] = { surface, group, impressions: 0, clicks: 0 };
-    if (eventName === 'knowledge_graph_impression') grouped[key].impressions += count;
-    if (eventName === 'knowledge_graph_click') grouped[key].clicks += count;
+    const grouped = {};
+    for (const row of rows) {
+      const eventName = row.dimensionValues?.[0]?.value || '';
+      const surface = row.dimensionValues?.[1]?.value || '(not set)';
+      const group = row.dimensionValues?.[2]?.value || '(not set)';
+      const count = Number(row.metricValues?.[0]?.value || 0);
+      const key = `${surface}::${group}`;
+      if (!grouped[key]) grouped[key] = { surface, group, impressions: 0, clicks: 0 };
+      if (eventName === 'knowledge_graph_impression') grouped[key].impressions += count;
+      if (eventName === 'knowledge_graph_click') grouped[key].clicks += count;
+    }
+
+    scoreRows = Object.values(grouped)
+      .map((row) => {
+        const ctr = pct(row.clicks, row.impressions);
+        const score = ctr * 10 + Math.log10(row.clicks + 1) * 10;
+        return {
+          surface: row.surface,
+          group: row.group,
+          impressions: fmt(row.impressions),
+          clicks: fmt(row.clicks),
+          ctr: `${ctr.toFixed(1)}%`,
+          score: score.toFixed(1),
+          raw: { ...row, ctr, score },
+        };
+      })
+      .sort((a, b) => Number(b.score) - Number(a.score));
+
+    recommendedOverrides = buildRecommendedOverrides(scoreRows);
   }
-
-  const scoreRows = Object.values(grouped)
-    .map((row) => {
-      const ctr = pct(row.clicks, row.impressions);
-      const score = ctr * 10 + Math.log10(row.clicks + 1) * 10;
-      return {
-        surface: row.surface,
-        group: row.group,
-        impressions: fmt(row.impressions),
-        clicks: fmt(row.clicks),
-        ctr: `${ctr.toFixed(1)}%`,
-        score: score.toFixed(1),
-        raw: { ...row, ctr, score },
-      };
-    })
-    .sort((a, b) => Number(b.score) - Number(a.score));
-
-  const recommendedOverrides = buildRecommendedOverrides(scoreRows);
 
   console.log(`\n╔══════════════════════════════════════════════════════════════╗`);
   console.log(`║        SpotOn Auto - Knowledge Graph Scoreboard            ║`);
@@ -174,15 +222,17 @@ async function main() {
   console.log(`\n  Period: ${startDate} to ${endDate}`);
   console.log(`  Property: ${GA_PROPERTY_ID}\n`);
 
-  console.log('=== GROUP SCORECARD ===\n');
-  printTable(scoreRows.map((row) => ({
-    surface: row.surface,
-    group: row.group,
-    impressions: row.impressions,
-    clicks: row.clicks,
-    ctr: row.ctr,
-    score: row.score,
-  })), ['surface', 'group', 'impressions', 'clicks', 'ctr', 'score']);
+  if (scoreRows.length > 0) {
+    console.log('=== GROUP SCORECARD ===\n');
+    printTable(scoreRows.map((row) => ({
+      surface: row.surface,
+      group: row.group,
+      impressions: row.impressions,
+      clicks: row.clicks,
+      ctr: row.ctr,
+      score: row.score,
+    })), ['surface', 'group', 'impressions', 'clicks', 'ctr', 'score']);
+  }
 
   console.log('=== RECOMMENDED OVERRIDES ===\n');
   console.log(JSON.stringify(recommendedOverrides, null, 2));
@@ -212,6 +262,10 @@ async function main() {
 
     console.log(`Exported scorecard to ${scoreboardPath}`);
     console.log(`Exported recommended overrides to ${overridePath}\n`);
+  }
+
+  if (shouldApplyLive) {
+    writeLiveOverrides(recommendedOverrides, { startDate, endDate });
   }
 }
 
