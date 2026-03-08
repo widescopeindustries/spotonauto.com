@@ -117,6 +117,7 @@ export default async function ThreadPage({ params }: PageProps) {
     if (!result) notFound();
 
     const { thread, posts } = result;
+    const threadUrl = `https://spotonauto.com/community/${catSlug}/${slug}`;
 
     // QAPage structured data
     const qaSchema = {
@@ -126,7 +127,7 @@ export default async function ThreadPage({ params }: PageProps) {
             '@type': 'Question',
             name: thread.title,
             text: thread.body,
-            dateCreated: thread.created_at,
+            datePublished: thread.created_at,
             author: { '@type': 'Person', name: thread.author.display_name },
             answerCount: posts.length,
             ...(posts.length > 0
@@ -134,8 +135,10 @@ export default async function ThreadPage({ params }: PageProps) {
                       acceptedAnswer: {
                           '@type': 'Answer',
                           text: posts[0].body,
-                          dateCreated: posts[0].created_at,
+                          datePublished: posts[0].created_at,
                           author: { '@type': 'Person', name: posts[0].author.display_name },
+                          upvoteCount: 0,
+                          url: threadUrl,
                       },
                   }
                 : {}),

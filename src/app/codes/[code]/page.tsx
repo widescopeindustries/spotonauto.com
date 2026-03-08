@@ -16,6 +16,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { code: slug } = await params;
     const dtc = DTC_CODES_MAP.get(slug.toUpperCase());
     if (!dtc) return { title: 'Code Not Found' };
+    const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
 
     const title = `${dtc.code}: ${dtc.title} — Symptoms, Causes & Fix | SpotOn Auto`;
     const description = `${dtc.code} means ${dtc.title}. ${dtc.description} Estimated fix cost: ${dtc.estimatedCostRange}. Free diagnosis and repair guide.`;
@@ -31,11 +32,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title,
             description,
             type: 'article',
-            url: `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`,
+            url: pageUrl,
         },
         twitter: { card: 'summary', title, description },
         alternates: {
-            canonical: `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`,
+            canonical: pageUrl,
         },
     };
 }
@@ -44,6 +45,13 @@ export default async function CodePage({ params }: PageProps) {
     const { code: slug } = await params;
     const dtc = DTC_CODES_MAP.get(slug.toUpperCase());
     if (!dtc) notFound();
+    const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
+    const schemaDate = '2026-03-05';
+    const schemaAuthor = {
+        '@type': 'Organization',
+        name: 'SpotOnAuto Editorial Team',
+        url: 'https://spotonauto.com',
+    };
 
     // QAPage + FAQPage structured data
     const qaSchema = {
@@ -53,11 +61,16 @@ export default async function CodePage({ params }: PageProps) {
             '@type': 'Question',
             name: `What does ${dtc.code} mean?`,
             text: `${dtc.code} — ${dtc.title}. ${dtc.description}`,
+            author: schemaAuthor,
+            datePublished: schemaDate,
             answerCount: 1,
             acceptedAnswer: {
                 '@type': 'Answer',
                 text: `${dtc.code} — ${dtc.title}. ${dtc.description} Common fix: ${dtc.commonFix}. Estimated cost: ${dtc.estimatedCostRange}.`,
-                url: `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`,
+                author: schemaAuthor,
+                datePublished: schemaDate,
+                upvoteCount: 0,
+                url: pageUrl,
             },
         },
     };

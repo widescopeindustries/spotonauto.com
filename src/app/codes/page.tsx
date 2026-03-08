@@ -20,6 +20,12 @@ export const metadata: Metadata = {
 
 export default function CodesPage() {
     const systems = DTC_SYSTEMS;
+    const schemaDate = '2026-03-05';
+    const schemaAuthor = {
+        '@type': 'Organization',
+        name: 'SpotOnAuto Editorial Team',
+        url: 'https://spotonauto.com',
+    };
 
     // QAPage schema for the index
     const qaSchema = {
@@ -28,9 +34,17 @@ export default function CodesPage() {
         mainEntity: {
             '@type': 'Question',
             name: 'What do OBD2 trouble codes mean?',
+            text: 'What do OBD2 trouble codes mean and how should you use them to diagnose your check engine light?',
+            author: schemaAuthor,
+            datePublished: schemaDate,
+            answerCount: 1,
             acceptedAnswer: {
                 '@type': 'Answer',
                 text: 'OBD2 trouble codes (DTCs) are diagnostic codes stored by your vehicle\'s computer when it detects a problem. Codes starting with P are powertrain (engine/transmission), B are body, C are chassis, and U are network/communication. Each code points to a specific system or component that needs attention.',
+                author: schemaAuthor,
+                datePublished: schemaDate,
+                upvoteCount: 0,
+                url: 'https://spotonauto.com/codes',
             },
         },
     };
