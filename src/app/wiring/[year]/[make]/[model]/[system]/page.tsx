@@ -17,6 +17,10 @@ import {
 } from '@/lib/wiringData';
 import WiringSeoTracker from '@/app/wiring/WiringSeoTracker';
 import WiringTrackedLink from '@/app/wiring/WiringTrackedLink';
+import {
+  getCodeLinksForWiringSystem,
+  getRepairLinksForWiringVehicle,
+} from '@/lib/diagnosticCrossLinks';
 
 export const revalidate = 21600;
 
@@ -176,6 +180,8 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
   const sameSystemVehicles = WIRING_SEO_VEHICLES
     .filter(v => !(v.year === vehicle.year && v.make === vehicle.make && v.model === vehicle.model))
     .slice(0, 8);
+  const relatedRepairLinks = getRepairLinksForWiringVehicle(vehicle, systemSlug, 4);
+  const relatedCodeLinks = getCodeLinksForWiringSystem(systemSlug, 6);
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -280,6 +286,62 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 pb-16 grid lg:grid-cols-2 gap-6">
+        {(relatedRepairLinks.length > 0 || relatedCodeLinks.length > 0) && (
+          <>
+            {relatedRepairLinks.length > 0 && (
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <h3 className="text-xl font-bold text-cyan-300">Repairs That Intersect This Wiring</h3>
+                  <Link href="/repair" className="text-xs text-cyan-400 hover:underline">
+                    Browse repairs →
+                  </Link>
+                </div>
+                <div className="grid gap-3">
+                  {relatedRepairLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="rounded-xl border border-cyan-500/20 bg-black/20 px-4 py-3 hover:border-cyan-400/40 hover:bg-black/30 transition"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-semibold text-white">{link.label}</span>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300">{link.badge}</span>
+                      </div>
+                      <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {relatedCodeLinks.length > 0 && (
+              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6">
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <h3 className="text-xl font-bold text-amber-300">Likely Trouble Codes for This System</h3>
+                  <Link href="/codes" className="text-xs text-amber-400 hover:underline">
+                    Browse codes →
+                  </Link>
+                </div>
+                <div className="grid gap-3">
+                  {relatedCodeLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="rounded-xl border border-amber-500/20 bg-black/20 px-4 py-3 hover:border-amber-400/40 hover:bg-black/30 transition"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-semibold text-white">{link.label}</span>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300">{link.badge}</span>
+                      </div>
+                      <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
           <h3 className="text-xl font-bold mb-4">More {vehicle.model} Wiring Pages</h3>
           <div className="grid gap-2">

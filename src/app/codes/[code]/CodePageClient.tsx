@@ -2,6 +2,11 @@ import Link from 'next/link';
 import type { DTCCode } from '@/data/dtc-codes-data';
 import AdUnit from '@/components/AdUnit';
 import LiveDtcFlowchart from '@/components/LiveDtcFlowchart';
+import {
+    getRelatedCodeLinks,
+    getRepairLinksForCode,
+    getWiringLinksForCode,
+} from '@/lib/diagnosticCrossLinks';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -20,6 +25,9 @@ const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-
 
 export default function CodePageClient({ code }: { code: DTCCode }) {
     const sev = SEVERITY_CONFIG[code.severity] || SEVERITY_CONFIG.medium;
+    const repairLinks = getRepairLinksForCode(code, 6);
+    const wiringLinks = getWiringLinksForCode(code, 6);
+    const relatedCodeLinks = getRelatedCodeLinks(code, 6);
 
     return (
         <section className="py-16 px-4 max-w-4xl mx-auto">
@@ -137,18 +145,88 @@ export default function CodePageClient({ code }: { code: DTCCode }) {
                 </div>
             )}
 
+            {/* Reverse knowledge graph */}
+            {(repairLinks.length > 0 || wiringLinks.length > 0) && (
+                <section className="mb-12">
+                    <div className="mb-5">
+                        <h3 className="text-xl font-bold text-white mb-2">Knowledge Paths from This Code</h3>
+                        <p className="text-gray-400 text-sm">
+                            These links connect {code.code} to the most relevant repair workflows and wiring surfaces across SpotOnAuto.
+                        </p>
+                    </div>
+
+                    <div className="grid lg:grid-cols-2 gap-6">
+                        {repairLinks.length > 0 && (
+                            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+                                <div className="flex items-center justify-between gap-3 mb-4">
+                                    <h4 className="text-base font-bold text-cyan-300">Exact Repair Workflows</h4>
+                                    <Link href="/repair" className="text-xs text-cyan-400 hover:underline">
+                                        Browse repairs →
+                                    </Link>
+                                </div>
+                                <div className="space-y-3">
+                                    {repairLinks.map((link) => (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            className="block rounded-xl border border-cyan-500/20 bg-black/20 p-4 hover:border-cyan-400/40 hover:bg-black/30 transition-all"
+                                        >
+                                            <div className="flex items-center justify-between gap-3">
+                                                <span className="font-semibold text-white">{link.label}</span>
+                                                <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300">{link.badge}</span>
+                                            </div>
+                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {wiringLinks.length > 0 && (
+                            <div className="rounded-2xl border border-violet-500/20 bg-violet-500/5 p-5">
+                                <div className="flex items-center justify-between gap-3 mb-4">
+                                    <h4 className="text-base font-bold text-violet-300">Wiring Diagram Paths</h4>
+                                    <Link href="/wiring" className="text-xs text-violet-400 hover:underline">
+                                        Browse wiring →
+                                    </Link>
+                                </div>
+                                <div className="space-y-3">
+                                    {wiringLinks.map((link) => (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            className="block rounded-xl border border-violet-500/20 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
+                                        >
+                                            <div className="flex items-center justify-between gap-3">
+                                                <span className="font-semibold text-white">{link.label}</span>
+                                                <span className="text-[11px] font-bold uppercase tracking-wider text-violet-300">{link.badge}</span>
+                                            </div>
+                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
             {/* Related Codes */}
-            {code.relatedCodes.length > 0 && (
+            {relatedCodeLinks.length > 0 && (
                 <div className="mb-8">
                     <h3 className="text-lg font-bold text-white mb-4">Related Codes</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {code.relatedCodes.map(rc => (
+                    <div className="grid sm:grid-cols-2 gap-3">
+                        {relatedCodeLinks.map((link) => (
                             <Link
-                                key={rc}
-                                href={`/codes/${rc.toLowerCase()}`}
-                                className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-cyan-400 font-mono text-sm hover:border-cyan-500/40 transition"
+                                key={link.href}
+                                href={link.href}
+                                className="rounded-xl bg-white/5 border border-white/10 p-4 hover:border-cyan-500/40 transition"
                             >
-                                {rc}
+                                <div className="flex items-center justify-between gap-3">
+                                    <span className="text-cyan-400 font-mono text-sm">{link.label}</span>
+                                    <span className="text-[11px] uppercase tracking-wider text-gray-500">{link.badge}</span>
+                                </div>
+                                <p className="text-xs text-gray-400 mt-2 leading-relaxed">{link.description}</p>
                             </Link>
                         ))}
                     </div>
@@ -172,29 +250,22 @@ export default function CodePageClient({ code }: { code: DTCCode }) {
             <AdUnit slot="code-after-faq" format="horizontal" />
 
             {/* Related Repair Guides — cross-links to repair pages */}
-            {code.repairTaskSlug && (
+            {repairLinks.length > 0 && (
                 <section className="mb-12">
                     <h3 className="text-xl font-bold text-white mb-4">Related Repair Guides</h3>
                     <p className="text-gray-400 text-sm mb-4">
                         If your vehicle has triggered {code.code}, these DIY repair guides may help:
                     </p>
                     <div className="grid sm:grid-cols-2 gap-3">
-                        {[
-                            { y: '2013', mk: 'toyota', mo: 'camry', label: 'Toyota Camry' },
-                            { y: '2013', mk: 'honda', mo: 'civic', label: 'Honda Civic' },
-                            { y: '2013', mk: 'ford', mo: 'f-150', label: 'Ford F-150' },
-                            { y: '2013', mk: 'chevrolet', mo: 'silverado', label: 'Chevy Silverado' },
-                            { y: '2013', mk: 'nissan', mo: 'altima', label: 'Nissan Altima' },
-                            { y: '2013', mk: 'hyundai', mo: 'sonata', label: 'Hyundai Sonata' },
-                        ].map(v => (
+                        {repairLinks.map((link) => (
                             <Link
-                                key={`${v.mk}-${v.mo}`}
-                                href={`/repair/${v.y}/${v.mk}/${v.mo}/${code.repairTaskSlug!}`}
+                                key={link.href}
+                                href={link.href}
                                 className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
                             >
                                 <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
                                 <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                                    {v.y} {v.label} {code.repairTaskSlug!.replace(/-/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase())}
+                                    {link.label}
                                 </span>
                             </Link>
                         ))}
