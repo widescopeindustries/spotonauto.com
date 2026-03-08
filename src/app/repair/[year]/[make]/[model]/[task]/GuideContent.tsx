@@ -6,7 +6,7 @@ import ServiceManualGuide from '@/components/ServiceManualGuide';
 import { generateFullRepairGuide } from '@/services/apiClient';
 import { saveGuide, getGuideById } from '@/services/storageService';
 import { RepairGuide } from '@/types';
-import { trackGuideGenerated, trackRepairPageView } from '@/lib/analytics';
+import { trackGuideGenerated, trackRepairPageView, trackRetrievalBackbone } from '@/lib/analytics';
 import VehicleHealthSnapshot from '@/components/VehicleHealthSnapshot';
 import { useT } from '@/lib/translations';
 
@@ -61,7 +61,15 @@ export default function GuideContent({ params }: GuideContentProps) {
                     task: cleanTask,
                     partsCount: generatedGuide.parts?.length || 0,
                     toolsCount: generatedGuide.tools?.length || 0,
+                    manualMode: generatedGuide.retrieval?.manualMode,
+                    manualSourceCount: generatedGuide.retrieval?.manualSourceCount,
                 });
+                trackRetrievalBackbone(
+                    `${year} ${make} ${model}`,
+                    cleanTask,
+                    generatedGuide.retrieval?.manualMode || 'none',
+                    generatedGuide.retrieval?.manualSourceCount || 0,
+                );
                 trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
                 setGuide(generatedGuide);
             } catch (err: any) {
@@ -108,7 +116,15 @@ export default function GuideContent({ params }: GuideContentProps) {
                                 task: cleanTask,
                                 partsCount: generatedGuide.parts?.length || 0,
                                 toolsCount: generatedGuide.tools?.length || 0,
+                                manualMode: generatedGuide.retrieval?.manualMode,
+                                manualSourceCount: generatedGuide.retrieval?.manualSourceCount,
                             });
+                            trackRetrievalBackbone(
+                                `${year} ${make} ${model}`,
+                                cleanTask,
+                                generatedGuide.retrieval?.manualMode || 'none',
+                                generatedGuide.retrieval?.manualSourceCount || 0,
+                            );
                             setGuide(generatedGuide);
                         } catch (e: any) {
                             setError(e instanceof Error ? e.message : 'Failed to generate guide.');

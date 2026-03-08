@@ -86,6 +86,10 @@ export async function POST(req: NextRequest) {
         if (result.sources && result.sources.length > 0) {
           console.log(`✓ Grounded in ${result.sources.length} sources from charm.li`);
         }
+        console.log(
+          `[RETRIEVAL] vehicle-info mode=${result.retrieval?.manualMode || 'none'} ` +
+          `manual_sources=${result.retrieval?.manualSourceCount || 0}`
+        );
         break;
 
       case 'generate-guide':
@@ -93,6 +97,10 @@ export async function POST(req: NextRequest) {
         if (result.sources && result.sources.length > 0) {
           console.log(`✓ Guide grounded in ${result.sources.length} sources`);
         }
+        console.log(
+          `[RETRIEVAL] generate-guide mode=${result.retrieval?.manualMode || 'none'} ` +
+          `manual_sources=${result.retrieval?.manualSourceCount || 0}`
+        );
         break;
 
       case 'diagnostic-chat':

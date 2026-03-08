@@ -309,9 +309,21 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                     {guide.sources.map((source, idx) => (
                                         <li key={idx} className="source-item">
                                             <span className="source-number">[{idx + 1}]</span>
-                                            <a href={source.uri} target="_blank" rel="noopener noreferrer" className="source-link">
-                                                {source.title}
-                                            </a>
+                                            <div className="flex flex-col gap-1">
+                                                <a href={source.uri} target="_blank" rel="noopener noreferrer" className="source-link">
+                                                    {source.title}
+                                                    {typeof source.similarity === 'number' && (
+                                                        <span className="ml-2 text-xs text-emerald-600">
+                                                            {(source.similarity * 100).toFixed(0)}% match
+                                                        </span>
+                                                    )}
+                                                </a>
+                                                {source.snippet && (
+                                                    <p className="text-sm text-[#5d5a54] leading-relaxed">
+                                                        {source.snippet}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </li>
                                     ))}
                                 </ul>

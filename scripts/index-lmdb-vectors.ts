@@ -5,7 +5,7 @@
  * Crawls the LMDB-backed factory manual archive at data.spotonauto.com,
  * extracts text from each Repair & Diagnosis section page, generates
  * vector embeddings via Gemini text-embedding-004, and upserts them
- * into the Supabase manual_embeddings table.
+ * into the configured manual_embeddings backend.
  *
  * Usage:
  *   npx tsx scripts/index-lmdb-vectors.ts                      # Index all makes
@@ -14,8 +14,9 @@
  *   npx tsx scripts/index-lmdb-vectors.ts --dry-run             # Preview without writing
  *
  * Requirements:
- *   - .env.local must contain GEMINI_API_KEY, NEXT_PUBLIC_SUPABASE_URL,
- *     and SUPABASE_SERVICE_ROLE_KEY
+ *   - .env.local must contain GEMINI_API_KEY and either:
+ *     - VPS_DATABASE_URL (preferred), or
+ *     - NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY
  *   - The manual_embeddings table must exist (run the SQL migration first)
  *   - data.spotonauto.com must be reachable
  *
@@ -27,9 +28,14 @@
  */
 
 import { GoogleGenAI } from '@google/genai';
-import { createClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 import * as path from 'path';
+import {
+  getIndexedPaths,
+  getManualEmbeddingsBackend,
+  testManualEmbeddingsConnection,
+  upsertManualEmbedding,
+} from '../src/lib/manualEmbeddingsStore';
 
 // ─── Load environment variables from .env.local ─────────────────────────────
 
@@ -87,18 +93,14 @@ function getArg(flag: string): string | null {
 // ─── Initialize clients ─────────────────────────────────────────────────────
 
 const geminiApiKey = process.env.GEMINI_API_KEY;
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const embeddingsBackend = getManualEmbeddingsBackend();
 
-if (!geminiApiKey || !supabaseUrl || !supabaseServiceKey) {
-  console.error('ERROR: Missing required env vars. Need GEMINI_API_KEY, NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY');
+if (!geminiApiKey || embeddingsBackend === 'none') {
+  console.error('ERROR: Missing required env vars. Need GEMINI_API_KEY and a manual embeddings backend (VPS_DATABASE_URL preferred).');
   process.exit(1);
 }
 
 const genAI = new GoogleGenAI({ apiKey: geminiApiKey });
-
-// Use service role key for write access (bypasses RLS)
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // ─── Stats tracking ─────────────────────────────────────────────────────────
 
@@ -140,8 +142,15 @@ function extractLinks(html: string): string[] {
   return results;
 }
 
-function extractText(html: string): string {
-  return html
+function extractText(html: string, baseUrl: string = ''): string {
+  const htmlWithImages = html.replace(/<img[^>]+src=["']([^"']+)["'][^>]*>/gi, (_match, src) => {
+    const absoluteSrc = baseUrl && !src.startsWith('http')
+      ? new URL(src, baseUrl).href
+      : src;
+    return ` [IMAGE: ${absoluteSrc}] `;
+  });
+
+  return htmlWithImages
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
     .replace(/<[^>]+>/g, ' ')
@@ -243,29 +252,6 @@ async function generateEmbedding(text: string): Promise<number[] | null> {
 /**
  * Check which paths are already indexed to support incremental runs.
  */
-async function getIndexedPaths(make: string, year?: number): Promise<Set<string>> {
-  let query = supabase
-    .from('manual_embeddings')
-    .select('path')
-    .eq('make', make);
-
-  if (year) {
-    query = query.eq('year', year);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.warn(`  [WARN] Could not fetch indexed paths: ${error.message}`);
-    return new Set();
-  }
-
-  return new Set((data || []).map((row: { path: string }) => row.path));
-}
-
-/**
- * Upsert a section into the manual_embeddings table.
- */
 async function upsertSection(section: {
   path: string;
   make: string;
@@ -281,24 +267,11 @@ async function upsertSection(section: {
     return true;
   }
 
-  const { error } = await supabase
-    .from('manual_embeddings')
-    .upsert(
-      {
-        path: section.path,
-        make: section.make,
-        year: section.year,
-        model: section.model,
-        section_title: section.sectionTitle,
-        content_preview: section.contentPreview,
-        content_full: section.contentFull,
-        embedding: JSON.stringify(section.embedding),
-      },
-      { onConflict: 'path' }
-    );
-
-  if (error) {
-    console.error(`  [ERROR] Upsert failed for ${section.path}: ${error.message}`);
+  try {
+    await upsertManualEmbedding(section);
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`  [ERROR] Upsert failed for ${section.path}: ${msg}`);
     return false;
   }
 
@@ -332,7 +305,7 @@ async function crawlSections(
   // If this is a leaf page (no child directories) or at max depth, index it
   if (childLinks.length === 0 || depth === MAX_SECTION_DEPTH) {
     // This page has content worth indexing
-    const text = extractText(html);
+    const text = extractText(html, `${CHARM_BASE}${basePath}`);
     if (text.length < 50) return 0; // Skip near-empty pages
 
     const normalizedPath = basePath.replace(/\/+$/, '');
@@ -527,24 +500,20 @@ async function main(): Promise<void> {
   console.log('╚══════════════════════════════════════════════════════╝');
   console.log('');
 
-  if (dryRun) console.log('[DRY RUN MODE] No data will be written to Supabase.\n');
+  if (dryRun) console.log('[DRY RUN MODE] No data will be written to the embeddings store.\n');
   if (filterMake) console.log(`Filtering to make: ${filterMake}`);
   if (filterYear) console.log(`Filtering to year: ${filterYear}`);
+  console.log(`Embeddings backend: ${embeddingsBackend}\n`);
 
-  // Verify Supabase connection
-  const { error: connError } = await supabase
-    .from('manual_embeddings')
-    .select('id')
-    .limit(1);
-
-  if (connError) {
-    console.error('ERROR: Cannot connect to Supabase or table does not exist.');
-    console.error('  Make sure you have run the SQL migration first.');
-    console.error(`  Error: ${connError.message}`);
+  const health = await testManualEmbeddingsConnection();
+  if (!health.ok) {
+    console.error(`ERROR: Cannot connect to the ${health.backend} embeddings backend.`);
+    console.error('  Make sure the manual_embeddings table exists and the backend is reachable.');
+    console.error(`  Error: ${health.error}`);
     process.exit(1);
   }
 
-  console.log('Supabase connection verified.\n');
+  console.log(`Embeddings backend verified. Indexed sections: ${health.totalSections ?? 'unknown'}\n`);
 
   if (filterMake) {
     // Index a single make

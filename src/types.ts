@@ -23,6 +23,11 @@ export interface RepairStep {
   imageUrl?: string;
 }
 
+export interface RetrievalMetadata {
+  manualMode: 'vector' | 'live' | 'none';
+  manualSourceCount: number;
+}
+
 export interface RepairGuide {
   id: string; // Unique identifier for the guide
   title: string;
@@ -33,6 +38,7 @@ export interface RepairGuide {
   steps: RepairStep[];
   sources?: GroundingSource[];
   sourceCount?: number;
+  retrieval?: RetrievalMetadata;
 }
 
 export interface ChatMessage {
@@ -64,6 +70,10 @@ export interface JobSnapshot {
 export interface GroundingSource {
   uri: string;
   title: string;
+  snippet?: string;
+  similarity?: number;
+  path?: string;
+  kind?: 'manual' | 'nhtsa' | 'web';
 }
 
 export interface VehicleInfo {
@@ -71,6 +81,8 @@ export interface VehicleInfo {
   tsbs: string[];     // TSB descriptions as plain strings
   recalls: string[];  // Real NHTSA recall strings or AI-generated fallbacks
   sources?: GroundingSource[];
+  sourceCount?: number;
+  retrieval?: RetrievalMetadata;
 }
 
 // New Type for History

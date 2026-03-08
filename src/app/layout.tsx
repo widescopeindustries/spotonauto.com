@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Orbitron, Rajdhani, Inter, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
+import AnalyticsScripts from "@/components/AnalyticsScripts";
 // SpotOnGuide moved into Providers (client component) for lazy loading
 
 // Self-hosted fonts — eliminates external Google Fonts network request (LCP fix)
@@ -34,8 +34,6 @@ const shareTechMono = Share_Tech_Mono({
   display: "swap",
   adjustFontFallback: true,
 });
-
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-WNFX6CY9RN';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://spotonauto.com'),
@@ -78,47 +76,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${orbitron.variable} ${rajdhani.variable} ${inter.variable} ${shareTechMono.variable}`}>
       <body className="bg-[#050505] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-cyan-400 selection:text-black">
-        {/* Google Analytics — afterInteractive so it doesn't block LCP */}
-        {GA_MEASUREMENT_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GA_MEASUREMENT_ID}', {
-                  send_page_view: false
-                });
-              `}
-            </Script>
-          </>
-        )}
-
-        {/* Ahrefs Web Analytics — idle/deferred to protect mobile INP */}
-        <Script id="ahrefs-deferred" strategy="lazyOnload">
-          {`
-            (function () {
-              function loadAhrefs() {
-                if (document.querySelector('script[data-ahrefs-analytics]')) return;
-                var s = document.createElement('script');
-                s.src = 'https://analytics.ahrefs.com/analytics.js';
-                s.dataset.key = 'Id9DIK0mrHJtsEHStxIWNA';
-                s.dataset.ahrefsAnalytics = 'true';
-                s.defer = true;
-                document.head.appendChild(s);
-              }
-              if ('requestIdleCallback' in window) {
-                requestIdleCallback(loadAhrefs, { timeout: 10000 });
-              } else {
-                setTimeout(loadAhrefs, 6000);
-              }
-            })();
-          `}
-        </Script>
+        <AnalyticsScripts />
 
         {/* Organization + WebSite schema — global site identity for Google */}
         <script

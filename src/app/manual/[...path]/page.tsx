@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = buildManualTitle(decodedPath);
   const description = buildManualDescription(decodedPath);
-  const canonical = 'https://spotonauto.com/manual/' + path.map(s => encodeURIComponent(s)).join('/');
+  const canonical = 'https://spotonauto.com/manual/' + decodedPath.map(s => encodeURIComponent(s)).join('/');
 
   return {
     title,

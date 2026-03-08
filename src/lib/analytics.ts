@@ -1,3 +1,5 @@
+import { isCanonicalHost } from '@/lib/host';
+
 /**
  * analytics.ts — Consolidated GA4 event tracking for SpotOnAuto
  *
@@ -24,6 +26,7 @@ const UTM_STORAGE_KEY = 'spotonauto_utm';
 /** Capture UTM params from URL and persist in sessionStorage */
 export function captureUTMParams(): void {
   if (typeof window === 'undefined') return;
+  if (!isCanonicalHost(window.location.hostname)) return;
 
   const params = new URLSearchParams(window.location.search);
   const utmData: Record<string, string> = {};
@@ -64,6 +67,7 @@ function getUTMParams(): Record<string, string> {
 /** Safe gtag wrapper with automatic UTM attribution */
 function trackEvent(eventName: string, params?: Record<string, any>): void {
   if (typeof window === 'undefined' || !window.gtag) return;
+  if (!isCanonicalHost(window.location.hostname)) return;
 
   const utmData = getUTMParams();
   window.gtag('event', eventName, {
@@ -130,6 +134,8 @@ interface GuideGeneratedEvent {
   task: string;
   partsCount: number;
   toolsCount: number;
+  manualMode?: 'vector' | 'live' | 'none';
+  manualSourceCount?: number;
 }
 
 export function trackGuideGenerated(event: GuideGeneratedEvent): void {
@@ -140,6 +146,24 @@ export function trackGuideGenerated(event: GuideGeneratedEvent): void {
     task: event.task,
     parts_count: event.partsCount,
     tools_count: event.toolsCount,
+    manual_mode: event.manualMode,
+    manual_source_count: event.manualSourceCount,
+  });
+}
+
+export function trackRetrievalBackbone(
+  vehicle: string,
+  task: string,
+  manualMode: 'vector' | 'live' | 'none',
+  manualSourceCount: number,
+): void {
+  trackEvent('manual_retrieval', {
+    event_category: 'knowledge_backbone',
+    event_label: `${vehicle}_${task}`,
+    vehicle,
+    task,
+    manual_mode: manualMode,
+    manual_source_count: manualSourceCount,
   });
 }
 

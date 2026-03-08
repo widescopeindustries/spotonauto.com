@@ -1,18 +1,10 @@
-import { Pool } from 'pg';
 import type { LiveDtcFlowStep, LiveDtcFlowchart } from '@/types/dtc-flowchart';
+import { findDiagnosticTroubleCodeIndexes } from '@/lib/manualEmbeddingsStore';
 
 const CHARM_BASE = 'https://data.spotonauto.com';
 const REQUEST_TIMEOUT_MS = 12000;
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const MAX_CANDIDATES = 12;
-
-const dtcFlowPool = process.env.VPS_DATABASE_URL
-  ? new Pool({
-      connectionString: process.env.VPS_DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
-      max: 2,
-    })
-  : null;
 
 const flowCache = new Map<string, { expiresAt: number; data: LiveDtcFlowchart | null }>();
 
@@ -205,25 +197,7 @@ interface CandidateIndex {
 }
 
 async function findCandidateIndexes(code: string): Promise<CandidateIndex[]> {
-  if (!dtcFlowPool) return [];
-
-  const codePattern = `%${code.toUpperCase()}%`;
-  const query = `
-    SELECT path, make, year, model
-    FROM manual_embeddings
-    WHERE section_title ILIKE '%Diagnostic Trouble Codes%'
-      AND content_full ILIKE $1
-    ORDER BY year DESC
-    LIMIT $2
-  `;
-
-  const { rows } = await dtcFlowPool.query(query, [codePattern, MAX_CANDIDATES]);
-  return rows.map((row) => ({
-    path: String(row.path || ''),
-    make: String(row.make || ''),
-    year: Number(row.year || 0),
-    model: String(row.model || ''),
-  }));
+  return findDiagnosticTroubleCodeIndexes(code, MAX_CANDIDATES);
 }
 
 function findCodeHref(indexHtml: string, code: string): string | null {

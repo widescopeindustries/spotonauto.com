@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { CANONICAL_HOST, isCanonicalHost, isIndexableHost, isLegacyRedirectHost, isPreviewHost, normalizeHost } from '@/lib/host';
 
 const ALLOWED_ORIGINS = [
     'https://spotonauto.com',
@@ -9,6 +10,27 @@ const ALLOWED_ORIGINS = [
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    const host = normalizeHost(request.headers.get('x-forwarded-host') || request.headers.get('host'));
+
+    if (isLegacyRedirectHost(host)) {
+        const url = request.nextUrl.clone();
+        url.protocol = 'https:';
+        url.host = CANONICAL_HOST;
+        return NextResponse.redirect(url, 308);
+    }
+
+    if (pathname === '/robots.txt' && !isIndexableHost(host)) {
+        return new NextResponse('User-agent: *\nDisallow: /\n', {
+            status: 200,
+            headers: {
+                'Content-Type': 'text/plain; charset=utf-8',
+                'Cache-Control': 'public, max-age=300',
+                'X-Robots-Tag': 'noindex, nofollow, noarchive',
+            },
+        });
+    }
+
+    const shouldNoindexHost = !isCanonicalHost(host) && isPreviewHost(host);
 
     // Crawler endpoints — force plain cache/Vary semantics (no RSC vary headers)
     // so search engines consistently parse robots + sitemap responses.
@@ -22,12 +44,21 @@ export function middleware(request: NextRequest) {
         const response = NextResponse.next();
         response.headers.set('Vary', 'Accept-Encoding');
         response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');
+        if (shouldNoindexHost) {
+            response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+        }
         if (isRobots) {
             response.headers.set('Content-Type', 'text/plain; charset=utf-8');
         } else {
             response.headers.set('Content-Type', 'application/xml; charset=utf-8');
         }
         return response;
+    }
+
+    const response = NextResponse.next();
+
+    if (shouldNoindexHost) {
+        response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
     }
 
     // API routes — block external origins
@@ -47,15 +78,11 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    return NextResponse.next();
+    return response;
 }
 
 export const config = {
     matcher: [
-        '/api/:path*',
-        '/robots.txt',
-        '/sitemap.xml',
-        '/:path*/sitemap.xml',
-        '/repair/sitemap/:path*',
+        '/((?!_next/static|_next/image|favicon.ico).*)',
     ],
 };

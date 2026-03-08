@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from '@google/genai';
-import { Vehicle, VehicleInfo, RepairGuide, ChatMessage } from '../types';
+import { Vehicle, VehicleInfo, RepairGuide, ChatMessage, GroundingSource } from '../types';
 import { isValidVehicleCombination } from '@/data/vehicles';
 import { getVehicleNHTSAData, nhtsaToPromptContext, recallsToSafetyWarnings } from './nhtsaService';
 import { searchManualSections } from './vectorSearch';
@@ -190,6 +190,40 @@ function extractLinks(html: string): string[] {
   return [...matches].map(m => m[1]);
 }
 
+function buildManualUrl(path: string): string {
+  const segments = path.split('/').filter(Boolean).map(segment => encodeURIComponent(decodeURIComponent(segment)));
+  return `https://spotonauto.com/manual/${segments.join('/')}`;
+}
+
+function clipSnippet(text: string, maxLength: number = 220): string {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (normalized.length <= maxLength) return normalized;
+  return `${normalized.slice(0, maxLength - 1).trim()}...`;
+}
+
+interface ManualContext {
+  content: string | null;
+  sources: GroundingSource[];
+  sourceCount: number;
+  retrievalMode: 'vector' | 'live' | 'none';
+}
+
+function makeManualSource(
+  path: string,
+  title: string,
+  snippet: string,
+  similarity?: number,
+): GroundingSource {
+  return {
+    uri: buildManualUrl(path),
+    title,
+    path,
+    snippet: clipSnippet(snippet),
+    similarity,
+    kind: 'manual',
+  };
+}
+
 /** Fuzzy match: find best vehicle variant on the year page for a given model name */
 function bestVariantMatch(modelName: string, variants: string[]): string | null {
   const norm = (s: string) => decodeURIComponent(s).toLowerCase().replace(/[-_\s]+/g, ' ');
@@ -229,16 +263,16 @@ function findTaskSections(sectionLinks: string[], task: string): string[] {
 }
 
 /**
- * Fetch live repair manual content from charm.li for the given vehicle + task.
- * Returns null for 2014+ vehicles or if charm.li doesn't have the data.
+ * Build the factory-manual context for a vehicle + task.
+ * Vector-backed corpus text is the primary context; live CHARM fetch is fallback only.
  * Never throws — always fails gracefully.
  */
-async function fetchFromCharmLi(year: string, make: string, model: string, task?: string): Promise<string | null> {
+async function fetchFromCharmLi(year: string, make: string, model: string, task?: string): Promise<ManualContext> {
   // charm.li coverage is 1982–2013
   const yearNum = parseInt(year, 10);
   if (isNaN(yearNum) || yearNum > 2013 || yearNum < 1982) {
     console.log(`[CHARM.LI] Year ${year} outside coverage (1982-2013), skipping`);
-    return null;
+    return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
   }
 
   // Try RAG vector search first (single DB query vs 4-5 HTTP fetches)
@@ -250,25 +284,20 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
 
   if (vectorResults && vectorResults.length > 0) {
     console.log(`[VECTOR] Found ${vectorResults.length} sections for "${task}" (best: ${(vectorResults[0].similarity * 100).toFixed(1)}%)`);
-
-    // Fetch the actual CHARM pages for top results to get image-enriched content
-    const enrichedPages = await Promise.all(
-      vectorResults.slice(0, 3).map(async (r) => {
-        try {
-          const pageUrl = `${CHARM_BASE}/${r.path}`;
-          const resp = await fetch(pageUrl, charmFetchOpts());
-          if (!resp.ok) return `=== ${r.sectionTitle} ===\n${r.contentFull}`;
-          const html = await resp.text();
-          return `=== ${r.sectionTitle} (relevance: ${(r.similarity * 100).toFixed(0)}%) ===\n${extractText(html, pageUrl)}`;
-        } catch {
-          // Fall back to stored text if CHARM fetch fails
-          return `=== ${r.sectionTitle} ===\n${r.contentFull}`;
-        }
-      })
+    const selected = vectorResults.slice(0, 3);
+    const corpusSections = selected.map((result) =>
+      `=== ${result.sectionTitle} (relevance: ${(result.similarity * 100).toFixed(0)}%) ===\n${result.contentFull}`
     );
-
+    const sources = selected.map((result) =>
+      makeManualSource(result.path, result.sectionTitle, result.contentPreview, result.similarity)
+    );
     const header = `=== Factory Service Manual: ${year} ${make} ${model} ===\n`;
-    return header + enrichedPages.join('\n\n');
+    return {
+      content: header + corpusSections.join('\n\n'),
+      sources,
+      sourceCount: sources.length,
+      retrievalMode: 'vector',
+    };
   }
 
   // Fall through to CHARM scraping if vector search returned nothing
@@ -276,7 +305,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     // Step 1: Get year page to find vehicle variants
     const yearUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`;
     const yearResp = await fetch(yearUrl, charmFetchOpts());
-    if (!yearResp.ok) { console.warn(`[CHARM.LI] Make/year not found: ${make}/${year}`); return null; }
+    if (!yearResp.ok) { console.warn(`[CHARM.LI] Make/year not found: ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
     const yearHtml = await yearResp.text();
 
     // Extract relative variant links (exclude breadcrumbs/nav)
@@ -285,12 +314,12 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
       l.startsWith(`/${make}/`) && l.split('/').length === 4 // /Make/Year/Variant/
     );
 
-    if (!variantLinks.length) { console.warn(`[CHARM.LI] No variants found for ${make}/${year}`); return null; }
+    if (!variantLinks.length) { console.warn(`[CHARM.LI] No variants found for ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
 
     // Step 2: Fuzzy-match the user's model to available variants
     const variantPaths = variantLinks.map(l => l.split('/')[3]); // just the encoded variant segment
     const bestPath = bestVariantMatch(model, variantPaths);
-    if (!bestPath) return null;
+    if (!bestPath) return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
 
     const variantBase = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${bestPath}`;
     const variantDecoded = decodeURIComponent(bestPath);
@@ -299,7 +328,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     // Step 3: Fetch Repair and Diagnosis index
     const rdUrl = `${variantBase}Repair%20and%20Diagnosis/`;
     const rdResp = await fetch(rdUrl, charmFetchOpts());
-    if (!rdResp.ok) { console.warn(`[CHARM.LI] No Repair+Diagnosis for ${variantDecoded}`); return null; }
+    if (!rdResp.ok) { console.warn(`[CHARM.LI] No Repair+Diagnosis for ${variantDecoded}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
     const rdHtml = await rdResp.text();
 
     // Step 4: Find task-relevant sections
@@ -308,7 +337,13 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
 
     if (!relevantSections.length) {
       // Return just the section index as context
-      return `=== charm.li: ${year} ${make} ${variantDecoded} — Repair & Diagnosis Index ===\n${extractText(rdHtml, rdUrl).slice(0, 4000)}`;
+      const indexSnippet = extractText(rdHtml, rdUrl).slice(0, 4000);
+      return {
+        content: `=== charm.li: ${year} ${make} ${variantDecoded} — Repair & Diagnosis Index ===\n${indexSnippet}`,
+        sources: [makeManualSource(rdUrl.replace(CHARM_BASE, ''), 'Repair & Diagnosis Index', indexSnippet)],
+        sourceCount: 1,
+        retrievalMode: 'live',
+      };
     }
 
     // Step 5: Fetch up to 3 relevant section pages + their sub-pages (where images live)
@@ -345,21 +380,31 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
 
           const mainText = extractText(html, sectionUrl).slice(0, 2000);
           const combined = `=== ${sectionName} ===\n${mainText}${subContent ? '\n' + subContent : ''}`;
-          return combined.slice(0, 4000);
+          const finalText = combined.slice(0, 4000);
+          return {
+            text: finalText,
+            source: makeManualSource(sectionUrl.replace(CHARM_BASE, ''), sectionName, mainText),
+          };
         } catch { return null; }
       })
     );
 
-    const content = contentPages.filter(Boolean).join('\n\n');
-    if (!content.trim()) return null;
+    const resolvedPages = contentPages.filter(Boolean) as Array<{ text: string; source: GroundingSource }>;
+    const content = resolvedPages.map((page) => page.text).join('\n\n');
+    if (!content.trim()) return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
 
     const header = `=== charm.li Factory Service Manual: ${year} ${make} ${variantDecoded} ===\n`;
     console.log(`[CHARM.LI] ✓ Fetched ${contentPages.filter(Boolean).length} section(s) for "${task}"`);
-    return header + content;
+    return {
+      content: header + content,
+      sources: resolvedPages.map((page) => page.source),
+      sourceCount: resolvedPages.length,
+      retrievalMode: 'live',
+    };
 
   } catch (error) {
     console.error('[CHARM.LI] Fetch error:', error);
-    return null;
+    return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
   }
 }
 
@@ -372,18 +417,18 @@ export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<Ve
   }
 
   // Fetch NHTSA data + charm.li in parallel
-  const [nhtsaData, charmLiContent] = await Promise.all([
+  const [nhtsaData, manualContext] = await Promise.all([
     getVehicleNHTSAData(year, make, model),
     fetchFromCharmLi(year, make, model, task),
   ]);
 
   const nhtsaContext = nhtsaToPromptContext(nhtsaData);
 
-  const basePrompt = charmLiContent
+  const basePrompt = manualContext.content
     ? `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", use the service manual content and NHTSA safety data below.
 
-CHARM.LI SERVICE MANUAL CONTENT:
-${charmLiContent.slice(0, 12000)}
+FACTORY SERVICE MANUAL CONTENT:
+${manualContext.content.slice(0, 12000)}
 
 ${nhtsaContext}`
     : `Act as an expert automotive service database. For a ${year} ${make} ${model} and repair task "${task}", use the NHTSA safety data below and your knowledge of factory service procedures.
@@ -418,14 +463,19 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
       )
     : data.recalls;
 
-  const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
+  const responseSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
     ?.map((chunk: any) => chunk.web)
-    .filter((web: any): web is { uri: string; title: string } => !!(web?.uri && web.title)) || [];
+    .filter((web: any): web is GroundingSource => !!(web?.uri && web.title)) || [];
 
   return {
     ...data,
     recalls: realRecalls,
-    sources,
+    sources: manualContext.sources.length > 0 ? manualContext.sources : responseSources,
+    sourceCount: manualContext.sources.length > 0 ? manualContext.sourceCount : responseSources.length,
+    retrieval: {
+      manualMode: manualContext.retrievalMode,
+      manualSourceCount: manualContext.sourceCount,
+    },
   };
 };
 
@@ -444,7 +494,7 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
   }
 
   // Fetch NHTSA data + charm.li in parallel
-  const [nhtsaData, charmLiContent] = await Promise.all([
+  const [nhtsaData, manualContext] = await Promise.all([
     getVehicleNHTSAData(year, make, model),
     fetchFromCharmLi(year, make, model, task),
   ]);
@@ -452,11 +502,11 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
   const nhtsaContext = nhtsaToPromptContext(nhtsaData);
   const recallWarnings = recallsToSafetyWarnings(nhtsaData.recalls);
 
-  const prompt = charmLiContent
+  const prompt = manualContext.content
     ? `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
 
-PRIMARY DATA SOURCE - CHARM.LI FACTORY SERVICE MANUAL:
-${charmLiContent.slice(0, 18000)}
+PRIMARY DATA SOURCE - FACTORY SERVICE MANUAL CORPUS:
+${manualContext.content.slice(0, 18000)}
 
 ${nhtsaContext}
 
@@ -530,12 +580,7 @@ Keep instructions concise and practical.`;
   // Get source count but don't expose URLs (especially charm.li)
   const rawSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
     ?.map((chunk: any) => chunk.web)
-    .filter((web: any): web is { uri: string; title: string } => !!(web?.uri && web.title)) || [];
-
-  // Only pass sanitized source info (no URLs, just count for "verified" badge)
-  const sources = rawSources.length > 0
-    ? [{ title: 'Factory Service Manual', uri: '#verified' }]
-    : [];
+    .filter((web: any): web is GroundingSource => !!(web?.uri && web.title)) || [];
 
   const stepsWithImages = data.steps.map((step: any, idx: number) => ({
     step: idx + 1,
@@ -555,8 +600,12 @@ Keep instructions concise and practical.`;
     id: guideId,
     safetyWarnings,
     steps: stepsWithImages,
-    sources,
-    sourceCount: rawSources.length,
+    sources: manualContext.sources.length > 0 ? manualContext.sources : rawSources,
+    sourceCount: manualContext.sources.length > 0 ? manualContext.sourceCount : rawSources.length,
+    retrieval: {
+      manualMode: manualContext.retrievalMode,
+      manualSourceCount: manualContext.sourceCount,
+    },
   };
 };
 

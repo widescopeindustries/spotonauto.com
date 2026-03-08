@@ -49,7 +49,7 @@
  */
 
 import { GoogleGenAI } from '@google/genai';
-import { Pool } from 'pg';
+import { getManualEmbeddingsBackend, searchManualEmbeddings } from '@/lib/manualEmbeddingsStore';
 
 // ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -58,13 +58,6 @@ const EMBEDDING_MODEL = 'gemini-embedding-001';
 // Initialize Gemini client (reuses the same API key as geminiService.ts)
 const geminiApiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenAI({ apiKey: geminiApiKey });
-
-// VPS PostgreSQL with pgvector — same server as CHARM data
-const vpsPool = new Pool({
-  connectionString: process.env.VPS_DATABASE_URL || '',
-  ssl: process.env.VPS_DATABASE_URL ? { rejectUnauthorized: false } : undefined,
-  max: 3,
-});
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -139,7 +132,7 @@ export async function searchManualSections(
   threshold: number = 0.3
 ): Promise<VectorSearchResult[] | null> {
   // Guard: don't attempt if env vars are missing
-  if (!process.env.VPS_DATABASE_URL || !geminiApiKey) {
+  if (getManualEmbeddingsBackend() === 'none' || !geminiApiKey) {
     console.warn('[VECTOR] Missing environment variables, skipping vector search');
     return null;
   }
@@ -154,18 +147,15 @@ export async function searchManualSections(
       return null;
     }
 
-    // Step 2: Query VPS PostgreSQL with pgvector cosine similarity
-    const embeddingStr = `[${embedding.join(',')}]`;
-    const { rows } = await vpsPool.query(
-      `SELECT id, path, make, year, model, section_title, content_preview, content_full,
-              1 - (embedding <=> $1::vector) AS similarity
-       FROM manual_embeddings
-       WHERE make = $2 AND year = $3
-         AND 1 - (embedding <=> $1::vector) > $4
-       ORDER BY embedding <=> $1::vector
-       LIMIT $5`,
-      [embeddingStr, vehicle.make, vehicle.year, threshold, maxResults]
-    );
+    // Step 2: Query the configured embeddings store
+    const rows = await searchManualEmbeddings({
+      embedding,
+      make: vehicle.make,
+      year: vehicle.year,
+      model: vehicle.model,
+      maxResults,
+      threshold,
+    });
 
     if (!rows || rows.length === 0) {
       console.log(`[VECTOR] No matches above threshold ${threshold} for "${query}" (${vehicle.make}/${vehicle.year})`);
@@ -179,10 +169,10 @@ export async function searchManualSections(
       make: row.make,
       year: row.year,
       model: row.model || '',
-      sectionTitle: row.section_title || '',
-      contentPreview: row.content_preview || '',
-      contentFull: row.content_full || '',
-      similarity: parseFloat(row.similarity),
+      sectionTitle: row.sectionTitle || '',
+      contentPreview: row.contentPreview || '',
+      contentFull: row.contentFull || '',
+      similarity: row.similarity,
     }));
 
     console.log(
