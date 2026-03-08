@@ -188,6 +188,41 @@ export function trackBookmarkClick(page: string): void {
   });
 }
 
+// ─── Wiring Events ──────────────────────────────────────────────────────────
+
+export function trackWiringSeoView(vehicle: string, system: string): void {
+  trackEvent('wiring_seo_view', {
+    event_category: 'wiring',
+    event_label: `${vehicle}_${system}`,
+    vehicle,
+    system,
+  });
+}
+
+export function trackWiringCtaClick(
+  vehicle: string,
+  system: string,
+  target: 'interactive_library' | 'diagram_jump' | 'cluster_nav',
+): void {
+  trackEvent('wiring_cta_click', {
+    event_category: 'wiring',
+    event_label: `${system}_${target}`,
+    vehicle,
+    system,
+    target,
+  });
+}
+
+export function trackWiringDiagramOpen(vehicle: string, system: string, diagramName: string): void {
+  trackEvent('wiring_diagram_open', {
+    event_category: 'wiring',
+    event_label: `${system}_${diagramName.slice(0, 60)}`,
+    vehicle,
+    system,
+    diagram_name: diagramName.slice(0, 120),
+  });
+}
+
 // ─── Auth Events ────────────────────────────────────────────────────────────
 
 export function trackAuth(method: 'google' | 'email', action: 'login' | 'signup'): void {

@@ -8,6 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "analytics:recovery": "node scripts/recovery-scoreboard.js",
+    "analytics:wiring": "node scripts/wiring-analytics-report.js",
+    "analytics:lost-pages": "node scripts/lost-pages-report.js",
     "smoke:prod": "node scripts/smoke-prod.mjs",
     "smoke:local": "BASE_URL=http://localhost:3000 node scripts/smoke-prod.mjs"
   },

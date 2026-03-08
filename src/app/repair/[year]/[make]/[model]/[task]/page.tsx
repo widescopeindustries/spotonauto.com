@@ -1,5 +1,5 @@
 ﻿import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import DeferredGuideContent from './DeferredGuideContent';
 import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -340,7 +340,7 @@ export default async function Page({ params }: PageProps) {
     // so users land on useful content and Google updates its index via 301.
     const clampedYear = getClampedYear(year, make, model);
     if (clampedYear !== null) {
-        redirect(`/repair/${clampedYear}/${make}/${model}/${task}`);
+        permanentRedirect(`/repair/${clampedYear}/${make}/${model}/${task}`);
     }
 
     // For truly unknown make/model/task combos, return 404

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { trackWiringDiagramOpen } from '@/lib/analytics';
 
 interface DiagramEntry {
   name: string;
@@ -45,6 +46,7 @@ export default function WiringDiagramLibrary() {
   const [loadingVariants, setLoadingVariants] = useState(false);
   const [loadingDiagrams, setLoadingDiagrams] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
+  const prefillVariantRef = useRef<string>('');
 
   // Fetch makes on mount (independent of year)
   useEffect(() => {
@@ -52,6 +54,20 @@ export default function WiringDiagramLibrary() {
       .then(r => r.json())
       .then(d => { setMakes(d.makes || []); setLoadingMakes(false); })
       .catch(() => setLoadingMakes(false));
+  }, []);
+
+  // Read optional query params for deep links from SEO pages
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const year = params.get('year');
+    const make = params.get('make');
+    const variant = params.get('variant');
+    const query = params.get('q');
+
+    if (year) setSelectedYear(year);
+    if (make) setSelectedMake(make);
+    if (variant) prefillVariantRef.current = variant;
+    if (query) setSearch(query);
   }, []);
 
   // Clear downstream when year changes
@@ -78,7 +94,15 @@ export default function WiringDiagramLibrary() {
     setDiagramData(null);
     fetch(`/api/wiring?action=variants&make=${encodeURIComponent(selectedMake)}&year=${selectedYear}`)
       .then(r => r.json())
-      .then(d => { setVariants(d.variants || []); setLoadingVariants(false); })
+      .then(d => {
+        const loadedVariants: string[] = d.variants || [];
+        setVariants(loadedVariants);
+        if (prefillVariantRef.current && loadedVariants.includes(prefillVariantRef.current)) {
+          setSelectedVariant(prefillVariantRef.current);
+          prefillVariantRef.current = '';
+        }
+        setLoadingVariants(false);
+      })
       .catch(() => setLoadingVariants(false));
   }, [selectedMake, selectedYear]);
 
@@ -95,7 +119,7 @@ export default function WiringDiagramLibrary() {
       .catch(() => setLoadingDiagrams(false));
   }, [selectedMake, selectedYear, selectedVariant]);
 
-  const openDiagram = useCallback(async (entry: DiagramEntry) => {
+  const openDiagram = useCallback(async (entry: DiagramEntry, systemName: string) => {
     setLoadingImage(true);
     setSelectedDiagram({ entry, images: { images: [], title: entry.name } });
     try {
@@ -104,11 +128,18 @@ export default function WiringDiagramLibrary() {
       const images = Array.isArray(data.images) ? data.images : [];
       const title = data.title || entry.name;
       setSelectedDiagram({ entry, images: { images, title } });
+      if (selectedYear && selectedMake && selectedVariant) {
+        trackWiringDiagramOpen(
+          `${selectedYear} ${selectedMake} ${selectedVariant}`,
+          systemName,
+          entry.name,
+        );
+      }
     } catch {
       setSelectedDiagram({ entry, images: { images: [], title: entry.name } });
     }
     setLoadingImage(false);
-  }, []);
+  }, [selectedMake, selectedVariant, selectedYear]);
 
   // Filter systems/diagrams by search term
   const filteredSystems = diagramData?.systems
@@ -235,7 +266,7 @@ export default function WiringDiagramLibrary() {
                         <button
                           key={idx}
                           className="wl-diagram-item"
-                          onClick={() => openDiagram(d)}
+                          onClick={() => openDiagram(d, sys.system)}
                         >
                           <svg className="wl-diagram-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="20" height="20">
                             <rect x="3" y="3" width="18" height="18" rx="2" />
