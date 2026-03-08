@@ -7,8 +7,7 @@ import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
-import { getRelatedToolLinksForRepair, TOOL_TYPE_META } from '@/data/tools-pages';
-import { getRepairDtcLinks, getRepairWiringLinks } from '@/lib/repairCrossLinks';
+import { buildRepairKnowledgeGraph, type RepairKnowledgeTheme } from '@/lib/repairKnowledgeGraph';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
 function toTitleCase(slug: string): string {
@@ -23,6 +22,50 @@ interface PageProps {
         task: string;
     }>;
 }
+
+const KNOWLEDGE_THEME_CLASSES: Record<RepairKnowledgeTheme, {
+    container: string;
+    title: string;
+    link: string;
+    badge: string;
+    card: string;
+}> = {
+    cyan: {
+        container: 'border-cyan-500/20 bg-cyan-500/5',
+        title: 'text-cyan-300',
+        link: 'text-cyan-400',
+        badge: 'text-cyan-300',
+        card: 'border-cyan-500/20 hover:border-cyan-400/40',
+    },
+    emerald: {
+        container: 'border-emerald-500/20 bg-emerald-500/5',
+        title: 'text-emerald-300',
+        link: 'text-emerald-400',
+        badge: 'text-emerald-300',
+        card: 'border-emerald-500/20 hover:border-emerald-400/40',
+    },
+    amber: {
+        container: 'border-amber-500/20 bg-amber-500/5',
+        title: 'text-amber-300',
+        link: 'text-amber-400',
+        badge: 'text-amber-300',
+        card: 'border-amber-500/20 hover:border-amber-400/40',
+    },
+    violet: {
+        container: 'border-violet-500/20 bg-violet-500/5',
+        title: 'text-violet-300',
+        link: 'text-violet-400',
+        badge: 'text-violet-300',
+        card: 'border-violet-500/20 hover:border-violet-400/40',
+    },
+    slate: {
+        container: 'border-slate-500/20 bg-slate-500/10',
+        title: 'text-slate-200',
+        link: 'text-slate-300',
+        badge: 'text-slate-300',
+        card: 'border-slate-500/20 hover:border-slate-400/40',
+    },
+};
 
 // Common repair data for SEO content
 const REPAIR_DATA: Record<string, {
@@ -370,16 +413,16 @@ export default async function Page({ params }: PageProps) {
         warnings: vehicleSpec?.warnings || genericData.warnings,
         steps: vehicleSpec?.steps || genericData.steps,
     };
-    const relatedToolLinks = getRelatedToolLinksForRepair(displayMake, displayModel, task, 5);
-    const relatedWiringLinks = getRepairWiringLinks({
+    const knowledgeGraph = await buildRepairKnowledgeGraph({
         year,
         make,
         displayMake,
         model,
         displayModel,
         task,
+        repairTools: repairData.tools,
+        vehicleSpec: vehicleSpec ?? undefined,
     });
-    const relatedDtcLinks = getRepairDtcLinks(task, 4);
 
     // Convert "30-45 minutes" / "1-2 hours" to ISO 8601 duration (upper bound)
     function toIso8601Duration(timeStr: string): string {
@@ -610,7 +653,7 @@ export default async function Page({ params }: PageProps) {
 
                 {/* Vehicle-Specific Notes — only renders when we have real data */}
                 {vehicleSpec && (
-                    <section className="mb-8 bg-cyan-950/30 border border-cyan-500/30 rounded-xl p-6">
+                    <section id="vehicle-specific-data" className="mb-8 bg-cyan-950/30 border border-cyan-500/30 rounded-xl p-6">
                         <h2 className="text-xl font-bold text-cyan-400 mb-4">
                             {vehicleName} — What You Need to Know
                         </h2>
@@ -657,7 +700,7 @@ export default async function Page({ params }: PageProps) {
                 <AdUnit slot="repair-after-safety" format="horizontal" />
 
                 {/* Tools Required */}
-                <section className="mb-8">
+                <section id="tools-required" className="mb-8">
                     <h2 className="text-xl font-bold text-white mb-4">Tools Required</h2>
                     <div className="grid md:grid-cols-2 gap-2">
                         {repairData.tools.map((tool, i) => (
@@ -670,7 +713,7 @@ export default async function Page({ params }: PageProps) {
                 </section>
 
                 {/* Parts List */}
-                <section className="mb-8">
+                <section id="parts-needed" className="mb-8">
                     <h2 className="text-xl font-bold text-white mb-4">Parts Needed</h2>
                     <div className="space-y-3">
                         {vehicleSpec ? (
@@ -820,106 +863,48 @@ export default async function Page({ params }: PageProps) {
                 </div>
             </section>
 
-            {/* ── Related Specs & Tools ──────────────────────────────────── */}
-            {relatedToolLinks.length > 0 && (
+            {/* ── Knowledge Graph ─────────────────────────────────────────── */}
+            {knowledgeGraph.groups.length > 0 && (
                 <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
-                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <h2 className="text-lg font-bold text-white">
-                            {displayMake} {displayModel} Specs & Reference
-                        </h2>
-                        <Link href="/tools" className="text-sm text-cyan-400 hover:underline">
-                            Browse all spec pages →
-                        </Link>
+                    <div className="max-w-3xl mb-6">
+                        <h2 className="text-lg font-bold text-white">Knowledge Paths for This Repair</h2>
+                        <p className="text-sm text-gray-400 mt-1">
+                            This graph connects the current repair to the strongest next surfaces: factory manuals, specs, tool pages, wiring, and likely trouble codes.
+                        </p>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        {relatedToolLinks.map((link) => (
-                            <Link
-                                key={link.slug}
-                                href={link.href}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm hover:bg-cyan-500/20 hover:border-cyan-500/40 transition-all"
-                            >
-                                <span>{TOOL_TYPE_META[link.toolType]?.icon || '🔧'}</span>
-                                <span>{displayMake} {displayModel} {link.label} →</span>
-                            </Link>
-                        ))}
-                        <Link
-                            href="/codes"
-                            className="px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm hover:bg-amber-500/20 hover:border-amber-500/40 transition-all"
-                        >
-                            DTC Trouble Code Lookup →
-                        </Link>
-                    </div>
-                </section>
-            )}
-
-            {/* ── Diagnostics & Wiring ───────────────────────────────────── */}
-            {(relatedWiringLinks.length > 0 || relatedDtcLinks.length > 0) && (
-                <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
-                    <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-                        <div>
-                            <h2 className="text-lg font-bold text-white">Diagnostics & Wiring for This Repair</h2>
-                            <p className="text-sm text-gray-400 mt-1">
-                                Cross-links chosen from the current repair task so users can jump into the right diagram or code flow faster.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="grid lg:grid-cols-2 gap-6">
-                        {relatedWiringLinks.length > 0 && (
-                            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+                    <div className="grid xl:grid-cols-2 gap-6">
+                        {knowledgeGraph.groups.map((group) => {
+                            const theme = KNOWLEDGE_THEME_CLASSES[group.theme];
+                            return (
+                                <div key={group.kind} className={`rounded-2xl border p-5 ${theme.container}`}>
                                 <div className="flex items-center justify-between gap-3 mb-4">
-                                    <h3 className="text-base font-bold text-cyan-300">Relevant Wiring Paths</h3>
-                                    <Link href="/wiring" className="text-xs text-cyan-400 hover:underline">
-                                        All wiring →
-                                    </Link>
+                                        <h3 className={`text-base font-bold ${theme.title}`}>{group.title}</h3>
+                                        {group.browseHref && (
+                                            <Link href={group.browseHref} className={`text-xs hover:underline ${theme.link}`}>
+                                                Browse →
+                                            </Link>
+                                        )}
                                 </div>
                                 <div className="space-y-3">
-                                    {relatedWiringLinks.map((link) => (
+                                        {group.nodes.map((node) => (
                                         <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className="block rounded-xl border border-cyan-500/20 bg-black/20 p-4 hover:border-cyan-400/40 hover:bg-black/30 transition-all"
+                                                key={`${group.kind}-${node.href}-${node.label}`}
+                                                href={node.href}
+                                                className={`block rounded-xl border bg-black/20 p-4 hover:bg-black/30 transition-all ${theme.card}`}
                                         >
                                             <div className="flex items-center justify-between gap-3">
-                                                <span className="font-semibold text-white">{link.label}</span>
-                                                <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300">
-                                                    {link.badge}
+                                                    <span className="font-semibold text-white">{node.label}</span>
+                                                    <span className={`text-[11px] font-bold uppercase tracking-wider ${theme.badge}`}>
+                                                        {node.badge}
                                                 </span>
                                             </div>
-                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                                                <p className="text-sm text-gray-300 mt-2">{node.description}</p>
                                         </Link>
                                     ))}
                                 </div>
                             </div>
-                        )}
-
-                        {relatedDtcLinks.length > 0 && (
-                            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
-                                <div className="flex items-center justify-between gap-3 mb-4">
-                                    <h3 className="text-base font-bold text-amber-300">Likely Trouble Codes</h3>
-                                    <Link href="/codes" className="text-xs text-amber-400 hover:underline">
-                                        All codes →
-                                    </Link>
-                                </div>
-                                <div className="space-y-3">
-                                    {relatedDtcLinks.map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className="block rounded-xl border border-amber-500/20 bg-black/20 p-4 hover:border-amber-400/40 hover:bg-black/30 transition-all"
-                                        >
-                                            <div className="flex items-center justify-between gap-3">
-                                                <span className="font-semibold text-white">{link.label}</span>
-                                                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300">
-                                                    {link.badge}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                            );
+                        })}
                     </div>
                 </section>
             )}
