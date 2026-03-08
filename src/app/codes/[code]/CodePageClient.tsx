@@ -9,6 +9,7 @@ import {
     getRepairLinksForCode,
     getWiringLinksForCode,
 } from '@/lib/diagnosticCrossLinks';
+import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -36,6 +37,38 @@ export default function CodePageClient({
     const repairLinks = getRepairLinksForCode(code, 6);
     const wiringLinks = getWiringLinksForCode(code, 6);
     const relatedCodeLinks = getRelatedCodeLinks(code, 6);
+    const graphBlocks = rankKnowledgeGraphBlocks('code', [
+        ...(manualLinks.length > 0 ? [{
+            kind: 'manual' as const,
+            title: 'OEM Manual Evidence',
+            browseHref: '/manual',
+            theme: 'slate' as const,
+            nodes: manualLinks.map((link) => ({
+                ...link,
+                targetKind: 'manual' as const,
+            })),
+        }] : []),
+        ...(repairLinks.length > 0 ? [{
+            kind: 'repair' as const,
+            title: 'Exact Repair Workflows',
+            browseHref: '/repair',
+            theme: 'cyan' as const,
+            nodes: repairLinks.map((link) => ({
+                ...link,
+                targetKind: 'repair' as const,
+            })),
+        }] : []),
+        ...(wiringLinks.length > 0 ? [{
+            kind: 'wiring' as const,
+            title: 'Wiring Diagram Paths',
+            browseHref: '/wiring',
+            theme: 'violet' as const,
+            nodes: wiringLinks.map((link) => ({
+                ...link,
+                targetKind: 'wiring' as const,
+            })),
+        }] : []),
+    ]);
 
     return (
         <section className="py-16 px-4 max-w-4xl mx-auto">
@@ -164,50 +197,18 @@ export default function CodePageClient({
                     </div>
 
                     <div className="grid lg:grid-cols-2 gap-6">
-                        {manualLinks.length > 0 && (
+                        {graphBlocks.map((block) => (
                             <KnowledgeGraphGroup
+                                key={block.kind}
                                 surface="code"
-                                groupKind="manual"
-                                title="OEM Manual Evidence"
-                                browseHref="/manual"
-                                theme="slate"
-                                nodes={manualLinks.map((link) => ({
-                                    ...link,
-                                    targetKind: 'manual' as const,
-                                }))}
-                                context={{ code: code.code }}
-                            />
-                        )}
-
-                        {repairLinks.length > 0 && (
-                            <KnowledgeGraphGroup
-                                surface="code"
-                                groupKind="repair"
-                                title="Exact Repair Workflows"
-                                browseHref="/repair"
-                                theme="cyan"
-                                nodes={repairLinks.map((link) => ({
-                                    ...link,
-                                    targetKind: 'repair' as const,
-                                }))}
+                                groupKind={block.kind}
+                                title={block.title}
+                                browseHref={block.browseHref}
+                                theme={block.theme}
+                                nodes={block.nodes}
                                 context={{ code: code.code, task: code.repairTaskSlug }}
                             />
-                        )}
-
-                        {wiringLinks.length > 0 && (
-                            <KnowledgeGraphGroup
-                                surface="code"
-                                groupKind="wiring"
-                                title="Wiring Diagram Paths"
-                                browseHref="/wiring"
-                                theme="violet"
-                                nodes={wiringLinks.map((link) => ({
-                                    ...link,
-                                    targetKind: 'wiring' as const,
-                                }))}
-                                context={{ code: code.code, task: code.repairTaskSlug }}
-                            />
-                        )}
+                        ))}
                     </div>
                 </section>
             )}

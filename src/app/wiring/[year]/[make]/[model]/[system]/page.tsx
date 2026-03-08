@@ -22,6 +22,7 @@ import {
   getCodeLinksForWiringSystem,
   getRepairLinksForWiringVehicle,
 } from '@/lib/diagnosticCrossLinks';
+import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { getManualSectionLinksForWiringVehicle } from '@/lib/manualSectionLinks';
 
 export const revalidate = 21600;
@@ -185,6 +186,38 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
   const relatedRepairLinks = getRepairLinksForWiringVehicle(vehicle, systemSlug, 4);
   const relatedCodeLinks = getCodeLinksForWiringSystem(systemSlug, 6);
   const manualSectionLinks = await getManualSectionLinksForWiringVehicle(vehicle, systemSlug, 4);
+  const graphBlocks = rankKnowledgeGraphBlocks('wiring', [
+    ...(manualSectionLinks.length > 0 ? [{
+      kind: 'manual' as const,
+      title: 'OEM Manual Evidence',
+      browseHref: '/manual',
+      theme: 'slate' as const,
+      nodes: manualSectionLinks.map((link) => ({
+        ...link,
+        targetKind: 'manual' as const,
+      })),
+    }] : []),
+    ...(relatedRepairLinks.length > 0 ? [{
+      kind: 'repair' as const,
+      title: 'Repairs That Intersect This Wiring',
+      browseHref: '/repair',
+      theme: 'cyan' as const,
+      nodes: relatedRepairLinks.map((link) => ({
+        ...link,
+        targetKind: 'repair' as const,
+      })),
+    }] : []),
+    ...(relatedCodeLinks.length > 0 ? [{
+      kind: 'dtc' as const,
+      title: 'Likely Trouble Codes for This System',
+      browseHref: '/codes',
+      theme: 'amber' as const,
+      nodes: relatedCodeLinks.map((link) => ({
+        ...link,
+        targetKind: 'dtc' as const,
+      })),
+    }] : []),
+  ]);
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -289,52 +322,20 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 pb-16 grid lg:grid-cols-2 gap-6">
-        {(manualSectionLinks.length > 0 || relatedRepairLinks.length > 0 || relatedCodeLinks.length > 0) && (
+        {graphBlocks.length > 0 && (
           <>
-            {manualSectionLinks.length > 0 && (
+            {graphBlocks.map((block) => (
               <KnowledgeGraphGroup
+                key={block.kind}
                 surface="wiring"
-                groupKind="manual"
-                title="OEM Manual Evidence"
-                browseHref="/manual"
-                theme="slate"
-                nodes={manualSectionLinks.map((link) => ({
-                  ...link,
-                  targetKind: 'manual' as const,
-                }))}
+                groupKind={block.kind}
+                title={block.title}
+                browseHref={block.browseHref}
+                theme={block.theme}
+                nodes={block.nodes}
                 context={{ vehicle: vehicleLabel, system: systemMeta.shortLabel }}
               />
-            )}
-
-            {relatedRepairLinks.length > 0 && (
-              <KnowledgeGraphGroup
-                surface="wiring"
-                groupKind="repair"
-                title="Repairs That Intersect This Wiring"
-                browseHref="/repair"
-                theme="cyan"
-                nodes={relatedRepairLinks.map((link) => ({
-                  ...link,
-                  targetKind: 'repair' as const,
-                }))}
-                context={{ vehicle: vehicleLabel, system: systemMeta.shortLabel }}
-              />
-            )}
-
-            {relatedCodeLinks.length > 0 && (
-              <KnowledgeGraphGroup
-                surface="wiring"
-                groupKind="dtc"
-                title="Likely Trouble Codes for This System"
-                browseHref="/codes"
-                theme="amber"
-                nodes={relatedCodeLinks.map((link) => ({
-                  ...link,
-                  targetKind: 'dtc' as const,
-                }))}
-                context={{ vehicle: vehicleLabel, system: systemMeta.shortLabel }}
-              />
-            )}
+            ))}
           </>
         )}
 

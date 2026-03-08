@@ -9,6 +9,7 @@ import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
+import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
 function toTitleCase(slug: string): string {
@@ -380,6 +381,7 @@ export default async function Page({ params }: PageProps) {
         repairTools: repairData.tools,
         vehicleSpec: vehicleSpec ?? undefined,
     });
+    const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('repair', knowledgeGraph.groups);
 
     // Convert "30-45 minutes" / "1-2 hours" to ISO 8601 duration (upper bound)
     function toIso8601Duration(timeStr: string): string {
@@ -830,7 +832,7 @@ export default async function Page({ params }: PageProps) {
                         </p>
                     </div>
                     <div className="grid xl:grid-cols-2 gap-6">
-                        {knowledgeGraph.groups.map((group) => (
+                        {rankedKnowledgeGroups.map((group) => (
                             <KnowledgeGraphGroup
                                 key={group.kind}
                                 surface="repair"
