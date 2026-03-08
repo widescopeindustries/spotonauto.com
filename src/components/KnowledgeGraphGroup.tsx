@@ -85,6 +85,19 @@ export default function KnowledgeGraphGroup({
 }: KnowledgeGraphGroupProps) {
   const classes = THEME_CLASSES[theme];
   const hasTrackedImpression = useRef(false);
+  const recentActivationKeys = useRef<Set<string>>(new Set());
+
+  function trackActivationOnce(
+    activationKey: string,
+    payload: Parameters<typeof trackKnowledgeGraphClick>[0],
+  ) {
+    if (recentActivationKeys.current.has(activationKey)) return;
+    recentActivationKeys.current.add(activationKey);
+    trackKnowledgeGraphClick(payload);
+    window.setTimeout(() => {
+      recentActivationKeys.current.delete(activationKey);
+    }, 1500);
+  }
 
   useEffect(() => {
     if (!nodes.length || hasTrackedImpression.current) return;
@@ -106,7 +119,7 @@ export default function KnowledgeGraphGroup({
           <Link
             href={browseHref}
             className={`text-xs hover:underline ${classes.link}`}
-            onClick={() => trackKnowledgeGraphClick({
+            onMouseDown={() => trackActivationOnce(`browse:${groupKind}:${browseHref}`, {
               surface,
               sourceKind: groupKind,
               targetKind: groupKind,
@@ -115,6 +128,27 @@ export default function KnowledgeGraphGroup({
               isBrowseLink: true,
               ...context,
             })}
+            onClick={() => trackActivationOnce(`browse:${groupKind}:${browseHref}`, {
+              surface,
+              sourceKind: groupKind,
+              targetKind: groupKind,
+              label: `Browse ${title}`,
+              href: browseHref,
+              isBrowseLink: true,
+              ...context,
+            })}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+              trackActivationOnce(`browse:${groupKind}:${browseHref}`, {
+                surface,
+                sourceKind: groupKind,
+                targetKind: groupKind,
+                label: `Browse ${title}`,
+                href: browseHref,
+                isBrowseLink: true,
+                ...context,
+              });
+            }}
           >
             Browse →
           </Link>
@@ -126,7 +160,7 @@ export default function KnowledgeGraphGroup({
             key={`${groupKind}-${node.targetKind}-${node.href}-${node.label}`}
             href={node.href}
             className={`block rounded-xl border bg-black/20 p-4 hover:bg-black/30 transition-all ${classes.card}`}
-            onClick={() => trackKnowledgeGraphClick({
+            onMouseDown={() => trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
               surface,
               sourceKind: groupKind,
               targetKind: node.targetKind,
@@ -134,6 +168,25 @@ export default function KnowledgeGraphGroup({
               href: node.href,
               ...context,
             })}
+            onClick={() => trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
+              surface,
+              sourceKind: groupKind,
+              targetKind: node.targetKind,
+              label: node.label,
+              href: node.href,
+              ...context,
+            })}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+              trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
+                surface,
+                sourceKind: groupKind,
+                targetKind: node.targetKind,
+                label: node.label,
+                href: node.href,
+                ...context,
+              });
+            }}
           >
             <div className="flex items-center justify-between gap-3">
               <span className="font-semibold text-white">{node.label}</span>
