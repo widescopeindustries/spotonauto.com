@@ -17,6 +17,7 @@ import {
 } from '@/lib/wiringData';
 import WiringSeoTracker from '@/app/wiring/WiringSeoTracker';
 import WiringTrackedLink from '@/app/wiring/WiringTrackedLink';
+import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import {
   getCodeLinksForWiringSystem,
   getRepairLinksForWiringVehicle,
@@ -291,81 +292,48 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         {(manualSectionLinks.length > 0 || relatedRepairLinks.length > 0 || relatedCodeLinks.length > 0) && (
           <>
             {manualSectionLinks.length > 0 && (
-              <div className="rounded-2xl border border-slate-500/20 bg-slate-500/10 p-6">
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <h3 className="text-xl font-bold text-slate-200">OEM Manual Evidence</h3>
-                  <Link href="/manual" className="text-xs text-slate-300 hover:underline">
-                    Browse manuals →
-                  </Link>
-                </div>
-                <div className="grid gap-3">
-                  {manualSectionLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="rounded-xl border border-slate-500/20 bg-black/20 px-4 py-3 hover:border-slate-400/40 hover:bg-black/30 transition"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="font-semibold text-white">{link.label}</span>
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">{link.badge}</span>
-                      </div>
-                      <p className="text-sm text-gray-300 mt-2">{link.description}</p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              <KnowledgeGraphGroup
+                surface="wiring"
+                groupKind="manual"
+                title="OEM Manual Evidence"
+                browseHref="/manual"
+                theme="slate"
+                nodes={manualSectionLinks.map((link) => ({
+                  ...link,
+                  targetKind: 'manual' as const,
+                }))}
+                context={{ vehicle: vehicleLabel, system: systemMeta.shortLabel }}
+              />
             )}
 
             {relatedRepairLinks.length > 0 && (
-              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <h3 className="text-xl font-bold text-cyan-300">Repairs That Intersect This Wiring</h3>
-                  <Link href="/repair" className="text-xs text-cyan-400 hover:underline">
-                    Browse repairs →
-                  </Link>
-                </div>
-                <div className="grid gap-3">
-                  {relatedRepairLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="rounded-xl border border-cyan-500/20 bg-black/20 px-4 py-3 hover:border-cyan-400/40 hover:bg-black/30 transition"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="font-semibold text-white">{link.label}</span>
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300">{link.badge}</span>
-                      </div>
-                      <p className="text-sm text-gray-300 mt-2">{link.description}</p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              <KnowledgeGraphGroup
+                surface="wiring"
+                groupKind="repair"
+                title="Repairs That Intersect This Wiring"
+                browseHref="/repair"
+                theme="cyan"
+                nodes={relatedRepairLinks.map((link) => ({
+                  ...link,
+                  targetKind: 'repair' as const,
+                }))}
+                context={{ vehicle: vehicleLabel, system: systemMeta.shortLabel }}
+              />
             )}
 
             {relatedCodeLinks.length > 0 && (
-              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6">
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <h3 className="text-xl font-bold text-amber-300">Likely Trouble Codes for This System</h3>
-                  <Link href="/codes" className="text-xs text-amber-400 hover:underline">
-                    Browse codes →
-                  </Link>
-                </div>
-                <div className="grid gap-3">
-                  {relatedCodeLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="rounded-xl border border-amber-500/20 bg-black/20 px-4 py-3 hover:border-amber-400/40 hover:bg-black/30 transition"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="font-semibold text-white">{link.label}</span>
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300">{link.badge}</span>
-                      </div>
-                      <p className="text-sm text-gray-300 mt-2">{link.description}</p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              <KnowledgeGraphGroup
+                surface="wiring"
+                groupKind="dtc"
+                title="Likely Trouble Codes for This System"
+                browseHref="/codes"
+                theme="amber"
+                nodes={relatedCodeLinks.map((link) => ({
+                  ...link,
+                  targetKind: 'dtc' as const,
+                }))}
+                context={{ vehicle: vehicleLabel, system: systemMeta.shortLabel }}
+              />
             )}
           </>
         )}

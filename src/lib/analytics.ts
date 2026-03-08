@@ -247,6 +247,66 @@ export function trackWiringDiagramOpen(vehicle: string, system: string, diagramN
   });
 }
 
+// ─── Knowledge Graph Events ────────────────────────────────────────────────
+
+export type KnowledgeGraphSurface = 'repair' | 'code' | 'wiring';
+export type KnowledgeGraphKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc' | 'repair';
+
+export interface KnowledgeGraphContext {
+  vehicle?: string;
+  task?: string;
+  code?: string;
+  system?: string;
+}
+
+interface KnowledgeGraphImpressionEvent extends KnowledgeGraphContext {
+  surface: KnowledgeGraphSurface;
+  groupKind: KnowledgeGraphKind;
+  title: string;
+  nodeCount: number;
+}
+
+interface KnowledgeGraphClickEvent extends KnowledgeGraphContext {
+  surface: KnowledgeGraphSurface;
+  sourceKind: KnowledgeGraphKind;
+  targetKind: KnowledgeGraphKind;
+  label: string;
+  href: string;
+  isBrowseLink?: boolean;
+}
+
+export function trackKnowledgeGraphImpression(event: KnowledgeGraphImpressionEvent): void {
+  trackEvent('knowledge_graph_impression', {
+    event_category: 'knowledge_graph',
+    event_label: `${event.surface}_${event.groupKind}`,
+    graph_surface: event.surface,
+    graph_group: event.groupKind,
+    graph_title: event.title,
+    graph_node_count: event.nodeCount,
+    vehicle: event.vehicle,
+    task: event.task,
+    code: event.code,
+    system: event.system,
+  });
+}
+
+export function trackKnowledgeGraphClick(event: KnowledgeGraphClickEvent): void {
+  trackEvent('knowledge_graph_click', {
+    event_category: 'knowledge_graph',
+    event_label: `${event.surface}_${event.sourceKind}_${event.targetKind}`,
+    graph_surface: event.surface,
+    graph_group: event.sourceKind,
+    graph_target_kind: event.targetKind,
+    graph_label: event.label.slice(0, 120),
+    graph_href: event.href.slice(0, 200),
+    is_browse_link: event.isBrowseLink ? 'true' : 'false',
+    vehicle: event.vehicle,
+    task: event.task,
+    code: event.code,
+    system: event.system,
+  });
+}
+
 // ─── Auth Events ────────────────────────────────────────────────────────────
 
 export function trackAuth(method: 'google' | 'email', action: 'login' | 'signup'): void {

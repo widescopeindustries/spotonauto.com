@@ -11,6 +11,7 @@
     "analytics:recovery": "node scripts/recovery-scoreboard.js",
     "analytics:backbone": "npx tsx scripts/manual-backbone-scoreboard.ts",
     "analytics:wiring": "node scripts/wiring-analytics-report.js",
+    "analytics:graph": "node scripts/graph-analytics-report.js",
     "analytics:lost-pages": "node scripts/lost-pages-report.js",
     "health:manual-backbone": "npx tsx scripts/manual-backbone-health.ts",
     "index:manual-backbone": "npx tsx scripts/index-lmdb-vectors.ts",

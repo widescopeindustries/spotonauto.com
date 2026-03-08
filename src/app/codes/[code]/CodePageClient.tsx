@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { DTCCode } from '@/data/dtc-codes-data';
 import AdUnit from '@/components/AdUnit';
 import LiveDtcFlowchart from '@/components/LiveDtcFlowchart';
+import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import {
     type DiagnosticCrossLink,
     getRelatedCodeLinks,
@@ -164,81 +165,48 @@ export default function CodePageClient({
 
                     <div className="grid lg:grid-cols-2 gap-6">
                         {manualLinks.length > 0 && (
-                            <div className="rounded-2xl border border-slate-500/20 bg-slate-500/10 p-5">
-                                <div className="flex items-center justify-between gap-3 mb-4">
-                                    <h4 className="text-base font-bold text-slate-200">OEM Manual Evidence</h4>
-                                    <Link href="/manual" className="text-xs text-slate-300 hover:underline">
-                                        Browse manuals →
-                                    </Link>
-                                </div>
-                                <div className="space-y-3">
-                                    {manualLinks.map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className="block rounded-xl border border-slate-500/20 bg-black/20 p-4 hover:border-slate-400/40 hover:bg-black/30 transition-all"
-                                        >
-                                            <div className="flex items-center justify-between gap-3">
-                                                <span className="font-semibold text-white">{link.label}</span>
-                                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">{link.badge}</span>
-                                            </div>
-                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
+                            <KnowledgeGraphGroup
+                                surface="code"
+                                groupKind="manual"
+                                title="OEM Manual Evidence"
+                                browseHref="/manual"
+                                theme="slate"
+                                nodes={manualLinks.map((link) => ({
+                                    ...link,
+                                    targetKind: 'manual' as const,
+                                }))}
+                                context={{ code: code.code }}
+                            />
                         )}
 
                         {repairLinks.length > 0 && (
-                            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
-                                <div className="flex items-center justify-between gap-3 mb-4">
-                                    <h4 className="text-base font-bold text-cyan-300">Exact Repair Workflows</h4>
-                                    <Link href="/repair" className="text-xs text-cyan-400 hover:underline">
-                                        Browse repairs →
-                                    </Link>
-                                </div>
-                                <div className="space-y-3">
-                                    {repairLinks.map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className="block rounded-xl border border-cyan-500/20 bg-black/20 p-4 hover:border-cyan-400/40 hover:bg-black/30 transition-all"
-                                        >
-                                            <div className="flex items-center justify-between gap-3">
-                                                <span className="font-semibold text-white">{link.label}</span>
-                                                <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300">{link.badge}</span>
-                                            </div>
-                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
+                            <KnowledgeGraphGroup
+                                surface="code"
+                                groupKind="repair"
+                                title="Exact Repair Workflows"
+                                browseHref="/repair"
+                                theme="cyan"
+                                nodes={repairLinks.map((link) => ({
+                                    ...link,
+                                    targetKind: 'repair' as const,
+                                }))}
+                                context={{ code: code.code, task: code.repairTaskSlug }}
+                            />
                         )}
 
                         {wiringLinks.length > 0 && (
-                            <div className="rounded-2xl border border-violet-500/20 bg-violet-500/5 p-5">
-                                <div className="flex items-center justify-between gap-3 mb-4">
-                                    <h4 className="text-base font-bold text-violet-300">Wiring Diagram Paths</h4>
-                                    <Link href="/wiring" className="text-xs text-violet-400 hover:underline">
-                                        Browse wiring →
-                                    </Link>
-                                </div>
-                                <div className="space-y-3">
-                                    {wiringLinks.map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className="block rounded-xl border border-violet-500/20 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
-                                        >
-                                            <div className="flex items-center justify-between gap-3">
-                                                <span className="font-semibold text-white">{link.label}</span>
-                                                <span className="text-[11px] font-bold uppercase tracking-wider text-violet-300">{link.badge}</span>
-                                            </div>
-                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
+                            <KnowledgeGraphGroup
+                                surface="code"
+                                groupKind="wiring"
+                                title="Wiring Diagram Paths"
+                                browseHref="/wiring"
+                                theme="violet"
+                                nodes={wiringLinks.map((link) => ({
+                                    ...link,
+                                    targetKind: 'wiring' as const,
+                                }))}
+                                context={{ code: code.code, task: code.repairTaskSlug }}
+                            />
                         )}
                     </div>
                 </section>

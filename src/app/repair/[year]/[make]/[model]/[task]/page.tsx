@@ -5,9 +5,10 @@ import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircle
 import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
+import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
-import { buildRepairKnowledgeGraph, type RepairKnowledgeTheme } from '@/lib/repairKnowledgeGraph';
+import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
 function toTitleCase(slug: string): string {
@@ -22,50 +23,6 @@ interface PageProps {
         task: string;
     }>;
 }
-
-const KNOWLEDGE_THEME_CLASSES: Record<RepairKnowledgeTheme, {
-    container: string;
-    title: string;
-    link: string;
-    badge: string;
-    card: string;
-}> = {
-    cyan: {
-        container: 'border-cyan-500/20 bg-cyan-500/5',
-        title: 'text-cyan-300',
-        link: 'text-cyan-400',
-        badge: 'text-cyan-300',
-        card: 'border-cyan-500/20 hover:border-cyan-400/40',
-    },
-    emerald: {
-        container: 'border-emerald-500/20 bg-emerald-500/5',
-        title: 'text-emerald-300',
-        link: 'text-emerald-400',
-        badge: 'text-emerald-300',
-        card: 'border-emerald-500/20 hover:border-emerald-400/40',
-    },
-    amber: {
-        container: 'border-amber-500/20 bg-amber-500/5',
-        title: 'text-amber-300',
-        link: 'text-amber-400',
-        badge: 'text-amber-300',
-        card: 'border-amber-500/20 hover:border-amber-400/40',
-    },
-    violet: {
-        container: 'border-violet-500/20 bg-violet-500/5',
-        title: 'text-violet-300',
-        link: 'text-violet-400',
-        badge: 'text-violet-300',
-        card: 'border-violet-500/20 hover:border-violet-400/40',
-    },
-    slate: {
-        container: 'border-slate-500/20 bg-slate-500/10',
-        title: 'text-slate-200',
-        link: 'text-slate-300',
-        badge: 'text-slate-300',
-        card: 'border-slate-500/20 hover:border-slate-400/40',
-    },
-};
 
 // Common repair data for SEO content
 const REPAIR_DATA: Record<string, {
@@ -873,38 +830,27 @@ export default async function Page({ params }: PageProps) {
                         </p>
                     </div>
                     <div className="grid xl:grid-cols-2 gap-6">
-                        {knowledgeGraph.groups.map((group) => {
-                            const theme = KNOWLEDGE_THEME_CLASSES[group.theme];
-                            return (
-                                <div key={group.kind} className={`rounded-2xl border p-5 ${theme.container}`}>
-                                <div className="flex items-center justify-between gap-3 mb-4">
-                                        <h3 className={`text-base font-bold ${theme.title}`}>{group.title}</h3>
-                                        {group.browseHref && (
-                                            <Link href={group.browseHref} className={`text-xs hover:underline ${theme.link}`}>
-                                                Browse →
-                                            </Link>
-                                        )}
-                                </div>
-                                <div className="space-y-3">
-                                        {group.nodes.map((node) => (
-                                        <Link
-                                                key={`${group.kind}-${node.href}-${node.label}`}
-                                                href={node.href}
-                                                className={`block rounded-xl border bg-black/20 p-4 hover:bg-black/30 transition-all ${theme.card}`}
-                                        >
-                                            <div className="flex items-center justify-between gap-3">
-                                                    <span className="font-semibold text-white">{node.label}</span>
-                                                    <span className={`text-[11px] font-bold uppercase tracking-wider ${theme.badge}`}>
-                                                        {node.badge}
-                                                </span>
-                                            </div>
-                                                <p className="text-sm text-gray-300 mt-2">{node.description}</p>
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
-                            );
-                        })}
+                        {knowledgeGraph.groups.map((group) => (
+                            <KnowledgeGraphGroup
+                                key={group.kind}
+                                surface="repair"
+                                groupKind={group.kind === 'manual' ? 'manual' : group.kind}
+                                title={group.title}
+                                browseHref={group.browseHref}
+                                theme={group.theme}
+                                nodes={group.nodes.map((node) => ({
+                                    href: node.href,
+                                    label: node.label,
+                                    description: node.description,
+                                    badge: node.badge,
+                                    targetKind: node.kind === 'manual' ? 'manual' : node.kind,
+                                }))}
+                                context={{
+                                    vehicle: vehicleName,
+                                    task,
+                                }}
+                            />
+                        ))}
                     </div>
                 </section>
             )}
