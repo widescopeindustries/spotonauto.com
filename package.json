@@ -12,6 +12,8 @@
     "analytics:backbone": "npx tsx scripts/manual-backbone-scoreboard.ts",
     "analytics:wiring": "node scripts/wiring-analytics-report.js",
     "analytics:graph": "node scripts/graph-analytics-report.js",
+    "analytics:graph-dimensions": "node scripts/ensure-graph-ga4-dimensions.js",
+    "analytics:graph-dimensions:create": "node scripts/ensure-graph-ga4-dimensions.js --create-missing",
     "analytics:graph-scoreboard": "node scripts/graph-scoreboard.js",
     "analytics:graph-apply": "node scripts/graph-scoreboard.js --apply-live",
     "analytics:lost-pages": "node scripts/lost-pages-report.js",
