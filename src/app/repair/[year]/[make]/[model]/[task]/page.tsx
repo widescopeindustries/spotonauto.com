@@ -8,6 +8,7 @@ import AdUnit from '@/components/AdUnit';
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair, TOOL_TYPE_META } from '@/data/tools-pages';
+import { getRepairDtcLinks, getRepairWiringLinks } from '@/lib/repairCrossLinks';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
 function toTitleCase(slug: string): string {
@@ -370,6 +371,15 @@ export default async function Page({ params }: PageProps) {
         steps: vehicleSpec?.steps || genericData.steps,
     };
     const relatedToolLinks = getRelatedToolLinksForRepair(displayMake, displayModel, task, 5);
+    const relatedWiringLinks = getRepairWiringLinks({
+        year,
+        make,
+        displayMake,
+        model,
+        displayModel,
+        task,
+    });
+    const relatedDtcLinks = getRepairDtcLinks(task, 4);
 
     // Convert "30-45 minutes" / "1-2 hours" to ISO 8601 duration (upper bound)
     function toIso8601Duration(timeStr: string): string {
@@ -838,6 +848,78 @@ export default async function Page({ params }: PageProps) {
                         >
                             DTC Trouble Code Lookup →
                         </Link>
+                    </div>
+                </section>
+            )}
+
+            {/* ── Diagnostics & Wiring ───────────────────────────────────── */}
+            {(relatedWiringLinks.length > 0 || relatedDtcLinks.length > 0) && (
+                <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                        <div>
+                            <h2 className="text-lg font-bold text-white">Diagnostics & Wiring for This Repair</h2>
+                            <p className="text-sm text-gray-400 mt-1">
+                                Cross-links chosen from the current repair task so users can jump into the right diagram or code flow faster.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="grid lg:grid-cols-2 gap-6">
+                        {relatedWiringLinks.length > 0 && (
+                            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+                                <div className="flex items-center justify-between gap-3 mb-4">
+                                    <h3 className="text-base font-bold text-cyan-300">Relevant Wiring Paths</h3>
+                                    <Link href="/wiring" className="text-xs text-cyan-400 hover:underline">
+                                        All wiring →
+                                    </Link>
+                                </div>
+                                <div className="space-y-3">
+                                    {relatedWiringLinks.map((link) => (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            className="block rounded-xl border border-cyan-500/20 bg-black/20 p-4 hover:border-cyan-400/40 hover:bg-black/30 transition-all"
+                                        >
+                                            <div className="flex items-center justify-between gap-3">
+                                                <span className="font-semibold text-white">{link.label}</span>
+                                                <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300">
+                                                    {link.badge}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {relatedDtcLinks.length > 0 && (
+                            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
+                                <div className="flex items-center justify-between gap-3 mb-4">
+                                    <h3 className="text-base font-bold text-amber-300">Likely Trouble Codes</h3>
+                                    <Link href="/codes" className="text-xs text-amber-400 hover:underline">
+                                        All codes →
+                                    </Link>
+                                </div>
+                                <div className="space-y-3">
+                                    {relatedDtcLinks.map((link) => (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            className="block rounded-xl border border-amber-500/20 bg-black/20 p-4 hover:border-amber-400/40 hover:bg-black/30 transition-all"
+                                        >
+                                            <div className="flex items-center justify-between gap-3">
+                                                <span className="font-semibold text-white">{link.label}</span>
+                                                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300">
+                                                    {link.badge}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-300 mt-2">{link.description}</p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </section>
             )}
