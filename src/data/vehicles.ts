@@ -439,6 +439,14 @@ export const NOINDEX_MAKES = new Set([
     'renault', 'fiat', 'smart', 'isuzu',
 ]);
 
+export function slugifyRoutePart(value: string): string {
+    return decodeURIComponent(value)
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+}
+
 /**
  * Validates if a vehicle/year combination is valid.
  * Permissive: rejects only known-impossible combos (e.g. year outside production range).
@@ -464,15 +472,13 @@ export function isValidVehicleCombination(
 
     // If we have production year data for this vehicle, validate the year range
     const makeEntry = Object.entries(VEHICLE_PRODUCTION_YEARS).find(
-        ([m]) => m.toLowerCase() === make.trim().toLowerCase()
+        ([m]) => slugifyRoutePart(m) === slugifyRoutePart(make)
     );
 
     if (makeEntry) {
         const [, models] = makeEntry;
         const modelEntry = Object.entries(models).find(([m]) => {
-            const normalizedDbModel = m.toLowerCase().replace(/\s+/g, '-');
-            const normalizedInputModel = model.trim().toLowerCase().replace(/\s+/g, '-');
-            return normalizedDbModel === normalizedInputModel;
+            return slugifyRoutePart(m) === slugifyRoutePart(model);
         });
 
         if (modelEntry) {
@@ -505,15 +511,13 @@ export function getClampedYear(
     if (isNaN(yearNum)) return null;
 
     const makeEntry = Object.entries(VEHICLE_PRODUCTION_YEARS).find(
-        ([m]) => m.toLowerCase() === make.trim().toLowerCase()
+        ([m]) => slugifyRoutePart(m) === slugifyRoutePart(make)
     );
     if (!makeEntry) return null;
 
     const [, models] = makeEntry;
     const modelEntry = Object.entries(models).find(([m]) => {
-        const normalizedDbModel = m.toLowerCase().replace(/\s+/g, '-');
-        const normalizedInputModel = model.trim().toLowerCase().replace(/\s+/g, '-');
-        return normalizedDbModel === normalizedInputModel;
+        return slugifyRoutePart(m) === slugifyRoutePart(model);
     });
     if (!modelEntry) return null;
 
@@ -531,13 +535,13 @@ export function getDisplayName(slug: string, type: 'make' | 'model'): string {
     // Try to find in hardcoded list first
     if (type === 'make') {
         const found = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
-            m => m.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()
+            m => slugifyRoutePart(m) === slugifyRoutePart(slug)
         );
         if (found) return found;
     } else {
         for (const [, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
             const found = Object.keys(models).find(
-                m => m.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()
+                m => slugifyRoutePart(m) === slugifyRoutePart(slug)
             );
             if (found) return found;
         }

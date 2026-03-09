@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES } from '@/data/vehicles';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
+import { getTier1RescuePagesForTask } from '@/data/rescuePriority';
 
 function toTitleCase(slug: string): string {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 function slugify(s: string): string {
-  return s.toLowerCase().replace(/\s+/g, '-');
+  return slugifyRoutePart(s);
 }
 
 interface PageProps {
@@ -21,22 +22,28 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { task } = await params;
-  if (!VALID_TASKS.includes(task)) return {};
-  const taskName = toTitleCase(task);
+  const canonicalTask = slugify(task);
+  if (!VALID_TASKS.includes(canonicalTask)) return {};
+  const taskName = toTitleCase(canonicalTask);
   return {
     title: `${taskName} Guides for Every Vehicle | SpotOnAuto`,
     description: `Step-by-step ${taskName.toLowerCase()} instructions for Toyota, Honda, Ford, Chevrolet, BMW, and 30+ more makes. Find your exact year, make, and model.`,
     alternates: {
-      canonical: `https://spotonauto.com/repairs/${task}`,
+      canonical: `https://spotonauto.com/repairs/${canonicalTask}`,
     },
   };
 }
 
 export default async function TaskCategoryPage({ params }: PageProps) {
   const { task } = await params;
-  if (!VALID_TASKS.includes(task)) notFound();
+  const canonicalTask = slugify(task);
+  if (task !== canonicalTask && VALID_TASKS.includes(canonicalTask)) {
+    permanentRedirect(`/repairs/${canonicalTask}`);
+  }
+  if (!VALID_TASKS.includes(canonicalTask)) notFound();
 
-  const taskName = toTitleCase(task);
+  const taskName = toTitleCase(canonicalTask);
+  const priorityPages = getTier1RescuePagesForTask(canonicalTask);
 
   // Build vehicle list grouped by make
   const makeGroups: { make: string; vehicles: { year: number; model: string; makeSlug: string; modelSlug: string }[] }[] = [];
@@ -72,7 +79,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://spotonauto.com" },
       { "@type": "ListItem", position: 2, name: "Repairs", item: "https://spotonauto.com/repairs" },
-      { "@type": "ListItem", position: 3, name: taskName, item: `https://spotonauto.com/repairs/${task}` },
+      { "@type": "ListItem", position: 3, name: taskName, item: `https://spotonauto.com/repairs/${canonicalTask}` },
     ],
   };
 
@@ -100,6 +107,31 @@ export default async function TaskCategoryPage({ params }: PageProps) {
           including tools, parts, torque specs, and safety warnings from factory service manuals.
         </p>
 
+        {priorityPages.length > 0 && (
+          <section className="mb-10 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+            <h2 className="text-xl font-bold text-white mb-2">Priority {taskName} Guides</h2>
+            <p className="text-sm text-gray-400 mb-5">
+              These exact pages were part of the late-February winner set and now have stronger vehicle-specific detail.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              {priorityPages.map((entry) => (
+                <Link
+                  key={entry.href}
+                  href={entry.href}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                >
+                  <p className="text-xs font-mono uppercase tracking-widest text-cyan-400/80 mb-2">
+                    Priority page
+                  </p>
+                  <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                    {entry.year} {entry.make} {entry.model}
+                  </h3>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         {makeGroups.map(({ make, vehicles }) => (
           <section key={make} className="mb-10" id={slugify(make)}>
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -110,7 +142,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
               {vehicles.map((v) => (
                 <Link
                   key={`${v.makeSlug}-${v.modelSlug}`}
-                  href={`/repair/${v.year}/${v.makeSlug}/${v.modelSlug}/${task}`}
+                  href={`/repair/${v.year}/${v.makeSlug}/${v.modelSlug}/${canonicalTask}`}
                   className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/60 flex-shrink-0" />
@@ -143,7 +175,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
         <section className="mt-12 pt-8 border-t border-white/10">
           <h3 className="text-lg font-bold text-white mb-4">Other Repair Categories</h3>
           <div className="flex flex-wrap gap-2">
-            {VALID_TASKS.filter(t => t !== task).slice(0, 15).map(t => (
+            {VALID_TASKS.filter(t => t !== canonicalTask).slice(0, 15).map(t => (
               <Link
                 key={t}
                 href={`/repairs/${t}`}

@@ -55,26 +55,17 @@ export default async function CodePage({ params }: PageProps) {
         url: 'https://spotonauto.com',
     };
 
-    // QAPage + FAQPage structured data
-    const qaSchema = {
+    const articleSchema = {
         '@context': 'https://schema.org',
-        '@type': 'QAPage',
-        mainEntity: {
-            '@type': 'Question',
-            name: `What does ${dtc.code} mean?`,
-            text: `${dtc.code} — ${dtc.title}. ${dtc.description}`,
-            author: schemaAuthor,
-            datePublished: schemaDate,
-            answerCount: 1,
-            acceptedAnswer: {
-                '@type': 'Answer',
-                text: `${dtc.code} — ${dtc.title}. ${dtc.description} Common fix: ${dtc.commonFix}. Estimated cost: ${dtc.estimatedCostRange}.`,
-                author: schemaAuthor,
-                datePublished: schemaDate,
-                upvoteCount: 0,
-                url: pageUrl,
-            },
-        },
+        '@type': 'Article',
+        headline: `${dtc.code}: ${dtc.title}`,
+        description: `${dtc.code} means ${dtc.title}. ${dtc.description} Common fix: ${dtc.commonFix}. Estimated cost: ${dtc.estimatedCostRange}.`,
+        author: schemaAuthor,
+        publisher: schemaAuthor,
+        datePublished: schemaDate,
+        dateModified: schemaDate,
+        mainEntityOfPage: pageUrl,
+        url: pageUrl,
     };
 
     const faqSchema = {
@@ -91,7 +82,7 @@ export default async function CodePage({ params }: PageProps) {
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(qaSchema) }}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
             />
             <script
                 type="application/ld+json"

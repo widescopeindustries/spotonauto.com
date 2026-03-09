@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES } from '@/data/vehicles';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
 import { getToolPagesForVehicle, TOOL_TYPE_META } from '@/data/tools-pages';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Wrench } from 'lucide-react';
@@ -14,7 +14,7 @@ interface PageProps {
 }
 
 function slugifyPart(value: string): string {
-  return value.toLowerCase().replace(/\s+/g, '-');
+  return slugifyRoutePart(value);
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -55,6 +55,12 @@ export default async function ModelGuidesPage({ params }: PageProps) {
   );
 
   if (!originalModel) notFound();
+
+  const canonicalMake = slugifyPart(originalMake);
+  const canonicalModel = slugifyPart(originalModel);
+  if (make !== canonicalMake || model !== canonicalModel) {
+    permanentRedirect(`/guides/${canonicalMake}/${canonicalModel}`);
+  }
 
   const production = VEHICLE_PRODUCTION_YEARS[originalMake][originalModel];
   const toolPages = getToolPagesForVehicle(originalMake, originalModel);
@@ -109,18 +115,18 @@ export default async function ModelGuidesPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
+            "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Guides", item: "https://spotonauto.com/guides" },
-            { "@type": "ListItem", position: 2, name: originalMake, item: `https://spotonauto.com/guides/${make}` },
-            { "@type": "ListItem", position: 3, name: `${originalMake} ${originalModel}`, item: `https://spotonauto.com/guides/${make}/${model}` },
+            { "@type": "ListItem", position: 2, name: originalMake, item: `https://spotonauto.com/guides/${canonicalMake}` },
+            { "@type": "ListItem", position: 3, name: `${originalMake} ${originalModel}`, item: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}` },
           ],
         }) }}
       />
       <div className="max-w-7xl mx-auto px-4 py-12">
         <FadeInUp>
           <div className="flex items-center gap-4 mb-8">
-            <Link href={`/guides/${make}`} className="text-cyan-400 hover:underline">← Back to {originalMake}</Link>
+            <Link href={`/guides/${canonicalMake}`} className="text-cyan-400 hover:underline">← Back to {originalMake}</Link>
           </div>
           <h1 className="text-4xl font-display font-bold text-white mb-4">
             <span className="text-cyan-400">{originalMake} {originalModel}</span> Guides
@@ -134,7 +140,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           {VALID_TASKS.map((task) => (
             <StaggerItem key={task}>
               <Link
-                href={`/repair/${targetYear}/${make}/${model}/${task}`}
+                href={`/repair/${targetYear}/${canonicalMake}/${canonicalModel}/${task}`}
                 className="flex items-center gap-4 glass p-6 hover:border-cyan-400/50 transition-all group"
               >
                 <div className="p-3 bg-cyan-500/10 rounded-lg group-hover:bg-cyan-500/20 transition-colors">
@@ -150,6 +156,39 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             </StaggerItem>
           ))}
         </StaggerContainer>
+
+        <section className="mt-16">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 className="text-xl font-bold text-white">
+              Factory Manual Paths
+            </h2>
+            <Link href="/manual" className="text-sm text-cyan-400 hover:underline">
+              Browse all manuals →
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Link
+              href={`/manual/${encodeURIComponent(originalMake)}`}
+              className="block p-5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40 transition group"
+            >
+              <p className="text-sm text-cyan-400 mb-1">Make-level manual</p>
+              <h3 className="text-base font-semibold text-gray-200 group-hover:text-white transition">
+                Browse {originalMake} manual categories
+              </h3>
+              <p className="text-xs text-gray-500 mt-2">Step into OEM section trees for every supported {originalMake} year.</p>
+            </Link>
+            <Link
+              href={`/manual/${encodeURIComponent(originalMake)}/${targetYear}`}
+              className="block p-5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40 transition group"
+            >
+              <p className="text-sm text-cyan-400 mb-1">Year index</p>
+              <h3 className="text-base font-semibold text-gray-200 group-hover:text-white transition">
+                Open the {targetYear} {originalMake} manual
+              </h3>
+              <p className="text-xs text-gray-500 mt-2">Start from the year-level OEM index, then drill into the procedures that match this model.</p>
+            </Link>
+          </div>
+        </section>
 
         {featuredToolPages.length > 0 && (
           <section className="mt-16">

@@ -13,7 +13,9 @@ export default function robots(): MetadataRoute.Robots {
       'https://spotonauto.com/community/sitemap.xml', // community threads (dynamic)
       'https://spotonauto.com/codes/sitemap.xml',  // ~300 DTC code pages
       'https://spotonauto.com/repair/sitemap.xml', // repair sitemap index -> chunked child sitemaps
+      'https://spotonauto.com/repair/winners/sitemap.xml', // exact Feb winner recrawl set
       'https://spotonauto.com/manual/sitemap.xml', // factory service manual browser (82 makes)
+      'https://spotonauto.com/wiring/sitemap.xml', // wiring SEO entry pages
     ],
   }
 }

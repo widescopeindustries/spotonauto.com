@@ -1,19 +1,29 @@
 ﻿import { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import DeferredGuideContent from './DeferredGuideContent';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { ShoppingCartIcon, WrenchIcon, ClockIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
-import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
+import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
+import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
 function toTitleCase(slug: string): string {
     return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function buildRepairPath(year: string, make: string, model: string, task: string): string {
+    return `/repair/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/${slugifyRoutePart(task)}`;
+}
+
+function buildManualBrowserPath(...segments: string[]): string {
+    return `/manual/${segments.map((segment) => encodeURIComponent(segment)).join('/')}`;
 }
 
 interface PageProps {
@@ -146,6 +156,38 @@ const REPAIR_DATA: Record<string, {
         warnings: ['Do not touch bulb glass with bare hands', 'Test before reassembly', 'Some vehicles require bumper removal'],
         steps: ['Access bulb from engine bay or wheel well', 'Disconnect electrical connector', 'Remove retaining clip or ring', 'Remove old bulb', 'Install new bulb without touching glass', 'Reconnect and test']
     }
+};
+
+const RELATED_TASK_PRIORITIES: Record<string, string[]> = {
+    'radiator-replacement': [
+        'coolant-flush',
+        'thermostat-replacement',
+        'water-pump-replacement',
+        'serpentine-belt-replacement',
+        'drive-belt-replacement',
+        'head-gasket-replacement',
+    ],
+    'oil-change': [
+        'engine-air-filter-replacement',
+        'cabin-air-filter-replacement',
+        'spark-plug-replacement',
+        'battery-replacement',
+        'serpentine-belt-replacement',
+        'coolant-flush',
+    ],
+    'serpentine-belt-replacement': [
+        'alternator-replacement',
+        'water-pump-replacement',
+        'drive-belt-replacement',
+        'battery-replacement',
+        'coolant-flush',
+    ],
+    'battery-replacement': [
+        'alternator-replacement',
+        'starter-replacement',
+        'spark-plug-replacement',
+        'serpentine-belt-replacement',
+    ],
 };
 
 const DEFAULT_REPAIR = {
@@ -284,18 +326,22 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { year, make, model, task } = await params;
+    const canonicalMake = slugifyRoutePart(make);
+    const canonicalModel = slugifyRoutePart(model);
+    const canonicalTask = slugifyRoutePart(task);
+    const canonicalYear = String(getClampedYear(year, canonicalMake, canonicalModel) ?? year);
 
     // Return generic metadata for invalid combos — page will 404/redirect anyway
-    if (!isValidVehicleCombination(year, make, model, task)) {
+    if (!isValidVehicleCombination(canonicalYear, canonicalMake, canonicalModel, canonicalTask)) {
         return { title: 'Page Not Found | SpotOnAuto' };
     }
 
-    const cleanTask = task.replace(/-/g, ' ');
-    const displayMake = getDisplayName(make, 'make') || toTitleCase(make);
-    const displayModel = getDisplayName(model, 'model') || toTitleCase(model);
-    const vehicleName = `${year} ${displayMake} ${displayModel}`;
+    const cleanTask = canonicalTask.replace(/-/g, ' ');
+    const displayMake = getDisplayName(canonicalMake, 'make') || toTitleCase(canonicalMake);
+    const displayModel = getDisplayName(canonicalModel, 'model') || toTitleCase(canonicalModel);
+    const vehicleName = `${canonicalYear} ${displayMake} ${displayModel}`;
 
-    const taskMeta = TASK_META[task];
+    const taskMeta = TASK_META[canonicalTask];
     const title = taskMeta
         ? `${vehicleName} ${taskMeta.title} | SpotOnAuto`
         : `${vehicleName} ${cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Guide | SpotOnAuto`;
@@ -304,11 +350,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         : `DIY ${cleanTask} for your ${vehicleName}. Step-by-step guide with tools, parts list, and safety tips. Save $100–$400 vs. the shop.`;
 
     const baseKeywords = [
-        `${year} ${displayMake} ${displayModel} ${cleanTask}`,
+        `${canonicalYear} ${displayMake} ${displayModel} ${cleanTask}`,
         `${displayMake} ${displayModel} ${cleanTask}`,
         `how to ${cleanTask} ${displayMake} ${displayModel}`,
         `${cleanTask} ${displayMake} ${displayModel} DIY`,
-        `${year} ${displayMake} ${cleanTask}`,
+        `${canonicalYear} ${displayMake} ${cleanTask}`,
     ];
     const keywords = taskMeta ? [...baseKeywords, ...taskMeta.extraKeywords] : baseKeywords;
 
@@ -316,12 +362,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title,
         description,
         keywords,
-        ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
+        ...(NOINDEX_MAKES.has(canonicalMake) ? { robots: { index: false, follow: true } } : {}),
         openGraph: {
             title,
             description,
             type: 'article',
-            url: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}`,
+            url: `https://spotonauto.com${buildRepairPath(canonicalYear, canonicalMake, canonicalModel, canonicalTask)}`,
         },
         twitter: {
             card: 'summary',
@@ -329,7 +375,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description,
         },
         alternates: {
-            canonical: `https://spotonauto.com/repair/${year}/${make.toLowerCase()}/${model.toLowerCase()}/${task.toLowerCase()}`,
+            canonical: `https://spotonauto.com${buildRepairPath(canonicalYear, canonicalMake, canonicalModel, canonicalTask)}`,
         },
     };
 }
@@ -337,28 +383,33 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function Page({ params }: PageProps) {
     const resolvedParams = await params;
     const { year, make, model, task } = resolvedParams;
+    const canonicalMake = slugifyRoutePart(make);
+    const canonicalModel = slugifyRoutePart(model);
+    const canonicalTask = slugifyRoutePart(task);
 
     // For known vehicles outside their production range, redirect to nearest valid year
     // so users land on useful content and Google updates its index via 301.
-    const clampedYear = getClampedYear(year, make, model);
-    if (clampedYear !== null) {
-        permanentRedirect(`/repair/${clampedYear}/${make}/${model}/${task}`);
+    const clampedYear = getClampedYear(year, canonicalMake, canonicalModel);
+    const resolvedYear = String(clampedYear ?? year);
+    const canonicalPath = buildRepairPath(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
+    if (clampedYear !== null || make !== canonicalMake || model !== canonicalModel || task !== canonicalTask) {
+        permanentRedirect(canonicalPath);
     }
 
     // For truly unknown make/model/task combos, return 404
-    if (!isValidVehicleCombination(year, make, model, task)) {
+    if (!isValidVehicleCombination(resolvedYear, canonicalMake, canonicalModel, canonicalTask)) {
         notFound();
     }
 
-    const cleanTask = task.replace(/-/g, ' ');
+    const cleanTask = canonicalTask.replace(/-/g, ' ');
     // Use display names for proper capitalization
-    const displayMake = getDisplayName(make, 'make') || toTitleCase(make);
-    const displayModel = getDisplayName(model, 'model') || toTitleCase(model);
+    const displayMake = getDisplayName(canonicalMake, 'make') || toTitleCase(canonicalMake);
+    const displayModel = getDisplayName(canonicalModel, 'model') || toTitleCase(canonicalModel);
 
-    const vehicleName = `${year} ${displayMake} ${displayModel}`;
+    const vehicleName = `${resolvedYear} ${displayMake} ${displayModel}`;
 
-    const vehicleSpec = getVehicleRepairSpec(year, make, model, task);
-    const genericData = REPAIR_DATA[task] || DEFAULT_REPAIR;
+    const vehicleSpec = getVehicleRepairSpec(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
+    const genericData = REPAIR_DATA[canonicalTask] || DEFAULT_REPAIR;
 
     // Merge: vehicle-specific data overrides generic, but generic fills gaps
     const repairData = {
@@ -372,16 +423,32 @@ export default async function Page({ params }: PageProps) {
         steps: vehicleSpec?.steps || genericData.steps,
     };
     const knowledgeGraph = await buildRepairKnowledgeGraph({
-        year,
-        make,
+        year: resolvedYear,
+        make: canonicalMake,
         displayMake,
-        model,
+        model: canonicalModel,
         displayModel,
-        task,
+        task: canonicalTask,
         repairTools: repairData.tools,
         vehicleSpec: vehicleSpec ?? undefined,
     });
     const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('repair', knowledgeGraph.groups);
+    const toolResourceLinks = getRelatedToolLinksForRepair(displayMake, displayModel, canonicalTask, 4);
+    const manualMakeHref = buildManualBrowserPath(displayMake);
+    const manualYearHref = buildManualBrowserPath(displayMake, resolvedYear);
+    const affiliateSourceParts: Array<PartSpec> = vehicleSpec?.parts ?? repairData.parts.map((partName) => ({ name: partName }));
+    const affiliateSpotlightParts = affiliateSourceParts
+        .slice(0, 3)
+        .map((part) => ({
+            name: part.name,
+            detail: part.spec || part.aftermarket || part.oem || `Amazon results for ${vehicleName} ${part.name}`,
+            query: [vehicleName, part.aftermarket || part.oem || part.name].filter(Boolean).join(' '),
+        }));
+    const prioritizedRelatedTasks = Array.from(
+        new Set([...(RELATED_TASK_PRIORITIES[canonicalTask] ?? []), ...VALID_TASKS])
+    )
+        .filter((relatedTask) => relatedTask !== canonicalTask)
+        .slice(0, 9);
 
     // Convert "30-45 minutes" / "1-2 hours" to ISO 8601 duration (upper bound)
     function toIso8601Duration(timeStr: string): string {
@@ -420,7 +487,7 @@ export default async function Page({ params }: PageProps) {
     };
 
     // ── FAQ data for GEO (Generative Engine Optimization) ────────────────
-    const costRange = COST_MAP[task] || '50-300';
+    const costRange = COST_MAP[canonicalTask] || '50-300';
     const difficultyAnswer = repairData.difficulty === 'Easy'
         ? `Yes, a ${cleanTask} on a ${vehicleName} is rated Easy and is a great beginner DIY project. You'll need basic hand tools and about ${repairData.time}.`
         : repairData.difficulty === 'Intermediate'
@@ -465,7 +532,7 @@ export default async function Page({ params }: PageProps) {
         },
         {
             question: `What happens if I delay ${cleanTask} on my ${vehicleName}?`,
-            answer: delayConsequences[task] || `Delaying ${cleanTask} on your ${vehicleName} can lead to more expensive repairs down the road, reduced vehicle reliability, and potential safety issues. It's best to address it within the manufacturer's recommended service interval.`,
+            answer: delayConsequences[canonicalTask] || `Delaying ${cleanTask} on your ${vehicleName} can lead to more expensive repairs down the road, reduced vehicle reliability, and potential safety issues. It's best to address it within the manufacturer's recommended service interval.`,
         },
     ];
 
@@ -492,7 +559,7 @@ export default async function Page({ params }: PageProps) {
         "estimatedCost": {
             "@type": "MonetaryAmount",
             "currency": "USD",
-            "value": COST_MAP[task] || "50-300"
+            "value": COST_MAP[canonicalTask] || "50-300"
         },
         "supply": vehicleSpec
             ? vehicleSpec.parts.map(part => ({
@@ -512,7 +579,7 @@ export default async function Page({ params }: PageProps) {
             "position": i + 1,
             "name": `Step ${i + 1}`,
             "text": step,
-            "url": `https://spotonauto.com/repair/${year}/${make}/${model}/${task}#step-${i + 1}`
+            "url": `https://spotonauto.com${canonicalPath}#step-${i + 1}`
         }))
     };
 
@@ -533,9 +600,9 @@ export default async function Page({ params }: PageProps) {
                     "@type": "BreadcrumbList",
                     "itemListElement": [
                         { "@type": "ListItem", position: 1, name: "Repairs", item: "https://spotonauto.com/repairs" },
-                        { "@type": "ListItem", position: 2, name: cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1), item: `https://spotonauto.com/repairs/${task}` },
-                        { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com/guides/${make}/${model}` },
-                        { "@type": "ListItem", position: 4, name: `${year}`, item: `https://spotonauto.com/repair/${year}/${make}/${model}/${task}` },
+                        { "@type": "ListItem", position: 2, name: cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1), item: `https://spotonauto.com/repairs/${canonicalTask}` },
+                        { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}` },
+                        { "@type": "ListItem", position: 4, name: `${resolvedYear}`, item: `https://spotonauto.com${canonicalPath}` },
                     ],
                 }) }}
             />
@@ -546,13 +613,13 @@ export default async function Page({ params }: PageProps) {
                 <span className="mx-2">/</span>
                 <Link href="/repairs" className="hover:text-cyan-400 transition-colors">Repairs</Link>
                 <span className="mx-2">/</span>
-                <Link href={`/repairs/${task}`} className="hover:text-cyan-400 transition-colors capitalize">{cleanTask}</Link>
+                <Link href={`/repairs/${canonicalTask}`} className="hover:text-cyan-400 transition-colors capitalize">{cleanTask}</Link>
                 <span className="mx-2">/</span>
-                <Link href={`/guides/${make}`} className="hover:text-cyan-400 transition-colors">{displayMake}</Link>
+                <Link href={`/guides/${canonicalMake}`} className="hover:text-cyan-400 transition-colors">{displayMake}</Link>
                 <span className="mx-2">/</span>
-                <Link href={`/guides/${make}/${model}`} className="hover:text-cyan-400 transition-colors">{displayModel}</Link>
+                <Link href={`/guides/${canonicalMake}/${canonicalModel}`} className="hover:text-cyan-400 transition-colors">{displayModel}</Link>
                 <span className="mx-2">/</span>
-                <span className="text-gray-300">{year}</span>
+                <span className="text-gray-300">{resolvedYear}</span>
             </nav>
 
             {/* SEO Content - Renders server-side for Google */}
@@ -699,7 +766,7 @@ export default async function Page({ params }: PageProps) {
                                             </div>
                                         </div>
                                         <AffiliateLink
-                                            href={`https://www.amazon.com/s?k=${encodeURIComponent(searchTerm)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
+                                            href={buildAmazonSearchUrl(searchTerm)}
                                             partName={part.name}
                                             vehicle={vehicleName}
                                             isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part.name)}
@@ -716,7 +783,7 @@ export default async function Page({ params }: PageProps) {
                                 <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
                                     <span className="text-gray-300">{part}</span>
                                     <AffiliateLink
-                                        href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicleName + ' ' + part)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
+                                        href={buildAmazonSearchUrl(`${vehicleName} ${part}`)}
                                         partName={part}
                                         vehicle={vehicleName}
                                         isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part)}
@@ -730,6 +797,47 @@ export default async function Page({ params }: PageProps) {
                         )}
                     </div>
                 </section>
+
+                {affiliateSpotlightParts.length > 0 && (
+                    <section className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6">
+                        <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h2 className="text-xl font-bold text-white">Shop This Job on Amazon</h2>
+                                <p className="text-sm text-amber-100/80 mt-1">
+                                    Quick part searches for the highest-intent items on this {cleanTask} job.
+                                </p>
+                            </div>
+                            <AffiliateLink
+                                href={buildAmazonSearchUrl(`${vehicleName} ${cleanTask}`)}
+                                partName={`${cleanTask} parts`}
+                                vehicle={vehicleName}
+                                isHighTicket={canonicalTask === 'radiator-replacement'}
+                                pageType="repair_guide"
+                                className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-black hover:bg-amber-400 transition"
+                            >
+                                Shop Complete Search
+                            </AffiliateLink>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-3">
+                            {affiliateSpotlightParts.map((part) => (
+                                <div key={part.name} className="rounded-xl border border-white/10 bg-black/20 p-4">
+                                    <p className="text-sm font-semibold text-white">{part.name}</p>
+                                    <p className="mt-2 text-xs leading-relaxed text-gray-400">{part.detail}</p>
+                                    <AffiliateLink
+                                        href={buildAmazonSearchUrl(part.query)}
+                                        partName={part.name}
+                                        vehicle={vehicleName}
+                                        isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part.name)}
+                                        pageType="repair_guide"
+                                        className="mt-4 inline-flex items-center text-sm font-bold text-amber-300 hover:text-amber-200 transition"
+                                    >
+                                        Check Amazon →
+                                    </AffiliateLink>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 {/* Ad: After Parts List */}
                 <AdUnit slot="repair-after-parts" format="rectangle" />
@@ -822,6 +930,50 @@ export default async function Page({ params }: PageProps) {
                 </div>
             </section>
 
+            <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
+                <div className="max-w-3xl mb-6">
+                    <h2 className="text-xl font-bold text-white">Vehicle Resources</h2>
+                    <p className="text-sm text-gray-400 mt-1">
+                        Follow the strongest internal paths from this repair into manuals, year indexes, and related spec pages.
+                    </p>
+                </div>
+                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <Link
+                        href={manualMakeHref}
+                        className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                    >
+                        <p className="text-xs font-mono uppercase tracking-widest text-cyan-400/80 mb-2">Factory manual</p>
+                        <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                            Browse {displayMake} manual sections
+                        </h3>
+                        <p className="mt-2 text-sm text-gray-400">Move from make-level manual navigation into service sections and procedures.</p>
+                    </Link>
+                    <Link
+                        href={manualYearHref}
+                        className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                    >
+                        <p className="text-xs font-mono uppercase tracking-widest text-cyan-400/80 mb-2">Year index</p>
+                        <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                            Open the {resolvedYear} {displayMake} manual
+                        </h3>
+                        <p className="mt-2 text-sm text-gray-400">Jump directly into the OEM year tree for this vehicle before drilling into sections.</p>
+                    </Link>
+                    {toolResourceLinks.map((toolLink) => (
+                        <Link
+                            key={toolLink.href}
+                            href={toolLink.href}
+                            className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                        >
+                            <p className="text-xs font-mono uppercase tracking-widest text-cyan-400/80 mb-2">Spec page</p>
+                            <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                {displayMake} {displayModel} {toolLink.label}
+                            </h3>
+                            <p className="mt-2 text-sm text-gray-400">Reference fitment and service specs without leaving the vehicle cluster.</p>
+                        </Link>
+                    ))}
+                </div>
+            </section>
+
             {/* ── Knowledge Graph ─────────────────────────────────────────── */}
             {knowledgeGraph.groups.length > 0 && (
                 <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
@@ -849,7 +1001,7 @@ export default async function Page({ params }: PageProps) {
                                 }))}
                                 context={{
                                     vehicle: vehicleName,
-                                    task,
+                                    task: canonicalTask,
                                 }}
                             />
                         ))}
@@ -862,22 +1014,18 @@ export default async function Page({ params }: PageProps) {
             <section className="max-w-6xl mx-auto px-4 py-10 border-t border-white/10">
                 <h2 className="text-xl font-bold text-white mb-6">Related Repairs for Your {displayMake} {displayModel}</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {VALID_TASKS
-                        .filter(t => t !== task)
-                        .slice(0, 9)
-                        .map(relTask => (
+                    {prioritizedRelatedTasks.map(relTask => (
                             <Link
                                 key={relTask}
-                                href={`/repair/${year}/${make}/${model}/${relTask}`}
+                                href={buildRepairPath(resolvedYear, canonicalMake, canonicalModel, relTask)}
                                 className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
                             >
                                 <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
                                 <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                                    {year} {displayMake} {displayModel} {toTitleCase(relTask)}
+                                    {resolvedYear} {displayMake} {displayModel} {toTitleCase(relTask)}
                                 </span>
                             </Link>
-                        ))
-                    }
+                        ))}
                 </div>
 
                 <h2 className="text-xl font-bold text-white mt-10 mb-6">
@@ -886,20 +1034,20 @@ export default async function Page({ params }: PageProps) {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {(() => {
                         // Build dynamic cross-vehicle links based on the current vehicle
-                        const currentMakeLower = make.toLowerCase();
-                        const currentModelLower = model.toLowerCase();
+                        const currentMakeLower = canonicalMake;
+                        const currentModelLower = canonicalModel;
                         const crossVehicles: { y: string; mk: string; mo: string; display: string }[] = [];
 
                         // Deterministic shuffle based on task+make so each page gets different vehicles
-                        const seed = (task + make).split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+                        const seed = (canonicalTask + canonicalMake).split('').reduce((a, c) => a + c.charCodeAt(0), 0);
                         const makes = Object.entries(VEHICLE_PRODUCTION_YEARS)
-                            .filter(([m]) => !NOINDEX_MAKES.has(m.toLowerCase()));
+                            .filter(([m]) => !NOINDEX_MAKES.has(slugifyRoutePart(m)));
 
                         // Collect candidates: 1 from same make (different model), rest from other makes
                         for (const [m, models] of makes) {
-                            const mSlug = m.toLowerCase().replace(/\s+/g, '-');
+                            const mSlug = slugifyRoutePart(m);
                             for (const [mo, years] of Object.entries(models)) {
-                                const moSlug = mo.toLowerCase().replace(/\s+/g, '-');
+                                const moSlug = slugifyRoutePart(mo);
                                 if (mSlug === currentMakeLower && moSlug === currentModelLower) continue;
                                 const targetYear = years.end >= 2013 && years.start <= 2013 ? 2013 : years.end;
                                 crossVehicles.push({ y: String(targetYear), mk: mSlug, mo: moSlug, display: `${targetYear} ${m} ${mo}` });
@@ -914,12 +1062,12 @@ export default async function Page({ params }: PageProps) {
                         return picked.map(v => (
                             <Link
                                 key={`${v.mk}-${v.mo}`}
-                                href={`/repair/${v.y}/${v.mk}/${v.mo}/${task}`}
+                                href={buildRepairPath(v.y, v.mk, v.mo, canonicalTask)}
                                 className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
                             >
                                 <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
                                 <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                                    {v.display} {toTitleCase(task)}
+                                    {v.display} {toTitleCase(canonicalTask)}
                                 </span>
                             </Link>
                         ));
@@ -928,13 +1076,13 @@ export default async function Page({ params }: PageProps) {
 
                 <div className="mt-8 flex flex-wrap gap-4">
                     <Link
-                        href={`/repairs/${task}`}
+                        href={`/repairs/${canonicalTask}`}
                         className="inline-flex items-center gap-2 text-cyan-500 hover:text-cyan-400 text-sm font-medium transition-colors"
                     >
                         View All {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides →
                     </Link>
                     <Link
-                        href={`/guides/${make}/${model}`}
+                        href={`/guides/${canonicalMake}/${canonicalModel}`}
                         className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 text-sm font-medium transition-colors"
                     >
                         All {displayMake} {displayModel} Guides →

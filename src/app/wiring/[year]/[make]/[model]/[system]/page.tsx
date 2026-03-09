@@ -5,8 +5,9 @@ import { cache } from 'react';
 import {
   buildWiringSeoHref,
   findWiringSeoVehicleBySlug,
+  getRelatedWiringSeoVehicles,
   WIRING_SEO_SYSTEMS,
-  WIRING_SEO_VEHICLES,
+  supportsWiringSystem,
   type WiringSystemSlug,
 } from '@/data/wiring-seo-cluster';
 import {
@@ -88,6 +89,8 @@ function buildInteractiveHref(args: {
   make: string;
   variant: string;
   search: string;
+  model?: string;
+  autoOpen?: boolean;
 }): string {
   const params = new URLSearchParams({
     year: String(args.year),
@@ -95,7 +98,13 @@ function buildInteractiveHref(args: {
     variant: args.variant,
     q: args.search,
   });
-  return `/wiring?${params.toString()}`;
+  if (args.model) {
+    params.set('model', args.model);
+  }
+  if (args.autoOpen) {
+    params.set('open', '1');
+  }
+  return `/wiring?${params.toString()}#diagram-browser`;
 }
 
 const loadVehicleWiringData = cache(async (year: number, make: string, model: string) => {
@@ -117,6 +126,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const systemMeta = WIRING_SEO_SYSTEMS[systemSlug];
 
   if (!vehicle || !systemMeta) {
+    return {
+      title: 'Wiring Diagram Not Found | SpotOnAuto',
+      description: 'Browse wiring diagrams by make, year, and model on SpotOnAuto.',
+    };
+  }
+  if (!supportsWiringSystem(vehicle, systemSlug)) {
     return {
       title: 'Wiring Diagram Not Found | SpotOnAuto',
       description: 'Browse wiring diagrams by make, year, and model on SpotOnAuto.',
@@ -157,6 +172,9 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
   if (!vehicle || !systemMeta) {
     notFound();
   }
+  if (!supportsWiringSystem(vehicle, systemSlug)) {
+    notFound();
+  }
 
   const data = await loadVehicleWiringData(vehicle.year, vehicle.make, vehicle.model);
   if (!data) {
@@ -170,19 +188,19 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
     make: vehicle.make,
     variant: data.resolvedVariant,
     search: systemMeta.shortLabel,
+    model: vehicle.model,
+    autoOpen: true,
   });
 
   const relatedSystems = (Object.keys(WIRING_SEO_SYSTEMS) as WiringSystemSlug[])
-    .filter(key => key !== systemSlug)
+    .filter((key) => key !== systemSlug && supportsWiringSystem(vehicle, key))
     .map(key => ({
       key,
       href: buildWiringSeoHref(vehicle, key),
       label: WIRING_SEO_SYSTEMS[key].title,
     }));
 
-  const sameSystemVehicles = WIRING_SEO_VEHICLES
-    .filter(v => !(v.year === vehicle.year && v.make === vehicle.make && v.model === vehicle.model))
-    .slice(0, 8);
+  const sameSystemVehicles = getRelatedWiringSeoVehicles(vehicle, systemSlug, 8);
   const relatedRepairLinks = getRepairLinksForWiringVehicle(vehicle, systemSlug, 4);
   const relatedCodeLinks = getCodeLinksForWiringSystem(systemSlug, 6);
   const manualSectionLinks = await getManualSectionLinksForWiringVehicle(vehicle, systemSlug, 4);
@@ -303,6 +321,8 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
                   make: vehicle.make,
                   variant: data.resolvedVariant,
                   search: diagram.name.slice(0, 90),
+                  model: vehicle.model,
+                  autoOpen: true,
                 })}
                 vehicle={vehicleLabel}
                 system={systemMeta.shortLabel}

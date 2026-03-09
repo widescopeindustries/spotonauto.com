@@ -1,7 +1,6 @@
 import { MetadataRoute } from 'next'
 import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
 import { TOOL_PAGES, TOOL_TYPE_META } from '@/data/tools-pages';
-import { getWiringSeoPaths } from '@/data/wiring-seo-cluster';
 
 function slugify(s: string) {
     return s.toLowerCase().replace(/\s+/g, '-');
@@ -85,16 +84,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
                 priority: 0.7,
             });
         }
-    }
-
-    // ── Wiring cluster pages (starter/alternator/fuel-pump) ──────────
-    for (const path of getWiringSeoPaths()) {
-        entries.push({
-            url: `${baseUrl}/wiring/${path.year}/${path.make}/${path.model}/${path.system}`,
-            lastModified: LAST_MOD,
-            changeFrequency: 'weekly',
-            priority: 0.75,
-        });
     }
 
     return entries;

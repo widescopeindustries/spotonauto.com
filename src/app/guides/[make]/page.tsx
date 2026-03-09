@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
 interface PageProps {
@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 function slugifyPart(value: string): string {
-  return value.toLowerCase().replace(/\s+/g, '-');
+  return slugifyRoutePart(value);
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -43,6 +43,11 @@ export default async function MakeGuidesPage({ params }: PageProps) {
     notFound();
   }
 
+  const canonicalMake = slugifyPart(originalMake);
+  if (make !== canonicalMake) {
+    permanentRedirect(`/guides/${canonicalMake}`);
+  }
+
   const models = Object.keys(VEHICLE_PRODUCTION_YEARS[originalMake]).sort();
 
   return (
@@ -63,7 +68,7 @@ export default async function MakeGuidesPage({ params }: PageProps) {
         {models.map((model) => (
           <StaggerItem key={model}>
             <Link
-              href={`/guides/${make}/${slugifyPart(model)}`}
+              href={`/guides/${canonicalMake}/${slugifyPart(model)}`}
               className="block glass p-6 hover:border-cyan-400/50 transition-all group"
             >
               <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">

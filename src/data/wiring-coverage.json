@@ -1,0 +1,6731 @@
+{
+  "generatedAt": "2026-03-09T17:11:04.850Z",
+  "source": "verified-charm",
+  "vehicles": [
+    {
+      "year": 2002,
+      "make": "Acura",
+      "model": "CL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Acura",
+      "model": "Integra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Acura",
+      "model": "Integra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Acura",
+      "model": "Legend",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Acura",
+      "model": "Legend",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Acura",
+      "model": "NSX",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Acura",
+      "model": "NSX",
+      "systems": [
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Acura",
+      "model": "NSX",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Acura",
+      "model": "RL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Acura",
+      "model": "RL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Acura",
+      "model": "RL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Acura",
+      "model": "RL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Acura",
+      "model": "RL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Acura",
+      "model": "RL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Acura",
+      "model": "RSX",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Acura",
+      "model": "TL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Acura",
+      "model": "TL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Acura",
+      "model": "TL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Acura",
+      "model": "TL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Acura",
+      "model": "TL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Acura",
+      "model": "TL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Acura",
+      "model": "TSX",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Acura",
+      "model": "TSX",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Acura",
+      "model": "TSX",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Acura",
+      "model": "Vigor",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Acura",
+      "model": "ZDX",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Buick",
+      "model": "Century",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Buick",
+      "model": "Century",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Buick",
+      "model": "Century",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Buick",
+      "model": "Century",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Buick",
+      "model": "Century",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Buick",
+      "model": "Century",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Buick",
+      "model": "Electra",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Buick",
+      "model": "LaCrosse",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Buick",
+      "model": "LaCrosse",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Buick",
+      "model": "LaCrosse",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Buick",
+      "model": "LeSabre",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Buick",
+      "model": "LeSabre",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Buick",
+      "model": "LeSabre",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Buick",
+      "model": "LeSabre",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Buick",
+      "model": "LeSabre",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Buick",
+      "model": "LeSabre",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Buick",
+      "model": "Lucerne",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Buick",
+      "model": "Lucerne",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Buick",
+      "model": "Park Avenue",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Buick",
+      "model": "Park Avenue",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Buick",
+      "model": "Park Avenue",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Buick",
+      "model": "Park Avenue",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Buick",
+      "model": "Park Avenue",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Buick",
+      "model": "Reatta",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Buick",
+      "model": "Regal",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Buick",
+      "model": "Regal",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Buick",
+      "model": "Regal",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Buick",
+      "model": "Regal",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Buick",
+      "model": "Regal",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Buick",
+      "model": "Regal",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Buick",
+      "model": "Riviera",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Buick",
+      "model": "Riviera",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Buick",
+      "model": "Riviera",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Buick",
+      "model": "Riviera",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Buick",
+      "model": "Roadmaster",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Buick",
+      "model": "Roadmaster",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Buick",
+      "model": "Skylark",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Buick",
+      "model": "Skylark",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Buick",
+      "model": "Skylark",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Cadillac",
+      "model": "Allante",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Cadillac",
+      "model": "Allante",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Cadillac",
+      "model": "Brougham",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Cadillac",
+      "model": "Catera",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Cadillac",
+      "model": "CTS",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Cadillac",
+      "model": "CTS",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Cadillac",
+      "model": "CTS",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Cadillac",
+      "model": "Deville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Cadillac",
+      "model": "Deville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Cadillac",
+      "model": "Deville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Cadillac",
+      "model": "Deville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Cadillac",
+      "model": "Deville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Cadillac",
+      "model": "Deville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Cadillac",
+      "model": "DTS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Cadillac",
+      "model": "DTS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Cadillac",
+      "model": "Eldorado",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Cadillac",
+      "model": "Eldorado",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Cadillac",
+      "model": "Eldorado",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Cadillac",
+      "model": "Eldorado",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Cadillac",
+      "model": "Eldorado",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Cadillac",
+      "model": "Fleetwood",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Cadillac",
+      "model": "Fleetwood",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Cadillac",
+      "model": "Fleetwood",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Cadillac",
+      "model": "Seville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Cadillac",
+      "model": "Seville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Cadillac",
+      "model": "Seville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Cadillac",
+      "model": "Seville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Cadillac",
+      "model": "Seville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Cadillac",
+      "model": "STS",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Cadillac",
+      "model": "STS",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Cadillac",
+      "model": "STS",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Cadillac",
+      "model": "XLR",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Cadillac",
+      "model": "XLR",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Chevrolet",
+      "model": "Aveo",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chevrolet",
+      "model": "Aveo",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chevrolet",
+      "model": "Aveo",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chevrolet",
+      "model": "Beretta",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chevrolet",
+      "model": "Beretta",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chevrolet",
+      "model": "Beretta",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Chevrolet",
+      "model": "Camaro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chevrolet",
+      "model": "Camaro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chevrolet",
+      "model": "Camaro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chevrolet",
+      "model": "Camaro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chevrolet",
+      "model": "Camaro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chevrolet",
+      "model": "Camaro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chevrolet",
+      "model": "Caprice",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chevrolet",
+      "model": "Caprice",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chevrolet",
+      "model": "Caprice",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chevrolet",
+      "model": "Cavalier",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chevrolet",
+      "model": "Cavalier",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chevrolet",
+      "model": "Cavalier",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chevrolet",
+      "model": "Cavalier",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chevrolet",
+      "model": "Cavalier",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chevrolet",
+      "model": "Cavalier",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chevrolet",
+      "model": "Celebrity",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chevrolet",
+      "model": "Cobalt",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chevrolet",
+      "model": "Cobalt",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chevrolet",
+      "model": "Corsica",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chevrolet",
+      "model": "Corsica",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chevrolet",
+      "model": "Corsica",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Chevrolet",
+      "model": "Corvette",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chevrolet",
+      "model": "Corvette",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chevrolet",
+      "model": "Corvette",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chevrolet",
+      "model": "Corvette",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chevrolet",
+      "model": "Corvette",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chevrolet",
+      "model": "Corvette",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chevrolet",
+      "model": "Corvette",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chevrolet",
+      "model": "Corvette",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Chevrolet",
+      "model": "Cruze",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Chevrolet",
+      "model": "Impala",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chevrolet",
+      "model": "Impala",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chevrolet",
+      "model": "Impala",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chevrolet",
+      "model": "Impala",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chevrolet",
+      "model": "Lumina",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chevrolet",
+      "model": "Lumina",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chevrolet",
+      "model": "Lumina",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chevrolet",
+      "model": "Lumina",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Chevrolet",
+      "model": "Malibu",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chevrolet",
+      "model": "Malibu",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chevrolet",
+      "model": "Malibu",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chevrolet",
+      "model": "Malibu",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chevrolet",
+      "model": "Malibu",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chevrolet",
+      "model": "Metro",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chevrolet",
+      "model": "Monte Carlo",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chevrolet",
+      "model": "Monte Carlo",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chevrolet",
+      "model": "Monte Carlo",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chevrolet",
+      "model": "Monte Carlo",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Chevrolet",
+      "model": "Volt",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chrysler",
+      "model": "300",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chrysler",
+      "model": "300",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chrysler",
+      "model": "300",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chrysler",
+      "model": "300",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chrysler",
+      "model": "Cirrus",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chrysler",
+      "model": "Cirrus",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chrysler",
+      "model": "Concorde",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chrysler",
+      "model": "Concorde",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chrysler",
+      "model": "Concorde",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chrysler",
+      "model": "Concorde",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chrysler",
+      "model": "Crossfire",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chrysler",
+      "model": "Crossfire",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chrysler",
+      "model": "Imperial",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chrysler",
+      "model": "Imperial",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chrysler",
+      "model": "LeBaron",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chrysler",
+      "model": "LeBaron",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chrysler",
+      "model": "LHS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chrysler",
+      "model": "LHS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chrysler",
+      "model": "New Yorker",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Chrysler",
+      "model": "New Yorker",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chrysler",
+      "model": "New Yorker",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chrysler",
+      "model": "Pacifica",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chrysler",
+      "model": "Pacifica",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chrysler",
+      "model": "Prowler",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Chrysler",
+      "model": "Sebring",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Chrysler",
+      "model": "Sebring",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Chrysler",
+      "model": "Sebring",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Chrysler",
+      "model": "Sebring",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Chrysler",
+      "model": "Sebring",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Chrysler",
+      "model": "TC",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Daewoo",
+      "model": "LANOS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Daewoo",
+      "model": "LANOS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Daewoo",
+      "model": "LEGANZA",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Daewoo",
+      "model": "LEGANZA",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Daewoo",
+      "model": "NUBIRA",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Daewoo",
+      "model": "NUBIRA",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Daihatsu",
+      "model": "Charade",
+      "systems": [
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Dodge",
+      "model": "Avenger",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Dodge",
+      "model": "Avenger",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Dodge",
+      "model": "Avenger",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Dodge",
+      "model": "Caliber",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Dodge",
+      "model": "Challenger",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Dodge",
+      "model": "Charger",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Dodge",
+      "model": "Colt",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Dodge",
+      "model": "Colt",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Dodge",
+      "model": "Daytona",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Dodge",
+      "model": "Daytona",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Dodge",
+      "model": "Dynasty",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Dodge",
+      "model": "Dynasty",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Dodge",
+      "model": "Intrepid",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Dodge",
+      "model": "Intrepid",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Dodge",
+      "model": "Intrepid",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Dodge",
+      "model": "Intrepid",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Dodge",
+      "model": "Magnum",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Dodge",
+      "model": "Magnum",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Dodge",
+      "model": "Monaco",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Dodge",
+      "model": "Neon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Dodge",
+      "model": "Neon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Dodge",
+      "model": "Neon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Dodge",
+      "model": "Neon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Dodge",
+      "model": "OMNI",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Dodge",
+      "model": "Shadow",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Dodge",
+      "model": "Shadow",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Dodge",
+      "model": "Spirit",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Dodge",
+      "model": "Spirit",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Dodge",
+      "model": "Stealth",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Dodge",
+      "model": "Stealth",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Dodge",
+      "model": "Stratus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Dodge",
+      "model": "Stratus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Dodge",
+      "model": "Stratus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Dodge",
+      "model": "Stratus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Dodge",
+      "model": "Viper",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Dodge",
+      "model": "Viper",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Dodge",
+      "model": "Viper",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Dodge",
+      "model": "Viper",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Dodge",
+      "model": "Viper",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Eagle",
+      "model": "PREMIER",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Eagle",
+      "model": "Summit",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Eagle",
+      "model": "Summit",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Eagle",
+      "model": "Summit",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Eagle",
+      "model": "Talon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Eagle",
+      "model": "Talon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Eagle",
+      "model": "Talon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Eagle",
+      "model": "Vision",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Eagle",
+      "model": "Vision",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Ford",
+      "model": "Aspire",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Ford",
+      "model": "Contour",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Ford",
+      "model": "Contour",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Ford",
+      "model": "Crown Victoria",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Ford",
+      "model": "Crown Victoria",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Ford",
+      "model": "Crown Victoria",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Ford",
+      "model": "Crown Victoria",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Ford",
+      "model": "Crown Victoria",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Ford",
+      "model": "Crown Victoria",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Ford",
+      "model": "Crown Victoria",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Ford",
+      "model": "Crown Victoria",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Ford",
+      "model": "Escort",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Ford",
+      "model": "Escort",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Ford",
+      "model": "Escort",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Ford",
+      "model": "Escort",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Ford",
+      "model": "Escort",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Ford",
+      "model": "Festiva",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Ford",
+      "model": "Festiva",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Ford",
+      "model": "Fiesta",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Ford",
+      "model": "Five Hundred",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Ford",
+      "model": "Flex",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Ford",
+      "model": "Focus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Ford",
+      "model": "Focus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Ford",
+      "model": "Focus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Ford",
+      "model": "Focus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Ford",
+      "model": "Fusion",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Ford",
+      "model": "Fusion",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Ford",
+      "model": "Mustang",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Ford",
+      "model": "Mustang",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Ford",
+      "model": "Mustang",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Ford",
+      "model": "Mustang",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Ford",
+      "model": "Mustang",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Ford",
+      "model": "Mustang",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Ford",
+      "model": "Mustang",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Ford",
+      "model": "Mustang",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Ford",
+      "model": "Probe",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Ford",
+      "model": "Probe",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Ford",
+      "model": "Probe",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Ford",
+      "model": "Taurus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Ford",
+      "model": "Taurus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Ford",
+      "model": "Taurus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Ford",
+      "model": "Taurus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Ford",
+      "model": "Taurus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Ford",
+      "model": "Taurus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Ford",
+      "model": "Taurus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Ford",
+      "model": "Taurus",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Ford",
+      "model": "Taurus X",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Ford",
+      "model": "Tempo",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Ford",
+      "model": "Thunderbird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Ford",
+      "model": "Thunderbird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Ford",
+      "model": "Thunderbird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Ford",
+      "model": "Thunderbird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Ford",
+      "model": "Thunderbird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Ford",
+      "model": "ZX2",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Ford",
+      "model": "ZX2",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Geo",
+      "model": "Metro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Geo",
+      "model": "Metro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Geo",
+      "model": "Metro",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Geo",
+      "model": "Prizm",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Geo",
+      "model": "Prizm",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Geo",
+      "model": "Prizm",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Geo",
+      "model": "Storm",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Geo",
+      "model": "Storm",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Honda",
+      "model": "Accord",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Honda",
+      "model": "Accord",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Honda",
+      "model": "Accord",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Honda",
+      "model": "Accord",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Honda",
+      "model": "Accord",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Honda",
+      "model": "Accord",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Honda",
+      "model": "Accord",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Honda",
+      "model": "Civic",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Honda",
+      "model": "Civic",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Honda",
+      "model": "Civic",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Honda",
+      "model": "Civic",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Honda",
+      "model": "CR-Z",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Honda",
+      "model": "Fit",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Honda",
+      "model": "Fit",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Honda",
+      "model": "Insight",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Honda",
+      "model": "Insight",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Honda",
+      "model": "Insight",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Honda",
+      "model": "Prelude",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Honda",
+      "model": "S2000",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Honda",
+      "model": "S2000",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Hummer",
+      "model": "H1",
+      "systems": [
+        "starter",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Hummer",
+      "model": "H1",
+      "systems": [
+        "starter",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Hummer",
+      "model": "H1",
+      "systems": [
+        "starter",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Hummer",
+      "model": "H2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Hummer",
+      "model": "H2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Hummer",
+      "model": "H3",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Hyundai",
+      "model": "Accent",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Hyundai",
+      "model": "Accent",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Hyundai",
+      "model": "Accent",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Hyundai",
+      "model": "Accent",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Hyundai",
+      "model": "Accent",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Hyundai",
+      "model": "Accent",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Hyundai",
+      "model": "Azera",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Hyundai",
+      "model": "Azera",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Hyundai",
+      "model": "Elantra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Hyundai",
+      "model": "Elantra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Hyundai",
+      "model": "Elantra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Hyundai",
+      "model": "Elantra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Hyundai",
+      "model": "Elantra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Hyundai",
+      "model": "Elantra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Hyundai",
+      "model": "Elantra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Hyundai",
+      "model": "Equus",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Hyundai",
+      "model": "Genesis",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Hyundai",
+      "model": "Genesis Coupe",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Hyundai",
+      "model": "Sonata",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Hyundai",
+      "model": "Sonata",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Hyundai",
+      "model": "Sonata",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Hyundai",
+      "model": "Sonata",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Hyundai",
+      "model": "Sonata",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Hyundai",
+      "model": "Sonata",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Hyundai",
+      "model": "Sonata",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Hyundai",
+      "model": "Sonata",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Hyundai",
+      "model": "Tiburon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Hyundai",
+      "model": "Tiburon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Hyundai",
+      "model": "Tiburon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Infiniti",
+      "model": "J30",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Infiniti",
+      "model": "M30",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Jaguar",
+      "model": "Vanden Plas",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Jaguar",
+      "model": "Vanden Plas",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Kia",
+      "model": "Amanti",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Kia",
+      "model": "Amanti",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Kia",
+      "model": "Forte",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Kia",
+      "model": "Optima",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Kia",
+      "model": "Optima",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Kia",
+      "model": "Optima",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Kia",
+      "model": "Optima",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Kia",
+      "model": "Rio",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Kia",
+      "model": "Rio",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Kia",
+      "model": "Rio",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Kia",
+      "model": "Rondo",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Kia",
+      "model": "Sephia",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Kia",
+      "model": "Sephia",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Kia",
+      "model": "Sephia",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Kia",
+      "model": "Soul",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Kia",
+      "model": "Spectra",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Kia",
+      "model": "Spectra",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Kia",
+      "model": "Spectra",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Lincoln",
+      "model": "Continental",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Lincoln",
+      "model": "Continental",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Lincoln",
+      "model": "Continental",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Lincoln",
+      "model": "Continental",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Lincoln",
+      "model": "Continental",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Lincoln",
+      "model": "LS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Lincoln",
+      "model": "LS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Lincoln",
+      "model": "Mark",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Lincoln",
+      "model": "Mark",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Lincoln",
+      "model": "Mark",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Lincoln",
+      "model": "MKS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Lincoln",
+      "model": "MKZ",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Lincoln",
+      "model": "MKZ",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Lincoln",
+      "model": "Town Car",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Lincoln",
+      "model": "Town Car",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Lincoln",
+      "model": "Town Car",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Lincoln",
+      "model": "Town Car",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Lincoln",
+      "model": "Town Car",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Lincoln",
+      "model": "Town Car",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Lincoln",
+      "model": "Town Car",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Lincoln",
+      "model": "Town Car",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mazda",
+      "model": "323",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mazda",
+      "model": "323",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mazda",
+      "model": "626",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mazda",
+      "model": "626",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mazda",
+      "model": "626",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mazda",
+      "model": "626",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mazda",
+      "model": "626",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mazda",
+      "model": "929",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mazda",
+      "model": "929",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mazda",
+      "model": "Millenia",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mazda",
+      "model": "Millenia",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mazda",
+      "model": "MX-3",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Mazda",
+      "model": "MX-5",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Mazda",
+      "model": "MX-5",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Mazda",
+      "model": "MX-5",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mazda",
+      "model": "MX-5",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mazda",
+      "model": "MX-5",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mazda",
+      "model": "MX-5",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mazda",
+      "model": "MX-5",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mazda",
+      "model": "MX-5",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mazda",
+      "model": "MX-6",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mazda",
+      "model": "MX-6",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mazda",
+      "model": "MX-6",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mazda",
+      "model": "Protege",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mazda",
+      "model": "Protege",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mazda",
+      "model": "Protege",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mazda",
+      "model": "Protege",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mazda",
+      "model": "Protege",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mercury",
+      "model": "Capri",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mercury",
+      "model": "Cougar",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mercury",
+      "model": "Cougar",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mercury",
+      "model": "Cougar",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mercury",
+      "model": "Cougar",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mercury",
+      "model": "Cougar",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Mercury",
+      "model": "Grand Marquis",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Mercury",
+      "model": "Grand Marquis",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Mercury",
+      "model": "Grand Marquis",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mercury",
+      "model": "Grand Marquis",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mercury",
+      "model": "Grand Marquis",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mercury",
+      "model": "Grand Marquis",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mercury",
+      "model": "Grand Marquis",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mercury",
+      "model": "Grand Marquis",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Mercury",
+      "model": "Milan",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Mercury",
+      "model": "Milan",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Mercury",
+      "model": "Montego",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mercury",
+      "model": "Mystique",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mercury",
+      "model": "Mystique",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Mercury",
+      "model": "Sable",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Mercury",
+      "model": "Sable",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mercury",
+      "model": "Sable",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mercury",
+      "model": "Sable",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mercury",
+      "model": "Sable",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mercury",
+      "model": "Sable",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mercury",
+      "model": "Sable",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mercury",
+      "model": "Topaz",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mercury",
+      "model": "Tracer",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mercury",
+      "model": "Tracer",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mercury",
+      "model": "Tracer",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mitsubishi",
+      "model": "3000GT",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mitsubishi",
+      "model": "3000GT",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mitsubishi",
+      "model": "3000GT",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mitsubishi",
+      "model": "Diamante",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mitsubishi",
+      "model": "Diamante",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mitsubishi",
+      "model": "Diamante",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mitsubishi",
+      "model": "Diamante",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Mitsubishi",
+      "model": "Eclipse",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mitsubishi",
+      "model": "Eclipse",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mitsubishi",
+      "model": "Eclipse",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mitsubishi",
+      "model": "Eclipse",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mitsubishi",
+      "model": "Eclipse",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mitsubishi",
+      "model": "Eclipse",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mitsubishi",
+      "model": "Expo",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mitsubishi",
+      "model": "Galant",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mitsubishi",
+      "model": "Galant",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mitsubishi",
+      "model": "Galant",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mitsubishi",
+      "model": "Galant",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mitsubishi",
+      "model": "Galant",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Mitsubishi",
+      "model": "Lancer",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mitsubishi",
+      "model": "Lancer",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Mitsubishi",
+      "model": "Lancer Evolution",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Mitsubishi",
+      "model": "Mirage",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Mitsubishi",
+      "model": "Mirage",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Mitsubishi",
+      "model": "Mirage",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Mitsubishi",
+      "model": "Mirage",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mitsubishi",
+      "model": "Mirage",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mitsubishi",
+      "model": "Precis",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Mitsubishi",
+      "model": "Sigma",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Oldsmobile",
+      "model": "Achieva",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Oldsmobile",
+      "model": "Achieva",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Oldsmobile",
+      "model": "Alero",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Oldsmobile",
+      "model": "Alero",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Oldsmobile",
+      "model": "Aurora",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Oldsmobile",
+      "model": "Aurora",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Oldsmobile",
+      "model": "Aurora",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Oldsmobile",
+      "model": "Custom Cruiser",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Oldsmobile",
+      "model": "Cutlass",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Oldsmobile",
+      "model": "Cutlass Ciera",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Oldsmobile",
+      "model": "Cutlass Ciera",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Oldsmobile",
+      "model": "Cutlass Ciera",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Oldsmobile",
+      "model": "Cutlass Supreme",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Oldsmobile",
+      "model": "Cutlass Supreme",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Oldsmobile",
+      "model": "Eighty Eight (88)",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Oldsmobile",
+      "model": "Eighty Eight (88)",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Oldsmobile",
+      "model": "Intrigue",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Oldsmobile",
+      "model": "Intrigue",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Oldsmobile",
+      "model": "LSS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Oldsmobile",
+      "model": "LSS",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Oldsmobile",
+      "model": "Ninety Eight (98)",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Oldsmobile",
+      "model": "Ninety Eight (98)",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Oldsmobile",
+      "model": "Ninety Eight (98)",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Oldsmobile",
+      "model": "Regency",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Oldsmobile",
+      "model": "Toronado",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Peugeot",
+      "model": "405",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Peugeot",
+      "model": "505",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Plymouth",
+      "model": "Acclaim",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Plymouth",
+      "model": "Acclaim",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Plymouth",
+      "model": "Breeze",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Plymouth",
+      "model": "Breeze",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Plymouth",
+      "model": "Colt",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Plymouth",
+      "model": "Colt",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Plymouth",
+      "model": "HORIZON",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Plymouth",
+      "model": "Laser",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Plymouth",
+      "model": "Laser",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Plymouth",
+      "model": "Neon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Plymouth",
+      "model": "Neon",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Plymouth",
+      "model": "Prowler",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Plymouth",
+      "model": "Sundance",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Plymouth",
+      "model": "Sundance",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Pontiac",
+      "model": "6000",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Pontiac",
+      "model": "Bonneville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Pontiac",
+      "model": "Bonneville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Pontiac",
+      "model": "Bonneville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Pontiac",
+      "model": "Bonneville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Pontiac",
+      "model": "Bonneville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Pontiac",
+      "model": "Bonneville",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Pontiac",
+      "model": "Firebird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Pontiac",
+      "model": "Firebird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Pontiac",
+      "model": "Firebird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Pontiac",
+      "model": "Firebird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Pontiac",
+      "model": "Firebird",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Pontiac",
+      "model": "G5",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Pontiac",
+      "model": "G6",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Pontiac",
+      "model": "G6",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Pontiac",
+      "model": "G8",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Pontiac",
+      "model": "Grand AM",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Pontiac",
+      "model": "Grand AM",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Pontiac",
+      "model": "Grand AM",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Pontiac",
+      "model": "Grand AM",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Pontiac",
+      "model": "Grand AM",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Pontiac",
+      "model": "Grand AM",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Pontiac",
+      "model": "Grand Prix",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Pontiac",
+      "model": "Grand Prix",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Pontiac",
+      "model": "Grand Prix",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Pontiac",
+      "model": "Grand Prix",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Pontiac",
+      "model": "Grand Prix",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Pontiac",
+      "model": "Grand Prix",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Pontiac",
+      "model": "Grand Prix",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Pontiac",
+      "model": "GTO",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Pontiac",
+      "model": "Lemans",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Pontiac",
+      "model": "Lemans",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Pontiac",
+      "model": "Solstice",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Pontiac",
+      "model": "Sunbird",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Pontiac",
+      "model": "Sunbird",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Pontiac",
+      "model": "Sunfire",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Pontiac",
+      "model": "Sunfire",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Pontiac",
+      "model": "Sunfire",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Pontiac",
+      "model": "Sunfire",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Pontiac",
+      "model": "Vibe",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Pontiac",
+      "model": "Vibe",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Porsche",
+      "model": "911",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Porsche",
+      "model": "911",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Porsche",
+      "model": "911",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Porsche",
+      "model": "928",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Porsche",
+      "model": "928",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Porsche",
+      "model": "944",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Porsche",
+      "model": "968",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Saab",
+      "model": "9-2X",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Saab",
+      "model": "9-4x",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Saab",
+      "model": "9-7X",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Saab",
+      "model": "9-7X",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saab",
+      "model": "900",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Saab",
+      "model": "900",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Saab",
+      "model": "900",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saab",
+      "model": "9000",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Saab",
+      "model": "9000",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Saab",
+      "model": "9000",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Saturn",
+      "model": "Astra",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Saturn",
+      "model": "Aura",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Saturn",
+      "model": "Ion",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Saturn",
+      "model": "LW1",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Saturn",
+      "model": "LW2",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Saturn",
+      "model": "SC1",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Saturn",
+      "model": "SC1",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saturn",
+      "model": "SC1",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Saturn",
+      "model": "SC2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Saturn",
+      "model": "SC2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saturn",
+      "model": "SC2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Saturn",
+      "model": "Sky",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Saturn",
+      "model": "SL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Saturn",
+      "model": "SL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saturn",
+      "model": "SL",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Saturn",
+      "model": "SL1",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Saturn",
+      "model": "SL1",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saturn",
+      "model": "SL1",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Saturn",
+      "model": "SL2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Saturn",
+      "model": "SL2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saturn",
+      "model": "SL2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Saturn",
+      "model": "SW1",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saturn",
+      "model": "SW1",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Saturn",
+      "model": "SW2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Saturn",
+      "model": "SW2",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Subaru",
+      "model": "Baja",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Subaru",
+      "model": "Forester",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Subaru",
+      "model": "Forester",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Subaru",
+      "model": "Forester",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Subaru",
+      "model": "Forester",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Subaru",
+      "model": "Forester",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Subaru",
+      "model": "Impreza",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Subaru",
+      "model": "Impreza",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Subaru",
+      "model": "Impreza",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Subaru",
+      "model": "Impreza",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Subaru",
+      "model": "Impreza",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Subaru",
+      "model": "Impreza",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Subaru",
+      "model": "Impreza",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Subaru",
+      "model": "Legacy",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Subaru",
+      "model": "Legacy",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Subaru",
+      "model": "Legacy",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Subaru",
+      "model": "Legacy",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Subaru",
+      "model": "Legacy",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Subaru",
+      "model": "Legacy",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Subaru",
+      "model": "Legacy",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Subaru",
+      "model": "Legacy",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Subaru",
+      "model": "Loyale",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Subaru",
+      "model": "Outback",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Subaru",
+      "model": "Outback",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Subaru",
+      "model": "Outback",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Subaru",
+      "model": "SVX",
+      "systems": [
+        "starter"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Subaru",
+      "model": "SVX",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1990,
+      "make": "Subaru",
+      "model": "XT",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Suzuki",
+      "model": "Aerio",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Suzuki",
+      "model": "Aerio",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Suzuki",
+      "model": "Esteem",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Suzuki",
+      "model": "Esteem",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Suzuki",
+      "model": "Esteem",
+      "systems": [
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Suzuki",
+      "model": "Forenza",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Suzuki",
+      "model": "Forenza",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Suzuki",
+      "model": "Kizashi",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Suzuki",
+      "model": "Reno",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Suzuki",
+      "model": "Reno",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Suzuki",
+      "model": "Swift",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1996,
+      "make": "Suzuki",
+      "model": "Swift",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Suzuki",
+      "model": "Swift",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Suzuki",
+      "model": "SX4",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Suzuki",
+      "model": "SX4",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Suzuki",
+      "model": "Verona",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Volkswagen",
+      "model": "CABRIOLET",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Volkswagen",
+      "model": "Corrado",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Volkswagen",
+      "model": "FOX",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 1993,
+      "make": "Volkswagen",
+      "model": "Passat",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "C30",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "C70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Volvo",
+      "model": "C70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Volvo",
+      "model": "C70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Volvo",
+      "model": "C70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "S40",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Volvo",
+      "model": "S40",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Volvo",
+      "model": "S40",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Volvo",
+      "model": "S40",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "S60",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Volvo",
+      "model": "S60",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Volvo",
+      "model": "S60",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Volvo",
+      "model": "S60",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Volvo",
+      "model": "S70",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "S80",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Volvo",
+      "model": "S80",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Volvo",
+      "model": "S80",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Volvo",
+      "model": "S80",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Volvo",
+      "model": "S80",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Volvo",
+      "model": "V40",
+      "systems": [
+        "starter",
+        "alternator"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "V50",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Volvo",
+      "model": "V50",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Volvo",
+      "model": "V50",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Volvo",
+      "model": "V70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Volvo",
+      "model": "V70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2002,
+      "make": "Volvo",
+      "model": "V70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 1999,
+      "make": "Volvo",
+      "model": "V70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "XC60",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "XC70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Volvo",
+      "model": "XC70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Volvo",
+      "model": "XC70",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2011,
+      "make": "Volvo",
+      "model": "XC90",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2008,
+      "make": "Volvo",
+      "model": "XC90",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    },
+    {
+      "year": 2005,
+      "make": "Volvo",
+      "model": "XC90",
+      "systems": [
+        "starter",
+        "alternator",
+        "fuel-pump"
+      ]
+    }
+  ]
+}

@@ -3,6 +3,9 @@ import { DTC_CODES, DTC_CODES_MAP } from '@/data/dtc-codes-data';
 import validatedVehicles from '@/data/validated-vehicles.json';
 import {
   buildWiringSeoHref,
+  getPriorityWiringSeoVehicles,
+  scoreWiringSeoVehicle,
+  supportsWiringSystem,
   WIRING_SEO_VEHICLES,
   type WiringSeoVehicle,
   type WiringSystemSlug,
@@ -151,20 +154,34 @@ export function getWiringLinksForCode(code: DTCCode, limit = 6): DiagnosticCross
   const links: Array<DiagnosticCrossLink & { score: number }> = [];
 
   for (const system of systems) {
-    for (const vehicle of WIRING_SEO_VEHICLES) {
+    for (const vehicle of getPriorityWiringSeoVehicles({
+      system,
+      task: code.repairTaskSlug,
+      limit: limit * 3,
+    })) {
       if (!hasVehicleTask(vehicle, code.repairTaskSlug!)) continue;
       links.push({
         href: buildWiringSeoHref(vehicle, system),
         label: `${vehicle.year} ${vehicle.make} ${vehicle.model} ${system.replace(/-/g, ' ')} wiring`,
         description: `Open the exact ${system.replace(/-/g, ' ')} diagram cluster for a vehicle that commonly triggers ${code.code}.`,
         badge: 'Exact Wiring',
-        score: Math.max(0, 40 - getMakeRank(vehicle.make) * 2) + (vehicle.year >= 2011 ? 4 : 0),
+        score: scoreWiringSeoVehicle(vehicle, {
+          system,
+          task: code.repairTaskSlug,
+        }),
       });
     }
   }
 
+  const seen = new Set<string>();
   return links
     .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
+    .filter((link) => {
+      const key = link.label.replace(/^\d+\s+/, '');
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .slice(0, Math.max(1, limit))
     .map(({ score: _score, ...link }) => link);
 }

@@ -27,33 +27,40 @@ export default function CodesPage() {
         url: 'https://spotonauto.com',
     };
 
-    // QAPage schema for the index
-    const qaSchema = {
+    const faqSchema = {
         '@context': 'https://schema.org',
-        '@type': 'QAPage',
-        mainEntity: {
+        '@type': 'FAQPage',
+        mainEntity: [{
             '@type': 'Question',
             name: 'What do OBD2 trouble codes mean?',
-            text: 'What do OBD2 trouble codes mean and how should you use them to diagnose your check engine light?',
-            author: schemaAuthor,
-            datePublished: schemaDate,
-            answerCount: 1,
             acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'OBD2 trouble codes (DTCs) are diagnostic codes stored by your vehicle\'s computer when it detects a problem. Codes starting with P are powertrain (engine/transmission), B are body, C are chassis, and U are network/communication. Each code points to a specific system or component that needs attention.',
-                author: schemaAuthor,
-                datePublished: schemaDate,
-                upvoteCount: 0,
-                url: 'https://spotonauto.com/codes',
+                text: 'OBD2 trouble codes (DTCs) are diagnostic codes stored by your vehicle computer when it detects a problem. P codes cover powertrain, B codes cover body, C codes cover chassis, and U codes cover network communication systems.',
             },
-        },
+        }],
+    };
+
+    const webPageSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'OBD2 Code Lookup | SpotOnAuto',
+        description: metadata.description,
+        url: 'https://spotonauto.com/codes',
+        datePublished: schemaDate,
+        dateModified: schemaDate,
+        author: schemaAuthor,
+        publisher: schemaAuthor,
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(qaSchema) }}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
             />
 
             {/* Hero */}

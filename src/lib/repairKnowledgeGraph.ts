@@ -6,7 +6,9 @@ import {
 import type { VehicleRepairSpec } from '@/data/vehicle-repair-specs';
 import {
   buildWiringSeoHref,
+  getPriorityWiringSeoVehicles,
   slugifyWiringSegment,
+  supportsWiringSystem,
   WIRING_SEO_SYSTEMS,
   WIRING_SEO_VEHICLES,
   type WiringSeoVehicle,
@@ -99,13 +101,20 @@ function getExactWiringVehicle(
   ) || null;
 }
 
-function buildWiringBrowserHref(year: string, displayMake: string, system: WiringSystemSlug): string {
+function buildWiringBrowserHref(
+  year: string,
+  displayMake: string,
+  displayModel: string,
+  system: WiringSystemSlug,
+): string {
   const params = new URLSearchParams({
     year,
     make: displayMake,
+    model: displayModel,
     q: WIRING_SEO_SYSTEMS[system].shortLabel,
+    open: '1',
   });
-  return `/wiring?${params.toString()}`;
+  return `/wiring?${params.toString()}#diagram-browser`;
 }
 
 function getWiringNodes(args: {
@@ -127,21 +136,49 @@ function getWiringNodes(args: {
     args.displayModel,
   );
 
-  return profile.wiringSystems.map((system, index) => {
+  return profile.wiringSystems.flatMap((system, index) => {
     const meta = WIRING_SEO_SYSTEMS[system];
-    const exact = Boolean(exactVehicle);
-    return {
+    const exact = Boolean(exactVehicle && supportsWiringSystem(exactVehicle, system));
+    const primaryNode: RepairKnowledgeNode = {
       kind: 'wiring',
-      href: exactVehicle
+      href: exactVehicle && supportsWiringSystem(exactVehicle, system)
         ? buildWiringSeoHref(exactVehicle, system)
-        : buildWiringBrowserHref(args.year, args.displayMake, system),
-      label: exactVehicle ? meta.title : `${meta.shortLabel} Wiring Browser`,
-      description: exactVehicle
+        : buildWiringBrowserHref(args.year, args.displayMake, args.displayModel, system),
+      label: exact ? meta.title : `${meta.shortLabel} Wiring Browser`,
+      description: exact
         ? `Open OEM-style ${meta.shortLabel.toLowerCase()} schematics for this exact vehicle.`
         : `Open the wiring browser prefilled for ${meta.shortLabel.toLowerCase()} diagnosis on this vehicle.`,
       badge: exact ? 'Exact Vehicle' : 'Prefilled Browser',
       score: exact ? 96 - index : 72 - index,
     };
+
+    if (exact) {
+      return [primaryNode];
+    }
+
+    const referenceVehicle = getPriorityWiringSeoVehicles({
+      system,
+      task: args.task,
+      make: args.displayMake,
+      year: Number(args.year),
+      limit: 1,
+    })[0];
+
+    if (!referenceVehicle) {
+      return [primaryNode];
+    }
+
+    return [
+      primaryNode,
+      {
+        kind: 'wiring',
+        href: buildWiringSeoHref(referenceVehicle, system),
+        label: `${referenceVehicle.year} ${referenceVehicle.make} ${referenceVehicle.model} ${meta.title}`,
+        description: `Verified ${meta.shortLabel.toLowerCase()} entry page tied to a strong matching repair cluster.`,
+        badge: 'Verified Reference',
+        score: 66 - index,
+      },
+    ];
   });
 }
 

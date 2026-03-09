@@ -31,6 +31,11 @@ export default function GuideContent({ params }: GuideContentProps) {
     const t = useT();
 
     useEffect(() => {
+        const cleanTask = task.replace(/-/g, ' ');
+        trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
+    }, [year, make, model, task]);
+
+    useEffect(() => {
         const fetchGuide = async () => {
             setError(null);
             setLoading(true);
@@ -70,7 +75,6 @@ export default function GuideContent({ params }: GuideContentProps) {
                     generatedGuide.retrieval?.manualMode || 'none',
                     generatedGuide.retrieval?.manualSourceCount || 0,
                 );
-                trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
                 setGuide(generatedGuide);
             } catch (err: any) {
                 setError(err instanceof Error ? err.message : "Failed to generate guide.");

@@ -10,6 +10,7 @@ import {
     getWiringLinksForCode,
 } from '@/lib/diagnosticCrossLinks';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -23,8 +24,6 @@ const LIKELIHOOD_BADGE: Record<string, string> = {
     possible: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
     unlikely: 'bg-gray-500/10 text-gray-400 border-gray-500/30',
 };
-
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
 
 export default function CodePageClient({
     code,
@@ -163,7 +162,7 @@ export default function CodePageClient({
             <div className="mb-8 bg-amber-500/5 border border-amber-500/20 rounded-xl p-6 text-center">
                 <p className="text-amber-200 text-sm mb-3">Need to read or clear this code?</p>
                 <a
-                    href={`https://www.amazon.com/s?k=obd2+scanner+bluetooth&i=automotive&tag=${AMAZON_TAG}`}
+                    href={buildAmazonSearchUrl('obd2 scanner bluetooth')}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 text-black text-sm font-bold rounded-lg hover:bg-amber-400 transition"

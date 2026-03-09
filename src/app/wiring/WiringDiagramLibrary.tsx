@@ -24,6 +24,46 @@ interface DiagramImage {
   title: string;
 }
 
+function normalizeModelText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function resolveVariantForModel(variants: string[], model: string): string | null {
+  const modelNorm = normalizeModelText(model);
+  if (!modelNorm) return null;
+
+  let bestVariant: string | null = null;
+  let bestScore = 0;
+
+  for (const variant of variants) {
+    const variantNorm = normalizeModelText(variant);
+    let score = 0;
+
+    if (variantNorm === modelNorm) score = 100;
+    else if (variantNorm.startsWith(`${modelNorm} `)) score = 95;
+    else if (variantNorm.includes(` ${modelNorm} `)) score = 88;
+    else if (variantNorm.includes(modelNorm)) score = 80;
+    else {
+      let tokenHits = 0;
+      for (const token of modelNorm.split(' ')) {
+        if (token.length > 1 && variantNorm.includes(token)) tokenHits += 1;
+      }
+      if (tokenHits > 0) score = 45 + tokenHits * 10;
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestVariant = variant;
+    }
+  }
+
+  return bestScore >= 60 ? bestVariant : null;
+}
+
 // Static year range — CHARM covers 1982-2013
 const YEARS = Array.from({ length: 2013 - 1982 + 1 }, (_, i) => 2013 - i);
 
@@ -47,6 +87,9 @@ export default function WiringDiagramLibrary() {
   const [loadingDiagrams, setLoadingDiagrams] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
   const prefillVariantRef = useRef<string>('');
+  const prefillModelRef = useRef<string>('');
+  const autoOpenRef = useRef(false);
+  const autoOpenConsumedRef = useRef(false);
 
   // Fetch makes on mount (independent of year)
   useEffect(() => {
@@ -62,12 +105,17 @@ export default function WiringDiagramLibrary() {
     const year = params.get('year');
     const make = params.get('make');
     const variant = params.get('variant');
+    const model = params.get('model');
     const query = params.get('q');
+    const open = params.get('open');
 
     if (year) setSelectedYear(year);
     if (make) setSelectedMake(make);
     if (variant) prefillVariantRef.current = variant;
+    if (model) prefillModelRef.current = model;
     if (query) setSearch(query);
+    autoOpenRef.current = open === '1';
+    autoOpenConsumedRef.current = false;
   }, []);
 
   // Clear downstream when year changes
@@ -97,9 +145,16 @@ export default function WiringDiagramLibrary() {
       .then(d => {
         const loadedVariants: string[] = d.variants || [];
         setVariants(loadedVariants);
-        if (prefillVariantRef.current && loadedVariants.includes(prefillVariantRef.current)) {
-          setSelectedVariant(prefillVariantRef.current);
+        const matchedVariant = prefillVariantRef.current && loadedVariants.includes(prefillVariantRef.current)
+          ? prefillVariantRef.current
+          : prefillModelRef.current
+            ? resolveVariantForModel(loadedVariants, prefillModelRef.current)
+            : null;
+
+        if (matchedVariant) {
+          setSelectedVariant(matchedVariant);
           prefillVariantRef.current = '';
+          prefillModelRef.current = '';
         }
         setLoadingVariants(false);
       })
@@ -153,6 +208,24 @@ export default function WiringDiagramLibrary() {
 
   const filteredCount = filteredSystems.reduce((sum, s) => sum + s.diagrams.length, 0);
 
+  useEffect(() => {
+    if (!search || filteredSystems.length === 0) return;
+    if (expandedSystem && filteredSystems.some(sys => sys.system === expandedSystem)) return;
+    setExpandedSystem(filteredSystems[0].system);
+  }, [expandedSystem, filteredSystems, search]);
+
+  useEffect(() => {
+    if (!autoOpenRef.current || autoOpenConsumedRef.current) return;
+    if (loadingDiagrams || loadingImage || selectedDiagram) return;
+    const firstSystem = filteredSystems[0];
+    const firstDiagram = firstSystem?.diagrams[0];
+    if (!firstSystem || !firstDiagram) return;
+
+    autoOpenConsumedRef.current = true;
+    setExpandedSystem(firstSystem.system);
+    void openDiagram(firstDiagram, firstSystem.system);
+  }, [filteredSystems, loadingDiagrams, loadingImage, openDiagram, selectedDiagram]);
+
   return (
     <div className="wiring-library">
       {/* Header */}
@@ -167,7 +240,7 @@ export default function WiringDiagramLibrary() {
         </div>
       </header>
 
-      <main className="wl-main">
+      <main className="wl-main" id="diagram-browser">
         {/* Vehicle Selector */}
         <div className="wl-selector">
           <h2 className="wl-selector-title">Select Your Vehicle</h2>
