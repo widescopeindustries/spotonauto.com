@@ -26,6 +26,26 @@ function buildManualBrowserPath(...segments: string[]): string {
     return `/manual/${segments.map((segment) => encodeURIComponent(segment)).join('/')}`;
 }
 
+function getSparkPlugIgnitionNote(
+    year: string,
+    make: string,
+    model: string,
+    task: string,
+): { title: string; body: string; faqQuestion: string; faqAnswer: string } | null {
+    if (task !== 'spark-plug-replacement') return null;
+
+    if (year === '2008' && make === 'chevrolet' && model === 'impala') {
+        return {
+            title: '2008 Chevrolet Impala 3.5L Ignition Layout',
+            body: 'For the common 3.5L V6 setup, the 2008 Chevrolet Impala uses coil-on-plug ignition rather than traditional spark plug wires. Each cylinder has its own ignition coil mounted over the spark plug, so you disconnect the coil connectors and remove the coils to reach the plugs. Verify your exact engine before ordering parts.',
+            faqQuestion: 'Does a 2008 Chevrolet Impala 3.5L use coil-on-plug or spark plug wires?',
+            faqAnswer: 'For the common 3.5L V6 configuration, the 2008 Chevrolet Impala uses coil-on-plug ignition instead of traditional spark plug wires. Each spark plug sits under its own ignition coil, so spark plug service starts by unplugging and removing the individual coils. Verify your exact engine before ordering ignition parts.',
+        };
+    }
+
+    return null;
+}
+
 interface PageProps {
     params: Promise<{
         year: string;
@@ -436,6 +456,7 @@ export default async function Page({ params }: PageProps) {
     const toolResourceLinks = getRelatedToolLinksForRepair(displayMake, displayModel, canonicalTask, 4);
     const manualMakeHref = buildManualBrowserPath(displayMake);
     const manualYearHref = buildManualBrowserPath(displayMake, resolvedYear);
+    const sparkPlugIgnitionNote = getSparkPlugIgnitionNote(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
     const affiliateSourceParts: Array<PartSpec> = vehicleSpec?.parts ?? repairData.parts.map((partName) => ({ name: partName }));
     const affiliateSpotlightParts = affiliateSourceParts
         .slice(0, 3)
@@ -534,6 +555,10 @@ export default async function Page({ params }: PageProps) {
             question: `What happens if I delay ${cleanTask} on my ${vehicleName}?`,
             answer: delayConsequences[canonicalTask] || `Delaying ${cleanTask} on your ${vehicleName} can lead to more expensive repairs down the road, reduced vehicle reliability, and potential safety issues. It's best to address it within the manufacturer's recommended service interval.`,
         },
+        ...(sparkPlugIgnitionNote ? [{
+            question: sparkPlugIgnitionNote.faqQuestion,
+            answer: sparkPlugIgnitionNote.faqAnswer,
+        }] : []),
     ];
 
     const faqSchemaData = {
@@ -856,6 +881,13 @@ export default async function Page({ params }: PageProps) {
                         ))}
                     </ol>
                 </section>
+
+                {sparkPlugIgnitionNote && (
+                    <section className="mb-8 bg-indigo-950/30 border border-indigo-500/30 rounded-xl p-6">
+                        <h2 className="text-xl font-bold text-indigo-300 mb-3">{sparkPlugIgnitionNote.title}</h2>
+                        <p className="text-indigo-100/90 leading-relaxed">{sparkPlugIgnitionNote.body}</p>
+                    </section>
+                )}
 
                 {/* Frequently Asked Questions — GEO optimized for AI search citation */}
                 <section className="mb-8">
