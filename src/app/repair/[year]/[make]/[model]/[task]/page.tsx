@@ -608,6 +608,11 @@ export default async function Page({ params }: PageProps) {
         }))
     };
 
+    const sectionShell = 'mb-8 rounded-2xl border border-white/10 bg-white/[0.035] p-6 md:p-7';
+    const sectionTitleClass = 'text-xl font-semibold text-white mb-4 tracking-tight';
+    const statCardClass = 'rounded-xl border border-white/10 bg-black/20 p-4';
+    const resourceCardClass = 'rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-all group';
+
     return (
         <>
             <script
@@ -648,99 +653,97 @@ export default async function Page({ params }: PageProps) {
             </nav>
 
             {/* SEO Content - Renders server-side for Google */}
-            <article className="max-w-6xl mx-auto px-4 py-8">
+            <article className="max-w-5xl mx-auto px-4 py-8 md:py-10">
                 {/* Hero */}
-                <header className="mb-8 text-center">
-                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                <header className="mb-8 md:mb-10">
+                    <p className="text-sm font-medium tracking-wide text-cyan-300/80 mb-3">
+                        DIY repair guide for {vehicleName}
+                    </p>
+                    <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-4">
                         {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guide {'\u2014'} {vehicleName}
                     </h1>
-                    <p className="text-gray-400 max-w-2xl mx-auto">
+                    <p className="text-base md:text-lg leading-7 text-gray-300 max-w-3xl">
                         Complete DIY repair guide with step-by-step instructions. Find exact parts on Amazon for your vehicle.
                     </p>
                 </header>
 
-                {/* Quick Answer — GEO target for AI featured snippets */}
-                <div className="mb-8 bg-white/5 border-l-4 border-brand-cyan rounded-xl p-5">
-                    <h2 className="text-sm font-bold text-brand-cyan uppercase tracking-wider mb-3">At a Glance</h2>
-                    <div className="flex flex-wrap gap-6 text-sm">
+                <section className={`${sectionShell} border-cyan-500/20 bg-cyan-500/[0.06]`}>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between mb-5">
                         <div>
-                            <span className="text-gray-500">Time: </span>
-                            <span className="text-white font-semibold">{repairData.time}</span>
+                            <h2 className="text-xl font-semibold text-white tracking-tight">At a glance</h2>
+                            <p className="mt-1 text-sm leading-6 text-gray-300">
+                                The core information most people want before deciding whether to do this repair themselves.
+                            </p>
                         </div>
-                        <div>
-                            <span className="text-gray-500">Cost (parts): </span>
-                            <span className="text-white font-semibold">${costRange}</span>
+                        <p className="text-sm text-cyan-100/80">
+                            DIY parts cost: <span className="font-semibold text-white">${costRange}</span>
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className={statCardClass}>
+                            <WrenchIcon className="w-5 h-5 text-brand-cyan mb-3" />
+                            <p className="text-[11px] font-medium tracking-wide text-gray-500">Difficulty</p>
+                            <p className="mt-1 text-white font-semibold">{repairData.difficulty}</p>
                         </div>
-                        <div>
-                            <span className="text-gray-500">Difficulty: </span>
-                            <span className="text-white font-semibold">{repairData.difficulty}</span>
+                        <div className={statCardClass}>
+                            <ClockIcon className="w-5 h-5 text-brand-cyan mb-3" />
+                            <p className="text-[11px] font-medium tracking-wide text-gray-500">Time</p>
+                            <p className="mt-1 text-white font-semibold">{repairData.time}</p>
+                        </div>
+                        <div className={statCardClass}>
+                            <ShoppingCartIcon className="w-5 h-5 text-amber-400 mb-3" />
+                            <p className="text-[11px] font-medium tracking-wide text-gray-500">Parts</p>
+                            <p className="mt-1 text-white font-semibold">{repairData.parts.length} items</p>
+                        </div>
+                        <div className={statCardClass}>
+                            <CheckCircleIcon className="w-5 h-5 text-green-400 mb-3" />
+                            <p className="text-[11px] font-medium tracking-wide text-gray-500">DIY savings</p>
+                            <p className="mt-1 text-white font-semibold">$100-400+</p>
                         </div>
                     </div>
-                </div>
-
-                {/* Quick Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10">
-                        <WrenchIcon className="w-6 h-6 text-brand-cyan mx-auto mb-2" />
-                        <p className="text-xs text-gray-500 uppercase">Difficulty</p>
-                        <p className="text-white font-bold">{repairData.difficulty}</p>
-                    </div>
-                    <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10">
-                        <ClockIcon className="w-6 h-6 text-brand-cyan mx-auto mb-2" />
-                        <p className="text-xs text-gray-500 uppercase">Time</p>
-                        <p className="text-white font-bold">{repairData.time}</p>
-                    </div>
-                    <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10">
-                        <ShoppingCartIcon className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                        <p className="text-xs text-gray-500 uppercase">Parts Needed</p>
-                        <p className="text-white font-bold">{repairData.parts.length} items</p>
-                    </div>
-                    <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10">
-                        <CheckCircleIcon className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                        <p className="text-xs text-gray-500 uppercase">DIY Savings</p>
-                        <p className="text-white font-bold">$100-400+</p>
-                    </div>
-                </div>
+                </section>
 
                 {/* Vehicle-Specific Notes — only renders when we have real data */}
                 {vehicleSpec && (
-                    <section id="vehicle-specific-data" className="mb-8 bg-cyan-950/30 border border-cyan-500/30 rounded-xl p-6">
-                        <h2 className="text-xl font-bold text-cyan-400 mb-4">
+                    <section id="vehicle-specific-data" className={`${sectionShell} border-cyan-500/20 bg-cyan-950/25`}>
+                        <h2 className="text-xl font-semibold text-cyan-300 mb-4 tracking-tight">
                             {vehicleName} — What You Need to Know
                         </h2>
-                        <ul className="space-y-2">
+                        <ul className="space-y-3">
                             {vehicleSpec.vehicleNotes.map((note, i) => (
-                                <li key={i} className="flex items-start gap-2 text-cyan-100">
-                                    <span className="text-cyan-400 mt-1">→</span>
+                                <li key={i} className="flex items-start gap-3 text-cyan-50/95 leading-7">
+                                    <span className="text-cyan-400 mt-1.5">•</span>
                                     {note}
                                 </li>
                             ))}
                         </ul>
+                        <div className="mt-5 grid gap-4 md:grid-cols-2">
                         {vehicleSpec.torqueSpecs && (
-                            <div className="mt-4 p-4 bg-cyan-900/30 rounded-lg">
-                                <span className="text-xs uppercase tracking-wider text-cyan-500 font-bold">Torque Specs</span>
-                                <p className="text-white font-mono mt-1">{vehicleSpec.torqueSpecs}</p>
+                            <div className="rounded-xl border border-cyan-500/20 bg-black/20 p-4">
+                                <span className="text-xs font-medium tracking-wide text-cyan-300/80">Torque specs</span>
+                                <p className="text-white mt-2">{vehicleSpec.torqueSpecs}</p>
                             </div>
                         )}
                         {vehicleSpec.beltRouting && (
-                            <div className="mt-4 p-4 bg-slate-800/50 rounded-lg">
-                                <span className="text-xs uppercase tracking-wider text-cyan-500 font-bold">Belt Routing</span>
-                                <p className="text-gray-300 mt-1">{vehicleSpec.beltRouting}</p>
+                            <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                                <span className="text-xs font-medium tracking-wide text-cyan-300/80">Belt routing</span>
+                                <p className="text-gray-300 mt-2 leading-6">{vehicleSpec.beltRouting}</p>
                             </div>
                         )}
+                        </div>
                     </section>
                 )}
 
                 {/* Safety Warnings */}
-                <section className="mb-8 bg-red-950/30 border border-red-500/30 rounded-xl p-6">
-                    <h2 className="text-xl font-bold text-red-400 mb-4 flex items-center gap-2">
+                <section className={`${sectionShell} border-red-500/25 bg-red-950/25`}>
+                    <h2 className="text-xl font-semibold text-red-300 mb-4 flex items-center gap-2 tracking-tight">
                         <AlertTriangleIcon className="w-5 h-5" />
                         Safety Warnings
                     </h2>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                         {repairData.warnings.map((warning, i) => (
-                            <li key={i} className="flex items-start gap-2 text-red-200">
-                                <span className="text-red-500 mt-1">•</span>
+                            <li key={i} className="flex items-start gap-3 text-red-100/95 leading-7">
+                                <span className="text-red-400 mt-1.5">•</span>
                                 {warning}
                             </li>
                         ))}
@@ -751,11 +754,14 @@ export default async function Page({ params }: PageProps) {
                 <AdUnit slot="repair-after-safety" format="horizontal" />
 
                 {/* Tools Required */}
-                <section id="tools-required" className="mb-8">
-                    <h2 className="text-xl font-bold text-white mb-4">Tools Required</h2>
-                    <div className="grid md:grid-cols-2 gap-2">
+                <section id="tools-required" className={sectionShell}>
+                    <h2 className={sectionTitleClass}>Tools required</h2>
+                    <p className="text-sm leading-6 text-gray-400 mb-4">
+                        Gather these before you start so the job flows cleanly once the vehicle is apart.
+                    </p>
+                    <div className="grid md:grid-cols-2 gap-3">
                         {repairData.tools.map((tool, i) => (
-                            <div key={i} className="flex items-center gap-2 bg-white/5 rounded-lg p-3 border border-white/10">
+                            <div key={i} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-3.5">
                                 <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0" />
                                 <span className="text-gray-300">{tool}</span>
                             </div>
@@ -764,27 +770,30 @@ export default async function Page({ params }: PageProps) {
                 </section>
 
                 {/* Parts List */}
-                <section id="parts-needed" className="mb-8">
-                    <h2 className="text-xl font-bold text-white mb-4">Parts Needed</h2>
+                <section id="parts-needed" className={sectionShell}>
+                    <h2 className={sectionTitleClass}>Parts needed</h2>
+                    <p className="text-sm leading-6 text-gray-400 mb-4">
+                        Use these searches as a starting point, then confirm fitment against your exact engine and trim.
+                    </p>
                     <div className="space-y-3">
                         {vehicleSpec ? (
                             vehicleSpec.parts.map((part: PartSpec, i: number) => {
                                 const searchTerm = part.aftermarket || part.oem || `${vehicleName} ${part.name}`;
                                 return (
-                                    <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
+                                    <div key={i} className="flex flex-col gap-4 rounded-xl border border-white/10 bg-black/20 p-4 md:flex-row md:items-center md:justify-between">
                                         <div className="flex-1 min-w-0">
-                                            <span className="text-gray-300">{part.name}</span>
+                                            <span className="text-white font-medium">{part.name}</span>
                                             {part.spec && (
-                                                <span className="block text-xs text-gray-500 mt-0.5">{part.spec}</span>
+                                                <span className="block text-sm text-gray-400 mt-1 leading-6">{part.spec}</span>
                                             )}
                                             <div className="flex flex-wrap gap-1.5 mt-1.5">
                                                 {part.oem && (
-                                                    <span className="inline-block px-2 py-0.5 bg-blue-500/20 text-blue-300 text-xs rounded font-mono">
+                                                    <span className="inline-block rounded-full bg-blue-500/20 px-2.5 py-1 text-xs text-blue-200">
                                                         OEM {part.oem}
                                                     </span>
                                                 )}
                                                 {part.aftermarket && (
-                                                    <span className="inline-block px-2 py-0.5 bg-green-500/20 text-green-300 text-xs rounded font-mono">
+                                                    <span className="inline-block rounded-full bg-green-500/20 px-2.5 py-1 text-xs text-green-200">
                                                         {part.aftermarket}
                                                     </span>
                                                 )}
@@ -796,7 +805,7 @@ export default async function Page({ params }: PageProps) {
                                             vehicle={vehicleName}
                                             isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part.name)}
                                             pageType="repair_guide"
-                                            className="flex-shrink-0 ml-4 px-4 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition"
+                                            className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-amber-400 transition"
                                         >
                                             Shop on Amazon
                                         </AffiliateLink>
@@ -805,15 +814,15 @@ export default async function Page({ params }: PageProps) {
                             })
                         ) : (
                             repairData.parts.map((part, i) => (
-                                <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
-                                    <span className="text-gray-300">{part}</span>
+                                <div key={i} className="flex flex-col gap-4 rounded-xl border border-white/10 bg-black/20 p-4 md:flex-row md:items-center md:justify-between">
+                                    <span className="text-white font-medium">{part}</span>
                                     <AffiliateLink
                                         href={buildAmazonSearchUrl(`${vehicleName} ${part}`)}
                                         partName={part}
                                         vehicle={vehicleName}
                                         isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part)}
                                         pageType="repair_guide"
-                                        className="px-4 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition"
+                                        className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-amber-400 transition"
                                     >
                                         Shop on Amazon
                                     </AffiliateLink>
@@ -824,11 +833,11 @@ export default async function Page({ params }: PageProps) {
                 </section>
 
                 {affiliateSpotlightParts.length > 0 && (
-                    <section className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6">
+                    <section className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6 md:p-7">
                         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
                             <div>
-                                <h2 className="text-xl font-bold text-white">Shop This Job on Amazon</h2>
-                                <p className="text-sm text-amber-100/80 mt-1">
+                                <h2 className="text-xl font-semibold text-white tracking-tight">Shop this job on Amazon</h2>
+                                <p className="text-sm leading-6 text-amber-100/80 mt-1">
                                     Quick part searches for the highest-intent items on this {cleanTask} job.
                                 </p>
                             </div>
@@ -838,7 +847,7 @@ export default async function Page({ params }: PageProps) {
                                 vehicle={vehicleName}
                                 isHighTicket={canonicalTask === 'radiator-replacement'}
                                 pageType="repair_guide"
-                                className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-black hover:bg-amber-400 transition"
+                                className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-amber-400 transition"
                             >
                                 Shop Complete Search
                             </AffiliateLink>
@@ -846,8 +855,8 @@ export default async function Page({ params }: PageProps) {
                         <div className="grid md:grid-cols-3 gap-3">
                             {affiliateSpotlightParts.map((part) => (
                                 <div key={part.name} className="rounded-xl border border-white/10 bg-black/20 p-4">
-                                    <p className="text-sm font-semibold text-white">{part.name}</p>
-                                    <p className="mt-2 text-xs leading-relaxed text-gray-400">{part.detail}</p>
+                                    <p className="text-base font-medium text-white">{part.name}</p>
+                                    <p className="mt-2 text-sm leading-6 text-gray-400">{part.detail}</p>
                                     <AffiliateLink
                                         href={buildAmazonSearchUrl(part.query)}
                                         partName={part.name}
@@ -868,37 +877,40 @@ export default async function Page({ params }: PageProps) {
                 <AdUnit slot="repair-after-parts" format="rectangle" />
 
                 {/* Basic Steps */}
-                <section className="mb-8">
-                    <h2 className="text-xl font-bold text-white mb-4">Basic Procedure Overview</h2>
+                <section className={sectionShell}>
+                    <h2 className={sectionTitleClass}>Basic procedure overview</h2>
+                    <p className="text-sm leading-6 text-gray-400 mb-4">
+                        This is the short version of the job flow. The AI guide below fills in torque specs, access details, and vehicle-specific cautions.
+                    </p>
                     <ol className="space-y-3">
                         {repairData.steps.map((step, i) => (
-                            <li key={i} className="flex gap-4 bg-white/5 rounded-lg p-4 border border-white/10">
-                                <span className="flex-shrink-0 w-8 h-8 bg-brand-cyan text-black font-bold rounded-full flex items-center justify-center">
+                            <li key={i} className="flex gap-4 rounded-xl border border-white/10 bg-black/20 p-4">
+                                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-brand-cyan/90 text-sm font-semibold text-black">
                                     {i + 1}
                                 </span>
-                                <span className="text-gray-300 pt-1">{step}</span>
+                                <span className="pt-1 leading-7 text-gray-300">{step}</span>
                             </li>
                         ))}
                     </ol>
                 </section>
 
                 {sparkPlugIgnitionNote && (
-                    <section className="mb-8 bg-indigo-950/30 border border-indigo-500/30 rounded-xl p-6">
-                        <h2 className="text-xl font-bold text-indigo-300 mb-3">{sparkPlugIgnitionNote.title}</h2>
+                    <section className={`${sectionShell} border-indigo-500/20 bg-indigo-950/20`}>
+                        <h2 className="text-xl font-semibold text-indigo-200 mb-3 tracking-tight">{sparkPlugIgnitionNote.title}</h2>
                         <p className="text-indigo-100/90 leading-relaxed">{sparkPlugIgnitionNote.body}</p>
                     </section>
                 )}
 
                 {/* Frequently Asked Questions — GEO optimized for AI search citation */}
-                <section className="mb-8">
-                    <h2 className="text-xl font-bold text-white mb-4">Frequently Asked Questions</h2>
+                <section className={sectionShell}>
+                    <h2 className={sectionTitleClass}>Frequently asked questions</h2>
                     <dl className="space-y-4">
                         {faqItems.map((faq, i) => (
-                            <div key={i} className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
-                                <dt className="px-5 py-4 font-semibold text-white">
+                            <div key={i} className="rounded-xl border border-white/10 bg-black/20 overflow-hidden">
+                                <dt className="px-5 py-4 font-medium text-white leading-7">
                                     {faq.question}
                                 </dt>
-                                <dd className="px-5 pb-4 text-gray-400 text-sm leading-relaxed">
+                                <dd className="px-5 pb-5 text-sm leading-7 text-gray-400">
                                     {faq.answer}
                                 </dd>
                             </div>
@@ -910,14 +922,14 @@ export default async function Page({ params }: PageProps) {
                 <AdUnit slot="repair-after-faq" format="horizontal" />
 
                 {/* CTA to AI Guide */}
-                <div className="bg-gradient-to-r from-brand-cyan/10 to-purple-500/10 rounded-2xl p-8 text-center border border-brand-cyan/30 mb-8">
-                    <div className="inline-block bg-brand-cyan/20 text-brand-cyan text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
+                <div className="mb-8 rounded-2xl border border-brand-cyan/20 bg-gradient-to-r from-brand-cyan/10 to-purple-500/10 p-8 text-center">
+                    <div className="inline-block rounded-full bg-brand-cyan/20 px-3 py-1 text-xs font-medium tracking-wide text-brand-cyan mb-4">
                         100% Free
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-3">
+                    <h2 className="text-2xl font-semibold text-white tracking-tight mb-3">
                         Get the Full AI-Powered Repair Guide
                     </h2>
-                    <p className="text-gray-400 mb-2 max-w-xl mx-auto">
+                    <p className="text-gray-300 leading-7 mb-2 max-w-xl mx-auto">
                         Exact torque specs, part numbers, and step-by-step instructions tailored to your <strong className="text-white">{vehicleName}</strong>.
                     </p>
                     <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
@@ -934,12 +946,12 @@ export default async function Page({ params }: PageProps) {
                 <h2 className="text-xl font-bold text-white mb-4">
                     About {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} on {displayMake} {displayModel}
                 </h2>
-                <p className="text-gray-400 mb-4">
+                <p className="text-gray-400 leading-7 mb-4">
                     Performing a {cleanTask} on your {vehicleName} is a common maintenance task that
                     most DIY mechanics can handle with basic tools. By doing this repair yourself,
                     you can save $100-400 compared to dealership or shop prices.
                 </p>
-                <p className="text-gray-400 mb-4">
+                <p className="text-gray-400 leading-7 mb-4">
                     The {displayMake} {displayModel} has been in production for many years, and {cleanTask} procedures
                     are well-documented. Always refer to your owner&apos;s manual for vehicle-specific
                     information and torque specifications.
@@ -972,35 +984,35 @@ export default async function Page({ params }: PageProps) {
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
                     <Link
                         href={manualMakeHref}
-                        className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                        className={resourceCardClass}
                     >
-                        <p className="text-xs font-mono uppercase tracking-widest text-cyan-400/80 mb-2">Factory manual</p>
-                        <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                        <p className="text-xs font-medium tracking-wide text-cyan-300/80 mb-2">Factory manual</p>
+                        <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
                             Browse {displayMake} manual sections
                         </h3>
-                        <p className="mt-2 text-sm text-gray-400">Move from make-level manual navigation into service sections and procedures.</p>
+                        <p className="mt-2 text-sm leading-6 text-gray-400">Move from make-level manual navigation into service sections and procedures.</p>
                     </Link>
                     <Link
                         href={manualYearHref}
-                        className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                        className={resourceCardClass}
                     >
-                        <p className="text-xs font-mono uppercase tracking-widest text-cyan-400/80 mb-2">Year index</p>
-                        <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                        <p className="text-xs font-medium tracking-wide text-cyan-300/80 mb-2">Year index</p>
+                        <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
                             Open the {resolvedYear} {displayMake} manual
                         </h3>
-                        <p className="mt-2 text-sm text-gray-400">Jump directly into the OEM year tree for this vehicle before drilling into sections.</p>
+                        <p className="mt-2 text-sm leading-6 text-gray-400">Jump directly into the OEM year tree for this vehicle before drilling into sections.</p>
                     </Link>
                     {toolResourceLinks.map((toolLink) => (
                         <Link
                             key={toolLink.href}
                             href={toolLink.href}
-                            className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                            className={resourceCardClass}
                         >
-                            <p className="text-xs font-mono uppercase tracking-widest text-cyan-400/80 mb-2">Spec page</p>
-                            <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                            <p className="text-xs font-medium tracking-wide text-cyan-300/80 mb-2">Spec page</p>
+                            <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
                                 {displayMake} {displayModel} {toolLink.label}
                             </h3>
-                            <p className="mt-2 text-sm text-gray-400">Reference fitment and service specs without leaving the vehicle cluster.</p>
+                            <p className="mt-2 text-sm leading-6 text-gray-400">Reference fitment and service specs without leaving the vehicle cluster.</p>
                         </Link>
                     ))}
                 </div>
@@ -1044,13 +1056,13 @@ export default async function Page({ params }: PageProps) {
             {/* ── Related Repairs ─────────────────────────────────────────── */}
             {/* Internal links between repair pages — solves orphan-page problem */}
             <section className="max-w-6xl mx-auto px-4 py-10 border-t border-white/10">
-                <h2 className="text-xl font-bold text-white mb-6">Related Repairs for Your {displayMake} {displayModel}</h2>
+                <h2 className="text-xl font-semibold text-white tracking-tight mb-6">Related repairs for your {displayMake} {displayModel}</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {prioritizedRelatedTasks.map(relTask => (
                             <Link
                                 key={relTask}
                                 href={buildRepairPath(resolvedYear, canonicalMake, canonicalModel, relTask)}
-                                className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-all group"
                             >
                                 <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
                                 <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
@@ -1060,7 +1072,7 @@ export default async function Page({ params }: PageProps) {
                         ))}
                 </div>
 
-                <h2 className="text-xl font-bold text-white mt-10 mb-6">
+                <h2 className="text-xl font-semibold text-white tracking-tight mt-10 mb-6">
                     {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides for Other Vehicles
                 </h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1095,7 +1107,7 @@ export default async function Page({ params }: PageProps) {
                             <Link
                                 key={`${v.mk}-${v.mo}`}
                                 href={buildRepairPath(v.y, v.mk, v.mo, canonicalTask)}
-                                className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-all group"
                             >
                                 <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
                                 <span className="text-gray-300 text-sm group-hover:text-white transition-colors">

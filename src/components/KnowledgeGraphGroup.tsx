@@ -38,39 +38,39 @@ const THEME_CLASSES: Record<KnowledgeGraphTheme, {
   card: string;
 }> = {
   cyan: {
-    container: 'border-cyan-500/20 bg-cyan-500/5',
+    container: 'border-cyan-500/20 bg-cyan-500/[0.04]',
     title: 'text-cyan-300',
     link: 'text-cyan-400',
     badge: 'text-cyan-300',
-    card: 'border-cyan-500/20 hover:border-cyan-400/40',
+    card: 'border-cyan-500/20 hover:border-cyan-400/35',
   },
   emerald: {
-    container: 'border-emerald-500/20 bg-emerald-500/5',
+    container: 'border-emerald-500/20 bg-emerald-500/[0.04]',
     title: 'text-emerald-300',
     link: 'text-emerald-400',
     badge: 'text-emerald-300',
-    card: 'border-emerald-500/20 hover:border-emerald-400/40',
+    card: 'border-emerald-500/20 hover:border-emerald-400/35',
   },
   amber: {
-    container: 'border-amber-500/20 bg-amber-500/5',
+    container: 'border-amber-500/20 bg-amber-500/[0.04]',
     title: 'text-amber-300',
     link: 'text-amber-400',
     badge: 'text-amber-300',
-    card: 'border-amber-500/20 hover:border-amber-400/40',
+    card: 'border-amber-500/20 hover:border-amber-400/35',
   },
   violet: {
-    container: 'border-violet-500/20 bg-violet-500/5',
+    container: 'border-violet-500/20 bg-violet-500/[0.04]',
     title: 'text-violet-300',
     link: 'text-violet-400',
     badge: 'text-violet-300',
-    card: 'border-violet-500/20 hover:border-violet-400/40',
+    card: 'border-violet-500/20 hover:border-violet-400/35',
   },
   slate: {
-    container: 'border-slate-500/20 bg-slate-500/10',
+    container: 'border-slate-500/20 bg-slate-500/[0.08]',
     title: 'text-slate-200',
     link: 'text-slate-300',
     badge: 'text-slate-300',
-    card: 'border-slate-500/20 hover:border-slate-400/40',
+    card: 'border-slate-500/20 hover:border-slate-400/35',
   },
 };
 
@@ -112,13 +112,13 @@ export default function KnowledgeGraphGroup({
   }, [surface, groupKind, title, nodes.length, context?.vehicle, context?.task, context?.code, context?.system]);
 
   return (
-    <div className={`rounded-2xl border p-5 ${classes.container}`}>
+    <div className={`rounded-2xl border p-5 md:p-6 ${classes.container}`}>
       <div className="flex items-center justify-between gap-3 mb-4">
-        <h3 className={`text-base font-bold ${classes.title}`}>{title}</h3>
+        <h3 className={`text-base font-semibold tracking-tight ${classes.title}`}>{title}</h3>
         {browseHref && (
           <Link
             href={browseHref}
-            className={`text-xs hover:underline ${classes.link}`}
+            className={`text-sm hover:underline ${classes.link}`}
             onMouseDown={() => trackActivationOnce(`browse:${groupKind}:${browseHref}`, {
               surface,
               sourceKind: groupKind,
@@ -159,7 +159,7 @@ export default function KnowledgeGraphGroup({
           <Link
             key={`${groupKind}-${node.targetKind}-${node.href}-${node.label}`}
             href={node.href}
-            className={`block rounded-xl border bg-black/20 p-4 hover:bg-black/30 transition-all ${classes.card}`}
+            className={`block rounded-xl border bg-black/15 p-4 hover:bg-black/25 transition-all ${classes.card}`}
             onMouseDown={() => trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
               surface,
               sourceKind: groupKind,
@@ -189,12 +189,12 @@ export default function KnowledgeGraphGroup({
             }}
           >
             <div className="flex items-center justify-between gap-3">
-              <span className="font-semibold text-white">{node.label}</span>
-              <span className={`text-[11px] font-bold uppercase tracking-wider ${classes.badge}`}>
+              <span className="font-medium leading-6 text-white">{node.label}</span>
+              <span className={`text-[11px] font-medium tracking-wide ${classes.badge}`}>
                 {node.badge}
               </span>
             </div>
-            <p className="text-sm text-gray-300 mt-2">{node.description}</p>
+            <p className="mt-2 text-sm leading-6 text-gray-300">{node.description}</p>
           </Link>
         ))}
       </div>
