@@ -159,7 +159,7 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
             {/* Database Stats */}
             <div className="mt-6 pt-4 border-t border-white/10 text-xs text-gray-500">
                 <p>
-                    Powered by charm.li database: {Object.keys(CHARM_LI_DATABASE).length} makes, {' '}
+                    Manual coverage database: {Object.keys(CHARM_LI_DATABASE).length} makes, {' '}
                     {Object.values(CHARM_LI_DATABASE).reduce((acc, models) => acc + Object.keys(models).length, 0)} models
                 </p>
             </div>

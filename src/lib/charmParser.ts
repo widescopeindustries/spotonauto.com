@@ -8,7 +8,7 @@ const CHARM_IMAGE_BASE = CHARM_BASE;
 const FETCH_OPTS: RequestInit = {
   headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' },
   signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout
-    ? AbortSignal.timeout(8000)
+    ? AbortSignal.timeout(15000)
     : undefined,
 };
 
@@ -38,6 +38,16 @@ export interface CharmPage {
   status: number;
 }
 
+function sanitizeCharmBrandingText(text: string): string {
+  return text
+    .replace(/Operation\s+CHARM/gi, '')
+    .replace(/charm\.li/gi, '')
+    .replace(/\(\s*\)/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/^[\s:,-]+|[\s:,-]+$/g, '')
+    .trim();
+}
+
 // ─── Fetch ─────────────────────────────────────────────────────────────────────
 
 /**
@@ -50,21 +60,30 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
   const encodedPath = pathSegments.map(s => encodeURIComponent(s)).join('/');
   // Ensure trailing slash — the LMDB proxy requires it for directory listings
   const url = `${CHARM_BASE}/${encodedPath}${encodedPath ? '/' : ''}`;
+  try {
+    const res = await fetch(url, { ...FETCH_OPTS, next: { revalidate: 86400 } });
 
-  const res = await fetch(url, { ...FETCH_OPTS, next: { revalidate: 86400 } });
+    if (!res.ok) {
+      return {
+        title: 'Page Not Found',
+        isNavigation: false,
+        links: [],
+        contentHtml: '',
+        status: res.status,
+      };
+    }
 
-  if (!res.ok) {
+    const html = await res.text();
+    return parseCharmHtml(html, pathSegments);
+  } catch {
     return {
-      title: 'Page Not Found',
+      title: 'Manual Temporarily Unavailable',
       isNavigation: false,
       links: [],
       contentHtml: '',
-      status: res.status,
+      status: 504,
     };
   }
-
-  const html = await res.text();
-  return parseCharmHtml(html, pathSegments);
 }
 
 // ─── Parser ────────────────────────────────────────────────────────────────────
@@ -72,7 +91,7 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
 function parseCharmHtml(html: string, pathSegments: string[]): CharmPage {
   // Extract <h1> title
   const titleMatch = html.match(/<h1>([\s\S]*?)<\/h1>/i);
-  const rawTitle = titleMatch ? stripTags(titleMatch[1]).trim() : 'Service Manual';
+  const rawTitle = titleMatch ? sanitizeCharmBrandingText(stripTags(titleMatch[1]).trim()) : 'Service Manual';
 
   // Extract main div content
   const mainMatch = html.match(/<div\s+class=['"]main['"]\s*>([\s\S]*?)<\/div>\s*\n?\s*<div\s+class/i);
@@ -225,7 +244,7 @@ function parseListItem(itemHtml: string, parentSegments: string[]): CharmLink | 
     const href = normalizeCharmHref(rawHref, parentSegments);
 
     const result: CharmLink = {
-      label: decodeHtmlEntities(label.trim()),
+      label: sanitizeCharmBrandingText(decodeHtmlEntities(label.trim())),
       href,
       isFolder: false,
     };
@@ -250,7 +269,7 @@ function parseListItem(itemHtml: string, parentSegments: string[]): CharmLink | 
     const [, , label] = folderMatch;
 
     const result: CharmLink = {
-      label: decodeHtmlEntities(label.trim()),
+      label: sanitizeCharmBrandingText(decodeHtmlEntities(label.trim())),
       href: '',
       isFolder: true,
     };
@@ -277,7 +296,7 @@ function parseListItem(itemHtml: string, parentSegments: string[]): CharmLink | 
     if (!label) return null;
 
     const result: CharmLink = {
-      label: decodeHtmlEntities(label),
+      label: sanitizeCharmBrandingText(decodeHtmlEntities(label)),
       href: '',
       isFolder: true,
     };
@@ -336,8 +355,8 @@ function sanitizeContentHtml(html: string, pathSegments: string[]): string {
   sanitized = sanitized.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
 
   // Strip Operation CHARM branding text
-  sanitized = sanitized.replace(/Operation\s+CHARM/gi, 'SpotOnAuto');
-  sanitized = sanitized.replace(/charm\.li/gi, 'spotonauto.com');
+  sanitized = sanitized.replace(/Operation\s+CHARM/gi, '');
+  sanitized = sanitized.replace(/charm\.li/gi, '');
 
   // Rewrite image src to use absolute URLs from the data server
   sanitized = sanitized.replace(
@@ -394,7 +413,7 @@ export function buildBreadcrumbs(pathSegments: string[]): Breadcrumb[] {
   ];
 
   for (let i = 0; i < pathSegments.length; i++) {
-    const segment = decodeURIComponent(pathSegments[i]);
+    const segment = sanitizeCharmBrandingText(decodeURIComponent(pathSegments[i]));
     const href = '/manual/' + pathSegments.slice(0, i + 1).map(s => encodeURIComponent(s)).join('/');
     crumbs.push({ label: segment, href });
   }
@@ -409,7 +428,7 @@ export function buildManualTitle(pathSegments: string[]): string {
     return 'Factory Service Manuals | 1982-2013 | SpotOnAuto';
   }
 
-  const decoded = pathSegments.map(s => decodeURIComponent(s));
+  const decoded = pathSegments.map(s => sanitizeCharmBrandingText(decodeURIComponent(s)));
   const last = decoded[decoded.length - 1];
 
   if (pathSegments.length === 1) {
@@ -430,7 +449,7 @@ export function buildManualDescription(pathSegments: string[]): string {
     return 'Browse free factory service manuals for 82 makes of cars and trucks (1982-2013). Includes repair procedures, torque specs, wiring diagrams, and TSBs.';
   }
 
-  const decoded = pathSegments.map(s => decodeURIComponent(s));
+  const decoded = pathSegments.map(s => sanitizeCharmBrandingText(decodeURIComponent(s)));
 
   if (pathSegments.length === 1) {
     return `Free ${decoded[0]} factory service manuals. Browse repair procedures, wiring diagrams, torque specs, and diagnostic information for all ${decoded[0]} models (1982-2013).`;
