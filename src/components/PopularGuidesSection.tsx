@@ -240,6 +240,14 @@ export default function PopularGuidesSection() {
                         <Link href="/guides" className="text-cyan-500 hover:text-cyan-400 ml-1 transition-colors">
                             Browse all repairs →
                         </Link>
+                        {' · '}
+                        <Link href="/diagnose" className="text-cyan-500 hover:text-cyan-400 transition-colors">
+                            Diagnose a symptom →
+                        </Link>
+                        {' · '}
+                        <Link href="/parts" className="text-cyan-500 hover:text-cyan-400 transition-colors">
+                            Compare parts →
+                        </Link>
                     </p>
                 </div>
             </div>

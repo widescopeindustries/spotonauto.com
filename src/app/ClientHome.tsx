@@ -2,8 +2,10 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
 import PopularGuidesSection from '@/components/PopularGuidesSection';
+import HomeRepairClusters from '@/components/HomeRepairClusters';
 import AdUnit from '@/components/AdUnit';
 import DeferredRender from '@/components/DeferredRender';
 import { useT } from '@/lib/translations';
@@ -81,6 +83,38 @@ const HeroSection = () => {
                             <span className="font-body text-sm text-cyan-400">
                                 {t('hero.aiPowered')} &middot; <span className="font-bold text-white">{t('hero.factoryData')}</span> &middot; {t('hero.free')}
                             </span>
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="text-xs uppercase tracking-[0.28em] text-gray-500 font-body">
+                                Popular fixes right now
+                            </div>
+                            <div className="flex flex-wrap gap-3">
+                                <Link
+                                    href="/repair/2013/bmw/x3/battery-replacement"
+                                    className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-200 hover:border-cyan-400 hover:bg-cyan-500/15 transition-all"
+                                >
+                                    BMW X3 battery replacement
+                                </Link>
+                                <Link
+                                    href="/repair/2009/bmw/x5/serpentine-belt-replacement"
+                                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-gray-200 hover:border-cyan-500/30 hover:text-cyan-100 transition-all"
+                                >
+                                    BMW X5 serpentine belt diagram
+                                </Link>
+                                <Link
+                                    href="/repair/2013/honda/odyssey/alternator-replacement"
+                                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-gray-200 hover:border-cyan-500/30 hover:text-cyan-100 transition-all"
+                                >
+                                    Honda Odyssey alternator replacement
+                                </Link>
+                                <Link
+                                    href="/diagnose"
+                                    className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-200 hover:border-emerald-400 hover:bg-emerald-500/15 transition-all"
+                                >
+                                    Diagnose by symptom
+                                </Link>
+                            </div>
                         </div>
                     </div>
 
@@ -200,6 +234,7 @@ export default function ClientHome() {
             <main className="relative z-10">
                 <HeroSection />
                 <FreeForTheWorldBanner />
+                <HomeRepairClusters />
                 <DeferredRender placeholderClassName="min-h-[380px]">
                     <PopularGuidesSection />
                 </DeferredRender>

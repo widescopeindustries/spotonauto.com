@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, ArrowRight, Shield, Clock, CheckCircle2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useT } from '@/lib/translations';
 
 const CTASection = () => {
   const [isHovered, setIsHovered] = useState(false);
-  const router = useRouter();
   const t = useT();
 
   return (
@@ -57,30 +56,50 @@ const CTASection = () => {
                 )}
               </AnimatePresence>
 
-              <motion.button
-                onClick={() => router.push('/diagnose')}
-                className="relative btn-cyber-primary text-lg px-10 py-5 flex items-center gap-3 glow-button"
+              <motion.div
+                className="relative"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Zap className="w-6 h-6" />
-                <span className="font-display font-bold tracking-wider">
-                  {isHovered ? t('cta.go') : t('cta.startDiagnosis')}
-                </span>
-                <ArrowRight className="w-6 h-6" />
-              </motion.button>
+                <Link
+                  href="/diagnose"
+                  className="relative btn-cyber-primary text-lg px-10 py-5 flex items-center gap-3 glow-button"
+                >
+                  <Zap className="w-6 h-6" />
+                  <span className="font-display font-bold tracking-wider">
+                    {isHovered ? t('cta.go') : t('cta.startDiagnosis')}
+                  </span>
+                  <ArrowRight className="w-6 h-6" />
+                </Link>
+              </motion.div>
             </motion.div>
 
             {/* Secondary — Guides */}
-            <motion.button
-              onClick={() => router.push('/guides')}
-              className="flex items-center gap-2 px-8 py-5 rounded-xl border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all font-bold text-base"
+            <motion.div
+              className="flex"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
-              <CheckCircle2 className="w-5 h-5" />
-              {t('cta.browseGuides')}
-            </motion.button>
+              <Link
+                href="/guides"
+                className="flex items-center gap-2 px-8 py-5 rounded-xl border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all font-bold text-base"
+              >
+                <CheckCircle2 className="w-5 h-5" />
+                {t('cta.browseGuides')}
+              </Link>
+            </motion.div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-10 text-sm text-gray-400">
+            <Link href="/parts" className="hover:text-cyan-300 transition-colors">
+              Compare common repair parts
+            </Link>
+            <Link href="/repair/2013/bmw/x3/battery-replacement" className="hover:text-cyan-300 transition-colors">
+              BMW X3 battery guide
+            </Link>
+            <Link href="/repair/2013/bmw/x3/brake-pad-replacement" className="hover:text-cyan-300 transition-colors">
+              BMW X3 brake pad guide
+            </Link>
           </div>
 
           {/* Trust Indicators */}
