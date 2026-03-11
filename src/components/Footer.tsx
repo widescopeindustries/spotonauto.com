@@ -13,8 +13,8 @@ const Footer = () => {
                     <div className="md:col-span-1">
                         <div className="flex items-center gap-2 mb-4">
                             <Cpu className="w-6 h-6 text-cyan-400" />
-                            <span className="font-display font-bold text-lg tracking-wider text-white">
-                                SPOTON<span className="text-cyan-400">AUTO</span>
+                            <span className="font-display font-bold text-lg tracking-wide text-white">
+                                SpotOn<span className="text-cyan-400">Auto</span>
                             </span>
                         </div>
                         <p className="font-body text-sm text-gray-500 leading-relaxed mb-4">
@@ -27,7 +27,7 @@ const Footer = () => {
 
                     {/* Tools */}
                     <div>
-                        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Tools</h3>
+                        <h3 className="font-display font-bold text-sm text-white tracking-wide mb-4">Tools</h3>
                         <ul className="space-y-3">
                             {[
                                 { href: '/diagnose', label: 'AI Diagnostic Chat', icon: Zap, accent: true },
@@ -56,7 +56,7 @@ const Footer = () => {
 
                     {/* Popular Repairs */}
                     <div>
-                        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Popular Repairs</h3>
+                        <h3 className="font-display font-bold text-sm text-white tracking-wide mb-4">Popular Repairs</h3>
                         <ul className="space-y-3">
                             {[
                                 { href: '/repairs/oil-change', label: 'Oil Change Guides' },
@@ -81,7 +81,7 @@ const Footer = () => {
 
                     {/* Company */}
                     <div>
-                        <h3 className="font-display font-bold text-sm text-white uppercase tracking-widest mb-4">Company</h3>
+                        <h3 className="font-display font-bold text-sm text-white tracking-wide mb-4">Company</h3>
                         <ul className="space-y-3">
                             {[
                                 { href: '/about', label: 'About Us' },
@@ -137,10 +137,10 @@ const Footer = () => {
                         © {year} SpotOn Auto. All rights reserved. AI-generated content is for informational purposes only.
                     </p>
                     <div className="flex items-center gap-4">
-                        <span className="text-xs text-gray-700 font-mono">Powered by Gemini 2.0</span>
+                        <span className="text-xs text-gray-700">Powered by Gemini 2.0</span>
                         <div className="flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-xs text-gray-600 font-mono">All Systems Operational</span>
+                            <span className="text-xs text-gray-600">All systems operational</span>
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const GuideContent = dynamic(() => import('./GuideContent'), {
   ssr: false,
@@ -23,49 +23,43 @@ interface DeferredGuideContentProps {
 
 export default function DeferredGuideContent({ params }: DeferredGuideContentProps) {
   const [shouldLoad, setShouldLoad] = useState(false);
-  const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const node = hostRef.current;
-    if (!node) return;
-
-    if (typeof IntersectionObserver === 'undefined') {
-      setShouldLoad(true);
+    if (typeof window === 'undefined') {
       return;
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '600px 0px' }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
+    if (new URLSearchParams(window.location.search).get('fullGuide') === '1') {
+      setShouldLoad(true);
+    }
   }, []);
 
   return (
-    <div ref={hostRef}>
+    <div id="full-ai-guide">
       {shouldLoad ? (
         <GuideContent params={params} />
       ) : (
         <section className="max-w-5xl mx-auto px-4 py-8 border-t border-white/10">
-          <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-5">
-            <h2 className="text-lg font-bold text-cyan-300">Loading Full AI Guide On Scroll</h2>
-            <p className="text-sm text-gray-300 mt-2">
-              Scroll down to load the interactive step-by-step guide and vehicle health snapshot.
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-7">
+            <h2 className="text-xl font-semibold tracking-tight text-white">Open the full AI repair guide</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-300">
+              Load the interactive guide only when you want it. This keeps the main repair page lighter on mobile while still giving you generated instructions, extra specs, and the vehicle health snapshot.
             </p>
-            <button
-              type="button"
-              onClick={() => setShouldLoad(true)}
-              className="mt-4 inline-flex items-center px-4 py-2 rounded-lg bg-cyan-500 text-black text-sm font-semibold hover:bg-cyan-400 transition-colors"
-            >
-              Load Now
-            </button>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => setShouldLoad(true)}
+                className="inline-flex items-center rounded-full bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-cyan-400"
+              >
+                Load full AI guide
+              </button>
+              <a
+                href="?fullGuide=1#full-ai-guide"
+                className="inline-flex items-center rounded-full border border-white/12 px-5 py-2.5 text-sm font-medium text-gray-200 transition-colors hover:border-cyan-400/40 hover:text-white"
+              >
+                Open via direct link
+              </a>
+            </div>
           </div>
         </section>
       )}

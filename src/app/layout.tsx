@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Orbitron, Rajdhani, Inter, Share_Tech_Mono } from "next/font/google";
+import { Rajdhani, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,28 +8,28 @@ import AnalyticsScripts from "@/components/AnalyticsScripts";
 // SpotOnGuide moved into Providers (client component) for lazy loading
 
 // Self-hosted fonts — eliminates external Google Fonts network request (LCP fix)
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "optional",
-  adjustFontFallback: true, // Auto-generates size-adjust/ascent-override to prevent font-swap LCP re-evaluation
-});
 const rajdhani = Rajdhani({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
+  display: "swap",
+  adjustFontFallback: true,
+});
+const interBody = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-body",
   display: "optional",
   adjustFontFallback: true,
 });
-const inter = Inter({
+const interUi = Inter({
   subsets: ["latin"],
   variable: "--font-ui",
   display: "swap",
   adjustFontFallback: true,
 });
-const shareTechMono = Share_Tech_Mono({
+const interMono = Inter({
   subsets: ["latin"],
-  weight: "400",
   variable: "--font-mono",
   display: "swap",
   adjustFontFallback: true,
@@ -74,7 +74,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${orbitron.variable} ${rajdhani.variable} ${inter.variable} ${shareTechMono.variable}`}>
+    <html lang="en" className={`${rajdhani.variable} ${interBody.variable} ${interUi.variable} ${interMono.variable}`}>
       <body className="bg-[#050505] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-cyan-400 selection:text-black">
         <AnalyticsScripts />
 

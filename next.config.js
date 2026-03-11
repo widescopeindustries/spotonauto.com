@@ -72,6 +72,12 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.spotonauto.com' }],
+        destination: 'https://spotonauto.com/:path*',
+        permanent: true,
+      },
       { source: '/tools/ford-f150-oil-type', destination: '/tools/ford-f-150-oil-type', permanent: true },
       { source: '/tools/ford-f150-battery-location', destination: '/tools/ford-f-150-battery-location', permanent: true },
       { source: '/tools/ford-f150-tire-size', destination: '/tools/ford-f-150-tire-size', permanent: true },

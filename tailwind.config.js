@@ -84,7 +84,7 @@ export default {
         display: ["var(--font-display)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
         ui: ["var(--font-ui)", "sans-serif"],
-        sans: ["var(--font-display)", "sans-serif"],
+        sans: ["var(--font-ui)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
       borderRadius: {

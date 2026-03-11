@@ -66,14 +66,14 @@ export default function CodesPage() {
             {/* Hero */}
             <section className="py-16 px-4 max-w-6xl mx-auto">
                 <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/5 mb-6 text-sm font-semibold uppercase tracking-wider text-cyan-400">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-2 mb-6 text-sm font-medium tracking-wide text-cyan-300">
                         <span>🔍</span>
                         <span>DTC Code Lookup</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                    <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
                         OBD2 Trouble Code <span className="text-cyan-400">Lookup</span>
                     </h1>
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+                    <p className="mx-auto max-w-2xl text-lg leading-8 text-gray-400">
                         300+ diagnostic trouble codes explained in plain English. Find what your check engine light means, what it costs, and how to fix it.
                     </p>
                 </div>

@@ -40,7 +40,7 @@ export default function CodesIndex({ systems }: { systems: string[] }) {
                     value={search}
                     onChange={e => setSearch(e.target.value.toUpperCase())}
                     placeholder="Search codes (e.g. P0420, misfire, catalytic)"
-                    className="w-full bg-white/5 border border-cyan-500/30 rounded-xl px-5 py-4 text-sm text-white font-mono placeholder:text-gray-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 uppercase tracking-wider"
+                    className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-cyan-400/40 focus:ring-1 focus:ring-cyan-400/40"
                 />
             </div>
 
@@ -48,7 +48,7 @@ export default function CodesIndex({ systems }: { systems: string[] }) {
             <div className="flex flex-wrap justify-center gap-2 mb-10">
                 <button
                     onClick={() => setActiveSystem(null)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border transition ${
+                    className={`rounded-full border px-4 py-2 text-xs font-medium tracking-wide transition ${
                         !activeSystem
                             ? 'bg-cyan-500 text-black border-cyan-500'
                             : 'bg-white/5 text-gray-400 border-white/10 hover:border-cyan-500/30'
@@ -62,7 +62,7 @@ export default function CodesIndex({ systems }: { systems: string[] }) {
                         <button
                             key={sys}
                             onClick={() => setActiveSystem(activeSystem === sys ? null : sys)}
-                            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border transition ${
+                            className={`rounded-full border px-4 py-2 text-xs font-medium tracking-wide transition ${
                                 activeSystem === sys
                                     ? 'bg-cyan-500 text-black border-cyan-500'
                                     : 'bg-white/5 text-gray-400 border-white/10 hover:border-cyan-500/30'
@@ -88,8 +88,8 @@ export default function CodesIndex({ systems }: { systems: string[] }) {
                         className="group flex flex-col p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 transition"
                     >
                         <div className="flex items-center justify-between mb-2">
-                            <span className="font-mono text-cyan-400 font-bold text-sm">{code.code}</span>
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${SEVERITY_COLORS[code.severity]}`}>
+                            <span className="font-ui text-cyan-300 font-semibold text-sm">{code.code}</span>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border ${SEVERITY_COLORS[code.severity]}`}>
                                 {code.severity}
                             </span>
                         </div>
