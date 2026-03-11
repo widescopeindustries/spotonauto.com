@@ -25,6 +25,10 @@ function clip(value: string, maxLength = 140): string {
 }
 
 async function safeFindRows<T>(label: string, lookup: () => Promise<T[]>): Promise<T[]> {
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return [];
+  }
+
   try {
     return await lookup();
   } catch (error) {
