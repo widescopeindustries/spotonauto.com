@@ -766,6 +766,16 @@ export default async function Page({ params }: PageProps) {
         "@type": "HowTo",
         "name": `How to Do a ${repairData.difficulty} ${cleanTask.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} on a ${vehicleName}`,
         "description": `DIY ${cleanTask} for the ${vehicleName}. Takes ${repairData.time}. Difficulty: ${repairData.difficulty}. Save $100–$400 vs. a shop with this step-by-step guide.`,
+        "author": {
+            "@type": "Organization",
+            "name": "SpotOnAuto"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "SpotOnAuto",
+            "url": "https://spotonauto.com"
+        },
+        "inLanguage": "en",
         "totalTime": toIso8601Duration(repairData.time),
         "estimatedCost": {
             "@type": "MonetaryAmount",
@@ -852,6 +862,27 @@ export default async function Page({ params }: PageProps) {
                         Complete DIY repair guide with step-by-step instructions. Find exact parts on Amazon for your vehicle.
                     </p>
                 </header>
+
+                <section className="mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-7">
+                    <h2 className="text-xl font-semibold text-white tracking-tight">Why this guide is trustworthy</h2>
+                    <p className="mt-2 text-sm leading-7 text-emerald-50/90">
+                        This page is generated from a structured repair template, then constrained with vehicle-specific validation so impossible year/make/model combinations are rejected before content is produced.
+                    </p>
+                    <div className="mt-4 grid gap-3 md:grid-cols-3">
+                        <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Vehicle validation</p>
+                            <p className="mt-2 text-sm leading-6 text-gray-200">Invalid vehicle combinations are blocked, then redirected or 404’d instead of being hallucinated.</p>
+                        </div>
+                        <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Structured data</p>
+                            <p className="mt-2 text-sm leading-6 text-gray-200">HowTo, FAQ, and breadcrumb schema are embedded to keep guidance machine-readable and consistent.</p>
+                        </div>
+                        <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Factory references</p>
+                            <p className="mt-2 text-sm leading-6 text-gray-200">Use the linked manual and spec pages below to verify torque specs, fitment, and service steps before teardown.</p>
+                        </div>
+                    </div>
+                </section>
 
                 <section className="mb-8 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
                     <div className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.07] p-6 md:p-7">
