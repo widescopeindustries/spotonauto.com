@@ -24,8 +24,17 @@ function clip(value: string, maxLength = 140): string {
   return `${normalized.slice(0, maxLength - 1).trim()}...`;
 }
 
+async function safeFindRows<T>(label: string, lookup: () => Promise<T[]>): Promise<T[]> {
+  try {
+    return await lookup();
+  } catch (error) {
+    console.warn(`[manualSectionLinks] ${label} lookup unavailable`, error);
+    return [];
+  }
+}
+
 export async function getManualSectionLinksForCode(code: DTCCode, limit = 4): Promise<DiagnosticCrossLink[]> {
-  const rows = await findDiagnosticTroubleCodeSections(code.code, limit);
+  const rows = await safeFindRows(`code:${code.code}`, () => findDiagnosticTroubleCodeSections(code.code, limit));
 
   return rows.map((row) => ({
     href: buildManualUrl(row.path),
@@ -41,13 +50,17 @@ export async function getManualSectionLinksForWiringVehicle(
   limit = 4,
 ): Promise<DiagnosticCrossLink[]> {
   const systemMeta = WIRING_SEO_SYSTEMS[system];
-  const rows = await findManualSectionsByTerms({
-    make: vehicle.make,
-    year: vehicle.year,
-    model: vehicle.model,
-    terms: systemMeta.matchTerms,
-    limit,
-  });
+  const rows = await safeFindRows(
+    `wiring:${vehicle.year}-${vehicle.make}-${vehicle.model}-${system}`,
+    () =>
+      findManualSectionsByTerms({
+        make: vehicle.make,
+        year: vehicle.year,
+        model: vehicle.model,
+        terms: systemMeta.matchTerms,
+        limit,
+      }),
+  );
 
   return rows.map((row) => ({
     href: buildManualUrl(row.path),
@@ -68,13 +81,17 @@ export async function getManualSectionLinksForRepair(args: {
 }): Promise<DiagnosticCrossLink[]> {
   const profile = getRepairTaskProfile(args.task);
   const taskLabel = args.task.replace(/-/g, ' ');
-  const rows = await findManualSectionsByTerms({
-    make: args.displayMake,
-    year: args.year,
-    model: args.displayModel,
-    terms: [...profile.keywords, taskLabel],
-    limit: args.limit || 4,
-  });
+  const rows = await safeFindRows(
+    `repair:${args.year}-${args.displayMake}-${args.displayModel}-${args.task}`,
+    () =>
+      findManualSectionsByTerms({
+        make: args.displayMake,
+        year: args.year,
+        model: args.displayModel,
+        terms: [...profile.keywords, taskLabel],
+        limit: args.limit || 4,
+      }),
+  );
 
   return rows.map((row) => ({
     href: buildManualUrl(row.path),
