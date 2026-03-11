@@ -104,6 +104,15 @@ const ACTIONS = [
   },
 ];
 
+const TASK_HUB_LINKS = [
+  { href: '/repairs/battery-replacement', label: 'Battery replacement guides by vehicle' },
+  { href: '/repairs/alternator-replacement', label: 'Alternator replacement guides by vehicle' },
+  { href: '/repairs/starter-replacement', label: 'Starter replacement guides by vehicle' },
+  { href: '/repairs/brake-pad-replacement', label: 'Brake pad replacement guides by vehicle' },
+  { href: '/repairs/serpentine-belt-replacement', label: 'Serpentine belt replacement guides by vehicle' },
+  { href: '/repairs/thermostat-replacement', label: 'Thermostat replacement guides by vehicle' },
+];
+
 const symptomIconMap: Record<string, ComponentType<{ className?: string }>> = {
   'Battery light': Zap,
   'Brake squeal': Flame,
@@ -238,6 +247,27 @@ export default function HomeRepairClusters() {
                   </Link>
                 );
               })}
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/25 p-5">
+              <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-cyan-300 mb-3">
+                Repair category hubs
+              </h4>
+              <p className="text-sm text-gray-400 leading-6 mb-4">
+                These hub pages consolidate links to the strongest battery, alternator, starter, brake, belt, and thermostat guides across makes and models.
+              </p>
+              <div className="space-y-2">
+                {TASK_HUB_LINKS.map((hub) => (
+                  <Link
+                    key={hub.href}
+                    href={hub.href}
+                    className="group flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-gray-200 hover:border-cyan-500/35 hover:text-cyan-100 transition-all"
+                  >
+                    <span>{hub.label}</span>
+                    <ArrowRight className="w-4 h-4 text-cyan-400 shrink-0 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                ))}
+              </div>
             </div>
           </aside>
         </div>
