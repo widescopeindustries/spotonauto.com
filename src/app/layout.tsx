@@ -1,39 +1,10 @@
 import type { Metadata } from "next";
-import { Rajdhani, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import AnalyticsScripts from "@/components/AnalyticsScripts";
 // SpotOnGuide moved into Providers (client component) for lazy loading
-
-// Self-hosted fonts — eliminates external Google Fonts network request (LCP fix)
-const rajdhani = Rajdhani({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-  adjustFontFallback: true,
-});
-const interBody = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-body",
-  display: "optional",
-  adjustFontFallback: true,
-});
-const interUi = Inter({
-  subsets: ["latin"],
-  variable: "--font-ui",
-  display: "swap",
-  adjustFontFallback: true,
-});
-const interMono = Inter({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  display: "swap",
-  adjustFontFallback: true,
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://spotonauto.com'),
@@ -74,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${rajdhani.variable} ${interBody.variable} ${interUi.variable} ${interMono.variable}`}>
+    <html lang="en">
       <body className="bg-[#050505] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-cyan-400 selection:text-black">
         <AnalyticsScripts />
 

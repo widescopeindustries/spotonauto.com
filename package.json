@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npx tsx scripts/generate-repair-sitemaps.mjs",
-    "build": "next build",
+    "prebuild": "node --experimental-strip-types scripts/generate-repair-sitemaps.mjs",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
     "analytics:recovery": "node scripts/recovery-scoreboard.js",

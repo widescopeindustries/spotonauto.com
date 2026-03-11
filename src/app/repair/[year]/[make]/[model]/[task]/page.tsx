@@ -344,6 +344,187 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
     },
 };
 
+interface CommercialTaskConfig {
+    primaryActionLabel: string;
+    primaryActionHint: string;
+    guideActionLabel: string;
+    guideActionHint: string;
+    partsTitle: string;
+    partsIntro: string;
+    spotlightTitle: string;
+    spotlightIntro: string;
+    bundleActionLabel: string;
+    fitmentChecks: string[];
+}
+
+const DEFAULT_COMMERCIAL_TASK_CONFIG: CommercialTaskConfig = {
+    primaryActionLabel: 'Check exact-fit parts',
+    primaryActionHint: 'Open the highest-intent parts search first, then come back here for warnings, tools, and the short procedure.',
+    guideActionLabel: 'Open full repair guide',
+    guideActionHint: 'Load the interactive guide only when you want the expanded walkthrough, extra specs, and the vehicle health snapshot.',
+    partsTitle: 'Exact-fit parts to confirm',
+    partsIntro: 'These links are tuned for this repair. Confirm engine, trim, and production split before you place the order.',
+    spotlightTitle: 'Fastest parts to verify before checkout',
+    spotlightIntro: 'Use these quick searches when you want the main replacement item first and the support pieces second.',
+    bundleActionLabel: 'Search full repair parts',
+    fitmentChecks: [
+        'Amazon results open in a new tab so you can keep this repair flow visible.',
+        'Confirm engine, trim, and production split before checkout.',
+        'Use the warnings and torque notes below as your final pre-order check.',
+    ],
+};
+
+const COMMERCIAL_TASK_CONFIG: Partial<Record<string, CommercialTaskConfig>> = {
+    'battery-replacement': {
+        primaryActionLabel: 'Check battery fitment now',
+        primaryActionHint: 'Start with group size, CCA, and terminal layout so you do not buy the wrong battery first.',
+        guideActionLabel: 'Open battery guide with reset notes',
+        guideActionHint: 'Use the full guide if you want the terminal order, hold-down access, and any registration or module reset notes.',
+        partsTitle: 'Battery options and install supplies',
+        partsIntro: 'Battery jobs fail fast when group size, terminal orientation, or hold-down shape is wrong. Check those before you order.',
+        spotlightTitle: 'Most important battery searches first',
+        spotlightIntro: 'Lead with the battery itself, then add terminal care items only if you still need them.',
+        bundleActionLabel: 'Search battery replacement kit',
+        fitmentChecks: [
+            'Verify group size, CCA, and terminal orientation.',
+            'Check whether your vehicle needs battery registration or a memory saver.',
+            'Keep the install order handy: negative off first, positive back on first.',
+        ],
+    },
+    'alternator-replacement': {
+        primaryActionLabel: 'Compare exact alternator options',
+        primaryActionHint: 'Alternator jobs are high-intent because amperage, pulley style, and connector shape all need to match before you wrench.',
+        guideActionLabel: 'Open alternator guide with charge checks',
+        guideActionHint: 'Use the full guide when you want charging-system context, routing notes, and post-install test reminders.',
+        partsTitle: 'Alternator fitment and supporting parts',
+        partsIntro: 'Confirm amperage, connector style, and pulley details before ordering. Belt condition matters on this job too.',
+        spotlightTitle: 'Fitment-critical alternator searches',
+        spotlightIntro: 'Start with the charging component that strands the car, then confirm the belt and supporting hardware.',
+        bundleActionLabel: 'Search alternator repair parts',
+        fitmentChecks: [
+            'Match amperage output and electrical connector style.',
+            'Confirm pulley or clutch style before checkout.',
+            'Inspect the serpentine belt and routing before reinstalling.',
+        ],
+    },
+    'starter-replacement': {
+        primaryActionLabel: 'Check starter fitment now',
+        primaryActionHint: 'Starter access is labor-heavy on many vehicles, so verifying engine and transmission fitment first saves the most wasted time.',
+        guideActionLabel: 'Open starter guide with access notes',
+        guideActionHint: 'Use the full guide when you want location details, wiring order, and removal sequence before going under the vehicle.',
+        partsTitle: 'Starter fitment and hardware',
+        partsIntro: 'Starter part numbers often split by engine, transmission, or drive layout. Double-check those before you order.',
+        spotlightTitle: 'Highest-risk starter ordering checks',
+        spotlightIntro: 'Match the starter first, then confirm bolts or electrical supplies if corrosion is likely.',
+        bundleActionLabel: 'Search starter replacement parts',
+        fitmentChecks: [
+            'Match engine and transmission before checkout.',
+            'Confirm mounting ear count and electrical terminal layout.',
+            'Plan access first because this job often starts under the vehicle.',
+        ],
+    },
+    'brake-pad-replacement': {
+        primaryActionLabel: 'Compare brake pad sets',
+        primaryActionHint: 'Brake jobs convert best when the buyer can verify front or rear location, pad shape, and any package code before ordering.',
+        guideActionLabel: 'Open brake guide with bed-in steps',
+        guideActionHint: 'Use the full guide for caliper access notes, piston direction reminders, and the short bed-in sequence after install.',
+        partsTitle: 'Brake pads, hardware, and consumables',
+        partsIntro: 'Pad fitment changes with axle position, package code, and rotor size. Confirm those before you commit.',
+        spotlightTitle: 'Brake items to validate before disassembly',
+        spotlightIntro: 'Lead with the pad set, then add hardware and grease so you do not stop mid-job.',
+        bundleActionLabel: 'Search brake pad replacement parts',
+        fitmentChecks: [
+            'Confirm front vs rear before ordering.',
+            'Check pad shape against rotor size or brake package code.',
+            'Replace or inspect hardware so the new pads slide correctly.',
+        ],
+    },
+    'serpentine-belt-replacement': {
+        primaryActionLabel: 'Check belt fitment and length',
+        primaryActionHint: 'The right belt depends on engine and accessory layout, so length and rib count should be your first filter.',
+        guideActionLabel: 'Open belt guide with routing notes',
+        guideActionHint: 'Use the full guide when you want routing context, tensioner notes, and the shortest install path.',
+        partsTitle: 'Belt fitment and routing support',
+        partsIntro: 'Serpentine belts vary by engine, A/C package, and accessory layout. Confirm rib count and overall length first.',
+        spotlightTitle: 'Belt searches that prevent wrong-order delays',
+        spotlightIntro: 'Start with the belt, then verify tensioner or idler parts if squeal or wobble was part of the original symptom.',
+        bundleActionLabel: 'Search serpentine belt parts',
+        fitmentChecks: [
+            'Verify engine-specific belt length and rib count.',
+            'Check whether the tensioner or idler should be replaced at the same time.',
+            'Keep the routing notes below open while you compare listings.',
+        ],
+    },
+    'thermostat-replacement': {
+        primaryActionLabel: 'Compare thermostat kits',
+        primaryActionHint: 'Thermostat jobs convert when the buyer can confirm housing style, gasket coverage, and coolant needs in one pass.',
+        guideActionLabel: 'Open thermostat guide with bleed notes',
+        guideActionHint: 'Use the full guide if you want the cooling-system sequence, bleed reminders, and access cautions before opening the housing.',
+        partsTitle: 'Thermostat fitment, gasket, and coolant items',
+        partsIntro: 'Thermostat jobs often need the thermostat, seal, and coolant together. Verify housing style and temperature rating before checkout.',
+        spotlightTitle: 'Cooling-system items to lock in first',
+        spotlightIntro: 'Start with the thermostat assembly, then add sealing and refill items so the car does not sit apart waiting on coolant.',
+        bundleActionLabel: 'Search thermostat replacement parts',
+        fitmentChecks: [
+            'Confirm thermostat or housing style for your engine.',
+            'Check whether the gasket or seal is included.',
+            'Plan for the correct coolant and bleed procedure before opening the system.',
+        ],
+    },
+};
+
+const HIGH_TICKET_PART_PATTERN = /alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i;
+
+function getCommercialTaskConfig(task: string): CommercialTaskConfig {
+    return COMMERCIAL_TASK_CONFIG[task] || DEFAULT_COMMERCIAL_TASK_CONFIG;
+}
+
+function getPartActionLabel(task: string, partName: string): string {
+    const lower = partName.toLowerCase();
+
+    if (/(grease|spray|cleaner|coolant|gasket|protector|washer|anti-seize)/.test(lower)) {
+        return 'See supporting supplies';
+    }
+
+    switch (task) {
+        case 'battery-replacement':
+            return /battery/.test(lower) ? 'Check battery fitment' : 'See battery supplies';
+        case 'alternator-replacement':
+            return /alternator/.test(lower) ? 'Check alternator fitment' : 'See belt and support parts';
+        case 'starter-replacement':
+            return /starter/.test(lower) ? 'Check starter fitment' : 'See starter hardware';
+        case 'brake-pad-replacement':
+            return /pad/.test(lower) ? 'Compare pad sets' : 'See brake hardware';
+        case 'serpentine-belt-replacement':
+            return /belt/.test(lower) ? 'Check belt fitment' : 'See tensioner options';
+        case 'thermostat-replacement':
+            return /thermostat/.test(lower) ? 'Compare thermostat kits' : 'See cooling supplies';
+        default:
+            return /battery|alternator|starter|belt|thermostat|filter|rotor|pad|pump|sensor|bulb/.test(lower)
+                ? 'Check fitment on Amazon'
+                : 'See options on Amazon';
+    }
+}
+
+function getSpotlightActionLabel(task: string, partName: string): string {
+    switch (task) {
+        case 'battery-replacement':
+            return /battery/.test(partName.toLowerCase()) ? 'Open battery fitment' : 'Open supply search';
+        case 'alternator-replacement':
+            return /alternator/.test(partName.toLowerCase()) ? 'Open alternator fitment' : 'Open supporting search';
+        case 'starter-replacement':
+            return /starter/.test(partName.toLowerCase()) ? 'Open starter fitment' : 'Open hardware search';
+        case 'brake-pad-replacement':
+            return /pad/.test(partName.toLowerCase()) ? 'Open pad comparison' : 'Open brake supplies';
+        case 'serpentine-belt-replacement':
+            return /belt/.test(partName.toLowerCase()) ? 'Open belt fitment' : 'Open tensioner search';
+        case 'thermostat-replacement':
+            return /thermostat/.test(partName.toLowerCase()) ? 'Open thermostat fitment' : 'Open coolant search';
+        default:
+            return 'Open fitment search';
+    }
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { year, make, model, task } = await params;
     const canonicalMake = slugifyRoutePart(make);
@@ -465,6 +646,11 @@ export default async function Page({ params }: PageProps) {
             detail: part.spec || part.aftermarket || part.oem || `Amazon results for ${vehicleName} ${part.name}`,
             query: [vehicleName, part.aftermarket || part.oem || part.name].filter(Boolean).join(' '),
         }));
+    const commercialConfig = getCommercialTaskConfig(canonicalTask);
+    const primaryAffiliatePart = affiliateSpotlightParts[0];
+    const primaryAffiliateQuery = primaryAffiliatePart?.query || `${vehicleName} ${cleanTask}`;
+    const primaryAffiliateName = primaryAffiliatePart?.name || `${cleanTask} parts`;
+    const fullGuideHref = '?fullGuide=1#full-ai-guide';
     const prioritizedRelatedTasks = Array.from(
         new Set([...(RELATED_TASK_PRIORITIES[canonicalTask] ?? []), ...VALID_TASKS])
     )
@@ -667,6 +853,75 @@ export default async function Page({ params }: PageProps) {
                     </p>
                 </header>
 
+                <section className="mb-8 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
+                    <div className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.07] p-6 md:p-7">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200/80">
+                            Best first step for this repair
+                        </p>
+                        <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                            {commercialConfig.primaryActionLabel}
+                        </h2>
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-amber-50/85">
+                            {commercialConfig.primaryActionHint}
+                        </p>
+                        <div className="mt-5 flex flex-wrap gap-3">
+                            <AffiliateLink
+                                href={buildAmazonSearchUrl(primaryAffiliateQuery)}
+                                partName={primaryAffiliateName}
+                                vehicle={vehicleName}
+                                isHighTicket={HIGH_TICKET_PART_PATTERN.test(primaryAffiliateName)}
+                                pageType="repair_guide"
+                                className="inline-flex items-center justify-center rounded-full bg-amber-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-amber-400"
+                            >
+                                {commercialConfig.primaryActionLabel}
+                            </AffiliateLink>
+                            <Link
+                                href="#parts-needed"
+                                className="inline-flex items-center justify-center rounded-full border border-white/12 px-5 py-3 text-sm font-medium text-white transition hover:border-amber-300/40 hover:bg-white/[0.04]"
+                            >
+                                Review parts list first
+                            </Link>
+                        </div>
+                        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                            {commercialConfig.fitmentChecks.map((item) => (
+                                <div key={item} className="rounded-xl border border-white/10 bg-black/20 p-3">
+                                    <p className="text-sm leading-6 text-gray-200">{item}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.06] p-6 md:p-7">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200/80">
+                            Need the walkthrough?
+                        </p>
+                        <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                            {commercialConfig.guideActionLabel}
+                        </h2>
+                        <p className="mt-3 text-sm leading-7 text-gray-300">
+                            {commercialConfig.guideActionHint}
+                        </p>
+                        <div className="mt-5 flex flex-wrap gap-3">
+                            <Link
+                                href={fullGuideHref}
+                                className="inline-flex items-center justify-center rounded-full bg-cyan-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-cyan-400"
+                            >
+                                Open full guide
+                            </Link>
+                            <Link
+                                href="#tools-required"
+                                className="inline-flex items-center justify-center rounded-full border border-white/12 px-5 py-3 text-sm font-medium text-white transition hover:border-cyan-300/40 hover:bg-white/[0.04]"
+                            >
+                                Check tools required
+                            </Link>
+                        </div>
+                        <div className="mt-5 space-y-2 text-sm leading-6 text-cyan-50/80">
+                            <p>No signup required. Loads only when requested for a faster first page view.</p>
+                            <p>{vehicleSpec ? 'Vehicle-specific notes and part numbers are already on this page.' : 'Start here with the short guide, then open the full version if you need more detail.'}</p>
+                        </div>
+                    </div>
+                </section>
+
                 <section className={`${sectionShell} border-cyan-500/20 bg-cyan-500/[0.06]`}>
                     <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between mb-5">
                         <div>
@@ -735,7 +990,7 @@ export default async function Page({ params }: PageProps) {
                 )}
 
                 {/* Safety Warnings */}
-                <section className={`${sectionShell} border-red-500/25 bg-red-950/25`}>
+                <section id="safety-warnings" className={`${sectionShell} border-red-500/25 bg-red-950/25`}>
                     <h2 className="text-xl font-semibold text-red-300 mb-4 flex items-center gap-2 tracking-tight">
                         <AlertTriangleIcon className="w-5 h-5" />
                         Safety Warnings
@@ -771,9 +1026,12 @@ export default async function Page({ params }: PageProps) {
 
                 {/* Parts List */}
                 <section id="parts-needed" className={sectionShell}>
-                    <h2 className={sectionTitleClass}>Parts needed</h2>
+                    <h2 className={sectionTitleClass}>{commercialConfig.partsTitle}</h2>
                     <p className="text-sm leading-6 text-gray-400 mb-4">
-                        Use these searches as a starting point, then confirm fitment against your exact engine and trim.
+                        {commercialConfig.partsIntro}
+                    </p>
+                    <p className="text-sm leading-6 text-gray-500 mb-4">
+                        We surface the most relevant part number, OEM reference, or spec we have for this job so you can compare listings with higher confidence.
                     </p>
                     <div className="space-y-3">
                         {vehicleSpec ? (
@@ -803,11 +1061,11 @@ export default async function Page({ params }: PageProps) {
                                             href={buildAmazonSearchUrl(searchTerm)}
                                             partName={part.name}
                                             vehicle={vehicleName}
-                                            isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part.name)}
+                                            isHighTicket={HIGH_TICKET_PART_PATTERN.test(part.name)}
                                             pageType="repair_guide"
                                             className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-amber-400 transition"
                                         >
-                                            Shop on Amazon
+                                            {getPartActionLabel(canonicalTask, part.name)}
                                         </AffiliateLink>
                                     </div>
                                 );
@@ -820,11 +1078,11 @@ export default async function Page({ params }: PageProps) {
                                         href={buildAmazonSearchUrl(`${vehicleName} ${part}`)}
                                         partName={part}
                                         vehicle={vehicleName}
-                                        isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part)}
+                                        isHighTicket={HIGH_TICKET_PART_PATTERN.test(part)}
                                         pageType="repair_guide"
                                         className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-amber-400 transition"
                                     >
-                                        Shop on Amazon
+                                        {getPartActionLabel(canonicalTask, part)}
                                     </AffiliateLink>
                                 </div>
                             ))
@@ -836,9 +1094,9 @@ export default async function Page({ params }: PageProps) {
                     <section className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6 md:p-7">
                         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
                             <div>
-                                <h2 className="text-xl font-semibold text-white tracking-tight">Shop this job on Amazon</h2>
+                                <h2 className="text-xl font-semibold text-white tracking-tight">{commercialConfig.spotlightTitle}</h2>
                                 <p className="text-sm leading-6 text-amber-100/80 mt-1">
-                                    Quick part searches for the highest-intent items on this {cleanTask} job.
+                                    {commercialConfig.spotlightIntro}
                                 </p>
                             </div>
                             <AffiliateLink
@@ -849,7 +1107,7 @@ export default async function Page({ params }: PageProps) {
                                 pageType="repair_guide"
                                 className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-black hover:bg-amber-400 transition"
                             >
-                                Shop Complete Search
+                                {commercialConfig.bundleActionLabel}
                             </AffiliateLink>
                         </div>
                         <div className="grid md:grid-cols-3 gap-3">
@@ -861,11 +1119,11 @@ export default async function Page({ params }: PageProps) {
                                         href={buildAmazonSearchUrl(part.query)}
                                         partName={part.name}
                                         vehicle={vehicleName}
-                                        isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part.name)}
+                                        isHighTicket={HIGH_TICKET_PART_PATTERN.test(part.name)}
                                         pageType="repair_guide"
                                         className="mt-4 inline-flex items-center text-sm font-bold text-amber-300 hover:text-amber-200 transition"
                                     >
-                                        Check Amazon →
+                                        {getSpotlightActionLabel(canonicalTask, part.name)} →
                                     </AffiliateLink>
                                 </div>
                             ))}
@@ -935,6 +1193,20 @@ export default async function Page({ params }: PageProps) {
                     <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
                         Unlimited AI repair guides for every vehicle. No signup required. Veteran-owned.
                     </p>
+                    <div className="flex flex-wrap items-center justify-center gap-3">
+                        <Link
+                            href={fullGuideHref}
+                            className="inline-flex items-center justify-center rounded-full bg-cyan-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-cyan-400"
+                        >
+                            Open full guide
+                        </Link>
+                        <Link
+                            href="#parts-needed"
+                            className="inline-flex items-center justify-center rounded-full border border-white/12 px-5 py-3 text-sm font-medium text-white transition hover:border-cyan-300/40 hover:bg-white/[0.04]"
+                        >
+                            Review exact-fit parts
+                        </Link>
+                    </div>
                 </div>
             </article>
 
