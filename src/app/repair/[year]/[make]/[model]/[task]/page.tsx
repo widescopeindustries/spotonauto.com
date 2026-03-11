@@ -223,8 +223,8 @@ const DEFAULT_REPAIR = {
 // Titles target ~50 chars to avoid truncation; descriptions target searcher intent.
 const TASK_META: Record<string, { title: string; description: string; extraKeywords: string[] }> = {
     'serpentine-belt-replacement': {
-        title: 'Serpentine Belt Diagram & Replacement',
-        description: 'Serpentine belt routing diagram, OEM part number, and step-by-step replacement for your {v}. Tensioner inspection, common failure signs. 15–30 min DIY.',
+        title: 'Serpentine Belt Diagram, Length, Cost & Replacement',
+        description: 'Serpentine belt routing diagram, rib/length fitment, and replacement steps for your {v}. Includes tensioner checks and common squeal diagnosis before ordering.',
         extraKeywords: ['serpentine belt diagram', 'belt routing diagram', 'belt replacement cost'],
     },
     'timing-belt-replacement': {
@@ -233,8 +233,8 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
         extraKeywords: ['timing belt diagram', 'timing marks', 'timing belt cost'],
     },
     'battery-replacement': {
-        title: 'Battery Location, Size & Replacement',
-        description: 'Battery group size, CCA rating, and location for your {v}. Terminal removal order, hold-down specs, and module reset tips. 15–30 min job.',
+        title: 'Battery Location, Group Size, Cost & Replacement',
+        description: 'Battery location, group size, CCA range, and replacement cost for your {v}. Includes terminal order, hold-down checks, and module reset notes. 15–30 min DIY job.',
         extraKeywords: ['battery location', 'battery group size', 'battery replacement cost'],
     },
     'oil-change': {
@@ -253,18 +253,18 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
         extraKeywords: ['headlight bulb size', 'how to change headlight bulb', 'headlight removal', 'headlight replacement diagram'],
     },
     'alternator-replacement': {
-        title: 'Alternator Symptoms, Testing & Replacement Cost',
-        description: 'How to test and replace the alternator on your {v}. Failure symptoms, output voltage specs, serpentine belt tips, and cost. DIY save $200-$500.',
+        title: 'Alternator Symptoms, Voltage Test, Cost & Replacement',
+        description: 'Diagnose and replace the alternator on your {v}. Covers charging voltage checks, failure symptoms, belt inspection, and realistic replacement cost ranges.',
         extraKeywords: ['alternator symptoms', 'bad alternator signs', 'alternator cost', 'alternator testing'],
     },
     'starter-replacement': {
-        title: 'Starter Motor Symptoms, Location & Replacement',
-        description: 'Starter motor failure symptoms, location, and step-by-step replacement for your {v}. Click vs. no-crank diagnosis, solenoid wiring, torque specs, and cost.',
+        title: 'Starter Symptoms, No-Start Diagnosis, Cost & Replacement',
+        description: 'Starter failure and no-start diagnosis for your {v}, with location notes, wiring checks, and replacement steps. Includes common click/no-crank troubleshooting.',
         extraKeywords: ['starter symptoms', 'car wont start clicking', 'starter location', 'starter replacement cost'],
     },
     'brake-pad-replacement': {
-        title: 'Brake Pad Replacement — Size, Cost & How-To Guide',
-        description: 'How to replace brake pads on your {v}. Correct pad part number, caliper piston direction, torque specs, and break-in procedure. Save $80-$200 vs. shop.',
+        title: 'Brake Pad Size, Cost, Torque Specs & Replacement',
+        description: 'Replace brake pads on your {v} with pad size checks, torque specs, piston direction, and bed-in steps. Includes fitment notes to avoid wrong-part orders.',
         extraKeywords: ['how to change brake pads', 'brake pad size', 'brake pad cost', 'brake pad replacement steps'],
     },
     'brake-rotor-replacement': {
@@ -278,8 +278,8 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
         extraKeywords: ['water pump symptoms', 'water pump location', 'water pump cost', 'water pump replacement steps'],
     },
     'thermostat-replacement': {
-        title: 'Thermostat Location, Symptoms & Replacement Guide',
-        description: 'Thermostat location, coolant type, and step-by-step replacement for your {v}. Overheating causes, housing torque, and air bleed procedure. $20-$100 DIY.',
+        title: 'Thermostat Location, Overheating Symptoms, Cost & Replacement',
+        description: 'Thermostat replacement for your {v} with location, overheating diagnosis, coolant specs, and bleed sequence. Covers housing/seal checks and realistic DIY cost.',
         extraKeywords: ['thermostat location', 'thermostat symptoms', 'thermostat replacement cost', 'overheating fix'],
     },
     'radiator-replacement': {
