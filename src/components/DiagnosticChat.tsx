@@ -1,30 +1,49 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Cpu, Activity, ImageIcon, Camera } from 'lucide-react';
-import { createDiagnosticChat, sendDiagnosticMessage, Chat } from '../services/apiClient';
-import { Vehicle } from '../types';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Activity, Camera, Cpu, HardDrive, ImageIcon, RotateCcw, Send } from 'lucide-react';
+import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/apiClient';
+import {
+    findLatestDiagnosticSessionForVehicle,
+    getDiagnosticSession,
+    saveDiagnosticSession,
+    type StoredDiagnosticMessage,
+} from '../services/diagnosticMemory';
+import type { Vehicle } from '../types';
 
 interface DiagnosticChatProps {
     vehicle?: Vehicle;
     initialProblem?: string;
 }
 
-interface Message {
-    id: string;
-    type: 'system' | 'user';
-    text: string;
-    imageUrl?: string | null;
-    options?: string[];
+type Message = StoredDiagnosticMessage;
+
+function vehiclesMatch(left: Vehicle, right: Vehicle): boolean {
+    return (
+        left.year.toLowerCase() === right.year.toLowerCase() &&
+        left.make.toLowerCase() === right.make.toLowerCase() &&
+        left.model.toLowerCase() === right.model.toLowerCase()
+    );
+}
+
+function buildGreeting(vehicle: Vehicle, initialProblem: string): string {
+    if (initialProblem) {
+        return `Diagnostic Core Online. Analyzing provided symptom: "${initialProblem}"...`;
+    }
+
+    return `Diagnostic Core Online. Connected to ${vehicle.year} ${vehicle.make} ${vehicle.model} database. Accessing factory-level technical service bulletins and professional diagnostic manuals. Please describe the primary symptom.`;
 }
 
 const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, initialProblem: initialProblemProp }) => {
+    const router = useRouter();
+    const pathname = usePathname();
     const searchParams = useSearchParams();
     const [messages, setMessages] = useState<Message[]>([]);
     const [typing, setTyping] = useState(false);
     const [chatSession, setChatSession] = useState<Chat | null>(null);
     const [userInput, setUserInput] = useState('');
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
+    const [sessionCreatedAt, setSessionCreatedAt] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const vehicle = vehicleProp || (searchParams.get('year') && searchParams.get('make') && searchParams.get('model')
@@ -32,84 +51,32 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         : null);
 
     const initialProblem = initialProblemProp || searchParams.get('task') || '';
+    const threadId = searchParams.get('thread');
+    const forceFresh = searchParams.get('fresh') === '1';
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+    const syncThreadInUrl = useCallback((nextThreadId: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('thread', nextThreadId);
+        params.delete('fresh');
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }, [pathname, router, searchParams]);
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages, typing]);
+    const sendMessageToChat = useCallback(async (
+        text: string,
+        activeChat: Chat,
+        options?: { skipUserEcho?: boolean }
+    ) => {
+        if (!text.trim()) return;
 
-    useEffect(() => {
-        const initChat = async () => {
-            // Wait for vehicle from search params or props
-            if (!vehicle) return;
-
-            try {
-                const chat = createDiagnosticChat(vehicle);
-                setChatSession(chat);
-
-                // Initial greeting
-                setTyping(true);
-
-                // Simulate boot sequence
-                setTimeout(() => {
-                    const greeting = initialProblem
-                        ? `Diagnostic Core Online. Analyzing provided symptom: "${initialProblem}"...`
-                        : `Diagnostic Core Online. Connected to ${vehicle.year} ${vehicle.make} ${vehicle.model} database. Accessing factory-level technical service bulletins and professional diagnostic manuals. Please describe the primary symptom.`;
-
-                    setMessages([{
-                        id: 'init',
-                        type: 'system',
-                        text: greeting,
-                    }]);
-
-                    if (initialProblem) {
-                        // Automatically send the initial problem to the AI to get the first real step
-                        handleUserResponse(initialProblem, chat);
-                    } else {
-                        setTyping(false);
-                    }
-                }, 1500);
-
-            } catch (err) {
-                console.error("Failed to init chat", err);
-                setMessages([{
-                    id: 'error',
-                    type: 'system',
-                    text: "Error initializing Diagnostic Core. Please refresh connection."
-                }]);
-                setTyping(false);
-            }
-        };
-
-        if (!chatSession && vehicle) {
-            initChat();
-        }
-    }, [vehicle]);
-
-    const handleUserResponse = async (text: string, activeChat = chatSession) => {
-        if (!text.trim() || !activeChat) return;
-
-        // If it's the initial auto-send, we don't need to duplicate the user message visually if we don't want to,
-        // but it's consistent to show what the "user" said (or passed in).
-        // For initialProblem, we might skip adding it to 'messages' if we want it to feel like the context was pre-loaded.
-        // But simpler is usually better: just add it.
-
-        // However, if called from useEffect with initialProblem, activeChat is passed explicitly.
-        // We need to differentiate if we are adding to UI or just sending.
-        // Let's add to UI for clarity.
-
-        const isInitial = text === initialProblem && activeChat !== chatSession;
-
-        if (!isInitial) {
-            const userMsg: Message = {
-                id: Date.now().toString(),
-                type: 'user',
-                text: text
-            };
-            setMessages(prev => [...prev, userMsg]);
+        if (!options?.skipUserEcho) {
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: `${Date.now()}-user`,
+                    type: 'user',
+                    text,
+                },
+            ]);
         }
 
         setUserInput('');
@@ -124,55 +91,178 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                 ),
             ]);
 
-            const systemMsg: Message = {
-                id: (Date.now() + 1).toString(),
-                type: 'system',
-                text: response.text,
-                imageUrl: response.imageUrl
-            };
-
-            setMessages(prev => [...prev, systemMsg]);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: `${Date.now()}-system`,
+                    type: 'system',
+                    text: response.text,
+                    imageUrl: response.imageUrl,
+                },
+            ]);
         } catch (error: any) {
-            let message = "Unable to complete diagnosis right now. Please try again.";
+            let message = 'Unable to complete diagnosis right now. Please try again.';
             const errorText = String(error?.message || '');
+
             if (errorText.includes('REQUEST_TIMEOUT')) {
-                message = "Diagnosis timed out after 20 seconds. Please retry, or shorten your symptom description.";
+                message = 'Diagnosis timed out after 20 seconds. Please retry, or shorten your symptom description.';
             } else if (errorText.toLowerCase().includes('authentication required')) {
-                message = "Please sign in, then try diagnosis again.";
+                message = 'Please sign in, then try diagnosis again.';
             }
-            setMessages(prev => [...prev, {
-                id: (Date.now() + 1).toString(),
-                type: 'system',
-                text: message
-            }]);
+
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: `${Date.now()}-error`,
+                    type: 'system',
+                    text: message,
+                },
+            ]);
             setStatusMessage(message);
         } finally {
             setTyping(false);
         }
+    }, []);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, typing]);
+
+    useEffect(() => {
+        if (!vehicle) return;
+
+        if (chatSession && vehiclesMatch(chatSession.vehicle, vehicle)) {
+            if (threadId) {
+                if (!forceFresh && chatSession.id === threadId) {
+                    return;
+                }
+            } else if (!forceFresh || messages.length > 0) {
+                return;
+            }
+        }
+
+        let cancelled = false;
+
+        const initChat = async () => {
+            setMessages([]);
+            setTyping(false);
+            setUserInput('');
+            setStatusMessage(null);
+
+            const storedSession = !forceFresh
+                ? (threadId ? getDiagnosticSession(threadId) : findLatestDiagnosticSessionForVehicle(vehicle))
+                : null;
+
+            if (storedSession && vehiclesMatch(storedSession.vehicle, vehicle)) {
+                if (cancelled) return;
+
+                setChatSession(createDiagnosticChat(vehicle, {
+                    id: storedSession.id,
+                    history: storedSession.history,
+                }));
+                setMessages(storedSession.messages);
+                setSessionCreatedAt(storedSession.createdAt);
+                syncThreadInUrl(storedSession.id);
+                return;
+            }
+
+            const createdAt = new Date().toISOString();
+            const nextChat = createDiagnosticChat(vehicle);
+            const greeting: Message = {
+                id: `${nextChat.id}-greeting`,
+                type: 'system',
+                text: buildGreeting(vehicle, initialProblem),
+            };
+
+            if (cancelled) return;
+
+            setChatSession(nextChat);
+            setSessionCreatedAt(createdAt);
+            setMessages([greeting]);
+            syncThreadInUrl(nextChat.id);
+
+            if (initialProblem) {
+                void sendMessageToChat(initialProblem, nextChat, { skipUserEcho: true });
+            }
+        };
+
+        void initChat();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [chatSession, forceFresh, initialProblem, messages.length, sendMessageToChat, syncThreadInUrl, threadId, vehicle]);
+
+    useEffect(() => {
+        if (!vehicle || !chatSession || !sessionCreatedAt || messages.length === 0) return;
+
+        saveDiagnosticSession({
+            id: chatSession.id,
+            vehicle,
+            initialProblem,
+            messages,
+            history: chatSession.history,
+            createdAt: sessionCreatedAt,
+            updatedAt: new Date().toISOString(),
+        });
+    }, [chatSession, initialProblem, messages, sessionCreatedAt, vehicle]);
+
+    const handleUserResponse = async (text: string) => {
+        if (!text.trim() || !chatSession) return;
+        await sendMessageToChat(text, chatSession);
+    };
+
+    const handleFreshThread = () => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete('thread');
+        params.delete('task');
+        params.set('fresh', '1');
+
+        setChatSession(null);
+        setMessages([]);
+        setTyping(false);
+        setStatusMessage(null);
+
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        handleUserResponse(userInput);
+        void handleUserResponse(userInput);
     };
 
     return (
-        <div className="flex flex-col h-[600px] w-full max-w-3xl mx-auto border border-neon-cyan/20 rounded-xl bg-black/80 backdrop-blur-xl overflow-hidden shadow-2xl relative">
-            <div className="absolute inset-0 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+        <div className="relative mx-auto flex h-[600px] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-neon-cyan/20 bg-black/80 shadow-2xl backdrop-blur-xl">
+            <div className="absolute inset-0 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
 
-            {/* Header */}
-            <div className="p-4 border-b border-neon-cyan/20 flex items-center justify-between bg-black/50 z-10">
+            <div className="z-10 flex items-center justify-between border-b border-neon-cyan/20 bg-black/50 p-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse"></div>
-                    <h3 className="text-neon-cyan font-mono tracking-widest text-sm">AI DIAGNOSTIC CORE v3.0 // {vehicle?.model || 'UNLINKED'}</h3>
+                    <div className="h-2 w-2 rounded-full bg-neon-cyan animate-pulse" />
+                    <div>
+                        <h3 className="font-mono text-sm tracking-widest text-neon-cyan">
+                            AI DIAGNOSTIC CORE v3.0 // {vehicle?.model || 'UNLINKED'}
+                        </h3>
+                        <div className="mt-1 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-cyan-200/80">
+                            <HardDrive className="h-3.5 w-3.5" />
+                            <span>Persistent memory active</span>
+                        </div>
+                    </div>
                 </div>
+
                 <div className="flex items-center gap-3">
-                    <Cpu className="text-neon-cyan/50 w-5 h-5" />
+                    <button
+                        type="button"
+                        onClick={handleFreshThread}
+                        className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-300 transition-colors hover:border-cyan-500/30 hover:text-cyan-100"
+                    >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        New thread
+                    </button>
+                    <Cpu className="h-5 w-5 text-neon-cyan/50" />
                 </div>
             </div>
 
-            {/* Chat Area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 z-10 scrollbar-thin scrollbar-thumb-neon-cyan/20 scrollbar-track-transparent">
+            <div className="z-10 flex-1 space-y-6 overflow-y-auto p-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-neon-cyan/20">
                 <AnimatePresence mode="popLayout">
                     {messages.map((msg) => (
                         <motion.div
@@ -180,25 +270,28 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                             layout
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                             className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                            <div className={`max-w-[85%] rounded-lg p-4 font-mono text-sm leading-relaxed border ${msg.type === 'user'
-                                ? 'bg-neon-cyan/10 border-neon-cyan/30 text-neon-cyan'
-                                : 'bg-gray-900/90 border-gray-700 text-white shadow-lg'
-                                }`}>
+                            <div
+                                className={`max-w-[85%] rounded-lg border p-4 font-mono text-sm leading-relaxed ${msg.type === 'user'
+                                    ? 'border-neon-cyan/30 bg-neon-cyan/10 text-neon-cyan'
+                                    : 'border-gray-700 bg-gray-900/90 text-white shadow-lg'
+                                    }`}
+                            >
                                 <p>{msg.text}</p>
                                 {msg.imageUrl && (
-                                    <div className="mt-4 rounded border border-neon-cyan/20 overflow-hidden relative group">
-                                        <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-xs text-neon-cyan flex items-center gap-1">
-                                            <ImageIcon className="w-3 h-3" /> AI GENERATED
+                                    <div className="relative mt-4 overflow-hidden rounded border border-neon-cyan/20">
+                                        <div className="absolute right-2 top-2 flex items-center gap-1 rounded bg-black/60 px-2 py-1 text-xs text-neon-cyan">
+                                            <ImageIcon className="h-3 w-3" /> AI GENERATED
                                         </div>
-                                        <img src={msg.imageUrl} alt="Diagnostic Illustration" className="w-full h-auto object-cover" />
+                                        <img src={msg.imageUrl} alt="Diagnostic Illustration" className="h-auto w-full object-cover" />
                                     </div>
                                 )}
                             </div>
                         </motion.div>
                     ))}
+
                     {typing && (
                         <motion.div
                             layout
@@ -207,49 +300,51 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                             exit={{ opacity: 0, scale: 0.9 }}
                             className="flex justify-start"
                         >
-                            <div className="bg-gray-900/80 border border-gray-700 px-4 py-3 rounded-lg flex items-center gap-1">
-                                <Activity className="w-4 h-4 text-neon-cyan animate-spin" />
-                                <span className="text-xs font-mono text-neon-cyan/70 ml-2">ANALYZING TELEMETRY...</span>
+                            <div className="flex items-center gap-1 rounded-lg border border-gray-700 bg-gray-900/80 px-4 py-3">
+                                <Activity className="h-4 w-4 animate-spin text-neon-cyan" />
+                                <span className="ml-2 font-mono text-xs text-neon-cyan/70">ANALYZING TELEMETRY...</span>
                             </div>
                         </motion.div>
                     )}
+
                     <div ref={messagesEndRef} />
                 </AnimatePresence>
             </div>
 
-            {/* Input Area */}
-            <div className="p-4 border-t border-neon-cyan/20 bg-black/60 z-10">
-                <form onSubmit={onSubmit} className="flex gap-3 relative">
-                    <div className="absolute inset-0 bg-neon-cyan/5 blur-xl -z-10"></div>
+            <div className="z-10 border-t border-neon-cyan/20 bg-black/60 p-4">
+                <form onSubmit={onSubmit} className="relative flex gap-3">
+                    <div className="absolute inset-0 -z-10 bg-neon-cyan/5 blur-xl" />
                     <input
                         type="text"
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
-                        placeholder={typing ? "Awaiting System Response..." : "Enter symptoms, codes, or observations..."}
-                        className="flex-1 bg-black/50 border border-neon-cyan/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-cyan focus:shadow-glow-cyan font-mono text-sm transition-all"
+                        placeholder={typing ? 'Awaiting System Response...' : 'Enter symptoms, codes, or observations...'}
+                        className="flex-1 rounded-lg border border-neon-cyan/30 bg-black/50 px-4 py-3 font-mono text-sm text-white placeholder-gray-500 transition-all focus:border-neon-cyan focus:outline-none focus:shadow-glow-cyan"
                         disabled={typing}
                         autoFocus
                     />
                     <button
                         type="submit"
                         disabled={typing || !userInput.trim()}
-                        className="bg-neon-cyan/10 hover:bg-neon-cyan/20 border border-neon-cyan text-neon-cyan px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow-cyan flex items-center justify-center"
+                        className="flex items-center justify-center rounded-lg border border-neon-cyan bg-neon-cyan/10 px-4 text-neon-cyan transition-all hover:bg-neon-cyan/20 hover:shadow-glow-cyan disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <Send className="w-5 h-5" />
+                        <Send className="h-5 w-5" />
                     </button>
                     <button
                         type="button"
-                        className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600 text-gray-400 px-3 rounded-lg transition-colors"
+                        className="rounded-lg border border-gray-600 bg-gray-800/50 px-3 text-gray-400 transition-colors hover:bg-gray-700/50"
                         title="Upload Image (Coming Soon)"
                     >
-                        <Camera className="w-5 h-5" />
+                        <Camera className="h-5 w-5" />
                     </button>
                 </form>
-                <div className="text-center mt-2">
-                    <span className="text-[10px] text-gray-500 font-mono">POWERED BY GEMINI 2.0 // FACTORY MANUAL PROTOCOL ENABLED</span>
+                <div className="mt-2 text-center">
+                    <span className="font-mono text-[10px] text-gray-500">
+                        THREAD SAVES LOCALLY ON EVERY REPLY // FACTORY MANUAL PROTOCOL ENABLED
+                    </span>
                 </div>
                 {statusMessage && (
-                    <p className="text-center mt-2 text-xs text-amber-400 font-mono">{statusMessage}</p>
+                    <p className="mt-2 text-center font-mono text-xs text-amber-400">{statusMessage}</p>
                 )}
             </div>
         </div>

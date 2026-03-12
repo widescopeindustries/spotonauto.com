@@ -6,7 +6,13 @@ import { motion } from 'framer-motion';
 import DiagnosticChat from '@/components/DiagnosticChat';
 import { getYears, COMMON_MAKES, fetchModels } from '@/services/vehicleData';
 import { useState, useEffect } from 'react';
-import { Zap, Car, ArrowRight } from 'lucide-react';
+import { Zap, ArrowRight, HardDrive } from 'lucide-react';
+import {
+    getDiagnosticDraft,
+    getLatestDiagnosticSession,
+    saveDiagnosticDraft,
+    type DiagnosticSessionSnapshot,
+} from '@/services/diagnosticMemory';
 
 // ── Vehicle selector shown when no vehicle params are in URL ──────────────
 function VehicleSelector() {
@@ -15,7 +21,24 @@ function VehicleSelector() {
     const [symptom, setSymptom] = useState('');
     const [availableModels, setAvailableModels] = useState<string[]>([]);
     const [loadingModels, setLoadingModels] = useState(false);
+    const [resumeSession, setResumeSession] = useState<DiagnosticSessionSnapshot | null>(null);
+    const [draftReady, setDraftReady] = useState(false);
     const availableYears = getYears();
+
+    useEffect(() => {
+        const draft = getDiagnosticDraft();
+        if (draft) {
+            setVehicle({
+                year: draft.year,
+                make: draft.make,
+                model: draft.model,
+            });
+            setSymptom(draft.symptom);
+        }
+
+        setResumeSession(getLatestDiagnosticSession());
+        setDraftReady(true);
+    }, []);
 
     useEffect(() => {
         if (vehicle.make && vehicle.year) {
@@ -28,6 +51,17 @@ function VehicleSelector() {
         }
     }, [vehicle.make, vehicle.year]);
 
+    useEffect(() => {
+        if (!draftReady) return;
+
+        saveDiagnosticDraft({
+            year: vehicle.year,
+            make: vehicle.make,
+            model: vehicle.model,
+            symptom,
+        });
+    }, [draftReady, symptom, vehicle]);
+
     const canSubmit = vehicle.year && vehicle.make && vehicle.model;
 
     const handleStart = () => {
@@ -38,8 +72,32 @@ function VehicleSelector() {
             model: vehicle.model,
             ...(symptom ? { task: symptom } : {}),
         });
+        params.set('fresh', '1');
         router.push(`/diagnose?${params.toString()}`);
     };
+
+    const handleResume = () => {
+        if (!resumeSession) return;
+
+        const params = new URLSearchParams({
+            year: resumeSession.vehicle.year,
+            make: resumeSession.vehicle.make,
+            model: resumeSession.vehicle.model,
+            thread: resumeSession.id,
+            ...(resumeSession.initialProblem ? { task: resumeSession.initialProblem } : {}),
+        });
+
+        router.push(`/diagnose?${params.toString()}`);
+    };
+
+    const resumeTimestamp = resumeSession
+        ? new Date(resumeSession.updatedAt).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+        })
+        : null;
 
     return (
         <div className="w-full max-w-2xl mx-auto">
@@ -61,6 +119,43 @@ function VehicleSelector() {
                     Select your car and describe the problem. Our AI will diagnose it and guide you through the fix — for free.
                 </p>
             </motion.div>
+
+            {resumeSession && (
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 }}
+                    className="mb-6 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-5"
+                >
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-black/20 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-cyan-200">
+                                <HardDrive className="h-3.5 w-3.5" />
+                                Persistent memory
+                            </div>
+                            <h3 className="mt-3 text-lg font-display font-bold text-white">
+                                Resume {resumeSession.vehicle.year} {resumeSession.vehicle.make} {resumeSession.vehicle.model}
+                            </h3>
+                            <p className="mt-1 text-sm text-gray-300">
+                                {resumeSession.initialProblem || 'Continue the last thread you left open.'}
+                            </p>
+                            {resumeTimestamp && (
+                                <p className="mt-1 text-xs uppercase tracking-[0.2em] text-cyan-200/70">
+                                    Last saved {resumeTimestamp}
+                                </p>
+                            )}
+                        </div>
+
+                        <button
+                            onClick={handleResume}
+                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-black/30 px-5 py-3 text-sm font-semibold text-cyan-100 transition-all hover:border-cyan-300 hover:bg-black/40"
+                        >
+                            Resume thread
+                            <ArrowRight className="h-4 w-4" />
+                        </button>
+                    </div>
+                </motion.div>
+            )}
 
             {/* Selector Form */}
             <motion.div

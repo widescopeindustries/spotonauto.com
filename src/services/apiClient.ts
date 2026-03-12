@@ -164,16 +164,25 @@ export const getQuickPreview = async (vehicle: Vehicle, task: string) => {
  * Chat interface for diagnostic assistant
  */
 export interface Chat {
+  id: string;
   history: any[];
   vehicle: Vehicle;
+}
+
+function createChatId(): string {
+  return `diag_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
 /**
  * Create a new diagnostic chat session
  */
-export const createDiagnosticChat = (vehicle: Vehicle): Chat => {
+export const createDiagnosticChat = (
+  vehicle: Vehicle,
+  options?: { id?: string; history?: any[] }
+): Chat => {
   return {
-    history: [],
+    id: options?.id || createChatId(),
+    history: [...(options?.history || [])],
     vehicle,
   };
 };
