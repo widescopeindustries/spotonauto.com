@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { trackWiringDiagramOpen } from '@/lib/analytics';
+import verifiedWiringCoverage from '@/data/wiring-coverage.json';
 
 interface DiagramEntry {
   name: string;
@@ -24,6 +25,12 @@ interface DiagramImage {
   title: string;
 }
 
+interface WiringCoverageVehicle {
+  year: number;
+  make: string;
+  model: string;
+}
+
 function normalizeModelText(value: string): string {
   return value
     .toLowerCase()
@@ -32,29 +39,29 @@ function normalizeModelText(value: string): string {
     .trim();
 }
 
-function resolveVariantForModel(variants: string[], model: string): string | null {
-  const modelNorm = normalizeModelText(model);
-  if (!modelNorm) return null;
+function scoreTextMatch(candidate: string, needle: string): number {
+  const candidateNorm = normalizeModelText(candidate);
+  const needleNorm = normalizeModelText(needle);
+  if (!candidateNorm || !needleNorm) return 0;
 
+  if (candidateNorm === needleNorm) return 100;
+  if (candidateNorm.startsWith(`${needleNorm} `)) return 95;
+  if (candidateNorm.includes(` ${needleNorm} `)) return 88;
+  if (candidateNorm.includes(needleNorm)) return 80;
+
+  let tokenHits = 0;
+  for (const token of needleNorm.split(' ')) {
+    if (token.length > 1 && candidateNorm.includes(token)) tokenHits += 1;
+  }
+  return tokenHits > 0 ? 45 + tokenHits * 10 : 0;
+}
+
+function resolveBestMatch(options: string[], needle: string): string | null {
   let bestVariant: string | null = null;
   let bestScore = 0;
 
-  for (const variant of variants) {
-    const variantNorm = normalizeModelText(variant);
-    let score = 0;
-
-    if (variantNorm === modelNorm) score = 100;
-    else if (variantNorm.startsWith(`${modelNorm} `)) score = 95;
-    else if (variantNorm.includes(` ${modelNorm} `)) score = 88;
-    else if (variantNorm.includes(modelNorm)) score = 80;
-    else {
-      let tokenHits = 0;
-      for (const token of modelNorm.split(' ')) {
-        if (token.length > 1 && variantNorm.includes(token)) tokenHits += 1;
-      }
-      if (tokenHits > 0) score = 45 + tokenHits * 10;
-    }
-
+  for (const variant of options) {
+    const score = scoreTextMatch(variant, needle);
     if (score > bestScore) {
       bestScore = score;
       bestVariant = variant;
@@ -64,15 +71,53 @@ function resolveVariantForModel(variants: string[], model: string): string | nul
   return bestScore >= 60 ? bestVariant : null;
 }
 
-// Static year range — CHARM covers 1982-2013
-const YEARS = Array.from({ length: 2013 - 1982 + 1 }, (_, i) => 2013 - i);
+function resolveVariantForModel(variants: string[], model: string): string | null {
+  return resolveBestMatch(variants, model);
+}
+
+function resolveModelForVariant(models: string[], variant: string): string | null {
+  return resolveBestMatch(models, variant);
+}
+
+const WIRING_COVERAGE = (verifiedWiringCoverage as { vehicles?: WiringCoverageVehicle[] }).vehicles || [];
+const COVERED_YEARS = [...new Set(WIRING_COVERAGE
+  .map((vehicle) => vehicle.year)
+  .filter((year) => Number.isFinite(year))
+)].sort((a, b) => b - a);
+const MAKES_BY_YEAR = new Map<string, string[]>();
+const MODELS_BY_YEAR_MAKE = new Map<string, string[]>();
+
+for (const vehicle of WIRING_COVERAGE) {
+  const yearKey = String(vehicle.year);
+  const makeKey = `${yearKey}:${vehicle.make}`;
+  const nextMakes = MAKES_BY_YEAR.get(yearKey) || [];
+  if (!nextMakes.includes(vehicle.make)) {
+    nextMakes.push(vehicle.make);
+    nextMakes.sort((left, right) => left.localeCompare(right));
+    MAKES_BY_YEAR.set(yearKey, nextMakes);
+  }
+
+  const nextModels = MODELS_BY_YEAR_MAKE.get(makeKey) || [];
+  if (!nextModels.includes(vehicle.model)) {
+    nextModels.push(vehicle.model);
+    nextModels.sort((left, right) => left.localeCompare(right));
+    MODELS_BY_YEAR_MAKE.set(makeKey, nextModels);
+  }
+}
+
+function getCoveredMakes(year: string): string[] {
+  return MAKES_BY_YEAR.get(year) || [];
+}
+
+function getCoveredModels(year: string, make: string): string[] {
+  return MODELS_BY_YEAR_MAKE.get(`${year}:${make}`) || [];
+}
 
 export default function WiringDiagramLibrary() {
-  // Vehicle selection state — Year → Make → Model
-  const [makes, setMakes] = useState<string[]>([]);
   const [variants, setVariants] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedMake, setSelectedMake] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
   const [selectedVariant, setSelectedVariant] = useState('');
 
   // Diagram state
@@ -82,7 +127,6 @@ export default function WiringDiagramLibrary() {
   const [search, setSearch] = useState('');
 
   // Loading states
-  const [loadingMakes, setLoadingMakes] = useState(true);
   const [loadingVariants, setLoadingVariants] = useState(false);
   const [loadingDiagrams, setLoadingDiagrams] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
@@ -91,13 +135,8 @@ export default function WiringDiagramLibrary() {
   const autoOpenRef = useRef(false);
   const autoOpenConsumedRef = useRef(false);
 
-  // Fetch makes on mount (independent of year)
-  useEffect(() => {
-    fetch('/api/wiring?action=makes')
-      .then(r => r.json())
-      .then(d => { setMakes(d.makes || []); setLoadingMakes(false); })
-      .catch(() => setLoadingMakes(false));
-  }, []);
+  const makes = selectedYear ? getCoveredMakes(selectedYear) : [];
+  const models = selectedYear && selectedMake ? getCoveredModels(selectedYear, selectedMake) : [];
 
   // Read optional query params for deep links from SEO pages
   useEffect(() => {
@@ -111,6 +150,7 @@ export default function WiringDiagramLibrary() {
 
     if (year) setSelectedYear(year);
     if (make) setSelectedMake(make);
+    if (model) setSelectedModel(model);
     if (variant) prefillVariantRef.current = variant;
     if (model) prefillModelRef.current = model;
     if (query) setSearch(query);
@@ -121,22 +161,44 @@ export default function WiringDiagramLibrary() {
   // Clear downstream when year changes
   const handleYearChange = useCallback((year: string) => {
     setSelectedYear(year);
+    setSelectedMake('');
+    setSelectedModel('');
     setSelectedVariant('');
     setVariants([]);
     setDiagramData(null);
+    setExpandedSystem(null);
+    setSelectedDiagram(null);
+    autoOpenConsumedRef.current = false;
   }, []);
 
   // Clear downstream when make changes
   const handleMakeChange = useCallback((make: string) => {
     setSelectedMake(make);
+    setSelectedModel('');
     setSelectedVariant('');
     setVariants([]);
     setDiagramData(null);
+    setExpandedSystem(null);
+    setSelectedDiagram(null);
+    autoOpenConsumedRef.current = false;
+  }, []);
+
+  const handleModelChange = useCallback((model: string) => {
+    setSelectedModel(model);
+    setSelectedVariant('');
+    setDiagramData(null);
+    setExpandedSystem(null);
+    setSelectedDiagram(null);
+    autoOpenConsumedRef.current = false;
   }, []);
 
   // Fetch variants when make + year both selected
   useEffect(() => {
-    if (!selectedMake || !selectedYear) { setVariants([]); setSelectedVariant(''); return; }
+    if (!selectedMake || !selectedYear) {
+      setVariants([]);
+      setSelectedVariant('');
+      return;
+    }
     setLoadingVariants(true);
     setSelectedVariant('');
     setDiagramData(null);
@@ -145,21 +207,49 @@ export default function WiringDiagramLibrary() {
       .then(d => {
         const loadedVariants: string[] = d.variants || [];
         setVariants(loadedVariants);
-        const matchedVariant = prefillVariantRef.current && loadedVariants.includes(prefillVariantRef.current)
-          ? prefillVariantRef.current
-          : prefillModelRef.current
-            ? resolveVariantForModel(loadedVariants, prefillModelRef.current)
-            : null;
-
-        if (matchedVariant) {
-          setSelectedVariant(matchedVariant);
-          prefillVariantRef.current = '';
-          prefillModelRef.current = '';
-        }
         setLoadingVariants(false);
       })
-      .catch(() => setLoadingVariants(false));
+      .catch(() => {
+        setVariants([]);
+        setLoadingVariants(false);
+      });
   }, [selectedMake, selectedYear]);
+
+  useEffect(() => {
+    if (!selectedYear || !selectedMake || loadingVariants) return;
+    if (variants.length === 0) {
+      setSelectedVariant('');
+      return;
+    }
+
+    let nextModel = selectedModel;
+
+    if (!nextModel && prefillModelRef.current) {
+      nextModel = prefillModelRef.current;
+      setSelectedModel(prefillModelRef.current);
+    }
+
+    if (!nextModel && prefillVariantRef.current && models.length > 0) {
+      const inferredModel = resolveModelForVariant(models, prefillVariantRef.current);
+      if (inferredModel) {
+        nextModel = inferredModel;
+        setSelectedModel(inferredModel);
+      }
+    }
+
+    const matchedVariant = prefillVariantRef.current && variants.includes(prefillVariantRef.current)
+      ? prefillVariantRef.current
+      : nextModel
+        ? resolveVariantForModel(variants, nextModel)
+        : null;
+
+    setSelectedVariant(matchedVariant || '');
+
+    if (matchedVariant) {
+      prefillVariantRef.current = '';
+      prefillModelRef.current = '';
+    }
+  }, [loadingVariants, models, selectedMake, selectedModel, selectedYear, variants]);
 
   // Fetch diagrams when variant changes
   useEffect(() => {
@@ -183,9 +273,9 @@ export default function WiringDiagramLibrary() {
       const images = Array.isArray(data.images) ? data.images : [];
       const title = data.title || entry.name;
       setSelectedDiagram({ entry, images: { images, title } });
-      if (selectedYear && selectedMake && selectedVariant) {
+      if (selectedYear && selectedMake && (selectedModel || selectedVariant)) {
         trackWiringDiagramOpen(
-          `${selectedYear} ${selectedMake} ${selectedVariant}`,
+          `${selectedYear} ${selectedMake} ${selectedModel || selectedVariant}`,
           systemName,
           entry.name,
         );
@@ -253,7 +343,7 @@ export default function WiringDiagramLibrary() {
                 onChange={e => handleYearChange(e.target.value)}
               >
                 <option value="">Select Year</option>
-                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+                {COVERED_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
               </select>
             </div>
 
@@ -263,26 +353,38 @@ export default function WiringDiagramLibrary() {
                 className="wl-select"
                 value={selectedMake}
                 onChange={e => handleMakeChange(e.target.value)}
-                disabled={loadingMakes}
+                disabled={!selectedYear}
               >
-                <option value="">{loadingMakes ? 'Loading...' : 'Select Make'}</option>
+                <option value="">{selectedYear ? 'Select Make' : 'Select Year First'}</option>
                 {makes.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
 
             <div className="wl-dropdown-group">
-              <label className="wl-label">Model / Engine</label>
+              <label className="wl-label">Model</label>
               <select
                 className="wl-select"
-                value={selectedVariant}
-                onChange={e => setSelectedVariant(e.target.value)}
-                disabled={!selectedYear || !selectedMake || loadingVariants}
+                value={selectedModel}
+                onChange={e => handleModelChange(e.target.value)}
+                disabled={!selectedYear || !selectedMake}
               >
-                <option value="">{loadingVariants ? 'Loading...' : 'Select Model'}</option>
-                {variants.map(v => <option key={v} value={v}>{v}</option>)}
+                <option value="">
+                  {!selectedYear ? 'Select Year First' : !selectedMake ? 'Select Make First' : 'Select Model'}
+                </option>
+                {models.map(model => <option key={model} value={model}>{model}</option>)}
               </select>
             </div>
           </div>
+
+          {selectedYear && makes.length === 0 && (
+            <p className="wl-hint">No verified wiring coverage is available for {selectedYear}.</p>
+          )}
+          {selectedYear && selectedMake && models.length === 0 && (
+            <p className="wl-hint">No verified wiring model coverage is available for {selectedYear} {selectedMake}.</p>
+          )}
+          {selectedYear && selectedMake && selectedModel && !loadingVariants && !selectedVariant && (
+            <p className="wl-hint">We found the vehicle, but could not resolve an exact archive variant for that model. Try another year or model.</p>
+          )}
         </div>
 
         {/* Loading */}
@@ -469,6 +571,12 @@ export default function WiringDiagramLibrary() {
         }
 
         .wl-dropdown-group { display: flex; flex-direction: column; gap: 0.375rem; }
+
+        .wl-hint {
+          margin: 1rem 0 0;
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.65);
+        }
 
         .wl-label {
           font-size: 0.75rem;
