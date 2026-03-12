@@ -34,8 +34,8 @@ export default function CharmRepairPage() {
                         <span className="text-brand-cyan">Factory Manual</span> Repair Guides
                     </h1>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Select your vehicle from our charm.li-powered database. 
-                        If we don&apos;t have it, we&apos;re working on adding it!
+                        Select your vehicle from our verified manual coverage database.
+                        If we do not have it yet, we will say that plainly instead of guessing.
                     </p>
                 </header>
 
@@ -91,7 +91,7 @@ export default function CharmRepairPage() {
                         <div className="text-3xl mb-2">📚</div>
                         <h3 className="font-bold text-white mb-2">Factory Manuals</h3>
                         <p className="text-gray-400 text-sm">
-                            All guides sourced directly from charm.li professional service manuals
+                            Guides are grounded in archived factory service manual material for supported vehicles
                         </p>
                     </div>
                     <div className="p-6 bg-white/5 rounded-xl border border-white/10">
@@ -105,7 +105,7 @@ export default function CharmRepairPage() {
                         <div className="text-3xl mb-2">🚫</div>
                         <h3 className="font-bold text-white mb-2">No Hallucinations</h3>
                         <p className="text-gray-400 text-sm">
-                            If it&apos;s not in our database, we won&apos;t make it up. We&apos;re expanding daily.
+                            If it&apos;s not in the archive-backed database, we won&apos;t make it up. Coverage expands over time.
                         </p>
                     </div>
                 </div>

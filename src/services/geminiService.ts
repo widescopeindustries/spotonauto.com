@@ -136,8 +136,8 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
   return { year, make: normMake, model: normModel };
 };
 
-// ─── Operation CHARM (charm.li) live fetch ──────────────────────────────────
-// Publicly free service manual archive ("no strings attached") covering 1982–2013.
+// ─── Factory manual archive live fetch ───────────────────────────────────────
+// Publicly accessible service manual archive covering 1982–2013.
 // We fetch live at query time — no local copy stored.
 // For 2014+ vehicles we fall back silently to AI-only.
 
@@ -151,7 +151,7 @@ function charmFetchOpts(): RequestInit {
   };
 }
 
-/** Keywords mapping common repair tasks to relevant charm.li path segments */
+/** Keywords mapping common repair tasks to relevant manual archive path segments */
 const TASK_KEYWORDS: Record<string, string[]> = {
   'oil':          ['Oil', 'Lubrication', 'Engine Oil', 'Oil Pan', 'Oil Filter'],
   'brake':        ['Brake', 'Brakes', 'Pad', 'Rotor', 'Caliper', 'Brake Disc'],
@@ -167,6 +167,16 @@ const TASK_KEYWORDS: Record<string, string[]> = {
   'shock':        ['Shock', 'Strut', 'Suspension', 'Spring'],
 };
 
+function sanitizeManualArchiveText(text: string): string {
+  return text
+    .replace(/Operation\s+CHARM/gi, '')
+    .replace(/charm\.li/gi, '')
+    .replace(/\(\s*\)/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.;:])/g, '$1')
+    .trim();
+}
+
 function extractText(html: string, baseUrl: string = ''): string {
   // Replace <img> tags with a text marker including the absolute URL
   const htmlWithImages = html.replace(/<img[^>]+src=["']([^"']+)["'][^>]*>/gi, (match, src) => {
@@ -177,12 +187,15 @@ function extractText(html: string, baseUrl: string = ''): string {
     return ` [IMAGE: ${absoluteSrc}] `;
   });
 
-  return htmlWithImages
+  return sanitizeManualArchiveText(
+    htmlWithImages
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&').replace(/&#\d+;/g, ' ')
-    .replace(/\s{2,}/g, ' ').trim();
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+  );
 }
 
 function extractLinks(html: string): string[] {
@@ -196,7 +209,7 @@ function buildManualUrl(path: string): string {
 }
 
 function clipSnippet(text: string, maxLength: number = 220): string {
-  const normalized = text.replace(/\s+/g, ' ').trim();
+  const normalized = sanitizeManualArchiveText(text).replace(/\s+/g, ' ').trim();
   if (normalized.length <= maxLength) return normalized;
   return `${normalized.slice(0, maxLength - 1).trim()}...`;
 }
@@ -264,14 +277,14 @@ function findTaskSections(sectionLinks: string[], task: string): string[] {
 
 /**
  * Build the factory-manual context for a vehicle + task.
- * Vector-backed corpus text is the primary context; live CHARM fetch is fallback only.
+ * Vector-backed corpus text is the primary context; live archive fetch is fallback only.
  * Never throws — always fails gracefully.
  */
 async function fetchFromCharmLi(year: string, make: string, model: string, task?: string): Promise<ManualContext> {
-  // charm.li coverage is 1982–2013
+  // Archive coverage is 1982–2013
   const yearNum = parseInt(year, 10);
   if (isNaN(yearNum) || yearNum > 2013 || yearNum < 1982) {
-    console.log(`[CHARM.LI] Year ${year} outside coverage (1982-2013), skipping`);
+    console.log(`[MANUAL ARCHIVE] Year ${year} outside coverage (1982-2013), skipping`);
     return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
   }
 
@@ -300,12 +313,12 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     };
   }
 
-  // Fall through to CHARM scraping if vector search returned nothing
+  // Fall through to live archive fetch if vector search returned nothing
   try {
     // Step 1: Get year page to find vehicle variants
     const yearUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`;
     const yearResp = await fetch(yearUrl, charmFetchOpts());
-    if (!yearResp.ok) { console.warn(`[CHARM.LI] Make/year not found: ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
+    if (!yearResp.ok) { console.warn(`[MANUAL ARCHIVE] Make/year not found: ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
     const yearHtml = await yearResp.text();
 
     // Extract relative variant links (exclude breadcrumbs/nav)
@@ -314,7 +327,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
       l.startsWith(`/${make}/`) && l.split('/').length === 4 // /Make/Year/Variant/
     );
 
-    if (!variantLinks.length) { console.warn(`[CHARM.LI] No variants found for ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
+    if (!variantLinks.length) { console.warn(`[MANUAL ARCHIVE] No variants found for ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
 
     // Step 2: Fuzzy-match the user's model to available variants
     const variantPaths = variantLinks.map(l => l.split('/')[3]); // just the encoded variant segment
@@ -323,12 +336,12 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
 
     const variantBase = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${bestPath}`;
     const variantDecoded = decodeURIComponent(bestPath);
-    console.log(`[CHARM.LI] ✓ Matched "${model}" → "${variantDecoded}"`);
+    console.log(`[MANUAL ARCHIVE] ✓ Matched "${model}" → "${variantDecoded}"`);
 
     // Step 3: Fetch Repair and Diagnosis index
     const rdUrl = `${variantBase}Repair%20and%20Diagnosis/`;
     const rdResp = await fetch(rdUrl, charmFetchOpts());
-    if (!rdResp.ok) { console.warn(`[CHARM.LI] No Repair+Diagnosis for ${variantDecoded}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
+    if (!rdResp.ok) { console.warn(`[MANUAL ARCHIVE] No Repair+Diagnosis for ${variantDecoded}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
     const rdHtml = await rdResp.text();
 
     // Step 4: Find task-relevant sections
@@ -337,9 +350,9 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
 
     if (!relevantSections.length) {
       // Return just the section index as context
-      const indexSnippet = extractText(rdHtml, rdUrl).slice(0, 4000);
+      const indexSnippet = sanitizeManualArchiveText(extractText(rdHtml, rdUrl).slice(0, 4000));
       return {
-        content: `=== charm.li: ${year} ${make} ${variantDecoded} — Repair & Diagnosis Index ===\n${indexSnippet}`,
+        content: `=== Factory Service Manual Archive: ${year} ${make} ${variantDecoded} — Repair & Diagnosis Index ===\n${indexSnippet}`,
         sources: [makeManualSource(rdUrl.replace(CHARM_BASE, ''), 'Repair & Diagnosis Index', indexSnippet)],
         sourceCount: 1,
         retrievalMode: 'live',
@@ -378,7 +391,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
           const subResults = await Promise.all(subPageFetches);
           const subContent = subResults.filter(Boolean).join('\n');
 
-          const mainText = extractText(html, sectionUrl).slice(0, 2000);
+          const mainText = sanitizeManualArchiveText(extractText(html, sectionUrl).slice(0, 2000));
           const combined = `=== ${sectionName} ===\n${mainText}${subContent ? '\n' + subContent : ''}`;
           const finalText = combined.slice(0, 4000);
           return {
@@ -393,8 +406,8 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     const content = resolvedPages.map((page) => page.text).join('\n\n');
     if (!content.trim()) return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
 
-    const header = `=== charm.li Factory Service Manual: ${year} ${make} ${variantDecoded} ===\n`;
-    console.log(`[CHARM.LI] ✓ Fetched ${contentPages.filter(Boolean).length} section(s) for "${task}"`);
+    const header = `=== Factory Service Manual Archive: ${year} ${make} ${variantDecoded} ===\n`;
+    console.log(`[MANUAL ARCHIVE] ✓ Fetched ${contentPages.filter(Boolean).length} section(s) for "${task}"`);
     return {
       content: header + content,
       sources: resolvedPages.map((page) => page.source),
@@ -403,7 +416,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     };
 
   } catch (error) {
-    console.error('[CHARM.LI] Fetch error:', error);
+    console.error('[MANUAL ARCHIVE] Fetch error:', error);
     return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
   }
 }
@@ -416,7 +429,7 @@ export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<Ve
     throw new Error(`Invalid vehicle combination: ${year} ${make} ${model}. This vehicle did not exist in the specified year.`);
   }
 
-  // Fetch NHTSA data + charm.li in parallel
+  // Fetch NHTSA data + manual archive context in parallel
   const [nhtsaData, manualContext] = await Promise.all([
     getVehicleNHTSAData(year, make, model),
     fetchFromCharmLi(year, make, model, task),
@@ -493,7 +506,7 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
     throw new Error(`Invalid vehicle combination: ${year} ${make} ${model}. This vehicle did not exist in the specified year.`);
   }
 
-  // Fetch NHTSA data + charm.li in parallel
+  // Fetch NHTSA data + manual archive context in parallel
   const [nhtsaData, manualContext] = await Promise.all([
     getVehicleNHTSAData(year, make, model),
     fetchFromCharmLi(year, make, model, task),
@@ -577,7 +590,7 @@ Keep instructions concise and practical.`;
   const text = (response.text || "").trim().replace(/^```json\s*|```$/g, '');
   const data = JSON.parse(text);
 
-  // Get source count but don't expose URLs (especially charm.li)
+  // Get source count but don't expose raw upstream archive URLs
   const rawSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
     ?.map((chunk: any) => chunk.web)
     .filter((web: any): web is GroundingSource => !!(web?.uri && web.title)) || [];
@@ -620,7 +633,7 @@ export const createDiagnosticChat = (vehicle: Vehicle): Chat => {
 
 CRITICAL: Only provide diagnostic guidance if you can verify the ${year} ${make} ${model} existed. If you cannot find specific data for this EXACT vehicle, state "I don't have diagnostic data for this specific vehicle year" rather than guessing.
 
-DATA SOURCE: When user describes symptoms or issues, you MUST use Google Search to find relevant diagnostic information. Always search "site:charm.li ${year} ${make} ${model}" combined with the symptom to find professional diagnostic procedures. Use charm.li as your PRIMARY SOURCE of information.
+DATA SOURCE: Prefer verified factory service manual archive evidence for the exact vehicle when available. Do not cite distributors or archive hosts as the author of the procedures. If the vehicle-specific evidence is not available, say so plainly instead of inventing steps.
 
 Instructions:
 1.  Begin by asking for the primary symptom or issue.

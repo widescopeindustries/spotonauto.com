@@ -48,9 +48,9 @@ html {
     overflow-x: hidden;
     line-height: 1.6;
     background-image:
-      radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.1), transparent 70%),
-      radial-gradient(circle at 0% 50%, rgba(188, 19, 254, 0.05), transparent 50%),
-      linear-gradient(to bottom, #050505, #0a0a0a);
+      radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.13), transparent 34%),
+      radial-gradient(circle at 100% 12%, rgba(255, 255, 255, 0.05), transparent 22%),
+      linear-gradient(180deg, #020202 0%, #050505 42%, #020202 100%);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -129,6 +129,29 @@ html {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(0, 212, 255, 0.3);
+  }
+
+  .matte-shell {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.14), transparent 32%),
+      linear-gradient(180deg, #020202 0%, #050505 45%, #020202 100%);
+  }
+
+  .matte-panel {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
+      rgba(7, 7, 7, 0.84);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .matte-panel-soft {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+      rgba(5, 5, 5, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .glass-panel {

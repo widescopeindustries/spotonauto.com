@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
       case 'vehicle-info':
         result = await getVehicleInfo(payload.vehicle, payload.task);
         if (result.sources && result.sources.length > 0) {
-          console.log(`✓ Grounded in ${result.sources.length} sources from charm.li`);
+          console.log(`✓ Grounded in ${result.sources.length} factory manual archive sources`);
         }
         console.log(
           `[RETRIEVAL] vehicle-info mode=${result.retrieval?.manualMode || 'none'} ` +

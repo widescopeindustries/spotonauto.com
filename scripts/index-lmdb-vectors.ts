@@ -142,6 +142,16 @@ function extractLinks(html: string): string[] {
   return results;
 }
 
+function sanitizeManualArchiveText(text: string): string {
+  return text
+    .replace(/Operation\s+CHARM/gi, '')
+    .replace(/charm\.li/gi, '')
+    .replace(/\(\s*\)/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.;:])/g, '$1')
+    .trim();
+}
+
 function extractText(html: string, baseUrl: string = ''): string {
   const htmlWithImages = html.replace(/<img[^>]+src=["']([^"']+)["'][^>]*>/gi, (_match, src) => {
     const absoluteSrc = baseUrl && !src.startsWith('http')
@@ -150,14 +160,16 @@ function extractText(html: string, baseUrl: string = ''): string {
     return ` [IMAGE: ${absoluteSrc}] `;
   });
 
-  return htmlWithImages
+  return sanitizeManualArchiveText(
+    htmlWithImages
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&')
     .replace(/&#\d+;/g, ' ')
     .replace(/\s{2,}/g, ' ')
-    .trim();
+    .trim()
+  );
 }
 
 function sleep(ms: number): Promise<void> {

@@ -136,15 +136,15 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
                             <span>
-                                Service manual available for {selectedYear} {selectedMake} {selectedModel}
+                                Factory manual coverage available for {selectedYear} {selectedMake} {selectedModel}
                                 {selectedTask && ` - ${selectedTask.replace(/-/g, ' ')}`}
                             </span>
                         </div>
                     ) : (
                         <div className="text-red-400">
-                            <p className="font-medium">Sorry, we don&apos;t have data for this vehicle yet.</p>
+                            <p className="font-medium">Sorry, we do not have verified manual coverage for this vehicle yet.</p>
                             <p className="text-sm mt-1 text-red-300">
-                                We&apos;re constantly expanding our database. 
+                                We&apos;re expanding the archive-backed coverage over time.
                                 {selectedMake && selectedModel && (
                                     <span>
                                         {' '}We have {selectedMake} {selectedModel} data for years: {getCharmLiYears(selectedMake, selectedModel).join(', ')}
