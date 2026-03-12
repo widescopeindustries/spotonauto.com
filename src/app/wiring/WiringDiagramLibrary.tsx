@@ -125,6 +125,8 @@ export default function WiringDiagramLibrary() {
   const [expandedSystem, setExpandedSystem] = useState<string | null>(null);
   const [selectedDiagram, setSelectedDiagram] = useState<{ entry: DiagramEntry; images: DiagramImage } | null>(null);
   const [search, setSearch] = useState('');
+  const [variantLookupError, setVariantLookupError] = useState<string | null>(null);
+  const [diagramError, setDiagramError] = useState<string | null>(null);
 
   // Loading states
   const [loadingVariants, setLoadingVariants] = useState(false);
@@ -168,6 +170,8 @@ export default function WiringDiagramLibrary() {
     setDiagramData(null);
     setExpandedSystem(null);
     setSelectedDiagram(null);
+    setVariantLookupError(null);
+    setDiagramError(null);
     autoOpenConsumedRef.current = false;
   }, []);
 
@@ -180,6 +184,8 @@ export default function WiringDiagramLibrary() {
     setDiagramData(null);
     setExpandedSystem(null);
     setSelectedDiagram(null);
+    setVariantLookupError(null);
+    setDiagramError(null);
     autoOpenConsumedRef.current = false;
   }, []);
 
@@ -189,6 +195,8 @@ export default function WiringDiagramLibrary() {
     setDiagramData(null);
     setExpandedSystem(null);
     setSelectedDiagram(null);
+    setVariantLookupError(null);
+    setDiagramError(null);
     autoOpenConsumedRef.current = false;
   }, []);
 
@@ -202,16 +210,24 @@ export default function WiringDiagramLibrary() {
     setLoadingVariants(true);
     setSelectedVariant('');
     setDiagramData(null);
-    fetch(`/api/wiring?action=variants&make=${encodeURIComponent(selectedMake)}&year=${selectedYear}`)
-      .then(r => r.json())
+    setVariantLookupError(null);
+    void fetch(`/api/wiring?action=variants&make=${encodeURIComponent(selectedMake)}&year=${selectedYear}`)
+      .then(async (r) => {
+        const data = await r.json();
+        if (!r.ok) {
+          throw new Error(data.error || 'Unable to load archive variants');
+        }
+        return data;
+      })
       .then(d => {
         const loadedVariants: string[] = d.variants || [];
         setVariants(loadedVariants);
         setLoadingVariants(false);
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         setVariants([]);
         setLoadingVariants(false);
+        setVariantLookupError(error instanceof Error ? error.message : 'Unable to load archive variants');
       });
   }, [selectedMake, selectedYear]);
 
@@ -251,18 +267,34 @@ export default function WiringDiagramLibrary() {
     }
   }, [loadingVariants, models, selectedMake, selectedModel, selectedYear, variants]);
 
+  const archiveTarget = selectedVariant || (selectedModel && !loadingVariants ? selectedModel : '');
+  const isUsingDirectModelFallback = Boolean(!selectedVariant && archiveTarget && selectedModel);
+
   // Fetch diagrams when variant changes
   useEffect(() => {
-    if (!selectedMake || !selectedYear || !selectedVariant) return;
+    if (!selectedMake || !selectedYear || !selectedModel || !archiveTarget) return;
     setLoadingDiagrams(true);
     setDiagramData(null);
     setExpandedSystem(null);
     setSelectedDiagram(null);
-    fetch(`/api/wiring?action=diagrams&make=${encodeURIComponent(selectedMake)}&year=${selectedYear}&variant=${encodeURIComponent(selectedVariant)}`)
-      .then(r => r.json())
-      .then(d => { setDiagramData(d); setLoadingDiagrams(false); })
-      .catch(() => setLoadingDiagrams(false));
-  }, [selectedMake, selectedYear, selectedVariant]);
+    setDiagramError(null);
+    void fetch(`/api/wiring?action=diagrams&make=${encodeURIComponent(selectedMake)}&year=${selectedYear}&variant=${encodeURIComponent(archiveTarget)}`)
+      .then(async (r) => {
+        const data = await r.json();
+        if (!r.ok) {
+          throw new Error(data.error || 'Unable to load diagram index');
+        }
+        return data;
+      })
+      .then(d => {
+        setDiagramData(d);
+        setLoadingDiagrams(false);
+      })
+      .catch((error: unknown) => {
+        setLoadingDiagrams(false);
+        setDiagramError(error instanceof Error ? error.message : 'Unable to load diagram index');
+      });
+  }, [archiveTarget, selectedMake, selectedModel, selectedYear]);
 
   const openDiagram = useCallback(async (entry: DiagramEntry, systemName: string) => {
     setLoadingImage(true);
@@ -382,8 +414,17 @@ export default function WiringDiagramLibrary() {
           {selectedYear && selectedMake && models.length === 0 && (
             <p className="wl-hint">No verified wiring model coverage is available for {selectedYear} {selectedMake}.</p>
           )}
-          {selectedYear && selectedMake && selectedModel && !loadingVariants && !selectedVariant && (
+          {variantLookupError && (
+            <p className="wl-hint wl-hint-warn">Archive variant lookup is unavailable right now. Trying the direct model path instead.</p>
+          )}
+          {selectedYear && selectedMake && selectedModel && !loadingVariants && !selectedVariant && !variantLookupError && !loadingDiagrams && !diagramData && (
             <p className="wl-hint">We found the vehicle, but could not resolve an exact archive variant for that model. Try another year or model.</p>
+          )}
+          {isUsingDirectModelFallback && !loadingDiagrams && diagramData && (
+            <p className="wl-hint">Opened diagrams using the direct model path because no engine-specific variant was required.</p>
+          )}
+          {diagramError && (
+            <p className="wl-hint wl-hint-warn">Could not load the diagram index for {selectedYear} {selectedMake} {selectedModel}. The archive may be unavailable for that model right now.</p>
           )}
         </div>
 
@@ -576,6 +617,10 @@ export default function WiringDiagramLibrary() {
           margin: 1rem 0 0;
           font-size: 0.85rem;
           color: rgba(255, 255, 255, 0.65);
+        }
+
+        .wl-hint-warn {
+          color: #f6c768;
         }
 
         .wl-label {
