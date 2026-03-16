@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ShoppingCartIcon, WrenchIcon, TruckIcon, MapPinIcon, TagIcon, StarIcon, CheckCircleIcon } from '@/components/Icons';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 export const metadata: Metadata = {
     title: 'Auto Parts | Shop Amazon & More | SpotOn Auto',
@@ -27,8 +28,6 @@ export const metadata: Metadata = {
         canonical: 'https://spotonauto.com/parts'
     }
 };
-
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
 
 // Popular parts categories with search queries
 const PARTS_CATEGORIES = [
@@ -78,7 +77,7 @@ const RETAILERS = [
         tagline: 'Fast Prime shipping',
         benefit: '2-day delivery on most parts',
         color: 'bg-amber-500',
-        url: `https://www.amazon.com/s?k=auto+parts&i=automotive&tag=${AMAZON_TAG}`
+        url: buildAmazonSearchUrl('auto parts')
     }
 ];
 
@@ -176,7 +175,7 @@ export default function PartsPage() {
                                     {category.parts.map((part) => (
                                         <li key={part}>
                                             <a
-                                                href={`https://www.amazon.com/s?k=${encodeURIComponent(part)}&i=automotive&tag=${AMAZON_TAG}`}
+                                                href={buildAmazonSearchUrl(part)}
                                                 target="_blank"
                                                 rel="noopener noreferrer sponsored"
                                                 className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors group"

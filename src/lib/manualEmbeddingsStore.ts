@@ -83,6 +83,11 @@ function embeddingToVectorLiteral(embedding: number[]): string {
   return `[${embedding.join(',')}]`;
 }
 
+function getTimeoutMs(value: string | undefined, fallback: number): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 function getVpsPool(): Pool | null {
   if (vpsPool !== undefined) return vpsPool;
 
@@ -91,10 +96,20 @@ function getVpsPool(): Pool | null {
     return vpsPool;
   }
 
+  const connectionTimeoutMs = getTimeoutMs(
+    process.env.VPS_DATABASE_CONNECT_TIMEOUT_MS || process.env.PGCONNECT_TIMEOUT_MS,
+    5000,
+  );
+  const queryTimeoutMs = getTimeoutMs(process.env.VPS_DATABASE_QUERY_TIMEOUT_MS, 10000);
+
   vpsPool = new Pool({
     connectionString: process.env.VPS_DATABASE_URL,
     ssl: { rejectUnauthorized: false },
     max: 4,
+    connectionTimeoutMillis: connectionTimeoutMs,
+    query_timeout: queryTimeoutMs,
+    statement_timeout: queryTimeoutMs,
+    idleTimeoutMillis: 10000,
   });
 
   return vpsPool;

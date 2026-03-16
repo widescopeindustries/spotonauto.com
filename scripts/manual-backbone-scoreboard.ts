@@ -2,9 +2,12 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { google } from 'googleapis';
-import { getManualEmbeddingsBackend, testManualEmbeddingsConnection } from '../src/lib/manualEmbeddingsStore';
+import { getManualEmbeddingsBackend, testManualEmbeddingsConnection } from '../src/lib/manualEmbeddingsStore.ts';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
 const OUTPUT_DIR = path.join(__dirname, 'seo-reports');
 const SITE_URL = 'sc-domain:spotonauto.com';

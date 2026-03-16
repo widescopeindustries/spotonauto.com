@@ -2,7 +2,11 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { getManualEmbeddingsBackend, testManualEmbeddingsConnection } from '../src/lib/manualEmbeddingsStore';
+import { fileURLToPath } from 'url';
+import { getManualEmbeddingsBackend, testManualEmbeddingsConnection } from '../src/lib/manualEmbeddingsStore.ts';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function loadEnv(): void {
   const candidates = [

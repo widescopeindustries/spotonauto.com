@@ -43,13 +43,13 @@ Confirm:
 Start with a dry run against one make/year:
 
 ```bash
-npx tsx scripts/index-lmdb-vectors.ts --make Toyota --year 2010 --dry-run
+node --experimental-strip-types scripts/index-lmdb-vectors.ts --make Toyota --year 2010 --dry-run
 ```
 
 Then run one real make/year to validate writes:
 
 ```bash
-npx tsx scripts/index-lmdb-vectors.ts --make Toyota --year 2010
+node --experimental-strip-types scripts/index-lmdb-vectors.ts --make Toyota --year 2010
 ```
 
 Recheck health:
@@ -73,19 +73,19 @@ This process is resumable. If interrupted, rerun the same command.
 One make:
 
 ```bash
-npx tsx scripts/index-lmdb-vectors.ts --make Honda
+node --experimental-strip-types scripts/index-lmdb-vectors.ts --make Honda
 ```
 
 One make + year:
 
 ```bash
-npx tsx scripts/index-lmdb-vectors.ts --make Ford --year 2008
+node --experimental-strip-types scripts/index-lmdb-vectors.ts --make Ford --year 2008
 ```
 
 Preview without writes:
 
 ```bash
-npx tsx scripts/index-lmdb-vectors.ts --make BMW --year 2011 --dry-run
+node --experimental-strip-types scripts/index-lmdb-vectors.ts --make BMW --year 2011 --dry-run
 ```
 
 ## Post-Run Validation

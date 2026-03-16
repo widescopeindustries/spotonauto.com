@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 // High-value SEO page for BMW X3 battery location queries (10 impressions)
 export const metadata: Metadata = {
@@ -23,8 +24,6 @@ export const metadata: Metadata = {
         canonical: 'https://spotonauto.com/tools/bmw-x3-battery-location',
     },
 };
-
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
 
 // BMW X3 battery data by generation
 const X3_BATTERY_DATA = [
@@ -132,7 +131,7 @@ export default function BMWX3BatteryLocationPage() {
                                         </td>
                                         <td className="py-4 px-4">
                                             <a
-                                                href={`https://www.amazon.com/s?k=BMW+X3+battery+${gen.agm.includes('Yes') ? 'AGM+' : ''}H7+94R&tag=${AMAZON_TAG}`}
+                                                href={buildAmazonSearchUrl(`BMW X3 battery ${gen.agm.includes('Yes') ? 'AGM ' : ''}H7 94R`)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"
@@ -211,7 +210,7 @@ export default function BMWX3BatteryLocationPage() {
                     <h2 className="text-xl font-bold mb-4">⭐ Recommended Batteries for BMW X3</h2>
                     <div className="grid md:grid-cols-3 gap-4">
                         <a
-                            href={`https://www.amazon.com/s?k=ACDelco+94R+AGM+battery&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('ACDelco 94R AGM battery')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
@@ -221,7 +220,7 @@ export default function BMWX3BatteryLocationPage() {
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
                         <a
-                            href={`https://www.amazon.com/s?k=Optima+RedTop+H7+battery&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('Optima RedTop H7 battery')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
@@ -231,7 +230,7 @@ export default function BMWX3BatteryLocationPage() {
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
                         <a
-                            href={`https://www.amazon.com/s?k=Bosch+S6+AGM+battery+H7&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('Bosch S6 AGM battery H7')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"

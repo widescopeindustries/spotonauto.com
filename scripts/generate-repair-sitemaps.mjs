@@ -3,7 +3,7 @@
  * Run before `next build` so Vercel serves them directly from CDN
  * with NO Next.js processing (no Vary: rsc headers, no RSC pipeline).
  */
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readdirSync, readFileSync, unlinkSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -11,12 +11,30 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const OUT_DIR = join(ROOT, 'public', 'repair', 'sitemap');
 const INDEX_PATH = join(ROOT, 'public', 'repair', 'sitemap.xml');
+const REPORTS_DIR = join(ROOT, 'scripts', 'seo-reports');
+const WINNERS_DIR = join(ROOT, 'public', 'repair', 'winners');
+const WINNERS_SITEMAP_PATH = join(WINNERS_DIR, 'sitemap.xml');
+const WINNERS_LIST_PATH = join(WINNERS_DIR, 'urls.txt');
 
 const LAST_MOD = '2026-03-01';
 const YEAR_STEP = 5;
 // Keep chunks small and stable for crawler fetch reliability.
 const URLS_PER_SITEMAP = 10000;
 const BASE_URL = 'https://spotonauto.com';
+const MAIN_SITEMAP_MIN_YEAR = 1995;
+const TASK_MIN_YEAR = {
+    'catalytic-converter-replacement': 1975,
+    'oxygen-sensor-replacement': 1980,
+    'egr-valve-replacement': 1975,
+    'mass-air-flow-sensor-replacement': 1988,
+    'crankshaft-sensor-replacement': 1988,
+    'camshaft-sensor-replacement': 1988,
+    'cabin-air-filter-replacement': 1990,
+    'serpentine-belt-replacement': 1985,
+    'turbo-replacement': 1980,
+    'cv-axle-replacement': 1980,
+    'glow-plug-replacement': 1980,
+};
 
 function slugify(s) {
     return s.toLowerCase().replace(/\s+/g, '-');
@@ -29,6 +47,10 @@ function escapeXml(s) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&apos;');
+}
+
+function getEligibleTasksForYear(year) {
+    return VALID_TASKS.filter((task) => year >= (TASK_MIN_YEAR[task] ?? 1900));
 }
 
 // Inline the vehicle data and tasks to avoid TS import issues
@@ -70,14 +92,17 @@ function buildAllEntries() {
             const modelSlug = slugify(model);
 
             const sampledYears = new Set();
-            sampledYears.add(years.start);
+            if (years.start >= MAIN_SITEMAP_MIN_YEAR) {
+                sampledYears.add(years.start);
+            }
             sampledYears.add(years.end);
-            for (let y = years.start; y <= years.end; y += YEAR_STEP) {
+            for (let y = Math.max(years.start, MAIN_SITEMAP_MIN_YEAR); y <= years.end; y += YEAR_STEP) {
                 sampledYears.add(y);
             }
 
             for (const year of sampledYears) {
-                for (const task of VALID_TASKS) {
+                const eligibleTasks = getEligibleTasksForYear(year);
+                for (const task of eligibleTasks) {
                     entries.push({
                         url: `${BASE_URL}/repair/${year}/${makeSlug}/${modelSlug}/${task}`,
                         lastmod: LAST_MOD,
@@ -92,26 +117,68 @@ function buildAllEntries() {
     return entries;
 }
 
+function findLatestRecrawlPriorityReport() {
+    const reports = readdirSync(REPORTS_DIR)
+        .map((name) => {
+            const match = name.match(/^recrawl-priority-(\d{4}-\d{2}-\d{2})\.txt$/);
+            return match ? { name, reportDate: match[1] } : null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.reportDate.localeCompare(a.reportDate));
+
+    if (!reports.length) {
+        throw new Error(`No recrawl-priority report found in ${REPORTS_DIR}`);
+    }
+
+    return reports[0];
+}
+
+function loadWinnerEntries() {
+    const latestReport = findLatestRecrawlPriorityReport();
+    const reportPath = join(REPORTS_DIR, latestReport.name);
+    const urls = [...new Set(
+        readFileSync(reportPath, 'utf-8')
+            .split(/\r?\n/)
+            .map((line) => line.trim())
+            .filter((line) => line.startsWith(`${BASE_URL}/repair/`))
+    )];
+
+    return {
+        reportName: latestReport.name,
+        reportDate: latestReport.reportDate,
+        urls,
+    };
+}
+
+function writeUrlSet(path, entries) {
+    const xml = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        ...entries.map(
+            (entry) =>
+                `<url><loc>${escapeXml(entry.url)}</loc><lastmod>${entry.lastmod}</lastmod><changefreq>${entry.changefreq}</changefreq><priority>${entry.priority}</priority></url>`
+        ),
+        '</urlset>',
+    ].join('\n');
+
+    writeFileSync(path, xml, 'utf-8');
+}
+
 // Generate
 const all = buildAllEntries();
 const chunkCount = Math.ceil(all.length / URLS_PER_SITEMAP);
 
 mkdirSync(OUT_DIR, { recursive: true });
+for (const name of readdirSync(OUT_DIR)) {
+    if (name.endsWith('.xml')) {
+        unlinkSync(join(OUT_DIR, name));
+    }
+}
 
 for (let i = 0; i < chunkCount; i++) {
     const chunk = all.slice(i * URLS_PER_SITEMAP, (i + 1) * URLS_PER_SITEMAP);
-    const xml = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-        ...chunk.map(
-            (e) =>
-                `<url><loc>${escapeXml(e.url)}</loc><lastmod>${e.lastmod}</lastmod><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`
-        ),
-        '</urlset>',
-    ].join('\n');
-
     const outPath = join(OUT_DIR, `${i}.xml`);
-    writeFileSync(outPath, xml, 'utf-8');
+    writeUrlSet(outPath, chunk);
     console.log(`✓ ${outPath} — ${chunk.length} URLs`);
 }
 
@@ -130,5 +197,20 @@ const indexXml = [
 
 writeFileSync(INDEX_PATH, indexXml, 'utf-8');
 console.log(`✓ ${INDEX_PATH} — ${chunkCount} child sitemaps`);
+
+const winners = loadWinnerEntries();
+mkdirSync(WINNERS_DIR, { recursive: true });
+
+const winnerEntries = winners.urls.map((url) => ({
+    url,
+    lastmod: winners.reportDate,
+    changefreq: 'weekly',
+    priority: 0.95,
+}));
+
+writeUrlSet(WINNERS_SITEMAP_PATH, winnerEntries);
+writeFileSync(WINNERS_LIST_PATH, `${winners.urls.join('\n')}\n`, 'utf-8');
+console.log(`✓ ${WINNERS_SITEMAP_PATH} — ${winnerEntries.length} URLs from ${winners.reportName}`);
+console.log(`✓ ${WINNERS_LIST_PATH} — ${winnerEntries.length} URLs`);
 
 console.log(`\nGenerated ${chunkCount} repair sitemap chunks with ${all.length} total URLs`);

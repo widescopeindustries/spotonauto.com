@@ -885,6 +885,997 @@ export const VEHICLE_REPAIR_SPECS: Record<VehicleTaskKey, VehicleRepairSpec> = {
     ],
   },
 
+  "honda-cr-v::spark-plug-replacement": {
+    difficulty: "Easy to Intermediate",
+    time: "45-75 minutes",
+    parts: [
+      { name: "Spark Plugs (2002-2006 K24A1)", aftermarket: "NGK IFR6J11 / Denso SKJ20DR-M11", spec: "Gap 0.044 inch, 4 plugs" },
+      { name: "Spark Plugs (2007-2011 K24Z1)", aftermarket: "NGK IZFR6K11 / Denso SKJ20DR-M11", spec: "Iridium, 4 plugs" },
+    ],
+    tools: ["5/8 inch spark plug socket", "10mm socket", "6 inch extension", "Torque wrench"],
+    warnings: [
+      "K24 uses coil-on-plug ignition - unplug each coil and remove the 10mm retaining bolt before pulling the coil",
+      "Work on a cold aluminum head only to avoid damaging spark plug threads",
+      "Do not overtighten the plugs - K-series heads strip easily if forced",
+    ],
+    steps: [
+      "Remove the engine cover if equipped and unplug each ignition coil connector",
+      "Remove the 10mm coil bolts, pull the coils straight up, and inspect boots for oil intrusion",
+      "Remove each spark plug with a 5/8 inch socket and extension",
+      "Install new plugs by hand first, then torque evenly to spec",
+      "Reinstall coils, connectors, and engine cover, then start the engine and verify smooth idle",
+    ],
+    torqueSpecs: "Spark plugs: 13 ft-lbs | Ignition coil bolts: 7 ft-lbs",
+    vehicleNotes: [
+      "The 2.4L K24 is a 4-cylinder engine, so this job uses only 4 plugs and is easier than the V6 Honda jobs",
+      "If you see oil in a plug tube, the valve cover tube seals are leaking and should be addressed before installing new plugs",
+      "Honda service interval on iridium plugs is typically 105,000 miles, but misfire complaints often start earlier on neglected engines",
+      "Use NGK or Denso only - cheap plugs often cause rough idle on K-series engines",
+    ],
+  },
+
+  "honda-cr-v::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "1.5-2.5 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "Denso 280-6012 / Honda reman equivalent", spec: "2.4L K24 starter" },
+      { name: "Starter terminal nut", spec: "Reuse if clean; replace if heavily corroded" },
+    ],
+    tools: ["10mm, 12mm, and 14mm sockets", "Long extension", "Ratchet", "Floor jack"],
+    warnings: [
+      "Disconnect the negative battery cable first - the main starter cable is always hot",
+      "Access is tight under the intake manifold, so make sure the socket is fully seated before breaking bolts loose",
+      "If the starter only clicks, verify battery voltage and ground condition before replacing the unit",
+    ],
+    steps: [
+      "Disconnect the battery negative cable and raise the front of the vehicle if you need lower access",
+      "Remove the intake duct or resonator as needed for room at the back of the engine",
+      "Unplug the solenoid trigger wire and remove the main battery cable nut",
+      "Remove the starter mounting bolts and work the starter out from under the intake area",
+      "Install the new starter, reconnect wiring, and confirm a strong crank before reassembling the intake pieces",
+    ],
+    torqueSpecs: "Starter mounting bolts: 33 ft-lbs | Main cable nut: snug only",
+    vehicleNotes: [
+      "On 2nd and 3rd gen CR-Vs the starter sits on the transmission bellhousing below the intake manifold",
+      "Weak batteries and dirty grounds can mimic a bad starter - voltage drop test first if symptoms are inconsistent",
+      "A hot-soak no-crank on the K24 is a common starter failure pattern",
+      "If the engine grinds after replacement, stop immediately and verify the starter nose and mounting alignment",
+    ],
+  },
+
+  "honda-civic::water-pump-replacement": {
+    difficulty: "Advanced",
+    time: "3-5 hours",
+    parts: [
+      { name: "Water Pump", aftermarket: "Aisin / Gates equivalent", spec: "Match engine family before ordering" },
+      { name: "Timing belt kit or drive belt hardware", spec: "Varies by engine and generation" },
+      { name: "Honda Type 2 coolant", spec: "Premixed blue coolant" },
+    ],
+    warnings: [
+      "Civic water pump procedure changes drastically by engine - older D/B-series engines are timing-belt driven",
+      "On timing-belt Civics, replace the timing belt and tensioner at the same time",
+      "Do not reuse old coolant if it is contaminated or rusty",
+    ],
+    steps: [
+      "Identify the engine code before ordering parts and beginning teardown",
+      "Drain the cooling system and remove the necessary covers or accessory belt hardware",
+      "If timing-belt driven, set engine timing marks before removing the belt",
+      "Remove the old pump, clean the mounting surface, and install the new pump with the correct gasket or O-ring",
+      "Reassemble timing or accessory components, refill with Honda coolant, and bleed the cooling system fully",
+    ],
+    torqueSpecs: "Pump bolts vary by engine - verify in service manual before final tightening",
+    vehicleNotes: [
+      "D16, B-series, and many early 2000s Civic engines use a timing-belt-driven water pump, making this a timing service job",
+      "R18 Civics use a different front cover layout, so do not assume all Civic pumps swap the same way",
+      "Persistent overheating after pump replacement usually means trapped air or a thermostat issue, not a bad new pump",
+      "Use Honda Type 2 coolant to avoid gasket and corrosion problems in the aluminum block and head",
+    ],
+  },
+
+  "honda-civic::spark-plug-replacement": {
+    difficulty: "Easy to Intermediate",
+    time: "30-60 minutes",
+    parts: [
+      { name: "Spark Plugs", aftermarket: "NGK or Denso equivalent", spec: "4 plugs - verify engine-specific heat range" },
+    ],
+    tools: ["5/8 inch spark plug socket", "Extension", "Torque wrench", "10mm socket for coil engines"],
+    warnings: [
+      "Older Civics may use plug wires while newer ones use coil-on-plug - verify ignition layout before starting",
+      "Do not install platinum or iridium plugs in the wrong heat range just because they thread in",
+      "Always start the plugs by hand to protect the aluminum head",
+    ],
+    steps: [
+      "Remove the engine cover or plug wire cover if equipped",
+      "Disconnect plug wires or ignition coils one at a time to avoid mixing up cylinder order",
+      "Remove the old plug, inspect color and wear, and compare to the new plug",
+      "Install the new plugs to torque spec and reconnect wires or coils in the same order",
+      "Start the engine and confirm no misfire or check-engine light is present",
+    ],
+    torqueSpecs: "Spark plugs: 13 ft-lbs typical for aluminum Honda heads",
+    vehicleNotes: [
+      "Most Civics are simple 4-plug jobs and often rank well because owners search exact year/model plug intervals",
+      "R18 and K20 Civic engines are sensitive to cheap ignition parts - stick with NGK or Denso",
+      "If you find oil around the plugs, plan a valve cover gasket and tube seal job soon",
+      "A rough idle after plug replacement usually means one coil or wire is not fully seated",
+    ],
+  },
+
+  "honda-accord::spark-plug-replacement": {
+    difficulty: "Intermediate",
+    time: "45-120 minutes",
+    parts: [
+      { name: "Spark Plugs", aftermarket: "NGK / Denso OEM-equivalent", spec: "4 plugs on 4-cylinder, 6 plugs on V6" },
+    ],
+    tools: ["5/8 inch spark plug socket", "Extensions", "Torque wrench", "10mm socket"],
+    warnings: [
+      "V6 Accords are far more time-consuming than 4-cylinder cars because the rear bank is against the firewall",
+      "Use the exact plug type for your engine - J-series V6 and K-series 4-cylinder do not share the same plug spec",
+      "Do not force rear-bank coils or connectors; the plastic gets brittle with age",
+    ],
+    steps: [
+      "Identify whether the car is a 4-cylinder or V6 before ordering parts",
+      "Remove covers, unplug coils, and work front bank plugs first",
+      "On V6 models, move wiring and intake pieces as needed to access the rear bank safely",
+      "Install new plugs by hand and torque evenly across all cylinders",
+      "Reassemble coils and covers, then verify a smooth idle under load",
+    ],
+    torqueSpecs: "Spark plugs: 13 ft-lbs typical",
+    vehicleNotes: [
+      "4-cylinder Accord plug jobs are straightforward; V6 plug jobs win because many owners want rear-bank guidance",
+      "Rear-bank access on J-series V6 engines is the main source of DIY frustration",
+      "Misfire codes after replacement usually indicate a loose coil connector, not a bad new plug",
+      "If the plugs are oil-fouled, inspect valve cover gaskets and tube seals before blaming the rings",
+    ],
+  },
+
+  "honda-pilot::alternator-replacement": {
+    difficulty: "Intermediate",
+    time: "1.5-3 hours",
+    parts: [
+      { name: "Alternator", aftermarket: "Denso / Remy equivalent", spec: "Match engine and amp rating" },
+      { name: "Serpentine belt", spec: "Inspect and replace if glazed or cracked" },
+    ],
+    tools: ["Serpentine belt tool", "12mm and 14mm sockets", "Long extension", "Multimeter"],
+    warnings: [
+      "Disconnect the battery before touching the alternator B+ cable",
+      "A weak battery can destroy a new alternator if you install the alternator first and ignore the battery condition",
+      "Take a belt-routing photo before removal if the underhood sticker is missing",
+    ],
+    steps: [
+      "Disconnect the battery and release the serpentine belt tensioner",
+      "Remove the belt from the alternator pulley and unplug the electrical connectors",
+      "Remove the alternator mounting bolts and maneuver the unit out through the available front-side opening",
+      "Install the new alternator, reconnect wiring, and reinstall the belt with correct routing",
+      "Start the engine and verify charging output is in the normal range",
+    ],
+    torqueSpecs: "Alternator mounting bolts: verify by engine; do not overtighten aluminum bracket threads",
+    vehicleNotes: [
+      "Many Pilots use the J35 V6, so space is tighter than on a compact Honda",
+      "Charging voltage should normally land around 13.5-14.5V with a healthy battery",
+      "A slipping serpentine belt can mimic alternator failure with battery and charging-system lights",
+      "If the alternator fails repeatedly, inspect for oil leaks soaking the unit from the valve cover or VTEC spool area",
+    ],
+  },
+
+  // ─── Ford F-150 / Fusion ────────────────────────────────────────────────
+
+  "ford-f-150::oil-change": {
+    difficulty: "Easy",
+    time: "20-35 minutes",
+    parts: [
+      { name: "Engine Oil", spec: "5W-20 or 5W-30 depending on engine and year - verify on oil cap" },
+      { name: "Oil Filter", aftermarket: "Motorcraft FL-820S / FL-500S depending on engine", spec: "Use the correct filter for your engine family" },
+      { name: "Drain plug washer", spec: "Replace if damaged or leaking" },
+    ],
+    torqueSpecs: "Drain plug torque varies by pan style - verify before final tightening",
+    vehicleNotes: [
+      "F-150s span many engines, so oil weight and filter change by year and displacement",
+      "The common Ford truck filters are FL-820S and FL-500S - do not guess by thread size alone",
+      "Turbo EcoBoost trucks often benefit from shorter oil intervals than Ford's longest advertised interval",
+      "Check the skid plate or splash shield hardware before the first DIY oil change on 4x4 trucks",
+    ],
+    steps: [
+      "Verify engine and oil spec from the oil cap or owner's manual",
+      "Drain the oil completely and inspect the drain plug and washer",
+      "Replace the filter with the correct Motorcraft or equivalent filter",
+      "Refill with the proper oil weight and quantity, then verify the level after a short run",
+    ],
+  },
+
+  "ford-f-150::thermostat-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Thermostat", aftermarket: "Motorad / Motorcraft equivalent", spec: "Match engine family" },
+      { name: "Thermostat housing gasket or O-ring", spec: "Replace every time the housing is opened" },
+      { name: "Motorcraft yellow coolant", spec: "Use correct Ford coolant for your year" },
+    ],
+    tools: ["Socket set", "Drain pan", "Gasket scraper", "Torque wrench"],
+    warnings: [
+      "Ford truck thermostat housings vary by engine - some are plastic and crack easily if overtightened",
+      "Do not mix old orange coolant with newer yellow coolant without fully flushing the system",
+      "Bleed trapped air carefully because air pockets can mimic a stuck thermostat",
+    ],
+    steps: [
+      "Drain enough coolant to get below the thermostat housing",
+      "Remove the upper hose and housing bolts, then note the thermostat orientation",
+      "Clean the mating surface and install the new thermostat with a fresh gasket or O-ring",
+      "Reassemble the housing, refill coolant, and run the heater to help purge air",
+      "Verify normal warm-up and stable temperature under a road test",
+    ],
+    torqueSpecs: "Housing bolts: light torque only on plastic housings",
+    vehicleNotes: [
+      "F-150 thermostat searches repeat because truck owners often diagnose slow warm-up or intermittent overheating",
+      "Plastic housings on later trucks can warp - if the housing is stained or cracked, replace it with the thermostat",
+      "A coolant temp sensor problem can mimic thermostat symptoms, so scan live temp data when possible",
+      "Trucks that tow heavily should get the cooling system fully bled and road-tested under load after repair",
+    ],
+  },
+
+  "ford-f-150::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "Motorcraft / Remy equivalent", spec: "Verify engine and drivetrain" },
+    ],
+    tools: ["Socket set", "Long extension", "Floor jack", "Battery terminal wrench"],
+    warnings: [
+      "Disconnect the battery before touching the starter cable",
+      "Some 4x4 trucks have tighter starter access around the front driveshaft or crossmember",
+      "A bad starter relay or weak battery can mimic starter failure - test before replacing",
+    ],
+    steps: [
+      "Disconnect the battery and raise the truck safely if underbody access is needed",
+      "Remove the main cable and trigger wire from the starter solenoid",
+      "Remove the starter mounting bolts and lower the old unit out of the bellhousing area",
+      "Install the new starter, reconnect cables, and confirm a strong crank on multiple starts",
+    ],
+    torqueSpecs: "Starter bolts: verify for engine family; bellhousing threads can be damaged by overtorque",
+    vehicleNotes: [
+      "F-150 starter jobs often rank because truck owners keep these trucks long enough to see repeated no-crank issues",
+      "Heat-soak failures after a highway drive are a classic starter symptom on older trucks",
+      "Corroded battery grounds and swollen positive cables are common on work trucks and should be checked with the starter",
+      "If the starter spins but does not engage, inspect the flywheel ring gear before installing another unit",
+    ],
+  },
+
+  "ford-fusion::oil-change": {
+    difficulty: "Easy",
+    time: "20-30 minutes",
+    parts: [
+      { name: "Engine Oil", spec: "Most 4-cylinder Fusion engines use 5W-20 or 5W-30 - verify the cap" },
+      { name: "Oil Filter", aftermarket: "Motorcraft FL-910S / FL-400S depending on engine" },
+    ],
+    torqueSpecs: "Drain plug torque varies by engine pan",
+    vehicleNotes: [
+      "Fusion oil-change winners suggest owners were searching exact year-model DIY maintenance pages",
+      "Ford 2.5L and EcoBoost engines do not always share the same oil requirement, so verify before filling",
+      "EcoBoost engines benefit from quality full synthetic oil and shorter intervals than maximum marketing numbers",
+      "Check the undertray hardware before starting - stripped splash shield fasteners waste the most time on this job",
+    ],
+    steps: [
+      "Confirm engine and oil spec, then drain the oil completely",
+      "Replace the filter with the correct Motorcraft or OEM-equivalent filter",
+      "Fill to the specified capacity and verify the level after a short run",
+    ],
+  },
+
+  "ford-fusion::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "1.5-2.5 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "Motorcraft / Remy equivalent", spec: "Verify by engine" },
+    ],
+    tools: ["Socket set", "Extensions", "Jack and stands", "Battery wrench"],
+    warnings: [
+      "Disconnect the battery first and keep the positive cable isolated",
+      "Starter access is tighter on some 4-cylinder transaxle layouts, so be patient with extensions and wiring clearance",
+      "If the car only clicks once, load-test the battery before condemning the starter",
+    ],
+    steps: [
+      "Disconnect the battery and remove splash shielding if needed",
+      "Unplug the solenoid trigger wire and remove the main battery cable",
+      "Remove the starter bolts and slide the starter out from the transmission side",
+      "Install the new unit, reconnect cables, and verify repeated clean starts",
+    ],
+    torqueSpecs: "Starter bolts: medium torque; do not strip aluminum transaxle threads",
+    vehicleNotes: [
+      "Fusion starter pages repeated late in the run-up, especially around no-crank commuter-car searches",
+      "Heat and road salt corrosion around the starter terminals are common on older Fusion models",
+      "If the starter replacement does not fix the issue, inspect the transmission range sensor and battery grounds",
+      "A dragging starter often causes slow crank before total failure, not an instant dead-start condition",
+    ],
+  },
+
+  "ford-edge::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "2-3 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "Motorcraft / Remy equivalent", spec: "Match engine size" },
+    ],
+    tools: ["Socket set", "Extensions", "Floor jack", "Trim clip tool for splash shields"],
+    warnings: [
+      "Space is tighter than on a sedan because of the crossover subframe and underbody shields",
+      "Disconnect battery before touching the starter cable",
+      "Do not overlook battery condition and grounds on vehicles with start/stop or high accessory load",
+    ],
+    steps: [
+      "Disconnect the battery and remove the lower splash shield for access",
+      "Disconnect the starter wiring and remove the mounting bolts",
+      "Work the old starter out carefully around the transmission case and nearby braces",
+      "Install the replacement, reconnect wiring, and confirm strong hot and cold starts",
+    ],
+    vehicleNotes: [
+      "Edge starter failures often present as intermittent clicks before full failure",
+      "Salt-belt corrosion on wiring and grounds can cause starter-like symptoms",
+      "Keep an eye on splash shield fasteners - stripped shields are common on daily-driven crossovers",
+      "If cranking remains weak after replacement, battery and charging tests should come next",
+    ],
+  },
+
+  "ford-focus::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "Motorcraft / Remy equivalent", spec: "Verify engine and transmission" },
+    ],
+    tools: ["Socket set", "Extensions", "Floor jack", "Battery wrench"],
+    warnings: [
+      "Disconnect battery first",
+      "Manual and automatic Focus layouts can change access path around the transaxle",
+      "Bad grounds and battery corrosion are common on older Focus cars and should be checked before ordering parts",
+    ],
+    steps: [
+      "Disconnect the battery and raise the vehicle if needed for lower access",
+      "Remove the starter wiring and mounting bolts",
+      "Swap the starter through the transaxle-side opening and reconnect all cables securely",
+      "Test several starts and verify cranking speed is restored",
+    ],
+    torqueSpecs: "Starter bolts: verify by engine family",
+    vehicleNotes: [
+      "Focus starter pages repeated during the run-up even when the exact years varied, which is a strong signal of recurring demand",
+      "Intermittent no-crank with a good battery is the classic Focus starter symptom",
+      "If the new starter sounds harsh or misaligned, stop and inspect ring-gear engagement",
+      "A poor engine ground strap can mimic a weak starter on older compact Fords",
+    ],
+  },
+
+  // ─── Toyota Corolla / Tacoma / Camry / RAV4 ─────────────────────────────
+
+  "toyota-corolla::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "Denso / Remy equivalent", spec: "Verify by engine year" },
+    ],
+    tools: ["Socket set", "Extensions", "Battery wrench"],
+    warnings: [
+      "Disconnect the battery before removing the main starter cable",
+      "Starter access changes between 1ZZ, 1.8L, and newer Corolla layouts",
+      "A weak battery can cause the same click-no-crank symptom as a failing starter",
+    ],
+    steps: [
+      "Disconnect the battery negative cable",
+      "Remove intake pieces if they block access to the starter on your engine layout",
+      "Disconnect the trigger wire and main power cable, then remove the mounting bolts",
+      "Install the replacement starter and verify repeated clean starts",
+    ],
+    torqueSpecs: "Starter bolts: verify by engine family",
+    vehicleNotes: [
+      "Corolla starter pages were one of the clearest late-February winners, so deeper starter guidance should pay off",
+      "Denso is the safest replacement brand on Toyota electrical systems",
+      "A starter that only fails hot is common and points to solenoid wear",
+      "If the engine cranks but does not start, the starter was never the main problem",
+    ],
+  },
+
+  "toyota-corolla::thermostat-replacement": {
+    difficulty: "Intermediate",
+    time: "1-1.5 hours",
+    parts: [
+      { name: "Thermostat", aftermarket: "Aisin / Motorad equivalent", spec: "Use the correct temperature rating" },
+      { name: "Thermostat gasket or O-ring", spec: "Replace every time" },
+      { name: "Toyota Super Long Life Coolant", spec: "Pink premix" },
+    ],
+    tools: ["Socket set", "Drain pan", "Pliers", "Torque wrench"],
+    warnings: [
+      "Toyota uses pink Super Long Life Coolant - do not top up with universal green coolant",
+      "Many Corolla thermostat housings sit low and trap coolant, so have the pan ready before loosening bolts",
+      "An overheating Corolla can also have a weak radiator fan or water pump - do not assume thermostat every time",
+    ],
+    steps: [
+      "Drain enough coolant to drop the level below the thermostat housing",
+      "Remove the housing and note the thermostat jiggle valve orientation",
+      "Install the new thermostat with fresh seal and correct orientation",
+      "Refill with Toyota pink coolant and bleed air fully before road test",
+    ],
+    torqueSpecs: "Thermostat housing bolts: light torque only",
+    vehicleNotes: [
+      "Toyota Corolla thermostat pages repeated across the run-up, which makes this a core cluster to deepen",
+      "The jiggle valve orientation matters on many Toyota thermostats for proper air bleeding",
+      "A Corolla that overheats only at idle may have a fan issue rather than a thermostat issue",
+      "Use Aisin if possible - it is the closest to Toyota OEM cooling hardware",
+    ],
+  },
+
+  "toyota-corolla::spark-plug-replacement": {
+    difficulty: "Easy to Intermediate",
+    time: "30-60 minutes",
+    parts: [
+      { name: "Spark Plugs", aftermarket: "NGK / Denso iridium", spec: "4 plugs, verify engine-specific part number" },
+    ],
+    tools: ["5/8 inch spark plug socket", "10mm socket", "Extension", "Torque wrench"],
+    warnings: [
+      "Coil-on-plug Corollas require unplugging one coil at a time to keep connectors organized",
+      "Do not gap fine-wire iridium plugs with force",
+      "Work on a cool engine only",
+    ],
+    steps: [
+      "Remove coil connectors and 10mm coil bolts",
+      "Pull coils, remove old plugs, and inspect for oil or carbon tracking",
+      "Install new plugs to torque spec and reinstall coils",
+      "Start the engine and verify no misfire is present",
+    ],
+    torqueSpecs: "Spark plugs: verify by engine; do not overtighten aluminum head threads",
+    vehicleNotes: [
+      "Toyota Corolla spark-plug pages repeated both during the run-up and on Feb 28 itself",
+      "Denso or NGK are the safe choices; off-brand plugs often cause idle quality complaints",
+      "If a plug tube is oily, plan a valve cover gasket service",
+      "Iridium plugs usually last a long time, so rough running after replacement usually points to coil issues or a connector left loose",
+    ],
+  },
+
+  "toyota-tacoma::alternator-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Alternator", aftermarket: "Denso / Remy equivalent", spec: "Match engine and amp rating" },
+      { name: "Drive belt", spec: "Inspect and replace if worn" },
+    ],
+    tools: ["Socket set", "Belt tool", "Multimeter", "Battery wrench"],
+    warnings: [
+      "Disconnect the battery first",
+      "Do not assume all Tacoma engines use the same alternator case or amperage",
+      "Oil or power-steering leaks can shorten alternator life if the unit gets soaked",
+    ],
+    steps: [
+      "Disconnect the battery and relieve belt tension",
+      "Remove the belt from the alternator pulley and disconnect the alternator wiring",
+      "Remove mounting hardware and swap the alternator out of the front accessory area",
+      "Install the new unit, tension the belt properly, and verify charging voltage",
+    ],
+    torqueSpecs: "Mounting bolts vary by engine; verify before final torque",
+    vehicleNotes: [
+      "Tacoma alternator searches repeated often enough to justify model-specific accessory-drive guidance",
+      "A squealing belt or loose belt can mimic alternator failure with battery-light complaints",
+      "Charging voltage should normally be in the mid-13 to mid-14 volt range",
+      "Use Denso when possible; Toyota electrical systems tend to like OEM-equivalent alternators",
+    ],
+  },
+
+  "toyota-tacoma::thermostat-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Thermostat", aftermarket: "Aisin / OEM-equivalent", spec: "Correct opening temp for your engine" },
+      { name: "Gasket or O-ring", spec: "Replace with thermostat" },
+      { name: "Toyota pink coolant", spec: "Super Long Life Coolant" },
+    ],
+    tools: ["Socket set", "Drain pan", "Pliers", "Torque wrench"],
+    warnings: [
+      "Do not mix coolant types",
+      "Thermostat orientation matters - check the jiggle valve placement on Toyota applications",
+      "Overheating under load can also point to radiator or fan-clutch problems",
+    ],
+    steps: [
+      "Drain enough coolant to expose the thermostat housing",
+      "Remove the housing and install the new thermostat in the correct orientation",
+      "Reassemble with the new seal and refill with Toyota coolant",
+      "Bleed the system and road-test under load",
+    ],
+    torqueSpecs: "Housing bolts: light torque",
+    vehicleNotes: [
+      "Tacoma thermostat pages repeated multiple times in the run-up and then resurfaced harder later",
+      "Aisin is the safest thermostat choice on Toyotas",
+      "If the truck still overheats on hills or while towing, inspect the radiator and clutch fan next",
+      "Pink coolant and proper bleeding matter more than people think on Toyota cooling systems",
+    ],
+  },
+
+  "toyota-tacoma::brake-pad-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Brake pads", aftermarket: "Akebono / Wagner / OEM-equivalent", spec: "Front or rear - verify axle" },
+      { name: "Hardware kit", spec: "Recommended with pad replacement" },
+      { name: "Brake grease", spec: "Use on slide and contact points only" },
+    ],
+    tools: ["Socket set", "C-clamp or piston tool", "Torque wrench", "Brake cleaner"],
+    warnings: [
+      "Tacoma front calipers can seize on older trucks - inspect slide pins and piston movement before just slapping in pads",
+      "Always bed in new pads after installation",
+      "Do not press the brake pedal with the caliper hanging free",
+    ],
+    steps: [
+      "Remove the wheel and unbolt the caliper",
+      "Inspect the rotor and slide hardware before compressing the piston",
+      "Install new pads and hardware, then torque everything correctly",
+      "Pump the pedal, check fluid level, and perform a proper bedding procedure",
+    ],
+    torqueSpecs: "Caliper hardware torque varies by axle and generation",
+    vehicleNotes: [
+      "Tacoma brake jobs trend because owners keep trucks long enough to see repeat front-brake wear",
+      "Sticky front calipers are common on older Tacoma platforms and can destroy new pads quickly",
+      "If the rotors are grooved or pulsating, do pads and rotors together",
+      "Use quality pads - cheap truck pads squeal and dust heavily",
+    ],
+  },
+
+  "toyota-camry::headlight-bulb-replacement": {
+    difficulty: "Easy",
+    time: "10-25 minutes",
+    parts: [
+      { name: "Headlight bulb", spec: "Commonly H11 low beam / 9005 high beam, but verify your year and trim" },
+    ],
+    tools: ["Gloves", "Flashlight"],
+    warnings: [
+      "Do not touch the bulb glass",
+      "Some Camry trims have tighter passenger-side access near the washer neck or airbox",
+      "Verify halogen vs HID before ordering bulbs",
+    ],
+    steps: [
+      "Access the rear of the headlight housing from the engine bay",
+      "Disconnect the bulb connector and twist the old bulb free",
+      "Install the new bulb without touching the glass and lock it in place",
+      "Reconnect the harness and test before closing the hood",
+    ],
+    vehicleNotes: [
+      "Camry bulb pages repeated early in the run-up, which is typical high-intent DIY traffic",
+      "Passenger-side access is often tighter, so move the washer neck or intake duct if needed",
+      "Replace bulbs in pairs if brightness mismatch matters to you",
+      "Cloudy lenses can make a good new bulb still look weak at night",
+    ],
+  },
+
+  "toyota-rav4::brake-pad-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Brake pads", aftermarket: "Akebono / Wagner / OEM-equivalent", spec: "Verify front or rear axle" },
+      { name: "Hardware kit", spec: "Recommended" },
+    ],
+    tools: ["Socket set", "Piston tool", "Brake cleaner", "Torque wrench"],
+    warnings: [
+      "Check rotor condition before compressing the piston",
+      "Do not let the caliper hang by the brake hose",
+      "Bed in pads properly after reassembly",
+    ],
+    steps: [
+      "Remove the wheel and caliper",
+      "Inspect slide pins and rotor condition, then compress the piston",
+      "Install new pads with fresh hardware and brake lubricant at contact points",
+      "Reassemble, pump the pedal, and bed in the brakes",
+    ],
+    torqueSpecs: "Caliper fastener torque varies by generation",
+    vehicleNotes: [
+      "RAV4 brake-pad pages showed late-February demand, so stronger RAV4 front-brake specifics are worth shipping",
+      "If the RAV4 has electric parking brake in newer trims, follow the correct rear service mode procedure",
+      "Akebono-style ceramic pads are a good fit for quieter daily-driver use",
+      "If you feel pulsation, include rotors in the repair instead of doing pads only",
+    ],
+  },
+
+  // ─── Hyundai / Kia / Nissan / Subaru / Chevrolet ────────────────────────
+
+  "hyundai-elantra::spark-plug-replacement": {
+    difficulty: "Easy to Intermediate",
+    time: "30-60 minutes",
+    parts: [
+      { name: "Spark Plugs", aftermarket: "NGK / Denso iridium", spec: "4 plugs - verify engine family" },
+    ],
+    tools: ["5/8 inch spark plug socket", "10mm socket", "Extension", "Torque wrench"],
+    warnings: [
+      "Elantra engines are compact but straightforward - keep coil connectors organized",
+      "Do not overtighten plugs in the aluminum head",
+      "Use only OEM-quality plugs if you want stable idle and fuel trims",
+    ],
+    steps: [
+      "Unplug and remove each ignition coil",
+      "Remove the old plugs and inspect for oil or white lean deposits",
+      "Install new plugs and torque properly",
+      "Reinstall the coils and verify smooth running",
+    ],
+    torqueSpecs: "Spark plug torque varies by engine",
+    vehicleNotes: [
+      "Elantra spark-plug pages were direct Feb 28 winners, so this is one of the cleanest expansion targets",
+      "If a plug tube is oily, plan a valve cover gasket service",
+      "A rough idle after plug replacement usually points to a loose coil connector",
+      "Do not mix plug brands across cylinders on Hyundai coil-on-plug engines",
+    ],
+  },
+
+  "hyundai-elantra::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "Valeo / Remy equivalent", spec: "Verify engine and transmission" },
+    ],
+    tools: ["Socket set", "Extensions", "Battery wrench"],
+    warnings: [
+      "Disconnect the battery first",
+      "Battery or ground issues can mimic a weak starter on compact Hyundais",
+      "Make sure the starter wiring is fully seated before final reassembly",
+    ],
+    steps: [
+      "Disconnect battery and gain access to the starter from above or below depending on layout",
+      "Remove the trigger wire and main battery cable",
+      "Unbolt the starter and install the replacement unit",
+      "Reconnect wiring and confirm reliable starts hot and cold",
+    ],
+    torqueSpecs: "Starter bolts: verify by engine family",
+    vehicleNotes: [
+      "Elantra starter pages repeated late in the run-up, making them a good indexing-priority cluster",
+      "Many no-crank cases are worsened by small battery capacity and dirty grounds",
+      "If the starter free-spins, inspect engagement with the ring gear before ordering another unit",
+      "Intermittent hot restart failure is a common starter symptom on older compact cars",
+    ],
+  },
+
+  "hyundai-tucson::alternator-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Alternator", aftermarket: "Valeo / Remy equivalent", spec: "Verify engine and amp rating" },
+      { name: "Drive belt", spec: "Inspect and replace if worn" },
+    ],
+    tools: ["Socket set", "Belt tool", "Multimeter"],
+    warnings: [
+      "Disconnect the battery first",
+      "Belt tension and belt condition should be checked along with the alternator",
+      "A weak battery can create charging complaints even with a good alternator",
+    ],
+    steps: [
+      "Disconnect the battery and remove belt tension from the alternator pulley",
+      "Disconnect the wiring and remove the mounting hardware",
+      "Install the new alternator and restore belt routing and tension",
+      "Start the engine and verify charging voltage",
+    ],
+    torqueSpecs: "Alternator fastener torque varies by engine",
+    vehicleNotes: [
+      "Tucson alternator pages appeared in the late-February winner set, so this one deserves model-specific content",
+      "If you smell burning rubber, inspect the belt and tensioner before assuming the alternator failed first",
+      "Use OEM-quality charging components on Hyundai/Kia products to avoid repeat failures",
+      "Charging voltage should stabilize in the 13.5-14.5V range with accessories on",
+    ],
+  },
+
+  "hyundai-santa-fe::spark-plug-replacement": {
+    difficulty: "Intermediate",
+    time: "45-120 minutes",
+    parts: [
+      { name: "Spark Plugs", aftermarket: "NGK / Denso OEM-equivalent", spec: "4 plugs on 4-cylinder, 6 on V6" },
+    ],
+    tools: ["Spark plug socket", "Extensions", "Torque wrench", "10mm socket"],
+    warnings: [
+      "V6 Santa Fe models are more time-consuming because of rear-bank access",
+      "Do not force rear-bank coils or brackets near the firewall",
+      "Use the correct plug type for your engine size",
+    ],
+    steps: [
+      "Identify engine type before ordering plugs",
+      "Remove engine covers and ignition coils, front bank first",
+      "Install the new plugs by hand and torque to spec",
+      "Reassemble coils and confirm a smooth idle under load",
+    ],
+    torqueSpecs: "Spark plug torque varies by engine",
+    vehicleNotes: [
+      "Santa Fe spark-plug pages repeated across the run-up and rose again near the end",
+      "V6 rear-bank access is the main DIY sticking point and worth calling out explicitly",
+      "If the engine shakes after the job, double-check every coil connector and vacuum line",
+      "Stick with NGK or Denso-level parts quality for reliable ignition behavior",
+    ],
+  },
+
+  "hyundai-sonata::serpentine-belt-replacement": {
+    difficulty: "Easy",
+    time: "20-35 minutes",
+    parts: [
+      { name: "Serpentine Belt", aftermarket: "Gates / Continental equivalent", spec: "Verify engine-specific length" },
+    ],
+    tools: ["Belt tool or breaker bar", "Flashlight"],
+    warnings: [
+      "Take a belt-routing photo before removal if the sticker is gone",
+      "Inspect the tensioner and idlers if the old belt shows edge wear or glazing",
+      "Do not force the belt over a pulley with a screwdriver",
+    ],
+    steps: [
+      "Locate the tensioner and release belt tension",
+      "Remove the old belt and compare length/rib count with the new one",
+      "Route the new belt correctly and release the tensioner slowly",
+      "Start the engine and verify the belt tracks cleanly on every pulley",
+    ],
+    torqueSpecs: "Accessory fastener torque varies by engine",
+    vehicleNotes: [
+      "Sonata serpentine-belt pages were one of the earliest recurring winners in the run-up",
+      "Belt squeal after replacement usually points to a weak tensioner or misrouting",
+      "Keep fingers clear when releasing the spring-loaded tensioner",
+      "If belt dust is present, inspect every idler and accessory pulley bearing",
+    ],
+  },
+
+  "hyundai-tucson::serpentine-belt-replacement": {
+    difficulty: "Easy to Intermediate",
+    time: "30-60 minutes",
+    parts: [
+      { name: "Serpentine Belt", aftermarket: "Gates / Continental equivalent", spec: "Verify by engine size and A/C equipment" },
+      { name: "Tensioner or idler pulley", spec: "Inspect and replace if noisy or loose" },
+    ],
+    tools: ["Belt tool or breaker bar", "Flashlight", "Belt-routing sketch or phone photo"],
+    warnings: [
+      "Do not route the belt from memory - several Tucson engines have similar-looking accessory layouts",
+      "If the belt failed suddenly, inspect every pulley before installing the new one",
+      "Keep fingers clear of the spring-loaded tensioner while rotating it",
+    ],
+    steps: [
+      "Photograph the current belt routing before removal",
+      "Rotate the tensioner to unload the belt and slip it off the easiest accessible pulley",
+      "Compare the new belt length and rib count to the old one before installation",
+      "Route the new belt around all pulleys except the final one, then rotate the tensioner and slip it into place",
+      "Start the engine and verify the belt tracks centered with no chirp or wobble",
+    ],
+    torqueSpecs: "No major torque spec unless replacing tensioner hardware; verify by engine",
+    vehicleNotes: [
+      "Tucson serpentine-belt pages were in the second wave of recurring Hyundai winners, so adding belt-specific detail helps the cluster",
+      "A belt squeal right after startup often points to weak tension or contamination, not belt quality alone",
+      "If the alternator pulley freewheels roughly, replace it before the new belt gets damaged",
+      "Use a routing photo because some Hyundai four-cylinder layouts are easy to misroute around the idler",
+    ],
+  },
+
+  "nissan-pathfinder::thermostat-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Thermostat", aftermarket: "Nissan / Aisin equivalent", spec: "Match engine family" },
+      { name: "Thermostat seal", spec: "Replace with thermostat" },
+      { name: "Nissan blue coolant", spec: "Use correct long-life coolant" },
+    ],
+    tools: ["Socket set", "Drain pan", "Pliers", "Torque wrench"],
+    warnings: [
+      "Use the right Nissan coolant and bleed the system carefully",
+      "A Pathfinder that overheats under load can also have radiator or fan-clutch issues",
+      "Do not overtighten thermostat housing bolts on older castings or plastic housings",
+    ],
+    steps: [
+      "Drain enough coolant to expose the thermostat housing",
+      "Remove the housing and replace the thermostat and seal",
+      "Refill with the proper coolant and bleed the system fully",
+      "Road-test and confirm normal operating temperature",
+    ],
+    torqueSpecs: "Housing bolts: light to medium torque only",
+    vehicleNotes: [
+      "Pathfinder thermostat pages repeated during the run-up, especially around practical overheating searches",
+      "A heater that blows cold with a hot gauge often means trapped air or low coolant",
+      "If temp spikes only on hills, inspect radiator flow and fan performance in addition to the thermostat",
+      "Use OEM-quality cooling parts on Nissans to avoid repeat work",
+    ],
+  },
+
+  "kia-optima::thermostat-replacement": {
+    difficulty: "Intermediate",
+    time: "1-2 hours",
+    parts: [
+      { name: "Thermostat", aftermarket: "Motorad / OEM-equivalent", spec: "Verify engine application" },
+      { name: "Seal or housing gasket", spec: "Replace with thermostat" },
+      { name: "Hyundai/Kia coolant", spec: "Use the correct long-life coolant" },
+    ],
+    warnings: [
+      "Do not mix coolant chemistries",
+      "Plastic housings crack if overtightened",
+      "Overheating can also be fan or water-pump related, not only thermostat-related",
+    ],
+    steps: [
+      "Drain enough coolant to open the thermostat housing cleanly",
+      "Replace the thermostat and seal in the correct orientation",
+      "Refill with proper coolant and bleed air thoroughly",
+      "Road-test and verify stable operating temperature",
+    ],
+    torqueSpecs: "Housing bolts: light torque only",
+    vehicleNotes: [
+      "Optima thermostat pages were repeated winners and should benefit from model-specific cooling notes",
+      "Bleeding trapped air is critical on many transverse Hyundai/Kia cooling systems",
+      "If the engine overheated badly before repair, pressure-test for head gasket issues afterwards",
+      "A sticking cooling fan relay can mimic thermostat failure in traffic",
+    ],
+  },
+
+  "kia-optima::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "1-3 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "Denso / Remy OEM-equivalent", spec: "Verify by engine and transmission" },
+    ],
+    tools: ["Socket set", "Extensions", "Ratchet", "Jack and stands if lower access is required"],
+    warnings: [
+      "Disconnect the battery before touching the main starter cable",
+      "Some Optima starters are tucked under the intake or near the radiator fan shroud - confirm access before ordering extra parts",
+      "A weak battery or corroded ground can mimic a failing starter",
+    ],
+    steps: [
+      "Disconnect the negative battery cable and remove any intake or splash-shield components blocking access",
+      "Unplug the solenoid connector and remove the main battery cable from the starter",
+      "Remove the starter mounting fasteners and work the unit out carefully through the available opening",
+      "Install the replacement starter, reconnect the wiring, and confirm a solid crank before reassembly",
+    ],
+    torqueSpecs: "Starter bolts: medium to high torque depending on engine; verify before final tightening",
+    vehicleNotes: [
+      "Optima starter pages were part of the Kia cluster expansion and deserve their own troubleshooting notes",
+      "If the engine clicks once but does not crank, measure voltage at the starter before assuming the motor is dead",
+      "Oil leaks from above can contaminate the starter and shorten its life",
+      "A dragging crank after replacement usually points to battery or cable issues, not a bad new starter",
+    ],
+  },
+
+  "kia-optima::water-pump-replacement": {
+    difficulty: "Intermediate to Advanced",
+    time: "2-4 hours",
+    parts: [
+      { name: "Water Pump", aftermarket: "AISIN / Gates equivalent", spec: "Verify engine family" },
+      { name: "Gasket or O-ring", spec: "Replace with pump" },
+      { name: "Coolant", spec: "Correct Hyundai/Kia long-life coolant" },
+    ],
+    warnings: [
+      "Pump access varies heavily by engine and whether the pump is belt-driven",
+      "Do not reuse old coolant after a contamination event",
+      "If the belt or tensioner is removed, inspect them closely before reassembly",
+    ],
+    steps: [
+      "Drain the cooling system and remove the necessary belt and pulley hardware",
+      "Remove the old pump and clean the mounting surface fully",
+      "Install the new pump with the proper seal and reassemble the accessory drive",
+      "Refill coolant, bleed air, and road-test until fans cycle normally",
+    ],
+    torqueSpecs: "Pump bolts: verify by engine; do not overtighten aluminum threads",
+    vehicleNotes: [
+      "Optima water-pump demand showed up repeatedly enough to justify deeper model guidance",
+      "If you hear bearing noise before replacement, inspect belt alignment and tensioner condition too",
+      "Persistent overheating after pump replacement usually means trapped air or a separate thermostat issue",
+      "Use OEM-quality pumps; cheap remans often leak early",
+    ],
+  },
+
+  "kia-sorento::water-pump-replacement": {
+    difficulty: "Intermediate to Advanced",
+    time: "2-4 hours",
+    parts: [
+      { name: "Water Pump", aftermarket: "AISIN / Gates equivalent", spec: "Verify engine and year" },
+      { name: "Coolant", spec: "Correct Kia long-life coolant" },
+    ],
+    warnings: [
+      "Sorento pump jobs vary significantly by engine, so verify the exact engine before ordering parts",
+      "Do not continue driving an overheating Sorento after a pump failure - head damage happens quickly",
+      "Inspect idlers and the drive belt whenever you are deep in the accessory drive",
+    ],
+    steps: [
+      "Drain the cooling system and remove access-limiting drive components",
+      "Swap the old pump for the new unit with the correct sealing method",
+      "Reassemble the belt path, refill coolant, and bleed thoroughly",
+      "Confirm stable temperature on a road test with the heater on",
+    ],
+    torqueSpecs: "Pump hardware torque varies by engine",
+    vehicleNotes: [
+      "Sorento water-pump pages spiked more than once during the run-up, especially older-year variants",
+      "Use this page to call out engine verification because Sorento engine families vary widely by year",
+      "A coolant smell with no visible leak may still point to weep-hole seepage at the pump",
+      "If a timing-belt engine is involved, pair the pump with timing service work",
+    ],
+  },
+
+  "subaru-outback::water-pump-replacement": {
+    difficulty: "Advanced",
+    time: "3-5 hours",
+    parts: [
+      { name: "Water Pump", aftermarket: "AISIN", spec: "Recommended for Subaru EJ engines" },
+      { name: "Timing belt kit", spec: "Strongly recommended on timing-belt Subaru engines" },
+      { name: "Subaru coolant", spec: "Use correct coolant and conditioner if required by year" },
+    ],
+    warnings: [
+      "Many Outback water pump jobs are timing-belt jobs - do not separate them unless the service was just done",
+      "Mark timing carefully before disassembly",
+      "Subaru boxer engines trap air easily if the cooling system is refilled carelessly",
+    ],
+    steps: [
+      "Drain the cooling system and remove timing covers or front access hardware as required",
+      "Set timing marks if working on a timing-belt-driven Subaru engine",
+      "Replace the water pump and gasket, then reinstall timing components correctly",
+      "Refill and bleed the system carefully, then road-test for stable temperature",
+    ],
+    torqueSpecs: "Pump and timing hardware torque must follow engine-specific Subaru specs",
+    vehicleNotes: [
+      "Outback water-pump pages were direct run-up winners, making this one of the best places to add boxer-specific guidance",
+      "On EJ engines, doing the pump without timing components is usually false economy",
+      "If overheating continues, inspect radiator flow and head-gasket history immediately",
+      "Use Aisin or OEM-quality cooling parts on Subarus to avoid repeat leaks",
+    ],
+  },
+
+  "chevrolet-impala::headlight-bulb-replacement": {
+    difficulty: "Easy to Intermediate",
+    time: "15-45 minutes",
+    parts: [
+      { name: "Headlight bulb", spec: "Varies by year and trim - verify low and high beam sizes before ordering" },
+    ],
+    warnings: [
+      "Some Impala generations have straightforward rear access, others require partial headlamp or splash-shield access",
+      "Do not touch the bulb glass",
+      "Verify halogen vs HID before ordering parts",
+    ],
+    steps: [
+      "Access the rear of the headlight assembly from the engine bay or service panel area",
+      "Disconnect the old bulb and remove it from the housing",
+      "Install the new bulb without touching the glass and test it before full reassembly",
+    ],
+    vehicleNotes: [
+      "Impala headlight-bulb pages were winners in the late-February set and benefit from model-specific access notes",
+      "Passenger-side access is often tighter and may require moving the airbox or washer neck",
+      "Clouded lenses can make a good new bulb still appear dim",
+      "If one bulb failed from age, the other is usually not far behind",
+    ],
+  },
+
+  "chevrolet-impala::starter-replacement": {
+    difficulty: "Intermediate",
+    time: "1-3 hours",
+    parts: [
+      { name: "Starter Motor", aftermarket: "ACDelco / Denso equivalent", spec: "Verify engine and stop-start equipment" },
+    ],
+    tools: ["Socket set", "Extensions", "Jack and stands", "Creeper or pad for lower access"],
+    warnings: [
+      "Disconnect the battery before removing the starter power lead",
+      "Some Impala generations route the starter near the exhaust, so let the engine cool completely first",
+      "A weak battery or bad ground can produce the same no-crank symptoms as a failed starter",
+    ],
+    steps: [
+      "Disconnect the negative battery cable and raise the front of the vehicle safely",
+      "Remove any splash shield or brace blocking access to the starter",
+      "Disconnect the solenoid connector and main cable, then remove the starter mounting bolts",
+      "Install the new starter, reconnect wiring, and test crank speed before reinstalling covers",
+    ],
+    torqueSpecs: "Starter bolts: verify by engine family; tighten securely and evenly",
+    vehicleNotes: [
+      "Impala starter pages complement the existing headlight and Malibu battery specs inside the Chevrolet winner pool",
+      "Heat soak after a short stop can expose a weak starter before it fails completely",
+      "If the old starter is oil-soaked, inspect the engine for valve cover or front cover leaks",
+      "A rapid clicking noise usually points to voltage loss rather than a seized starter drive",
+    ],
+  },
+
+  "chevrolet-malibu::battery-replacement": {
+    difficulty: "Easy to Intermediate",
+    time: "20-40 minutes",
+    parts: [
+      { name: "Battery", spec: "Verify group size by year and engine - many use Group 47/H5 or nearby sizes" },
+    ],
+    tools: ["10mm socket", "13mm socket", "Battery hold-down tool"],
+    warnings: [
+      "Some Malibu generations place braces or fuse boxes over the battery, so do not yank the battery out blindly",
+      "Disconnect negative terminal first",
+      "Retain any vent tube or shielding present on the original battery setup",
+    ],
+    steps: [
+      "Remove any battery cover or brace blocking access",
+      "Disconnect negative then positive cables and remove the hold-down",
+      "Swap the battery, reconnect positive then negative, and verify clean starts",
+    ],
+    torqueSpecs: "Terminal bolts: snug only",
+    vehicleNotes: [
+      "Malibu battery pages showed enough late-runup demand to justify a better battery-access explanation",
+      "Corrosion at the side-post or top-post connections can mimic a dead battery",
+      "If warning lights remain after replacement, drive the car briefly and recheck charging voltage",
+      "Keep memory settings in mind if the owner cares about radio presets or clock reset",
+    ],
+  },
+
   // ─── Jeep Grand Cherokee (2005-2010) ─────────────────────────────────────
 
   "jeep-grand-cherokee::serpentine-belt-replacement": {

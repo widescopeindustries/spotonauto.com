@@ -4,6 +4,7 @@ import React from 'react';
 import type { PartWithLinks, AffiliateLink, AffiliateProvider } from '../types';
 import { ShoppingCartIcon, CheckCircleIcon, TruckIcon, TagIcon, MapPinIcon, StarIcon } from './Icons';
 import { trackAffiliateClick, trackShopAllClick } from '../lib/analytics';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 interface PartsComparisonProps {
     parts: PartWithLinks[];
@@ -231,7 +232,7 @@ const PartsComparison: React.FC<PartsComparisonProps> = ({ parts, vehicle }) => 
                     Can&apos;t find what you need? Browse full catalogs:
                 </p>
                 <a
-                    href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicle + ' parts')}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20'}`}
+                    href={buildAmazonSearchUrl(`${vehicle} parts`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => trackShopAllClick('Amazon', vehicle)}

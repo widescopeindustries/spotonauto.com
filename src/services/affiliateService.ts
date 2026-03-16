@@ -2,9 +2,7 @@
 // Multi-retailer affiliate link generator for auto parts
 
 import { AffiliateLink, AffiliateProvider, PartWithLinks } from '../types';
-
-// Affiliate Tags - Set these in your .env.local
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 // Part category detection for smarter linking
 const PART_CATEGORIES = {
@@ -39,9 +37,7 @@ function generateAmazonLink(partName: string, vehicleString: string): AffiliateL
   const cleanVehicle = vehicleString.replace(/[^a-zA-Z0-9\s]/g, '');
   const cleanPart = partName.replace(/[^a-zA-Z0-9\s]/g, '');
   const query = `${cleanVehicle} ${cleanPart}`.trim();
-  const encodedQuery = encodeURIComponent(query);
-
-  const url = `https://www.amazon.com/s?k=${encodedQuery}&i=automotive&tag=${AMAZON_TAG}`;
+  const url = buildAmazonSearchUrl(query);
 
   return {
     provider: 'Amazon',
@@ -93,8 +89,7 @@ export function generateAllPartsWithLinks(parts: string[], vehicleString: string
  * Generate tool affiliate links (Amazon-only for tools)
  */
 export function generateToolLinks(toolName: string): AffiliateLink[] {
-  const query = encodeURIComponent(toolName);
-  const amazonUrl = `https://www.amazon.com/s?k=${query}&i=automotive&tag=${AMAZON_TAG}`;
+  const amazonUrl = buildAmazonSearchUrl(toolName);
 
   return [
     {
@@ -112,12 +107,10 @@ export function generateToolLinks(toolName: string): AffiliateLink[] {
  * Generate a "shop all parts" link for the vehicle
  */
 export function generateShopAllLink(vehicleString: string, provider: AffiliateProvider): AffiliateLink {
-  const encoded = encodeURIComponent(vehicleString + ' parts');
-
   // Default to Amazon if provider is not found or removed
   return {
     provider: 'Amazon',
-    url: `https://www.amazon.com/s?k=${encoded}&i=automotive&tag=${AMAZON_TAG}`,
+    url: buildAmazonSearchUrl(`${vehicleString} parts`),
     buttonText: 'Shop All on Amazon',
     badge: 'Prime',
     icon: 'amazon'

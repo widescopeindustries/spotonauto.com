@@ -8,10 +8,10 @@
  * into the configured manual_embeddings backend.
  *
  * Usage:
- *   npx tsx scripts/index-lmdb-vectors.ts                      # Index all makes
- *   npx tsx scripts/index-lmdb-vectors.ts --make Toyota         # Index one make
- *   npx tsx scripts/index-lmdb-vectors.ts --make Toyota --year 2010  # One make+year
- *   npx tsx scripts/index-lmdb-vectors.ts --dry-run             # Preview without writing
+ *   node --experimental-strip-types scripts/index-lmdb-vectors.ts                      # Index all makes
+ *   node --experimental-strip-types scripts/index-lmdb-vectors.ts --make Toyota         # Index one make
+ *   node --experimental-strip-types scripts/index-lmdb-vectors.ts --make Toyota --year 2010  # One make+year
+ *   node --experimental-strip-types scripts/index-lmdb-vectors.ts --dry-run             # Preview without writing
  *
  * Requirements:
  *   - .env.local must contain GEMINI_API_KEY and either:
@@ -30,12 +30,16 @@
 import { GoogleGenAI } from '@google/genai';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import {
   getIndexedPaths,
   getManualEmbeddingsBackend,
   testManualEmbeddingsConnection,
   upsertManualEmbedding,
-} from '../src/lib/manualEmbeddingsStore';
+} from '../src/lib/manualEmbeddingsStore.ts';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ─── Load environment variables from .env.local ─────────────────────────────
 

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 // High-value SEO page for BMW X3 headlight queries (14 impressions in Search Console)
 export const metadata: Metadata = {
@@ -65,8 +66,6 @@ const TOOLS_NEEDED = [
     'Trim removal tool (optional)',
 ];
 
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
-
 export default function BMWX3HeadlightPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
@@ -109,7 +108,7 @@ export default function BMWX3HeadlightPage() {
                                         <td className="py-4 px-4 text-gray-300">{gen.fogLight}</td>
                                         <td className="py-4 px-4">
                                             <a
-                                                href={`https://www.amazon.com/s?k=BMW+X3+${gen.years.split('-')[0]}+headlight+bulb&tag=${AMAZON_TAG}`}
+                                                href={buildAmazonSearchUrl(`BMW X3 ${gen.years.split('-')[0]} headlight bulb`)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded hover:bg-amber-400 transition inline-block"
@@ -150,7 +149,7 @@ export default function BMWX3HeadlightPage() {
                         ))}
                     </div>
                     <a
-                        href={`https://www.amazon.com/s?k=BMW+headlight+replacement+tool+kit&tag=${AMAZON_TAG}`}
+                        href={buildAmazonSearchUrl('BMW headlight replacement tool kit')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block mt-4 text-cyan-400 hover:underline text-sm"
@@ -230,7 +229,7 @@ export default function BMWX3HeadlightPage() {
                     <h2 className="text-xl font-bold mb-4">⭐ Recommended Bulbs</h2>
                     <div className="grid md:grid-cols-3 gap-4">
                         <a
-                            href={`https://www.amazon.com/s?k=Philips+H7+headlight+bulb&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('Philips H7 headlight bulb')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
@@ -240,7 +239,7 @@ export default function BMWX3HeadlightPage() {
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
                         <a
-                            href={`https://www.amazon.com/s?k=Sylvania+Silverstar+H7&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('Sylvania Silverstar H7')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
@@ -250,7 +249,7 @@ export default function BMWX3HeadlightPage() {
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
                         <a
-                            href={`https://www.amazon.com/s?k=BMW+X3+LED+headlight+bulb+H7&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('BMW X3 LED headlight bulb H7')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"

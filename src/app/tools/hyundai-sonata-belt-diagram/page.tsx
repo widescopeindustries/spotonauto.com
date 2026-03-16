@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 // High-value SEO page for Hyundai Sonata belt diagram (6 impressions)
 export const metadata: Metadata = {
@@ -22,8 +23,6 @@ export const metadata: Metadata = {
         canonical: 'https://spotonauto.com/tools/hyundai-sonata-belt-diagram',
     },
 };
-
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
 
 // Sonata belt data by generation
 const SONATA_BELT_DATA = [
@@ -112,7 +111,7 @@ export default function HyundaiSonataBeltDiagramPage() {
                                         <td className="py-4 px-4 text-cyan-400">{gen.beltPart}</td>
                                         <td className="py-4 px-4">
                                             <a
-                                                href={`https://www.amazon.com/s?k=Hyundai+Sonata+${gen.years.split('-')[0]}+serpentine+belt&tag=${AMAZON_TAG}`}
+                                                href={buildAmazonSearchUrl(`Hyundai Sonata ${gen.years.split('-')[0]} serpentine belt`)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"
@@ -197,17 +196,17 @@ export default function HyundaiSonataBeltDiagramPage() {
                 <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-12">
                     <h2 className="text-xl font-bold mb-4">⭐ Recommended Belts</h2>
                     <div className="grid md:grid-cols-3 gap-4">
-                        <a href={`https://www.amazon.com/s?k=Gates+serpentine+belt+Hyundai+Sonata&tag=${AMAZON_TAG}`} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Gates serpentine belt Hyundai Sonata')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Gates K-Series</h3>
                             <p className="text-sm text-gray-400">OEM quality, EPDM rubber</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
-                        <a href={`https://www.amazon.com/s?k=Continental+serpentine+belt+Hyundai&tag=${AMAZON_TAG}`} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Continental serpentine belt Hyundai')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Continental Elite</h3>
                             <p className="text-sm text-gray-400">Premium aftermarket</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
-                        <a href={`https://www.amazon.com/s?k=Hyundai+Sonata+belt+tensioner+kit&tag=${AMAZON_TAG}`} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Hyundai Sonata belt tensioner kit')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Belt + Tensioner Kit</h3>
                             <p className="text-sm text-gray-400">Replace both for reliability</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>

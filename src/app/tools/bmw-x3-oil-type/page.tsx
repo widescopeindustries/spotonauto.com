@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 // Hand-crafted page targeting high-volume BMW X3 oil queries
 // GSC: "bmw x3 oil change" = 56 impressions/week at position 72 (machine page too generic)
@@ -30,8 +31,6 @@ export const metadata: Metadata = {
         canonical: 'https://spotonauto.com/tools/bmw-x3-oil-type',
     },
 };
-
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
 
 const X3_OIL_DATA = [
     {
@@ -281,7 +280,7 @@ export default function BMWX3OilTypePage() {
                                             <td className="py-4 px-4 text-gray-300 text-xs">{e.interval}</td>
                                             <td className="py-4 px-4">
                                                 <a
-                                                    href={`https://www.amazon.com/s?k=${encodeURIComponent('BMW ' + e.spec + ' ' + e.oilType + ' oil')}&tag=${AMAZON_TAG}`}
+                                                    href={buildAmazonSearchUrl(`BMW ${e.spec} ${e.oilType} oil`)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="px-3 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"
@@ -314,7 +313,7 @@ export default function BMWX3OilTypePage() {
                     <h2 className="text-xl font-bold mb-5">⭐ Recommended Oils for BMW X3</h2>
                     <div className="grid md:grid-cols-3 gap-4">
                         <a
-                            href={`https://www.amazon.com/s?k=Castrol+Edge+0W-30+BMW+LL01&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('Castrol Edge 0W-30 BMW LL01')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-amber-400 transition"
@@ -325,7 +324,7 @@ export default function BMWX3OilTypePage() {
                             <p className="text-amber-400 text-sm mt-3">Shop on Amazon →</p>
                         </a>
                         <a
-                            href={`https://www.amazon.com/s?k=Liqui-Moly+Synthoil+0W-40+BMW&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('Liqui Moly Synthoil 0W-40 BMW')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-amber-400 transition"
@@ -336,7 +335,7 @@ export default function BMWX3OilTypePage() {
                             <p className="text-amber-400 text-sm mt-3">Shop on Amazon →</p>
                         </a>
                         <a
-                            href={`https://www.amazon.com/s?k=Motul+8100+X-clean+5W-30+BMW+LL04&tag=${AMAZON_TAG}`}
+                            href={buildAmazonSearchUrl('Motul 8100 X-clean 5W-30 BMW LL04')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-amber-400 transition"

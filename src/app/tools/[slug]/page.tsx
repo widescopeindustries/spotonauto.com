@@ -10,6 +10,7 @@ import {
     getRelatedRepairLinks,
 } from '@/data/tools-pages';
 import AdUnit from '@/components/AdUnit';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -51,8 +52,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         },
     };
 }
-
-const AMAZON_TAG = process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'antigravity-20';
 
 export default async function ToolPage({ params }: PageProps) {
     const { slug } = await params;
@@ -96,8 +95,7 @@ export default async function ToolPage({ params }: PageProps) {
     };
 
     // Amazon search links
-    const amazonSearch = (query: string) =>
-        `https://www.amazon.com/s?k=${encodeURIComponent(query)}&i=automotive&tag=${AMAZON_TAG}`;
+    const amazonSearch = (query: string) => buildAmazonSearchUrl(query);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
