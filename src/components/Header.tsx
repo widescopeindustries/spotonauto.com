@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, startTransition } from 'react';
 import Link from 'next/link';
 import { Cpu, Menu, X, History, LogOut, Zap, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,7 +22,7 @@ const Header: React.FC = () => {
             const next = window.scrollY > 50;
             if (next !== last) {
                 last = next;
-                setIsScrolled(next);
+                startTransition(() => setIsScrolled(next));
             }
         };
 
