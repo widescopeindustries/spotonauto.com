@@ -127,7 +127,7 @@ function findLatestRecrawlPriorityReport() {
         .sort((a, b) => b.reportDate.localeCompare(a.reportDate));
 
     if (!reports.length) {
-        throw new Error(`No recrawl-priority report found in ${REPORTS_DIR}`);
+        return null;
     }
 
     return reports[0];
@@ -135,6 +135,7 @@ function findLatestRecrawlPriorityReport() {
 
 function loadWinnerEntries() {
     const latestReport = findLatestRecrawlPriorityReport();
+    if (!latestReport) return null;
     const reportPath = join(REPORTS_DIR, latestReport.name);
     const urls = [...new Set(
         readFileSync(reportPath, 'utf-8')
@@ -199,18 +200,22 @@ writeFileSync(INDEX_PATH, indexXml, 'utf-8');
 console.log(`✓ ${INDEX_PATH} — ${chunkCount} child sitemaps`);
 
 const winners = loadWinnerEntries();
-mkdirSync(WINNERS_DIR, { recursive: true });
+if (winners) {
+    mkdirSync(WINNERS_DIR, { recursive: true });
 
-const winnerEntries = winners.urls.map((url) => ({
-    url,
-    lastmod: winners.reportDate,
-    changefreq: 'weekly',
-    priority: 0.95,
-}));
+    const winnerEntries = winners.urls.map((url) => ({
+        url,
+        lastmod: winners.reportDate,
+        changefreq: 'weekly',
+        priority: 0.95,
+    }));
 
-writeUrlSet(WINNERS_SITEMAP_PATH, winnerEntries);
-writeFileSync(WINNERS_LIST_PATH, `${winners.urls.join('\n')}\n`, 'utf-8');
-console.log(`✓ ${WINNERS_SITEMAP_PATH} — ${winnerEntries.length} URLs from ${winners.reportName}`);
-console.log(`✓ ${WINNERS_LIST_PATH} — ${winnerEntries.length} URLs`);
+    writeUrlSet(WINNERS_SITEMAP_PATH, winnerEntries);
+    writeFileSync(WINNERS_LIST_PATH, `${winners.urls.join('\n')}\n`, 'utf-8');
+    console.log(`✓ ${WINNERS_SITEMAP_PATH} — ${winnerEntries.length} URLs from ${winners.reportName}`);
+    console.log(`✓ ${WINNERS_LIST_PATH} — ${winnerEntries.length} URLs`);
+} else {
+    console.log(`⚠ No recrawl-priority report found — skipping winner sitemap`);
+}
 
 console.log(`\nGenerated ${chunkCount} repair sitemap chunks with ${all.length} total URLs`);
