@@ -5,10 +5,45 @@
 const CHARM_BASE = 'https://data.spotonauto.com';
 const CHARM_IMAGE_BASE = CHARM_BASE;
 
+// ─── Circuit Breaker ───────────────────────────────────────────────────────────
+// When the VPS is down, every repair page waits for the full timeout before
+// rendering.  The circuit breaker trips after FAILURE_THRESHOLD consecutive
+// failures and skips the fetch entirely for COOLDOWN_MS, returning the fallback
+// immediately (~0 ms instead of 15 s).
+// ────────────────────────────────────────────────────────────────────────────────
+const FAILURE_THRESHOLD = 2;   // trip after 2 consecutive failures
+const COOLDOWN_MS = 5 * 60 * 1000; // stay open for 5 minutes before retrying
+let circuitFailures = 0;
+let circuitOpenUntil = 0;
+
+function isCircuitOpen(): boolean {
+  if (circuitFailures >= FAILURE_THRESHOLD && Date.now() < circuitOpenUntil) {
+    return true; // skip fetch — VPS is known-down
+  }
+  if (Date.now() >= circuitOpenUntil) {
+    circuitFailures = 0; // reset after cooldown — allow a retry
+  }
+  return false;
+}
+
+function recordFailure(): void {
+  circuitFailures++;
+  if (circuitFailures >= FAILURE_THRESHOLD) {
+    circuitOpenUntil = Date.now() + COOLDOWN_MS;
+  }
+}
+
+function recordSuccess(): void {
+  circuitFailures = 0;
+  circuitOpenUntil = 0;
+}
+
+const FETCH_TIMEOUT_MS = 3000; // 3s instead of 15s — fail fast
+
 const FETCH_OPTS: RequestInit = {
   headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' },
   signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout
-    ? AbortSignal.timeout(15000)
+    ? AbortSignal.timeout(FETCH_TIMEOUT_MS)
     : undefined,
 };
 
@@ -56,6 +91,17 @@ function sanitizeCharmBrandingText(text: string): string {
  * @returns Parsed CharmPage
  */
 export async function fetchCharmPage(pathSegments: string[] = []): Promise<CharmPage> {
+  // ── Circuit breaker: skip fetch entirely when VPS is known-down ──
+  if (isCircuitOpen()) {
+    return {
+      title: 'Manual Temporarily Unavailable',
+      isNavigation: false,
+      links: [],
+      contentHtml: '',
+      status: 503,
+    };
+  }
+
   // Re-encode each segment for the upstream URL
   const encodedPath = pathSegments.map(s => encodeURIComponent(s)).join('/');
   // Ensure trailing slash — the LMDB proxy requires it for directory listings
@@ -64,6 +110,7 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
     const res = await fetch(url, { ...FETCH_OPTS, next: { revalidate: 86400 } });
 
     if (!res.ok) {
+      recordFailure();
       return {
         title: 'Page Not Found',
         isNavigation: false,
@@ -74,8 +121,10 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
     }
 
     const html = await res.text();
+    recordSuccess();
     return parseCharmHtml(html, pathSegments);
   } catch {
+    recordFailure();
     return {
       title: 'Manual Temporarily Unavailable',
       isNavigation: false,

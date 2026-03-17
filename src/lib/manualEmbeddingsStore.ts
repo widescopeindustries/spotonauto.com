@@ -98,9 +98,9 @@ function getVpsPool(): Pool | null {
 
   const connectionTimeoutMs = getTimeoutMs(
     process.env.VPS_DATABASE_CONNECT_TIMEOUT_MS || process.env.PGCONNECT_TIMEOUT_MS,
-    5000,
+    2000,  // 2s instead of 5s — fail fast when VPS is down
   );
-  const queryTimeoutMs = getTimeoutMs(process.env.VPS_DATABASE_QUERY_TIMEOUT_MS, 10000);
+  const queryTimeoutMs = getTimeoutMs(process.env.VPS_DATABASE_QUERY_TIMEOUT_MS, 3000);  // 3s instead of 10s
 
   vpsPool = new Pool({
     connectionString: process.env.VPS_DATABASE_URL,
