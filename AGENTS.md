@@ -72,6 +72,8 @@ Update it when product decisions, traps, or standing preferences change.
   - auth and personal history utility routes should remain non-indexable
   - sitemap freshness should come from `src/lib/sitemap.ts` or `SITEMAP_LAST_MOD`, not hard-coded stale dates
   - `scripts/internal-link-audit.js` should fail loudly if seed fetches fail instead of silently reporting zero discovered links
+  - wiring selector coverage should not import the full `src/data/wiring-coverage.json` into a client component
+  - `src/lib/wiringCoverage.ts` is the server-only helper that derives the lightweight selector payload for `/wiring`
 ## Working Norms
 
 - This repo is often dirty with unrelated local edits. Stage only task-relevant files.

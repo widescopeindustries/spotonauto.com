@@ -1,5 +1,7 @@
+import { getWiringSelectorData } from '@/lib/wiringCoverage';
+
 import WiringDiagramLibrary from './WiringDiagramLibrary';
 
 export default function WiringPage() {
-  return <WiringDiagramLibrary />;
+  return <WiringDiagramLibrary selectorData={getWiringSelectorData()} />;
 }

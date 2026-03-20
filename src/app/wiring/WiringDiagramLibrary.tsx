@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { trackWiringDiagramOpen } from '@/lib/analytics';
-import verifiedWiringCoverage from '@/data/wiring-coverage.json';
+import type { WiringSelectorData } from '@/lib/wiringCoverage';
 
 interface DiagramEntry {
   name: string;
@@ -23,12 +23,6 @@ interface DiagramData {
 interface DiagramImage {
   images: string[];
   title: string;
-}
-
-interface WiringCoverageVehicle {
-  year: number;
-  make: string;
-  model: string;
 }
 
 function normalizeModelText(value: string): string {
@@ -79,41 +73,11 @@ function resolveModelForVariant(models: string[], variant: string): string | nul
   return resolveBestMatch(models, variant);
 }
 
-const WIRING_COVERAGE = (verifiedWiringCoverage as { vehicles?: WiringCoverageVehicle[] }).vehicles || [];
-const COVERED_YEARS = [...new Set(WIRING_COVERAGE
-  .map((vehicle) => vehicle.year)
-  .filter((year) => Number.isFinite(year))
-)].sort((a, b) => b - a);
-const MAKES_BY_YEAR = new Map<string, string[]>();
-const MODELS_BY_YEAR_MAKE = new Map<string, string[]>();
-
-for (const vehicle of WIRING_COVERAGE) {
-  const yearKey = String(vehicle.year);
-  const makeKey = `${yearKey}:${vehicle.make}`;
-  const nextMakes = MAKES_BY_YEAR.get(yearKey) || [];
-  if (!nextMakes.includes(vehicle.make)) {
-    nextMakes.push(vehicle.make);
-    nextMakes.sort((left, right) => left.localeCompare(right));
-    MAKES_BY_YEAR.set(yearKey, nextMakes);
-  }
-
-  const nextModels = MODELS_BY_YEAR_MAKE.get(makeKey) || [];
-  if (!nextModels.includes(vehicle.model)) {
-    nextModels.push(vehicle.model);
-    nextModels.sort((left, right) => left.localeCompare(right));
-    MODELS_BY_YEAR_MAKE.set(makeKey, nextModels);
-  }
+interface WiringDiagramLibraryProps {
+  selectorData: WiringSelectorData;
 }
 
-function getCoveredMakes(year: string): string[] {
-  return MAKES_BY_YEAR.get(year) || [];
-}
-
-function getCoveredModels(year: string, make: string): string[] {
-  return MODELS_BY_YEAR_MAKE.get(`${year}:${make}`) || [];
-}
-
-export default function WiringDiagramLibrary() {
+export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibraryProps) {
   const [variants, setVariants] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedMake, setSelectedMake] = useState('');
@@ -137,8 +101,10 @@ export default function WiringDiagramLibrary() {
   const autoOpenRef = useRef(false);
   const autoOpenConsumedRef = useRef(false);
 
-  const makes = selectedYear ? getCoveredMakes(selectedYear) : [];
-  const models = selectedYear && selectedMake ? getCoveredModels(selectedYear, selectedMake) : [];
+  const makes = selectedYear ? selectorData.makesByYear[selectedYear] || [] : [];
+  const models = selectedYear && selectedMake
+    ? selectorData.modelsByYearMake[`${selectedYear}:${selectedMake}`] || []
+    : [];
 
   // Read optional query params for deep links from SEO pages
   useEffect(() => {
@@ -375,7 +341,7 @@ export default function WiringDiagramLibrary() {
                 onChange={e => handleYearChange(e.target.value)}
               >
                 <option value="">Select Year</option>
-                {COVERED_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+                {selectorData.years.map(y => <option key={y} value={y}>{y}</option>)}
               </select>
             </div>
 
