@@ -4,11 +4,15 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI, Type } from '@google/genai';
+import OpenAI from 'openai';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
+const openAiApiKey = process.env.OPENAI_API_KEY;
+const openAI = openAiApiKey ? new OpenAI({ apiKey: openAiApiKey }) : null;
 const TEXT_MODEL = 'gemini-2.0-flash';
+const OPENAI_TEXT_MODEL = process.env.OPENAI_TEXT_MODEL || 'gpt-4o-mini';
 
 const secondOpinionSchema = {
   type: Type.OBJECT,
@@ -80,9 +84,9 @@ export async function POST(req: NextRequest) {
   const limited = checkRateLimit(req, 5, 60_000); // 5 quotes/min per IP
   if (limited) return limited;
 
-  if (!apiKey) {
+  if (!apiKey && !openAiApiKey) {
     return NextResponse.json(
-      { error: 'Server configuration error: Missing API Key' },
+      { error: 'Server configuration error: Missing AI API key' },
       { status: 500 }
     );
   }
@@ -132,18 +136,53 @@ ${symptoms ? `Owner's Symptoms: ${symptoms}` : ''}
 
 Provide your analysis as JSON with: verdict, confidence, avgPrice, priceRange (low/high), summary, flags, commonMisdiagnoses, questionsToAsk, alternatives, partsBreakdown.`;
 
-    const response = await genAI.models.generateContent({
-      model: TEXT_MODEL,
-      contents: userPrompt,
-      config: {
-        systemInstruction: systemPrompt,
-        responseMimeType: 'application/json',
-        responseSchema: secondOpinionSchema,
-      },
-    });
+    let data: any;
 
-    const text = (response.text || '').trim().replace(/^```json\s*|```$/g, '');
-    const data = JSON.parse(text);
+    try {
+      if (!apiKey) {
+        throw new Error('Gemini API key is unavailable.');
+      }
+
+      const response = await genAI.models.generateContent({
+        model: TEXT_MODEL,
+        contents: userPrompt,
+        config: {
+          systemInstruction: systemPrompt,
+          responseMimeType: 'application/json',
+          responseSchema: secondOpinionSchema,
+        },
+      });
+
+      const text = (response.text || '').trim().replace(/^```json\s*|```$/g, '');
+      data = JSON.parse(text);
+    } catch (error) {
+      const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+      const shouldFallback = openAI && (
+        !apiKey ||
+        message.includes('resource_exhausted') ||
+        message.includes('quota') ||
+        message.includes('rate limit') ||
+        message.includes('429')
+      );
+
+      if (!shouldFallback) {
+        throw error;
+      }
+
+      console.warn('[Second Opinion] Falling back to OpenAI:', error);
+      const completion = await openAI.chat.completions.create({
+        model: OPENAI_TEXT_MODEL,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: `${systemPrompt}\nReturn valid JSON only.` },
+          { role: 'user', content: userPrompt },
+        ],
+        temperature: 0.2,
+      });
+
+      const text = completion.choices[0]?.message?.content?.trim() || '';
+      data = JSON.parse(text.replace(/^```json\s*|```$/g, ''));
+    }
 
     // Validate the verdict value
     const validVerdicts = ['Fair Price', 'Seems High', 'Red Flag', 'Seems Low'];

@@ -74,6 +74,8 @@ Update it when product decisions, traps, or standing preferences change.
   - `scripts/internal-link-audit.js` should fail loudly if seed fetches fail instead of silently reporting zero discovered links
   - wiring selector coverage should not import the full `src/data/wiring-coverage.json` into a client component
   - `src/lib/wiringCoverage.ts` is the server-only helper that derives the lightweight selector payload for `/wiring`
+  - AI runtime can now fall back from Gemini to OpenAI for guide generation, vehicle info, diagnostic chat, homepage chat, and second-opinion flows when Gemini is missing or quota-limited
+  - deploys that rely on the fallback need `OPENAI_API_KEY` set in the runtime environment
 ## Working Norms
 
 - This repo is often dirty with unrelated local edits. Stage only task-relevant files.

@@ -1,5 +1,7 @@
 
 import { GoogleGenAI, Type } from '@google/genai';
+import OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { Vehicle, VehicleInfo, RepairGuide, ChatMessage, GroundingSource } from '../types';
 import { isValidVehicleCombination } from '@/data/vehicles';
 import { getVehicleNHTSAData, nhtsaToPromptContext, recallsToSafetyWarnings } from './nhtsaService';
@@ -15,10 +17,13 @@ if (!apiKey || apiKey === 'placeholder_gemini_key') {
 }
 
 const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
+const openAiApiKey = process.env.OPENAI_API_KEY;
+const openAI = openAiApiKey ? new OpenAI({ apiKey: openAiApiKey }) : null;
 
 // Models
 const TEXT_MODEL = "gemini-2.0-flash";
 const IMAGE_MODEL = "imagen-3.0-generate-002";
+const OPENAI_TEXT_MODEL = process.env.OPENAI_TEXT_MODEL || 'gpt-4o-mini';
 
 // Schemas
 const vehicleSchema = {
@@ -250,6 +255,82 @@ function normalizeGuideGenerationError(error: unknown): Error {
   }
 
   return error instanceof Error ? error : new Error('Failed to generate guide.');
+}
+
+function stripJsonFences(text: string): string {
+  return text.trim().replace(/^```json\s*|```$/g, '');
+}
+
+function isQuotaLikeError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+  return (
+    message.includes('resource_exhausted') ||
+    message.includes('quota') ||
+    message.includes('rate limit') ||
+    message.includes('429')
+  );
+}
+
+function canUseGemini(): boolean {
+  return Boolean(apiKey && apiKey !== 'placeholder_gemini_key');
+}
+
+function canUseOpenAI(): boolean {
+  return Boolean(openAI);
+}
+
+function shouldFallbackToOpenAI(error: unknown): boolean {
+  return canUseOpenAI() && (!canUseGemini() || isQuotaLikeError(error));
+}
+
+async function generateJsonWithOpenAI(systemInstruction: string, prompt: string) {
+  if (!openAI) {
+    throw new Error('OpenAI API Key is missing.');
+  }
+
+  const completion = await openAI.chat.completions.create({
+    model: OPENAI_TEXT_MODEL,
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: `${systemInstruction}\nReturn valid JSON only.` },
+      { role: 'user', content: prompt },
+    ],
+    temperature: 0.2,
+  });
+
+  const text = completion.choices[0]?.message?.content;
+  if (!text) {
+    throw new Error('OpenAI returned an empty JSON response.');
+  }
+
+  return JSON.parse(stripJsonFences(text));
+}
+
+async function generateTextWithOpenAI(
+  systemInstruction: string,
+  history: { role: string; parts: { text: string }[] }[],
+  message: string,
+) {
+  if (!openAI) {
+    throw new Error('OpenAI API Key is missing.');
+  }
+
+  const messages: ChatCompletionMessageParam[] = [
+    { role: 'system', content: systemInstruction },
+    ...history.map((item): ChatCompletionMessageParam => ({
+      role: item.role === 'model' ? 'assistant' : 'user',
+      content: item.parts.map((part) => part.text).join('\n'),
+    })),
+    { role: 'user', content: message },
+  ];
+
+  const completion = await openAI.chat.completions.create({
+    model: OPENAI_TEXT_MODEL,
+    messages,
+    temperature: 0.4,
+  });
+
+  return completion.choices[0]?.message?.content?.trim() || '';
 }
 
 function buildRepairGuidePrompt(args: {
@@ -599,17 +680,39 @@ Provide:
 
 Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
 
-  const response = await genAI.models.generateContent({
-    model: TEXT_MODEL,
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: vehicleInfoSchema,
-    },
-  });
+  let data: any;
+  let responseSources: GroundingSource[] = [];
 
-  const text = (response.text || "").trim().replace(/^```json\s*|```$/g, '');
-  const data = JSON.parse(text);
+  try {
+    if (!canUseGemini()) {
+      throw new Error('Gemini API key is unavailable.');
+    }
+
+    const response = await genAI.models.generateContent({
+      model: TEXT_MODEL,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: vehicleInfoSchema,
+      },
+    });
+
+    const text = stripJsonFences(response.text || '');
+    data = JSON.parse(text);
+    responseSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
+      ?.map((chunk: any) => chunk.web)
+      .filter((web: any): web is GroundingSource => !!(web?.uri && web.title)) || [];
+  } catch (error) {
+    if (!shouldFallbackToOpenAI(error)) {
+      throw error;
+    }
+
+    console.warn(`[AI] Falling back to OpenAI for vehicle info on ${year} ${make} ${model} ${task}:`, error);
+    data = await generateJsonWithOpenAI(
+      'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
+      prompt,
+    );
+  }
 
   // Override AI-generated recalls with real NHTSA recalls
   const realRecalls = nhtsaData.recalls.length > 0
@@ -617,10 +720,6 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
         `[${r.nhtsaCampaignNumber}] ${r.component}: ${r.summary.slice(0, 300)}`
       )
     : data.recalls;
-
-  const responseSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
-    ?.map((chunk: any) => chunk.web)
-    .filter((web: any): web is GroundingSource => !!(web?.uri && web.title)) || [];
 
   return {
     ...data,
@@ -686,6 +785,8 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
     : [0];
 
   let response: Awaited<ReturnType<typeof genAI.models.generateContent>> | null = null;
+  let data: any = null;
+  let rawSources: GroundingSource[] = [];
   let usedManualContext = false;
   let finalError: unknown = null;
 
@@ -701,6 +802,10 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
     });
 
     try {
+      if (!canUseGemini()) {
+        throw new Error('Gemini API key is unavailable.');
+      }
+
       response = await genAI.models.generateContent({
         model: TEXT_MODEL,
         contents: promptResult.prompt,
@@ -727,16 +832,32 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
   }
 
   if (!response) {
-    throw normalizeGuideGenerationError(finalError);
+    if (!shouldFallbackToOpenAI(finalError)) {
+      throw normalizeGuideGenerationError(finalError);
+    }
+
+    const fallbackPrompt = buildRepairGuidePrompt({
+      vehicle,
+      task,
+      locale,
+      nhtsaContext,
+      manualContext,
+      maxManualChars: manualContext.content ? 9000 : 0,
+    });
+
+    console.warn(`[AI] Falling back to OpenAI for repair guide on ${year} ${make} ${model} ${task}:`, finalError);
+    data = await generateJsonWithOpenAI(
+      'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
+      fallbackPrompt.prompt,
+    );
+    usedManualContext = fallbackPrompt.usedManualContext;
+  } else {
+    const text = stripJsonFences(response.text || '');
+    data = JSON.parse(text);
+    rawSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
+      ?.map((chunk: any) => chunk.web)
+      .filter((web: any): web is GroundingSource => !!(web?.uri && web.title)) || [];
   }
-
-  const text = (response.text || "").trim().replace(/^```json\s*|```$/g, '');
-  const data = JSON.parse(text);
-
-  // Get source count but don't expose raw upstream archive URLs
-  const rawSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
-    ?.map((chunk: any) => chunk.web)
-    .filter((web: any): web is GroundingSource => !!(web?.uri && web.title)) || [];
 
   const stepsWithImages = data.steps.map((step: any, idx: number) => ({
     step: idx + 1,
@@ -843,33 +964,41 @@ Instructions:
 Keep your response concise and practical. Do NOT return JSON - respond in natural language.`;
 
   try {
-    // Build the conversation contents for a single generateContent call
-    // This is more reliable for stateless API calls
     const contents = [
-      // Add history as alternating user/model messages
       ...history.map(h => ({
         role: h.role as 'user' | 'model',
         parts: h.parts.map(p => ({ text: p.text }))
       })),
-      // Add the new user message
       {
         role: 'user' as const,
         parts: [{ text: message }]
       }
     ];
 
-    // Use generateContent instead of chat for stateless operation
-    const response = await genAI.models.generateContent({
-      model: TEXT_MODEL,
-      contents: contents,
-      config: {
-        systemInstruction: diagnosticSystemInstruction,
+    try {
+      if (!canUseGemini()) {
+        throw new Error('Gemini API key is unavailable.');
       }
-    });
 
-    const responseText = (response.text || "").trim();
+      const response = await genAI.models.generateContent({
+        model: TEXT_MODEL,
+        contents: contents,
+        config: {
+          systemInstruction: diagnosticSystemInstruction,
+        }
+      });
 
-    return { text: responseText, imageUrl: null };
+      const responseText = (response.text || "").trim();
+      return { text: responseText, imageUrl: null };
+    } catch (error) {
+      if (!shouldFallbackToOpenAI(error)) {
+        throw error;
+      }
+
+      console.warn(`[AI] Falling back to OpenAI for diagnostic chat on ${year} ${make} ${model}:`, error);
+      const responseText = await generateTextWithOpenAI(diagnosticSystemInstruction, history, message);
+      return { text: responseText, imageUrl: null };
+    }
   } catch (error) {
     console.error('Diagnostic message error:', error);
     throw error;

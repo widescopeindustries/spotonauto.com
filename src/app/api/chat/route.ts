@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
+import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { checkRateLimit } from "@/lib/rateLimit";
 
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const geminiApiKey = process.env.GEMINI_API_KEY || "";
+const genAI = new GoogleGenAI({ apiKey: geminiApiKey });
+const openAiApiKey = process.env.OPENAI_API_KEY;
+const openAI = openAiApiKey ? new OpenAI({ apiKey: openAiApiKey }) : null;
 
 const SYSTEM_PROMPT = `You are SpotOn Guide — a friendly AI assistant for SpotOnAuto.com, an AI-powered vehicle repair platform.
 
@@ -53,18 +58,57 @@ export async function POST(req: NextRequest) {
 
     const lastMessage = messages[messages.length - 1];
 
-    const chat = genAI.chats.create({
-      model: "gemini-2.0-flash",
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        maxOutputTokens: 200,
-        temperature: 0.7,
-      },
-      history,
-    });
+    let reply = "";
 
-    const result = await chat.sendMessage({ message: lastMessage.content });
-    const reply = result.text || "";
+    try {
+      if (!geminiApiKey) {
+        throw new Error("Gemini API key is unavailable.");
+      }
+
+      const chat = genAI.chats.create({
+        model: "gemini-2.0-flash",
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          maxOutputTokens: 200,
+          temperature: 0.7,
+        },
+        history,
+      });
+
+      const result = await chat.sendMessage({ message: lastMessage.content });
+      reply = result.text || "";
+    } catch (error) {
+      const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+      const shouldFallback = openAI && (
+        !geminiApiKey ||
+        message.includes("resource_exhausted") ||
+        message.includes("quota") ||
+        message.includes("rate limit") ||
+        message.includes("429")
+      );
+
+      if (!shouldFallback) {
+        throw error;
+      }
+
+      console.warn("[SpotOn Guide] Falling back to OpenAI:", error);
+      const openAiMessages: ChatCompletionMessageParam[] = [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...history.map((item: { role: string; parts: { text: string }[] }): ChatCompletionMessageParam => ({
+          role: item.role === "model" ? "assistant" : "user",
+          content: item.parts.map((part: { text: string }) => part.text).join("\n"),
+        })),
+        { role: "user", content: lastMessage.content },
+      ];
+
+      const completion = await openAI.chat.completions.create({
+        model: process.env.OPENAI_TEXT_MODEL || "gpt-4o-mini",
+        messages: openAiMessages,
+        temperature: 0.7,
+      });
+
+      reply = completion.choices[0]?.message?.content?.trim() || "";
+    }
 
     // Check for upgrade intent
     const upgradeMatch = reply.match(/\[UPGRADE_INTENT:\s*reason="([^"]+)"\]/);
