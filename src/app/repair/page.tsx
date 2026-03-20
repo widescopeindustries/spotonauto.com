@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { TIER_1_RESCUE_PAGES } from '@/data/rescuePriority';
+import { SYMPTOM_CLUSTERS, buildSymptomHref } from '@/data/symptomGraph';
 
 export const metadata: Metadata = {
   title: 'Repair Hub | SpotOnAuto',
@@ -37,6 +38,13 @@ export default function RepairHubPage() {
           <p className="text-sm text-gray-300 mt-2">Best first step when you know the symptom but not the exact repair yet.</p>
         </Link>
         <Link
+          href="/symptoms"
+          className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5 hover:border-amber-400/45 hover:bg-amber-500/15 transition-all"
+        >
+          <h2 className="text-lg font-bold text-white">Browse symptom hubs</h2>
+          <p className="text-sm text-gray-300 mt-2">Open canonical symptom clusters that map complaints into repair categories, codes, and exact vehicle pages.</p>
+        </Link>
+        <Link
           href="/repairs"
           className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all"
         >
@@ -50,6 +58,33 @@ export default function RepairHubPage() {
           <h2 className="text-lg font-bold text-white">Compare parts</h2>
           <p className="text-sm text-gray-300 mt-2">Check fitment and pricing context before tearing down the vehicle.</p>
         </Link>
+      </section>
+
+      <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-6">
+        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
+          <div>
+            <h2 className="text-xl font-bold text-white">Symptom hubs</h2>
+            <p className="text-sm text-gray-300 mt-1">
+              These graph-driven symptom pages bridge plain-English complaints into repair categories, code lookups, and exact vehicle workflows.
+            </p>
+          </div>
+          <Link href="/symptoms" className="text-sm text-amber-300 hover:text-amber-200 transition-colors">
+            Browse all symptom hubs →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          {SYMPTOM_CLUSTERS.slice(0, 6).map((cluster) => (
+            <Link
+              key={cluster.slug}
+              href={buildSymptomHref(cluster.slug)}
+              className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
+            >
+              <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Symptom Cluster</p>
+              <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
+              <p className="text-sm text-gray-300 mt-2">{cluster.summary}</p>
+            </Link>
+          ))}
+        </div>
       </section>
 
       <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">

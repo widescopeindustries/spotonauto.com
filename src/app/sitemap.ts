@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { SYMPTOM_CLUSTERS } from '@/data/symptomGraph';
 import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
 import { TOOL_PAGES, TOOL_TYPE_META } from '@/data/tools-pages';
 import { getSitemapLastMod } from '@/lib/sitemap';
@@ -32,6 +33,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/cel`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
         { url: `${baseUrl}/second-opinion`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
         { url: `${baseUrl}/parts`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.65 },
+        { url: `${baseUrl}/repair`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.82 },
+        { url: `${baseUrl}/symptoms`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.78 },
         { url: `${baseUrl}/wiring`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.8 },
         { url: `${baseUrl}/community`, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 0.7 },
         { url: `${baseUrl}/about`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
@@ -84,6 +87,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
                 priority: 0.7,
             });
         }
+    }
+
+    for (const cluster of SYMPTOM_CLUSTERS) {
+        entries.push({
+            url: `${baseUrl}/symptoms/${cluster.slug}`,
+            lastModified: LAST_MOD,
+            changeFrequency: 'weekly',
+            priority: 0.72,
+        });
     }
 
     return entries;

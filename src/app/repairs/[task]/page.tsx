@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
+import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
 import { getTier1RescuePagesForTask } from '@/data/rescuePriority';
 
@@ -46,6 +47,10 @@ export default async function TaskCategoryPage({ params }: PageProps) {
   }
   if (!VALID_TASKS.includes(canonicalTask)) {
     const symptom = taskSlugToSymptom(task);
+    const matchedCluster = getSymptomClusterFromText(symptom);
+    if (matchedCluster) {
+      permanentRedirect(buildSymptomHref(matchedCluster.slug));
+    }
     if (symptom.length > 2) {
       permanentRedirect(`/diagnose?task=${encodeURIComponent(symptom)}`);
     }

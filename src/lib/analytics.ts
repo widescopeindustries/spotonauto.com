@@ -249,7 +249,7 @@ export function trackWiringDiagramOpen(vehicle: string, system: string, diagramN
 
 // ─── Knowledge Graph Events ────────────────────────────────────────────────
 
-export type KnowledgeGraphSurface = 'repair' | 'code' | 'wiring' | 'vehicle';
+export type KnowledgeGraphSurface = 'repair' | 'code' | 'wiring' | 'vehicle' | 'symptom';
 export type KnowledgeGraphKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc' | 'repair' | 'vehicle';
 
 export interface KnowledgeGraphContext {

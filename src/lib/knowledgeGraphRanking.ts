@@ -1,6 +1,6 @@
 import overrides from '@/data/knowledge-graph-overrides.json';
 
-export type KnowledgeGraphSurface = 'repair' | 'code' | 'wiring' | 'vehicle';
+export type KnowledgeGraphSurface = 'repair' | 'code' | 'wiring' | 'vehicle' | 'symptom';
 export type KnowledgeGraphKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc' | 'repair' | 'vehicle';
 
 export interface KnowledgeGraphBlock<TNode = unknown> {
@@ -57,6 +57,15 @@ const DEFAULT_GROUP_WEIGHTS: Record<KnowledgeGraphSurface, Record<KnowledgeGraph
     tool: 74,
     dtc: 68,
     spec: 40,
+  },
+  symptom: {
+    repair: 100,
+    dtc: 88,
+    vehicle: 76,
+    manual: 70,
+    wiring: 54,
+    tool: 42,
+    spec: 18,
   },
 };
 

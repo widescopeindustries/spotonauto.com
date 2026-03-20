@@ -17,6 +17,7 @@ import {
 // ── Vehicle selector shown when no vehicle params are in URL ──────────────
 function VehicleSelector() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [vehicle, setVehicle] = useState({ year: '', make: '', model: '' });
     const [symptom, setSymptom] = useState('');
     const [availableModels, setAvailableModels] = useState<string[]>([]);
@@ -27,6 +28,7 @@ function VehicleSelector() {
     const availableMakes = vehicle.year ? getMakesForYear(vehicle.year) : [];
 
     useEffect(() => {
+        const taskFromUrl = searchParams.get('task') || '';
         const draft = getDiagnosticDraft();
         if (draft) {
             setVehicle({
@@ -34,12 +36,14 @@ function VehicleSelector() {
                 make: draft.make,
                 model: draft.model,
             });
-            setSymptom(draft.symptom);
+            setSymptom(taskFromUrl || draft.symptom);
+        } else if (taskFromUrl) {
+            setSymptom(taskFromUrl);
         }
 
         setResumeSession(getLatestDiagnosticSession());
         setDraftReady(true);
-    }, []);
+    }, [searchParams]);
 
     useEffect(() => {
         if (vehicle.make && vehicle.year) {

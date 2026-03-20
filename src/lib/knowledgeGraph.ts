@@ -9,6 +9,7 @@ export type KnowledgeGraphRelation =
   | 'has-code'
   | 'has-vehicle'
   | 'has-repair'
+  | 'has-symptom'
   | 'references'
   | 'related';
 
@@ -29,6 +30,10 @@ function slugifyGraphPart(value: string): string {
 
 export function buildTaskNodeId(task: string): string {
   return `task:${slugifyGraphPart(task)}`;
+}
+
+export function buildSymptomNodeId(symptom: string): string {
+  return `symptom:${slugifyGraphPart(symptom)}`;
 }
 
 export function buildCodeNodeId(code: string): string {
