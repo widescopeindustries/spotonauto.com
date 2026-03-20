@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Search, Zap, AlertTriangle, ScanLine, Wrench } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { decodeVin } from '../services/apiClient';
-import { getYears, COMMON_MAKES, fetchModels } from '../services/vehicleData';
+import { getYears, getMakesForYear, fetchModels } from '../services/vehicleData';
 import { trackVehicleSearch, trackVinDecode } from '../lib/analytics';
 import { useT } from '@/lib/translations';
+import { buildRepairUrl } from '@/lib/vehicleIdentity';
 
 interface HolographicDashboardProps {
     onVehicleChange?: (vehicle: { year: string; make: string; model: string }) => void;
@@ -30,6 +31,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
     const [availableYears] = useState(getYears());
     const [availableModels, setAvailableModels] = useState<string[]>([]);
     const [loadingModels, setLoadingModels] = useState(false);
+    const availableMakes = vehicle.year ? getMakesForYear(vehicle.year) : [];
 
     useEffect(() => {
         if (vehicle.make && vehicle.year) {
@@ -49,7 +51,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
         e.preventDefault();
         if (vehicle.year && vehicle.make && vehicle.model && task) {
             trackVehicleSearch(`${vehicle.year} ${vehicle.make} ${vehicle.model}`, task, 'guide');
-            router.push(`/repair/${vehicle.year}/${vehicle.make}/${vehicle.model}/${task.replace(/\s+/g, '-')}`);
+            router.push(buildRepairUrl(vehicle.year, vehicle.make, vehicle.model, task));
         }
     };
 
@@ -142,7 +144,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                             id="year-select"
                             className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan shadow-lg transition-all text-sm font-medium appearance-none hover:border-gray-500"
                             value={vehicle.year}
-                            onChange={(e) => setVehicle({ ...vehicle, year: e.target.value, model: '' })}
+                            onChange={(e) => setVehicle({ ...vehicle, year: e.target.value, make: '', model: '' })}
                             aria-label="Select Year"
                         >
                             <option value="">{t('form.selectYear')}</option>
@@ -165,7 +167,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                             aria-label="Select Make"
                         >
                             <option value="">{t('form.selectMake')}</option>
-                            {COMMON_MAKES.map(make => (
+                            {availableMakes.map(make => (
                                 <option key={make} value={make}>{make.toUpperCase()}</option>
                             ))}
                         </select>

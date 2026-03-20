@@ -5,6 +5,7 @@ import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart 
 import { getToolPagesForVehicle, TOOL_TYPE_META } from '@/data/tools-pages';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Wrench } from 'lucide-react';
+import { buildVehicleHubGraph } from '@/lib/vehicleHubGraph';
 
 interface PageProps {
   params: Promise<{
@@ -68,6 +69,17 @@ export default async function ModelGuidesPage({ params }: PageProps) {
   
   // We'll link to 2013 as a representative year or the latest year available in our sitemap range
   const targetYear = Math.min(2013, production.end);
+  const representativeVehicleGraph = await buildVehicleHubGraph({
+    year: String(targetYear),
+    make: canonicalMake,
+    model: canonicalModel,
+    displayMake: originalMake,
+    displayModel: originalModel,
+  });
+  const representativeRepairNodes = (representativeVehicleGraph.groups.find((group) => group.kind === 'repair')?.nodes ?? []).slice(0, 12);
+  const representativeWiringNodes = (representativeVehicleGraph.groups.find((group) => group.kind === 'wiring')?.nodes ?? []).slice(0, 6);
+  const representativeCodeNodes = (representativeVehicleGraph.groups.find((group) => group.kind === 'dtc')?.nodes ?? []).slice(0, 6);
+  const representativeManualNodes = (representativeVehicleGraph.groups.find((group) => group.kind === 'manual')?.nodes ?? []).slice(0, 2);
 
   const faqItems = [
     {
@@ -136,11 +148,28 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           </p>
         </FadeInUp>
 
+        <section className="mb-12 rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-bold text-white">Exact Vehicle Hub</h2>
+              <p className="text-sm text-gray-300 mt-2">
+                Start from the canonical {targetYear} {originalMake} {originalModel} hub to move between exact repair, wiring, manual, and code surfaces.
+              </p>
+            </div>
+            <Link
+              href={`/repair/${targetYear}/${canonicalMake}/${canonicalModel}`}
+              className="inline-flex items-center rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-200 hover:border-cyan-400/40 hover:bg-cyan-500/20 transition-all"
+            >
+              Open {targetYear} vehicle hub
+            </Link>
+          </div>
+        </section>
+
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {VALID_TASKS.map((task) => (
-            <StaggerItem key={task}>
+          {representativeRepairNodes.map((node) => (
+            <StaggerItem key={node.nodeId || node.href}>
               <Link
-                href={`/repair/${targetYear}/${canonicalMake}/${canonicalModel}/${task}`}
+                href={node.href}
                 className="flex items-center gap-4 glass p-6 hover:border-cyan-400/50 transition-all group"
               >
                 <div className="p-3 bg-cyan-500/10 rounded-lg group-hover:bg-cyan-500/20 transition-colors">
@@ -148,9 +177,9 @@ export default async function ModelGuidesPage({ params }: PageProps) {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors capitalize">
-                    {task.replace(/-/g, ' ')}
+                    {node.label.replace(`${targetYear} ${originalMake} ${originalModel} `, '')}
                   </h3>
-                  <p className="text-sm text-gray-500">Step-by-step guide & parts list</p>
+                  <p className="text-sm text-gray-500">{node.description}</p>
                 </div>
               </Link>
             </StaggerItem>
@@ -168,7 +197,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <Link
-              href={`/manual/${encodeURIComponent(originalMake)}`}
+              href={representativeManualNodes[0]?.href || `/manual/${encodeURIComponent(originalMake)}`}
               className="block p-5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40 transition group"
             >
               <p className="text-sm text-cyan-400 mb-1">Make-level manual</p>
@@ -178,7 +207,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
               <p className="text-xs text-gray-500 mt-2">Step into OEM section trees for every supported {originalMake} year.</p>
             </Link>
             <Link
-              href={`/manual/${encodeURIComponent(originalMake)}/${targetYear}`}
+              href={representativeManualNodes[1]?.href || `/manual/${encodeURIComponent(originalMake)}/${targetYear}`}
               className="block p-5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40 transition group"
             >
               <p className="text-sm text-cyan-400 mb-1">Year index</p>
@@ -217,6 +246,62 @@ export default async function ModelGuidesPage({ params }: PageProps) {
                   </Link>
                 );
               })}
+            </div>
+          </section>
+        )}
+
+        {representativeWiringNodes.length > 0 && (
+          <section className="mt-16">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <h2 className="text-xl font-bold text-white">
+                Exact {targetYear} Wiring Paths
+              </h2>
+              <Link href="/wiring" className="text-sm text-cyan-400 hover:underline">
+                Browse all wiring pages →
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {representativeWiringNodes.map((node) => (
+                <Link
+                  key={node.nodeId || node.href}
+                  href={node.href}
+                  className="block p-4 rounded-xl bg-white/5 border border-white/10 hover:border-violet-500/40 transition group"
+                >
+                  <p className="text-sm text-violet-300 mb-1">{node.badge}</p>
+                  <h3 className="text-sm font-semibold text-gray-200 group-hover:text-white transition">
+                    {node.label}
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-2">{node.description}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {representativeCodeNodes.length > 0 && (
+          <section className="mt-16">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <h2 className="text-xl font-bold text-white">
+                Likely Trouble Code Clusters
+              </h2>
+              <Link href="/codes" className="text-sm text-cyan-400 hover:underline">
+                Browse all DTC codes →
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {representativeCodeNodes.map((node) => (
+                <Link
+                  key={node.nodeId || node.href}
+                  href={node.href}
+                  className="block p-4 rounded-xl bg-white/5 border border-white/10 hover:border-amber-500/40 transition group"
+                >
+                  <p className="text-sm text-amber-300 mb-1">{node.badge}</p>
+                  <h3 className="text-sm font-semibold text-gray-200 group-hover:text-white transition">
+                    {node.label}
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-2">{node.description}</p>
+                </Link>
+              ))}
             </div>
           </section>
         )}

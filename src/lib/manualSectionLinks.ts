@@ -12,6 +12,13 @@ import {
   findDiagnosticTroubleCodeSections,
   findManualSectionsByTerms,
 } from '@/lib/manualEmbeddingsStore';
+import {
+  buildCodeNodeId,
+  buildEdgeReference,
+  buildManualNodeId,
+  buildRepairNodeId,
+  buildWiringNodeId,
+} from '@/lib/knowledgeGraph';
 
 function buildManualUrl(path: string): string {
   const segments = path.split('/').filter(Boolean).map((segment) => encodeURIComponent(decodeURIComponent(segment)));
@@ -41,6 +48,15 @@ export async function getManualSectionLinksForCode(code: DTCCode, limit = 4): Pr
   const rows = await safeFindRows(`code:${code.code}`, () => findDiagnosticTroubleCodeSections(code.code, limit));
 
   return rows.map((row) => ({
+    ...buildEdgeReference({
+      sourceNodeId: buildCodeNodeId(code.code),
+      targetNodeId: buildManualNodeId(row.path),
+      relation: 'has-manual',
+      year: row.year,
+      make: row.make,
+      model: row.model,
+      code: code.code,
+    }),
     href: buildManualUrl(row.path),
     label: `${row.year} ${row.make} ${row.model} ${row.sectionTitle}`,
     description: clip(row.contentPreview || `${code.code} appears in this OEM diagnostic section.`),
@@ -67,6 +83,15 @@ export async function getManualSectionLinksForWiringVehicle(
   );
 
   return rows.map((row) => ({
+    ...buildEdgeReference({
+      sourceNodeId: buildWiringNodeId(vehicle.year, vehicle.make, vehicle.model, system),
+      targetNodeId: buildManualNodeId(row.path),
+      relation: 'has-manual',
+      year: vehicle.year,
+      make: vehicle.make,
+      model: vehicle.model,
+      system,
+    }),
     href: buildManualUrl(row.path),
     label: `${vehicle.year} ${vehicle.make} ${vehicle.model} ${row.sectionTitle}`,
     description: clip(row.contentPreview || `${systemMeta.shortLabel} references from the OEM service manual for this vehicle.`),
@@ -98,6 +123,15 @@ export async function getManualSectionLinksForRepair(args: {
   );
 
   return rows.map((row) => ({
+    ...buildEdgeReference({
+      sourceNodeId: buildRepairNodeId(args.year, args.displayMake, args.displayModel, args.task),
+      targetNodeId: buildManualNodeId(row.path),
+      relation: 'has-manual',
+      year: args.year,
+      make: args.displayMake,
+      model: args.displayModel,
+      task: args.task,
+    }),
     href: buildManualUrl(row.path),
     label: `${args.year} ${args.displayMake} ${args.displayModel} ${row.sectionTitle}`,
     description: clip(row.contentPreview || `${taskLabel} procedures from the OEM service manual for this vehicle.`),

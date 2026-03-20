@@ -9,10 +9,11 @@ import {
   type KnowledgeGraphKind,
   type KnowledgeGraphSurface,
 } from '@/lib/analytics';
+import type { KnowledgeGraphReference } from '@/lib/knowledgeGraph';
 
 export type KnowledgeGraphTheme = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
 
-export interface KnowledgeGraphGroupNode {
+export interface KnowledgeGraphGroupNode extends KnowledgeGraphReference {
   href: string;
   label: string;
   description: string;
@@ -157,7 +158,7 @@ export default function KnowledgeGraphGroup({
       <div className="space-y-3">
         {nodes.map((node) => (
           <Link
-            key={`${groupKind}-${node.targetKind}-${node.href}-${node.label}`}
+            key={node.nodeId || `${groupKind}-${node.targetKind}-${node.href}-${node.label}`}
             href={node.href}
             className={`block rounded-xl border bg-black/15 p-4 hover:bg-black/25 transition-all ${classes.card}`}
             onMouseDown={() => trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {

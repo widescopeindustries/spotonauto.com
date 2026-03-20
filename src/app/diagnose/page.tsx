@@ -4,7 +4,7 @@ import React, { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import DiagnosticChat from '@/components/DiagnosticChat';
-import { getYears, COMMON_MAKES, fetchModels } from '@/services/vehicleData';
+import { getYears, getMakesForYear, fetchModels } from '@/services/vehicleData';
 import { useState, useEffect } from 'react';
 import { Zap, ArrowRight, HardDrive } from 'lucide-react';
 import {
@@ -24,6 +24,7 @@ function VehicleSelector() {
     const [resumeSession, setResumeSession] = useState<DiagnosticSessionSnapshot | null>(null);
     const [draftReady, setDraftReady] = useState(false);
     const availableYears = getYears();
+    const availableMakes = vehicle.year ? getMakesForYear(vehicle.year) : [];
 
     useEffect(() => {
         const draft = getDiagnosticDraft();
@@ -171,7 +172,7 @@ function VehicleSelector() {
                         <label className="block text-xs text-gray-500 font-mono uppercase tracking-wider mb-1.5">Year</label>
                         <select
                             value={vehicle.year}
-                            onChange={e => setVehicle({ ...vehicle, year: e.target.value, model: '' })}
+                            onChange={e => setVehicle({ ...vehicle, year: e.target.value, make: '', model: '' })}
                             className="w-full bg-gray-900/80 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-200 focus:outline-none focus:border-cyan-500 text-sm appearance-none"
                         >
                             <option value="">Year</option>
@@ -189,7 +190,7 @@ function VehicleSelector() {
                             className="w-full bg-gray-900/80 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-200 focus:outline-none focus:border-cyan-500 text-sm appearance-none disabled:opacity-50"
                         >
                             <option value="">Make</option>
-                            {COMMON_MAKES.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase() + m.slice(1)}</option>)}
+                            {availableMakes.map(m => <option key={m} value={m}>{m}</option>)}
                         </select>
                     </div>
 

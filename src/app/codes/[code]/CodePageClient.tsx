@@ -9,8 +9,11 @@ import {
     getRepairLinksForCode,
     getWiringLinksForCode,
 } from '@/lib/diagnosticCrossLinks';
+import { buildCodeNodeId } from '@/lib/knowledgeGraph';
+import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { buildVehicleHubLinksForCode } from '@/lib/vehicleHubLinks';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -36,7 +39,24 @@ export default function CodePageClient({
     const repairLinks = getRepairLinksForCode(code, 6);
     const wiringLinks = getWiringLinksForCode(code, 6);
     const relatedCodeLinks = getRelatedCodeLinks(code, 6);
+    const vehicleHubLinks = buildVehicleHubLinksForCode({
+        code: code.code,
+        repairLinks,
+        wiringLinks,
+        manualLinks,
+        limit: 6,
+    });
     const graphBlocks = rankKnowledgeGraphBlocks('code', [
+        ...(vehicleHubLinks.length > 0 ? [{
+            kind: 'vehicle' as const,
+            title: 'Exact Vehicle Hubs',
+            browseHref: '/repair',
+            theme: 'emerald' as const,
+            nodes: vehicleHubLinks.map((link) => ({
+                ...link,
+                targetKind: 'vehicle' as const,
+            })),
+        }] : []),
         ...(manualLinks.length > 0 ? [{
             kind: 'manual' as const,
             title: 'OEM Manual Evidence',
@@ -68,9 +88,40 @@ export default function CodePageClient({
             })),
         }] : []),
     ]);
+    const knowledgeGraphExport = buildKnowledgeGraphExport({
+        surface: 'code',
+        rootNodeId: buildCodeNodeId(code.code),
+        rootKind: 'dtc',
+        rootLabel: `${code.code}: ${code.title}`,
+        blocks: graphBlocks.map((block) => ({
+            kind: block.kind,
+            title: block.title,
+            browseHref: block.browseHref,
+            nodes: block.nodes.map((node) => ({
+                nodeId: node.nodeId,
+                edgeId: node.edgeId,
+                sourceNodeId: node.sourceNodeId,
+                targetNodeId: node.targetNodeId,
+                vehicleNodeId: node.vehicleNodeId,
+                taskNodeId: node.taskNodeId,
+                systemNodeId: node.systemNodeId,
+                codeNodeId: node.codeNodeId,
+                href: node.href,
+                label: node.label,
+                description: node.description,
+                badge: node.badge,
+                targetKind: node.targetKind,
+            })),
+        })),
+    });
 
     return (
         <section className="py-16 px-4 max-w-4xl mx-auto">
+            <script
+                id="knowledge-graph-export"
+                type="application/json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(knowledgeGraphExport) }}
+            />
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
                 <Link href="/" className="hover:text-cyan-400 transition">Home</Link>

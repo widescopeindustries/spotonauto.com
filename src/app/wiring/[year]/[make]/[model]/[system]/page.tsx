@@ -23,8 +23,12 @@ import {
   getCodeLinksForWiringSystem,
   getRepairLinksForWiringVehicle,
 } from '@/lib/diagnosticCrossLinks';
+import { buildWiringNodeId } from '@/lib/knowledgeGraph';
+import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { getManualSectionLinksForWiringVehicle } from '@/lib/manualSectionLinks';
+import { buildVehicleHubLinkForWiring } from '@/lib/vehicleHubLinks';
+import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
 export const revalidate = 21600;
 
@@ -183,6 +187,13 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
 
   const systemDiagrams = rankDiagramsForSystem(data.index, systemMeta.matchTerms, 48);
   const vehicleLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  const vehicleHubHref = buildVehicleHubUrl(vehicle.year, vehicle.make, vehicle.model);
+  const vehicleHubNode = buildVehicleHubLinkForWiring({
+    year: vehicle.year,
+    make: vehicle.make,
+    model: vehicle.model,
+    system: systemSlug,
+  });
   const browserHref = buildInteractiveHref({
     year: vehicle.year,
     make: vehicle.make,
@@ -205,6 +216,16 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
   const relatedCodeLinks = getCodeLinksForWiringSystem(systemSlug, 6);
   const manualSectionLinks = await getManualSectionLinksForWiringVehicle(vehicle, systemSlug, 4);
   const graphBlocks = rankKnowledgeGraphBlocks('wiring', [
+    {
+      kind: 'vehicle' as const,
+      title: 'Exact Vehicle Hub',
+      browseHref: vehicleHubHref,
+      theme: 'emerald' as const,
+      nodes: [{
+        ...vehicleHubNode,
+        targetKind: 'vehicle' as const,
+      }],
+    },
     ...(manualSectionLinks.length > 0 ? [{
       kind: 'manual' as const,
       title: 'OEM Manual Evidence',
@@ -236,6 +257,32 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
       })),
     }] : []),
   ]);
+  const knowledgeGraphExport = buildKnowledgeGraphExport({
+    surface: 'wiring',
+    rootNodeId: buildWiringNodeId(vehicle.year, vehicle.make, vehicle.model, systemSlug),
+    rootKind: 'wiring',
+    rootLabel: `${vehicleLabel} ${systemMeta.title}`,
+    blocks: graphBlocks.map((block) => ({
+      kind: block.kind,
+      title: block.title,
+      browseHref: block.browseHref,
+      nodes: block.nodes.map((node) => ({
+        nodeId: node.nodeId,
+        edgeId: node.edgeId,
+        sourceNodeId: node.sourceNodeId,
+        targetNodeId: node.targetNodeId,
+        vehicleNodeId: node.vehicleNodeId,
+        taskNodeId: node.taskNodeId,
+        systemNodeId: node.systemNodeId,
+        codeNodeId: node.codeNodeId,
+        href: node.href,
+        label: node.label,
+        description: node.description,
+        badge: node.badge,
+        targetKind: node.targetKind,
+      })),
+    })),
+  });
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -272,6 +319,11 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
     <main className="min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-950 text-white">
       <WiringSeoTracker vehicle={vehicleLabel} system={systemMeta.shortLabel} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script
+        id="knowledge-graph-export"
+        type="application/json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(knowledgeGraphExport) }}
+      />
 
       <section className="max-w-6xl mx-auto px-4 pt-24 pb-12">
         <p className="text-cyan-400 text-xs uppercase tracking-[0.2em] font-bold mb-3">Wiring Diagram Cluster</p>
@@ -281,6 +333,12 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         <p className="text-gray-300 text-lg max-w-3xl">{systemMeta.intro}</p>
 
         <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href={vehicleHubHref}
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-emerald-400/30 text-emerald-200 hover:border-emerald-300/50 hover:text-white transition"
+          >
+            Open Exact Vehicle Repair Hub
+          </Link>
           <WiringTrackedLink
             href={browserHref}
             vehicle={vehicleLabel}

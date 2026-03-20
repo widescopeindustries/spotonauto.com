@@ -37,6 +37,38 @@ Update it when product decisions, traps, or standing preferences change.
   - `src/components/DiagnosticChat.tsx`
   - `src/app/diagnose/page.tsx`
   - `src/services/apiClient.ts`
+- Vehicle identity and knowledge graph normalization is in progress:
+  - canonical user-facing vehicle order is `year -> make -> model`
+  - selectors were moved toward year-first flow
+  - `src/lib/vehicleIdentity.ts` is the shared canonical vehicle identity layer
+  - `src/lib/knowledgeGraph.ts` is the shared node/edge identity layer
+  - `src/lib/knowledgeGraphExport.ts` is the shared serialized graph export layer
+  - graph-producing modules now attach stable `nodeId` / `edgeId` metadata:
+    - `src/lib/repairKnowledgeGraph.ts`
+    - `src/lib/manualSectionLinks.ts`
+    - `src/lib/diagnosticCrossLinks.ts`
+  - graph-heavy surfaces now emit a machine-readable export snapshot:
+    - `src/app/repair/[year]/[make]/[model]/[task]/page.tsx`
+    - `src/app/repair/[year]/[make]/[model]/page.tsx`
+    - `src/app/wiring/[year]/[make]/[model]/[system]/page.tsx`
+    - `src/app/codes/[code]/CodePageClient.tsx`
+  - `src/lib/vehicleHubGraph.ts` builds graph-driven exact-vehicle hubs from canonical IDs
+  - `src/lib/vehicleHubLinks.ts` builds canonical vehicle-hub back-links from code and wiring surfaces
+  - exact repair guides now link back to the year/make/model hub, and model guide pages link into a representative exact-vehicle hub
+  - code pages now emit graph-driven exact vehicle hub links
+  - exact wiring pages now emit graph-driven exact vehicle hub links and a direct hub CTA
+  - repair sitemap generation now includes exact vehicle hub URLs under `/repair/{year}/{make}/{model}`
+  - `scripts/generate-graph-link-suggestions.ts` writes graph-derived internal-link suggestions to `scripts/seo-reports/`
+  - `npm run seo:graph-link-suggestions` currently emits JSON + CSV suggestions grouped by `guide-model`, `code`, and `wiring` source surfaces
+  - node metadata is canonical; relation copy belongs on edges in the export model
+  - `scripts/audit-knowledge-graph.ts` audits canonical graph snapshots for code, wiring, and vehicle surfaces
+  - `npm run audit:knowledge-graph` currently passes with:
+    - no dangling edges
+    - no node conflicts
+    - no edge conflicts
+  - Cloudflare KV remains a helper index, not the canonical corpus store
+  - VPS-backed manual embeddings remain the real retrieval backbone
+  - current next step is to expand graph-driven hubs beyond the first exact-vehicle surface and use the same export to power stronger related-page/internal-link generation
 
 ## Working Norms
 

@@ -11,7 +11,11 @@ import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS,
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
+import { buildRepairNodeId } from '@/lib/knowledgeGraph';
+import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
+import { buildRepairUrl } from '@/lib/vehicleIdentity';
+import { buildVehicleHubGraph } from '@/lib/vehicleHubGraph';
 
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
 function toTitleCase(slug: string): string {
@@ -19,7 +23,7 @@ function toTitleCase(slug: string): string {
 }
 
 function buildRepairPath(year: string, make: string, model: string, task: string): string {
-    return `/repair/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/${slugifyRoutePart(task)}`;
+    return buildRepairUrl(year, make, model, task);
 }
 
 function buildManualBrowserPath(...segments: string[]): string {
@@ -608,6 +612,7 @@ export default async function Page({ params }: PageProps) {
     const displayModel = getDisplayName(canonicalModel, 'model') || toTitleCase(canonicalModel);
 
     const vehicleName = `${resolvedYear} ${displayMake} ${displayModel}`;
+    const vehicleHubHref = `/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`;
 
     const vehicleSpec = getVehicleRepairSpec(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
     const genericData = REPAIR_DATA[canonicalTask] || DEFAULT_REPAIR;
@@ -634,6 +639,47 @@ export default async function Page({ params }: PageProps) {
         vehicleSpec: vehicleSpec ?? undefined,
     });
     const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('repair', knowledgeGraph.groups);
+    const knowledgeGraphExport = buildKnowledgeGraphExport({
+        surface: 'repair',
+        rootNodeId: buildRepairNodeId(resolvedYear, displayMake, displayModel, canonicalTask),
+        rootKind: 'repair',
+        rootLabel: `${vehicleName} ${cleanTask}`,
+        blocks: rankedKnowledgeGroups.map((group) => ({
+            kind: group.kind,
+            title: group.title,
+            browseHref: group.browseHref,
+            nodes: group.nodes.map((node) => ({
+                nodeId: node.nodeId,
+                edgeId: node.edgeId,
+                sourceNodeId: node.sourceNodeId,
+                targetNodeId: node.targetNodeId,
+                vehicleNodeId: node.vehicleNodeId,
+                taskNodeId: node.taskNodeId,
+                systemNodeId: node.systemNodeId,
+                codeNodeId: node.codeNodeId,
+                href: node.href,
+                label: node.label,
+                description: node.description,
+                badge: node.badge,
+                targetKind: node.kind,
+            })),
+        })),
+    });
+    const vehicleHubGraph = await buildVehicleHubGraph({
+        year: resolvedYear,
+        make: canonicalMake,
+        model: canonicalModel,
+        displayMake,
+        displayModel,
+    });
+    const vehicleRepairGroup = vehicleHubGraph.groups.find((group) => group.kind === 'repair');
+    const vehicleWiringGroup = vehicleHubGraph.groups.find((group) => group.kind === 'wiring');
+    const vehicleCodeGroup = vehicleHubGraph.groups.find((group) => group.kind === 'dtc');
+    const relatedVehicleRepairNodes = (vehicleRepairGroup?.nodes ?? [])
+        .filter((node) => node.taskNodeId !== `task:${canonicalTask}`)
+        .slice(0, 9);
+    const relatedVehicleWiringNodes = (vehicleWiringGroup?.nodes ?? []).slice(0, 6);
+    const relatedVehicleCodeNodes = (vehicleCodeGroup?.nodes ?? []).slice(0, 6);
     const toolResourceLinks = getRelatedToolLinksForRepair(displayMake, displayModel, canonicalTask, 4);
     const manualMakeHref = buildManualBrowserPath(displayMake);
     const manualYearHref = buildManualBrowserPath(displayMake, resolvedYear);
@@ -651,12 +697,6 @@ export default async function Page({ params }: PageProps) {
     const primaryAffiliateQuery = primaryAffiliatePart?.query || `${vehicleName} ${cleanTask}`;
     const primaryAffiliateName = primaryAffiliatePart?.name || `${cleanTask} parts`;
     const fullGuideHref = '?fullGuide=1#full-ai-guide';
-    const prioritizedRelatedTasks = Array.from(
-        new Set([...(RELATED_TASK_PRIORITIES[canonicalTask] ?? []), ...VALID_TASKS])
-    )
-        .filter((relatedTask) => relatedTask !== canonicalTask)
-        .slice(0, 9);
-
     // Convert "30-45 minutes" / "1-2 hours" to ISO 8601 duration (upper bound)
     function toIso8601Duration(timeStr: string): string {
         const lower = timeStr.toLowerCase();
@@ -827,10 +867,15 @@ export default async function Page({ params }: PageProps) {
                     "itemListElement": [
                         { "@type": "ListItem", position: 1, name: "Repairs", item: "https://spotonauto.com/repairs" },
                         { "@type": "ListItem", position: 2, name: cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1), item: `https://spotonauto.com/repairs/${canonicalTask}` },
-                        { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}` },
+                        { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com${vehicleHubHref}` },
                         { "@type": "ListItem", position: 4, name: `${resolvedYear}`, item: `https://spotonauto.com${canonicalPath}` },
                     ],
                 }) }}
+            />
+            <script
+                id="knowledge-graph-export"
+                type="application/json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(knowledgeGraphExport) }}
             />
 
             {/* Visible breadcrumb navigation */}
@@ -843,7 +888,7 @@ export default async function Page({ params }: PageProps) {
                 <span className="mx-2">/</span>
                 <Link href={`/guides/${canonicalMake}`} className="hover:text-cyan-400 transition-colors">{displayMake}</Link>
                 <span className="mx-2">/</span>
-                <Link href={`/guides/${canonicalMake}/${canonicalModel}`} className="hover:text-cyan-400 transition-colors">{displayModel}</Link>
+                <Link href={vehicleHubHref} className="hover:text-cyan-400 transition-colors">{displayModel}</Link>
                 <span className="mx-2">/</span>
                 <span className="text-gray-300">{resolvedYear}</span>
             </nav>
@@ -861,6 +906,14 @@ export default async function Page({ params }: PageProps) {
                     <p className="text-base md:text-lg leading-7 text-gray-300 max-w-3xl">
                         Complete DIY repair guide with step-by-step instructions. Find exact parts on Amazon for your vehicle.
                     </p>
+                    <div className="mt-5">
+                        <Link
+                            href={vehicleHubHref}
+                            className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/25 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-200 hover:border-cyan-400/40 hover:bg-cyan-500/15 transition-all"
+                        >
+                            Browse the full {vehicleName} vehicle hub
+                        </Link>
+                    </div>
                 </header>
 
                 <section className="mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-7">
@@ -1340,6 +1393,14 @@ export default async function Page({ params }: PageProps) {
                                 browseHref={group.browseHref}
                                 theme={group.theme}
                                 nodes={group.nodes.map((node) => ({
+                                    nodeId: node.nodeId,
+                                    edgeId: node.edgeId,
+                                    sourceNodeId: node.sourceNodeId,
+                                    targetNodeId: node.targetNodeId,
+                                    vehicleNodeId: node.vehicleNodeId,
+                                    taskNodeId: node.taskNodeId,
+                                    systemNodeId: node.systemNodeId,
+                                    codeNodeId: node.codeNodeId,
                                     href: node.href,
                                     label: node.label,
                                     description: node.description,
@@ -1356,24 +1417,67 @@ export default async function Page({ params }: PageProps) {
                 </section>
             )}
 
-            {/* ── Related Repairs ─────────────────────────────────────────── */}
-            {/* Internal links between repair pages — solves orphan-page problem */}
+            {/* ── Exact Vehicle Graph Continuation ───────────────────────── */}
             <section className="max-w-6xl mx-auto px-4 py-10 border-t border-white/10">
-                <h2 className="text-xl font-semibold text-white tracking-tight mb-6">Related repairs for your {displayMake} {displayModel}</h2>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {prioritizedRelatedTasks.map(relTask => (
-                            <Link
-                                key={relTask}
-                                href={buildRepairPath(resolvedYear, canonicalMake, canonicalModel, relTask)}
-                                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-all group"
-                            >
-                                <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
-                                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                                    {resolvedYear} {displayMake} {displayModel} {toTitleCase(relTask)}
-                                </span>
-                            </Link>
-                        ))}
-                </div>
+                {relatedVehicleRepairNodes.length > 0 && (
+                    <>
+                        <h2 className="text-xl font-semibold text-white tracking-tight mb-6">More exact repair paths for your {displayMake} {displayModel}</h2>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {relatedVehicleRepairNodes.map((node) => (
+                                <Link
+                                    key={node.nodeId || node.href}
+                                    href={node.href}
+                                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-all group"
+                                >
+                                    <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
+                                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
+                                        {node.label}
+                                    </span>
+                                </Link>
+                            ))}
+                        </div>
+                    </>
+                )}
+
+                {relatedVehicleWiringNodes.length > 0 && (
+                    <>
+                        <h2 className="text-xl font-semibold text-white tracking-tight mt-10 mb-6">Exact wiring pages for this vehicle</h2>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {relatedVehicleWiringNodes.map((node) => (
+                                <Link
+                                    key={node.nodeId || node.href}
+                                    href={node.href}
+                                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-violet-500/30 hover:bg-white/[0.05] transition-all group"
+                                >
+                                    <span className="w-2 h-2 rounded-full bg-violet-500 flex-shrink-0" />
+                                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
+                                        {node.label}
+                                    </span>
+                                </Link>
+                            ))}
+                        </div>
+                    </>
+                )}
+
+                {relatedVehicleCodeNodes.length > 0 && (
+                    <>
+                        <h2 className="text-xl font-semibold text-white tracking-tight mt-10 mb-6">Likely code clusters for this vehicle</h2>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {relatedVehicleCodeNodes.map((node) => (
+                                <Link
+                                    key={node.nodeId || node.href}
+                                    href={node.href}
+                                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-amber-500/30 hover:bg-white/[0.05] transition-all group"
+                                >
+                                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
+                                    <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
+                                        {node.label}
+                                    </span>
+                                </Link>
+                            ))}
+                        </div>
+                    </>
+                )}
 
                 <h2 className="text-xl font-semibold text-white tracking-tight mt-10 mb-6">
                     {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides for Other Vehicles

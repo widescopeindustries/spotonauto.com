@@ -89,6 +89,37 @@ export function getCharmLiMakes(): string[] {
     return Object.keys(CHARM_LI_DATABASE).sort();
 }
 
+export function getCharmLiAvailableYears(): number[] {
+    const years = new Set<number>();
+    for (const models of Object.values(CHARM_LI_DATABASE)) {
+        for (const vehicle of Object.values(models)) {
+            for (const year of vehicle.years) {
+                years.add(year);
+            }
+        }
+    }
+    return [...years].sort((a, b) => b - a);
+}
+
+export function getCharmLiMakesForYear(year: number): string[] {
+    return Object.entries(CHARM_LI_DATABASE)
+        .filter(([, models]) =>
+            Object.values(models).some((vehicle) => vehicle.years.includes(year))
+        )
+        .map(([make]) => make)
+        .sort();
+}
+
+export function getCharmLiModelsForYearMake(year: number, make: string): string[] {
+    const makeData = CHARM_LI_DATABASE[make];
+    if (!makeData) return [];
+
+    return Object.entries(makeData)
+        .filter(([, vehicle]) => vehicle.years.includes(year))
+        .map(([model]) => model)
+        .sort();
+}
+
 // Get all models for a make
 export function getCharmLiModels(make: string): string[] {
     const makeData = CHARM_LI_DATABASE[make];

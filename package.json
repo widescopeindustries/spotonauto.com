@@ -21,6 +21,8 @@
     "health:manual-backbone": "node --experimental-strip-types scripts/manual-backbone-health.ts",
     "index:manual-backbone": "node --experimental-strip-types scripts/index-lmdb-vectors.ts",
     "audit:internal-links": "node scripts/internal-link-audit.js",
+    "audit:knowledge-graph": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/audit-knowledge-graph.ts",
+    "seo:graph-link-suggestions": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/generate-graph-link-suggestions.ts",
     "smoke:prod": "node scripts/smoke-prod.mjs",
     "smoke:local": "BASE_URL=http://localhost:3000 node scripts/smoke-prod.mjs"
   },

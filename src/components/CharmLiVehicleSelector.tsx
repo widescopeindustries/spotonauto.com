@@ -1,7 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CHARM_LI_DATABASE, getCharmLiMakes, getCharmLiModels, getCharmLiYears, isInCharmLi } from '@/data/charmLiDatabase';
+import {
+    CHARM_LI_DATABASE,
+    getCharmLiAvailableYears,
+    getCharmLiMakesForYear,
+    getCharmLiModelsForYearMake,
+    getCharmLiYears,
+    isInCharmLi,
+} from '@/data/charmLiDatabase';
 
 interface VehicleSelection {
     year: string;
@@ -15,39 +22,50 @@ interface CharmLiVehicleSelectorProps {
 }
 
 export default function CharmLiVehicleSelector({ onSelect, selectedTask }: CharmLiVehicleSelectorProps) {
-    const [makes, setMakes] = useState<string[]>([]);
-    const [models, setModels] = useState<string[]>([]);
     const [years, setYears] = useState<number[]>([]);
-    
-    const [selectedMake, setSelectedMake] = useState('');
-    const [selectedModel, setSelectedModel] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
+    const [makes, setMakes] = useState<string[]>([]);
+    const [selectedMake, setSelectedMake] = useState('');
+    const [models, setModels] = useState<string[]>([]);
+    const [selectedModel, setSelectedModel] = useState('');
     const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
 
-    // Load makes on mount
+    // Load years on mount
     useEffect(() => {
-        setMakes(getCharmLiMakes());
+        setYears(getCharmLiAvailableYears());
     }, []);
+
+    // Update makes when year changes
+    useEffect(() => {
+        if (!selectedYear) {
+            setMakes([]);
+            setSelectedMake('');
+            setModels([]);
+            setSelectedModel('');
+            setIsAvailable(null);
+            return;
+        }
+
+        setMakes(getCharmLiMakesForYear(parseInt(selectedYear, 10)));
+        setSelectedMake('');
+        setModels([]);
+        setSelectedModel('');
+        setIsAvailable(null);
+    }, [selectedYear]);
 
     // Update models when make changes
     useEffect(() => {
-        if (selectedMake) {
-            setModels(getCharmLiModels(selectedMake));
+        if (!selectedYear || !selectedMake) {
+            setModels([]);
             setSelectedModel('');
-            setSelectedYear('');
-            setYears([]);
             setIsAvailable(null);
+            return;
         }
-    }, [selectedMake]);
 
-    // Update years when model changes
-    useEffect(() => {
-        if (selectedMake && selectedModel) {
-            setYears(getCharmLiYears(selectedMake, selectedModel));
-            setSelectedYear('');
-            setIsAvailable(null);
-        }
-    }, [selectedMake, selectedModel]);
+        setModels(getCharmLiModelsForYearMake(parseInt(selectedYear, 10), selectedMake));
+        setSelectedModel('');
+        setIsAvailable(null);
+    }, [selectedYear, selectedMake]);
 
     // Check availability when all selected
     useEffect(() => {
@@ -74,6 +92,23 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
                 Select Your Vehicle
             </h3>
             
+            {/* Year Dropdown */}
+            <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-400 mb-2">
+                    Year
+                </label>
+                <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    className="w-full px-4 py-3 bg-black/30 border border-white/20 rounded-lg text-white focus:outline-none focus:border-brand-cyan transition-colors"
+                >
+                    <option value="">Select Year...</option>
+                    {years.map(year => (
+                        <option key={year} value={year.toString()}>{year}</option>
+                    ))}
+                </select>
+            </div>
+
             {/* Make Dropdown */}
             <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -82,7 +117,8 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
                 <select
                     value={selectedMake}
                     onChange={(e) => setSelectedMake(e.target.value)}
-                    className="w-full px-4 py-3 bg-black/30 border border-white/20 rounded-lg text-white focus:outline-none focus:border-brand-cyan transition-colors"
+                    disabled={!selectedYear}
+                    className="w-full px-4 py-3 bg-black/30 border border-white/20 rounded-lg text-white focus:outline-none focus:border-brand-cyan transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <option value="">Select Make...</option>
                     {makes.map(make => (
@@ -99,30 +135,12 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
                 <select
                     value={selectedModel}
                     onChange={(e) => setSelectedModel(e.target.value)}
-                    disabled={!selectedMake}
+                    disabled={!selectedYear || !selectedMake}
                     className="w-full px-4 py-3 bg-black/30 border border-white/20 rounded-lg text-white focus:outline-none focus:border-brand-cyan transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <option value="">Select Model...</option>
                     {models.map(model => (
                         <option key={model} value={model}>{model}</option>
-                    ))}
-                </select>
-            </div>
-
-            {/* Year Dropdown */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                    Year
-                </label>
-                <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    disabled={!selectedModel}
-                    className="w-full px-4 py-3 bg-black/30 border border-white/20 rounded-lg text-white focus:outline-none focus:border-brand-cyan transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <option value="">Select Year...</option>
-                    {years.map(year => (
-                        <option key={year} value={year.toString()}>{year}</option>
                     ))}
                 </select>
             </div>

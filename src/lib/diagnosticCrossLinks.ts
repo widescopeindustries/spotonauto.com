@@ -6,13 +6,23 @@ import {
   getPriorityWiringSeoVehicles,
   scoreWiringSeoVehicle,
   supportsWiringSystem,
+  WIRING_SEO_SYSTEMS,
   WIRING_SEO_VEHICLES,
   type WiringSeoVehicle,
   type WiringSystemSlug,
 } from '@/data/wiring-seo-cluster';
+import {
+  type KnowledgeGraphReference,
+  buildCodeNodeId,
+  buildEdgeReference,
+  buildRepairNodeId,
+  buildSystemNodeId,
+  buildWiringNodeId,
+} from '@/lib/knowledgeGraph';
 import { getRepairTaskProfile } from '@/lib/repairTaskProfiles';
+import { buildRepairUrl } from '@/lib/vehicleIdentity';
 
-export interface DiagnosticCrossLink {
+export interface DiagnosticCrossLink extends KnowledgeGraphReference {
   href: string;
   label: string;
   description: string;
@@ -107,10 +117,6 @@ function getVehiclesForTask(task: string, limit = 6): Array<{ make: string; mode
     .map(({ make, model, year }) => ({ make, model, year }));
 }
 
-function slugifyPart(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
-
 function getEntryForVehicle(make: string, model: string): ValidatedModelEntry | null {
   return VALIDATED_VEHICLES[make]?.[model] || null;
 }
@@ -138,9 +144,20 @@ function scoreCodeForSystem(code: DTCCode, system: WiringSystemSlug): number {
 
 export function getRepairLinksForCode(code: DTCCode, limit = 6): DiagnosticCrossLink[] {
   if (!code.repairTaskSlug) return [];
+  const sourceNodeId = buildCodeNodeId(code.code);
 
   return getVehiclesForTask(code.repairTaskSlug, limit).map((vehicle) => ({
-    href: `/repair/${vehicle.year}/${slugifyPart(vehicle.make)}/${slugifyPart(vehicle.model)}/${code.repairTaskSlug}`,
+    ...buildEdgeReference({
+      sourceNodeId,
+      targetNodeId: buildRepairNodeId(vehicle.year, vehicle.make, vehicle.model, code.repairTaskSlug!),
+      relation: 'has-repair',
+      year: vehicle.year,
+      make: vehicle.make,
+      model: vehicle.model,
+      task: code.repairTaskSlug!,
+      code: code.code,
+    }),
+    href: buildRepairUrl(vehicle.year, vehicle.make, vehicle.model, code.repairTaskSlug!),
     label: `${vehicle.year} ${vehicle.make} ${vehicle.model} ${normalizeTaskLabel(code.repairTaskSlug!)}`,
     description: `Open the exact repair flow most commonly associated with ${code.code} on this vehicle.`,
     badge: 'Repair',
@@ -150,6 +167,7 @@ export function getRepairLinksForCode(code: DTCCode, limit = 6): DiagnosticCross
 export function getWiringLinksForCode(code: DTCCode, limit = 6): DiagnosticCrossLink[] {
   const systems = code.repairTaskSlug ? getRepairTaskProfile(code.repairTaskSlug).wiringSystems : [];
   if (!systems.length) return [];
+  const sourceNodeId = buildCodeNodeId(code.code);
 
   const links: Array<DiagnosticCrossLink & { score: number }> = [];
 
@@ -161,8 +179,19 @@ export function getWiringLinksForCode(code: DTCCode, limit = 6): DiagnosticCross
     })) {
       if (!hasVehicleTask(vehicle, code.repairTaskSlug!)) continue;
       links.push({
+        ...buildEdgeReference({
+          sourceNodeId,
+          targetNodeId: buildWiringNodeId(vehicle.year, vehicle.make, vehicle.model, system),
+          relation: 'has-wiring',
+          year: vehicle.year,
+          make: vehicle.make,
+          model: vehicle.model,
+          task: code.repairTaskSlug!,
+          system,
+          code: code.code,
+        }),
         href: buildWiringSeoHref(vehicle, system),
-        label: `${vehicle.year} ${vehicle.make} ${vehicle.model} ${system.replace(/-/g, ' ')} wiring`,
+        label: `${vehicle.year} ${vehicle.make} ${vehicle.model} ${WIRING_SEO_SYSTEMS[system].title}`,
         description: `Open the exact ${system.replace(/-/g, ' ')} diagram cluster for a vehicle that commonly triggers ${code.code}.`,
         badge: 'Exact Wiring',
         score: scoreWiringSeoVehicle(vehicle, {
@@ -189,12 +218,23 @@ export function getWiringLinksForCode(code: DTCCode, limit = 6): DiagnosticCross
 export function getRepairLinksForWiringVehicle(vehicle: WiringSeoVehicle, system: WiringSystemSlug, limit = 4): DiagnosticCrossLink[] {
   const entry = getEntryForVehicle(vehicle.make, vehicle.model);
   if (!entry) return [];
+  const sourceNodeId = buildWiringNodeId(vehicle.year, vehicle.make, vehicle.model, system);
 
   return WIRING_SYSTEM_TO_REPAIR_TASKS[system]
     .filter((task) => entry.tasks.includes(task))
     .slice(0, Math.max(1, limit))
     .map((task) => ({
-      href: `/repair/${vehicle.year}/${slugifyPart(vehicle.make)}/${slugifyPart(vehicle.model)}/${task}`,
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildRepairNodeId(vehicle.year, vehicle.make, vehicle.model, task),
+        relation: 'has-repair',
+        year: vehicle.year,
+        make: vehicle.make,
+        model: vehicle.model,
+        task,
+        system,
+      }),
+      href: buildRepairUrl(vehicle.year, vehicle.make, vehicle.model, task),
       label: `${vehicle.year} ${vehicle.make} ${vehicle.model} ${normalizeTaskLabel(task)}`,
       description: `Open the matching repair workflow that usually intersects with ${system.replace(/-/g, ' ')} diagnosis on this vehicle.`,
       badge: 'Repair',
@@ -208,6 +248,13 @@ export function getCodeLinksForWiringSystem(system: WiringSystemSlug, limit = 6)
     .sort((a, b) => b.score - a.score || a.code.code.localeCompare(b.code.code))
     .slice(0, Math.max(1, limit))
     .map(({ code }) => ({
+      ...buildEdgeReference({
+        sourceNodeId: buildSystemNodeId(system),
+        targetNodeId: buildCodeNodeId(code.code),
+        relation: 'has-code',
+        system,
+        code: code.code,
+      }),
       href: `/codes/${code.code.toLowerCase()}`,
       label: `${code.code}: ${code.title}`,
       description: `${code.affectedSystem} code commonly seen during ${system.replace(/-/g, ' ')} diagnosis.`,
@@ -222,6 +269,12 @@ export function getRelatedCodeLinks(code: DTCCode, limit = 6): DiagnosticCrossLi
     .slice(0, Math.max(1, limit));
 
   return direct.map((entry) => ({
+    ...buildEdgeReference({
+      sourceNodeId: buildCodeNodeId(code.code),
+      targetNodeId: buildCodeNodeId(entry.code),
+      relation: 'related',
+      code: entry.code,
+    }),
     href: `/codes/${entry.code.toLowerCase()}`,
     label: `${entry.code}: ${entry.title}`,
     description: entry.description,

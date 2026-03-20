@@ -1,4 +1,5 @@
 // Server-only — imported from geminiService.ts (API routes only)
+import { scoreVehicleModelMatch } from '@/lib/vehicleIdentity';
 
 // ─── Cloudflare KV Client ─────────────────────────────────────────────────────
 // Thin REST client for reading vehicle knowledge-graph slices from Workers KV.
@@ -116,6 +117,23 @@ function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+function pickBestVehicleKey(keys: string[], model: string): string | null {
+  const ranked = keys
+    .map((name) => {
+      const parts = name.split(':');
+      const candidateModel = parts[3] || '';
+      return {
+        name,
+        score: scoreVehicleModelMatch(model, candidateModel),
+      };
+    })
+    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+
+  if (ranked.length === 0) return null;
+  if (ranked[0].score <= 0) return null;
+  return ranked[0].name;
+}
+
 /**
  * Look up a vehicle in KV. Handles the variant-suffix problem:
  * keys are like `vehicle:toyota:2010:camry:2ar-fe` but the caller
@@ -132,22 +150,20 @@ export async function getVehicleFromKV(
   const prefix = `vehicle:${makeSlug}:${year}:${modelSlug}:`;
 
   // List all variants for this make/year/model
-  const keys = await kvListKeys(prefix, 20);
-  if (keys.length === 0) {
+  let keys = await kvListKeys(prefix, 20);
+  let selectedKey = pickBestVehicleKey(keys, model);
+
+  if (!selectedKey) {
     // Try without model slug in case of slug mismatch — broader search
     const broaderPrefix = `vehicle:${makeSlug}:${year}:`;
-    const broaderKeys = await kvListKeys(broaderPrefix, 50);
-    // Find best model match from broader results
-    const matching = broaderKeys.filter(k => {
-      const parts = k.split(':');
-      return parts.length >= 4 && parts[3].includes(modelSlug.split('-')[0]);
-    });
-    if (matching.length === 0) return null;
-    keys.push(...matching);
+    const broaderKeys = await kvListKeys(broaderPrefix, 500);
+    if (broaderKeys.length === 0) return null;
+    keys = broaderKeys;
+    selectedKey = pickBestVehicleKey(keys, model);
+    if (!selectedKey) return null;
   }
 
-  // Fetch the first matching vehicle (most common variant)
-  const raw = await kvGet(keys[0]);
+  const raw = await kvGet(selectedKey);
   if (!raw) return null;
 
   try {

@@ -101,6 +101,13 @@ function buildAllEntries() {
             }
 
             for (const year of sampledYears) {
+                entries.push({
+                    url: `${BASE_URL}/repair/${year}/${makeSlug}/${modelSlug}`,
+                    lastmod: LAST_MOD,
+                    changefreq: 'weekly',
+                    priority: year === years.end ? 0.82 : 0.72,
+                });
+
                 const eligibleTasks = getEligibleTasksForYear(year);
                 for (const task of eligibleTasks) {
                     entries.push({

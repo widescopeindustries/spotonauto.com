@@ -2,25 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import Link from 'next/link';
 import { Analytics, captureUTMParams } from '@/lib/analytics';
-
-const makes = Object.keys(VEHICLE_PRODUCTION_YEARS).sort();
-
-function getModelsForMake(make: string): string[] {
-    const models = VEHICLE_PRODUCTION_YEARS[make];
-    return models ? Object.keys(models).sort() : [];
-}
-
-function getYearsForModel(make: string, model: string): number[] {
-    const models = VEHICLE_PRODUCTION_YEARS[make];
-    if (!models || !models[model]) return [];
-    const { start, end } = models[model];
-    const years: number[] = [];
-    for (let y = end; y >= start; y--) years.push(y);
-    return years;
-}
+import { getKnownModelsForYearMake, getMakesForYear, getYears } from '@/services/vehicleData';
 
 // Common OBD codes that people search for
 const COMMON_CODES = [
@@ -87,12 +71,12 @@ export default function CELLandingPage() {
     const [expandedCode, setExpandedCode] = useState<string | null>(null);
 
     // Vehicle selector state
+    const [year, setYear] = useState('');
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
-    const [year, setYear] = useState('');
-
-    const models = make ? getModelsForMake(make) : [];
-    const years = make && model ? getYearsForModel(make, model) : [];
+    const years = getYears();
+    const makes = year ? getMakesForYear(year) : [];
+    const models = year && make ? getKnownModelsForYearMake(make, year) : [];
     const canSubmit = make && model && year;
 
     // Track page view + capture UTMs on mount
@@ -210,30 +194,30 @@ export default function CELLandingPage() {
                             <form onSubmit={handleVehicleSubmit} className="space-y-2">
                                 <div className="grid grid-cols-3 gap-2">
                                     <select
-                                        value={make}
-                                        onChange={(e) => { setMake(e.target.value); setModel(''); setYear(''); }}
+                                        value={year}
+                                        onChange={(e) => { setYear(e.target.value); setMake(''); setModel(''); }}
                                         className="bg-white/5 border border-cyan-500/30 rounded-lg px-3 py-3 text-sm text-white font-body focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 appearance-none"
+                                    >
+                                        <option value="" className="bg-gray-900">Year</option>
+                                        {years.map(y => <option key={y} value={y} className="bg-gray-900">{y}</option>)}
+                                    </select>
+                                    <select
+                                        value={make}
+                                        onChange={(e) => { setMake(e.target.value); setModel(''); }}
+                                        disabled={!year}
+                                        className="bg-white/5 border border-cyan-500/30 rounded-lg px-3 py-3 text-sm text-white font-body focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 disabled:opacity-40 appearance-none"
                                     >
                                         <option value="" className="bg-gray-900">Make</option>
                                         {makes.map(m => <option key={m} value={m} className="bg-gray-900">{m}</option>)}
                                     </select>
                                     <select
                                         value={model}
-                                        onChange={(e) => { setModel(e.target.value); setYear(''); }}
-                                        disabled={!make}
+                                        onChange={(e) => setModel(e.target.value)}
+                                        disabled={!year || !make}
                                         className="bg-white/5 border border-cyan-500/30 rounded-lg px-3 py-3 text-sm text-white font-body focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 disabled:opacity-40 appearance-none"
                                     >
                                         <option value="" className="bg-gray-900">Model</option>
                                         {models.map(m => <option key={m} value={m} className="bg-gray-900">{m}</option>)}
-                                    </select>
-                                    <select
-                                        value={year}
-                                        onChange={(e) => setYear(e.target.value)}
-                                        disabled={!model}
-                                        className="bg-white/5 border border-cyan-500/30 rounded-lg px-3 py-3 text-sm text-white font-body focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 disabled:opacity-40 appearance-none"
-                                    >
-                                        <option value="" className="bg-gray-900">Year</option>
-                                        {years.map(y => <option key={y} value={y} className="bg-gray-900">{y}</option>)}
                                     </select>
                                 </div>
                                 <button

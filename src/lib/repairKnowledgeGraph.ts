@@ -15,13 +15,24 @@ import {
   type WiringSystemSlug,
 } from '@/data/wiring-seo-cluster';
 import { fetchCharmPage, type CharmLink } from '@/lib/charmParser';
+import {
+  type KnowledgeGraphReference,
+  buildCodeNodeId,
+  buildEdgeReference,
+  buildManualNodeId,
+  buildRepairNodeId,
+  buildSpecNodeId,
+  buildTaskNodeId,
+  buildToolNodeId,
+  buildWiringNodeId,
+} from '@/lib/knowledgeGraph';
 import { getManualSectionLinksForRepair } from '@/lib/manualSectionLinks';
 import { getRepairTaskProfile, type RepairTaskProfile } from '@/lib/repairTaskProfiles';
 
 export type RepairKnowledgeKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc';
 export type RepairKnowledgeTheme = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
 
-export interface RepairKnowledgeNode {
+export interface RepairKnowledgeNode extends KnowledgeGraphReference {
   kind: RepairKnowledgeKind;
   href: string;
   label: string;
@@ -127,6 +138,7 @@ function getWiringNodes(args: {
 }): RepairKnowledgeNode[] {
   const profile = getRepairTaskProfile(args.task);
   if (!profile.wiringSystems.length) return [];
+  const sourceNodeId = buildRepairNodeId(args.year, args.displayMake, args.displayModel, args.task);
 
   const exactVehicle = getExactWiringVehicle(
     args.year,
@@ -140,6 +152,21 @@ function getWiringNodes(args: {
     const meta = WIRING_SEO_SYSTEMS[system];
     const exact = Boolean(exactVehicle && supportsWiringSystem(exactVehicle, system));
     const primaryNode: RepairKnowledgeNode = {
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildWiringNodeId(
+          exactVehicle?.year || args.year,
+          exactVehicle?.make || args.displayMake,
+          exactVehicle?.model || args.displayModel,
+          system,
+        ),
+        relation: 'has-wiring',
+        year: exactVehicle?.year || args.year,
+        make: exactVehicle?.make || args.displayMake,
+        model: exactVehicle?.model || args.displayModel,
+        task: args.task,
+        system,
+      }),
       kind: 'wiring',
       href: exactVehicle && supportsWiringSystem(exactVehicle, system)
         ? buildWiringSeoHref(exactVehicle, system)
@@ -171,6 +198,16 @@ function getWiringNodes(args: {
     return [
       primaryNode,
       {
+        ...buildEdgeReference({
+          sourceNodeId,
+          targetNodeId: buildWiringNodeId(referenceVehicle.year, referenceVehicle.make, referenceVehicle.model, system),
+          relation: 'has-wiring',
+          year: referenceVehicle.year,
+          make: referenceVehicle.make,
+          model: referenceVehicle.model,
+          task: args.task,
+          system,
+        }),
         kind: 'wiring',
         href: buildWiringSeoHref(referenceVehicle, system),
         label: `${referenceVehicle.year} ${referenceVehicle.make} ${referenceVehicle.model} ${meta.title}`,
@@ -219,6 +256,13 @@ function getDtcNodes(task: string, limit: number): RepairKnowledgeNode[] {
     })
     .slice(0, limit)
     .map(({ code, score }) => ({
+      ...buildEdgeReference({
+        sourceNodeId: buildTaskNodeId(task),
+        targetNodeId: buildCodeNodeId(code.code),
+        relation: 'has-code',
+        task,
+        code: code.code,
+      }),
       kind: 'dtc' as const,
       href: `/codes/${code.code.toLowerCase()}`,
       label: `${code.code}: ${code.title}`,
@@ -228,8 +272,18 @@ function getDtcNodes(task: string, limit: number): RepairKnowledgeNode[] {
     }));
 }
 
-function getToolNodes(displayMake: string, displayModel: string, task: string): RepairKnowledgeNode[] {
+function getToolNodes(year: string, displayMake: string, displayModel: string, task: string): RepairKnowledgeNode[] {
+  const sourceNodeId = buildRepairNodeId(year, displayMake, displayModel, task);
   return getRelatedToolLinksForRepair(displayMake, displayModel, task, 5).map((link, index) => ({
+    ...buildEdgeReference({
+      sourceNodeId,
+      targetNodeId: buildToolNodeId(link.href),
+      relation: 'has-tool',
+      year,
+      make: displayMake,
+      model: displayModel,
+      task,
+    }),
     kind: 'tool',
     href: link.href,
     label: `${displayMake} ${displayModel} ${link.label}`,
@@ -246,14 +300,27 @@ function clip(value: string, maxLength: number = 110): string {
 }
 
 function getSpecNodes(
+  year: string,
+  displayMake: string,
+  displayModel: string,
   task: string,
   repairTools: string[],
   vehicleSpec?: VehicleRepairSpec,
 ): RepairKnowledgeNode[] {
   const nodes: RepairKnowledgeNode[] = [];
+  const sourceNodeId = buildRepairNodeId(year, displayMake, displayModel, task);
 
   if (vehicleSpec?.torqueSpecs) {
     nodes.push({
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildSpecNodeId(sourceNodeId, 'torque-specs'),
+        relation: 'has-spec',
+        year,
+        make: displayMake,
+        model: displayModel,
+        task,
+      }),
       kind: 'spec',
       href: '#vehicle-specific-data',
       label: 'Torque Specs & Vehicle Notes',
@@ -269,6 +336,15 @@ function getSpecNodes(
       .map((part) => part.aftermarket || part.oem || part.name)
       .join(' · ');
     nodes.push({
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildSpecNodeId(sourceNodeId, 'parts-fitment'),
+        relation: 'has-spec',
+        year,
+        make: displayMake,
+        model: displayModel,
+        task,
+      }),
       kind: 'spec',
       href: '#parts-needed',
       label: 'OEM Part Numbers & Fitment',
@@ -280,6 +356,15 @@ function getSpecNodes(
 
   if (repairTools.length > 0) {
     nodes.push({
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildSpecNodeId(sourceNodeId, 'tools-required'),
+        relation: 'has-spec',
+        year,
+        make: displayMake,
+        model: displayModel,
+        task,
+      }),
       kind: 'spec',
       href: '#tools-required',
       label: `${task.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())} Tools`,
@@ -291,6 +376,15 @@ function getSpecNodes(
 
   if (vehicleSpec?.beltRouting) {
     nodes.push({
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildSpecNodeId(sourceNodeId, 'belt-routing'),
+        relation: 'has-spec',
+        year,
+        make: displayMake,
+        model: displayModel,
+        task,
+      }),
       kind: 'spec',
       href: '#vehicle-specific-data',
       label: 'Belt Routing Reference',
@@ -354,6 +448,7 @@ async function getManualNodes(args: {
   task: string;
 }): Promise<RepairKnowledgeNode[]> {
   const nodes: RepairKnowledgeNode[] = [];
+  const sourceNodeId = buildRepairNodeId(args.year, args.displayMake, args.displayModel, args.task);
   const makeCandidates = [args.displayMake, `${args.displayMake} Truck`];
   const evidenceLinks = await getManualSectionLinksForRepair({
     make: args.make,
@@ -368,6 +463,14 @@ async function getManualNodes(args: {
 
   for (const [index, link] of evidenceLinks.entries()) {
     nodes.push({
+      nodeId: link.nodeId,
+      edgeId: link.edgeId,
+      sourceNodeId: link.sourceNodeId,
+      targetNodeId: link.targetNodeId,
+      vehicleNodeId: link.vehicleNodeId,
+      taskNodeId: link.taskNodeId,
+      systemNodeId: link.systemNodeId,
+      codeNodeId: link.codeNodeId,
       kind: 'manual',
       href: link.href,
       label: link.label,
@@ -404,6 +507,15 @@ async function getManualNodes(args: {
 
   if (exactVariant) {
     const node: RepairKnowledgeNode = {
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildManualNodeId(exactVariant.href),
+        relation: 'has-manual',
+        year: args.year,
+        make: args.displayMake,
+        model: args.displayModel,
+        task: args.task,
+      }),
       kind: 'manual',
       href: exactVariant.href,
       label: `Factory Manual: ${exactVariant.label}`,
@@ -420,6 +532,15 @@ async function getManualNodes(args: {
   const yearIndexHref = buildManualHref(matchedMake, args.year);
   if (!seenHrefs.has(yearIndexHref)) {
     nodes.push({
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildManualNodeId(yearIndexHref),
+        relation: 'has-manual',
+        year: args.year,
+        make: args.displayMake,
+        model: args.displayModel,
+        task: args.task,
+      }),
       kind: 'manual',
       href: yearIndexHref,
       label: `${args.year} ${args.displayMake} Manual Index`,
@@ -433,6 +554,15 @@ async function getManualNodes(args: {
   const libraryHref = buildManualHref(matchedMake);
   if (!seenHrefs.has(libraryHref)) {
     nodes.push({
+      ...buildEdgeReference({
+        sourceNodeId,
+        targetNodeId: buildManualNodeId(libraryHref),
+        relation: 'has-manual',
+        year: args.year,
+        make: args.displayMake,
+        model: args.displayModel,
+        task: args.task,
+      }),
       kind: 'manual',
       href: libraryHref,
       label: `${args.displayMake} Factory Manual Library`,
@@ -507,8 +637,8 @@ export async function buildRepairKnowledgeGraph(args: {
     getManualNodes(args),
   ]);
 
-  const specNodes = getSpecNodes(args.task, args.repairTools, args.vehicleSpec);
-  const toolNodes = getToolNodes(args.displayMake, args.displayModel, args.task);
+  const specNodes = getSpecNodes(args.year, args.displayMake, args.displayModel, args.task, args.repairTools, args.vehicleSpec);
+  const toolNodes = getToolNodes(args.year, args.displayMake, args.displayModel, args.task);
   const wiringNodes = getWiringNodes(args);
   const dtcNodes = getDtcNodes(args.task, 4);
   const groups = getGroups({ manualNodes, specNodes, toolNodes, wiringNodes, dtcNodes });
