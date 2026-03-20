@@ -24,7 +24,7 @@ export interface RepairStep {
 }
 
 export interface RetrievalMetadata {
-  manualMode: 'vector' | 'live' | 'none';
+  manualMode: 'vector' | 'kv' | 'live' | 'none';
   manualSourceCount: number;
 }
 

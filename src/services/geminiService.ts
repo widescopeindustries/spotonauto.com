@@ -4,6 +4,7 @@ import { Vehicle, VehicleInfo, RepairGuide, ChatMessage, GroundingSource } from 
 import { isValidVehicleCombination } from '@/data/vehicles';
 import { getVehicleNHTSAData, nhtsaToPromptContext, recallsToSafetyWarnings } from './nhtsaService';
 import { searchManualSections } from './vectorSearch';
+import { getVehicleFromKV, findRelevantKVContent } from '@/lib/cloudflareKV';
 
 // NOTE: This service is now only used server-side (e.g., in api/ folder).
 // Client-side code should use apiClient.ts instead to make secure API requests.
@@ -218,7 +219,7 @@ interface ManualContext {
   content: string | null;
   sources: GroundingSource[];
   sourceCount: number;
-  retrievalMode: 'vector' | 'live' | 'none';
+  retrievalMode: 'vector' | 'kv' | 'live' | 'none';
 }
 
 function makeManualSource(
@@ -313,7 +314,58 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     };
   }
 
-  // Fall through to live archive fetch if vector search returned nothing
+  // ─── KV-assisted fetch: skip multi-hop navigation via pre-indexed graph ────
+  // One KV read gives us the vehicle's full system/section tree. We then fetch
+  // only the relevant content pages from charm (1-3 targeted requests instead of
+  // the 4-5 sequential navigation hops below).
+  try {
+    const kvData = await getVehicleFromKV(make, yearNum, model);
+    if (kvData && kvData.sys && Object.keys(kvData.sys).length > 0) {
+      const relevant = findRelevantKVContent(kvData.sys, task ?? '');
+      if (relevant.length > 0) {
+        const variantEncoded = encodeURIComponent(kvData.v.variant);
+        console.log(`[KV] ✓ Found ${relevant.length} relevant entries for "${task}" on ${kvData.v.variant}`);
+
+        // Fetch actual content from charm by reconstructed path (still need VPS for HTML)
+        const contentPages = await Promise.all(
+          relevant.slice(0, 3).map(async ({ system, entry }) => {
+            try {
+              const sectionUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${variantEncoded}/Repair%20and%20Diagnosis/${encodeURIComponent(system)}/${encodeURIComponent(entry.title)}/`;
+              const resp = await fetch(sectionUrl, charmFetchOpts());
+              if (!resp.ok) return null;
+              const html = await resp.text();
+              const mainText = sanitizeManualArchiveText(extractText(html, sectionUrl).slice(0, 3000));
+              if (!mainText.trim()) return null;
+              return {
+                text: `=== ${system}: ${entry.title} (${entry.type}) ===\n${mainText}`,
+                source: makeManualSource(
+                  `/${make}/${year}/${kvData.v.variant}/Repair and Diagnosis/${system}/${entry.title}`,
+                  `${system}: ${entry.title}`,
+                  mainText,
+                ),
+              };
+            } catch { return null; }
+          })
+        );
+
+        const resolved = contentPages.filter(Boolean) as Array<{ text: string; source: GroundingSource }>;
+        if (resolved.length > 0) {
+          const header = `=== Factory Service Manual: ${year} ${make} ${kvData.v.variant} ===\n`;
+          console.log(`[KV] ✓ Fetched ${resolved.length} section(s) for "${task}" via KV-assisted path`);
+          return {
+            content: header + resolved.map(p => p.text).join('\n\n'),
+            sources: resolved.map(p => p.source),
+            sourceCount: resolved.length,
+            retrievalMode: 'kv',
+          };
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('[KV] Assisted fetch failed, falling back to live crawl:', error);
+  }
+
+  // Fall through to live archive fetch if vector search AND KV returned nothing
   try {
     // Step 1: Get year page to find vehicle variants
     const yearUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`;

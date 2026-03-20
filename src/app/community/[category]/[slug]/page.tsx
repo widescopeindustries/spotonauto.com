@@ -127,7 +127,7 @@ export default async function ThreadPage({ params }: PageProps) {
             '@type': 'Question',
             name: thread.title,
             text: thread.body,
-            datePublished: thread.created_at,
+            datePublished: new Date(thread.created_at).toISOString(),
             author: { '@type': 'Person', name: thread.author.display_name },
             answerCount: posts.length,
             ...(posts.length > 0
@@ -135,7 +135,7 @@ export default async function ThreadPage({ params }: PageProps) {
                       acceptedAnswer: {
                           '@type': 'Answer',
                           text: posts[0].body,
-                          datePublished: posts[0].created_at,
+                          datePublished: new Date(posts[0].created_at).toISOString(),
                           author: { '@type': 'Person', name: posts[0].author.display_name },
                           upvoteCount: 0,
                           url: threadUrl,

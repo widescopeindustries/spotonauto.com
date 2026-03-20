@@ -134,7 +134,7 @@ interface GuideGeneratedEvent {
   task: string;
   partsCount: number;
   toolsCount: number;
-  manualMode?: 'vector' | 'live' | 'none';
+  manualMode?: 'vector' | 'kv' | 'live' | 'none';
   manualSourceCount?: number;
 }
 
@@ -154,7 +154,7 @@ export function trackGuideGenerated(event: GuideGeneratedEvent): void {
 export function trackRetrievalBackbone(
   vehicle: string,
   task: string,
-  manualMode: 'vector' | 'live' | 'none',
+  manualMode: 'vector' | 'kv' | 'live' | 'none',
   manualSourceCount: number,
 ): void {
   trackEvent('manual_retrieval', {
