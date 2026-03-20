@@ -16,7 +16,7 @@ const WINNERS_DIR = join(ROOT, 'public', 'repair', 'winners');
 const WINNERS_SITEMAP_PATH = join(WINNERS_DIR, 'sitemap.xml');
 const WINNERS_LIST_PATH = join(WINNERS_DIR, 'urls.txt');
 
-const LAST_MOD = '2026-03-01';
+const LAST_MOD = process.env.SITEMAP_LAST_MOD || new Date().toISOString().slice(0, 10);
 const YEAR_STEP = 5;
 // Keep chunks small and stable for crawler fetch reliability.
 const URLS_PER_SITEMAP = 10000;

@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
+import { getSitemapLastMod } from '@/lib/sitemap';
 
-const LAST_MOD = '2026-03-06';
+const LAST_MOD = getSitemapLastMod();
 
 /**
  * Manual browser sitemap — landing page + all 82 make pages.

@@ -1,13 +1,13 @@
 import { MetadataRoute } from 'next'
 import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
 import { TOOL_PAGES, TOOL_TYPE_META } from '@/data/tools-pages';
+import { getSitemapLastMod } from '@/lib/sitemap';
 
 function slugify(s: string) {
     return s.toLowerCase().replace(/\s+/g, '-');
 }
 
-/** Stable date for sitemap lastmod — avoids build-time clock drift */
-const LAST_MOD = '2026-03-06';
+const LAST_MOD = getSitemapLastMod();
 
 /**
  * Main sitemap — static pages, tool pages, guide pages.

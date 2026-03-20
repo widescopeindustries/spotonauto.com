@@ -131,15 +131,27 @@ async function main() {
   }
 
   const discovered = new Set();
+  const seedFailures = [];
   for (const page of [...new Set(seed)]) {
     try {
       const html = await fetchHtml(page);
       for (const link of extractLinks(html, page)) {
         discovered.add(link);
       }
-    } catch {
-      // skip seed fetch failures
+    } catch (err) {
+      seedFailures.push({
+        page,
+        error: String(err.message || err),
+      });
     }
+  }
+
+  if (discovered.size === 0 && seedFailures.length > 0) {
+    console.error('\nSeed fetch failures prevented internal link discovery:\n');
+    for (const failure of seedFailures.slice(0, 20)) {
+      console.error(`  ${failure.page} :: ${failure.error}`);
+    }
+    process.exit(1);
   }
 
   const links = [...discovered].slice(0, maxLinks);
@@ -170,6 +182,10 @@ async function main() {
   console.log(`Seed pages:        ${fmtNum([...new Set(seed)].length)}`);
   console.log(`Discovered links:  ${fmtNum(discovered.size)}`);
   console.log(`Checked links:     ${fmtNum(results.length)}\n`);
+
+  if (seedFailures.length > 0) {
+    console.log(`Seed fetch errors: ${fmtNum(seedFailures.length)}\n`);
+  }
 
   console.log('Status counts:');
   for (const [status, count] of Object.entries(counts).sort((a, b) => String(a[0]).localeCompare(String(b[0])))) {

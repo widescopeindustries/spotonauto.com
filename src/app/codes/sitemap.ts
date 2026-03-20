@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next'
 import { DTC_CODES } from '@/data/dtc-codes-data';
+import { getSitemapLastMod } from '@/lib/sitemap';
 
-const LAST_MOD = '2026-03-06';
+const LAST_MOD = getSitemapLastMod();
 
 /**
  * Codes sub-sitemap — index page + 300 individual code pages.

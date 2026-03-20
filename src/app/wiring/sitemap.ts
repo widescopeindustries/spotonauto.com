@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
 import { getWiringSeoPaths } from '@/data/wiring-seo-cluster';
+import { getSitemapLastMod } from '@/lib/sitemap';
 
-const LAST_MOD = '2026-03-09';
+const LAST_MOD = getSitemapLastMod();
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://spotonauto.com';

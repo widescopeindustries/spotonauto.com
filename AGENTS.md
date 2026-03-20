@@ -69,6 +69,9 @@ Update it when product decisions, traps, or standing preferences change.
   - Cloudflare KV remains a helper index, not the canonical corpus store
   - VPS-backed manual embeddings remain the real retrieval backbone
   - current next step is to expand graph-driven hubs beyond the first exact-vehicle surface and use the same export to power stronger related-page/internal-link generation
+  - auth and personal history utility routes should remain non-indexable
+  - sitemap freshness should come from `src/lib/sitemap.ts` or `SITEMAP_LAST_MOD`, not hard-coded stale dates
+  - `scripts/internal-link-audit.js` should fail loudly if seed fetches fail instead of silently reporting zero discovered links
 ## Working Norms
 
 - This repo is often dirty with unrelated local edits. Stage only task-relevant files.
