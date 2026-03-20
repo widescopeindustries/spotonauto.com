@@ -69,19 +69,6 @@ Update it when product decisions, traps, or standing preferences change.
   - Cloudflare KV remains a helper index, not the canonical corpus store
   - VPS-backed manual embeddings remain the real retrieval backbone
   - current next step is to expand graph-driven hubs beyond the first exact-vehicle surface and use the same export to power stronger related-page/internal-link generation
-- Simulation sandbox foundation was added for a separate world-modeling track:
-  - UI route: `src/app/simulation/page.tsx`
-  - API route: `src/app/api/simulation/route.ts`
-  - core implementation: `src/lib/simulation/`
-  - capabilities in first pass:
-    - reality-seed extraction
-    - collective memory injection
-    - GraphRAG-style retrieval over nodes, edges, and memories
-    - dual-platform parallel simulation turns (`gemini` + `heuristic`)
-    - report generation
-    - chat with individual personas or `ReportAgent`
-  - current persistence is an in-memory store only, suitable for sandbox/prototype use rather than durable production storage
-
 ## Working Norms
 
 - This repo is often dirty with unrelated local edits. Stage only task-relevant files.
