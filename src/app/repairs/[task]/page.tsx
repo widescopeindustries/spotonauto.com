@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
-import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
+import { buildSymptomHref, getSymptomClusterFromText, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
 import { getTier1RescuePagesForTask } from '@/data/rescuePriority';
 
@@ -59,6 +59,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
 
   const taskName = toTitleCase(canonicalTask);
   const priorityPages = getTier1RescuePagesForTask(canonicalTask);
+  const symptomClusters = getSymptomClustersForRepairTask(canonicalTask, [canonicalTask, taskName], 6);
 
   // Build vehicle list grouped by make
   const makeGroups: { make: string; vehicles: { year: number; model: string; makeSlug: string; modelSlug: string }[] }[] = [];
@@ -141,6 +142,35 @@ export default async function TaskCategoryPage({ params }: PageProps) {
                   <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
                     {entry.year} {entry.make} {entry.model}
                   </h3>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {symptomClusters.length > 0 && (
+          <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-6">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
+              <div>
+                <h2 className="text-xl font-bold text-white">Symptoms that commonly resolve into {taskName}</h2>
+                <p className="text-sm text-gray-300 mt-1">
+                  These canonical symptom hubs map plain-English complaints into this repair family, related codes, and exact vehicle pages.
+                </p>
+              </div>
+              <Link href="/symptoms" className="text-sm text-amber-300 hover:text-amber-200 transition-colors">
+                Browse all symptom hubs →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              {symptomClusters.map((cluster) => (
+                <Link
+                  key={cluster.slug}
+                  href={buildSymptomHref(cluster.slug)}
+                  className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
+                >
+                  <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Symptom Cluster</p>
+                  <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
+                  <p className="text-sm text-gray-300 mt-2">{cluster.summary}</p>
                 </Link>
               ))}
             </div>

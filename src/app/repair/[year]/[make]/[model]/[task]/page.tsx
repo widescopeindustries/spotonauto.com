@@ -7,11 +7,12 @@ import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
+import { buildSymptomHref, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
-import { buildRepairNodeId } from '@/lib/knowledgeGraph';
+import { buildEdgeReference, buildRepairNodeId, buildSymptomNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildRepairUrl } from '@/lib/vehicleIdentity';
@@ -638,7 +639,40 @@ export default async function Page({ params }: PageProps) {
         repairTools: repairData.tools,
         vehicleSpec: vehicleSpec ?? undefined,
     });
-    const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('repair', knowledgeGraph.groups);
+    const symptomClusters = getSymptomClustersForRepairTask(canonicalTask, [
+        cleanTask,
+        TASK_META[canonicalTask]?.title || '',
+        TASK_META[canonicalTask]?.description || '',
+        ...(TASK_META[canonicalTask]?.extraKeywords || []),
+        ...repairData.warnings,
+    ], 4);
+    const symptomNodes = symptomClusters.map((cluster, index) => ({
+        ...buildEdgeReference({
+            sourceNodeId: buildRepairNodeId(resolvedYear, displayMake, displayModel, canonicalTask),
+            targetNodeId: buildSymptomNodeId(cluster.slug),
+            relation: 'has-symptom',
+            year: resolvedYear,
+            make: displayMake,
+            model: displayModel,
+            task: canonicalTask,
+        }),
+        kind: 'symptom' as const,
+        href: buildSymptomHref(cluster.slug),
+        label: cluster.label,
+        description: cluster.summary,
+        badge: index === 0 ? 'Primary Symptom' : 'Symptom Hub',
+    }));
+    const repairGraphGroups = [
+        ...(symptomNodes.length > 0 ? [{
+            kind: 'symptom' as const,
+            title: 'Canonical Symptom Hubs',
+            browseHref: '/symptoms',
+            theme: 'amber' as const,
+            nodes: symptomNodes,
+        }] : []),
+        ...knowledgeGraph.groups,
+    ];
+    const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('repair', repairGraphGroups);
     const knowledgeGraphExport = buildKnowledgeGraphExport({
         surface: 'repair',
         rootNodeId: buildRepairNodeId(resolvedYear, displayMake, displayModel, canonicalTask),
@@ -936,6 +970,43 @@ export default async function Page({ params }: PageProps) {
                         </div>
                     </div>
                 </section>
+
+                {symptomClusters.length > 0 && (
+                    <section className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-6 md:p-7">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                            <div className="max-w-3xl">
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200/80">
+                                    Symptom routing
+                                </p>
+                                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                                    Common symptoms that lead to this repair
+                                </h2>
+                                <p className="mt-3 text-sm leading-7 text-amber-50/85">
+                                    These canonical symptom hubs connect plain-English complaints back into this repair path, related codes, and exact vehicle troubleshooting.
+                                </p>
+                            </div>
+                            <Link
+                                href={`/diagnose?year=${resolvedYear}&make=${canonicalMake}&model=${canonicalModel}&task=${encodeURIComponent(symptomClusters[0].label)}`}
+                                className="inline-flex items-center justify-center rounded-full bg-amber-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-amber-400"
+                            >
+                                Diagnose from symptom
+                            </Link>
+                        </div>
+                        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                            {symptomClusters.map((cluster) => (
+                                <Link
+                                    key={cluster.slug}
+                                    href={buildSymptomHref(cluster.slug)}
+                                    className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
+                                >
+                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200/80 mb-2">Symptom Hub</p>
+                                    <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
+                                    <p className="mt-2 text-sm leading-6 text-gray-300">{cluster.summary}</p>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 <section className="mb-8 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
                     <div className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.07] p-6 md:p-7">
@@ -1375,12 +1446,12 @@ export default async function Page({ params }: PageProps) {
             </section>
 
             {/* ── Knowledge Graph ─────────────────────────────────────────── */}
-            {knowledgeGraph.groups.length > 0 && (
+            {rankedKnowledgeGroups.length > 0 && (
                 <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
                     <div className="max-w-3xl mb-6">
                         <h2 className="text-lg font-bold text-white">Knowledge Paths for This Repair</h2>
                         <p className="text-sm text-gray-400 mt-1">
-                            This graph connects the current repair to the strongest next surfaces: factory manuals, specs, tool pages, wiring, and likely trouble codes.
+                            This graph connects the current repair to the strongest next surfaces: symptom hubs, factory manuals, specs, tool pages, wiring, and likely trouble codes.
                         </p>
                     </div>
                     <div className="grid xl:grid-cols-2 gap-6">

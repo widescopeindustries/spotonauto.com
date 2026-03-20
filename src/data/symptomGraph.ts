@@ -208,6 +208,33 @@ export function getSymptomClustersForTexts(texts: string[], limit = 6): SymptomC
   return clusters;
 }
 
+export function getSymptomClustersForRepairTask(task: string, texts: string[] = [], limit = 4): SymptomCluster[] {
+  const normalizedTask = slugifyRoutePart(task);
+  const normalizedTexts = texts
+    .map((text) => normalizeSymptomText(text))
+    .filter(Boolean);
+
+  return SYMPTOM_CLUSTERS
+    .map((cluster) => {
+      let score = cluster.likelyTasks.includes(normalizedTask) ? 100 : 0;
+      if (score === 0) return { cluster, score };
+
+      for (const text of normalizedTexts) {
+        if (normalizeSymptomText(cluster.label) === text) score += 40;
+        if (normalizeSymptomText(cluster.shortLabel) === text) score += 24;
+        if (cluster.aliases.some((alias) => normalizeSymptomText(alias) === text)) score += 32;
+        if (cluster.aliases.some((alias) => text.includes(normalizeSymptomText(alias)))) score += 16;
+        if (cluster.systems.some((system) => text.includes(normalizeSymptomText(system)))) score += 8;
+      }
+
+      return { cluster, score };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort((left, right) => right.score - left.score || left.cluster.label.localeCompare(right.cluster.label))
+    .slice(0, limit)
+    .map((entry) => entry.cluster);
+}
+
 export function buildSymptomHref(slug: string): string {
   return `/symptoms/${slugifyRoutePart(slug)}`;
 }
