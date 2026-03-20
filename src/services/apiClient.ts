@@ -8,6 +8,31 @@ import { supabase } from '../lib/supabaseClient';
 
 const API_ENDPOINT = '/api/generate-guide';
 
+function isAbortLikeMessage(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes('signal is aborted') ||
+    normalized.includes('aborted without reason') ||
+    normalized.includes('this operation was aborted') ||
+    normalized.includes('the operation was aborted') ||
+    normalized.includes('timeout') ||
+    normalized.includes('timed out')
+  );
+}
+
+function normalizeApiErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  if (isAbortLikeMessage(message)) {
+    return 'Guide generation timed out while contacting an upstream service. Please try again.';
+  }
+
+  if (message === 'Failed to fetch') {
+    return 'Unable to reach the guide service right now. Please try again.';
+  }
+
+  return message || 'Unknown error';
+}
+
 /**
  * Get auth headers for API requests (attaches Supabase JWT if logged in)
  */
@@ -38,15 +63,20 @@ async function makeApiRequest(action: string, payload: any, options?: { stream?:
   const headers = await getAuthHeaders();
   const locale = getClientLocale();
 
-  const response = await fetch(API_ENDPOINT, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ action, payload: { ...payload, locale }, stream: options?.stream }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ action, payload: { ...payload, locale }, stream: options?.stream }),
+    });
+  } catch (error) {
+    throw new Error(normalizeApiErrorMessage(error));
+  }
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-    throw new Error(error.error || `API request failed: ${response.statusText}`);
+    const error = await response.json().catch(() => ({ error: `API request failed: ${response.statusText}` }));
+    throw new Error(normalizeApiErrorMessage(error.error));
   }
 
   return response.json();

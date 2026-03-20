@@ -222,6 +222,96 @@ interface ManualContext {
   retrievalMode: 'vector' | 'kv' | 'live' | 'none';
 }
 
+interface RepairGuidePromptResult {
+  prompt: string;
+  usedManualContext: boolean;
+}
+
+function isAbortLikeError(error: unknown): boolean {
+  if (!error) return false;
+  const name = typeof error === 'object' && error && 'name' in error ? String((error as { name?: unknown }).name || '').toLowerCase() : '';
+  const message = typeof error === 'object' && error && 'message' in error ? String((error as { message?: unknown }).message || '').toLowerCase() : String(error).toLowerCase();
+
+  return (
+    name.includes('abort') ||
+    name.includes('timeout') ||
+    message.includes('signal is aborted') ||
+    message.includes('aborted without reason') ||
+    message.includes('this operation was aborted') ||
+    message.includes('the operation was aborted') ||
+    message.includes('timed out') ||
+    message.includes('timeout')
+  );
+}
+
+function normalizeGuideGenerationError(error: unknown): Error {
+  if (isAbortLikeError(error)) {
+    return new Error('Guide generation timed out while contacting an upstream service. Please try again.');
+  }
+
+  return error instanceof Error ? error : new Error('Failed to generate guide.');
+}
+
+function buildRepairGuidePrompt(args: {
+  vehicle: Vehicle;
+  task: string;
+  locale?: string;
+  nhtsaContext: string;
+  manualContext: ManualContext;
+  maxManualChars?: number;
+}): RepairGuidePromptResult {
+  const { vehicle, task, locale, nhtsaContext, manualContext, maxManualChars = 18000 } = args;
+  const { year, make, model } = vehicle;
+  const manualContent = manualContext.content?.slice(0, maxManualChars).trim() || '';
+
+  if (manualContent) {
+    return {
+      usedManualContext: true,
+      prompt: `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
+
+PRIMARY DATA SOURCE - FACTORY SERVICE MANUAL CORPUS:
+${manualContent}
+
+${nhtsaContext}
+
+INSTRUCTIONS:
+1. Use the factory service manual content as your primary source for procedures
+2. Extract the specific procedure for "${task}" on this exact vehicle
+3. Include exact torque specs, part numbers from the manual
+4. IMPORTANT: Use the NHTSA recall data above as safety warnings — these are REAL and must be included
+5. IMAGES: If you see an image marker like [IMAGE: https://...] near a procedure in the source text, include that exact URL in the \`imageUrl\` field for that specific step. Do not invent image URLs.
+6. Do not invent information not present in the sources above
+${locale && locale !== 'en' ? `\nLANGUAGE: Generate ALL content (title, safety warnings, tools, parts, step instructions) in ${LOCALE_NAMES[locale] || 'English'}. Use the native language for everything except proper nouns, part numbers, and technical specifications.` : ''}
+
+Return JSON with title, vehicle, safetyWarnings, tools, parts, steps.`,
+    };
+  }
+
+  return {
+    usedManualContext: false,
+    prompt: `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
+
+${nhtsaContext}
+
+INSTRUCTIONS:
+1. Provide accurate repair procedures based on known factory service procedures for this vehicle
+2. Include torque specs, part numbers, and safety warnings where known
+3. IMPORTANT: The NHTSA recall data above is REAL — include relevant recalls as the first safety warnings
+4. Focus on safety and correctness
+${locale && locale !== 'en' ? `\nLANGUAGE: Generate ALL content (title, safety warnings, tools, parts, step instructions) in ${LOCALE_NAMES[locale] || 'English'}. Use the native language for everything except proper nouns, part numbers, and technical specifications.` : ''}
+
+Return JSON with:
+- title (concise repair task name)
+- vehicle ("${year} ${make} ${model}")
+- safetyWarnings (3-5 warnings — lead with any NHTSA recalls above)
+- tools (5-10 tools needed)
+- parts (5-10 part names with typical part numbers where known)
+- steps (5-8 clear numbered steps)
+
+Keep instructions concise and practical.`,
+  };
+}
+
 function makeManualSource(
   path: string,
   title: string,
@@ -567,45 +657,6 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
   const nhtsaContext = nhtsaToPromptContext(nhtsaData);
   const recallWarnings = recallsToSafetyWarnings(nhtsaData.recalls);
 
-  const prompt = manualContext.content
-    ? `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
-
-PRIMARY DATA SOURCE - FACTORY SERVICE MANUAL CORPUS:
-${manualContext.content.slice(0, 18000)}
-
-${nhtsaContext}
-
-INSTRUCTIONS:
-1. Use the factory service manual content as your primary source for procedures
-2. Extract the specific procedure for "${task}" on this exact vehicle
-3. Include exact torque specs, part numbers from the manual
-4. IMPORTANT: Use the NHTSA recall data above as safety warnings — these are REAL and must be included
-5. IMAGES: If you see an image marker like [IMAGE: https://...] near a procedure in the source text, include that exact URL in the \`imageUrl\` field for that specific step. Do not invent image URLs.
-6. Do not invent information not present in the sources above
-${locale && locale !== 'en' ? `\nLANGUAGE: Generate ALL content (title, safety warnings, tools, parts, step instructions) in ${LOCALE_NAMES[locale] || 'English'}. Use the native language for everything except proper nouns, part numbers, and technical specifications.` : ''}
-
-Return JSON with title, vehicle, safetyWarnings, tools, parts, steps.`
-    : `Generate a step-by-step DIY repair guide for "${task}" on a ${year} ${make} ${model}.
-
-${nhtsaContext}
-
-INSTRUCTIONS:
-1. Provide accurate repair procedures based on known factory service procedures for this vehicle
-2. Include torque specs, part numbers, and safety warnings where known
-3. IMPORTANT: The NHTSA recall data above is REAL — include relevant recalls as the first safety warnings
-4. Focus on safety and correctness
-${locale && locale !== 'en' ? `\nLANGUAGE: Generate ALL content (title, safety warnings, tools, parts, step instructions) in ${LOCALE_NAMES[locale] || 'English'}. Use the native language for everything except proper nouns, part numbers, and technical specifications.` : ''}
-
-Return JSON with:
-- title (concise repair task name)
-- vehicle ("${year} ${make} ${model}")
-- safetyWarnings (3-5 warnings — lead with any NHTSA recalls above)
-- tools (5-10 tools needed)
-- parts (5-10 part names with typical part numbers where known)
-- steps (5-8 clear numbered steps)
-
-Keep instructions concise and practical.`;
-
   const repairGuideSchema = {
     type: Type.OBJECT,
     properties: {
@@ -630,14 +681,54 @@ Keep instructions concise and practical.`;
     required: ["title", "vehicle", "safetyWarnings", "tools", "parts", "steps"]
   };
 
-  const response = await genAI.models.generateContent({
-    model: TEXT_MODEL,
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: repairGuideSchema,
-    },
-  });
+  const promptAttempts = manualContext.content
+    ? [18000, 9000, 0]
+    : [0];
+
+  let response: Awaited<ReturnType<typeof genAI.models.generateContent>> | null = null;
+  let usedManualContext = false;
+  let finalError: unknown = null;
+
+  for (let index = 0; index < promptAttempts.length; index++) {
+    const maxManualChars = promptAttempts[index];
+    const promptResult = buildRepairGuidePrompt({
+      vehicle,
+      task,
+      locale,
+      nhtsaContext,
+      manualContext,
+      maxManualChars,
+    });
+
+    try {
+      response = await genAI.models.generateContent({
+        model: TEXT_MODEL,
+        contents: promptResult.prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: repairGuideSchema,
+        },
+      });
+      usedManualContext = promptResult.usedManualContext;
+      break;
+    } catch (error) {
+      finalError = error;
+
+      const shouldRetry = isAbortLikeError(error) && index < promptAttempts.length - 1;
+      if (!shouldRetry) {
+        throw normalizeGuideGenerationError(error);
+      }
+
+      console.warn(
+        `[GUIDE] Retry ${index + 1}/${promptAttempts.length - 1} after transient upstream error for ${year} ${make} ${model} ${task}:`,
+        error,
+      );
+    }
+  }
+
+  if (!response) {
+    throw normalizeGuideGenerationError(finalError);
+  }
 
   const text = (response.text || "").trim().replace(/^```json\s*|```$/g, '');
   const data = JSON.parse(text);
@@ -665,11 +756,11 @@ Keep instructions concise and practical.`;
     id: guideId,
     safetyWarnings,
     steps: stepsWithImages,
-    sources: manualContext.sources.length > 0 ? manualContext.sources : rawSources,
-    sourceCount: manualContext.sources.length > 0 ? manualContext.sourceCount : rawSources.length,
+    sources: usedManualContext && manualContext.sources.length > 0 ? manualContext.sources : rawSources,
+    sourceCount: usedManualContext && manualContext.sources.length > 0 ? manualContext.sourceCount : rawSources.length,
     retrieval: {
-      manualMode: manualContext.retrievalMode,
-      manualSourceCount: manualContext.sourceCount,
+      manualMode: usedManualContext ? manualContext.retrievalMode : 'none',
+      manualSourceCount: usedManualContext ? manualContext.sourceCount : 0,
     },
   };
 };

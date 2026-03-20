@@ -21,6 +21,24 @@ interface GuideContentProps {
 
 const guideCache = new Map<string, RepairGuide>();
 
+function formatGuideError(error: unknown): string {
+    const message = error instanceof Error ? error.message : String(error || '');
+    const normalized = message.toLowerCase();
+
+    if (
+        normalized.includes('signal is aborted') ||
+        normalized.includes('aborted without reason') ||
+        normalized.includes('this operation was aborted') ||
+        normalized.includes('the operation was aborted') ||
+        normalized.includes('timeout') ||
+        normalized.includes('timed out')
+    ) {
+        return 'Guide generation timed out while contacting an upstream service. Please try again.';
+    }
+
+    return message || 'Failed to generate guide.';
+}
+
 export default function GuideContent({ params }: GuideContentProps) {
     const router = useRouter();
     const { year, make, model, task } = params;
@@ -77,7 +95,7 @@ export default function GuideContent({ params }: GuideContentProps) {
                 );
                 setGuide(generatedGuide);
             } catch (err: any) {
-                setError(err instanceof Error ? err.message : "Failed to generate guide.");
+                setError(formatGuideError(err));
             } finally {
                 setLoading(false);
             }
@@ -131,7 +149,7 @@ export default function GuideContent({ params }: GuideContentProps) {
                             );
                             setGuide(generatedGuide);
                         } catch (e: any) {
-                            setError(e instanceof Error ? e.message : 'Failed to generate guide.');
+                            setError(formatGuideError(e));
                         } finally {
                             setLoading(false);
                         }

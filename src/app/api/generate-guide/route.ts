@@ -13,6 +13,30 @@ import {
 } from '@/services/geminiService';
 import { isValidVehicleCombination } from '@/data/vehicles';
 
+function isAbortLikeError(error: unknown): boolean {
+  if (!error) return false;
+  const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+  const name = error instanceof Error ? error.name.toLowerCase() : '';
+  return (
+    name.includes('abort') ||
+    name.includes('timeout') ||
+    message.includes('signal is aborted') ||
+    message.includes('aborted without reason') ||
+    message.includes('this operation was aborted') ||
+    message.includes('the operation was aborted') ||
+    message.includes('timed out') ||
+    message.includes('timeout')
+  );
+}
+
+function toSafeApiErrorMessage(error: unknown): string {
+  if (isAbortLikeError(error)) {
+    return 'Guide generation timed out while contacting an upstream service. Please try again.';
+  }
+
+  return error instanceof Error ? error.message : 'Internal Server Error';
+}
+
 // Admin client used solely to verify JWT tokens server-side (no user-context queries)
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -122,8 +146,8 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error('API Handler Error:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal Server Error' },
-      { status: 500 }
+      { error: toSafeApiErrorMessage(error) },
+      { status: isAbortLikeError(error) ? 504 : 500 }
     );
   }
 }
