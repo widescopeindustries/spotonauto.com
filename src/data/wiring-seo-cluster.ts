@@ -19,7 +19,21 @@ export interface WiringSeoVehiclePriorityOptions {
   limit?: number;
 }
 
-export type WiringSystemSlug = 'starter' | 'alternator' | 'fuel-pump';
+export type WiringSystemSlug =
+  | 'starter'
+  | 'alternator'
+  | 'fuel-pump'
+  | 'headlight'
+  | 'abs'
+  | 'ac-heater'
+  | 'power-windows'
+  | 'instrument-cluster'
+  | 'wipers'
+  | 'transmission'
+  | 'cruise-control'
+  | 'airbag'
+  | 'engine-management'
+  | 'body-electrical';
 
 export interface WiringSeoSystem {
   slug: WiringSystemSlug;
@@ -72,6 +86,17 @@ const WIRING_TASKS_BY_SYSTEM: Record<WiringSystemSlug, string[]> = {
   alternator: ['alternator-replacement', 'battery-replacement'],
   starter: ['starter-replacement', 'battery-replacement'],
   'fuel-pump': ['fuel-pump-replacement'],
+  headlight: ['headlight-bulb-replacement'],
+  abs: ['brake-pad-replacement', 'brake-rotor-replacement'],
+  'ac-heater': ['ac-recharge', 'heater-core-replacement'],
+  'power-windows': ['window-regulator-replacement'],
+  'instrument-cluster': [],
+  wipers: ['wiper-blade-replacement'],
+  transmission: ['transmission-fluid-change'],
+  'cruise-control': [],
+  airbag: [],
+  'engine-management': ['spark-plug-replacement', 'oil-change', 'engine-air-filter-replacement'],
+  'body-electrical': [],
 };
 
 const NON_ROAD_VEHICLE_PATTERN = /\b(trailer|scooter|motorcycle|motocross|enduro|atv|utv|quad|snowmobile|roadking|softail|sportster|electra\s+glide|heritage\s+classic|fat\s+boy|shadow\s+ace|gold\s+wing|vulcan|hayabusa|ninja|gsx-r|rm-z|xr\d|crf\d|dr\d|yz[f]?\d|vt\d|cbr\d|klr\d|intruder|boulevard|virago|v-star|roadstar|nighthawk|speedfight|manufacturing)\b/i;
@@ -103,6 +128,105 @@ export const WIRING_SEO_SYSTEMS: Record<WiringSystemSlug, WiringSeoSystem> = {
       'Find fuel-pump power and control wiring, relay paths, and fuel-level sender references to speed up no-start diagnosis.',
     matchTerms: ['fuel pump', 'fuel sender', 'fuel level', 'fuel delivery', 'fuel system'],
     keywords: ['fuel pump wiring diagram', 'fuel pump relay wiring', 'fuel sender wiring diagram'],
+  },
+  headlight: {
+    slug: 'headlight',
+    title: 'Headlight Wiring Diagram',
+    shortLabel: 'Headlight',
+    intro:
+      'Find headlight circuit schematics, high/low beam relay paths, DRL wiring, and ground points for lighting diagnosis.',
+    matchTerms: ['headlight', 'headlamp', 'head light', 'high beam', 'low beam', 'drl', 'daytime running', 'lighting'],
+    keywords: ['headlight wiring diagram', 'headlamp circuit diagram', 'headlight relay wiring'],
+  },
+  abs: {
+    slug: 'abs',
+    title: 'ABS Brake Wiring Diagram',
+    shortLabel: 'ABS',
+    intro:
+      'Find ABS module wiring, wheel speed sensor circuits, brake pressure sensor paths, and traction control schematics.',
+    matchTerms: ['abs', 'anti lock', 'brake', 'wheel speed', 'traction', 'stability', 'skid'],
+    keywords: ['abs wiring diagram', 'abs sensor wiring', 'brake system wiring diagram'],
+  },
+  'ac-heater': {
+    slug: 'ac-heater',
+    title: 'A/C & Heater Wiring Diagram',
+    shortLabel: 'A/C & Heater',
+    intro:
+      'Find A/C compressor clutch wiring, blower motor circuits, temperature control module paths, and refrigerant pressure switch schematics.',
+    matchTerms: ['air conditioning', 'a/c', 'ac ', 'heater', 'hvac', 'blower', 'compressor', 'climate', 'defrost'],
+    keywords: ['ac wiring diagram', 'heater wiring diagram', 'blower motor wiring diagram'],
+  },
+  'power-windows': {
+    slug: 'power-windows',
+    title: 'Power Window Wiring Diagram',
+    shortLabel: 'Power Windows',
+    intro:
+      'Find power window motor circuits, master switch wiring, window lock relay paths, and regulator control schematics.',
+    matchTerms: ['window', 'power window', 'window motor', 'window regulator', 'window switch', 'glass'],
+    keywords: ['power window wiring diagram', 'window motor wiring', 'window switch diagram'],
+  },
+  'instrument-cluster': {
+    slug: 'instrument-cluster',
+    title: 'Instrument Cluster Wiring Diagram',
+    shortLabel: 'Instrument Cluster',
+    intro:
+      'Find instrument panel wiring, gauge sender circuits, warning light paths, and speedometer/tachometer schematics.',
+    matchTerms: ['instrument', 'cluster', 'gauge', 'speedometer', 'tachometer', 'warning indicator', 'dashboard', 'panel'],
+    keywords: ['instrument cluster wiring diagram', 'gauge wiring diagram', 'dashboard wiring diagram'],
+  },
+  wipers: {
+    slug: 'wipers',
+    title: 'Wiper & Washer Wiring Diagram',
+    shortLabel: 'Wipers',
+    intro:
+      'Find wiper motor circuits, intermittent relay wiring, washer pump paths, and rain sensor schematics.',
+    matchTerms: ['wiper', 'washer', 'windshield', 'rain sensor', 'intermittent'],
+    keywords: ['wiper motor wiring diagram', 'wiper relay diagram', 'washer pump wiring'],
+  },
+  transmission: {
+    slug: 'transmission',
+    title: 'Transmission Wiring Diagram',
+    shortLabel: 'Transmission',
+    intro:
+      'Find transmission control module wiring, shift solenoid circuits, speed sensor paths, and torque converter clutch schematics.',
+    matchTerms: ['transmission', 'transaxle', 'shift solenoid', 'torque converter', 'gear', 'drivetrain', 'transfer case'],
+    keywords: ['transmission wiring diagram', 'shift solenoid wiring', 'tcm wiring diagram'],
+  },
+  'cruise-control': {
+    slug: 'cruise-control',
+    title: 'Cruise Control Wiring Diagram',
+    shortLabel: 'Cruise Control',
+    intro:
+      'Find cruise control module wiring, servo/actuator circuits, brake cancel switch paths, and speed control schematics.',
+    matchTerms: ['cruise', 'cruise control', 'speed control'],
+    keywords: ['cruise control wiring diagram', 'cruise control module wiring'],
+  },
+  airbag: {
+    slug: 'airbag',
+    title: 'Airbag SRS Wiring Diagram',
+    shortLabel: 'Airbag SRS',
+    intro:
+      'Find airbag module wiring, crash sensor circuits, seatbelt pretensioner paths, and SRS warning light schematics.',
+    matchTerms: ['airbag', 'srs', 'restraint', 'crash sensor', 'occupant', 'pretensioner', 'squib'],
+    keywords: ['airbag wiring diagram', 'srs wiring diagram', 'airbag sensor wiring'],
+  },
+  'engine-management': {
+    slug: 'engine-management',
+    title: 'Engine Management Wiring Diagram',
+    shortLabel: 'Engine Management',
+    intro:
+      'Find ECU/PCM wiring, fuel injector circuits, ignition coil paths, and oxygen sensor schematics for engine diagnostics.',
+    matchTerms: ['engine', 'powertrain', 'ecu', 'pcm', 'ecm', 'fuel injector', 'ignition coil', 'oxygen sensor', 'throttle'],
+    keywords: ['engine wiring diagram', 'ecu wiring diagram', 'fuel injector wiring diagram'],
+  },
+  'body-electrical': {
+    slug: 'body-electrical',
+    title: 'Body Electrical Wiring Diagram',
+    shortLabel: 'Body Electrical',
+    intro:
+      'Find body control module wiring, door lock circuits, interior lighting paths, and horn/alarm schematics.',
+    matchTerms: ['body', 'door lock', 'interior light', 'dome light', 'horn', 'keyless', 'central lock', 'trunk', 'tailgate'],
+    keywords: ['body electrical wiring diagram', 'door lock wiring', 'body control module diagram'],
   },
 };
 

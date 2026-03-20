@@ -65,12 +65,34 @@ const WIRING_SYSTEM_TO_REPAIR_TASKS: Record<WiringSystemSlug, string[]> = {
   alternator: ['alternator-replacement', 'battery-replacement', 'serpentine-belt-replacement'],
   starter: ['starter-replacement', 'battery-replacement'],
   'fuel-pump': ['fuel-pump-replacement', 'fuel-filter-replacement'],
+  headlight: ['headlight-bulb-replacement'],
+  abs: ['brake-pad-replacement', 'brake-rotor-replacement'],
+  'ac-heater': ['ac-recharge', 'heater-core-replacement'],
+  'power-windows': ['window-regulator-replacement'],
+  'instrument-cluster': [],
+  wipers: ['wiper-blade-replacement'],
+  transmission: ['transmission-fluid-change'],
+  'cruise-control': [],
+  airbag: [],
+  'engine-management': ['spark-plug-replacement', 'oil-change'],
+  'body-electrical': [],
 };
 
 const WIRING_SYSTEM_TO_SEARCH_TERMS: Record<WiringSystemSlug, string[]> = {
   alternator: ['alternator', 'charging', 'battery', 'voltage', 'regulator'],
   starter: ['starter', 'starting', 'crank', 'no start', 'solenoid'],
   'fuel-pump': ['fuel pump', 'fuel pressure', 'fuel relay', 'no start', 'stalling'],
+  headlight: ['headlight', 'headlamp', 'bulb', 'high beam', 'low beam'],
+  abs: ['abs', 'wheel speed', 'brake pressure', 'traction'],
+  'ac-heater': ['compressor', 'blower', 'refrigerant', 'heater core', 'climate'],
+  'power-windows': ['window motor', 'window switch', 'regulator'],
+  'instrument-cluster': ['gauge', 'speedometer', 'cluster', 'warning light'],
+  wipers: ['wiper motor', 'washer pump', 'intermittent'],
+  transmission: ['shift solenoid', 'torque converter', 'speed sensor', 'tcm'],
+  'cruise-control': ['cruise', 'speed control'],
+  airbag: ['airbag', 'srs', 'crash sensor', 'squib'],
+  'engine-management': ['ignition coil', 'injector', 'oxygen sensor', 'throttle', 'ecu'],
+  'body-electrical': ['door lock', 'horn', 'keyless entry', 'interior light'],
 };
 
 function normalizeTaskLabel(task: string): string {
