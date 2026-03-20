@@ -193,6 +193,21 @@ export function getSymptomClusterFromText(text: string): SymptomCluster | null {
   ) || null;
 }
 
+export function getSymptomClustersForTexts(texts: string[], limit = 6): SymptomCluster[] {
+  const seen = new Set<string>();
+  const clusters: SymptomCluster[] = [];
+
+  for (const text of texts) {
+    const cluster = getSymptomClusterFromText(text);
+    if (!cluster || seen.has(cluster.slug)) continue;
+    seen.add(cluster.slug);
+    clusters.push(cluster);
+    if (clusters.length >= limit) break;
+  }
+
+  return clusters;
+}
+
 export function buildSymptomHref(slug: string): string {
   return `/symptoms/${slugifyRoutePart(slug)}`;
 }

@@ -1,7 +1,7 @@
 import overrides from '@/data/knowledge-graph-overrides.json';
 
 export type KnowledgeGraphSurface = 'repair' | 'code' | 'wiring' | 'vehicle' | 'symptom';
-export type KnowledgeGraphKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc' | 'repair' | 'vehicle';
+export type KnowledgeGraphKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc' | 'repair' | 'vehicle' | 'symptom';
 
 export interface KnowledgeGraphBlock<TNode = unknown> {
   kind: KnowledgeGraphKind;
@@ -23,6 +23,7 @@ const GRAPH_OVERRIDES = overrides as KnowledgeGraphOverrides;
 
 const DEFAULT_GROUP_WEIGHTS: Record<KnowledgeGraphSurface, Record<KnowledgeGraphKind, number>> = {
   repair: {
+    symptom: 84,
     manual: 90,
     spec: 80,
     vehicle: 72,
@@ -34,6 +35,7 @@ const DEFAULT_GROUP_WEIGHTS: Record<KnowledgeGraphSurface, Record<KnowledgeGraph
   code: {
     manual: 90,
     vehicle: 85,
+    symptom: 84,
     repair: 80,
     wiring: 70,
     dtc: 50,
@@ -43,6 +45,7 @@ const DEFAULT_GROUP_WEIGHTS: Record<KnowledgeGraphSurface, Record<KnowledgeGraph
   wiring: {
     vehicle: 95,
     manual: 90,
+    symptom: 66,
     repair: 75,
     dtc: 70,
     wiring: 50,
@@ -52,6 +55,7 @@ const DEFAULT_GROUP_WEIGHTS: Record<KnowledgeGraphSurface, Record<KnowledgeGraph
   vehicle: {
     vehicle: 100,
     manual: 90,
+    symptom: 78,
     repair: 86,
     wiring: 82,
     tool: 74,
@@ -59,6 +63,7 @@ const DEFAULT_GROUP_WEIGHTS: Record<KnowledgeGraphSurface, Record<KnowledgeGraph
     spec: 40,
   },
   symptom: {
+    symptom: 100,
     repair: 100,
     dtc: 88,
     vehicle: 76,

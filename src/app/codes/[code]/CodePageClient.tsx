@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { buildSymptomHref, getSymptomClustersForTexts } from '@/data/symptomGraph';
 import type { DTCCode } from '@/data/dtc-codes-data';
 import AdUnit from '@/components/AdUnit';
 import LiveDtcFlowchart from '@/components/LiveDtcFlowchart';
@@ -9,7 +10,7 @@ import {
     getRepairLinksForCode,
     getWiringLinksForCode,
 } from '@/lib/diagnosticCrossLinks';
-import { buildCodeNodeId } from '@/lib/knowledgeGraph';
+import { buildCodeNodeId, buildEdgeReference, buildSymptomNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
@@ -39,6 +40,24 @@ export default function CodePageClient({
     const repairLinks = getRepairLinksForCode(code, 6);
     const wiringLinks = getWiringLinksForCode(code, 6);
     const relatedCodeLinks = getRelatedCodeLinks(code, 6);
+    const symptomHubLinks = getSymptomClustersForTexts([
+        ...code.symptoms,
+        code.title,
+        code.description,
+        code.commonFix,
+    ], 4).map((cluster) => ({
+        ...buildEdgeReference({
+            sourceNodeId: buildCodeNodeId(code.code),
+            targetNodeId: buildSymptomNodeId(cluster.slug),
+            relation: 'has-symptom',
+            code: code.code,
+        }),
+        href: buildSymptomHref(cluster.slug),
+        label: cluster.label,
+        description: cluster.summary,
+        badge: 'Symptom Hub',
+        targetKind: 'symptom' as const,
+    }));
     const vehicleHubLinks = buildVehicleHubLinksForCode({
         code: code.code,
         repairLinks,
@@ -66,6 +85,13 @@ export default function CodePageClient({
                 ...link,
                 targetKind: 'manual' as const,
             })),
+        }] : []),
+        ...(symptomHubLinks.length > 0 ? [{
+            kind: 'symptom' as const,
+            title: 'Canonical Symptom Hubs',
+            browseHref: '/symptoms',
+            theme: 'amber' as const,
+            nodes: symptomHubLinks,
         }] : []),
         ...(repairLinks.length > 0 ? [{
             kind: 'repair' as const,
@@ -172,6 +198,22 @@ export default function CodePageClient({
                         </li>
                     ))}
                 </ul>
+                {symptomHubLinks.length > 0 && (
+                    <div className="mt-5 border-t border-white/10 pt-4">
+                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-300 mb-3">Canonical symptom paths</p>
+                        <div className="flex flex-wrap gap-2">
+                            {symptomHubLinks.map((link) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-xs uppercase tracking-[0.16em] text-amber-100 hover:border-amber-400/35 hover:bg-amber-500/15 transition-all"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Common Causes */}
@@ -237,12 +279,12 @@ export default function CodePageClient({
             )}
 
             {/* Reverse knowledge graph */}
-            {(manualLinks.length > 0 || repairLinks.length > 0 || wiringLinks.length > 0) && (
+            {(manualLinks.length > 0 || symptomHubLinks.length > 0 || repairLinks.length > 0 || wiringLinks.length > 0) && (
                 <section className="mb-12">
                     <div className="mb-5">
                         <h3 className="text-xl font-bold text-white mb-2">Knowledge Paths from This Code</h3>
                         <p className="text-gray-400 text-sm">
-                            These links connect {code.code} to the most relevant repair workflows and wiring surfaces across SpotOnAuto.
+                            These links connect {code.code} to the most relevant symptom hubs, repair workflows, and wiring surfaces across SpotOnAuto.
                         </p>
                     </div>
 

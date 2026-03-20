@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Activity, Camera, Cpu, HardDrive, ImageIcon, RotateCcw, Send } from 'lucide-react';
+import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/apiClient';
 import {
     findLatestDiagnosticSessionForVehicle,
@@ -53,6 +55,22 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const initialProblem = initialProblemProp || searchParams.get('task') || '';
     const threadId = searchParams.get('thread');
     const forceFresh = searchParams.get('fresh') === '1';
+    const canonicalSymptomCluster = (() => {
+        const candidateTexts = [
+            initialProblem,
+            ...messages
+                .filter((message) => message.type === 'user')
+                .map((message) => message.text)
+                .reverse(),
+        ];
+
+        for (const text of candidateTexts) {
+            const cluster = getSymptomClusterFromText(text);
+            if (cluster) return cluster;
+        }
+
+        return null;
+    })();
 
     const syncThreadInUrl = useCallback((nextThreadId: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -312,6 +330,36 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
             </div>
 
             <div className="z-10 border-t border-neon-cyan/20 bg-black/60 p-4">
+                {canonicalSymptomCluster && (
+                    <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                            <div>
+                                <p className="text-[10px] uppercase tracking-[0.24em] text-amber-300/85">Canonical symptom cluster</p>
+                                <h4 className="mt-2 text-sm font-semibold text-white">{canonicalSymptomCluster.label}</h4>
+                                <p className="mt-1 text-xs leading-5 text-gray-300">{canonicalSymptomCluster.summary}</p>
+                            </div>
+                            <Link
+                                href={buildSymptomHref(canonicalSymptomCluster.slug)}
+                                className="inline-flex items-center justify-center rounded-lg border border-amber-400/30 bg-black/20 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-amber-100 transition-all hover:border-amber-300/50 hover:bg-black/30"
+                            >
+                                Open Symptom Hub
+                            </Link>
+                        </div>
+                        {canonicalSymptomCluster.likelyTasks.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {canonicalSymptomCluster.likelyTasks.slice(0, 3).map((task) => (
+                                    <Link
+                                        key={task}
+                                        href={`/repairs/${task}`}
+                                        className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 hover:border-cyan-400/35 hover:text-cyan-200 transition-all"
+                                    >
+                                        {task.replace(/-/g, ' ')}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
                 <form onSubmit={onSubmit} className="relative flex gap-3">
                     <div className="absolute inset-0 -z-10 bg-neon-cyan/5 blur-xl" />
                     <input
