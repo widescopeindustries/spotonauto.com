@@ -12,6 +12,10 @@ function slugify(s: string): string {
   return slugifyRoutePart(s);
 }
 
+function taskSlugToSymptom(slug: string): string {
+  return decodeURIComponent(slug).replace(/-/g, ' ').trim();
+}
+
 interface PageProps {
   params: Promise<{ task: string }>;
 }
@@ -40,7 +44,13 @@ export default async function TaskCategoryPage({ params }: PageProps) {
   if (task !== canonicalTask && VALID_TASKS.includes(canonicalTask)) {
     permanentRedirect(`/repairs/${canonicalTask}`);
   }
-  if (!VALID_TASKS.includes(canonicalTask)) notFound();
+  if (!VALID_TASKS.includes(canonicalTask)) {
+    const symptom = taskSlugToSymptom(task);
+    if (symptom.length > 2) {
+      permanentRedirect(`/diagnose?task=${encodeURIComponent(symptom)}`);
+    }
+    notFound();
+  }
 
   const taskName = toTitleCase(canonicalTask);
   const priorityPages = getTier1RescuePagesForTask(canonicalTask);

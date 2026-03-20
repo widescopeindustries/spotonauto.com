@@ -30,8 +30,27 @@ function isAbortLikeError(error: unknown): boolean {
 }
 
 function toSafeApiErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+
   if (isAbortLikeError(error)) {
     return 'Guide generation timed out while contacting an upstream service. Please try again.';
+  }
+
+  if (
+    message.includes('resource_exhausted') ||
+    message.includes('quota') ||
+    message.includes('rate limit') ||
+    message.includes('429')
+  ) {
+    return 'Guide generation is temporarily unavailable because the AI service is rate-limited. Please try again shortly.';
+  }
+
+  if (
+    message.includes('gemini api key is unavailable') ||
+    message.includes('openai api key is missing') ||
+    message.includes('missing ai api key')
+  ) {
+    return 'Guide generation is temporarily unavailable because the AI provider is not configured correctly.';
   }
 
   return error instanceof Error ? error.message : 'Internal Server Error';
