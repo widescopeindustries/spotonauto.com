@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Search, Zap, AlertTriangle, ScanLine, Wrench } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { decodeVin } from '../services/apiClient';
 import { getYears, getMakesForYear, fetchModels } from '../services/vehicleData';
 import { trackVehicleSearch, trackVinDecode } from '../lib/analytics';
@@ -32,6 +34,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
     const [availableModels, setAvailableModels] = useState<string[]>([]);
     const [loadingModels, setLoadingModels] = useState(false);
     const availableMakes = vehicle.year ? getMakesForYear(vehicle.year) : [];
+    const matchedSymptomCluster = getSymptomClusterFromText(task);
 
     useEffect(() => {
         if (vehicle.make && vehicle.year) {
@@ -211,6 +214,15 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                         aria-label="Describe symptom or repair task"
                     />
                 </div>
+
+                {matchedSymptomCluster && (
+                    <Link
+                        href={buildSymptomHref(matchedSymptomCluster.slug)}
+                        className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-amber-100 hover:border-amber-400/35 hover:bg-amber-500/15 transition-all"
+                    >
+                        Matched symptom hub: {matchedSymptomCluster.label}
+                    </Link>
+                )}
 
                 <div className="pt-6 grid grid-cols-2 gap-4">
                     <button

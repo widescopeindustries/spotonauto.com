@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import type { ComponentType } from 'react';
 import {
   ArrowRight,
@@ -46,8 +47,8 @@ const REPAIR_CLUSTERS: RepairCluster[] = [
       { href: '/repair/2009/bmw/x5/alternator-replacement', label: '2009 BMW X5 alternator replacement' },
       { href: '/repair/2007/honda/pilot/starter-replacement', label: '2007 Honda Pilot starter replacement' },
     ],
-    primaryHref: '/diagnose',
-    primaryLabel: 'Diagnose a no-start first',
+    primaryHref: buildSymptomHref('car-wont-start'),
+    primaryLabel: 'Open the no-start symptom hub',
   },
   {
     title: 'Belts, cooling, and overheating',
@@ -62,8 +63,8 @@ const REPAIR_CLUSTERS: RepairCluster[] = [
       { href: '/repair/2013/toyota/prius/water-pump-replacement', label: '2013 Toyota Prius water pump replacement' },
       { href: '/repair/2012/chevrolet/malibu/thermostat-replacement', label: '2012 Chevy Malibu thermostat replacement' },
     ],
-    primaryHref: '/guides',
-    primaryLabel: 'Browse repair guides by vehicle',
+    primaryHref: buildSymptomHref('overheating'),
+    primaryLabel: 'Open the overheating symptom hub',
   },
   {
     title: 'Brakes, tune-up, and lighting',
@@ -78,16 +79,16 @@ const REPAIR_CLUSTERS: RepairCluster[] = [
       { href: '/repair/2010/toyota/tundra/brake-pad-replacement', label: '2010 Toyota Tundra brake pad replacement' },
       { href: '/repair/2012/honda/cr-v/headlight-bulb-replacement', label: '2012 Honda CR-V headlight bulb guide' },
     ],
-    primaryHref: '/parts',
-    primaryLabel: 'Compare parts before you buy',
+    primaryHref: buildSymptomHref('squeaky-brakes'),
+    primaryLabel: 'Open the brake squeal symptom hub',
   },
 ];
 
 const ACTIONS = [
   {
-    href: '/diagnose',
-    label: 'Symptom-based diagnosis',
-    description: 'Use this when you know the warning light or symptom, but not the exact repair yet.',
+    href: '/symptoms',
+    label: 'Browse symptom hubs',
+    description: 'Start from the canonical symptom cluster when you know the complaint but not the exact repair yet.',
     icon: Sparkles,
   },
   {
@@ -172,8 +173,18 @@ export default function HomeRepairClusters() {
                   <div className="flex flex-wrap gap-2 mb-5">
                     {cluster.symptoms.map((symptom) => {
                       const SymptomIcon = symptomIconMap[symptom] ?? Sparkles;
+                      const symptomCluster = getSymptomClusterFromText(symptom);
 
-                      return (
+                      return symptomCluster ? (
+                        <Link
+                          key={symptom}
+                          href={buildSymptomHref(symptomCluster.slug)}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-gray-300"
+                        >
+                          <SymptomIcon className="w-3.5 h-3.5 text-cyan-400" />
+                          {symptom}
+                        </Link>
+                      ) : (
                         <span
                           key={symptom}
                           className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-gray-300"

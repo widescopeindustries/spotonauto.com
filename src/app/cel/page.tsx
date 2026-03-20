@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { buildSymptomHref } from '@/data/symptomGraph';
 import { Analytics, captureUTMParams } from '@/lib/analytics';
 import { getKnownModelsForYearMake, getMakesForYear, getYears } from '@/services/vehicleData';
 
@@ -184,12 +185,20 @@ export default function CELLandingPage() {
 
                         {/* Vehicle path - secondary */}
                         {mode !== 'vehicle' ? (
-                            <button
-                                onClick={() => setMode('vehicle')}
-                                className="w-full py-3.5 rounded-lg border border-white/10 bg-white/[0.03] text-gray-300 font-body text-sm hover:border-cyan-500/30 hover:text-white transition-all"
-                            >
-                                Select my vehicle for a full diagnosis
-                            </button>
+                            <div className="space-y-2">
+                                <Link
+                                    href={buildSymptomHref('check-engine-light-on')}
+                                    className="block w-full py-3.5 rounded-lg border border-amber-500/20 bg-amber-500/[0.06] text-amber-100 font-body text-sm hover:border-amber-400/35 hover:bg-amber-500/[0.1] transition-all"
+                                >
+                                    Open the check engine light symptom hub
+                                </Link>
+                                <button
+                                    onClick={() => setMode('vehicle')}
+                                    className="w-full py-3.5 rounded-lg border border-white/10 bg-white/[0.03] text-gray-300 font-body text-sm hover:border-cyan-500/30 hover:text-white transition-all"
+                                >
+                                    Select my vehicle for a full diagnosis
+                                </button>
+                            </div>
                         ) : (
                             <form onSubmit={handleVehicleSubmit} className="space-y-2">
                                 <div className="grid grid-cols-3 gap-2">
