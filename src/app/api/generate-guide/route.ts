@@ -59,11 +59,6 @@ async function getAuthenticatedUser(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
-    console.error("SERVER ERROR: No AI provider key is set. Configure GEMINI_API_KEY or OPENAI_API_KEY.");
-    return NextResponse.json({ error: 'Server configuration error: Missing AI API key' }, { status: 500 });
-  }
-
   try {
     const body = await req.json();
     const { action, payload = {}, stream } = body;
@@ -73,6 +68,12 @@ export async function POST(req: NextRequest) {
 
     if (!action) {
       return NextResponse.json({ error: 'Missing action' }, { status: 400 });
+    }
+
+    const requiresAiProvider = action !== 'decode-vin';
+    if (requiresAiProvider && !process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
+      console.error("SERVER ERROR: No AI provider key is set. Configure GEMINI_API_KEY or OPENAI_API_KEY.");
+      return NextResponse.json({ error: 'Server configuration error: Missing AI API key' }, { status: 500 });
     }
 
     const user = await getAuthenticatedUser(req);

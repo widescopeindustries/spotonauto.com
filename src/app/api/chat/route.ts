@@ -8,6 +8,11 @@ const geminiApiKey = process.env.GEMINI_API_KEY || "";
 const genAI = new GoogleGenAI({ apiKey: geminiApiKey });
 const openAiApiKey = process.env.OPENAI_API_KEY;
 const openAI = openAiApiKey ? new OpenAI({ apiKey: openAiApiKey }) : null;
+const preferOpenAI = (() => {
+  const raw = (process.env.OPENAI_PRIMARY || "").trim().toLowerCase();
+  if (!raw) return Boolean(openAiApiKey);
+  return raw === "1" || raw === "true" || raw === "yes";
+})();
 
 const SYSTEM_PROMPT = `You are SpotOn Guide — a friendly AI assistant for SpotOnAuto.com, an AI-powered vehicle repair platform.
 
@@ -61,7 +66,7 @@ export async function POST(req: NextRequest) {
     let reply = "";
 
     try {
-      if (!geminiApiKey) {
+      if (preferOpenAI || !geminiApiKey) {
         throw new Error("Gemini API key is unavailable.");
       }
 
@@ -80,6 +85,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
       const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
       const shouldFallback = openAI && (
+        preferOpenAI ||
         !geminiApiKey ||
         message.includes("resource_exhausted") ||
         message.includes("quota") ||

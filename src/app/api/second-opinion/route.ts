@@ -13,6 +13,11 @@ const openAiApiKey = process.env.OPENAI_API_KEY;
 const openAI = openAiApiKey ? new OpenAI({ apiKey: openAiApiKey }) : null;
 const TEXT_MODEL = 'gemini-2.0-flash';
 const OPENAI_TEXT_MODEL = process.env.OPENAI_TEXT_MODEL || 'gpt-4o-mini';
+const preferOpenAI = (() => {
+  const raw = (process.env.OPENAI_PRIMARY || '').trim().toLowerCase();
+  if (!raw) return Boolean(openAiApiKey);
+  return raw === '1' || raw === 'true' || raw === 'yes';
+})();
 
 const secondOpinionSchema = {
   type: Type.OBJECT,
@@ -139,7 +144,7 @@ Provide your analysis as JSON with: verdict, confidence, avgPrice, priceRange (l
     let data: any;
 
     try {
-      if (!apiKey) {
+      if (preferOpenAI || !apiKey) {
         throw new Error('Gemini API key is unavailable.');
       }
 
@@ -158,6 +163,7 @@ Provide your analysis as JSON with: verdict, confidence, avgPrice, priceRange (l
     } catch (error) {
       const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
       const shouldFallback = openAI && (
+        preferOpenAI ||
         !apiKey ||
         message.includes('resource_exhausted') ||
         message.includes('quota') ||

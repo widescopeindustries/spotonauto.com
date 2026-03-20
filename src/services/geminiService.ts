@@ -19,11 +19,18 @@ if (!apiKey || apiKey === 'placeholder_gemini_key') {
 const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
 const openAiApiKey = process.env.OPENAI_API_KEY;
 const openAI = openAiApiKey ? new OpenAI({ apiKey: openAiApiKey }) : null;
+const preferOpenAI = canReadOpenAIFirst();
 
 // Models
 const TEXT_MODEL = "gemini-2.0-flash";
 const IMAGE_MODEL = "imagen-3.0-generate-002";
 const OPENAI_TEXT_MODEL = process.env.OPENAI_TEXT_MODEL || 'gpt-4o-mini';
+
+function canReadOpenAIFirst(): boolean {
+  const raw = (process.env.OPENAI_PRIMARY || '').trim().toLowerCase();
+  if (!raw) return Boolean(process.env.OPENAI_API_KEY);
+  return raw === '1' || raw === 'true' || raw === 'yes';
+}
 
 // Schemas
 const vehicleSchema = {
@@ -280,7 +287,7 @@ function canUseOpenAI(): boolean {
 }
 
 function shouldFallbackToOpenAI(error: unknown): boolean {
-  return canUseOpenAI() && (!canUseGemini() || isQuotaLikeError(error));
+  return canUseOpenAI() && (preferOpenAI || !canUseGemini() || isQuotaLikeError(error));
 }
 
 async function generateJsonWithOpenAI(systemInstruction: string, prompt: string) {
@@ -684,7 +691,7 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
   let responseSources: GroundingSource[] = [];
 
   try {
-    if (!canUseGemini()) {
+    if (preferOpenAI || !canUseGemini()) {
       throw new Error('Gemini API key is unavailable.');
     }
 
@@ -802,7 +809,7 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
     });
 
     try {
-      if (!canUseGemini()) {
+      if (preferOpenAI || !canUseGemini()) {
         throw new Error('Gemini API key is unavailable.');
       }
 
@@ -976,7 +983,7 @@ Keep your response concise and practical. Do NOT return JSON - respond in natura
     ];
 
     try {
-      if (!canUseGemini()) {
+      if (preferOpenAI || !canUseGemini()) {
         throw new Error('Gemini API key is unavailable.');
       }
 
