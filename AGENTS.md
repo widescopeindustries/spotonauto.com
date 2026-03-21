@@ -32,6 +32,10 @@ Update it when product decisions, traps, or standing preferences change.
   - the primary landing-page job is to get users into the exact year/make/model hub quickly
   - `year -> make -> model` should feel like the main route, not one option among many stacked sections
   - fallback entry paths like wiring, codes, and diagnosis should remain visible but secondary
+  - if query families become clear in Search Console, the homepage can surface a restrained lower-page cluster section keyed to those real DIY lanes
+    - keep it below the primary vehicle-first flow
+    - use it to reinforce clusters already showing traction, such as lighting, battery, fluids, and filters
+    - prefer category pages plus a few exact-query examples over a giant “popular guides” wall
 - Exact year/make/model pages are now the intended place for richer option density.
   - `src/app/repair/[year]/[make]/[model]/page.tsx` should read like a vehicle command center, not a generic SEO landing page
   - the exact vehicle hub should expose the main spokes users care about: repairs, wiring, symptoms, codes, specs/tools, and OEM manual paths

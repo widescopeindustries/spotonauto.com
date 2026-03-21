@@ -3,7 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { ArrowRight, Cpu, Route, Search } from 'lucide-react';
+import { ArrowRight, Battery, Cpu, Droplets, Lightbulb, Route, Search, Wrench } from 'lucide-react';
 import { useT } from '@/lib/translations';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
@@ -76,6 +76,61 @@ const HUB_SURFACES = [
         label: 'Guide directory',
         href: '/guides',
         description: 'Browse by make, model, and repair intent.',
+    },
+];
+
+const SEARCH_MOMENTUM_CLUSTERS = [
+    {
+        eyebrow: 'Lighting',
+        title: 'Headlights and tail lights',
+        description: 'Bulb and lamp jobs are one of the clearest DIY entry lanes, and they keep showing up in current search demand.',
+        href: '/repairs/headlight-bulb-replacement',
+        cta: 'Browse lighting guides',
+        icon: Lightbulb,
+        links: [
+            { href: '/repair/2019/kia/optima/headlight-bulb-replacement', label: '2019 Kia Optima headlight replacement' },
+            { href: '/repair/2015/subaru/outback/tail-light-replacement', label: '2015 Subaru Outback tail lights' },
+            { href: '/repair/2006/kia/sorento/headlight-bulb-replacement', label: '2006 Kia Sorento headlight bulb replacement' },
+        ],
+    },
+    {
+        eyebrow: 'Battery',
+        title: 'Battery and quick no-start wins',
+        description: 'Battery jobs are still one of the fastest trust-building first repairs because owners can verify the part and finish the job in one sitting.',
+        href: '/repairs/battery-replacement',
+        cta: 'Browse battery guides',
+        icon: Battery,
+        links: [
+            { href: '/repair/2013/toyota/corolla/battery-replacement', label: '2013 Toyota Corolla battery replacement' },
+            { href: '/repair/2015/honda/odyssey/battery-replacement', label: '2015 Honda Odyssey battery replacement' },
+            { href: '/repair/2020/toyota/tacoma/battery-replacement', label: '2020 Toyota Tacoma battery replacement' },
+        ],
+    },
+    {
+        eyebrow: 'Fluids',
+        title: 'Oil, transmission fluid, and coolant',
+        description: 'Fluid-intent searchers are usually ready to act if the spec, quantity, and refill path are obvious enough.',
+        href: '/repairs/oil-change',
+        cta: 'Browse fluid guides',
+        icon: Droplets,
+        links: [
+            { href: '/repair/2010/chevrolet/traverse/oil-change', label: 'Chevy Traverse oil change' },
+            { href: '/repair/2004/acura/tsx/transmission-fluid-change', label: '2004 Acura TSX transmission fluid' },
+            { href: '/repairs/coolant-flush', label: 'Coolant flush guides by vehicle' },
+        ],
+    },
+    {
+        eyebrow: 'Filters',
+        title: 'Filters and light maintenance',
+        description: 'These jobs are low-risk, high-confidence wins that turn search traffic into repeat users and parts research.',
+        href: '/repairs/cabin-air-filter-replacement',
+        cta: 'Browse filter guides',
+        icon: Wrench,
+        links: [
+            { href: '/repair/2020/toyota/tacoma/cabin-air-filter-replacement', label: '2020 Toyota Tacoma cabin air filter' },
+            { href: '/repair/2010/honda/pilot/fuel-filter-replacement', label: 'Honda Pilot fuel filter' },
+            { href: '/repair/2016/nissan/rogue/cabin-air-filter-replacement', label: '2016 Nissan Rogue cabin air filter' },
+        ],
     },
 ];
 
@@ -240,6 +295,72 @@ function AlternateEntrySection() {
     );
 }
 
+function SearchMomentumSection() {
+    return (
+        <section className="px-4 pb-20 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+                <div className="rounded-[32px] matte-panel p-8 sm:p-10">
+                    <div className="mb-8 max-w-3xl space-y-4">
+                        <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
+                            Search momentum
+                        </span>
+                        <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
+                            Expand the DIY clusters that are already pulling people in
+                        </h2>
+                        <p className="text-lg text-gray-300">
+                            These are the simpler jobs current search demand keeps circling: lighting, battery, fluids, and filters.
+                            The goal is not more homepage noise. It is stronger paths into the exact guides and repair categories that are already earning trust.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+                        {SEARCH_MOMENTUM_CLUSTERS.map((cluster) => {
+                            const Icon = cluster.icon;
+
+                            return (
+                                <div
+                                    key={cluster.title}
+                                    className="rounded-[24px] matte-panel-soft p-6"
+                                >
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="space-y-3">
+                                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">{cluster.eyebrow}</p>
+                                            <h3 className="font-display text-2xl font-bold text-white">{cluster.title}</h3>
+                                            <p className="text-sm leading-6 text-gray-400">{cluster.description}</p>
+                                        </div>
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300">
+                                            <Icon className="h-5 w-5" />
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-5 space-y-2">
+                                        {cluster.links.map((link) => (
+                                            <Link
+                                                key={link.href}
+                                                href={link.href}
+                                                className="block rounded-2xl border border-white/10 bg-slate-900/45 px-4 py-3 text-sm text-gray-200 transition-all hover:border-cyan-500/30 hover:bg-slate-900/70 hover:text-cyan-100"
+                                            >
+                                                {link.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-100">
+                                        <Link href={cluster.href} className="inline-flex items-center gap-2">
+                                            {cluster.cta}
+                                            <ArrowRight className="h-4 w-4" />
+                                        </Link>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 export default function ClientHome() {
     return (
         <div className="relative min-h-screen overflow-x-hidden matte-shell text-white">
@@ -251,6 +372,7 @@ export default function ClientHome() {
             <div className="relative z-10">
                 <HeroSection />
                 <AlternateEntrySection />
+                <SearchMomentumSection />
             </div>
         </div>
     );
