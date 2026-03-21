@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { VALID_TASKS } from '@/data/vehicles';
 import { TIER_1_RESCUE_PAGES } from '@/data/rescuePriority';
+import { getTier1RepairSupportGaps, getTopUnderlinkedRepairPages } from '@/lib/graphPriorityLinks';
 import { Wrench } from 'lucide-react';
 
 function toTitleCase(slug: string): string {
@@ -26,6 +27,9 @@ export const metadata: Metadata = {
 };
 
 export default function RepairsIndexPage() {
+  const supportGapRepairs = getTier1RepairSupportGaps(6);
+  const underlinkedRepairs = getTopUnderlinkedRepairPages(6);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <nav className="text-sm text-gray-500 mb-6">
@@ -76,6 +80,60 @@ export default function RepairsIndexPage() {
           ))}
         </div>
       </section>
+
+      {supportGapRepairs.length > 0 && (
+        <section className="mb-12 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-white">Tier-1 Support Gaps</h2>
+              <p className="text-sm text-gray-300 mt-1">
+                Exact repair pages the graph report says still need more authority flow from categories, symptoms, and vehicle hubs.
+              </p>
+            </div>
+            <Link
+              href="/repair"
+              className="text-sm text-violet-300 hover:text-violet-200 transition-colors"
+            >
+              Open repair hub →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+            {supportGapRepairs.map((entry) => (
+              <Link
+                key={entry.href}
+                href={entry.href}
+                className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Tier-1 Gap</p>
+                <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                <p className="text-xs text-gray-400 mt-2">Opportunity score {entry.opportunityScore}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {underlinkedRepairs.length > 0 && (
+        <section className="mb-12 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-6">
+          <h2 className="text-xl font-bold text-white">Underlinked exact repair pages</h2>
+          <p className="text-sm text-gray-300 mt-2 mb-5 max-w-3xl">
+            These exact year-make-model pages have strong business value but weak inbound graph support. Linking them here helps crawl flow reach deeper repair inventory.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+            {underlinkedRepairs.map((entry) => (
+              <Link
+                key={entry.href}
+                href={entry.href}
+                className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/40 hover:bg-black/30 transition-all"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Underlinked</p>
+                <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                <p className="text-xs text-gray-400 mt-2">{entry.action}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {VALID_TASKS.map((task) => (

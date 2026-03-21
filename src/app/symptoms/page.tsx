@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SYMPTOM_CLUSTERS, buildSymptomHref } from '@/data/symptomGraph';
+import { getHighValueSymptomHubs, getTier1RepairSupportGaps, getTopOrphanSymptoms } from '@/lib/graphPriorityLinks';
 
 export const metadata: Metadata = {
   title: 'Symptom Hubs | SpotOnAuto',
@@ -11,6 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default function SymptomsIndexPage() {
+  const prioritySymptomHubs = getHighValueSymptomHubs(6);
+  const orphanSymptoms = getTopOrphanSymptoms(4);
+  const supportGapRepairs = getTier1RepairSupportGaps(6);
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-12">
       <nav className="text-sm text-gray-500 mb-6">
@@ -27,6 +32,50 @@ export default function SymptomsIndexPage() {
         Start from the symptom the way drivers actually describe it. These hubs normalize plain-English complaints into repair categories,
         trouble codes, and exact vehicle repair pages so the graph can route you to the shortest valid fix path.
       </p>
+
+      {prioritySymptomHubs.length > 0 && (
+        <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-6">
+          <h2 className="text-xl font-bold text-white mb-2">Priority symptom hubs</h2>
+          <p className="text-sm text-gray-300 mb-5">
+            The graph-priority report says these symptom clusters deserve the strongest crawl and link support right now.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {prioritySymptomHubs.map((cluster) => (
+              <Link
+                key={cluster.href}
+                href={cluster.href}
+                className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Priority Hub</p>
+                <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
+                <p className="text-xs text-gray-400 mt-2">Opportunity score {cluster.opportunityScore}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {supportGapRepairs.length > 0 && (
+        <section className="mb-10 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
+          <h2 className="text-xl font-bold text-white mb-2">Exact repair pages symptom hubs should reinforce</h2>
+          <p className="text-sm text-gray-300 mb-5">
+            These exact repair pages are valuable but still under-supported. Strong symptom-hub links help move crawl depth into deeper repair inventory.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {supportGapRepairs.map((entry) => (
+              <Link
+                key={entry.href}
+                href={entry.href}
+                className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Support Gap</p>
+                <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                <p className="text-xs text-gray-400 mt-2">{entry.action}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {SYMPTOM_CLUSTERS.map((cluster) => (
@@ -51,6 +100,26 @@ export default function SymptomsIndexPage() {
           </Link>
         ))}
       </div>
+
+      {orphanSymptoms.length > 0 && (
+        <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+          <h2 className="text-xl font-bold text-white mb-2">Symptom hubs still light on inbound support</h2>
+          <p className="text-sm text-gray-300 mb-5">
+            These are canonical symptom pages the graph still sees as underlinked. Keeping them prominent here helps fix that.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {orphanSymptoms.map((entry) => (
+              <Link
+                key={entry.href}
+                href={entry.href}
+                className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-sm text-gray-200 hover:border-amber-400/35 hover:text-white transition-all"
+              >
+                {entry.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

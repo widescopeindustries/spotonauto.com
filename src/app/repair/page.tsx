@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { TIER_1_RESCUE_PAGES } from '@/data/rescuePriority';
-import { SYMPTOM_CLUSTERS, buildSymptomHref } from '@/data/symptomGraph';
+import { getHighValueSymptomHubs, getTier1RepairSupportGaps } from '@/lib/graphPriorityLinks';
 
 export const metadata: Metadata = {
   title: 'Repair Hub | SpotOnAuto',
@@ -13,6 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default function RepairHubPage() {
+  const prioritySymptomHubs = getHighValueSymptomHubs(6);
+  const supportGapRepairs = getTier1RepairSupportGaps(6);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <nav className="text-sm text-gray-500 mb-6">
@@ -73,19 +76,45 @@ export default function RepairHubPage() {
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          {SYMPTOM_CLUSTERS.slice(0, 6).map((cluster) => (
+          {prioritySymptomHubs.map((cluster) => (
             <Link
-              key={cluster.slug}
-              href={buildSymptomHref(cluster.slug)}
+              key={cluster.href}
+              href={cluster.href}
               className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
             >
               <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Symptom Cluster</p>
               <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
-              <p className="text-sm text-gray-300 mt-2">{cluster.summary}</p>
+              <p className="text-sm text-gray-300 mt-2">
+                High-opportunity symptom hub from the graph-priority report. Use it to route plain-English complaints into exact repair pages faster.
+              </p>
             </Link>
           ))}
         </div>
       </section>
+
+      {supportGapRepairs.length > 0 && (
+        <section className="mb-10 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
+          <h2 className="text-xl font-bold text-white mb-2">Graph-priority repair pages needing stronger support</h2>
+          <p className="text-sm text-gray-300 mb-5">
+            These exact repair pages already matter to recovery, but the graph says they still need stronger inbound support from hub surfaces.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+            {supportGapRepairs.map((entry) => (
+              <Link
+                key={entry.href}
+                href={entry.href}
+                className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Support Gap</p>
+                <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                <p className="text-xs text-gray-400 mt-2">
+                  Opportunity score {entry.opportunityScore} · {entry.action}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">
         <h2 className="text-xl font-bold text-white mb-2">Priority repair pages</h2>
