@@ -103,6 +103,9 @@ Update it when product decisions, traps, or standing preferences change.
   - wiring selector coverage should not import the full `src/data/wiring-coverage.json` into a client component
   - `src/lib/wiringCoverage.ts` is the server-only helper that derives the lightweight selector payload for `/wiring`
   - the interactive diagram viewer in `src/app/wiring/WiringDiagramLibrary.tsx` now overlays a slim vertical `SpotOnAuto.com` edge watermark on diagram images so printed/screenshot schematics retain the brand without obscuring the drawing
+  - `src/lib/wiringData.ts` now needs to tolerate model-bucket paths that are not the final engine variant.
+    - if a direct `/Repair and Diagnosis/` path fails, or resolves to an empty diagram bucket, the server should re-resolve the best matching variant from the year page and retry before giving up
+    - this specifically matters for `Dodge or Ram Truck`-style entries where `RAM 3500 Truck 2WD` is a model bucket and the real diagrams live under engine-specific children
   - AI runtime can now fall back from Gemini to OpenAI for guide generation, vehicle info, diagnostic chat, homepage chat, and second-opinion flows when Gemini is missing or quota-limited
   - deploys that rely on the fallback need `OPENAI_API_KEY` set in the runtime environment
 ## Working Norms

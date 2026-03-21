@@ -3,12 +3,43 @@ const CHARM_HEADERS = {
   'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) wiring-diagrams',
 };
 
-function charmFetchOpts(revalidateSeconds = 3600): RequestInit {
+const DEFAULT_FETCH_RETRIES = 2;
+
+function charmFetchOpts(revalidateSeconds = 3600, timeoutMs = 15000): RequestInit {
   return {
     headers: CHARM_HEADERS,
-    signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
+    signal: AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : undefined,
     next: { revalidate: revalidateSeconds },
   };
+}
+
+async function fetchCharmText(
+  url: string,
+  revalidateSeconds = 3600,
+  errorMessage = 'Charm fetch failed',
+  timeoutMs = 15000,
+  retries = DEFAULT_FETCH_RETRIES,
+): Promise<string> {
+  let lastError: unknown = null;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      const resp = await fetch(url, charmFetchOpts(revalidateSeconds, timeoutMs));
+      if (!resp.ok) {
+        throw new Error(`${errorMessage} (${resp.status})`);
+      }
+      return await resp.text();
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) break;
+      await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
+    }
+  }
+
+  if (lastError instanceof Error) {
+    throw lastError;
+  }
+  throw new Error(errorMessage);
 }
 
 function extractLinks(html: string): string[] {
@@ -77,12 +108,7 @@ export interface WiringImageData {
 }
 
 export async function fetchWiringMakes(): Promise<string[]> {
-  const resp = await fetch(`${CHARM_BASE}/`, charmFetchOpts(86400));
-  if (!resp.ok) {
-    throw new Error('Cannot reach wiring data source');
-  }
-
-  const html = await resp.text();
+  const html = await fetchCharmText(`${CHARM_BASE}/`, 86400, 'Cannot reach wiring data source');
   const links = extractLinks(html);
   return links
     .filter(link => {
@@ -94,12 +120,11 @@ export async function fetchWiringMakes(): Promise<string[]> {
 }
 
 export async function fetchWiringYears(make: string): Promise<number[]> {
-  const resp = await fetch(`${CHARM_BASE}/${encodeURIComponent(make)}/`, charmFetchOpts(86400));
-  if (!resp.ok) {
-    throw new Error('Make not found');
-  }
-
-  const html = await resp.text();
+  const html = await fetchCharmText(
+    `${CHARM_BASE}/${encodeURIComponent(make)}/`,
+    86400,
+    'Make not found',
+  );
   const links = extractLinks(html);
 
   return [...new Set(
@@ -113,12 +138,11 @@ export async function fetchWiringYears(make: string): Promise<number[]> {
 }
 
 export async function fetchWiringVariants(make: string, year: string): Promise<string[]> {
-  const resp = await fetch(`${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`, charmFetchOpts(86400));
-  if (!resp.ok) {
-    throw new Error('Year not found');
-  }
-
-  const html = await resp.text();
+  const html = await fetchCharmText(
+    `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`,
+    86400,
+    'Year not found',
+  );
   const links = extractLinks(html);
   const variants = links
     .filter(link => {
@@ -153,21 +177,82 @@ export function resolveVariantForModel(variants: string[], model: string): strin
   return bestScore >= 60 ? bestVariant : null;
 }
 
+async function fetchRepairAndDiagnosisHtml(
+  make: string,
+  year: string,
+  variant: string,
+): Promise<{ html: string; resolvedVariant: string }> {
+  const encodedMake = encodeURIComponent(make);
+  const encodedVariant = encodeURIComponent(variant);
+  const directUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodedVariant}/Repair%20and%20Diagnosis/`;
+
+  try {
+    const html = await fetchCharmText(directUrl, 3600, 'Repair data not found');
+    return { html, resolvedVariant: variant };
+  } catch {
+    const variants = await fetchWiringVariants(make, year);
+    const matchedVariant = resolveVariantForModel(variants, variant);
+    if (!matchedVariant || matchedVariant === variant) {
+      throw new Error('Repair data not found');
+    }
+
+    const matchedUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodeURIComponent(matchedVariant)}/Repair%20and%20Diagnosis/`;
+    const html = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
+    return { html, resolvedVariant: matchedVariant };
+  }
+}
+
+async function resolveVariantIfDiagramBucketIsEmpty(args: {
+  make: string;
+  year: string;
+  variant: string;
+  currentVariant: string;
+  hasDiagrams: boolean;
+}): Promise<{ html: string; resolvedVariant: string } | null> {
+  if (args.hasDiagrams || args.currentVariant !== args.variant) return null;
+
+  const variants = await fetchWiringVariants(args.make, args.year);
+  const matchedVariant = resolveVariantForModel(variants, args.variant);
+  if (!matchedVariant || matchedVariant === args.currentVariant) {
+    return null;
+  }
+
+  const encodedMake = encodeURIComponent(args.make);
+  const matchedUrl = `${CHARM_BASE}/${encodedMake}/${args.year}/${encodeURIComponent(matchedVariant)}/Repair%20and%20Diagnosis/`;
+
+  try {
+    const html = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
+    return { html, resolvedVariant: matchedVariant };
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchWiringDiagramIndex(
   make: string,
   year: string,
   variant: string,
 ): Promise<WiringDiagramIndex> {
-  const repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${encodeURIComponent(variant)}/Repair%20and%20Diagnosis/`;
-  const resp = await fetch(repairAndDiagnosisUrl, charmFetchOpts(3600));
+  let { html, resolvedVariant } = await fetchRepairAndDiagnosisHtml(make, year, variant);
+  let repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${encodeURIComponent(resolvedVariant)}/Repair%20and%20Diagnosis/`;
+  let allLinks = extractLinks(html);
+  let diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
 
-  if (!resp.ok) {
-    throw new Error('Repair data not found');
+  const matchedVariantBucket = await resolveVariantIfDiagramBucketIsEmpty({
+    make,
+    year,
+    variant,
+    currentVariant: resolvedVariant,
+    hasDiagrams: diagramLinks.length > 0,
+  });
+
+  if (matchedVariantBucket) {
+    html = matchedVariantBucket.html;
+    resolvedVariant = matchedVariantBucket.resolvedVariant;
+    repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${encodeURIComponent(resolvedVariant)}/Repair%20and%20Diagnosis/`;
+    allLinks = extractLinks(html);
+    diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
   }
-
-  const html = await resp.text();
-  const allLinks = extractLinks(html);
-  const diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
 
   const systems: Record<string, WiringDiagramEntry[]> = {};
   for (const link of diagramLinks) {
@@ -198,22 +283,17 @@ export async function fetchWiringDiagramIndex(
     .sort((a, b) => a.system.localeCompare(b.system));
 
   return {
-    vehicle: `${year} ${make} ${decodeSegment(variant)}`,
+    vehicle: `${year} ${make} ${decodeSegment(resolvedVariant)}`,
     make,
     year,
-    variant,
+    variant: resolvedVariant,
     systems: sortedSystems,
     totalDiagrams: diagramLinks.length,
   };
 }
 
 export async function fetchWiringDiagramImages(url: string): Promise<WiringImageData> {
-  const resp = await fetch(url, charmFetchOpts(86400));
-  if (!resp.ok) {
-    throw new Error('Diagram page not found');
-  }
-
-  const html = await resp.text();
+  const html = await fetchCharmText(url, 86400, 'Diagram page not found');
   const imageMatches = html.matchAll(/<img[^>]+class=['"]big-img['"][^>]+src=['"]([^'"]+)['"]/g);
   const images = [...imageMatches].map(match => `${CHARM_BASE}${match[1]}`);
   const titleMatch = html.match(/<h1>([^<]+)<\/h1>/);
@@ -223,4 +303,3 @@ export async function fetchWiringDiagramImages(url: string): Promise<WiringImage
     title: titleMatch ? titleMatch[1] : '',
   };
 }
-
