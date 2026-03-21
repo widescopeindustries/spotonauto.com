@@ -144,8 +144,6 @@ const Header: React.FC = () => {
                         <div
                             ref={toolsMenuRef}
                             className="relative"
-                            onMouseEnter={() => setIsToolsMenuOpen(true)}
-                            onMouseLeave={() => setIsToolsMenuOpen(false)}
                         >
                             <button
                                 type="button"
