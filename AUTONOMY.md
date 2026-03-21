@@ -158,7 +158,7 @@ The agent may redesign existing page sections to achieve these goals as long as 
 
 ## Revenue Rules
 
-- Use Amazon tag: `aiautorepai04-20`
+- Use Amazon tag: `aiautorepair-20`
 - Affiliate placements should support the task on the page, not distract from it
 - Prefer context-aware part/tool links over generic sales blocks
 - Do not stuff affiliate links into low-trust placements

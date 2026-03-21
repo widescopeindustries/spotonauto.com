@@ -324,7 +324,7 @@ export default async function Page({ params }: PageProps) {
                             <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
                                 <span className="text-gray-300">{part}</span>
                                 <AffiliateLink
-                                    href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicleName + ' ' + part)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'aiautorepai04-20'}`}
+                                    href={`https://www.amazon.com/s?k=${encodeURIComponent(vehicleName + ' ' + part)}&i=automotive&tag=${process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG || 'aiautorepair-20'}`}
                                     partName={part}
                                     vehicle={vehicleName}
                                     isHighTicket={/alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i.test(part)}
