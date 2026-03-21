@@ -25,7 +25,16 @@ Update it when product decisions, traps, or standing preferences change.
 
 ## Current Durable Changes
 
-- Homepage hero/start flow was rewritten toward the matte-black direction in `src/app/ClientHome.tsx` and `src/app/globals.css`.
+- Homepage is now explicitly moving toward a simpler vehicle-first front door in `src/app/ClientHome.tsx`.
+  - the primary landing-page job is to get users into the exact year/make/model hub quickly
+  - `year -> make -> model` should feel like the main route, not one option among many stacked sections
+  - fallback entry paths like wiring, codes, and diagnosis should remain visible but secondary
+- Header now exposes a fast `Tools` path with `Wiring Diagrams` promoted in primary navigation so wiring-intent users do not have to rely on deep homepage scroll.
+  - main implementation lives in `src/components/Header.tsx`
+- Homepage hero and dashboard now expose above-the-fold tool shortcuts, including vehicle-aware wiring links when a user locks year/make/model.
+  - main implementation lives in:
+    - `src/app/ClientHome.tsx`
+    - `src/components/HolographicDashboard.tsx`
 - Manual/archive sanitization lives in:
   - `src/services/geminiService.ts`
   - `scripts/index-lmdb-vectors.ts`
@@ -57,6 +66,14 @@ Update it when product decisions, traps, or standing preferences change.
   - exact repair guides now link back to the year/make/model hub, and model guide pages link into a representative exact-vehicle hub
   - code pages now emit graph-driven exact vehicle hub links
   - exact wiring pages now emit graph-driven exact vehicle hub links and a direct hub CTA
+  - graph-priority helpers now also surface report-backed orphan symptom hubs and orphan code pages:
+    - `src/lib/graphPriorityLinks.ts`
+  - repair category pages now reinforce report-backed symptom hubs, support-gap exact repair pages, and priority code pages:
+    - `src/app/repairs/[task]/page.tsx`
+  - exact repair pages now reinforce report-backed symptom hubs and priority code pages in addition to vehicle/code/wiring graph links:
+    - `src/app/repair/[year]/[make]/[model]/[task]/page.tsx`
+  - symptom hubs now reinforce priority orphan/underlinked code pages in addition to exact repair support gaps:
+    - `src/app/symptoms/[symptom]/page.tsx`
   - repair sitemap generation now includes exact vehicle hub URLs under `/repair/{year}/{make}/{model}`
   - `scripts/generate-graph-link-suggestions.ts` writes graph-derived internal-link suggestions to `scripts/seo-reports/`
   - `npm run seo:graph-link-suggestions` currently emits JSON + CSV suggestions grouped by `guide-model`, `code`, and `wiring` source surfaces
@@ -68,7 +85,7 @@ Update it when product decisions, traps, or standing preferences change.
     - no edge conflicts
   - Cloudflare KV remains a helper index, not the canonical corpus store
   - VPS-backed manual embeddings remain the real retrieval backbone
-  - current next step is to expand graph-driven hubs beyond the first exact-vehicle surface and use the same export to power stronger related-page/internal-link generation
+  - current next step is to push the same report-backed prioritization deeper into homepage and diagnostic entry surfaces, then keep burning down the remaining underlinked nodes from the daily graph-priority report
   - auth and personal history utility routes should remain non-indexable
   - sitemap freshness should come from `src/lib/sitemap.ts` or `SITEMAP_LAST_MOD`, not hard-coded stale dates
   - `scripts/internal-link-audit.js` should fail loudly if seed fetches fail instead of silently reporting zero discovered links

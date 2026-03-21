@@ -7,7 +7,7 @@ import { decodeVin } from '../services/apiClient';
 import { getYears, getMakesForYear, fetchModels } from '../services/vehicleData';
 import { trackVehicleSearch, trackVinDecode } from '../lib/analytics';
 import { useT } from '@/lib/translations';
-import { buildRepairUrl } from '@/lib/vehicleIdentity';
+import { buildRepairUrl, buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
 interface HolographicDashboardProps {
     onVehicleChange?: (vehicle: { year: string; make: string; model: string }) => void;
@@ -35,6 +35,17 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
     const [loadingModels, setLoadingModels] = useState(false);
     const availableMakes = vehicle.year ? getMakesForYear(vehicle.year) : [];
     const matchedSymptomCluster = getSymptomClusterFromText(task);
+    const hasVehicleLock = Boolean(vehicle.year && vehicle.make && vehicle.model);
+    const wiringHref = hasVehicleLock
+        ? `/wiring?${new URLSearchParams({
+            year: vehicle.year,
+            make: vehicle.make,
+            model: vehicle.model,
+        }).toString()}`
+        : '/wiring';
+    const vehicleHubHref = hasVehicleLock
+        ? buildVehicleHubUrl(vehicle.year, vehicle.make, vehicle.model)
+        : '/repair';
 
     useEffect(() => {
         if (vehicle.make && vehicle.year) {
@@ -199,8 +210,52 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                     </div>
                 </div>
 
+                <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.06] p-4">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-300/85">Primary route</p>
+                            <p className="mt-2 text-xs leading-5 text-gray-300">
+                                Pick year, make, and model, then enter the exact vehicle hub. Add a symptom only if you want to skip straight into diagnosis or a task-specific guide.
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (hasVehicleLock) {
+                                    router.push(vehicleHubHref);
+                                }
+                            }}
+                            disabled={!hasVehicleLock}
+                            className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold uppercase tracking-[0.18em] text-black transition-all hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            {hasVehicleLock ? `Open ${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Open vehicle hub'}
+                        </button>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                        <Link
+                            href={wiringHref}
+                            className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 hover:border-cyan-400/35 hover:text-cyan-200 transition-all"
+                        >
+                            Wiring diagrams
+                        </Link>
+                        <Link
+                            href="/codes"
+                            className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 hover:border-cyan-400/35 hover:text-cyan-200 transition-all"
+                        >
+                            OBD2 codes
+                        </Link>
+                        <Link
+                            href="/parts"
+                            className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 hover:border-cyan-400/35 hover:text-cyan-200 transition-all"
+                        >
+                            Parts
+                        </Link>
+                    </div>
+                </div>
+
                 <div className="relative group">
                     <label htmlFor="symptom-input" className="sr-only">Describe Symptom</label>
+                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500">Optional shortcut</p>
                     <div className="absolute left-4 top-3.5 text-gray-500 group-focus-within:text-brand-cyan transition-colors">
                         <Wrench className="w-5 h-5" />
                     </div>

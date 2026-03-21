@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import { buildSymptomHref, getSymptomClusterBySlug, getSymptomClusterFromText, SYMPTOM_CLUSTERS } from '@/data/symptomGraph';
-import { getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
+import { getPriorityCodePagesForSymptomCluster, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildSymptomNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
@@ -52,6 +52,7 @@ export default async function SymptomHubPage({ params }: PageProps) {
   }
 
   const symptomHub = buildSymptomHubGraph(matchedCluster);
+  const priorityCodePages = getPriorityCodePagesForSymptomCluster(matchedCluster, 6);
   const supportGapRepairs = getSupportGapRepairsForTasks(matchedCluster.likelyTasks, 6);
   const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('symptom', symptomHub.groups);
   const knowledgeGraphExport = buildKnowledgeGraphExport({
@@ -210,6 +211,33 @@ export default async function SymptomHubPage({ params }: PageProps) {
                 context={{ task: matchedCluster.slug }}
               />
             ))}
+          </div>
+        </section>
+      )}
+
+      {priorityCodePages.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 pb-14">
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">
+            <div className="mb-5">
+              <h2 className="text-2xl font-semibold text-white">Priority code pages this symptom should reinforce</h2>
+              <p className="text-gray-300 mt-2">
+                These code pages are still light on inbound support. Linking them from the canonical symptom hub helps push more authority into the code-to-repair path.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
+              {priorityCodePages.map((entry) => (
+                <Link
+                  key={entry.href}
+                  href={entry.href}
+                  className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-emerald-400/40 hover:bg-black/30 transition-all"
+                >
+                  <p className="text-xs uppercase tracking-[0.2em] text-emerald-300/80 mb-2">{entry.affectedSystem} Code</p>
+                  <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                  <p className="text-xs text-gray-400 mt-2">{entry.action}</p>
+                  <p className="text-xs text-gray-500 mt-1">Opportunity score {entry.opportunityScore}</p>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}

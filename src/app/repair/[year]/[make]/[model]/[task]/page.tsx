@@ -12,7 +12,7 @@ import { buildSymptomHref, getSymptomClustersForRepairTask } from '@/data/sympto
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
-import { getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
+import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
 import { buildEdgeReference, buildRepairNodeId, buildSymptomNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
@@ -658,6 +658,7 @@ export default async function Page({ params }: PageProps) {
         ...(TASK_META[canonicalTask]?.extraKeywords || []),
         ...repairData.warnings,
     ], 4);
+    const prioritySymptomHubs = getPrioritySymptomHubsForTasks([canonicalTask], 4);
     const symptomNodes = symptomClusters.map((cluster, index) => ({
         ...buildEdgeReference({
             sourceNodeId: buildRepairNodeId(resolvedYear, displayMake, displayModel, canonicalTask),
@@ -726,6 +727,8 @@ export default async function Page({ params }: PageProps) {
         .slice(0, 9);
     const relatedVehicleWiringNodes = (vehicleWiringGroup?.nodes ?? []).slice(0, 6);
     const relatedVehicleCodeNodes = (vehicleCodeGroup?.nodes ?? []).slice(0, 6);
+    const priorityCodePages = getPriorityCodePagesForTasks([canonicalTask], 4)
+        .filter((entry) => !relatedVehicleCodeNodes.some((node) => node.href === entry.href));
     const toolResourceLinks = getRelatedToolLinksForRepair(displayMake, displayModel, canonicalTask, 4);
     const manualMakeHref = buildManualBrowserPath(displayMake);
     const manualYearHref = buildManualBrowserPath(displayMake, resolvedYear);
@@ -1094,7 +1097,7 @@ export default async function Page({ params }: PageProps) {
                     </section>
                 )}
 
-                {symptomClusters.length > 0 && (
+                {prioritySymptomHubs.length > 0 && (
                     <section className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-6 md:p-7">
                         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                             <div className="max-w-3xl">
@@ -1102,29 +1105,68 @@ export default async function Page({ params }: PageProps) {
                                     Symptom routing
                                 </p>
                                 <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                                    Common symptoms that lead to this repair
+                                    Priority symptom hubs that lead to this repair
                                 </h2>
                                 <p className="mt-3 text-sm leading-7 text-amber-50/85">
-                                    These canonical symptom hubs connect plain-English complaints back into this repair path, related codes, and exact vehicle troubleshooting.
+                                    These report-backed symptom hubs are the strongest plain-English entry points into this repair path, related codes, and exact vehicle troubleshooting.
                                 </p>
                             </div>
                             <Link
-                                href={`/diagnose?year=${resolvedYear}&make=${canonicalMake}&model=${canonicalModel}&task=${encodeURIComponent(symptomClusters[0].label)}`}
+                                href={`/diagnose?year=${resolvedYear}&make=${canonicalMake}&model=${canonicalModel}&task=${encodeURIComponent(prioritySymptomHubs[0].label)}`}
                                 className="inline-flex items-center justify-center rounded-full bg-amber-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-amber-400"
                             >
                                 Diagnose from symptom
                             </Link>
                         </div>
                         <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                            {symptomClusters.map((cluster) => (
+                            {prioritySymptomHubs.map((cluster) => (
                                 <Link
-                                    key={cluster.slug}
-                                    href={buildSymptomHref(cluster.slug)}
+                                    key={cluster.href}
+                                    href={cluster.href}
                                     className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
                                 >
                                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200/80 mb-2">Symptom Hub</p>
                                     <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
                                     <p className="mt-2 text-sm leading-6 text-gray-300">{cluster.summary}</p>
+                                    <p className="mt-2 text-xs leading-6 text-gray-500">Opportunity score {cluster.opportunityScore}</p>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {priorityCodePages.length > 0 && (
+                    <section className="mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-7">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                            <div className="max-w-3xl">
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200/80">
+                                    Code reinforcement
+                                </p>
+                                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                                    Priority code pages this repair should support
+                                </h2>
+                                <p className="mt-3 text-sm leading-7 text-emerald-50/85">
+                                    These code pages are still light on inbound support. Promoting them from repair surfaces helps strengthen code-to-repair discovery and keeps the graph tighter.
+                                </p>
+                            </div>
+                            <Link
+                                href="/codes"
+                                className="inline-flex items-center justify-center rounded-full border border-emerald-300/30 px-5 py-3 text-sm font-semibold text-emerald-100 transition hover:border-emerald-200/50 hover:bg-white/[0.04]"
+                            >
+                                Browse all codes
+                            </Link>
+                        </div>
+                        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                            {priorityCodePages.map((entry) => (
+                                <Link
+                                    key={entry.href}
+                                    href={entry.href}
+                                    className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-emerald-400/40 hover:bg-black/30 transition-all"
+                                >
+                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200/80 mb-2">{entry.affectedSystem} Code</p>
+                                    <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                                    <p className="mt-2 text-xs leading-6 text-gray-400">{entry.action}</p>
+                                    <p className="mt-1 text-xs leading-6 text-gray-500">Opportunity score {entry.opportunityScore}</p>
                                 </Link>
                             ))}
                         </div>

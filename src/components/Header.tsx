@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, startTransition } from 'react';
+import React, { useState, useEffect, useRef, startTransition } from 'react';
 import Link from 'next/link';
-import { Cpu, Menu, X, History, LogOut, Zap, Shield } from 'lucide-react';
+import { ChevronDown, Cpu, Menu, X, History, LogOut, Zap, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useT } from '@/lib/translations';
@@ -11,7 +11,46 @@ const Header: React.FC = () => {
     const { user, logout } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
+    const toolsMenuRef = useRef<HTMLDivElement | null>(null);
     const t = useT();
+
+    const desktopNavItems = [
+        { key: 'nav.guides', href: '/guides' },
+        { key: 'nav.community', href: '/community' },
+    ];
+
+    const toolsMenuItems = [
+        {
+            label: 'Wiring Diagrams',
+            href: '/wiring',
+            description: 'Jump straight to vehicle-system diagram clusters.',
+        },
+        {
+            label: t('nav.codes'),
+            href: '/codes',
+            description: 'Trouble-code pages connected to repairs, symptoms, and wiring.',
+        },
+        {
+            label: 'Repair Hub',
+            href: '/repair',
+            description: 'Browse graph-driven repair and symptom entry points.',
+        },
+        {
+            label: t('nav.parts'),
+            href: '/parts',
+            description: 'Compare parts before teardown or ordering.',
+        },
+    ];
+
+    const mobileNavItems = [
+        { label: t('nav.guides'), href: '/guides' },
+        { label: 'Wiring Diagrams', href: '/wiring' },
+        { label: t('nav.codes'), href: '/codes' },
+        { label: 'Repair Hub', href: '/repair' },
+        { label: t('nav.parts'), href: '/parts' },
+        { label: t('nav.community'), href: '/community' },
+    ];
 
     useEffect(() => {
         let ticking = false;
@@ -37,9 +76,34 @@ const Header: React.FC = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        if (!isToolsMenuOpen) return;
+
+        const handlePointerDown = (event: MouseEvent) => {
+            if (!toolsMenuRef.current?.contains(event.target as Node)) {
+                setIsToolsMenuOpen(false);
+            }
+        };
+
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsToolsMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handlePointerDown);
+        document.addEventListener('keydown', handleEscape);
+
+        return () => {
+            document.removeEventListener('mousedown', handlePointerDown);
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [isToolsMenuOpen]);
+
     const handleLogout = async () => {
         await logout();
         setIsMobileMenuOpen(false);
+        setIsToolsMenuOpen(false);
     };
 
     return (
@@ -67,12 +131,7 @@ const Header: React.FC = () => {
 
                     {/* Desktop Navigation */}
                     <nav aria-label="Main navigation" className="hidden md:flex items-center gap-5">
-                        {[
-                            { key: 'nav.guides', href: '/guides' },
-                            { key: 'nav.codes', href: '/codes' },
-                            { key: 'nav.parts', href: '/parts' },
-                            { key: 'nav.community', href: '/community' },
-                        ].map((item) => (
+                        {desktopNavItems.map((item) => (
                             <Link
                                 key={item.key}
                                 href={item.href}
@@ -82,6 +141,53 @@ const Header: React.FC = () => {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
                             </Link>
                         ))}
+                        <div
+                            ref={toolsMenuRef}
+                            className="relative"
+                            onMouseEnter={() => setIsToolsMenuOpen(true)}
+                            onMouseLeave={() => setIsToolsMenuOpen(false)}
+                        >
+                            <button
+                                type="button"
+                                onClick={() => setIsToolsMenuOpen((open) => !open)}
+                                className="flex items-center gap-1.5 font-body text-sm text-gray-300 hover:text-cyan-400 transition-colors"
+                                aria-haspopup="menu"
+                                aria-expanded={isToolsMenuOpen}
+                            >
+                                <span>Tools</span>
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isToolsMenuOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {isToolsMenuOpen && (
+                                <div
+                                    className="absolute left-1/2 top-full mt-4 w-[22rem] -translate-x-1/2 rounded-2xl border border-cyan-500/20 bg-black/95 p-3 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+                                    role="menu"
+                                    aria-label="Tools"
+                                >
+                                    <div className="mb-2 px-3 pt-2">
+                                        <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-300/80">Quick access</p>
+                                        <p className="mt-2 text-sm text-gray-400">Move directly into wiring, codes, repair hubs, and parts without losing the scroll.</p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        {toolsMenuItems.map((item) => (
+                                            <Link
+                                                key={item.href}
+                                                href={item.href}
+                                                className="block rounded-xl border border-transparent px-3 py-3 transition-all hover:border-cyan-500/25 hover:bg-cyan-500/10"
+                                                role="menuitem"
+                                                onClick={() => setIsToolsMenuOpen(false)}
+                                            >
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <span className="font-body text-sm font-semibold text-white">{item.label}</span>
+                                                    <span className="text-[10px] uppercase tracking-[0.18em] text-cyan-300/70">Open</span>
+                                                </div>
+                                                <p className="mt-1 text-xs leading-5 text-gray-400">{item.description}</p>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </nav>
 
                     {/* CTA Buttons */}
@@ -132,7 +238,10 @@ const Header: React.FC = () => {
                     {/* Mobile Menu Button */}
                     <button
                         className="md:hidden text-white"
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        onClick={() => {
+                            setIsMobileMenuOpen(!isMobileMenuOpen);
+                            setIsToolsMenuOpen(false);
+                        }}
                         aria-label="Toggle menu"
                     >
                         {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -148,19 +257,18 @@ const Header: React.FC = () => {
                 }`}
             >
                 <div className="px-4 py-6 space-y-4">
-                    {[
-                        { key: 'nav.guides', href: '/guides' },
-                        { key: 'nav.codes', href: '/codes' },
-                        { key: 'nav.parts', href: '/parts' },
-                        { key: 'nav.community', href: '/community' },
-                    ].map((item) => (
+                    <div className="rounded-2xl border border-cyan-500/15 bg-black/20 p-4">
+                        <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-300/80">Tools</p>
+                        <p className="mt-2 text-xs leading-5 text-gray-400">Fast paths for users who came for wiring, codes, repair hubs, or parts.</p>
+                    </div>
+                    {mobileNavItems.map((item) => (
                         <Link
-                            key={item.key}
+                            key={item.href}
                             href={item.href}
                             className="block font-body text-gray-300 hover:text-cyan-400 transition-colors"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
-                            {t(item.key)}
+                            {item.label}
                         </Link>
                     ))}
 

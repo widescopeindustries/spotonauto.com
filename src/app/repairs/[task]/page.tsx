@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
-import { buildSymptomHref, getSymptomClusterFromText, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
+import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
 import { getTier1RescuePagesForTask } from '@/data/rescuePriority';
+import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 
 function toTitleCase(slug: string): string {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -59,7 +60,10 @@ export default async function TaskCategoryPage({ params }: PageProps) {
 
   const taskName = toTitleCase(canonicalTask);
   const priorityPages = getTier1RescuePagesForTask(canonicalTask);
-  const symptomClusters = getSymptomClustersForRepairTask(canonicalTask, [canonicalTask, taskName], 6);
+  const supportGapPages = getSupportGapRepairsForTasks([canonicalTask], 6)
+    .filter((entry) => !priorityPages.some((page) => page.href === entry.href));
+  const prioritySymptomHubs = getPrioritySymptomHubsForTasks([canonicalTask], 6);
+  const priorityCodePages = getPriorityCodePagesForTasks([canonicalTask], 6);
 
   // Build vehicle list grouped by make
   const makeGroups: { make: string; vehicles: { year: number; model: string; makeSlug: string; modelSlug: string }[] }[] = [];
@@ -148,13 +152,42 @@ export default async function TaskCategoryPage({ params }: PageProps) {
           </section>
         )}
 
-        {symptomClusters.length > 0 && (
+        {supportGapPages.length > 0 && (
+          <section className="mb-10 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
+              <div>
+                <h2 className="text-xl font-bold text-white">Graph-priority exact pages for {taskName}</h2>
+                <p className="text-sm text-gray-300 mt-1">
+                  These exact repair pages match this task family but still need stronger inbound support from category, symptom, and code surfaces.
+                </p>
+              </div>
+              <Link href="/repair" className="text-sm text-violet-300 hover:text-violet-200 transition-colors">
+                Open repair hub →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              {supportGapPages.map((entry) => (
+                <Link
+                  key={entry.href}
+                  href={entry.href}
+                  className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
+                >
+                  <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Support Gap</p>
+                  <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                  <p className="text-xs text-gray-400 mt-2">Opportunity score {entry.opportunityScore}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {prioritySymptomHubs.length > 0 && (
           <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-6">
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
               <div>
-                <h2 className="text-xl font-bold text-white">Symptoms that commonly resolve into {taskName}</h2>
+                <h2 className="text-xl font-bold text-white">Priority symptom hubs that resolve into {taskName}</h2>
                 <p className="text-sm text-gray-300 mt-1">
-                  These canonical symptom hubs map plain-English complaints into this repair family, related codes, and exact vehicle pages.
+                  These are the strongest report-backed symptom entry points for this repair family. Keeping them prominent helps route plain-English demand into exact repair pages faster.
                 </p>
               </div>
               <Link href="/symptoms" className="text-sm text-amber-300 hover:text-amber-200 transition-colors">
@@ -162,15 +195,47 @@ export default async function TaskCategoryPage({ params }: PageProps) {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-              {symptomClusters.map((cluster) => (
+              {prioritySymptomHubs.map((cluster) => (
                 <Link
-                  key={cluster.slug}
-                  href={buildSymptomHref(cluster.slug)}
+                  key={cluster.href}
+                  href={cluster.href}
                   className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
                 >
                   <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Symptom Cluster</p>
                   <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
                   <p className="text-sm text-gray-300 mt-2">{cluster.summary}</p>
+                  <p className="text-xs text-gray-500 mt-2">Opportunity score {cluster.opportunityScore}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {priorityCodePages.length > 0 && (
+          <section className="mb-10 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
+              <div>
+                <h2 className="text-xl font-bold text-white">Priority code pages tied to {taskName}</h2>
+                <p className="text-sm text-gray-300 mt-1">
+                  The graph report still sees these code pages as light on support. Promoting them here helps reinforce code-to-repair routing.
+                </p>
+              </div>
+              <Link href="/codes" className="text-sm text-emerald-300 hover:text-emerald-200 transition-colors">
+                Browse all codes →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+              {priorityCodePages.map((entry) => (
+                <Link
+                  key={entry.href}
+                  href={entry.href}
+                  className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-emerald-400/40 hover:bg-black/30 transition-all"
+                >
+                  <p className="text-xs uppercase tracking-[0.2em] text-emerald-300/80 mb-2">{entry.affectedSystem} Code</p>
+                  <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                  <p className="text-xs text-gray-400 mt-2">
+                    {entry.action} · Opportunity score {entry.opportunityScore}
+                  </p>
                 </Link>
               ))}
             </div>
