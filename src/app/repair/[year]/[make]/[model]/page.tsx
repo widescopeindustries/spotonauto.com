@@ -45,6 +45,20 @@ type CommandCardTone = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
 const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
   {
     eyebrow: 'DIY favorite',
+    title: 'Brakes',
+    description: 'Pads and rotors are still one of the clearest DIY wins when the instructions stay vehicle-specific and the parts list is simple.',
+    guideHint: 'Exact guide includes pad hardware, rotor notes, torque path, and the consumables people forget to buy.',
+    tone: 'cyan',
+    primaryTask: 'brake-pad-replacement',
+    primaryLabel: 'Open brake pad guide',
+    relatedTasks: [
+      { task: 'brake-rotor-replacement', label: 'Rotor guide' },
+    ],
+    supportGroup: 'tool',
+    supportPatterns: [/brake/i, /pad/i, /rotor/i, /fluid/i],
+  },
+  {
+    eyebrow: 'DIY favorite',
     title: 'Lighting',
     description: 'When the job is a headlight, tail light, or other exterior-light issue, owners usually want the fastest exact guide first.',
     guideHint: 'Exact guide includes bulb fitment, access path, and purchase links before you pull trim.',
@@ -71,18 +85,6 @@ const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
     ],
     supportGroup: 'wiring',
     supportPatterns: [/charging/i, /starting/i, /ignition/i, /battery/i, /power/i],
-  },
-  {
-    eyebrow: 'Safety-first',
-    title: 'Brakes',
-    description: 'Pads and rotors are still one of the biggest step-up DIY jobs people are willing to tackle when the instructions are clear.',
-    guideHint: 'Exact guide includes pad hardware, torque path, and the consumables needed before you put the wheel back on.',
-    tone: 'cyan',
-    primaryTask: 'brake-pad-replacement',
-    primaryLabel: 'Open brake pad guide',
-    relatedTasks: [
-      { task: 'brake-rotor-replacement', label: 'Rotor guide' },
-    ],
   },
   {
     eyebrow: 'Recurring maintenance',
@@ -197,6 +199,39 @@ function findSupportingPreviewLink(
     href: match.href,
     label: stripVehiclePrefix(match.label, vehicleLabel),
   };
+}
+
+function buildPriorityRepairPreviewLinks(
+  exactPages: PreviewLink[],
+  repairNodes: Array<{ href: string; label: string }>,
+  vehicleLabel: string,
+): PreviewLink[] {
+  const brakeLinks = repairNodes
+    .filter((node) => /brake/i.test(node.label))
+    .map((node) => ({
+      href: node.href,
+      label: stripVehiclePrefix(node.label, vehicleLabel),
+    }));
+
+  const fallbackLinks = repairNodes
+    .filter((node) => !/brake/i.test(node.label))
+    .map((node) => ({
+      href: node.href,
+      label: stripVehiclePrefix(node.label, vehicleLabel),
+    }));
+
+  const combined = [...brakeLinks, ...exactPages, ...fallbackLinks];
+  const deduped: PreviewLink[] = [];
+  const seen = new Set<string>();
+
+  for (const link of combined) {
+    if (seen.has(link.href)) continue;
+    seen.add(link.href);
+    deduped.push(link);
+    if (deduped.length >= 3) break;
+  }
+
+  return deduped;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -342,10 +377,14 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
       tone: 'cyan',
       primaryHref: repairGroup?.nodes[0]?.href || '/repairs',
       primaryLabel: repairGroup ? 'Open exact repairs' : 'Browse repair categories',
-      previewLinks: buildPreviewLinks(exactVehicleTier1Pages.length > 0 ? exactVehicleTier1Pages.map((entry) => ({
-        href: entry.href,
-        label: toTitleCase(entry.task),
-      })) : (repairGroup?.nodes ?? []), vehicleLabel, 3),
+      previewLinks: buildPriorityRepairPreviewLinks(
+        exactVehicleTier1Pages.length > 0 ? exactVehicleTier1Pages.map((entry) => ({
+          href: entry.href,
+          label: toTitleCase(entry.task),
+        })) : [],
+        repairGroup?.nodes ?? [],
+        vehicleLabel,
+      ),
     },
     {
       eyebrow: 'Electrical first',
@@ -496,7 +535,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
             <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-300/85">DIY Quick Starts</p>
             <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Start with the jobs owners actually do themselves</h2>
             <p className="text-sm md:text-base text-gray-300 mt-3">
-              These are the lighter-maintenance paths most searchers are willing to take on: lights, battery, brakes, oil, fluids,
+              These are the lighter-maintenance paths most searchers are willing to take on: brakes, lights, battery, oil, fluids,
               and filters. Each exact guide already carries the tools, parts, fitment notes, and consumable-buying context that make the job easier to finish.
             </p>
           </div>

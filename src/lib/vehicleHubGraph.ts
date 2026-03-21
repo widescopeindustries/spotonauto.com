@@ -61,21 +61,22 @@ export interface VehicleHubGraph {
 }
 
 const PRIORITY_TASKS = [
+  'headlight-bulb-replacement',
+  'brake-pad-replacement',
+  'brake-rotor-replacement',
+  'tail-light-replacement',
   'battery-replacement',
   'alternator-replacement',
   'starter-replacement',
   'oil-change',
-  'tail-light-replacement',
-  'brake-pad-replacement',
-  'spark-plug-replacement',
-  'serpentine-belt-replacement',
-  'thermostat-replacement',
-  'headlight-bulb-replacement',
   'transmission-fluid-change',
-  'radiator-replacement',
   'coolant-flush',
   'engine-air-filter-replacement',
   'cabin-air-filter-replacement',
+  'spark-plug-replacement',
+  'serpentine-belt-replacement',
+  'thermostat-replacement',
+  'radiator-replacement',
 ];
 
 function toTaskLabel(task: string): string {

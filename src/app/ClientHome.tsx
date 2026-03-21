@@ -3,7 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { ArrowRight, Battery, Cpu, Droplets, Lightbulb, Route, Search, Wrench } from 'lucide-react';
+import { ArrowRight, Battery, CircleDot, Cpu, Droplets, Lightbulb, Route, Search, Wrench } from 'lucide-react';
 import { useT } from '@/lib/translations';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
@@ -107,6 +107,19 @@ const SEARCH_MOMENTUM_CLUSTERS = [
         ],
     },
     {
+        eyebrow: 'Brakes',
+        title: 'Pads, rotors, and basic brake service',
+        description: 'Brake work is already showing up as a strong next-wave DIY lane, especially when the exact vehicle path makes parts, tools, and the first steps obvious.',
+        href: '/repairs/brake-pad-replacement',
+        cta: 'Browse brake guides',
+        icon: CircleDot,
+        links: [
+            { href: '/repair/2017/ford/fusion/brake-pad-replacement', label: '2017 Ford Fusion brake pads' },
+            { href: '/repair/2014/nissan/altima/brake-pad-replacement', label: '2014 Nissan Altima front brakes' },
+            { href: '/repair/2018/toyota/camry/brake-pad-replacement', label: '2018 Toyota Camry brake pads' },
+        ],
+    },
+    {
         eyebrow: 'Fluids',
         title: 'Oil, transmission fluid, and coolant',
         description: 'Fluid-intent searchers are usually ready to act if the spec, quantity, and refill path are obvious enough.',
@@ -132,6 +145,15 @@ const SEARCH_MOMENTUM_CLUSTERS = [
             { href: '/repair/2016/nissan/rogue/cabin-air-filter-replacement', label: '2016 Nissan Rogue cabin air filter' },
         ],
     },
+];
+
+const COMMAND_CENTER_MOMENTUM = [
+    { year: '2014', make: 'Ford', model: 'Escape', note: 'Lights, brakes, cooling, and tune-up signals are stacking here.' },
+    { year: '2016', make: 'Ford', model: 'Fusion', note: 'Headlights and brakes are surfacing together on one vehicle family.' },
+    { year: '2016', make: 'Nissan', model: 'Rogue', note: 'Filters, brakes, and lights all have active exact-vehicle demand.' },
+    { year: '2014', make: 'Nissan', model: 'Altima', note: 'Brake and lighting demand is repeating on the same hub.' },
+    { year: '2018', make: 'Toyota', model: 'Camry', note: 'Headlights and brake work are both getting tested already.' },
+    { year: '2016', make: 'Hyundai', model: 'Elantra', note: 'Lighting, brakes, and charging all showed up in the query mix.' },
 ];
 
 function HeroSection() {
@@ -308,12 +330,12 @@ function SearchMomentumSection() {
                             Expand the DIY clusters that are already pulling people in
                         </h2>
                         <p className="text-lg text-gray-300">
-                            These are the simpler jobs current search demand keeps circling: lighting, battery, fluids, and filters.
+                            These are the simpler jobs current search demand keeps circling: lighting, brakes, battery, fluids, and filters.
                             The goal is not more homepage noise. It is stronger paths into the exact guides and repair categories that are already earning trust.
                         </p>
                     </div>
 
-                    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+                    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-5">
                         {SEARCH_MOMENTUM_CLUSTERS.map((cluster) => {
                             const Icon = cluster.icon;
 
@@ -361,6 +383,59 @@ function SearchMomentumSection() {
     );
 }
 
+function CommandCenterMomentumSection() {
+    return (
+        <section className="px-4 pb-24 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+                <div className="rounded-[32px] matte-panel p-8 sm:p-10">
+                    <div className="mb-8 max-w-3xl space-y-4">
+                        <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
+                            Command centers gaining traction
+                        </span>
+                        <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
+                            Repeated year-make-model demand should flow into stronger exact vehicle hubs
+                        </h2>
+                        <p className="text-lg text-gray-300">
+                            These exact vehicles are already showing repeated search intent across multiple tasks. Their command centers should be the clean handoff from discovery into wiring, repairs, specs, symptoms, and the next likely job.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+                        {COMMAND_CENTER_MOMENTUM.map((vehicle) => {
+                            const href = buildVehicleHubUrl(vehicle.year, vehicle.make, vehicle.model);
+                            const label = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+
+                            return (
+                                <Link
+                                    key={label}
+                                    href={href}
+                                    className="group rounded-[24px] matte-panel-soft p-6 transition-all hover:border-cyan-500/30 hover:bg-white/[0.035]"
+                                >
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="space-y-3">
+                                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Exact vehicle hub</p>
+                                            <h3 className="font-display text-2xl font-bold text-white">{label}</h3>
+                                            <p className="text-sm leading-6 text-gray-400">{vehicle.note}</p>
+                                        </div>
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300">
+                                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-100">
+                                        Open command center
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 export default function ClientHome() {
     return (
         <div className="relative min-h-screen overflow-x-hidden matte-shell text-white">
@@ -373,6 +448,7 @@ export default function ClientHome() {
                 <HeroSection />
                 <AlternateEntrySection />
                 <SearchMomentumSection />
+                <CommandCenterMomentumSection />
             </div>
         </div>
     );

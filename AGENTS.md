@@ -34,8 +34,11 @@ Update it when product decisions, traps, or standing preferences change.
   - fallback entry paths like wiring, codes, and diagnosis should remain visible but secondary
   - if query families become clear in Search Console, the homepage can surface a restrained lower-page cluster section keyed to those real DIY lanes
     - keep it below the primary vehicle-first flow
-    - use it to reinforce clusters already showing traction, such as lighting, battery, fluids, and filters
+    - use it to reinforce clusters already showing traction, such as lighting, brakes, battery, fluids, and filters
     - prefer category pages plus a few exact-query examples over a giant “popular guides” wall
+  - if repeated exact year/make/model demand becomes obvious in Search Console, the homepage can also surface a restrained lower-page command-center strip for those exact vehicles
+    - keep this below the main vehicle selector and below the first fallback entry section
+    - use it to route users into command centers that are already showing multi-intent demand, not as a generic “popular vehicles” wall
 - Exact year/make/model pages are now the intended place for richer option density.
   - `src/app/repair/[year]/[make]/[model]/page.tsx` should read like a vehicle command center, not a generic SEO landing page
   - the exact vehicle hub should expose the main spokes users care about: repairs, wiring, symptoms, codes, specs/tools, and OEM manual paths
@@ -91,6 +94,10 @@ Update it when product decisions, traps, or standing preferences change.
   - exact repair guides now link back to the year/make/model hub, and model guide pages link into a representative exact-vehicle hub
   - code pages now emit graph-driven exact vehicle hub links
   - exact wiring pages now emit graph-driven exact vehicle hub links and a direct hub CTA
+  - current Search Console enrichment priority is:
+    - cluster level: lighting first, then brakes, battery, oil/fluids, and filters
+    - repeated exact-vehicle hubs: `2014 Ford Escape`, `2016 Ford Fusion`, `2016 Nissan Rogue`, `2014 Nissan Altima`, `2018 Toyota Camry`, `2016 Hyundai Elantra`
+    - repeated family-level demand to keep enriching: `Jeep Grand Cherokee`, `Ford Explorer`, `Ford Fusion`, `Ford Escape`, `Nissan Altima`, `Nissan Rogue`, `Toyota Tacoma`, `Kia Optima`, `Hyundai Tucson`, `Jeep Cherokee`
   - graph-priority helpers now also surface report-backed orphan symptom hubs and orphan code pages:
     - `src/lib/graphPriorityLinks.ts`
   - repair category pages now reinforce report-backed symptom hubs, support-gap exact repair pages, and priority code pages:

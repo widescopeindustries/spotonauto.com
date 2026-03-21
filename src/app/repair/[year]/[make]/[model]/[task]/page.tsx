@@ -614,6 +614,14 @@ interface TaskSupportNote {
     tone: 'cyan' | 'emerald' | 'amber' | 'violet';
 }
 
+interface ExactGuideProfile {
+    titleSuffix?: string;
+    descriptionSuffix?: string;
+    extraKeywords?: string[];
+    supportNote?: TaskSupportNote;
+    faq?: { question: string; answer: string };
+}
+
 const TASK_SUPPORT_NOTES: Partial<Record<string, TaskSupportNote>> = {
     'tail-light-replacement': {
         eyebrow: 'Quick check',
@@ -660,6 +668,177 @@ const TASK_SUPPORT_NOTES: Partial<Record<string, TaskSupportNote>> = {
         tone: 'cyan',
     },
 };
+
+function getExactGuideProfile(year: string, make: string, model: string, task: string): ExactGuideProfile | null {
+    const yearNum = Number(year);
+    const makeKey = slugifyRoutePart(make);
+    const modelKey = slugifyRoutePart(model);
+    const taskKey = slugifyRoutePart(task);
+
+    if (taskKey === 'headlight-bulb-replacement' && makeKey === 'jeep' && modelKey === 'grand-cherokee' && [2017, 2018, 2019].includes(yearNum)) {
+        return {
+            titleSuffix: 'Headlight Replacement Quick Check',
+            descriptionSuffix: 'If you are here for 2017-2019 Jeep Grand Cherokee headlight replacement, verify bulb-only vs. full assembly, side, and connector access before ordering.',
+            extraKeywords: [
+                `${year} Jeep Grand Cherokee headlight replacement`,
+                'Jeep Grand Cherokee headlight bulb replacement',
+                'Grand Cherokee low beam bulb',
+            ],
+            supportNote: {
+                eyebrow: 'Exact-fit quick check',
+                title: `${year} Jeep Grand Cherokee headlights split into a few common setups`,
+                intro: 'Use the exact vehicle context before ordering so you do not buy the wrong side or the wrong assembly style.',
+                bullets: [
+                    'Confirm whether you need a bulb, socket, or full lamp assembly.',
+                    'Check driver vs. passenger side before checkout.',
+                    'Look for connector access notes if the housing is tight behind the bumper or fender liner.',
+                ],
+                tone: 'amber',
+            },
+            faq: {
+                question: `What should I verify first for a ${year} Jeep Grand Cherokee headlight replacement?`,
+                answer: 'Confirm whether the job is bulb-only or a full assembly, then check driver or passenger side before ordering. If access is tight, use the vehicle hub first so you can compare wiring, codes, and related lighting pages before you buy parts.',
+            },
+        };
+    }
+
+    if (taskKey === 'battery-replacement' && makeKey === 'honda' && modelKey === 'civic' && yearNum === 2008) {
+        return {
+            titleSuffix: 'Battery Location, Group Size & Fitment Check',
+            descriptionSuffix: 'For 2008 Honda Civic battery replacement, verify group size, terminal layout, and hold-down style before you order the battery.',
+            extraKeywords: [
+                '2008 Honda Civic battery replacement',
+                'Honda Civic battery group size',
+                'Honda Civic battery location',
+            ],
+            supportNote: {
+                eyebrow: 'Exact-fit quick check',
+                title: '2008 Honda Civic battery jobs are won by fitment first',
+                intro: 'This is the kind of repair where the part should match before the wrench turns. A quick fitment check saves the most time.',
+                bullets: [
+                    'Confirm the battery group size before checkout.',
+                    'Check terminal orientation and hold-down shape.',
+                    'Plan for a memory saver only if your setup calls for one.',
+                ],
+                tone: 'emerald',
+            },
+            faq: {
+                question: 'What should I check before buying a 2008 Honda Civic battery?',
+                answer: 'Verify the battery group size, terminal orientation, and hold-down shape before you buy. If the car has electronic memory concerns, keep a memory saver on hand so the install stays simple.',
+            },
+        };
+    }
+
+    if (taskKey === 'transmission-fluid-change' && makeKey === 'acura' && modelKey === 'tsx' && yearNum === 2004) {
+        return {
+            titleSuffix: 'ATF Type, Capacity & Fill Check',
+            descriptionSuffix: 'For 2004 Acura TSX transmission fluid, confirm the exact ATF spec, service method, and refill amount before opening the transmission.',
+            extraKeywords: [
+                '2004 Acura TSX transmission fluid',
+                'Acura TSX ATF type',
+                'Acura TSX transmission fluid capacity',
+            ],
+            supportNote: {
+                eyebrow: 'Exact-fit quick check',
+                title: '2004 Acura TSX transmission fluid is spec-sensitive',
+                intro: 'This job pays to verify the fluid spec and the service method first, because the wrong ATF creates more problems than it solves.',
+                bullets: [
+                    'Match the exact ATF spec before ordering.',
+                    'Confirm whether your service is drain-and-fill or a pan-drop method.',
+                    'Plan for a washer, gasket, or filter only if the transmission uses them.',
+                ],
+                tone: 'violet',
+            },
+            faq: {
+                question: 'What should I confirm before changing transmission fluid on a 2004 Acura TSX?',
+                answer: 'Confirm the exact ATF spec, whether the service is drain-and-fill or pan-drop, and the refill amount before you open anything. That keeps the job from turning into a troubleshooting exercise after the drain plug comes out.',
+            },
+        };
+    }
+
+    if (taskKey === 'headlight-bulb-replacement' && makeKey === 'kia' && modelKey === 'optima' && yearNum === 2019) {
+        return {
+            titleSuffix: 'Headlight Bulb Size & Assembly Check',
+            descriptionSuffix: 'If you are here for 2019 Kia Optima headlight replacement, confirm bulb size, side, and whether the job is bulb-only or full assembly before ordering.',
+            extraKeywords: [
+                '2019 Kia Optima headlight replacement',
+                '2019 Kia Optima headlight bulb replacement',
+                'Kia Optima headlight bulb size',
+            ],
+            supportNote: {
+                eyebrow: 'Exact-fit quick check',
+                title: '2019 Kia Optima headlights are easiest when you verify the assembly first',
+                intro: 'The fastest way to avoid a wrong-order delay is to confirm whether you are buying a bulb or a full lamp assembly.',
+                bullets: [
+                    'Check bulb-only vs. full assembly before checkout.',
+                    'Confirm driver or passenger side if the job is one-sided.',
+                    'Look for access notes if the housing sits behind a tight inner liner.',
+                ],
+                tone: 'amber',
+            },
+            faq: {
+                question: 'What should I verify before buying a 2019 Kia Optima headlight part?',
+                answer: 'Check whether you need a bulb or a full assembly, then confirm the side and connector style. If the car uses multiple trims or light packages, use the exact vehicle hub first so you stay on the right fitment path.',
+            },
+        };
+    }
+
+    if (makeKey === 'toyota' && modelKey === 'tacoma' && yearNum === 2020 && taskKey === 'cabin-air-filter-replacement') {
+        return {
+            titleSuffix: 'Cabin Filter Size, Location & Access Check',
+            descriptionSuffix: 'For 2020 Toyota Tacoma cabin air filter replacement, confirm filter size, access point, and arrow direction before opening the glove box area.',
+            extraKeywords: [
+                '2020 Toyota Tacoma cabin air filter',
+                'Toyota Tacoma cabin filter location',
+                '2020 Tacoma cabin air filter replacement',
+            ],
+            supportNote: {
+                eyebrow: 'Exact-fit quick check',
+                title: '2020 Toyota Tacoma cabin air filter jobs are mostly about access',
+                intro: 'Once you know the access path, this job is quick. The main risk is ordering the wrong size or installing the filter backward.',
+                bullets: [
+                    'Confirm the filter size before checkout.',
+                    'Check the access panel or glove box release path first.',
+                    'Watch the airflow arrow direction during install.',
+                ],
+                tone: 'cyan',
+            },
+            faq: {
+                question: 'What should I check before replacing the cabin air filter on a 2020 Toyota Tacoma?',
+                answer: 'Confirm the filter size, the access point, and the airflow arrow direction before you start. That keeps the job simple and prevents a second trip for the right filter.',
+            },
+        };
+    }
+
+    if (makeKey === 'toyota' && modelKey === 'tacoma' && yearNum === 2020 && taskKey === 'battery-replacement') {
+        return {
+            titleSuffix: 'Battery Size, Terminal Layout & Fitment Check',
+            descriptionSuffix: 'For 2020 Toyota Tacoma battery replacement, verify group size, terminal orientation, and hold-down shape before you order the battery.',
+            extraKeywords: [
+                '2020 Toyota Tacoma battery replacement',
+                'Toyota Tacoma battery group size',
+                'Toyota Tacoma battery location',
+            ],
+            supportNote: {
+                eyebrow: 'Exact-fit quick check',
+                title: '2020 Toyota Tacoma battery replacement starts with the right fit',
+                intro: 'The battery itself is the first thing to verify. After that, make sure the terminals and hold-down match the truck before ordering.',
+                bullets: [
+                    'Confirm group size and terminal orientation first.',
+                    'Check the hold-down style before checkout.',
+                    'Use a memory saver only if your trim or electronics call for it.',
+                ],
+                tone: 'emerald',
+            },
+            faq: {
+                question: 'What should I verify before buying a 2020 Toyota Tacoma battery?',
+                answer: 'Confirm the group size, terminal orientation, and hold-down style before you order. If the truck has memory-sensitive electronics, keep a memory saver handy so the swap stays quick.',
+            },
+        };
+    }
+
+    return null;
+}
 
 const TASK_SUPPORT_TONE_CLASSES: Record<TaskSupportNote['tone'], {
     shell: string;
@@ -777,13 +956,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const displayMake = getDisplayName(canonicalMake, 'make') || toTitleCase(canonicalMake);
     const displayModel = getDisplayName(canonicalModel, 'model') || toTitleCase(canonicalModel);
     const vehicleName = `${canonicalYear} ${displayMake} ${displayModel}`;
+    const exactGuideProfile = getExactGuideProfile(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
 
     const taskMeta = TASK_META[canonicalTask];
     const title = taskMeta
-        ? `${vehicleName} ${taskMeta.title} | SpotOnAuto`
+        ? `${vehicleName} ${taskMeta.title}${exactGuideProfile?.titleSuffix ? ` | ${exactGuideProfile.titleSuffix}` : ''} | SpotOnAuto`
         : `${vehicleName} ${cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Guide | SpotOnAuto`;
     const description = taskMeta
-        ? taskMeta.description.replace('{v}', vehicleName)
+        ? `${taskMeta.description.replace('{v}', vehicleName)}${exactGuideProfile?.descriptionSuffix ? ` ${exactGuideProfile.descriptionSuffix}` : ''}`
         : `DIY ${cleanTask} for your ${vehicleName}. Step-by-step guide with tools, parts list, and safety tips. Save $100–$400 vs. the shop.`;
 
     const baseKeywords = [
@@ -793,7 +973,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         `${cleanTask} ${displayMake} ${displayModel} DIY`,
         `${canonicalYear} ${displayMake} ${cleanTask}`,
     ];
-    const keywords = taskMeta ? [...baseKeywords, ...taskMeta.extraKeywords] : baseKeywords;
+    const keywords = taskMeta
+        ? [...baseKeywords, ...taskMeta.extraKeywords, ...(exactGuideProfile?.extraKeywords || [])]
+        : [...baseKeywords, ...(exactGuideProfile?.extraKeywords || [])];
 
     return {
         title,
@@ -972,6 +1154,7 @@ export default async function Page({ params }: PageProps) {
         }));
     const commercialConfig = getCommercialTaskConfig(canonicalTask);
     const taskSupportNote = TASK_SUPPORT_NOTES[canonicalTask];
+    const exactGuideProfile = getExactGuideProfile(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
     const primaryAffiliatePart = affiliateSpotlightParts[0];
     const primaryAffiliateQuery = primaryAffiliatePart?.query || `${vehicleName} ${cleanTask}`;
     const primaryAffiliateName = primaryAffiliatePart?.name || `${cleanTask} parts`;
@@ -1072,6 +1255,7 @@ export default async function Page({ params }: PageProps) {
             question: sparkPlugIgnitionNote.faqQuestion,
             answer: sparkPlugIgnitionNote.faqAnswer,
         }] : []),
+        ...(exactGuideProfile?.faq ? [exactGuideProfile.faq] : []),
     ];
 
     const faqSchemaData = {
@@ -1225,6 +1409,34 @@ export default async function Page({ params }: PageProps) {
                         </div>
                     </section>
                 )}
+
+                {exactGuideProfile?.supportNote && (() => {
+                    const supportNote = exactGuideProfile.supportNote;
+                    const toneClasses = TASK_SUPPORT_TONE_CLASSES[supportNote.tone];
+
+                    return (
+                    <section className={`mb-8 rounded-2xl border p-6 md:p-7 ${toneClasses.shell}`}>
+                        <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${toneClasses.eyebrow}`}>
+                            {supportNote.eyebrow}
+                        </p>
+                        <h2 className={`mt-3 text-2xl font-semibold tracking-tight ${toneClasses.title}`}>
+                            {supportNote.title}
+                        </h2>
+                        <p className="mt-3 text-sm leading-7 text-gray-200/90">
+                            {supportNote.intro}
+                        </p>
+                        <div className="mt-5 grid gap-3 md:grid-cols-3">
+                            {supportNote.bullets.map((bullet) => (
+                                <div key={bullet} className="rounded-xl border border-white/10 bg-black/20 p-4">
+                                    <p className={`text-sm leading-6 ${toneClasses.bullet}`}>
+                                        {bullet}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                    );
+                })()}
 
                 <section className="mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-7">
                     <h2 className="text-xl font-semibold text-white tracking-tight">Why this guide is trustworthy</h2>
