@@ -36,10 +36,10 @@ Update it when product decisions, traps, or standing preferences change.
   - `src/app/repair/[year]/[make]/[model]/page.tsx` should read like a vehicle command center, not a generic SEO landing page
   - the exact vehicle hub should expose the main spokes users care about: repairs, wiring, symptoms, codes, specs/tools, and OEM manual paths
   - near the top of the hub, prioritize a clear DIY-first lane for the jobs normal owners actually attempt:
-    - headlights / lighting
+    - headlights / lighting, including tail lights
     - battery / starting
     - brakes
-    - oil and fluids
+    - oil and fluids, including transmission fluid and coolant
     - filters / tune-up
   - those quick-start links should drive into the exact vehicle repair guides because the one-off guide pages already carry the deeper tool, parts, fitment, and consumable-buying support
   - if complexity is added, prefer adding it to the exact vehicle hub rather than pushing it back onto the homepage

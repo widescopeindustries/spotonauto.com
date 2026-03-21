@@ -46,14 +46,16 @@ const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
   {
     eyebrow: 'DIY favorite',
     title: 'Lighting',
-    description: 'When the job is a headlight or other front-light issue, owners usually want the fastest exact guide first.',
+    description: 'When the job is a headlight, tail light, or other exterior-light issue, owners usually want the fastest exact guide first.',
     guideHint: 'Exact guide includes bulb fitment, access path, and purchase links before you pull trim.',
     tone: 'amber',
     primaryTask: 'headlight-bulb-replacement',
     primaryLabel: 'Open headlight guide',
-    relatedTasks: [],
+    relatedTasks: [
+      { task: 'tail-light-replacement', label: 'Tail light guide' },
+    ],
     supportGroup: 'wiring',
-    supportPatterns: [/lighting/i, /headlight/i, /exterior/i],
+    supportPatterns: [/lighting/i, /headlight/i, /tail/i, /exterior/i],
   },
   {
     eyebrow: 'Stranded-car fix',
@@ -91,10 +93,11 @@ const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
     primaryTask: 'oil-change',
     primaryLabel: 'Open oil guide',
     relatedTasks: [
+      { task: 'transmission-fluid-change', label: 'Transmission fluid' },
       { task: 'coolant-flush', label: 'Coolant flush' },
     ],
     supportGroup: 'tool',
-    supportPatterns: [/oil/i, /fluid/i, /capacity/i, /spec/i],
+    supportPatterns: [/oil/i, /fluid/i, /capacity/i, /spec/i, /transmission/i, /coolant/i],
   },
   {
     eyebrow: 'Low-risk win',
