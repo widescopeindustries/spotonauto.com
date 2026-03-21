@@ -16,6 +16,7 @@
     "analytics:backbone": "node --experimental-strip-types scripts/manual-backbone-scoreboard.ts",
     "analytics:wiring": "node scripts/wiring-analytics-report.js",
     "analytics:graph": "node scripts/graph-analytics-report.js",
+    "analytics:graph-priority": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/graph-priority-report.ts",
     "analytics:graph-dimensions": "node scripts/ensure-graph-ga4-dimensions.js",
     "analytics:graph-dimensions:create": "node scripts/ensure-graph-ga4-dimensions.js --create-missing",
     "analytics:graph-scoreboard": "node scripts/graph-scoreboard.js",

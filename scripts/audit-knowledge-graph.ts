@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
+import { pathToFileURL } from 'url';
 import { DTC_CODES } from '../src/data/dtc-codes-data.ts';
+import { SYMPTOM_CLUSTERS, buildSymptomHref, getSymptomClustersForTexts } from '../src/data/symptomGraph.ts';
 import {
   WIRING_SEO_SYSTEMS,
   WIRING_SEO_VEHICLES,
@@ -13,7 +15,7 @@ import {
   getRepairLinksForWiringVehicle,
   getWiringLinksForCode,
 } from '../src/lib/diagnosticCrossLinks.ts';
-import { buildCodeNodeId, buildWiringNodeId } from '../src/lib/knowledgeGraph.ts';
+import { buildCodeNodeId, buildEdgeReference, buildSymptomNodeId, buildWiringNodeId } from '../src/lib/knowledgeGraph.ts';
 import {
   buildKnowledgeGraphExport,
   type KnowledgeGraphExportBlockInput,
@@ -21,12 +23,13 @@ import {
   type KnowledgeGraphExportNode,
 } from '../src/lib/knowledgeGraphExport.ts';
 import { rankKnowledgeGraphBlocks, type KnowledgeGraphSurface } from '../src/lib/knowledgeGraphRanking.ts';
+import { buildSymptomHubGraph } from '../src/lib/symptomHubGraph.ts';
 import { buildVehicleHubGraph } from '../src/lib/vehicleHubGraph.ts';
 import { slugifyRoutePart } from '../src/data/vehicles.ts';
 import { buildVehicleNodeId } from '../src/lib/vehicleIdentity.ts';
 import { buildVehicleHubLinkForWiring, buildVehicleHubLinksForCode } from '../src/lib/vehicleHubLinks.ts';
 
-interface SurfaceSnapshot {
+export interface SurfaceSnapshot {
   surface: KnowledgeGraphSurface;
   rootNodeId: string;
   nodes: KnowledgeGraphExportNode[];
@@ -39,7 +42,7 @@ interface Conflict {
   second: string;
 }
 
-interface AuditResult {
+export interface AuditResult {
   totals: {
     snapshots: number;
     nodes: number;
@@ -155,6 +158,24 @@ function mergeEdgeMetadata(
 function buildCodeBlocks(code: (typeof DTC_CODES)[number]): KnowledgeGraphExportBlockInput[] {
   const repairLinks = getRepairLinksForCode(code, 6);
   const wiringLinks = getWiringLinksForCode(code, 6);
+  const symptomHubLinks = getSymptomClustersForTexts([
+    ...code.symptoms,
+    code.title,
+    code.description,
+    code.commonFix,
+  ], 4).map((cluster) => ({
+    ...buildEdgeReference({
+      sourceNodeId: buildCodeNodeId(code.code),
+      targetNodeId: buildSymptomNodeId(cluster.slug),
+      relation: 'has-symptom',
+      code: code.code,
+    }),
+    href: buildSymptomHref(cluster.slug),
+    label: cluster.label,
+    description: cluster.summary,
+    badge: 'Symptom Hub',
+    targetKind: 'symptom' as const,
+  }));
   const vehicleHubLinks = buildVehicleHubLinksForCode({
     code: code.code,
     repairLinks,
@@ -173,6 +194,13 @@ function buildCodeBlocks(code: (typeof DTC_CODES)[number]): KnowledgeGraphExport
         ...link,
         targetKind: 'vehicle' as const,
       })),
+    }] : []),
+    ...(symptomHubLinks.length > 0 ? [{
+      kind: 'symptom' as const,
+      title: 'Canonical Symptom Hubs',
+      browseHref: '/symptoms',
+      theme: 'amber' as const,
+      nodes: symptomHubLinks,
     }] : []),
     ...(repairLinks.length > 0 ? [{
       kind: 'repair' as const,
@@ -279,7 +307,34 @@ function buildWiringBlocks(system: WiringSystemSlug, vehicle: typeof WIRING_SEO_
   }));
 }
 
-async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
+function buildSymptomBlocks(slug: string): KnowledgeGraphExportBlockInput[] {
+  const cluster = SYMPTOM_CLUSTERS.find((entry) => entry.slug === slug);
+  if (!cluster) return [];
+
+  const symptomHub = buildSymptomHubGraph(cluster);
+  return rankKnowledgeGraphBlocks('symptom', symptomHub.groups).map((block) => ({
+    kind: block.kind,
+    title: block.title,
+    browseHref: block.browseHref,
+    nodes: block.nodes.map((node) => ({
+      nodeId: node.nodeId,
+      edgeId: node.edgeId,
+      sourceNodeId: node.sourceNodeId,
+      targetNodeId: node.targetNodeId,
+      vehicleNodeId: node.vehicleNodeId,
+      taskNodeId: node.taskNodeId,
+      systemNodeId: node.systemNodeId,
+      codeNodeId: node.codeNodeId,
+      href: node.href,
+      label: node.label,
+      description: node.description,
+      badge: node.badge,
+      targetKind: node.kind,
+    })),
+  }));
+}
+
+export async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
   const snapshots: SurfaceSnapshot[] = [];
 
   for (const code of DTC_CODES) {
@@ -293,6 +348,23 @@ async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
 
     snapshots.push({
       surface: 'code',
+      rootNodeId: exportData.rootNodeId,
+      nodes: exportData.nodes,
+      edges: exportData.edges,
+    });
+  }
+
+  for (const cluster of SYMPTOM_CLUSTERS) {
+    const exportData = buildKnowledgeGraphExport({
+      surface: 'symptom',
+      rootNodeId: buildSymptomNodeId(cluster.slug),
+      rootKind: 'symptom',
+      rootLabel: cluster.label,
+      blocks: buildSymptomBlocks(cluster.slug),
+    });
+
+    snapshots.push({
+      surface: 'symptom',
       rootNodeId: exportData.rootNodeId,
       nodes: exportData.nodes,
       edges: exportData.edges,
@@ -366,7 +438,7 @@ async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
   return snapshots;
 }
 
-function auditSnapshots(snapshots: SurfaceSnapshot[]): AuditResult {
+export function auditSnapshots(snapshots: SurfaceSnapshot[]): AuditResult {
   const uniqueNodes = new Map<string, KnowledgeGraphExportNode>();
   const uniqueEdges = new Map<string, KnowledgeGraphExportEdge>();
   const surfaces = new Map<string, { snapshots: number; nodeIds: Set<string>; edgeIds: Set<string> }>();
@@ -463,7 +535,9 @@ async function main(): Promise<void> {
   console.log(JSON.stringify(audit, null, 2));
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
