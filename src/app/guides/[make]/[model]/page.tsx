@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
+import { getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
 import { getToolPagesForVehicle, TOOL_TYPE_META } from '@/data/tools-pages';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
@@ -80,6 +81,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
   const representativeWiringNodes = (representativeVehicleGraph.groups.find((group) => group.kind === 'wiring')?.nodes ?? []).slice(0, 6);
   const representativeCodeNodes = (representativeVehicleGraph.groups.find((group) => group.kind === 'dtc')?.nodes ?? []).slice(0, 6);
   const representativeManualNodes = (representativeVehicleGraph.groups.find((group) => group.kind === 'manual')?.nodes ?? []).slice(0, 2);
+  const tier1ModelPages = getTier1RescuePagesForVehicle(originalMake, originalModel).slice(0, 6);
 
   const faqItems = [
     {
@@ -164,6 +166,38 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             </Link>
           </div>
         </section>
+
+        {tier1ModelPages.length > 0 && (
+          <section className="mb-12 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div>
+                <h2 className="text-xl font-bold text-white">Tier-1 winner repair pages for the {originalMake} {originalModel}</h2>
+                <p className="text-sm text-gray-300 mt-2">
+                  These exact repair pages are in the recovery lane already. Keep them linked from the model cluster so authority flows into the pages with the best current ranking potential.
+                </p>
+              </div>
+              <Link
+                href="/repair/winners/sitemap.xml"
+                className="inline-flex items-center rounded-lg border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:border-violet-400/40 hover:bg-violet-500/20 transition-all"
+              >
+                Winner sitemap
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {tier1ModelPages.map((entry) => (
+                <Link
+                  key={entry.href}
+                  href={entry.href}
+                  className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                >
+                  <p className="text-xs uppercase tracking-[0.18em] text-violet-300/80 mb-2">Tier-1 winner</p>
+                  <h3 className="text-base font-semibold text-white">{entry.year} {entry.make} {entry.model}</h3>
+                  <p className="text-sm text-gray-300 mt-2 capitalize">{entry.task.replace(/-/g, ' ')}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {representativeRepairNodes.map((node) => (

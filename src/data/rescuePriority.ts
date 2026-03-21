@@ -1,3 +1,5 @@
+import { slugifyRoutePart } from '@/data/vehicles';
+
 export interface RescuePriorityEntry {
   href: string;
   year: number;
@@ -132,4 +134,37 @@ export const TIER_1_RESCUE_PAGES: RescuePriorityEntry[] = [
 
 export function getTier1RescuePagesForTask(task: string): RescuePriorityEntry[] {
   return TIER_1_RESCUE_PAGES.filter((entry) => entry.task === task);
+}
+
+function normalizeHref(value: string): string {
+  return value.replace(/\/+$/, '');
+}
+
+function normalizeKey(value: string): string {
+  return slugifyRoutePart(value);
+}
+
+export function isTier1RescueHref(href: string): boolean {
+  const normalizedHref = normalizeHref(href);
+  return TIER_1_RESCUE_PAGES.some((entry) => normalizeHref(entry.href) === normalizedHref);
+}
+
+export function getTier1RescueEntryByHref(href: string): RescuePriorityEntry | null {
+  const normalizedHref = normalizeHref(href);
+  return TIER_1_RESCUE_PAGES.find((entry) => normalizeHref(entry.href) === normalizedHref) || null;
+}
+
+export function getTier1RescuePagesForVehicle(make: string, model: string): RescuePriorityEntry[] {
+  const normalizedMake = normalizeKey(make);
+  const normalizedModel = normalizeKey(model);
+
+  return TIER_1_RESCUE_PAGES.filter((entry) =>
+    normalizeKey(entry.make) === normalizedMake &&
+    normalizeKey(entry.model) === normalizedModel
+  );
+}
+
+export function getTier1RescuePagesForExactVehicle(year: string | number, make: string, model: string): RescuePriorityEntry[] {
+  const normalizedYear = Number(year);
+  return getTier1RescuePagesForVehicle(make, model).filter((entry) => entry.year === normalizedYear);
 }

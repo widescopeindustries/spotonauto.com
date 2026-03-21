@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { isTier1RescueHref } from '@/data/rescuePriority';
 import { buildSymptomHref, getSymptomClustersForTexts } from '@/data/symptomGraph';
 import type { DTCCode } from '@/data/dtc-codes-data';
 import AdUnit from '@/components/AdUnit';
@@ -13,6 +14,7 @@ import {
 import { buildCodeNodeId, buildEdgeReference, buildSymptomNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
+import { getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { buildVehicleHubLinksForCode } from '@/lib/vehicleHubLinks';
 
@@ -40,6 +42,11 @@ export default function CodePageClient({
     const repairLinks = getRepairLinksForCode(code, 6);
     const wiringLinks = getWiringLinksForCode(code, 6);
     const relatedCodeLinks = getRelatedCodeLinks(code, 6);
+    const tier1RepairLinks = repairLinks.filter((link) => isTier1RescueHref(link.href)).slice(0, 4);
+    const supportGapRepairLinks = code.repairTaskSlug
+        ? getSupportGapRepairsForTasks([code.repairTaskSlug], 4)
+            .filter((entry) => !repairLinks.some((link) => link.href === entry.href))
+        : [];
     const symptomHubLinks = getSymptomClustersForTexts([
         ...code.symptoms,
         code.title,
@@ -276,6 +283,45 @@ export default function CodePageClient({
                     </Link>
                     <p className="text-gray-600 text-xs mt-2">Select your exact vehicle for a personalized step-by-step guide</p>
                 </div>
+            )}
+
+            {(tier1RepairLinks.length > 0 || supportGapRepairLinks.length > 0) && (
+                <section className="mb-12 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
+                    <h3 className="text-xl font-bold text-white mb-4">Priority exact repair pages for this code family</h3>
+                    <p className="text-gray-300 text-sm mb-5">
+                        These exact repair pages are in the current recovery lane. Linking them from code pages helps push authority into the repair surfaces most likely to win first.
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                        {tier1RepairLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="rounded-xl bg-black/20 border border-white/10 p-4 hover:border-violet-400/40 transition"
+                            >
+                                <div className="flex items-center justify-between gap-3">
+                                    <span className="text-violet-300 font-mono text-sm">{link.label}</span>
+                                    <span className="text-[11px] uppercase tracking-wider text-violet-200/80">Tier-1 winner</span>
+                                </div>
+                                <p className="text-xs text-gray-400 mt-2 leading-relaxed">{link.description}</p>
+                            </Link>
+                        ))}
+                        {supportGapRepairLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="rounded-xl bg-black/20 border border-white/10 p-4 hover:border-violet-400/40 transition"
+                            >
+                                <div className="flex items-center justify-between gap-3">
+                                    <span className="text-violet-300 font-mono text-sm">{link.label}</span>
+                                    <span className="text-[11px] uppercase tracking-wider text-violet-200/80">Support gap</span>
+                                </div>
+                                <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                                    Opportunity score {link.opportunityScore}. Use this page to reinforce the repair family behind {code.code}.
+                                </p>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
             )}
 
             {/* Reverse knowledge graph */}

@@ -7,6 +7,7 @@ import {
   VEHICLE_PRODUCTION_YEARS,
   slugifyRoutePart,
 } from '@/data/vehicles';
+import { getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
 import { buildVehicleNodeId } from '@/lib/vehicleIdentity';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
@@ -152,6 +153,10 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
   const repairGroup = rankedKnowledgeGroups.find((group) => group.kind === 'repair');
   const wiringGroup = rankedKnowledgeGroups.find((group) => group.kind === 'wiring');
   const manualGroup = rankedKnowledgeGroups.find((group) => group.kind === 'manual');
+  const exactVehicleTier1Pages = getTier1RescuePagesForExactVehicle(canonicalYear, originalMake, originalModel).slice(0, 6);
+  const modelTier1Pages = getTier1RescuePagesForVehicle(originalMake, originalModel)
+    .filter((entry) => entry.year !== resolvedYear)
+    .slice(0, 6);
   const relatedYears = getRelatedYears(resolvedYear, production.start, production.end);
 
   const faqItems = [
@@ -265,6 +270,55 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           </Link>
         </div>
       </section>
+
+      {(exactVehicleTier1Pages.length > 0 || modelTier1Pages.length > 0) && (
+        <section className="max-w-6xl mx-auto px-4 pb-12">
+          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
+            <div className="mb-5">
+              <h2 className="text-2xl font-bold text-white">Tier-1 winner pages tied to this vehicle line</h2>
+              <p className="text-sm text-gray-300 mt-2">
+                These are the strongest exact repair pages already connected to the {originalMake} {originalModel} cluster. Keep them close to the vehicle hub so authority flows into pages that can rank sooner.
+              </p>
+            </div>
+            <div className="grid gap-6 xl:grid-cols-2">
+              {exactVehicleTier1Pages.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3">Exact {vehicleLabel} winner pages</h3>
+                  <div className="space-y-3">
+                    {exactVehicleTier1Pages.map((entry) => (
+                      <Link
+                        key={entry.href}
+                        href={entry.href}
+                        className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                      >
+                        <p className="text-base font-semibold text-white">{entry.year} {entry.make} {entry.model}</p>
+                        <p className="mt-1 text-sm capitalize text-gray-300">{entry.task.replace(/-/g, ' ')}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {modelTier1Pages.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3">More winner pages for this model line</h3>
+                  <div className="space-y-3">
+                    {modelTier1Pages.map((entry) => (
+                      <Link
+                        key={entry.href}
+                        href={entry.href}
+                        className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                      >
+                        <p className="text-base font-semibold text-white">{entry.year} {entry.make} {entry.model}</p>
+                        <p className="mt-1 text-sm capitalize text-gray-300">{entry.task.replace(/-/g, ' ')}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {repairGroup && (
         <section className="max-w-6xl mx-auto px-4 pb-12">

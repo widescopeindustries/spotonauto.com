@@ -7,10 +7,12 @@ import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
+import { getTier1RescueEntryByHref, getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
 import { buildSymptomHref, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
+import { getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
 import { buildEdgeReference, buildRepairNodeId, buildSymptomNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
@@ -614,6 +616,16 @@ export default async function Page({ params }: PageProps) {
 
     const vehicleName = `${resolvedYear} ${displayMake} ${displayModel}`;
     const vehicleHubHref = `/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`;
+    const tier1RescueEntry = getTier1RescueEntryByHref(canonicalPath);
+    const sameTaskSupportGapPages = getSupportGapRepairsForTasks([canonicalTask], 6)
+        .filter((entry) => entry.href !== canonicalPath)
+        .slice(0, 3);
+    const exactVehicleTier1Pages = getTier1RescuePagesForExactVehicle(resolvedYear, displayMake, displayModel)
+        .filter((entry) => entry.href !== canonicalPath)
+        .slice(0, 2);
+    const modelTier1Pages = getTier1RescuePagesForVehicle(displayMake, displayModel)
+        .filter((entry) => entry.href !== canonicalPath)
+        .slice(0, 4);
 
     const vehicleSpec = getVehicleRepairSpec(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
     const genericData = REPAIR_DATA[canonicalTask] || DEFAULT_REPAIR;
@@ -970,6 +982,117 @@ export default async function Page({ params }: PageProps) {
                         </div>
                     </div>
                 </section>
+
+                {(tier1RescueEntry || sameTaskSupportGapPages.length > 0 || modelTier1Pages.length > 0 || exactVehicleTier1Pages.length > 0) && (
+                    <section className="mb-8 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6 md:p-7">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                            <div className="max-w-3xl">
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80">
+                                    Tier-1 recovery lane
+                                </p>
+                                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                                    Push more authority into the strongest exact repair pages
+                                </h2>
+                                <p className="mt-3 text-sm leading-7 text-violet-50/85">
+                                    {tier1RescueEntry
+                                        ? 'This exact repair page is part of the winner set. Keep it tightly connected to vehicle, model, symptom, and code surfaces so Google sees it as a primary destination.'
+                                        : 'This repair family is part of the current recovery lane. The links below reinforce exact repair pages the graph says deserve more internal authority.'}
+                                </p>
+                            </div>
+                            <Link
+                                href="/repair/winners/sitemap.xml"
+                                className="inline-flex items-center justify-center rounded-full bg-violet-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-400"
+                            >
+                                Open winner sitemap
+                            </Link>
+                        </div>
+
+                        <div className="mt-5 grid gap-3 md:grid-cols-3">
+                            <Link
+                                href={vehicleHubHref}
+                                className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                            >
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Vehicle hub</p>
+                                <h3 className="text-base font-semibold text-white">Support the exact {vehicleName} cluster</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-300">Keep repair, wiring, manual, and code links flowing through the exact vehicle hub.</p>
+                            </Link>
+                            <Link
+                                href={`/guides/${canonicalMake}/${canonicalModel}`}
+                                className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                            >
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Model cluster</p>
+                                <h3 className="text-base font-semibold text-white">{displayMake} {displayModel} guide cluster</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-300">Route broader make/model traffic into the exact repair pages that already have recovery potential.</p>
+                            </Link>
+                            <Link
+                                href={`/repairs/${canonicalTask}`}
+                                className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                            >
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Repair family</p>
+                                <h3 className="text-base font-semibold text-white">Reinforce the {cleanTask} category hub</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-300">Use the category hub to keep task-level crawl flow pointed into the exact pages that matter most.</p>
+                            </Link>
+                        </div>
+
+                        {sameTaskSupportGapPages.length > 0 && (
+                            <div className="mt-6">
+                                <h3 className="text-lg font-semibold text-white mb-3">High-opportunity exact pages in this repair family</h3>
+                                <div className="grid gap-3 md:grid-cols-3">
+                                    {sameTaskSupportGapPages.map((entry) => (
+                                        <Link
+                                            key={entry.href}
+                                            href={entry.href}
+                                            className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                                        >
+                                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Support Gap</p>
+                                            <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                                            <p className="mt-2 text-xs leading-6 text-gray-400">Opportunity score {entry.opportunityScore}</p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {(exactVehicleTier1Pages.length > 0 || modelTier1Pages.length > 0) && (
+                            <div className="mt-6 grid gap-6 xl:grid-cols-2">
+                                {exactVehicleTier1Pages.length > 0 && (
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-white mb-3">Other winner pages for this exact vehicle</h3>
+                                        <div className="space-y-3">
+                                            {exactVehicleTier1Pages.map((entry) => (
+                                                <Link
+                                                    key={entry.href}
+                                                    href={entry.href}
+                                                    className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                                                >
+                                                    <p className="text-base font-semibold text-white">{entry.year} {entry.make} {entry.model}</p>
+                                                    <p className="mt-1 text-sm capitalize text-gray-300">{entry.task.replace(/-/g, ' ')}</p>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {modelTier1Pages.length > 0 && (
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-white mb-3">Winner pages for this model line</h3>
+                                        <div className="space-y-3">
+                                            {modelTier1Pages.map((entry) => (
+                                                <Link
+                                                    key={entry.href}
+                                                    href={entry.href}
+                                                    className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                                                >
+                                                    <p className="text-base font-semibold text-white">{entry.year} {entry.make} {entry.model}</p>
+                                                    <p className="mt-1 text-sm capitalize text-gray-300">{entry.task.replace(/-/g, ' ')}</p>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </section>
+                )}
 
                 {symptomClusters.length > 0 && (
                     <section className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-6 md:p-7">
