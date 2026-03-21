@@ -21,6 +21,13 @@ interface PageProps {
   }>;
 }
 
+interface PreviewLink {
+  href: string;
+  label: string;
+}
+
+type CommandCardTone = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
+
 function toTitleCase(value: string): string {
   return value.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 }
@@ -59,6 +66,22 @@ function getRelatedYears(year: number, start: number, end: number): number[] {
     .filter((candidate) => candidate >= start && candidate <= end && candidate !== year)
     .sort((a, b) => Math.abs(a - year) - Math.abs(b - year) || a - b)
     .slice(0, 6);
+}
+
+function stripVehiclePrefix(label: string, vehicleLabel: string): string {
+  const prefix = `${vehicleLabel} `;
+  return label.startsWith(prefix) ? label.slice(prefix.length) : label;
+}
+
+function buildPreviewLinks(
+  nodes: Array<{ href: string; label: string }>,
+  vehicleLabel: string,
+  limit: number,
+): PreviewLink[] {
+  return nodes.slice(0, limit).map((node) => ({
+    href: node.href,
+    label: stripVehiclePrefix(node.label, vehicleLabel),
+  }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -153,11 +176,91 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
   const repairGroup = rankedKnowledgeGroups.find((group) => group.kind === 'repair');
   const wiringGroup = rankedKnowledgeGroups.find((group) => group.kind === 'wiring');
   const manualGroup = rankedKnowledgeGroups.find((group) => group.kind === 'manual');
-  const exactVehicleTier1Pages = getTier1RescuePagesForExactVehicle(canonicalYear, originalMake, originalModel).slice(0, 6);
+  const symptomGroup = rankedKnowledgeGroups.find((group) => group.kind === 'symptom');
+  const toolGroup = rankedKnowledgeGroups.find((group) => group.kind === 'tool');
+  const codeGroup = rankedKnowledgeGroups.find((group) => group.kind === 'dtc');
+  const exactVehicleTier1Pages = getTier1RescuePagesForExactVehicle(canonicalYear, originalMake, originalModel).slice(0, 4);
   const modelTier1Pages = getTier1RescuePagesForVehicle(originalMake, originalModel)
     .filter((entry) => entry.year !== resolvedYear)
-    .slice(0, 6);
+    .slice(0, 4);
   const relatedYears = getRelatedYears(resolvedYear, production.start, production.end);
+  const commandCards: Array<{
+    eyebrow: string;
+    title: string;
+    description: string;
+    countLabel: string;
+    tone: CommandCardTone;
+    primaryHref: string;
+    primaryLabel: string;
+    previewLinks: PreviewLink[];
+  }> = [
+    {
+      eyebrow: 'Most-used path',
+      title: 'Exact Repair Guides',
+      description: `Open the jobs people actually perform on a ${vehicleLabel}, with the vehicle locked in from the start.`,
+      countLabel: `${vehicleHub.repairCount} exact paths`,
+      tone: 'cyan',
+      primaryHref: repairGroup?.nodes[0]?.href || '/repairs',
+      primaryLabel: repairGroup ? 'Open exact repairs' : 'Browse repair categories',
+      previewLinks: buildPreviewLinks(exactVehicleTier1Pages.length > 0 ? exactVehicleTier1Pages.map((entry) => ({
+        href: entry.href,
+        label: toTitleCase(entry.task),
+      })) : (repairGroup?.nodes ?? []), vehicleLabel, 3),
+    },
+    {
+      eyebrow: 'Electrical first',
+      title: 'Wiring Diagrams',
+      description: 'Jump straight into the exact system diagrams for this vehicle instead of hunting through the homepage.',
+      countLabel: `${vehicleHub.wiringCount} systems`,
+      tone: 'violet',
+      primaryHref: wiringGroup?.nodes[0]?.href || '/wiring',
+      primaryLabel: wiringGroup ? 'Open exact wiring' : 'Browse wiring pages',
+      previewLinks: buildPreviewLinks(wiringGroup?.nodes ?? [], vehicleLabel, 3),
+    },
+    {
+      eyebrow: 'Complaint-led path',
+      title: 'Symptoms and Diagnosis',
+      description: 'Start from the symptom when you know what the car is doing, but not yet which repair or system is behind it.',
+      countLabel: `${vehicleHub.symptomCount} shared symptoms`,
+      tone: 'amber',
+      primaryHref: symptomGroup?.nodes[0]?.href || '/diagnose',
+      primaryLabel: symptomGroup ? 'Open symptom hubs' : 'Start diagnosis',
+      previewLinks: [
+        { href: '/diagnose', label: 'Guided diagnosis' },
+        ...buildPreviewLinks(symptomGroup?.nodes ?? [], vehicleLabel, 2),
+      ].slice(0, 3),
+    },
+    {
+      eyebrow: 'If you have a code',
+      title: 'Trouble Code Pages',
+      description: 'Move from the exact vehicle into shared code clusters that connect back to likely repairs and systems.',
+      countLabel: `${vehicleHub.codeCount} code paths`,
+      tone: 'emerald',
+      primaryHref: codeGroup?.nodes[0]?.href || '/codes',
+      primaryLabel: codeGroup ? 'Open code pages' : 'Browse all codes',
+      previewLinks: buildPreviewLinks(codeGroup?.nodes ?? [], vehicleLabel, 3),
+    },
+    {
+      eyebrow: 'Fitment and reference',
+      title: 'Specs and Tools',
+      description: 'Pull fitment, capacities, locations, and other reference pages that support the job before teardown.',
+      countLabel: `${vehicleHub.toolCount} tool pages`,
+      tone: 'emerald',
+      primaryHref: toolGroup?.nodes[0]?.href || '/tools',
+      primaryLabel: toolGroup ? 'Open specs and tools' : 'Browse tool pages',
+      previewLinks: buildPreviewLinks(toolGroup?.nodes ?? [], vehicleLabel, 3),
+    },
+    {
+      eyebrow: 'OEM source',
+      title: 'Factory Manual Paths',
+      description: 'Open the nearest year-level or make-level manual index without losing the canonical vehicle identity.',
+      countLabel: `${manualGroup?.nodes.length || 0} archive paths`,
+      tone: 'slate',
+      primaryHref: manualGroup?.nodes[1]?.href || manualGroup?.nodes[0]?.href || '/manual',
+      primaryLabel: 'Open OEM manual paths',
+      previewLinks: buildPreviewLinks(manualGroup?.nodes ?? [], vehicleLabel, 3),
+    },
+  ];
 
   const faqItems = [
     {
@@ -230,60 +333,98 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           <span className="text-gray-300">{canonicalYear}</span>
         </nav>
 
-        <p className="text-cyan-400 text-xs uppercase tracking-[0.2em] font-bold mb-3">Exact Vehicle Cluster</p>
+        <p className="text-cyan-400 text-xs uppercase tracking-[0.2em] font-bold mb-3">Exact Vehicle Command Center</p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
-          {vehicleLabel} <span className="text-cyan-400">Repair Hub</span>
+          {vehicleLabel} <span className="text-cyan-400">Command Center</span>
         </h1>
         <p className="text-lg text-gray-300 max-w-3xl">
-          One canonical page for your exact vehicle. Use it to move between repair guides, wiring diagrams, factory manual paths,
-          tool pages, and high-signal code clusters without losing the {canonicalYear} {originalMake} {originalModel} context.
+          One canonical page for your exact vehicle. Enter here, then branch into repairs, wiring, codes, symptoms, specs, and
+          OEM manual paths without losing the {canonicalYear} {originalMake} {originalModel} context.
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8">
           <StatCard label="Repair paths" value={String(vehicleHub.repairCount)} />
           <StatCard label="Wiring systems" value={String(vehicleHub.wiringCount)} />
+          <StatCard label="Symptom spokes" value={String(vehicleHub.symptomCount)} />
           <StatCard label="Spec pages" value={String(vehicleHub.toolCount)} />
           <StatCard label="Code clusters" value={String(vehicleHub.codeCount)} />
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 mt-8">
-          <Link
-            href="/diagnose"
-            className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-5 hover:border-cyan-400/45 transition-all"
-          >
-            <h2 className="text-lg font-semibold text-white">Diagnose symptoms first</h2>
-            <p className="text-sm text-gray-300 mt-2">Jump into guided diagnosis if you know the problem but not the repair yet.</p>
-          </Link>
-          <Link
-            href={`/guides/${canonicalMake}/${canonicalModel}`}
-            className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-cyan-500/40 transition-all"
-          >
-            <h2 className="text-lg font-semibold text-white">Open model guide cluster</h2>
-            <p className="text-sm text-gray-300 mt-2">Step back to the broader {originalMake} {originalModel} guide directory.</p>
-          </Link>
-          <Link
-            href={manualGroup?.nodes[1]?.href || '/manual'}
-            className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-cyan-500/40 transition-all"
-          >
-            <h2 className="text-lg font-semibold text-white">Start from the OEM manual</h2>
-            <p className="text-sm text-gray-300 mt-2">Open the nearest factory manual entry point for this exact vehicle year.</p>
-          </Link>
+        <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6 md:p-8 mt-8">
+          <div className="max-w-3xl">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-300/85">Start Here</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Everything for this vehicle, arranged by job</h2>
+            <p className="text-sm md:text-base text-gray-300 mt-3">
+              The homepage now gets people into the vehicle first. This page is where the richer options belong, because every path below already pertains to the exact car they selected.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
+            {commandCards.map((card) => (
+              <HubActionCard
+                key={card.title}
+                eyebrow={card.eyebrow}
+                title={card.title}
+                description={card.description}
+                countLabel={card.countLabel}
+                tone={card.tone}
+                primaryHref={card.primaryHref}
+                primaryLabel={card.primaryLabel}
+                previewLinks={card.previewLinks}
+              />
+            ))}
+          </div>
         </div>
       </section>
+
+      {(symptomGroup || codeGroup) && (
+        <section className="max-w-6xl mx-auto px-4 pb-12">
+          <div className="grid gap-6 lg:grid-cols-2">
+            {symptomGroup && (
+              <EntryPanel
+                title="Start from the complaint"
+                description={`Symptom hubs give the ${vehicleLabel} a calmer entry path when the user knows what the car is doing, but not what to fix yet.`}
+                tone="amber"
+                browseHref="/symptoms"
+                entries={[
+                  { href: '/diagnose', label: 'Guided diagnosis', description: 'Use the AI flow when the symptom needs follow-up questions.' },
+                  ...symptomGroup.nodes.slice(0, 5).map((node) => ({
+                    href: node.href,
+                    label: node.label,
+                    description: node.description,
+                  })),
+                ].slice(0, 5)}
+              />
+            )}
+            {codeGroup && (
+              <EntryPanel
+                title="Have a code already"
+                description="These shared code clusters connect the exact vehicle hub back into code-specific diagnosis, likely repairs, and affected systems."
+                tone="emerald"
+                browseHref="/codes"
+                entries={codeGroup.nodes.slice(0, 5).map((node) => ({
+                  href: node.href,
+                  label: node.label,
+                  description: node.description,
+                }))}
+              />
+            )}
+          </div>
+        </section>
+      )}
 
       {(exactVehicleTier1Pages.length > 0 || modelTier1Pages.length > 0) && (
         <section className="max-w-6xl mx-auto px-4 pb-12">
           <div className="rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
             <div className="mb-5">
-              <h2 className="text-2xl font-bold text-white">Tier-1 winner pages tied to this vehicle line</h2>
+              <h2 className="text-2xl font-bold text-white">High-priority exact pages around this vehicle line</h2>
               <p className="text-sm text-gray-300 mt-2">
-                These are the strongest exact repair pages already connected to the {originalMake} {originalModel} cluster. Keep them close to the vehicle hub so authority flows into pages that can rank sooner.
+                These are the exact repair pages and nearby model-line pages still worth keeping close to the hub while traffic is climbing.
               </p>
             </div>
             <div className="grid gap-6 xl:grid-cols-2">
               {exactVehicleTier1Pages.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-3">Exact {vehicleLabel} winner pages</h3>
+                  <h3 className="text-lg font-semibold text-white mb-3">Exact {vehicleLabel} priority pages</h3>
                   <div className="space-y-3">
                     {exactVehicleTier1Pages.map((entry) => (
                       <Link
@@ -291,8 +432,8 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
                         href={entry.href}
                         className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
                       >
-                        <p className="text-base font-semibold text-white">{entry.year} {entry.make} {entry.model}</p>
-                        <p className="mt-1 text-sm capitalize text-gray-300">{entry.task.replace(/-/g, ' ')}</p>
+                        <p className="text-base font-semibold text-white">{toTitleCase(entry.task)}</p>
+                        <p className="mt-1 text-sm text-gray-300">{entry.year} {entry.make} {entry.model}</p>
                       </Link>
                     ))}
                   </div>
@@ -300,7 +441,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               )}
               {modelTier1Pages.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-3">More winner pages for this model line</h3>
+                  <h3 className="text-lg font-semibold text-white mb-3">More exact pages across this model line</h3>
                   <div className="space-y-3">
                     {modelTier1Pages.map((entry) => (
                       <Link
@@ -342,7 +483,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               >
                 <p className="text-xs uppercase tracking-[0.16em] text-cyan-400/80 mb-2">{node.badge}</p>
                 <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                  {node.label}
+                  {stripVehiclePrefix(node.label, vehicleLabel)}
                 </h3>
                 <p className="text-sm text-gray-400 mt-2">{node.description}</p>
               </Link>
@@ -373,7 +514,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               >
                 <p className="text-xs uppercase tracking-[0.16em] text-violet-300/80 mb-2">{node.badge}</p>
                 <h3 className="text-base font-semibold text-white group-hover:text-violet-300 transition-colors">
-                  {node.label}
+                  {stripVehiclePrefix(node.label, vehicleLabel)}
                 </h3>
                 <p className="text-sm text-gray-400 mt-2">{node.description}</p>
               </Link>
@@ -450,6 +591,146 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
         </dl>
       </section>
     </main>
+  );
+}
+
+const CARD_TONE_CLASSES: Record<CommandCardTone, {
+  shell: string;
+  eyebrow: string;
+  count: string;
+  button: string;
+  chip: string;
+}> = {
+  cyan: {
+    shell: 'border-cyan-500/20 bg-cyan-500/[0.06]',
+    eyebrow: 'text-cyan-300/80',
+    count: 'text-cyan-300',
+    button: 'border-cyan-400/35 text-cyan-200 hover:border-cyan-300/60 hover:bg-cyan-500/10',
+    chip: 'border-cyan-500/20 bg-cyan-500/[0.08] text-cyan-100',
+  },
+  emerald: {
+    shell: 'border-emerald-500/20 bg-emerald-500/[0.06]',
+    eyebrow: 'text-emerald-300/80',
+    count: 'text-emerald-300',
+    button: 'border-emerald-400/35 text-emerald-200 hover:border-emerald-300/60 hover:bg-emerald-500/10',
+    chip: 'border-emerald-500/20 bg-emerald-500/[0.08] text-emerald-100',
+  },
+  amber: {
+    shell: 'border-amber-500/20 bg-amber-500/[0.06]',
+    eyebrow: 'text-amber-300/80',
+    count: 'text-amber-300',
+    button: 'border-amber-400/35 text-amber-100 hover:border-amber-300/60 hover:bg-amber-500/10',
+    chip: 'border-amber-500/20 bg-amber-500/[0.08] text-amber-100',
+  },
+  violet: {
+    shell: 'border-violet-500/20 bg-violet-500/[0.06]',
+    eyebrow: 'text-violet-300/80',
+    count: 'text-violet-300',
+    button: 'border-violet-400/35 text-violet-200 hover:border-violet-300/60 hover:bg-violet-500/10',
+    chip: 'border-violet-500/20 bg-violet-500/[0.08] text-violet-100',
+  },
+  slate: {
+    shell: 'border-slate-500/20 bg-slate-500/[0.08]',
+    eyebrow: 'text-slate-300/80',
+    count: 'text-slate-200',
+    button: 'border-slate-400/35 text-slate-100 hover:border-slate-300/60 hover:bg-slate-500/10',
+    chip: 'border-slate-500/20 bg-slate-500/[0.10] text-slate-100',
+  },
+};
+
+function HubActionCard({
+  eyebrow,
+  title,
+  description,
+  countLabel,
+  tone,
+  primaryHref,
+  primaryLabel,
+  previewLinks,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  countLabel: string;
+  tone: CommandCardTone;
+  primaryHref: string;
+  primaryLabel: string;
+  previewLinks: PreviewLink[];
+}) {
+  const toneClasses = CARD_TONE_CLASSES[tone];
+
+  return (
+    <div className={`rounded-2xl border p-5 ${toneClasses.shell}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className={`text-[11px] uppercase tracking-[0.2em] ${toneClasses.eyebrow}`}>{eyebrow}</p>
+          <h3 className="text-xl font-semibold text-white mt-2">{title}</h3>
+        </div>
+        <span className={`text-xs font-medium ${toneClasses.count}`}>{countLabel}</span>
+      </div>
+      <p className="text-sm leading-6 text-gray-300 mt-3">{description}</p>
+      <Link
+        href={primaryHref}
+        className={`mt-4 inline-flex rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${toneClasses.button}`}
+      >
+        {primaryLabel} →
+      </Link>
+      {previewLinks.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-4">
+          {previewLinks.map((link) => (
+            <Link
+              key={`${title}-${link.href}-${link.label}`}
+              href={link.href}
+              className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${toneClasses.chip}`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EntryPanel({
+  title,
+  description,
+  tone,
+  browseHref,
+  entries,
+}: {
+  title: string;
+  description: string;
+  tone: CommandCardTone;
+  browseHref: string;
+  entries: Array<{ href: string; label: string; description: string }>;
+}) {
+  const toneClasses = CARD_TONE_CLASSES[tone];
+
+  return (
+    <div className={`rounded-2xl border p-6 ${toneClasses.shell}`}>
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <h2 className="text-2xl font-bold text-white">{title}</h2>
+          <p className="text-sm text-gray-300 mt-2">{description}</p>
+        </div>
+        <Link href={browseHref} className={`text-sm hover:underline ${toneClasses.count}`}>
+          Browse →
+        </Link>
+      </div>
+      <div className="space-y-3 mt-5">
+        {entries.map((entry) => (
+          <Link
+            key={`${title}-${entry.href}-${entry.label}`}
+            href={entry.href}
+            className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-white/20 hover:bg-black/30 transition-all"
+          >
+            <p className="text-base font-semibold text-white">{entry.label}</p>
+            <p className="text-sm text-gray-400 mt-2">{entry.description}</p>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 

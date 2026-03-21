@@ -29,6 +29,10 @@ Update it when product decisions, traps, or standing preferences change.
   - the primary landing-page job is to get users into the exact year/make/model hub quickly
   - `year -> make -> model` should feel like the main route, not one option among many stacked sections
   - fallback entry paths like wiring, codes, and diagnosis should remain visible but secondary
+- Exact year/make/model pages are now the intended place for richer option density.
+  - `src/app/repair/[year]/[make]/[model]/page.tsx` should read like a vehicle command center, not a generic SEO landing page
+  - the exact vehicle hub should expose the main spokes users care about: repairs, wiring, symptoms, codes, specs/tools, and OEM manual paths
+  - if complexity is added, prefer adding it to the exact vehicle hub rather than pushing it back onto the homepage
 - Header now exposes a fast `Tools` path with `Wiring Diagrams` promoted in primary navigation so wiring-intent users do not have to rely on deep homepage scroll.
   - main implementation lives in `src/components/Header.tsx`
 - Homepage hero and dashboard now expose above-the-fold tool shortcuts, including vehicle-aware wiring links when a user locks year/make/model.
@@ -62,6 +66,7 @@ Update it when product decisions, traps, or standing preferences change.
     - `src/app/wiring/[year]/[make]/[model]/[system]/page.tsx`
     - `src/app/codes/[code]/CodePageClient.tsx`
   - `src/lib/vehicleHubGraph.ts` builds graph-driven exact-vehicle hubs from canonical IDs
+  - exact vehicle hubs now also surface shared symptom spokes and task-backed code fallbacks so the graph can traverse through shared concepts without forcing users to think cross-vehicle
   - `src/lib/vehicleHubLinks.ts` builds canonical vehicle-hub back-links from code and wiring surfaces
   - exact repair guides now link back to the year/make/model hub, and model guide pages link into a representative exact-vehicle hub
   - code pages now emit graph-driven exact vehicle hub links

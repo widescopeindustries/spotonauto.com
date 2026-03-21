@@ -1,3 +1,6 @@
+import 'server-only';
+
+import { buildSymptomHref } from '@/data/symptomGraph';
 import {
   NOINDEX_MAKES,
   VALID_TASKS,
@@ -15,18 +18,20 @@ import {
   type WiringSystemSlug,
 } from '@/data/wiring-seo-cluster';
 import { getCodeLinksForWiringSystem } from '@/lib/diagnosticCrossLinks';
+import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks } from '@/lib/graphPriorityLinks';
 import {
   type KnowledgeGraphReference,
   buildCodeNodeId,
   buildEdgeReference,
   buildManualNodeId,
   buildRepairNodeId,
+  buildSymptomNodeId,
   buildToolNodeId,
   buildWiringNodeId,
 } from '@/lib/knowledgeGraph';
 import { buildRepairUrl, buildVehicleNodeId } from '@/lib/vehicleIdentity';
 
-export type VehicleHubKind = 'manual' | 'tool' | 'wiring' | 'dtc' | 'repair';
+export type VehicleHubKind = 'manual' | 'tool' | 'wiring' | 'dtc' | 'repair' | 'symptom';
 export type VehicleHubTheme = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
 
 export interface VehicleHubNode extends KnowledgeGraphReference {
@@ -52,6 +57,7 @@ export interface VehicleHubGraph {
   wiringCount: number;
   toolCount: number;
   codeCount: number;
+  symptomCount: number;
 }
 
 const PRIORITY_TASKS = [
@@ -201,6 +207,26 @@ function getToolNodes(args: {
     }));
 }
 
+function getSymptomNodes(args: {
+  sourceNodeId: string;
+  tasks: string[];
+  limit: number;
+}): VehicleHubNode[] {
+  return getPrioritySymptomHubsForTasks(args.tasks, Math.max(1, args.limit))
+    .map((entry) => ({
+      ...buildEdgeReference({
+        sourceNodeId: args.sourceNodeId,
+        targetNodeId: buildSymptomNodeId(entry.symptomSlug),
+        relation: 'has-symptom',
+      }),
+      kind: 'symptom' as const,
+      href: buildSymptomHref(entry.symptomSlug),
+      label: entry.label,
+      description: `${entry.summary} Likely systems: ${entry.systems.slice(0, 3).join(', ')}.`,
+      badge: 'Symptom Hub',
+    }));
+}
+
 function getWiringNodes(args: {
   year: string;
   make: string;
@@ -232,12 +258,11 @@ function getWiringNodes(args: {
 
 function getCodeNodes(args: {
   year: string;
-  make: string;
-  model: string;
   displayMake: string;
   displayModel: string;
   sourceNodeId: string;
   systems: WiringSystemSlug[];
+  tasks: string[];
   limit: number;
 }): VehicleHubNode[] {
   const codeMap = new Map<string, { label: string; href: string; systems: Set<string> }>();
@@ -253,6 +278,21 @@ function getCodeNodes(args: {
       };
       existing.systems.add(WIRING_SEO_SYSTEMS[system].shortLabel);
       codeMap.set(code, existing);
+    }
+  }
+
+  if (codeMap.size < args.limit) {
+    for (const entry of getPriorityCodePagesForTasks(args.tasks, Math.max(args.limit * 2, 8))) {
+      if (codeMap.has(entry.code)) continue;
+
+      codeMap.set(entry.code, {
+        label: entry.label,
+        href: entry.href,
+        systems: new Set([
+          entry.affectedSystem,
+          ...(entry.symptoms.slice(0, 2)),
+        ]),
+      });
     }
   }
 
@@ -285,6 +325,7 @@ export async function buildVehicleHubGraph(args: {
   displayModel: string;
 }): Promise<VehicleHubGraph> {
   const sourceNodeId = buildVehicleNodeId(args.year, args.make, args.model);
+  const orderedTasks = getOrderedVehicleTasks(args.year, args.make, args.model).slice(0, 12);
   const repairNodes = getRepairNodes({ ...args, limit: 12 });
   const manualNodes = getManualNodes({
     year: args.year,
@@ -293,13 +334,21 @@ export async function buildVehicleHubGraph(args: {
     sourceNodeId,
   });
   const toolNodes = getToolNodes({ ...args, sourceNodeId, limit: 6 });
+  const symptomNodes = getSymptomNodes({
+    sourceNodeId,
+    tasks: orderedTasks,
+    limit: 4,
+  });
   const wiringNodes = getWiringNodes({ ...args, sourceNodeId });
   const codeNodes = getCodeNodes({
-    ...args,
+    year: args.year,
+    displayMake: args.displayMake,
+    displayModel: args.displayModel,
     sourceNodeId,
     systems: wiringNodes
       .map((node) => node.systemNodeId?.replace(/^system:/, '') as WiringSystemSlug | undefined)
       .filter((value): value is WiringSystemSlug => Boolean(value)),
+    tasks: orderedTasks,
     limit: 8,
   });
 
@@ -325,6 +374,13 @@ export async function buildVehicleHubGraph(args: {
       theme: 'slate' as const,
       nodes: manualNodes,
     }] : []),
+    ...(symptomNodes.length > 0 ? [{
+      kind: 'symptom' as const,
+      title: 'Shared Symptom Entry Points',
+      browseHref: '/symptoms',
+      theme: 'amber' as const,
+      nodes: symptomNodes,
+    }] : []),
     ...(toolNodes.length > 0 ? [{
       kind: 'tool' as const,
       title: 'Specs, Fitment, and Reference Pages',
@@ -348,5 +404,6 @@ export async function buildVehicleHubGraph(args: {
     wiringCount: wiringNodes.length,
     toolCount: toolNodes.length,
     codeCount: codeNodes.length,
+    symptomCount: symptomNodes.length,
   };
 }
