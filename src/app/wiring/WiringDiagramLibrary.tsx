@@ -881,13 +881,14 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
 
         .wl-modal-watermark {
           position: absolute;
-          right: 12px;
-          bottom: 12px;
-          width: min(220px, 34%);
-          min-width: 110px;
-          opacity: 0.96;
+          right: 6px;
+          top: 50%;
+          height: min(320px, 76%);
+          width: auto;
+          transform: translateY(-50%);
+          opacity: 0.88;
           pointer-events: none;
-          filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.32));
+          filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
         }
 
         .wl-modal-footer {
@@ -912,10 +913,8 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           .wl-diagram-list { padding: 0 0.5rem 0.5rem 1rem; }
           .wl-modal { width: 100%; max-width: 100vw; border-radius: 8px; }
           .wl-modal-watermark {
-            width: min(150px, 42%);
-            min-width: 88px;
-            right: 8px;
-            bottom: 8px;
+            right: 3px;
+            height: min(220px, 64%);
           }
         }
       `}</style>

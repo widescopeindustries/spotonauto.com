@@ -1,11 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="320" height="68" viewBox="0 0 320 68" role="img" aria-label="SpotOnAuto watermark">
-  <rect x="0.5" y="0.5" width="319" height="67" rx="14" fill="#091f28" fill-opacity="0.92" stroke="#123544"/>
-  <rect x="10" y="10" width="48" height="48" rx="12" fill="#0d313e"/>
-  <g transform="translate(22 22)" fill="none" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="1.5" y="1.5" width="21" height="21" rx="4.5"/>
-    <rect x="7" y="7" width="10" height="10" rx="2.5"/>
-    <path d="M12 0v4M18.5 1.7l-2 3.4M22.3 6l-3.5 2M24 12h-4M22.3 18l-3.5-2M18.5 22.3l-2-3.4M12 24v-4M5.5 22.3l2-3.4M1.7 18l3.5-2M0 12h4M1.7 6l3.5 2M5.5 1.7l2 3.4"/>
-  </g>
-  <text x="70" y="42" fill="#f7fbfd" font-size="28" font-family="Orbitron, Rajdhani, Arial, sans-serif" font-weight="700" letter-spacing="1.5">SPOTON</text>
-  <text x="206" y="42" fill="#00d4ff" font-size="28" font-family="Orbitron, Rajdhani, Arial, sans-serif" font-weight="700" letter-spacing="1.5">AUTO</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="420" viewBox="0 0 64 420" role="img" aria-label="SpotOnAuto diagram watermark">
+  <rect x="8.5" y="8.5" width="47" height="403" rx="17.5" fill="#f9fdff" fill-opacity="0.84" stroke="#72dfff" stroke-opacity="0.72"/>
+  <rect x="16" y="20" width="32" height="3.5" rx="1.75" fill="#00d4ff" fill-opacity="0.82"/>
+  <rect x="16" y="396.5" width="32" height="3.5" rx="1.75" fill="#00d4ff" fill-opacity="0.82"/>
+  <text
+    x="32"
+    y="214"
+    transform="rotate(-90 32 214)"
+    text-anchor="middle"
+    fill="#0d141a"
+    font-size="23"
+    font-style="italic"
+    font-family="Rajdhani, Arial Narrow, Arial, sans-serif"
+    font-weight="700"
+    letter-spacing="0.5"
+  >SpotOnAuto.com</text>
 </svg>
