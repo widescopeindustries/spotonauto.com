@@ -4,30 +4,30 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 2%;
+  --background: 210 14% 11%;
   --foreground: 0 0% 100%;
-  --card: 0 0% 4%;
+  --card: 210 11% 14%;
   --card-foreground: 0 0% 100%;
   --primary: 187 100% 50%;
   --primary-foreground: 0 0% 0%;
-  --secondary: 0 0% 8%;
+  --secondary: 210 10% 16%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 0 0% 12%;
+  --muted: 210 10% 20%;
   --muted-foreground: 0 0% 60%;
   --accent: 187 100% 50%;
   --accent-foreground: 0 0% 0%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 0 0% 15%;
-  --input: 0 0% 15%;
+  --border: 210 10% 24%;
+  --input: 210 10% 24%;
   --ring: 187 100% 50%;
   --radius: 0.75rem;
 
   --cyan: #00d4ff;
   --cyan-glow: rgba(0, 212, 255, 0.4);
-  --dark-void: #050505;
-  --charcoal: #0a0a0a;
-  --text-secondary: #c0c0c0;
+  --dark-void: #12171b;
+  --charcoal: #1a2025;
+  --text-secondary: #c7d0d7;
 }
 
 * {
@@ -48,9 +48,9 @@ html {
     overflow-x: hidden;
     line-height: 1.6;
     background-image:
-      radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.13), transparent 34%),
-      radial-gradient(circle at 100% 12%, rgba(255, 255, 255, 0.05), transparent 22%),
-      linear-gradient(180deg, #020202 0%, #050505 42%, #020202 100%);
+      radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.1), transparent 34%),
+      radial-gradient(circle at 100% 12%, rgba(255, 255, 255, 0.04), transparent 22%),
+      linear-gradient(180deg, #171c21 0%, #11161a 42%, #191f24 100%);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -118,14 +118,14 @@ html {
 
   /* Glassmorphism */
   .glass {
-    background: rgba(10, 10, 10, 0.7);
+    background: rgba(23, 29, 34, 0.72);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(0, 212, 255, 0.2);
   }
 
   .glass-strong {
-    background: rgba(10, 10, 10, 0.9);
+    background: rgba(23, 29, 34, 0.88);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(0, 212, 255, 0.3);
@@ -133,14 +133,14 @@ html {
 
   .matte-shell {
     background:
-      radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.14), transparent 32%),
-      linear-gradient(180deg, #020202 0%, #050505 45%, #020202 100%);
+      radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.12), transparent 32%),
+      linear-gradient(180deg, #1a2024 0%, #12181c 46%, #1d2328 100%);
   }
 
   .matte-panel {
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
-      rgba(7, 7, 7, 0.84);
+      rgba(22, 28, 33, 0.84);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 28px 90px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(12px);
@@ -150,7 +150,7 @@ html {
   .matte-panel-soft {
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
-      rgba(5, 5, 5, 0.72);
+      rgba(28, 34, 39, 0.74);
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
 

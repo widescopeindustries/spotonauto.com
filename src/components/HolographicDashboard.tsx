@@ -106,15 +106,15 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
             </div>
 
             {/* VIN Decoder Section */}
-            <div className="mb-8 p-1 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl shadow-inner border border-gray-700">
-                <div className="bg-black/40 rounded-lg p-4 backdrop-blur-sm">
+            <div className="mb-8 rounded-xl border border-slate-700/80 bg-gradient-to-r from-slate-700/65 to-slate-800/80 p-1 shadow-inner">
+                <div className="rounded-lg bg-slate-950/55 p-4 backdrop-blur-sm">
                     <label htmlFor="vin-input" className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 font-mono">{t('form.quickScan')}</label>
                     <div className="flex gap-2">
                         <input
                             id="vin-input"
                             type="text"
                             placeholder={t('form.enterVin')}
-                            className="flex-grow bg-gray-900/80 border border-gray-700 rounded-lg px-4 py-2.5 text-brand-cyan placeholder-gray-500 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan transition-all font-mono text-sm uppercase tracking-wider"
+                            className="flex-grow rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2.5 font-mono text-sm uppercase tracking-wider text-brand-cyan placeholder-gray-500 transition-all focus:border-brand-cyan focus:outline-none focus:ring-1 focus:ring-brand-cyan"
                             value={vin}
                             onChange={(e) => {
                                 setVin(e.target.value.toUpperCase());
@@ -127,7 +127,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                             type="button"
                             onClick={handleDecodeVin}
                             disabled={isDecoding || vin.length !== 17}
-                            className="bg-gray-800 hover:bg-gray-700 text-brand-cyan border border-gray-600 hover:border-brand-cyan px-4 py-2 rounded-lg font-bold text-sm tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="flex items-center gap-2 rounded-lg border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-bold tracking-wide text-brand-cyan transition-all hover:border-brand-cyan hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                             aria-label="Decode VIN"
                         >
                             {isDecoding ? <ScanLine className="w-4 h-4 animate-spin" /> : t('form.decode')}
@@ -144,9 +144,9 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
 
             {/* divider */}
             <div className="relative flex items-center py-4 mb-6">
-                <div className="flex-grow border-t border-gray-800"></div>
+                <div className="flex-grow border-t border-slate-700/80"></div>
                 <span className="flex-shrink-0 mx-4 text-gray-500 text-[10px] font-bold uppercase tracking-widest font-mono">{t('form.orManual')}</span>
-                <div className="flex-grow border-t border-gray-800"></div>
+                <div className="flex-grow border-t border-slate-700/80"></div>
             </div>
 
             <form onSubmit={handleSearch} className="space-y-5">
@@ -156,7 +156,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                         <label htmlFor="year-select" className="sr-only">Select Year</label>
                         <select
                             id="year-select"
-                            className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan shadow-lg transition-all text-sm font-medium appearance-none hover:border-gray-500"
+                            className="w-full appearance-none rounded-lg border border-slate-700 bg-slate-900/55 px-4 py-3 text-sm font-medium text-gray-200 shadow-lg transition-all hover:border-slate-500 focus:border-brand-cyan focus:outline-none focus:ring-1 focus:ring-brand-cyan"
                             value={vehicle.year}
                             onChange={(e) => setVehicle({ ...vehicle, year: e.target.value, make: '', model: '' })}
                             aria-label="Select Year"
@@ -174,7 +174,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                         <label htmlFor="make-select" className="sr-only">Select Make</label>
                         <select
                             id="make-select"
-                            className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan shadow-lg transition-all text-sm font-medium appearance-none hover:border-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full appearance-none rounded-lg border border-slate-700 bg-slate-900/55 px-4 py-3 text-sm font-medium text-gray-200 shadow-lg transition-all hover:border-slate-500 focus:border-brand-cyan focus:outline-none focus:ring-1 focus:ring-brand-cyan disabled:cursor-not-allowed disabled:opacity-50"
                             value={vehicle.make}
                             onChange={(e) => setVehicle({ ...vehicle, make: e.target.value, model: '' })}
                             disabled={!vehicle.year}
@@ -193,7 +193,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                         <label htmlFor="model-select" className="sr-only">Select Model</label>
                         <select
                             id="model-select"
-                            className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan shadow-lg transition-all text-sm font-medium appearance-none hover:border-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full appearance-none rounded-lg border border-slate-700 bg-slate-900/55 px-4 py-3 text-sm font-medium text-gray-200 shadow-lg transition-all hover:border-slate-500 focus:border-brand-cyan focus:outline-none focus:ring-1 focus:ring-brand-cyan disabled:cursor-not-allowed disabled:opacity-50"
                             value={vehicle.model}
                             onChange={(e) => setVehicle({ ...vehicle, model: e.target.value })}
                             disabled={!vehicle.make || loadingModels}
@@ -234,19 +234,19 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                     <div className="mt-3 flex flex-wrap gap-2">
                         <Link
                             href={wiringHref}
-                            className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 hover:border-cyan-400/35 hover:text-cyan-200 transition-all"
+                            className="rounded-full border border-white/10 bg-slate-900/50 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 transition-all hover:border-cyan-400/35 hover:text-cyan-200"
                         >
                             Wiring diagrams
                         </Link>
                         <Link
                             href="/codes"
-                            className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 hover:border-cyan-400/35 hover:text-cyan-200 transition-all"
+                            className="rounded-full border border-white/10 bg-slate-900/50 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 transition-all hover:border-cyan-400/35 hover:text-cyan-200"
                         >
                             OBD2 codes
                         </Link>
                         <Link
                             href="/parts"
-                            className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 hover:border-cyan-400/35 hover:text-cyan-200 transition-all"
+                            className="rounded-full border border-white/10 bg-slate-900/50 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 transition-all hover:border-cyan-400/35 hover:text-cyan-200"
                         >
                             Parts
                         </Link>
@@ -263,7 +263,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                         id="symptom-input"
                         type="text"
                         placeholder={t('form.describeSymptom')}
-                        className="w-full bg-gray-900/50 border border-gray-700 rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan shadow-lg transition-all text-sm"
+                        className="w-full rounded-lg border border-slate-700 bg-slate-900/55 py-3 pl-12 pr-4 text-sm text-white placeholder-gray-500 shadow-lg transition-all focus:border-brand-cyan focus:outline-none focus:ring-1 focus:ring-brand-cyan"
                         value={task}
                         onChange={(e) => setTask(e.target.value)}
                         aria-label="Describe symptom or repair task"

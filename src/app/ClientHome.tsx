@@ -159,7 +159,7 @@ function HeroSection() {
                                     <Link
                                         key={surface.label}
                                         href={surface.href}
-                                        className="rounded-2xl border border-white/10 bg-black/20 p-4 transition-all hover:border-cyan-500/30 hover:bg-black/30"
+                                        className="rounded-2xl border border-white/10 bg-slate-900/45 p-4 transition-all hover:border-cyan-500/30 hover:bg-slate-900/70"
                                     >
                                         <h3 className="text-base font-semibold text-white">{surface.label}</h3>
                                         <p className="mt-2 text-sm leading-6 text-gray-400">{surface.description}</p>

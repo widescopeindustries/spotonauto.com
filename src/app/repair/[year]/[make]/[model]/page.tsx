@@ -9,7 +9,7 @@ import {
   slugifyRoutePart,
 } from '@/data/vehicles';
 import { getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
-import { buildVehicleNodeId } from '@/lib/vehicleIdentity';
+import { buildRepairUrl, buildVehicleNodeId } from '@/lib/vehicleIdentity';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildVehicleHubGraph } from '@/lib/vehicleHubGraph';
@@ -27,7 +27,91 @@ interface PreviewLink {
   label: string;
 }
 
+interface DiyQuickStartBlueprint {
+  eyebrow: string;
+  title: string;
+  description: string;
+  guideHint: string;
+  tone: CommandCardTone;
+  primaryTask: string;
+  primaryLabel: string;
+  relatedTasks: Array<{ task: string; label: string }>;
+  supportGroup?: 'wiring' | 'tool';
+  supportPatterns?: RegExp[];
+}
+
 type CommandCardTone = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
+
+const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
+  {
+    eyebrow: 'DIY favorite',
+    title: 'Lighting',
+    description: 'When the job is a headlight or other front-light issue, owners usually want the fastest exact guide first.',
+    guideHint: 'Exact guide includes bulb fitment, access path, and purchase links before you pull trim.',
+    tone: 'amber',
+    primaryTask: 'headlight-bulb-replacement',
+    primaryLabel: 'Open headlight guide',
+    relatedTasks: [],
+    supportGroup: 'wiring',
+    supportPatterns: [/lighting/i, /headlight/i, /exterior/i],
+  },
+  {
+    eyebrow: 'Stranded-car fix',
+    title: 'Battery and Starting',
+    description: 'Start with the battery, then move cleanly into alternator or starter checks without leaving the exact vehicle context.',
+    guideHint: 'Exact guide includes group size, terminal order, and the install supplies people forget to buy.',
+    tone: 'emerald',
+    primaryTask: 'battery-replacement',
+    primaryLabel: 'Open battery guide',
+    relatedTasks: [
+      { task: 'alternator-replacement', label: 'Alternator guide' },
+      { task: 'starter-replacement', label: 'Starter guide' },
+    ],
+    supportGroup: 'wiring',
+    supportPatterns: [/charging/i, /starting/i, /ignition/i, /battery/i, /power/i],
+  },
+  {
+    eyebrow: 'Safety-first',
+    title: 'Brakes',
+    description: 'Pads and rotors are still one of the biggest step-up DIY jobs people are willing to tackle when the instructions are clear.',
+    guideHint: 'Exact guide includes pad hardware, torque path, and the consumables needed before you put the wheel back on.',
+    tone: 'cyan',
+    primaryTask: 'brake-pad-replacement',
+    primaryLabel: 'Open brake pad guide',
+    relatedTasks: [
+      { task: 'brake-rotor-replacement', label: 'Rotor guide' },
+    ],
+  },
+  {
+    eyebrow: 'Recurring maintenance',
+    title: 'Oil and Fluids',
+    description: 'Routine fluid work needs to be easy to find because it is one of the first places owners save money themselves.',
+    guideHint: 'Exact guide includes oil type, capacity, filter support, and the basic consumables to buy in one pass.',
+    tone: 'violet',
+    primaryTask: 'oil-change',
+    primaryLabel: 'Open oil guide',
+    relatedTasks: [
+      { task: 'coolant-flush', label: 'Coolant flush' },
+    ],
+    supportGroup: 'tool',
+    supportPatterns: [/oil/i, /fluid/i, /capacity/i, /spec/i],
+  },
+  {
+    eyebrow: 'Low-risk win',
+    title: 'Filters and Tune-Up',
+    description: 'Filters, plugs, and other light maintenance jobs are confidence-builders for non-tech owners.',
+    guideHint: 'Exact guides keep the job simple, then hand off to the right parts and fitment notes before checkout.',
+    tone: 'slate',
+    primaryTask: 'cabin-air-filter-replacement',
+    primaryLabel: 'Open cabin filter guide',
+    relatedTasks: [
+      { task: 'engine-air-filter-replacement', label: 'Engine air filter' },
+      { task: 'spark-plug-replacement', label: 'Spark plug guide' },
+    ],
+    supportGroup: 'tool',
+    supportPatterns: [/filter/i, /spark/i, /plug/i, /maintenance/i],
+  },
+];
 
 function toTitleCase(value: string): string {
   return value.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
@@ -83,6 +167,33 @@ function buildPreviewLinks(
     href: node.href,
     label: stripVehiclePrefix(node.label, vehicleLabel),
   }));
+}
+
+function buildExactTaskLink(
+  year: string,
+  make: string,
+  model: string,
+  task: string,
+  label: string,
+): PreviewLink {
+  return {
+    href: buildRepairUrl(year, make, model, task),
+    label,
+  };
+}
+
+function findSupportingPreviewLink(
+  nodes: Array<{ href: string; label: string }>,
+  vehicleLabel: string,
+  patterns: RegExp[],
+): PreviewLink | null {
+  const match = nodes.find((node) => patterns.some((pattern) => pattern.test(node.label)));
+  if (!match) return null;
+
+  return {
+    href: match.href,
+    label: stripVehiclePrefix(match.label, vehicleLabel),
+  };
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -185,6 +296,31 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     .filter((entry) => entry.year !== resolvedYear)
     .slice(0, 4);
   const relatedYears = getRelatedYears(resolvedYear, production.start, production.end);
+  const diyQuickStartCards = DIY_QUICK_START_BLUEPRINTS.map((blueprint) => {
+    const supportNodes = blueprint.supportGroup === 'wiring'
+      ? (wiringGroup?.nodes ?? [])
+      : blueprint.supportGroup === 'tool'
+        ? (toolGroup?.nodes ?? [])
+        : [];
+    const supportLink = blueprint.supportPatterns
+      ? findSupportingPreviewLink(supportNodes, vehicleLabel, blueprint.supportPatterns)
+      : null;
+
+    return {
+      ...blueprint,
+      primaryHref: buildRepairUrl(canonicalYear, canonicalMake, canonicalModel, blueprint.primaryTask),
+      previewLinks: [
+        ...blueprint.relatedTasks.map((task) => buildExactTaskLink(
+          canonicalYear,
+          canonicalMake,
+          canonicalModel,
+          task.task,
+          task.label,
+        )),
+        ...(supportLink ? [supportLink] : []),
+      ].slice(0, 3),
+    };
+  });
   const commandCards: Array<{
     eyebrow: string;
     title: string;
@@ -311,7 +447,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-950 text-white">
+    <main className="min-h-screen bg-gradient-to-b from-slate-950 via-[#141a1f] to-[#1b2126] text-white">
       <VehicleHubTracker vehicle={vehicleLabel} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
@@ -350,6 +486,32 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           <StatCard label="Symptom spokes" value={String(vehicleHub.symptomCount)} />
           <StatCard label="Spec pages" value={String(vehicleHub.toolCount)} />
           <StatCard label="Code clusters" value={String(vehicleHub.codeCount)} />
+        </div>
+
+        <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/[0.05] p-6 md:p-8 mt-8">
+          <div className="max-w-3xl">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-300/85">DIY Quick Starts</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Start with the jobs owners actually do themselves</h2>
+            <p className="text-sm md:text-base text-gray-300 mt-3">
+              These are the lighter-maintenance paths most searchers are willing to take on: lights, battery, brakes, oil, fluids,
+              and filters. Each exact guide already carries the tools, parts, fitment notes, and consumable-buying context that make the job easier to finish.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 xl:grid-cols-5 gap-4 mt-6">
+            {diyQuickStartCards.map((card) => (
+              <DiyQuickStartCard
+                key={card.title}
+                eyebrow={card.eyebrow}
+                title={card.title}
+                description={card.description}
+                guideHint={card.guideHint}
+                tone={card.tone}
+                primaryHref={card.primaryHref}
+                primaryLabel={card.primaryLabel}
+                previewLinks={card.previewLinks}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6 md:p-8 mt-8">
@@ -432,7 +594,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
                       <Link
                         key={entry.href}
                         href={entry.href}
-                        className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                        className="block rounded-xl border border-white/10 bg-slate-900/45 p-4 transition-all hover:border-violet-400/35 hover:bg-slate-900/65"
                       >
                         <p className="text-base font-semibold text-white">{toTitleCase(entry.task)}</p>
                         <p className="mt-1 text-sm text-gray-300">{entry.year} {entry.make} {entry.model}</p>
@@ -449,7 +611,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
                       <Link
                         key={entry.href}
                         href={entry.href}
-                        className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
+                        className="block rounded-xl border border-white/10 bg-slate-900/45 p-4 transition-all hover:border-violet-400/35 hover:bg-slate-900/65"
                       >
                         <p className="text-base font-semibold text-white">{entry.year} {entry.make} {entry.model}</p>
                         <p className="mt-1 text-sm capitalize text-gray-300">{entry.task.replace(/-/g, ' ')}</p>
@@ -481,7 +643,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               <Link
                 key={node.nodeId || node.href}
                 href={node.href}
-                className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/35 hover:bg-white/[0.06] transition-all group"
+                className="rounded-xl border border-white/10 bg-slate-900/45 p-4 transition-all group hover:border-cyan-500/35 hover:bg-slate-900/65"
               >
                 <p className="text-xs uppercase tracking-[0.16em] text-cyan-400/80 mb-2">{node.badge}</p>
                 <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
@@ -512,7 +674,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               <Link
                 key={node.nodeId || node.href}
                 href={node.href}
-                className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-violet-500/35 hover:bg-white/[0.06] transition-all group"
+                className="rounded-xl border border-white/10 bg-slate-900/45 p-4 transition-all group hover:border-violet-500/35 hover:bg-slate-900/65"
               >
                 <p className="text-xs uppercase tracking-[0.16em] text-violet-300/80 mb-2">{node.badge}</p>
                 <h3 className="text-base font-semibold text-white group-hover:text-violet-300 transition-colors">
@@ -572,7 +734,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               <Link
                 key={relatedYear}
                 href={`/repair/${relatedYear}/${canonicalMake}/${canonicalModel}`}
-                className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/10 text-sm text-gray-300 hover:text-cyan-300 hover:border-cyan-500/40 transition-all"
+                className="rounded-lg border border-white/10 bg-slate-900/45 px-3 py-2 text-sm text-gray-300 transition-all hover:border-cyan-500/40 hover:text-cyan-300"
               >
                 {relatedYear} {originalMake} {originalModel}
               </Link>
@@ -585,7 +747,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
         <h2 className="text-xl font-bold text-white mb-4">Frequently Asked Questions</h2>
         <dl className="space-y-4">
           {faqItems.map((faq) => (
-            <div key={faq.question} className="rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden">
+            <div key={faq.question} className="overflow-hidden rounded-xl border border-white/10 bg-slate-900/45">
               <dt className="px-5 py-4 font-semibold text-white">{faq.question}</dt>
               <dd className="px-5 pb-4 text-sm leading-7 text-gray-400">{faq.answer}</dd>
             </div>
@@ -694,6 +856,56 @@ function HubActionCard({
   );
 }
 
+function DiyQuickStartCard({
+  eyebrow,
+  title,
+  description,
+  guideHint,
+  tone,
+  primaryHref,
+  primaryLabel,
+  previewLinks,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  guideHint: string;
+  tone: CommandCardTone;
+  primaryHref: string;
+  primaryLabel: string;
+  previewLinks: PreviewLink[];
+}) {
+  const toneClasses = CARD_TONE_CLASSES[tone];
+
+  return (
+    <div className={`rounded-2xl border p-5 ${toneClasses.shell}`}>
+      <p className={`text-[11px] uppercase tracking-[0.2em] ${toneClasses.eyebrow}`}>{eyebrow}</p>
+      <h3 className="text-xl font-semibold text-white mt-2">{title}</h3>
+      <p className="text-sm leading-6 text-gray-300 mt-3">{description}</p>
+      <p className="text-xs leading-5 text-gray-400 mt-3">{guideHint}</p>
+      <Link
+        href={primaryHref}
+        className={`mt-4 inline-flex rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${toneClasses.button}`}
+      >
+        {primaryLabel} →
+      </Link>
+      {previewLinks.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-4">
+          {previewLinks.map((link) => (
+            <Link
+              key={`${title}-${link.href}-${link.label}`}
+              href={link.href}
+              className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${toneClasses.chip}`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function EntryPanel({
   title,
   description,
@@ -725,7 +937,7 @@ function EntryPanel({
           <Link
             key={`${title}-${entry.href}-${entry.label}`}
             href={entry.href}
-            className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-white/20 hover:bg-black/30 transition-all"
+            className="block rounded-xl border border-white/10 bg-slate-900/45 p-4 transition-all hover:border-white/20 hover:bg-slate-900/65"
           >
             <p className="text-base font-semibold text-white">{entry.label}</p>
             <p className="text-sm text-gray-400 mt-2">{entry.description}</p>
@@ -738,7 +950,7 @@ function EntryPanel({
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+    <div className="rounded-xl border border-white/10 bg-slate-900/45 p-4">
       <p className="text-xs uppercase tracking-wider text-gray-400 mb-1">{label}</p>
       <p className="text-lg font-semibold text-white">{value}</p>
     </div>

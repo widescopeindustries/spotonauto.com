@@ -160,7 +160,7 @@ export default function KnowledgeGraphGroup({
           <Link
             key={node.nodeId || `${groupKind}-${node.targetKind}-${node.href}-${node.label}`}
             href={node.href}
-            className={`block rounded-xl border bg-black/15 p-4 hover:bg-black/25 transition-all ${classes.card}`}
+            className={`block rounded-xl border bg-slate-900/45 p-4 transition-all hover:bg-slate-900/65 ${classes.card}`}
             onMouseDown={() => trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
               surface,
               sourceKind: groupKind,

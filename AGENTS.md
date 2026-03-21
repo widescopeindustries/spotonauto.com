@@ -12,6 +12,9 @@ Update it when product decisions, traps, or standing preferences change.
 ## UI Direction
 
 - Homepage direction is matte black with blue/white text.
+- Prefer a softened graphite / charcoal dark theme over true black on primary entry surfaces.
+  - homepage and exact vehicle command-center pages should feel calmer and more mainstream, not harsh or “raven black”
+  - keep the dark identity, but use deep gray shells with near-black cards/panels where contrast is needed
 - Avoid the old starfield / particle-background look on the homepage.
 - Favor calmer, more flowing section transitions over noisy sci-fi effects.
 - Keep the tone intentional and restrained, not gimmicky.
@@ -32,6 +35,13 @@ Update it when product decisions, traps, or standing preferences change.
 - Exact year/make/model pages are now the intended place for richer option density.
   - `src/app/repair/[year]/[make]/[model]/page.tsx` should read like a vehicle command center, not a generic SEO landing page
   - the exact vehicle hub should expose the main spokes users care about: repairs, wiring, symptoms, codes, specs/tools, and OEM manual paths
+  - near the top of the hub, prioritize a clear DIY-first lane for the jobs normal owners actually attempt:
+    - headlights / lighting
+    - battery / starting
+    - brakes
+    - oil and fluids
+    - filters / tune-up
+  - those quick-start links should drive into the exact vehicle repair guides because the one-off guide pages already carry the deeper tool, parts, fitment, and consumable-buying support
   - if complexity is added, prefer adding it to the exact vehicle hub rather than pushing it back onto the homepage
 - Header now exposes a fast `Tools` path with `Wiring Diagrams` promoted in primary navigation so wiring-intent users do not have to rely on deep homepage scroll.
   - main implementation lives in `src/components/Header.tsx`
