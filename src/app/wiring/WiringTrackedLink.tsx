@@ -9,7 +9,15 @@ interface WiringTrackedLinkProps {
   className?: string;
   vehicle: string;
   system: string;
-  target: 'interactive_library' | 'diagram_jump' | 'cluster_nav';
+  target:
+    | 'interactive_library'
+    | 'diagram_jump'
+    | 'cluster_nav'
+    | 'vehicle_hub'
+    | 'repair_path'
+    | 'code_path'
+    | 'manual_path'
+    | 'same_system_vehicle';
   children: ReactNode;
 }
 
@@ -31,4 +39,3 @@ export default function WiringTrackedLink({
     </Link>
   );
 }
-

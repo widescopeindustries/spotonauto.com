@@ -492,6 +492,12 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                         className="wl-modal-img"
                         loading="lazy"
                       />
+                      <img
+                        src="/diagram-watermark.svg"
+                        alt=""
+                        aria-hidden="true"
+                        className="wl-modal-watermark"
+                      />
                     </div>
                   ))
                 ) : (
@@ -863,11 +869,25 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           padding: 1rem;
           margin-bottom: 1rem;
           text-align: center;
+          position: relative;
         }
 
         .wl-modal-img {
           max-width: 100%;
           height: auto;
+          display: block;
+          margin: 0 auto;
+        }
+
+        .wl-modal-watermark {
+          position: absolute;
+          right: 12px;
+          bottom: 12px;
+          width: min(220px, 34%);
+          min-width: 110px;
+          opacity: 0.96;
+          pointer-events: none;
+          filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.32));
         }
 
         .wl-modal-footer {
@@ -891,6 +911,12 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           .wl-system-header { padding: 0.875rem 1rem; }
           .wl-diagram-list { padding: 0 0.5rem 0.5rem 1rem; }
           .wl-modal { width: 100%; max-width: 100vw; border-radius: 8px; }
+          .wl-modal-watermark {
+            width: min(150px, 42%);
+            min-width: 88px;
+            right: 8px;
+            bottom: 8px;
+          }
         }
       `}</style>
     </div>

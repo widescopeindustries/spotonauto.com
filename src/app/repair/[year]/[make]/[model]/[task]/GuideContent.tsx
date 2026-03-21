@@ -6,7 +6,7 @@ import ServiceManualGuide from '@/components/ServiceManualGuide';
 import { generateFullRepairGuide } from '@/services/apiClient';
 import { saveGuide, getGuideById } from '@/services/storageService';
 import { RepairGuide } from '@/types';
-import { trackGuideGenerated, trackRepairPageView, trackRetrievalBackbone } from '@/lib/analytics';
+import { trackGuideGenerated, trackRepairGuideOpen, trackRepairPageView, trackRetrievalBackbone } from '@/lib/analytics';
 import VehicleHealthSnapshot from '@/components/VehicleHealthSnapshot';
 import { useT } from '@/lib/translations';
 
@@ -51,6 +51,7 @@ export default function GuideContent({ params }: GuideContentProps) {
     useEffect(() => {
         const cleanTask = task.replace(/-/g, ' ');
         trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
+        trackRepairGuideOpen(`${year} ${make} ${model}`, cleanTask);
     }, [year, make, model, task]);
 
     useEffect(() => {

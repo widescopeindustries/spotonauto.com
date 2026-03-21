@@ -35,6 +35,12 @@ Update it when product decisions, traps, or standing preferences change.
   - if complexity is added, prefer adding it to the exact vehicle hub rather than pushing it back onto the homepage
 - Header now exposes a fast `Tools` path with `Wiring Diagrams` promoted in primary navigation so wiring-intent users do not have to rely on deep homepage scroll.
   - main implementation lives in `src/components/Header.tsx`
+- Wiring is now a primary acquisition and conversion surface, not a buried utility page.
+  - exact wiring pages in `src/app/wiring/[year]/[make]/[model]/[system]/page.tsx` should push users toward the next step: exact vehicle hub, likely repair guides, and likely code pages
+  - wiring funnel measurement now matters alongside raw diagram opens:
+    - `wiring_diagram_open`
+    - `vehicle_hub_enter`
+    - `repair_guide_open`
 - Homepage hero and dashboard now expose above-the-fold tool shortcuts, including vehicle-aware wiring links when a user locks year/make/model.
   - main implementation lives in:
     - `src/app/ClientHome.tsx`
@@ -96,6 +102,7 @@ Update it when product decisions, traps, or standing preferences change.
   - `scripts/internal-link-audit.js` should fail loudly if seed fetches fail instead of silently reporting zero discovered links
   - wiring selector coverage should not import the full `src/data/wiring-coverage.json` into a client component
   - `src/lib/wiringCoverage.ts` is the server-only helper that derives the lightweight selector payload for `/wiring`
+  - the interactive diagram viewer in `src/app/wiring/WiringDiagramLibrary.tsx` now overlays a small SpotOnAuto watermark on diagram images so printed/screenshot schematics retain the brand at the edge without obscuring the drawing
   - AI runtime can now fall back from Gemini to OpenAI for guide generation, vehicle info, diagnostic chat, homepage chat, and second-opinion flows when Gemini is missing or quota-limited
   - deploys that rely on the fallback need `OPENAI_API_KEY` set in the runtime environment
 ## Working Norms

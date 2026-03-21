@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
+import VehicleHubTracker from '@/components/VehicleHubTracker';
 import {
   NOINDEX_MAKES,
   VEHICLE_PRODUCTION_YEARS,
@@ -311,6 +312,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-950 text-white">
+      <VehicleHubTracker vehicle={vehicleLabel} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />

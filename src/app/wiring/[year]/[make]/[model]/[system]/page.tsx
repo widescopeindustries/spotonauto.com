@@ -48,12 +48,35 @@ interface MatchedDiagram {
   score: number;
 }
 
+type WiringCtaTarget =
+  | 'interactive_library'
+  | 'diagram_jump'
+  | 'cluster_nav'
+  | 'vehicle_hub'
+  | 'repair_path'
+  | 'code_path'
+  | 'manual_path'
+  | 'same_system_vehicle';
+
+type WiringCardTone = 'emerald' | 'cyan' | 'amber' | 'slate' | 'violet';
+
+interface WiringActionLink {
+  href: string;
+  label: string;
+  target: WiringCtaTarget;
+}
+
 function normalizeText(value: string): string {
   return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function stripVehiclePrefix(label: string, vehicleLabel: string): string {
+  const prefix = `${vehicleLabel} `;
+  return label.startsWith(prefix) ? label.slice(prefix.length) : label;
 }
 
 function rankDiagramsForSystem(index: WiringDiagramIndex, terms: string[], limit = 60): MatchedDiagram[] {
@@ -215,6 +238,104 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
   const relatedRepairLinks = getRepairLinksForWiringVehicle(vehicle, systemSlug, 4);
   const relatedCodeLinks = getCodeLinksForWiringSystem(systemSlug, 6);
   const manualSectionLinks = await getManualSectionLinksForWiringVehicle(vehicle, systemSlug, 4);
+  const nextStepCards: Array<{
+    eyebrow: string;
+    title: string;
+    description: string;
+    tone: WiringCardTone;
+    primaryLink: WiringActionLink;
+    secondaryLinks: WiringActionLink[];
+  }> = [
+    {
+      eyebrow: 'Keep context',
+      title: 'Exact Vehicle Command Center',
+      description: `Step out of raw diagrams and into the full ${vehicleLabel} hub with repairs, specs, codes, and other systems already tied to this car.`,
+      tone: 'emerald',
+      primaryLink: {
+        href: vehicleHubHref,
+        label: 'Open vehicle command center',
+        target: 'vehicle_hub',
+      },
+      secondaryLinks: [
+        ...(relatedRepairLinks.slice(0, 2).map((link) => ({
+          href: link.href,
+          label: stripVehiclePrefix(link.label, vehicleLabel),
+          target: 'repair_path' as const,
+        }))),
+        ...(manualSectionLinks.slice(0, 1).map((link) => ({
+          href: link.href,
+          label: link.label,
+          target: 'manual_path' as const,
+        }))),
+      ].slice(0, 3),
+    },
+    relatedRepairLinks.length > 0
+      ? {
+          eyebrow: 'Likely fix path',
+          title: 'Exact Repair Guides',
+          description: `These repair flows most often intersect with ${systemMeta.shortLabel.toLowerCase()} diagnosis on this exact vehicle.`,
+          tone: 'cyan' as const,
+          primaryLink: {
+            href: relatedRepairLinks[0].href,
+            label: stripVehiclePrefix(relatedRepairLinks[0].label, vehicleLabel),
+            target: 'repair_path',
+          },
+          secondaryLinks: relatedRepairLinks.slice(1, 4).map((link) => ({
+            href: link.href,
+            label: stripVehiclePrefix(link.label, vehicleLabel),
+            target: 'repair_path' as const,
+          })),
+        }
+      : {
+          eyebrow: 'OEM source',
+          title: 'Factory Manual Evidence',
+          description: 'When there is no clean repair shortcut for this system, drop into the OEM manual sections that usually carry the authoritative test path.',
+          tone: 'slate' as const,
+          primaryLink: {
+            href: manualSectionLinks[0]?.href || browserHref,
+            label: manualSectionLinks[0]?.label || 'Open interactive browser',
+            target: manualSectionLinks[0] ? 'manual_path' : 'interactive_library',
+          },
+          secondaryLinks: manualSectionLinks.slice(1, 4).map((link) => ({
+            href: link.href,
+            label: link.label,
+            target: 'manual_path' as const,
+          })),
+        },
+    relatedCodeLinks.length > 0
+      ? {
+          eyebrow: 'Diagnostic signal',
+          title: 'Codes Often Seen With This System',
+          description: 'Use the code cluster when wiring faults overlap with check-engine or module-level diagnostics.',
+          tone: 'amber' as const,
+          primaryLink: {
+            href: relatedCodeLinks[0].href,
+            label: relatedCodeLinks[0].label,
+            target: 'code_path',
+          },
+          secondaryLinks: relatedCodeLinks.slice(1, 4).map((link) => ({
+            href: link.href,
+            label: link.label,
+            target: 'code_path' as const,
+          })),
+        }
+      : {
+          eyebrow: 'Stay in wiring',
+          title: 'More System Pages for This Vehicle',
+          description: 'Move laterally into the neighboring systems that usually share the same electrical neighborhood.',
+          tone: 'violet' as const,
+          primaryLink: {
+            href: relatedSystems[0]?.href || '/wiring',
+            label: relatedSystems[0]?.label || 'Browse all wiring pages',
+            target: 'cluster_nav',
+          },
+          secondaryLinks: relatedSystems.slice(1, 4).map((link) => ({
+            href: link.href,
+            label: link.label,
+            target: 'cluster_nav' as const,
+          })),
+        },
+  ];
   const graphBlocks = rankKnowledgeGraphBlocks('wiring', [
     {
       kind: 'vehicle' as const,
@@ -333,12 +454,15 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         <p className="text-gray-300 text-lg max-w-3xl">{systemMeta.intro}</p>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link
+          <WiringTrackedLink
             href={vehicleHubHref}
+            vehicle={vehicleLabel}
+            system={systemMeta.shortLabel}
+            target="vehicle_hub"
             className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-emerald-400/30 text-emerald-200 hover:border-emerald-300/50 hover:text-white transition"
           >
             Open Exact Vehicle Repair Hub
-          </Link>
+          </WiringTrackedLink>
           <WiringTrackedLink
             href={browserHref}
             vehicle={vehicleLabel}
@@ -348,18 +472,48 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
           >
             Open Interactive Diagram Browser
           </WiringTrackedLink>
-          <Link
+          <WiringTrackedLink
             href="/wiring"
+            vehicle={vehicleLabel}
+            system={systemMeta.shortLabel}
+            target="cluster_nav"
             className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/20 text-gray-200 hover:border-cyan-400/50 hover:text-white transition"
           >
             Browse All Wiring Diagrams
-          </Link>
+          </WiringTrackedLink>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-8">
           <StatCard label="Matched Diagrams" value={String(systemDiagrams.length)} />
           <StatCard label="Variant Used" value={data.resolvedVariant} />
           <StatCard label="Total Vehicle Diagrams" value={String(data.index.totalDiagrams)} />
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 pb-12">
+        <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6 md:p-8">
+          <div className="max-w-3xl">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-300/85">From Diagram To Fix</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Use this wiring page as the jump point, not the dead end</h2>
+            <p className="text-sm md:text-base text-gray-300 mt-3">
+              Open the exact diagram, then move directly into the vehicle hub, the repair most likely tied to this system, or the code cluster that usually shows up with it.
+            </p>
+          </div>
+          <div className="grid lg:grid-cols-3 gap-4 mt-6">
+            {nextStepCards.map((card) => (
+              <WiringStepCard
+                key={card.title}
+                vehicle={vehicleLabel}
+                system={systemMeta.shortLabel}
+                eyebrow={card.eyebrow}
+                title={card.title}
+                description={card.description}
+                tone={card.tone}
+                primaryLink={card.primaryLink}
+                secondaryLinks={card.secondaryLinks}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -439,13 +593,16 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
           <h3 className="text-xl font-bold mb-4">Same System, Other Vehicles</h3>
           <div className="grid gap-2">
             {sameSystemVehicles.map(v => (
-              <Link
+              <WiringTrackedLink
                 key={`${v.year}-${v.make}-${v.model}`}
                 href={buildWiringSeoHref(v, systemSlug)}
+                vehicle={vehicleLabel}
+                system={systemMeta.shortLabel}
+                target="same_system_vehicle"
                 className="rounded-lg border border-white/10 px-4 py-3 text-gray-300 hover:text-white hover:border-cyan-400/40 transition"
               >
                 {v.year} {v.make} {v.model} {WIRING_SEO_SYSTEMS[systemSlug].shortLabel} Wiring Diagram
-              </Link>
+              </WiringTrackedLink>
             ))}
           </div>
         </div>
@@ -459,6 +616,99 @@ function StatCard({ label, value }: { label: string; value: string }) {
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
       <p className="text-xs uppercase tracking-wider text-gray-400 mb-1">{label}</p>
       <p className="text-sm text-white font-semibold">{value}</p>
+    </div>
+  );
+}
+
+const WIRING_CARD_TONE_CLASSES: Record<WiringCardTone, {
+  shell: string;
+  eyebrow: string;
+  button: string;
+  chip: string;
+}> = {
+  emerald: {
+    shell: 'border-emerald-500/20 bg-emerald-500/[0.06]',
+    eyebrow: 'text-emerald-300/80',
+    button: 'border-emerald-400/35 text-emerald-200 hover:border-emerald-300/60 hover:bg-emerald-500/10',
+    chip: 'border-emerald-500/20 bg-emerald-500/[0.08] text-emerald-100',
+  },
+  cyan: {
+    shell: 'border-cyan-500/20 bg-cyan-500/[0.06]',
+    eyebrow: 'text-cyan-300/80',
+    button: 'border-cyan-400/35 text-cyan-200 hover:border-cyan-300/60 hover:bg-cyan-500/10',
+    chip: 'border-cyan-500/20 bg-cyan-500/[0.08] text-cyan-100',
+  },
+  amber: {
+    shell: 'border-amber-500/20 bg-amber-500/[0.06]',
+    eyebrow: 'text-amber-300/80',
+    button: 'border-amber-400/35 text-amber-100 hover:border-amber-300/60 hover:bg-amber-500/10',
+    chip: 'border-amber-500/20 bg-amber-500/[0.08] text-amber-100',
+  },
+  slate: {
+    shell: 'border-slate-500/20 bg-slate-500/[0.08]',
+    eyebrow: 'text-slate-300/80',
+    button: 'border-slate-400/35 text-slate-100 hover:border-slate-300/60 hover:bg-slate-500/10',
+    chip: 'border-slate-500/20 bg-slate-500/[0.10] text-slate-100',
+  },
+  violet: {
+    shell: 'border-violet-500/20 bg-violet-500/[0.06]',
+    eyebrow: 'text-violet-300/80',
+    button: 'border-violet-400/35 text-violet-200 hover:border-violet-300/60 hover:bg-violet-500/10',
+    chip: 'border-violet-500/20 bg-violet-500/[0.08] text-violet-100',
+  },
+};
+
+function WiringStepCard({
+  vehicle,
+  system,
+  eyebrow,
+  title,
+  description,
+  tone,
+  primaryLink,
+  secondaryLinks,
+}: {
+  vehicle: string;
+  system: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  tone: WiringCardTone;
+  primaryLink: WiringActionLink;
+  secondaryLinks: WiringActionLink[];
+}) {
+  const toneClasses = WIRING_CARD_TONE_CLASSES[tone];
+
+  return (
+    <div className={`rounded-2xl border p-5 ${toneClasses.shell}`}>
+      <p className={`text-[11px] uppercase tracking-[0.2em] ${toneClasses.eyebrow}`}>{eyebrow}</p>
+      <h3 className="text-xl font-semibold text-white mt-2">{title}</h3>
+      <p className="text-sm leading-6 text-gray-300 mt-3">{description}</p>
+      <WiringTrackedLink
+        href={primaryLink.href}
+        vehicle={vehicle}
+        system={system}
+        target={primaryLink.target}
+        className={`mt-4 inline-flex rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${toneClasses.button}`}
+      >
+        {primaryLink.label} →
+      </WiringTrackedLink>
+      {secondaryLinks.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-4">
+          {secondaryLinks.map((link) => (
+            <WiringTrackedLink
+              key={`${title}-${link.href}-${link.label}`}
+              href={link.href}
+              vehicle={vehicle}
+              system={system}
+              target={link.target}
+              className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${toneClasses.chip}`}
+            >
+              {link.label}
+            </WiringTrackedLink>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
