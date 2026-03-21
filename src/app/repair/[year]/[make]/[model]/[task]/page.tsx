@@ -182,6 +182,38 @@ const REPAIR_DATA: Record<string, {
         parts: ['Headlight bulb (correct fitment)'],
         warnings: ['Do not touch bulb glass with bare hands', 'Test before reassembly', 'Some vehicles require bumper removal'],
         steps: ['Access bulb from engine bay or wheel well', 'Disconnect electrical connector', 'Remove retaining clip or ring', 'Remove old bulb', 'Install new bulb without touching glass', 'Reconnect and test']
+    },
+    'tail-light-replacement': {
+        difficulty: 'Easy',
+        time: '15-30 minutes',
+        tools: ['Trim tool', 'Screwdriver set', 'Gloves', 'Flashlight'],
+        parts: ['Tail light bulb or lamp assembly', 'Socket seal or gasket (if required)'],
+        warnings: ['Confirm driver or passenger side before ordering', 'Test brake, turn, and running lights before reassembly', 'Watch for broken clips around the lens'],
+        steps: ['Open the rear access panel or trim cover', 'Disconnect the connector or bulb socket', 'Remove the lamp fasteners', 'Swap the bulb or assembly', 'Check the seal and reconnect', 'Test all rear lighting functions']
+    },
+    'transmission-fluid-change': {
+        difficulty: 'Intermediate',
+        time: '45-90 minutes',
+        tools: ['Drain pan', 'Funnel', 'Socket set', 'Torque wrench', 'Jack stands'],
+        parts: ['Correct transmission fluid', 'Drain plug washer or pan gasket', 'Transmission filter (if applicable)'],
+        warnings: ['Use the exact fluid spec for your transmission', 'Check whether your vehicle is drain-and-fill or pan-drop service', 'Do not overfill after refilling'],
+        steps: ['Verify the correct transmission fluid spec', 'Raise and secure the vehicle if needed', 'Drain or service the pan per your vehicle method', 'Replace washer, gasket, or filter if applicable', 'Refill with the specified fluid amount', 'Check level and inspect for leaks']
+    },
+    'coolant-flush': {
+        difficulty: 'Easy to Intermediate',
+        time: '1-2 hours',
+        tools: ['Drain pan', 'Funnel', 'Pliers', 'Gloves', 'Distilled water if mixing'],
+        parts: ['Correct coolant', 'Distilled water', 'Clamps or seals (if leaking)'],
+        warnings: ['Work on a cold engine only', 'Do not mix incompatible coolant chemistries', 'Bleed air from the system after refill'],
+        steps: ['Let the engine cool completely', 'Drain the old coolant', 'Flush or rinse the system if required', 'Refill with the correct coolant mix', 'Bleed air from the system', 'Check level and inspect for leaks']
+    },
+    'fuel-filter-replacement': {
+        difficulty: 'Intermediate',
+        time: '30-60 minutes',
+        tools: ['Line wrench set', 'Catch pan', 'Safety glasses', 'Shop rags'],
+        parts: ['Fuel filter', 'Seals or line clips if required'],
+        warnings: ['Relieve fuel pressure before opening the system', 'Confirm flow direction before installation', 'Keep sparks and open flame away from the work area'],
+        steps: ['Relieve fuel pressure', 'Locate the external filter or service access', 'Mark flow direction and disconnect lines', 'Replace the filter and seals', 'Reconnect the lines and secure clips', 'Prime and check for leaks']
     }
 };
 
@@ -214,6 +246,26 @@ const RELATED_TASK_PRIORITIES: Record<string, string[]> = {
         'starter-replacement',
         'spark-plug-replacement',
         'serpentine-belt-replacement',
+    ],
+    'tail-light-replacement': [
+        'headlight-bulb-replacement',
+        'battery-replacement',
+        'engine-air-filter-replacement',
+    ],
+    'transmission-fluid-change': [
+        'coolant-flush',
+        'oil-change',
+        'brake-fluid-flush',
+    ],
+    'coolant-flush': [
+        'thermostat-replacement',
+        'radiator-replacement',
+        'water-pump-replacement',
+    ],
+    'fuel-filter-replacement': [
+        'fuel-pump-replacement',
+        'spark-plug-replacement',
+        'engine-air-filter-replacement',
     ],
 };
 
@@ -258,6 +310,11 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
         title: 'How to Replace Headlight Bulb — Size & Diagram',
         description: 'Step-by-step headlight bulb replacement for your {v}. Correct bulb size, high beam and low beam fitment, removal tips, and DRL guide. 10–30 min job.',
         extraKeywords: ['headlight bulb size', 'how to change headlight bulb', 'headlight removal', 'headlight replacement diagram'],
+    },
+    'tail-light-replacement': {
+        title: 'Tail Light Bulb, Assembly & Replacement',
+        description: 'Tail light replacement for your {v} with bulb vs. assembly guidance, connector checks, and lens access tips. Covers side-specific fitment and moisture clues before ordering.',
+        extraKeywords: ['tail light replacement', 'tail light bulb replacement', 'tail light assembly', 'rear light replacement'],
     },
     'alternator-replacement': {
         title: 'Alternator Symptoms, Voltage Test, Cost & Replacement',
@@ -348,6 +405,11 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
         title: 'Fuel Pump Symptoms, Location & Replacement',
         description: 'Fuel pump failure symptoms and step-by-step replacement for your {v}. In-tank vs. external, pressure specs, strainer, and priming procedure.',
         extraKeywords: ['fuel pump symptoms', 'fuel pump location', 'fuel pump replacement cost', 'no fuel pressure fix'],
+    },
+    'fuel-filter-replacement': {
+        title: 'Fuel Filter Location, Symptoms & Replacement',
+        description: 'Fuel filter replacement for your {v} with location notes, flow direction, pressure-relief reminders, and fitment checks before you buy the part.',
+        extraKeywords: ['fuel filter location', 'fuel filter replacement cost', 'how to change fuel filter', 'fuel filter symptoms'],
     },
 };
 
@@ -478,6 +540,157 @@ const COMMERCIAL_TASK_CONFIG: Partial<Record<string, CommercialTaskConfig>> = {
             'Plan for the correct coolant and bleed procedure before opening the system.',
         ],
     },
+    'tail-light-replacement': {
+        primaryActionLabel: 'Check tail light fitment now',
+        primaryActionHint: 'Tail light jobs convert best when the buyer can verify bulb-only vs. full assembly, plus left or right side, before ordering.',
+        guideActionLabel: 'Open tail light guide with access notes',
+        guideActionHint: 'Use the full guide when you want lens access, connector checks, and the quick bulb-or-assembly decision before teardown.',
+        partsTitle: 'Tail light bulbs, assemblies, and seal checks',
+        partsIntro: 'Tail light fitment changes with side, bulb style, and whether the car uses a complete lamp assembly. Verify those before checkout.',
+        spotlightTitle: 'Lighting searches that prevent the wrong part',
+        spotlightIntro: 'Start with the lamp or bulb, then confirm the correct side and socket style so the new light fits the first time.',
+        bundleActionLabel: 'Search tail light replacement parts',
+        fitmentChecks: [
+            'Confirm driver or passenger side before ordering.',
+            'Check whether you need a bulb, socket, or full lamp assembly.',
+            'Inspect the seal or housing for moisture before reinstalling.',
+        ],
+    },
+    'transmission-fluid-change': {
+        primaryActionLabel: 'Check transmission fluid spec',
+        primaryActionHint: 'Transmission fluid jobs fail when the ATF spec or service method is wrong, so confirm both before you buy anything.',
+        guideActionLabel: 'Open transmission fluid guide with service notes',
+        guideActionHint: 'Use the full guide when you want drain-and-fill guidance, pan-drop caution, and the exact refill path for your vehicle.',
+        partsTitle: 'Transmission fluid, washer, and service items',
+        partsIntro: 'Transmission jobs often need the exact ATF, a drain plug washer or pan gasket, and in some cases a filter. Match the service method first.',
+        spotlightTitle: 'Transmission searches that matter first',
+        spotlightIntro: 'Lead with the fluid spec, then add the service hardware only if your vehicle uses a pan drop or filter service.',
+        bundleActionLabel: 'Search transmission fluid parts',
+        fitmentChecks: [
+            'Confirm the exact ATF spec before checkout.',
+            'Check whether your vehicle is drain-and-fill, pan-drop, or dipstick service.',
+            'Plan for a washer, gasket, or filter only if the service method requires it.',
+        ],
+    },
+    'coolant-flush': {
+        primaryActionLabel: 'Check coolant type now',
+        primaryActionHint: 'Coolant jobs are mostly about chemistry and capacity, so match the coolant type before you start the flush.',
+        guideActionLabel: 'Open coolant guide with bleed notes',
+        guideActionHint: 'Use the full guide when you want the flush sequence, bleed reminders, and the exact refill mix for your vehicle.',
+        partsTitle: 'Coolant, distilled water, and refill items',
+        partsIntro: 'Cooling-system service often needs the correct coolant type, total capacity, and sometimes distilled water for the mix. Confirm the spec before checkout.',
+        spotlightTitle: 'Cooling searches that keep the flush simple',
+        spotlightIntro: 'Start with the coolant type, then verify the refill volume and any seals or clamps you may need while the system is open.',
+        bundleActionLabel: 'Search coolant flush parts',
+        fitmentChecks: [
+            'Match coolant chemistry and color family before mixing anything.',
+            'Confirm total refill capacity and whether distilled water is needed.',
+            'Let the engine cool completely before opening the system.',
+        ],
+    },
+    'fuel-filter-replacement': {
+        primaryActionLabel: 'Check fuel filter fitment',
+        primaryActionHint: 'Fuel filter jobs can be external or in-tank, so verify the design and line orientation before ordering the part.',
+        guideActionLabel: 'Open fuel filter guide with pressure notes',
+        guideActionHint: 'Use the full guide when you want pressure-relief reminders, line orientation, and the shortest access path for your vehicle.',
+        partsTitle: 'Fuel filter, seals, and line hardware',
+        partsIntro: 'Fuel filter service may need the filter itself, new seals, or line clips depending on how the vehicle is built. Confirm the layout first.',
+        spotlightTitle: 'Fuel system searches to lock in first',
+        spotlightIntro: 'Start with the filter design, then add seals or clips only if the service opens the fuel line or housing.',
+        bundleActionLabel: 'Search fuel filter replacement parts',
+        fitmentChecks: [
+            'Confirm external filter vs. in-tank design before ordering.',
+            'Check flow direction and line orientation if the filter is inline.',
+            'Relieve fuel pressure and plan for any seals or clips the service requires.',
+        ],
+    },
+};
+
+interface TaskSupportNote {
+    eyebrow: string;
+    title: string;
+    intro: string;
+    bullets: string[];
+    tone: 'cyan' | 'emerald' | 'amber' | 'violet';
+}
+
+const TASK_SUPPORT_NOTES: Partial<Record<string, TaskSupportNote>> = {
+    'tail-light-replacement': {
+        eyebrow: 'Quick check',
+        title: 'Tail light jobs split into a few common versions',
+        intro: 'Before you buy, confirm whether you need a bulb, socket, seal, or the full lamp assembly.',
+        bullets: [
+            'Check the side first: driver or passenger.',
+            'Verify bulb-only vs. full assembly before checkout.',
+            'Look for moisture, cracked lenses, or brittle clips while the housing is open.',
+        ],
+        tone: 'amber',
+    },
+    'transmission-fluid-change': {
+        eyebrow: 'Quick check',
+        title: 'Transmission fluid work is about the exact spec',
+        intro: 'The wrong ATF or the wrong service method creates the most wasted time on this job.',
+        bullets: [
+            'Match the exact ATF spec before ordering anything.',
+            'Confirm whether your vehicle is drain-and-fill or pan-drop service.',
+            'Plan for a washer, gasket, or filter only if your transmission uses them.',
+        ],
+        tone: 'violet',
+    },
+    'coolant-flush': {
+        eyebrow: 'Quick check',
+        title: 'Coolant flushes are mostly chemistry and bleed process',
+        intro: 'Owners get into trouble when they mix the wrong coolant or rush the refill with air still trapped in the system.',
+        bullets: [
+            'Match the coolant chemistry and color family.',
+            'Let the engine cool fully before opening the system.',
+            'Bleed air and recheck level after the first heat cycle.',
+        ],
+        tone: 'emerald',
+    },
+    'fuel-filter-replacement': {
+        eyebrow: 'Quick check',
+        title: 'Fuel filter access depends on the vehicle layout',
+        intro: 'Some vehicles use a simple inline filter. Others bury the filter in a module or service access point.',
+        bullets: [
+            'Confirm external filter vs. in-tank design before ordering.',
+            'Check flow direction and line orientation if the filter is inline.',
+            'Relieve fuel pressure and keep replacement clips or seals handy.',
+        ],
+        tone: 'cyan',
+    },
+};
+
+const TASK_SUPPORT_TONE_CLASSES: Record<TaskSupportNote['tone'], {
+    shell: string;
+    eyebrow: string;
+    title: string;
+    bullet: string;
+}> = {
+    cyan: {
+        shell: 'border-cyan-500/20 bg-cyan-500/[0.06]',
+        eyebrow: 'text-cyan-200/80',
+        title: 'text-white',
+        bullet: 'text-cyan-50/90',
+    },
+    emerald: {
+        shell: 'border-emerald-500/20 bg-emerald-500/[0.06]',
+        eyebrow: 'text-emerald-200/80',
+        title: 'text-white',
+        bullet: 'text-emerald-50/90',
+    },
+    amber: {
+        shell: 'border-amber-500/20 bg-amber-500/[0.06]',
+        eyebrow: 'text-amber-200/80',
+        title: 'text-white',
+        bullet: 'text-amber-50/90',
+    },
+    violet: {
+        shell: 'border-violet-500/20 bg-violet-500/[0.06]',
+        eyebrow: 'text-violet-200/80',
+        title: 'text-white',
+        bullet: 'text-violet-50/90',
+    },
 };
 
 const HIGH_TICKET_PART_PATTERN = /alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i;
@@ -506,6 +719,14 @@ function getPartActionLabel(task: string, partName: string): string {
             return /belt/.test(lower) ? 'Check belt fitment' : 'See tensioner options';
         case 'thermostat-replacement':
             return /thermostat/.test(lower) ? 'Compare thermostat kits' : 'See cooling supplies';
+        case 'tail-light-replacement':
+            return /tail|lamp|assembly|bulb|socket/.test(lower) ? 'Check tail light fitment' : 'See lighting supplies';
+        case 'transmission-fluid-change':
+            return /fluid|atf|transmission/.test(lower) ? 'Check fluid spec' : 'See transmission supplies';
+        case 'coolant-flush':
+            return /coolant|antifreeze|water/.test(lower) ? 'Check coolant type' : 'See cooling supplies';
+        case 'fuel-filter-replacement':
+            return /fuel|filter|line/.test(lower) ? 'Check fuel filter fitment' : 'See fuel system parts';
         default:
             return /battery|alternator|starter|belt|thermostat|filter|rotor|pad|pump|sensor|bulb/.test(lower)
                 ? 'Check fitment on Amazon'
@@ -527,6 +748,14 @@ function getSpotlightActionLabel(task: string, partName: string): string {
             return /belt/.test(partName.toLowerCase()) ? 'Open belt fitment' : 'Open tensioner search';
         case 'thermostat-replacement':
             return /thermostat/.test(partName.toLowerCase()) ? 'Open thermostat fitment' : 'Open coolant search';
+        case 'tail-light-replacement':
+            return /tail|lamp|assembly|bulb|socket/.test(partName.toLowerCase()) ? 'Open tail light fitment' : 'Open lighting search';
+        case 'transmission-fluid-change':
+            return /fluid|atf|transmission/.test(partName.toLowerCase()) ? 'Open fluid spec' : 'Open service search';
+        case 'coolant-flush':
+            return /coolant|antifreeze|water/.test(partName.toLowerCase()) ? 'Open coolant type' : 'Open cooling search';
+        case 'fuel-filter-replacement':
+            return /fuel|filter|line/.test(partName.toLowerCase()) ? 'Open filter fitment' : 'Open fuel system search';
         default:
             return 'Open fitment search';
     }
@@ -742,6 +971,7 @@ export default async function Page({ params }: PageProps) {
             query: [vehicleName, part.aftermarket || part.oem || part.name].filter(Boolean).join(' '),
         }));
     const commercialConfig = getCommercialTaskConfig(canonicalTask);
+    const taskSupportNote = TASK_SUPPORT_NOTES[canonicalTask];
     const primaryAffiliatePart = affiliateSpotlightParts[0];
     const primaryAffiliateQuery = primaryAffiliatePart?.query || `${vehicleName} ${cleanTask}`;
     const primaryAffiliateName = primaryAffiliatePart?.name || `${cleanTask} parts`;
@@ -780,6 +1010,10 @@ export default async function Page({ params }: PageProps) {
         'thermostat-replacement': '20-80',
         'water-pump-replacement': '80-250',
         'headlight-bulb-replacement': '15-80',
+        'tail-light-replacement': '20-150',
+        'transmission-fluid-change': '40-220',
+        'coolant-flush': '20-120',
+        'fuel-filter-replacement': '15-80',
     };
 
     // ── FAQ data for GEO (Generative Engine Optimization) ────────────────
@@ -807,6 +1041,10 @@ export default async function Page({ params }: PageProps) {
         'cabin-air-filter-replacement': `A clogged cabin air filter in your ${vehicleName} reduces HVAC airflow, causes musty odors, and can fog up windows. It also makes the blower motor work harder, shortening its life.`,
         'engine-air-filter-replacement': `A dirty engine air filter in your ${vehicleName} restricts airflow to the engine, reducing power by up to 10% and hurting fuel economy. Over time it can allow debris into the engine.`,
         'headlight-bulb-replacement': `Driving your ${vehicleName} with a burned-out headlight is a safety hazard and a ticketable offense in most states. Reduced visibility increases accident risk, especially at night and in bad weather.`,
+        'tail-light-replacement': `A broken or dim tail light on your ${vehicleName} makes the car harder to see and can trigger a traffic stop or inspection failure. Moisture in the housing can also spread damage to the socket or connector if ignored.`,
+        'transmission-fluid-change': `Old or wrong transmission fluid in your ${vehicleName} can cause harsh shifting, slipping, shuddering, and long-term transmission wear. Neglect can turn a fluid service into a costly rebuild.`,
+        'coolant-flush': `Old or contaminated coolant in your ${vehicleName} can corrode the cooling system, clog passages, and let overheating damage the head gasket or engine. Air left in the system can also create false overheating symptoms.`,
+        'fuel-filter-replacement': `A clogged fuel filter on your ${vehicleName} can cause lean running, hesitation, hard starts, and fuel pump strain. Ignoring it can make the pump work harder and fail sooner.`,
     };
 
     const faqItems = [
@@ -964,6 +1202,29 @@ export default async function Page({ params }: PageProps) {
                         </Link>
                     </div>
                 </header>
+
+                {taskSupportNote && (
+                    <section className={`mb-8 rounded-2xl border p-6 md:p-7 ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].shell}`}>
+                        <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].eyebrow}`}>
+                            {taskSupportNote.eyebrow}
+                        </p>
+                        <h2 className={`mt-3 text-2xl font-semibold tracking-tight ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].title}`}>
+                            {taskSupportNote.title}
+                        </h2>
+                        <p className="mt-3 text-sm leading-7 text-gray-200/90">
+                            {taskSupportNote.intro}
+                        </p>
+                        <div className="mt-5 grid gap-3 md:grid-cols-3">
+                            {taskSupportNote.bullets.map((bullet) => (
+                                <div key={bullet} className="rounded-xl border border-white/10 bg-black/20 p-4">
+                                    <p className={`text-sm leading-6 ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].bullet}`}>
+                                        {bullet}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 <section className="mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-7">
                     <h2 className="text-xl font-semibold text-white tracking-tight">Why this guide is trustworthy</h2>
