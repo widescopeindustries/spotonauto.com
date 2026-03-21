@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node --experimental-strip-types scripts/generate-repair-sitemaps.mjs",
+    "prebuild": "node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
