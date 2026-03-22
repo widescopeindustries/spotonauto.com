@@ -221,6 +221,35 @@ export function trackBookmarkClick(page: string): void {
   });
 }
 
+export type EntryRouteSurface =
+  | 'home_hero'
+  | 'home_alternate'
+  | 'home_symptom_quick_start'
+  | 'home_dashboard';
+
+export type EntryRouteDestination =
+  | 'diagnose'
+  | 'symptom'
+  | 'codes'
+  | 'wiring'
+  | 'repair'
+  | 'vehicle_hub'
+  | 'parts';
+
+export function trackEntryRouteClick(
+  surface: EntryRouteSurface,
+  destination: EntryRouteDestination,
+  label: string,
+): void {
+  trackEvent('entry_route_click', {
+    event_category: 'funnel',
+    event_label: `${surface}_${destination}`,
+    entry_surface: surface,
+    entry_destination: destination,
+    entry_label: label.slice(0, 120),
+  });
+}
+
 // ─── Wiring Events ──────────────────────────────────────────────────────────
 
 export function trackWiringSeoView(vehicle: string, system: string): void {

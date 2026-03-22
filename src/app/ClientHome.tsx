@@ -4,6 +4,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ArrowRight, Battery, CircleDot, Cpu, Droplets, Lightbulb, Route, Search, Wrench } from 'lucide-react';
+import { trackEntryRouteClick } from '@/lib/analytics';
 import { useT } from '@/lib/translations';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
@@ -21,12 +22,22 @@ const HolographicDashboard = dynamic(() => import('@/components/HolographicDashb
 
 const FALLBACK_PATHS = [
     {
+        eyebrow: 'Need help first',
+        title: 'Start with diagnosis',
+        description: 'Use the diagnostic flow when you only know the symptom and need help narrowing the repair path first.',
+        href: '/diagnose',
+        cta: 'Run diagnosis',
+        icon: Search,
+        destination: 'diagnose' as const,
+    },
+    {
         eyebrow: 'Have a code',
         title: 'Open OBD2 code pages',
         description: 'If the warning light already gave you a code, go straight into the code library and its repair paths.',
         href: '/codes',
         cta: 'Browse codes',
         icon: Cpu,
+        destination: 'codes' as const,
     },
     {
         eyebrow: 'Need wiring now',
@@ -35,15 +46,17 @@ const FALLBACK_PATHS = [
         href: '/wiring',
         cta: 'Browse wiring',
         icon: Route,
+        destination: 'wiring' as const,
     },
-    {
-        eyebrow: 'Not sure yet',
-        title: 'Start with diagnosis',
-        description: 'Use the diagnostic flow when you only know the symptom and need help narrowing the repair path first.',
-        href: '/diagnose',
-        cta: 'Run diagnosis',
-        icon: Search,
-    },
+];
+
+const DIAGNOSIS_QUICK_STARTS = [
+    { label: 'Car won\'t start', task: 'car won\'t start' },
+    { label: 'Check engine light', task: 'check engine light on' },
+    { label: 'Squeaky brakes', task: 'squeaky brakes' },
+    { label: 'Battery light', task: 'battery light on' },
+    { label: 'Overheating', task: 'overheating' },
+    { label: 'AC not cold', task: 'AC not cold' },
 ];
 
 const HUB_SURFACES = [
@@ -167,6 +180,13 @@ function HeroSection() {
                         <div className="flex flex-wrap gap-3">
                             <Link
                                 href={vehicleHubHref}
+                                onClick={() => {
+                                    trackEntryRouteClick(
+                                        'home_hero',
+                                        hasVehicleLock ? 'vehicle_hub' : 'repair',
+                                        vehicleLabel || 'open vehicle hub',
+                                    );
+                                }}
                                 className="inline-flex items-center justify-center gap-3 rounded-xl bg-cyan-400 px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-black transition-all hover:bg-cyan-300"
                             >
                                 {vehicleLabel ? `Open ${vehicleLabel}` : 'Open vehicle hub'}
@@ -174,6 +194,9 @@ function HeroSection() {
                             </Link>
                             <Link
                                 href={wiringHref}
+                                onClick={() => {
+                                    trackEntryRouteClick('home_hero', 'wiring', vehicleLabel ? `${vehicleLabel} wiring` : 'wiring diagrams');
+                                }}
                                 className="inline-flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-6 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-white transition-all hover:border-cyan-400/30 hover:text-cyan-100"
                             >
                                 Wiring diagrams
@@ -232,14 +255,14 @@ function AlternateEntrySection() {
                 <div className="rounded-[32px] matte-panel p-8 sm:p-10">
                     <div className="mb-8 max-w-3xl space-y-4">
                         <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
-                            Other ways in
+                            Need a different starting point?
                         </span>
                         <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
-                            Keep the front door simple, but do not trap users who came with a different intent
+                            Start with diagnosis, a code, or wiring when that is what you already know
                         </h2>
                         <p className="text-lg text-gray-300">
-                            The primary path is vehicle first. These three routes stay visible for people who already know they need wiring,
-                            a code page, or diagnosis before they know the exact repair.
+                            Not every visit starts with an exact repair. These routes help when you already have a trouble code,
+                            need wiring diagrams, or want help narrowing the problem before opening a guide.
                         </p>
                     </div>
 
@@ -251,6 +274,7 @@ function AlternateEntrySection() {
                                 <Link
                                     key={path.title}
                                     href={path.href}
+                                    onClick={() => trackEntryRouteClick('home_alternate', path.destination, path.title)}
                                     className="group rounded-[24px] matte-panel-soft p-6 transition-all hover:border-cyan-500/30 hover:bg-white/[0.035]"
                                 >
                                     <div className="flex items-start justify-between gap-4">
@@ -271,6 +295,29 @@ function AlternateEntrySection() {
                                 </Link>
                             );
                         })}
+                    </div>
+
+                    <div className="mt-8 rounded-[24px] matte-panel-soft p-6">
+                        <div className="max-w-3xl space-y-3">
+                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Common starting points</p>
+                            <h3 className="font-display text-2xl font-bold text-white">If you only know the symptom, start here</h3>
+                            <p className="text-sm leading-6 text-gray-400">
+                                These quick starts open diagnosis with the symptom already filled in, so you can add the vehicle on the next screen and keep moving.
+                            </p>
+                        </div>
+
+                        <div className="mt-5 flex flex-wrap gap-3">
+                            {DIAGNOSIS_QUICK_STARTS.map((quickStart) => (
+                                <Link
+                                    key={quickStart.task}
+                                    href={{ pathname: '/diagnose', query: { task: quickStart.task } }}
+                                    onClick={() => trackEntryRouteClick('home_symptom_quick_start', 'diagnose', quickStart.task)}
+                                    className="rounded-full border border-white/10 bg-slate-900/50 px-4 py-2 text-sm text-gray-200 transition-all hover:border-cyan-400/35 hover:bg-slate-900/70 hover:text-cyan-100"
+                                >
+                                    {quickStart.label}
+                                </Link>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

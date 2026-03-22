@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { decodeVin } from '../services/apiClient';
 import { getYears, getMakesForYear, fetchModels } from '../services/vehicleData';
-import { trackVehicleSearch, trackVinDecode } from '../lib/analytics';
+import { trackEntryRouteClick, trackVehicleSearch, trackVinDecode } from '../lib/analytics';
 import { useT } from '@/lib/translations';
 import { buildRepairUrl, buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
@@ -222,6 +222,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                             type="button"
                             onClick={() => {
                                 if (hasVehicleLock) {
+                                    trackEntryRouteClick('home_dashboard', 'vehicle_hub', `${vehicle.year} ${vehicle.make} ${vehicle.model}`);
                                     router.push(vehicleHubHref);
                                 }
                             }}
@@ -234,18 +235,21 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                     <div className="mt-3 flex flex-wrap gap-2">
                         <Link
                             href={wiringHref}
+                            onClick={() => trackEntryRouteClick('home_dashboard', 'wiring', hasVehicleLock ? `${vehicle.year} ${vehicle.make} ${vehicle.model} wiring` : 'wiring diagrams')}
                             className="rounded-full border border-white/10 bg-slate-900/50 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 transition-all hover:border-cyan-400/35 hover:text-cyan-200"
                         >
                             Wiring diagrams
                         </Link>
                         <Link
                             href="/codes"
+                            onClick={() => trackEntryRouteClick('home_dashboard', 'codes', 'OBD2 codes')}
                             className="rounded-full border border-white/10 bg-slate-900/50 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 transition-all hover:border-cyan-400/35 hover:text-cyan-200"
                         >
                             OBD2 codes
                         </Link>
                         <Link
                             href="/parts"
+                            onClick={() => trackEntryRouteClick('home_dashboard', 'parts', 'parts')}
                             className="rounded-full border border-white/10 bg-slate-900/50 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 transition-all hover:border-cyan-400/35 hover:text-cyan-200"
                         >
                             Parts
