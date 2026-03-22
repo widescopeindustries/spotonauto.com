@@ -12,6 +12,19 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const host = normalizeHost(request.headers.get('x-forwarded-host') || request.headers.get('host'));
 
+    if (pathname === '/wiring/sitemap.xml') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/api/wiring-xml-index';
+        return NextResponse.rewrite(url);
+    }
+
+    const wiringChunkMatch = pathname.match(/^\/wiring\/sitemap\/(\d+)\.xml$/);
+    if (wiringChunkMatch) {
+        const url = request.nextUrl.clone();
+        url.pathname = `/api/wiring-xml/${wiringChunkMatch[1]}`;
+        return NextResponse.rewrite(url);
+    }
+
     if (isLegacyRedirectHost(host)) {
         const url = request.nextUrl.clone();
         url.protocol = 'https:';
@@ -36,11 +49,11 @@ export function middleware(request: NextRequest) {
     // so search engines consistently parse robots + sitemap responses.
     const isRootOrNestedSitemap =
         pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
-    const isRepairSitemapChunk =
-        pathname.startsWith('/repair/sitemap/') && pathname.endsWith('.xml');
+    const isNestedSitemapChunk =
+        pathname.includes('/sitemap/') && pathname.endsWith('.xml');
     const isRobots = pathname === '/robots.txt';
 
-    if (isRootOrNestedSitemap || isRepairSitemapChunk || isRobots) {
+    if (isRootOrNestedSitemap || isNestedSitemapChunk || isRobots) {
         const response = NextResponse.next();
         response.headers.set('Vary', 'Accept-Encoding');
         response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');

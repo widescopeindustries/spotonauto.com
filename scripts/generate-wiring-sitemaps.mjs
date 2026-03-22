@@ -3,8 +3,8 @@
  * Same strategy as generate-repair-sitemaps.mjs — chunked static files
  * served directly by Vercel CDN with no Next.js processing.
  *
- * Splits ~168K wiring URLs into chunks of 45,000 to stay under
- * Google's 50,000 URL-per-sitemap limit.
+ * Splits wiring URLs into conservative 10,000-URL chunks to match the
+ * repair sitemap strategy and reduce crawler fetch/parse risk.
  */
 import { writeFileSync, mkdirSync, readdirSync, unlinkSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
@@ -17,7 +17,7 @@ const INDEX_PATH = join(ROOT, 'public', 'wiring', 'sitemap.xml');
 const COVERAGE_PATH = join(ROOT, 'src', 'data', 'wiring-coverage.json');
 
 const LAST_MOD = process.env.SITEMAP_LAST_MOD || new Date().toISOString().slice(0, 10);
-const URLS_PER_SITEMAP = 45000;
+const URLS_PER_SITEMAP = 10000;
 const BASE_URL = 'https://spotonauto.com';
 
 const NON_ROAD_VEHICLE_PATTERN =
