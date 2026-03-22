@@ -79,82 +79,43 @@ const HUB_SURFACES = [
     },
 ];
 
-const SEARCH_MOMENTUM_CLUSTERS = [
-    {
-        eyebrow: 'Lighting',
-        title: 'Headlights and tail lights',
-        description: 'Bulb and lamp jobs are one of the clearest DIY entry lanes, and they keep showing up in current search demand.',
-        href: '/repairs/headlight-bulb-replacement',
-        cta: 'Browse lighting guides',
-        icon: Lightbulb,
-        links: [
-            { href: '/repair/2019/kia/optima/headlight-bulb-replacement', label: '2019 Kia Optima headlight replacement' },
-            { href: '/repair/2015/subaru/outback/tail-light-replacement', label: '2015 Subaru Outback tail lights' },
-            { href: '/repair/2006/kia/sorento/headlight-bulb-replacement', label: '2006 Kia Sorento headlight bulb replacement' },
-        ],
-    },
-    {
-        eyebrow: 'Battery',
-        title: 'Battery and quick no-start wins',
-        description: 'Battery jobs are still one of the fastest trust-building first repairs because owners can verify the part and finish the job in one sitting.',
-        href: '/repairs/battery-replacement',
-        cta: 'Browse battery guides',
-        icon: Battery,
-        links: [
-            { href: '/repair/2013/toyota/corolla/battery-replacement', label: '2013 Toyota Corolla battery replacement' },
-            { href: '/repair/2015/honda/odyssey/battery-replacement', label: '2015 Honda Odyssey battery replacement' },
-            { href: '/repair/2020/toyota/tacoma/battery-replacement', label: '2020 Toyota Tacoma battery replacement' },
-        ],
-    },
-    {
-        eyebrow: 'Brakes',
-        title: 'Pads, rotors, and basic brake service',
-        description: 'Brake work is already showing up as a strong next-wave DIY lane, especially when the exact vehicle path makes parts, tools, and the first steps obvious.',
-        href: '/repairs/brake-pad-replacement',
-        cta: 'Browse brake guides',
-        icon: CircleDot,
-        links: [
-            { href: '/repair/2017/ford/fusion/brake-pad-replacement', label: '2017 Ford Fusion brake pads' },
-            { href: '/repair/2014/nissan/altima/brake-pad-replacement', label: '2014 Nissan Altima front brakes' },
-            { href: '/repair/2018/toyota/camry/brake-pad-replacement', label: '2018 Toyota Camry brake pads' },
-        ],
-    },
-    {
-        eyebrow: 'Fluids',
-        title: 'Oil, transmission fluid, and coolant',
-        description: 'Fluid-intent searchers are usually ready to act if the spec, quantity, and refill path are obvious enough.',
-        href: '/repairs/oil-change',
-        cta: 'Browse fluid guides',
-        icon: Droplets,
-        links: [
-            { href: '/repair/2010/chevrolet/traverse/oil-change', label: 'Chevy Traverse oil change' },
-            { href: '/repair/2004/acura/tsx/transmission-fluid-change', label: '2004 Acura TSX transmission fluid' },
-            { href: '/repairs/coolant-flush', label: 'Coolant flush guides by vehicle' },
-        ],
-    },
-    {
-        eyebrow: 'Filters',
-        title: 'Filters and light maintenance',
-        description: 'These jobs are low-risk, high-confidence wins that turn search traffic into repeat users and parts research.',
-        href: '/repairs/cabin-air-filter-replacement',
-        cta: 'Browse filter guides',
-        icon: Wrench,
-        links: [
-            { href: '/repair/2020/toyota/tacoma/cabin-air-filter-replacement', label: '2020 Toyota Tacoma cabin air filter' },
-            { href: '/repair/2010/honda/pilot/fuel-filter-replacement', label: 'Honda Pilot fuel filter' },
-            { href: '/repair/2016/nissan/rogue/cabin-air-filter-replacement', label: '2016 Nissan Rogue cabin air filter' },
-        ],
-    },
-];
+interface MomentumClusterCard {
+    cluster: string;
+    eyebrow: string;
+    title: string;
+    description: string;
+    href: string;
+    cta: string;
+    queries: number;
+    impressions: number;
+    links: Array<{ href: string; label: string }>;
+}
 
-const COMMAND_CENTER_MOMENTUM = [
-    { year: '2014', make: 'Ford', model: 'Escape', note: 'Lights, brakes, cooling, and tune-up signals are stacking here.' },
-    { year: '2016', make: 'Ford', model: 'Fusion', note: 'Headlights and brakes are surfacing together on one vehicle family.' },
-    { year: '2016', make: 'Nissan', model: 'Rogue', note: 'Filters, brakes, and lights all have active exact-vehicle demand.' },
-    { year: '2014', make: 'Nissan', model: 'Altima', note: 'Brake and lighting demand is repeating on the same hub.' },
-    { year: '2018', make: 'Toyota', model: 'Camry', note: 'Headlights and brake work are both getting tested already.' },
-    { year: '2016', make: 'Hyundai', model: 'Elantra', note: 'Lighting, brakes, and charging all showed up in the query mix.' },
-];
+interface CommandCenterMomentumCard {
+    year: string;
+    make: string;
+    model: string;
+    label: string;
+    note: string;
+    href: string;
+    score: number;
+}
+
+interface ClientHomeProps {
+    momentumClusters: MomentumClusterCard[];
+    commandCenterMomentum: CommandCenterMomentumCard[];
+}
+
+const CLUSTER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+    lighting: Lightbulb,
+    battery: Battery,
+    brakes: CircleDot,
+    oil_fluids: Droplets,
+    filters: Wrench,
+    belts_cooling: Route,
+    starting_charging: Battery,
+    ignition_tuneup: Wrench,
+};
 
 function HeroSection() {
     const [selectedVehicle, setSelectedVehicle] = React.useState<{ year: string; make: string; model: string } | null>(null);
@@ -317,27 +278,27 @@ function AlternateEntrySection() {
     );
 }
 
-function SearchMomentumSection() {
+function SearchMomentumSection({ momentumClusters }: { momentumClusters: MomentumClusterCard[] }) {
     return (
         <section className="px-4 pb-20 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
                 <div className="rounded-[32px] matte-panel p-8 sm:p-10">
                     <div className="mb-8 max-w-3xl space-y-4">
                         <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
-                            Search momentum
+                            Popular DIY repairs
                         </span>
                         <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
-                            Expand the DIY clusters that are already pulling people in
+                            Start with the repairs drivers handle most often
                         </h2>
                         <p className="text-lg text-gray-300">
-                            These are the simpler jobs current search demand keeps circling: lighting, brakes, battery, fluids, and filters.
-                            The goal is not more homepage noise. It is stronger paths into the exact guides and repair categories that are already earning trust.
+                            These are common jobs many owners can usually do themselves: lights, brakes, batteries, fluids, and filters.
+                            Open an exact guide to get the right parts, specs, and next steps for your vehicle.
                         </p>
                     </div>
 
                     <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-5">
-                        {SEARCH_MOMENTUM_CLUSTERS.map((cluster) => {
-                            const Icon = cluster.icon;
+                        {momentumClusters.map((cluster) => {
+                            const Icon = CLUSTER_ICONS[cluster.cluster] || Wrench;
 
                             return (
                                 <div
@@ -383,38 +344,35 @@ function SearchMomentumSection() {
     );
 }
 
-function CommandCenterMomentumSection() {
+function CommandCenterMomentumSection({ commandCenterMomentum }: { commandCenterMomentum: CommandCenterMomentumCard[] }) {
     return (
         <section className="px-4 pb-24 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
                 <div className="rounded-[32px] matte-panel p-8 sm:p-10">
                     <div className="mb-8 max-w-3xl space-y-4">
                         <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
-                            Command centers gaining traction
+                            Popular vehicle hubs
                         </span>
                         <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
-                            Repeated year-make-model demand should flow into stronger exact vehicle hubs
+                            Start from an exact vehicle hub when you already know the car
                         </h2>
                         <p className="text-lg text-gray-300">
-                            These exact vehicles are already showing repeated search intent across multiple tasks. Their command centers should be the clean handoff from discovery into wiring, repairs, specs, symptoms, and the next likely job.
+                            These exact vehicle hubs make it easier to move from the car you own into the right repair guide, wiring page, symptom path, or code page without starting over.
                         </p>
                     </div>
 
                     <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-                        {COMMAND_CENTER_MOMENTUM.map((vehicle) => {
-                            const href = buildVehicleHubUrl(vehicle.year, vehicle.make, vehicle.model);
-                            const label = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
-
+                        {commandCenterMomentum.map((vehicle) => {
                             return (
                                 <Link
-                                    key={label}
-                                    href={href}
+                                    key={vehicle.href}
+                                    href={vehicle.href}
                                     className="group rounded-[24px] matte-panel-soft p-6 transition-all hover:border-cyan-500/30 hover:bg-white/[0.035]"
                                 >
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="space-y-3">
                                             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Exact vehicle hub</p>
-                                            <h3 className="font-display text-2xl font-bold text-white">{label}</h3>
+                                            <h3 className="font-display text-2xl font-bold text-white">{vehicle.label}</h3>
                                             <p className="text-sm leading-6 text-gray-400">{vehicle.note}</p>
                                         </div>
                                         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300">
@@ -436,7 +394,7 @@ function CommandCenterMomentumSection() {
     );
 }
 
-export default function ClientHome() {
+export default function ClientHome({ momentumClusters, commandCenterMomentum }: ClientHomeProps) {
     return (
         <div className="relative min-h-screen overflow-x-hidden matte-shell text-white">
             <div className="pointer-events-none fixed inset-0 -z-10">
@@ -447,8 +405,8 @@ export default function ClientHome() {
             <div className="relative z-10">
                 <HeroSection />
                 <AlternateEntrySection />
-                <SearchMomentumSection />
-                <CommandCenterMomentumSection />
+                <SearchMomentumSection momentumClusters={momentumClusters} />
+                <CommandCenterMomentumSection commandCenterMomentum={commandCenterMomentum} />
             </div>
         </div>
     );

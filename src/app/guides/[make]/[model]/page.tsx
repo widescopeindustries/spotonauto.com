@@ -6,6 +6,11 @@ import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart 
 import { getToolPagesForVehicle, TOOL_TYPE_META } from '@/data/tools-pages';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Wrench } from 'lucide-react';
+import {
+  getVehicleFamilyCommandCenterOpportunities,
+  getVehicleFamilyQuerySignals,
+} from '@/lib/commandCenterOpportunities';
+import { buildRepairUrl } from '@/lib/vehicleIdentity';
 import { buildVehicleHubGraph } from '@/lib/vehicleHubGraph';
 
 interface PageProps {
@@ -17,6 +22,11 @@ interface PageProps {
 
 function slugifyPart(value: string): string {
   return slugifyRoutePart(value);
+}
+
+function clampRepresentativeYear(preferredYear: number | null, start: number, end: number): number {
+  if (preferredYear && preferredYear >= start && preferredYear <= end) return preferredYear;
+  return Math.max(start, Math.min(2013, end));
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -67,9 +77,20 @@ export default async function ModelGuidesPage({ params }: PageProps) {
   const production = VEHICLE_PRODUCTION_YEARS[originalMake][originalModel];
   const toolPages = getToolPagesForVehicle(originalMake, originalModel);
   const featuredToolPages = toolPages.slice(0, 8);
-  
-  // We'll link to 2013 as a representative year or the latest year available in our sitemap range
-  const targetYear = Math.min(2013, production.end);
+  const familyOpportunities = getVehicleFamilyCommandCenterOpportunities(originalMake, originalModel, { limit: 4 });
+  const familyQuerySignals = getVehicleFamilyQuerySignals(originalMake, originalModel, { limit: 6 });
+  const targetYear = clampRepresentativeYear(
+    familyOpportunities.length > 0 ? Number(familyOpportunities[0].year) : null,
+    production.start,
+    production.end,
+  );
+  const queryOnlySignals = familyQuerySignals
+    .filter((entry) =>
+      entry.year !== String(targetYear)
+      && !familyOpportunities.some((opportunity) => opportunity.year === entry.year),
+    )
+    .slice(0, 4);
+
   const representativeVehicleGraph = await buildVehicleHubGraph({
     year: String(targetYear),
     make: canonicalMake,
@@ -166,6 +187,77 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             </Link>
           </div>
         </section>
+
+        {(familyOpportunities.length > 0 || queryOnlySignals.length > 0) && (
+          <section className="mb-12 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div className="max-w-3xl">
+                <h2 className="text-xl font-bold text-white">Current demand on the {originalMake} {originalModel} line</h2>
+                <p className="text-sm text-gray-300 mt-2">
+                  These exact-year hubs are where query repetition and page pickup are already showing. Keep the model page feeding them instead of pointing users into a generic representative year.
+                </p>
+              </div>
+              <Link
+                href={`/repair/${targetYear}/${canonicalMake}/${canonicalModel}`}
+                className="inline-flex items-center rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 hover:border-emerald-400/40 hover:bg-emerald-500/20 transition-all"
+              >
+                Open lead year hub
+              </Link>
+            </div>
+
+            {familyOpportunities.length > 0 && (
+              <div className="grid lg:grid-cols-3 gap-4">
+                {familyOpportunities.map((entry) => (
+                  <div
+                    key={entry.hubPath}
+                    className="rounded-xl border border-white/10 bg-black/20 p-4"
+                  >
+                    <Link href={entry.hubPath} className="block group">
+                      <p className="text-xs uppercase tracking-[0.18em] text-emerald-300/80 mb-2">Exact-year demand</p>
+                      <h3 className="text-base font-semibold text-white group-hover:text-emerald-300 transition-colors">
+                        {entry.label}
+                      </h3>
+                    </Link>
+                    <p className="text-sm text-gray-300 mt-2">{entry.note}</p>
+                    <p className="text-xs text-gray-500 mt-3">
+                      {entry.query24hCount} repeated queries • {entry.gscCurrentImpressions} weekly GSC impressions • {entry.gaCurrentSessions} weekly GA organic sessions
+                    </p>
+                    {entry.topTasks.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {entry.topTasks.slice(0, 3).map((task) => (
+                          <Link
+                            key={`${entry.hubPath}-${task.task}`}
+                            href={buildRepairUrl(entry.year, canonicalMake, canonicalModel, task.task)}
+                            className="rounded-full border border-emerald-500/20 bg-emerald-500/[0.08] px-3 py-1.5 text-xs text-emerald-100 transition-colors hover:border-emerald-400/40 hover:bg-emerald-500/[0.14]"
+                          >
+                            {task.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {queryOnlySignals.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-white">Also showing fresh query pickup</h3>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {queryOnlySignals.map((entry) => (
+                    <Link
+                      key={entry.hubPath}
+                      href={entry.hubPath}
+                      className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-gray-200 transition-colors hover:border-emerald-400/35 hover:text-emerald-200"
+                    >
+                      {entry.label} • {entry.queryCount} queries / {entry.impressions} impressions
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
 
         {tier1ModelPages.length > 0 && (
           <section className="mb-12 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">

@@ -9,6 +9,10 @@ import {
   slugifyRoutePart,
 } from '@/data/vehicles';
 import { getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
+import {
+  getExactVehicleCommandCenterOpportunity,
+  getVehicleFamilyCommandCenterOpportunities,
+} from '@/lib/commandCenterOpportunities';
 import { buildRepairUrl, buildVehicleNodeId } from '@/lib/vehicleIdentity';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
@@ -205,6 +209,7 @@ function buildPriorityRepairPreviewLinks(
   exactPages: PreviewLink[],
   repairNodes: Array<{ href: string; label: string }>,
   vehicleLabel: string,
+  priorityLinks: PreviewLink[] = [],
 ): PreviewLink[] {
   const brakeLinks = repairNodes
     .filter((node) => /brake/i.test(node.label))
@@ -220,7 +225,7 @@ function buildPriorityRepairPreviewLinks(
       label: stripVehiclePrefix(node.label, vehicleLabel),
     }));
 
-  const combined = [...brakeLinks, ...exactPages, ...fallbackLinks];
+  const combined = [...priorityLinks, ...brakeLinks, ...exactPages, ...fallbackLinks];
   const deduped: PreviewLink[] = [];
   const seen = new Set<string>();
 
@@ -232,6 +237,35 @@ function buildPriorityRepairPreviewLinks(
   }
 
   return deduped;
+}
+
+function toRelativeHref(href: string): string {
+  if (href.startsWith('/')) return href;
+
+  try {
+    const url = new URL(href);
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return href;
+  }
+}
+
+function dedupePreviewLinks(links: PreviewLink[], limit: number): PreviewLink[] {
+  const out: PreviewLink[] = [];
+  const seen = new Set<string>();
+
+  for (const link of links) {
+    if (!link.href || seen.has(link.href)) continue;
+    seen.add(link.href);
+    out.push(link);
+    if (out.length >= limit) break;
+  }
+
+  return out;
+}
+
+function formatSignedDelta(value: number): string {
+  return value > 0 ? `+${value}` : String(value);
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -333,6 +367,18 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
   const modelTier1Pages = getTier1RescuePagesForVehicle(originalMake, originalModel)
     .filter((entry) => entry.year !== resolvedYear)
     .slice(0, 4);
+  const exactOpportunity = getExactVehicleCommandCenterOpportunity(canonicalYear, originalMake, originalModel);
+  const familyOpportunities = getVehicleFamilyCommandCenterOpportunities(originalMake, originalModel, {
+    excludeYear: canonicalYear,
+    limit: 4,
+  });
+  const opportunityTaskPreviewLinks = dedupePreviewLinks(
+    (exactOpportunity?.topTasks ?? []).map((task) => ({
+      href: buildRepairUrl(canonicalYear, canonicalMake, canonicalModel, task.task),
+      label: task.label,
+    })),
+    4,
+  );
   const relatedYears = getRelatedYears(resolvedYear, production.start, production.end);
   const diyQuickStartCards = DIY_QUICK_START_BLUEPRINTS.map((blueprint) => {
     const supportNodes = blueprint.supportGroup === 'wiring'
@@ -384,6 +430,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
         })) : [],
         repairGroup?.nodes ?? [],
         vehicleLabel,
+        opportunityTaskPreviewLinks,
       ),
     },
     {
@@ -581,6 +628,140 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {(exactOpportunity || familyOpportunities.length > 0) && (
+        <section className="max-w-6xl mx-auto px-4 pb-12">
+          <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-8">
+            <div className="max-w-4xl">
+              <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-300/85">Search Demand Snapshot</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">
+                {exactOpportunity
+                  ? `Current query and page pickup around the ${vehicleLabel}`
+                  : `Current demand stacking on the ${originalMake} ${originalModel} line`}
+              </h2>
+              <p className="text-sm md:text-base text-gray-300 mt-3">
+                {exactOpportunity
+                  ? `${exactOpportunity.note} Use these exact task and symptom links to keep the strongest current search lanes one click away from the command center.`
+                  : `This model line is already showing live exact-year demand. Route people into the strongest year hubs instead of relying on a generic fallback year.`}
+              </p>
+            </div>
+
+            {exactOpportunity && (
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mt-6">
+                <DemandStatCard
+                  label="24h repeated queries"
+                  value={String(exactOpportunity.query24hCount)}
+                  detail={`${exactOpportunity.query24hImpressions} impressions`}
+                />
+                <DemandStatCard
+                  label="Weekly GSC impressions"
+                  value={String(exactOpportunity.gscCurrentImpressions)}
+                  detail={`${formatSignedDelta(exactOpportunity.gscDeltaImpressions)} vs prior week`}
+                />
+                <DemandStatCard
+                  label="Weekly GSC clicks"
+                  value={String(exactOpportunity.gscCurrentClicks)}
+                  detail={`${exactOpportunity.topClusters.slice(0, 2).map((cluster) => cluster.label).join(' • ') || 'Live repair pickup'}`}
+                />
+                <DemandStatCard
+                  label="Weekly GA organic sessions"
+                  value={String(exactOpportunity.gaCurrentSessions)}
+                  detail={`${formatSignedDelta(exactOpportunity.gaDeltaSessions)} vs prior week`}
+                />
+              </div>
+            )}
+
+            {exactOpportunity?.topTasks.length ? (
+              <div className="mt-6">
+                <div className="flex items-end justify-between gap-3 mb-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">Exact repair tasks already surfacing for this vehicle</h3>
+                    <p className="text-sm text-gray-300 mt-2">
+                      Push users into these exact paths first when they line up with what they searched.
+                    </p>
+                  </div>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                  {exactOpportunity.topTasks.slice(0, 4).map((task) => (
+                    <Link
+                      key={`${vehicleLabel}-${task.task}`}
+                      href={buildRepairUrl(canonicalYear, canonicalMake, canonicalModel, task.task)}
+                      className="rounded-xl border border-white/10 bg-slate-900/45 p-4 transition-all hover:border-emerald-400/35 hover:bg-slate-900/65"
+                    >
+                      <p className="text-xs uppercase tracking-[0.18em] text-emerald-300/85 mb-2">{task.cluster}</p>
+                      <h3 className="text-base font-semibold text-white">{task.label}</h3>
+                      <p className="text-sm text-gray-400 mt-2">Demand weight {task.weight}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {exactOpportunity?.symptomHubs.length ? (
+              <div className="mt-6">
+                <h3 className="text-xl font-semibold text-white">Symptom hubs that should keep feeding this vehicle</h3>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {exactOpportunity.symptomHubs.slice(0, 4).map((hub) => (
+                    <Link
+                      key={`${vehicleLabel}-${hub.href}`}
+                      href={toRelativeHref(hub.href)}
+                      className="rounded-full border border-amber-500/20 bg-amber-500/[0.08] px-3 py-1.5 text-xs text-amber-100 transition-colors hover:border-amber-400/40 hover:bg-amber-500/[0.14]"
+                    >
+                      {hub.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {familyOpportunities.length > 0 && (
+              <div className="mt-6">
+                <div className="flex items-end justify-between gap-3 mb-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">Nearby hot years on this model line</h3>
+                    <p className="text-sm text-gray-300 mt-2">
+                      These year hubs are picking up demand now and should stay tightly linked to the rest of the model family.
+                    </p>
+                  </div>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                  {familyOpportunities.map((entry) => (
+                    <div
+                      key={entry.hubPath}
+                      className="rounded-xl border border-white/10 bg-slate-900/45 p-4"
+                    >
+                      <Link
+                        href={entry.hubPath}
+                        className="block transition-colors hover:text-emerald-300"
+                      >
+                        <p className="text-xs uppercase tracking-[0.18em] text-emerald-300/85 mb-2">Model-line demand</p>
+                        <h3 className="text-base font-semibold text-white">{entry.label}</h3>
+                      </Link>
+                      <p className="text-sm text-gray-400 mt-2">{entry.note}</p>
+                      <p className="text-xs text-gray-500 mt-3">
+                        {entry.query24hCount} repeated queries • {entry.gscCurrentImpressions} GSC impressions • {entry.gaCurrentSessions} GA organic sessions
+                      </p>
+                      {entry.topTasks.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {entry.topTasks.slice(0, 2).map((task) => (
+                            <Link
+                              key={`${entry.hubPath}-${task.task}`}
+                              href={buildRepairUrl(entry.year, canonicalMake, canonicalModel, task.task)}
+                              className="rounded-full border border-emerald-500/20 bg-emerald-500/[0.08] px-3 py-1.5 text-xs text-emerald-100 transition-colors hover:border-emerald-400/40 hover:bg-emerald-500/[0.14]"
+                            >
+                              {task.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {(symptomGroup || codeGroup) && (
         <section className="max-w-6xl mx-auto px-4 pb-12">
@@ -986,6 +1167,24 @@ function EntryPanel({
           </Link>
         ))}
       </div>
+    </div>
+  );
+}
+
+function DemandStatCard({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-slate-900/45 p-4">
+      <p className="text-xs uppercase tracking-wider text-gray-400">{label}</p>
+      <p className="text-2xl font-semibold text-white mt-2">{value}</p>
+      <p className="text-xs text-gray-500 mt-2">{detail}</p>
     </div>
   );
 }
