@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { trackVehicleHubEnter } from '@/lib/analytics';
+import { parseVehicleLabel } from '@/lib/analyticsContext';
 
 interface VehicleHubTrackerProps {
   vehicle: string;
@@ -9,7 +10,11 @@ interface VehicleHubTrackerProps {
 
 export default function VehicleHubTracker({ vehicle }: VehicleHubTrackerProps) {
   useEffect(() => {
-    trackVehicleHubEnter(vehicle);
+    trackVehicleHubEnter(vehicle, {
+      pageSurface: 'vehicle_hub',
+      intentCluster: 'vehicle_hub',
+      ...parseVehicleLabel(vehicle),
+    });
   }, [vehicle]);
 
   return null;

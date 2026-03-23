@@ -22,14 +22,107 @@ const DEFAULT_SURFACE_BASE = {
   wiring: { manual: 90, repair: 75, dtc: 70, wiring: 50, tool: 30, spec: 20 },
 };
 
+function hasFlag(name) {
+  return process.argv.includes(`--${name}`);
+}
+
 function getArg(name, fallback = null) {
   const idx = process.argv.indexOf(`--${name}`);
   if (idx === -1) return fallback;
   return process.argv[idx + 1] || fallback;
 }
 
-function hasFlag(name) {
-  return process.argv.includes(`--${name}`);
+function getAllArgValues(name) {
+  const values = [];
+  for (let i = 0; i < process.argv.length; i += 1) {
+    if (process.argv[i] !== `--${name}`) continue;
+    const value = process.argv[i + 1];
+    if (value && !value.startsWith('--')) values.push(value);
+  }
+  return values;
+}
+
+function parseCsv(value) {
+  return String(value || '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function parseFilterPairs() {
+  const pairs = [];
+  for (const raw of getAllArgValues('filter')) {
+    const idx = raw.indexOf('=');
+    if (idx === -1) continue;
+    const key = raw.slice(0, idx).trim();
+    const value = raw.slice(idx + 1).trim();
+    if (!key || !value) continue;
+    pairs.push([key, value]);
+  }
+  return pairs;
+}
+
+function buildAndFilter(expressions) {
+  const validExpressions = expressions.filter(Boolean);
+  if (!validExpressions.length) return undefined;
+  if (validExpressions.length === 1) return validExpressions[0];
+  return { andGroup: { expressions: validExpressions } };
+}
+
+function isOptionalDimensionError(err) {
+  const msg = String(err?.message || err || '');
+  return (
+    msg.includes('customEvent:') ||
+    msg.includes('Unknown name') ||
+    msg.includes('unrecognized') ||
+    msg.includes('Invalid value')
+  );
+}
+
+function buildGraphFilter() {
+  const expressions = [{
+    filter: {
+      fieldName: 'eventName',
+      inListFilter: {
+        values: ['knowledge_graph_impression', 'knowledge_graph_click'],
+      },
+    },
+  }];
+
+  for (const [key, value] of parseFilterPairs()) {
+    const values = parseCsv(value);
+    expressions.push({
+      filter: {
+        fieldName: `customEvent:${key}`,
+        ...(values.length > 1
+          ? { inListFilter: { values } }
+          : { stringFilter: { value: values[0] } }),
+      },
+    });
+  }
+
+  for (const [flagName, paramName] of [
+    ['graph-surface', 'graph_surface'],
+    ['graph-group', 'graph_group'],
+    ['graph-target-kind', 'graph_target_kind'],
+    ['graph-label', 'graph_label'],
+    ['task', 'task'],
+    ['system', 'system'],
+  ]) {
+    const value = getArg(flagName, null);
+    if (!value) continue;
+    const values = parseCsv(value);
+    expressions.push({
+      filter: {
+        fieldName: `customEvent:${paramName}`,
+        ...(values.length > 1
+          ? { inListFilter: { values } }
+          : { stringFilter: { value: values[0] } }),
+      },
+    });
+  }
+
+  return buildAndFilter(expressions);
 }
 
 function addDays(dateStr, days) {
@@ -151,6 +244,7 @@ async function main() {
   const shouldExport = hasFlag('export');
   const shouldApplyLive = hasFlag('apply-live');
   const inputPath = getArg('input');
+  const graphFilter = buildGraphFilter();
 
   let scoreRows = [];
   let recommendedOverrides = { surfaces: {} };
@@ -173,14 +267,7 @@ async function main() {
         { name: 'customEvent:graph_group' },
       ],
       metrics: [{ name: 'eventCount' }],
-      dimensionFilter: {
-        filter: {
-          fieldName: 'eventName',
-          inListFilter: {
-            values: ['knowledge_graph_impression', 'knowledge_graph_click'],
-          },
-        },
-      },
+      ...(graphFilter ? { dimensionFilter: graphFilter } : {}),
       orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
       limit: 200,
     });
@@ -221,6 +308,18 @@ async function main() {
   console.log(`╚══════════════════════════════════════════════════════════════╝`);
   console.log(`\n  Period: ${startDate} to ${endDate}`);
   console.log(`  Property: ${GA_PROPERTY_ID}\n`);
+  if (parseFilterPairs().length || getArg('graph-surface') || getArg('graph-group') || getArg('graph-target-kind') || getArg('graph-label') || getArg('task') || getArg('system')) {
+    const filters = [
+      ...parseFilterPairs().map(([key, value]) => `${key}=${value}`),
+      getArg('graph-surface', null) ? `graph_surface=${getArg('graph-surface', null)}` : null,
+      getArg('graph-group', null) ? `graph_group=${getArg('graph-group', null)}` : null,
+      getArg('graph-target-kind', null) ? `graph_target_kind=${getArg('graph-target-kind', null)}` : null,
+      getArg('graph-label', null) ? `graph_label=${getArg('graph-label', null)}` : null,
+      getArg('task', null) ? `task=${getArg('task', null)}` : null,
+      getArg('system', null) ? `system=${getArg('system', null)}` : null,
+    ].filter(Boolean);
+    console.log(`  Active filters: ${filters.join(' | ')}\n`);
+  }
 
   if (scoreRows.length > 0) {
     console.log('=== GROUP SCORECARD ===\n');
@@ -278,6 +377,8 @@ main().catch((err) => {
     console.error('  graph_group');
     console.error('  graph_target_kind');
     console.error('  graph_label');
+    console.error('  task');
+    console.error('  system');
   }
   process.exit(1);
 });

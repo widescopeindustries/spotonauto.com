@@ -9,6 +9,7 @@ import {
   type KnowledgeGraphKind,
   type KnowledgeGraphSurface,
 } from '@/lib/analytics';
+import { buildAnalyticsContext, deriveIntentCluster, parseVehicleLabel } from '@/lib/analyticsContext';
 import type { KnowledgeGraphReference } from '@/lib/knowledgeGraph';
 
 export type KnowledgeGraphTheme = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
@@ -87,6 +88,19 @@ export default function KnowledgeGraphGroup({
   const classes = THEME_CLASSES[theme];
   const hasTrackedImpression = useRef(false);
   const recentActivationKeys = useRef<Set<string>>(new Set());
+  const pageSurface = surface === 'vehicle' ? 'vehicle_hub' : surface === 'repair' ? 'repair_guide' : surface;
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(context?.vehicle),
+    ...context,
+    pageSurface,
+    intentCluster: context?.intentCluster || deriveIntentCluster({
+      pageSurface,
+      task: context?.taskSlug || context?.task,
+      system: context?.systemSlug || context?.system,
+      code: context?.code,
+      vehicle: context?.vehicle,
+    }),
+  });
 
   function trackActivationOnce(
     activationKey: string,
@@ -107,10 +121,28 @@ export default function KnowledgeGraphGroup({
       groupKind,
       title,
       nodeCount: nodes.length,
+      ...structuredContext,
       ...context,
     });
     hasTrackedImpression.current = true;
-  }, [surface, groupKind, title, nodes.length, context?.vehicle, context?.task, context?.code, context?.system]);
+  }, [
+    surface,
+    groupKind,
+    title,
+    nodes.length,
+    context?.vehicle,
+    context?.task,
+    context?.taskSlug,
+    context?.code,
+    context?.codeFamily,
+    context?.system,
+    context?.systemSlug,
+    context?.vehicleYear,
+    context?.vehicleMake,
+    context?.vehicleModel,
+    context?.pageSurface,
+    context?.intentCluster,
+  ]);
 
   return (
     <div className={`rounded-2xl border p-5 md:p-6 ${classes.container}`}>
@@ -127,6 +159,7 @@ export default function KnowledgeGraphGroup({
               label: `Browse ${title}`,
               href: browseHref,
               isBrowseLink: true,
+              ...structuredContext,
               ...context,
             })}
             onClick={() => trackActivationOnce(`browse:${groupKind}:${browseHref}`, {
@@ -136,6 +169,7 @@ export default function KnowledgeGraphGroup({
               label: `Browse ${title}`,
               href: browseHref,
               isBrowseLink: true,
+              ...structuredContext,
               ...context,
             })}
             onKeyDown={(event) => {
@@ -147,6 +181,7 @@ export default function KnowledgeGraphGroup({
                 label: `Browse ${title}`,
                 href: browseHref,
                 isBrowseLink: true,
+                ...structuredContext,
                 ...context,
               });
             }}
@@ -167,6 +202,7 @@ export default function KnowledgeGraphGroup({
               targetKind: node.targetKind,
               label: node.label,
               href: node.href,
+              ...structuredContext,
               ...context,
             })}
             onClick={() => trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
@@ -175,6 +211,7 @@ export default function KnowledgeGraphGroup({
               targetKind: node.targetKind,
               label: node.label,
               href: node.href,
+              ...structuredContext,
               ...context,
             })}
             onKeyDown={(event) => {
@@ -185,6 +222,7 @@ export default function KnowledgeGraphGroup({
                 targetKind: node.targetKind,
                 label: node.label,
                 href: node.href,
+                ...structuredContext,
                 ...context,
               });
             }}

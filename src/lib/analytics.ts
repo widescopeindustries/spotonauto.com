@@ -1,4 +1,12 @@
 import { isCanonicalHost } from '@/lib/host';
+import {
+  buildAnalyticsContext,
+  deriveIntentCluster,
+  parseVehicleLabel,
+  type AnalyticsContextInput,
+  type AnalyticsIntentCluster,
+  type AnalyticsPageSurface,
+} from '@/lib/analyticsContext';
 
 /**
  * analytics.ts — Consolidated GA4 event tracking for SpotOnAuto
@@ -95,7 +103,24 @@ interface AffiliateClickEvent {
   pageType: 'repair_guide' | 'parts_page' | 'diagnostic';
 }
 
-export function trackAffiliateClick(event: AffiliateClickEvent): void {
+function pageTypeToSurface(pageType: AffiliateClickEvent['pageType']): AnalyticsPageSurface {
+  if (pageType === 'repair_guide') return 'repair_guide';
+  if (pageType === 'parts_page') return 'parts';
+  return 'diagnostic';
+}
+
+export function trackAffiliateClick(event: AffiliateClickEvent, context: AnalyticsContextInput = {}): void {
+  const pageSurface = pageTypeToSurface(event.pageType);
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(event.vehicle),
+    pageSurface,
+    intentCluster: context.intentCluster || (pageSurface === 'parts' ? 'parts' : pageSurface === 'diagnostic' ? 'diagnostic' : deriveIntentCluster({
+      pageSurface,
+      vehicle: event.vehicle,
+    })),
+    ...context,
+  });
+
   trackEvent('affiliate_click', {
     event_category: 'affiliate',
     event_label: `${event.provider}_${event.partName}`,
@@ -105,26 +130,47 @@ export function trackAffiliateClick(event: AffiliateClickEvent): void {
     is_high_ticket: event.isHighTicket,
     page_type: event.pageType,
     value: event.isHighTicket ? 10 : 1,
+    ...structuredContext,
   });
 }
 
-export function trackShopAllClick(provider: AffiliateProvider, vehicle: string): void {
+export function trackShopAllClick(provider: AffiliateProvider, vehicle: string, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(vehicle),
+    pageSurface: 'parts',
+    intentCluster: context.intentCluster || 'parts',
+    ...context,
+  });
+
   trackEvent('shop_all_click', {
     event_category: 'affiliate',
     event_label: provider,
     provider,
     vehicle,
     value: 5,
+    ...structuredContext,
   });
 }
 
-export function trackToolClick(toolName: string, vehicle: string): void {
+export function trackToolClick(toolName: string, vehicle: string, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(vehicle),
+    pageSurface: context.pageSurface || 'repair_guide',
+    intentCluster: context.intentCluster || deriveIntentCluster({
+      pageSurface: 'repair_guide',
+      task: context.taskSlug || context.task,
+      vehicle,
+    }),
+    ...context,
+  });
+
   trackEvent('tool_affiliate_click', {
     event_category: 'affiliate',
     event_label: toolName,
     tool_name: toolName,
     vehicle,
     value: 2,
+    ...structuredContext,
   });
 }
 
@@ -137,18 +183,38 @@ interface GuideGeneratedEvent {
   toolsCount: number;
   manualMode?: 'vector' | 'kv' | 'live' | 'none';
   manualSourceCount?: number;
+  taskSlug?: string;
+  pageSurface?: AnalyticsPageSurface;
+  intentCluster?: AnalyticsIntentCluster;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
 }
 
 export function trackGuideGenerated(event: GuideGeneratedEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: event.pageSurface || 'repair_guide',
+    intentCluster: event.intentCluster || deriveIntentCluster({
+      pageSurface: event.pageSurface || 'repair_guide',
+      task: event.taskSlug || event.task,
+    }),
+    taskSlug: event.taskSlug || event.task,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
   trackEvent('guide_generated', {
     event_category: 'engagement',
-    event_label: `${event.vehicle}_${event.task}`,
+    event_label: `${structuredContext.page_surface || 'repair_guide'}_${structuredContext.intent_cluster || 'other'}`,
     vehicle: event.vehicle,
     task: event.task,
     parts_count: event.partsCount,
     tools_count: event.toolsCount,
     manual_mode: event.manualMode,
     manual_source_count: event.manualSourceCount,
+    ...structuredContext,
   });
 }
 
@@ -157,32 +223,69 @@ export function trackRetrievalBackbone(
   task: string,
   manualMode: 'vector' | 'kv' | 'live' | 'none',
   manualSourceCount: number,
+  context: AnalyticsContextInput = {},
 ): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: context.pageSurface || 'repair_guide',
+    intentCluster: context.intentCluster || deriveIntentCluster({
+      pageSurface: context.pageSurface || 'repair_guide',
+      task: context.taskSlug || task,
+    }),
+    taskSlug: context.taskSlug || task,
+    vehicle,
+    ...context,
+  });
+
   trackEvent('manual_retrieval', {
     event_category: 'knowledge_backbone',
-    event_label: `${vehicle}_${task}`,
+    event_label: `${structuredContext.page_surface || 'repair_guide'}_${structuredContext.intent_cluster || 'other'}`,
     vehicle,
     task,
     manual_mode: manualMode,
     manual_source_count: manualSourceCount,
+    ...structuredContext,
   });
 }
 
-export function trackRepairPageView(vehicle: string, task: string): void {
+export function trackRepairPageView(vehicle: string, task: string, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: context.pageSurface || 'repair_guide',
+    intentCluster: context.intentCluster || deriveIntentCluster({
+      pageSurface: context.pageSurface || 'repair_guide',
+      task: context.taskSlug || task,
+    }),
+    taskSlug: context.taskSlug || task,
+    vehicle,
+    ...context,
+  });
+
   trackEvent('repair_page_view', {
     event_category: 'engagement',
-    event_label: `${vehicle}_${task}`,
+    event_label: `${structuredContext.page_surface || 'repair_guide'}_${structuredContext.intent_cluster || 'other'}`,
     vehicle,
     task,
+    ...structuredContext,
   });
 }
 
-export function trackRepairGuideOpen(vehicle: string, task: string): void {
+export function trackRepairGuideOpen(vehicle: string, task: string, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: context.pageSurface || 'repair_guide',
+    intentCluster: context.intentCluster || deriveIntentCluster({
+      pageSurface: context.pageSurface || 'repair_guide',
+      task: context.taskSlug || task,
+    }),
+    taskSlug: context.taskSlug || task,
+    vehicle,
+    ...context,
+  });
+
   trackEvent('repair_guide_open', {
     event_category: 'funnel',
-    event_label: `${vehicle}_${task}`,
+    event_label: `${structuredContext.page_surface || 'repair_guide'}_${structuredContext.intent_cluster || 'other'}`,
     vehicle,
     task,
+    ...structuredContext,
   });
 }
 
@@ -193,6 +296,11 @@ interface RepairAnswerImpressionEvent {
   label?: string;
   target?: string;
   itemCount?: number;
+  pageSurface?: AnalyticsPageSurface;
+  taskSlug?: string;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
 }
 
 interface RepairAnswerClickEvent {
@@ -202,16 +310,38 @@ interface RepairAnswerClickEvent {
   target: string;
   label: string;
   href?: string;
+  pageSurface?: AnalyticsPageSurface;
+  taskSlug?: string;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
 }
 
 export function trackRepairAnswerImpression(event: RepairAnswerImpressionEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: event.pageSurface || 'repair_guide',
+    intentCluster: deriveIntentCluster({
+      pageSurface: event.pageSurface || 'repair_guide',
+      task: event.taskSlug || event.task,
+    }),
+    taskSlug: event.taskSlug || event.task,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
   trackEvent('repair_answer_impression', {
     event_category: 'repair_answer',
     event_label: `${event.section}_${event.label || 'impression'}`.slice(0, 120),
     vehicle: event.vehicle,
     task: event.task,
-    repair_answer_vehicle: event.vehicle,
-    repair_answer_task: event.task,
+    page_surface: structuredContext.page_surface,
+    intent_cluster: structuredContext.intent_cluster,
+    task_slug: structuredContext.task_slug,
+    vehicle_year: structuredContext.vehicle_year,
+    vehicle_make: structuredContext.vehicle_make,
+    vehicle_model: structuredContext.vehicle_model,
     repair_answer_section: event.section,
     repair_answer_target: event.target,
     repair_answer_label: event.label?.slice(0, 120),
@@ -220,13 +350,30 @@ export function trackRepairAnswerImpression(event: RepairAnswerImpressionEvent):
 }
 
 export function trackRepairAnswerClick(event: RepairAnswerClickEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: event.pageSurface || 'repair_guide',
+    intentCluster: deriveIntentCluster({
+      pageSurface: event.pageSurface || 'repair_guide',
+      task: event.taskSlug || event.task,
+    }),
+    taskSlug: event.taskSlug || event.task,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
   trackEvent('repair_answer_click', {
     event_category: 'repair_answer',
     event_label: `${event.section}_${event.target}`,
     vehicle: event.vehicle,
     task: event.task,
-    repair_answer_vehicle: event.vehicle,
-    repair_answer_task: event.task,
+    page_surface: structuredContext.page_surface,
+    intent_cluster: structuredContext.intent_cluster,
+    task_slug: structuredContext.task_slug,
+    vehicle_year: structuredContext.vehicle_year,
+    vehicle_make: structuredContext.vehicle_make,
+    vehicle_model: structuredContext.vehicle_model,
     repair_answer_section: event.section,
     repair_answer_target: event.target,
     repair_answer_label: event.label.slice(0, 120),
@@ -236,37 +383,81 @@ export function trackRepairAnswerClick(event: RepairAnswerClickEvent): void {
 
 // ─── Engagement Events ──────────────────────────────────────────────────────
 
-export function trackVehicleSearch(vehicle: string, task: string, method: 'guide' | 'diagnose'): void {
+export function trackVehicleSearch(
+  vehicle: string,
+  task: string,
+  method: 'guide' | 'diagnose',
+  context: AnalyticsContextInput = {},
+): void {
+  const pageSurface: AnalyticsPageSurface = method === 'guide' ? 'repair_guide' : 'diagnostic';
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(vehicle),
+    pageSurface,
+    intentCluster: context.intentCluster || deriveIntentCluster({
+      pageSurface,
+      task: context.taskSlug || task,
+      vehicle,
+    }),
+    taskSlug: context.taskSlug || task,
+    vehicle,
+    ...context,
+  });
+
   trackEvent('vehicle_search', {
     event_category: 'engagement',
-    event_label: `${vehicle}_${task}`,
+    event_label: `${structuredContext.page_surface || pageSurface}_${structuredContext.intent_cluster || 'other'}`,
     vehicle,
     task,
     search_method: method,
+    ...structuredContext,
   });
 }
 
-export function trackDiagnosticStart(vehicle: string): void {
+export function trackDiagnosticStart(vehicle: string, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(vehicle),
+    pageSurface: 'diagnostic',
+    intentCluster: context.intentCluster || 'diagnostic',
+    vehicle,
+    ...context,
+  });
+
   trackEvent('diagnostic_start', {
     event_category: 'engagement',
-    event_label: vehicle,
+    event_label: 'diagnostic',
     vehicle,
+    ...structuredContext,
   });
 }
 
-export function trackVinDecode(vin: string, success: boolean): void {
+export function trackVinDecode(vin: string, success: boolean, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: 'diagnostic',
+    intentCluster: context.intentCluster || 'diagnostic',
+    vehicle: context.vehicle,
+    ...context,
+  });
+
   trackEvent('vin_decode', {
     event_category: 'engagement',
     event_label: success ? 'success' : 'failure',
     success,
+    ...structuredContext,
   });
 }
 
-export function trackBookmarkClick(page: string): void {
+export function trackBookmarkClick(page: string, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: context.pageSurface || 'other',
+    intentCluster: context.intentCluster || 'other',
+    ...context,
+  });
+
   trackEvent('bookmark_click', {
     event_category: 'engagement',
     event_label: page,
     page,
+    ...structuredContext,
   });
 }
 
@@ -289,24 +480,59 @@ export function trackEntryRouteClick(
   surface: EntryRouteSurface,
   destination: EntryRouteDestination,
   label: string,
+  context: AnalyticsContextInput = {},
 ): void {
+  const intentCluster: AnalyticsIntentCluster =
+    destination === 'wiring'
+      ? 'wiring'
+      : destination === 'repair'
+        ? 'repair'
+        : destination === 'vehicle_hub'
+          ? 'vehicle_hub'
+          : destination === 'parts'
+            ? 'parts'
+            : 'diagnostic';
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: 'home',
+    intentCluster: context.intentCluster || intentCluster,
+    vehicle: context.vehicle,
+    taskSlug: context.taskSlug,
+    ...context,
+  });
+
   trackEvent('entry_route_click', {
     event_category: 'funnel',
     event_label: `${surface}_${destination}`,
     entry_surface: surface,
     entry_destination: destination,
     entry_label: label.slice(0, 120),
+    ...structuredContext,
   });
 }
 
 // ─── Wiring Events ──────────────────────────────────────────────────────────
 
-export function trackWiringSeoView(vehicle: string, system: string): void {
+export function trackWiringSeoView(vehicle: string, system: string, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(vehicle),
+    pageSurface: 'wiring',
+    intentCluster: context.intentCluster || deriveIntentCluster({
+      pageSurface: 'wiring',
+      system,
+      code: context.code,
+      vehicle,
+    }),
+    systemSlug: context.systemSlug || system,
+    vehicle,
+    ...context,
+  });
+
   trackEvent('wiring_seo_view', {
     event_category: 'wiring',
-    event_label: `${vehicle}_${system}`,
+    event_label: `wiring_${structuredContext.system_slug || system}`,
     vehicle,
     system,
+    ...structuredContext,
   });
 }
 
@@ -322,31 +548,74 @@ export function trackWiringCtaClick(
     | 'code_path'
     | 'manual_path'
     | 'same_system_vehicle',
+  context: AnalyticsContextInput = {},
 ): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(vehicle),
+    pageSurface: 'wiring',
+    intentCluster: context.intentCluster || deriveIntentCluster({
+      pageSurface: 'wiring',
+      system,
+      vehicle,
+    }),
+    systemSlug: context.systemSlug || system,
+    vehicle,
+    ...context,
+  });
+
   trackEvent('wiring_cta_click', {
     event_category: 'wiring',
     event_label: `${system}_${target}`,
     vehicle,
     system,
     target,
+    ...structuredContext,
   });
 }
 
-export function trackWiringDiagramOpen(vehicle: string, system: string, diagramName: string): void {
+export function trackWiringDiagramOpen(
+  vehicle: string,
+  system: string,
+  diagramName: string,
+  context: AnalyticsContextInput = {},
+): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(vehicle),
+    pageSurface: 'wiring',
+    intentCluster: context.intentCluster || deriveIntentCluster({
+      pageSurface: 'wiring',
+      system,
+      vehicle,
+    }),
+    systemSlug: context.systemSlug || system,
+    vehicle,
+    ...context,
+  });
+
   trackEvent('wiring_diagram_open', {
     event_category: 'wiring',
-    event_label: `${system}_${diagramName.slice(0, 60)}`,
+    event_label: `${structuredContext.system_slug || 'wiring'}_diagram`,
     vehicle,
     system,
     diagram_name: diagramName.slice(0, 120),
+    ...structuredContext,
   });
 }
 
-export function trackVehicleHubEnter(vehicle: string): void {
+export function trackVehicleHubEnter(vehicle: string, context: AnalyticsContextInput = {}): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(vehicle),
+    pageSurface: 'vehicle_hub',
+    intentCluster: context.intentCluster || 'vehicle_hub',
+    vehicle,
+    ...context,
+  });
+
   trackEvent('vehicle_hub_enter', {
     event_category: 'funnel',
-    event_label: vehicle,
+    event_label: 'vehicle_hub',
     vehicle,
+    ...structuredContext,
   });
 }
 
@@ -358,8 +627,16 @@ export type KnowledgeGraphKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc' |
 export interface KnowledgeGraphContext {
   vehicle?: string;
   task?: string;
+  taskSlug?: string;
   code?: string;
+  codeFamily?: string;
   system?: string;
+  systemSlug?: string;
+  pageSurface?: AnalyticsPageSurface;
+  intentCluster?: AnalyticsIntentCluster;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
 }
 
 interface KnowledgeGraphImpressionEvent extends KnowledgeGraphContext {
@@ -379,6 +656,24 @@ interface KnowledgeGraphClickEvent extends KnowledgeGraphContext {
 }
 
 export function trackKnowledgeGraphImpression(event: KnowledgeGraphImpressionEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: event.pageSurface || (event.surface === 'vehicle' ? 'vehicle_hub' : event.surface === 'repair' ? 'repair_guide' : event.surface),
+    intentCluster: event.intentCluster || deriveIntentCluster({
+      pageSurface: event.pageSurface || (event.surface === 'vehicle' ? 'vehicle_hub' : event.surface === 'repair' ? 'repair_guide' : event.surface),
+      task: event.taskSlug || event.task,
+      system: event.systemSlug || event.system,
+      code: event.code,
+      vehicle: event.vehicle,
+    }),
+    taskSlug: event.taskSlug || event.task,
+    systemSlug: event.systemSlug || event.system,
+    codeFamily: event.codeFamily,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
   trackEvent('knowledge_graph_impression', {
     event_category: 'knowledge_graph',
     event_label: `${event.surface}_${event.groupKind}`,
@@ -390,10 +685,29 @@ export function trackKnowledgeGraphImpression(event: KnowledgeGraphImpressionEve
     task: event.task,
     code: event.code,
     system: event.system,
+    ...structuredContext,
   });
 }
 
 export function trackKnowledgeGraphClick(event: KnowledgeGraphClickEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: event.pageSurface || (event.surface === 'vehicle' ? 'vehicle_hub' : event.surface === 'repair' ? 'repair_guide' : event.surface),
+    intentCluster: event.intentCluster || deriveIntentCluster({
+      pageSurface: event.pageSurface || (event.surface === 'vehicle' ? 'vehicle_hub' : event.surface === 'repair' ? 'repair_guide' : event.surface),
+      task: event.taskSlug || event.task,
+      system: event.systemSlug || event.system,
+      code: event.code,
+      vehicle: event.vehicle,
+    }),
+    taskSlug: event.taskSlug || event.task,
+    systemSlug: event.systemSlug || event.system,
+    codeFamily: event.codeFamily,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
   trackEvent('knowledge_graph_click', {
     event_category: 'knowledge_graph',
     event_label: `${event.surface}_${event.sourceKind}_${event.targetKind}`,
@@ -407,6 +721,7 @@ export function trackKnowledgeGraphClick(event: KnowledgeGraphClickEvent): void 
     task: event.task,
     code: event.code,
     system: event.system,
+    ...structuredContext,
   });
 }
 
@@ -428,7 +743,20 @@ export const Analytics = {
     trackEvent('symptom_entered', { symptom: symptom.slice(0, 100) }),
 
   diagnoseClicked: (vehicle: string, symptom: string) =>
-    trackEvent('diagnose_started', { vehicle, symptom: symptom.slice(0, 100) }),
+    trackEvent('diagnostic_start', {
+      vehicle,
+      symptom: symptom.slice(0, 100),
+      ...buildAnalyticsContext({
+        ...parseVehicleLabel(vehicle),
+        pageSurface: 'diagnostic',
+        intentCluster: deriveIntentCluster({
+          pageSurface: 'diagnostic',
+          task: symptom,
+          vehicle,
+        }),
+        vehicle,
+      }),
+    }),
 
   guideGenerated: (vehicle: string, task: string) =>
     trackEvent('guide_generated', { vehicle, task: task.slice(0, 100) }),

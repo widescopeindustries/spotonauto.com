@@ -11,6 +11,8 @@
  *   - graph_group
  *   - graph_target_kind
  *   - graph_label
+ *   - task
+ *   - system
  */
 
 const { google } = require('googleapis');
@@ -20,14 +22,107 @@ const path = require('path');
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
 const GA_PROPERTY_ID = '520432705';
 
+function hasFlag(name) {
+  return process.argv.includes(`--${name}`);
+}
+
 function getArg(name, fallback = null) {
   const idx = process.argv.indexOf(`--${name}`);
   if (idx === -1) return fallback;
   return process.argv[idx + 1] || fallback;
 }
 
-function hasFlag(name) {
-  return process.argv.includes(`--${name}`);
+function getAllArgValues(name) {
+  const values = [];
+  for (let i = 0; i < process.argv.length; i += 1) {
+    if (process.argv[i] !== `--${name}`) continue;
+    const value = process.argv[i + 1];
+    if (value && !value.startsWith('--')) values.push(value);
+  }
+  return values;
+}
+
+function parseCsv(value) {
+  return String(value || '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function parseFilterPairs() {
+  const pairs = [];
+  for (const raw of getAllArgValues('filter')) {
+    const idx = raw.indexOf('=');
+    if (idx === -1) continue;
+    const key = raw.slice(0, idx).trim();
+    const value = raw.slice(idx + 1).trim();
+    if (!key || !value) continue;
+    pairs.push([key, value]);
+  }
+  return pairs;
+}
+
+function buildAndFilter(expressions) {
+  const validExpressions = expressions.filter(Boolean);
+  if (!validExpressions.length) return undefined;
+  if (validExpressions.length === 1) return validExpressions[0];
+  return { andGroup: { expressions: validExpressions } };
+}
+
+function isOptionalDimensionError(err) {
+  const msg = String(err?.message || err || '');
+  return (
+    msg.includes('customEvent:') ||
+    msg.includes('Unknown name') ||
+    msg.includes('unrecognized') ||
+    msg.includes('Invalid value')
+  );
+}
+
+function buildGraphFilter() {
+  const expressions = [{
+    filter: {
+      fieldName: 'eventName',
+      inListFilter: {
+        values: ['knowledge_graph_impression', 'knowledge_graph_click'],
+      },
+    },
+  }];
+
+  for (const [key, value] of parseFilterPairs()) {
+    const values = parseCsv(value);
+    expressions.push({
+      filter: {
+        fieldName: `customEvent:${key}`,
+        ...(values.length > 1
+          ? { inListFilter: { values } }
+          : { stringFilter: { value: values[0] } }),
+      },
+    });
+  }
+
+  for (const [flagName, paramName] of [
+    ['graph-surface', 'graph_surface'],
+    ['graph-group', 'graph_group'],
+    ['graph-target-kind', 'graph_target_kind'],
+    ['graph-label', 'graph_label'],
+    ['task', 'task'],
+    ['system', 'system'],
+  ]) {
+    const value = getArg(flagName, null);
+    if (!value) continue;
+    const values = parseCsv(value);
+    expressions.push({
+      filter: {
+        fieldName: `customEvent:${paramName}`,
+        ...(values.length > 1
+          ? { inListFilter: { values } }
+          : { stringFilter: { value: values[0] } }),
+      },
+    });
+  }
+
+  return buildAndFilter(expressions);
 }
 
 function addDays(dateStr, days) {
@@ -96,22 +191,14 @@ async function main() {
   const startDate = getArg('start', addDays(endDate, -6));
   const shouldExport = hasFlag('export');
   const analyticsdata = await buildClient();
-
-  const baseFilter = {
-    filter: {
-      fieldName: 'eventName',
-      inListFilter: {
-        values: ['knowledge_graph_impression', 'knowledge_graph_click'],
-      },
-    },
-  };
+  const graphFilter = buildGraphFilter();
 
   const [eventCounts, bySurfaceGroup, topClicks] = await Promise.all([
     runReport(analyticsdata, {
       dateRanges: [{ startDate, endDate }],
       dimensions: [{ name: 'eventName' }],
       metrics: [{ name: 'eventCount' }],
-      dimensionFilter: baseFilter,
+      ...(graphFilter ? { dimensionFilter: graphFilter } : {}),
       orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
     }),
     runReport(analyticsdata, {
@@ -122,7 +209,7 @@ async function main() {
         { name: 'customEvent:graph_group' },
       ],
       metrics: [{ name: 'eventCount' }],
-      dimensionFilter: baseFilter,
+      ...(graphFilter ? { dimensionFilter: graphFilter } : {}),
       orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
       limit: 100,
     }),
@@ -135,16 +222,46 @@ async function main() {
         { name: 'customEvent:graph_label' },
       ],
       metrics: [{ name: 'eventCount' }],
-      dimensionFilter: {
-        filter: {
-          fieldName: 'eventName',
-          stringFilter: { value: 'knowledge_graph_click' },
+      dimensionFilter: buildAndFilter([
+        {
+          filter: {
+            fieldName: 'eventName',
+            stringFilter: { value: 'knowledge_graph_click' },
+          },
         },
-      },
+        graphFilter,
+      ]),
       orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
       limit: 50,
     }),
   ]);
+
+  let byContextTaskSystem = [];
+  try {
+    byContextTaskSystem = await runReport(analyticsdata, {
+      dateRanges: [{ startDate, endDate }],
+      dimensions: [
+        { name: 'customEvent:graph_surface' },
+        { name: 'customEvent:graph_group' },
+        { name: 'customEvent:task' },
+        { name: 'customEvent:system' },
+      ],
+      metrics: [{ name: 'eventCount' }],
+      dimensionFilter: buildAndFilter([
+        {
+          filter: {
+            fieldName: 'eventName',
+            inListFilter: { values: ['knowledge_graph_impression', 'knowledge_graph_click'] },
+          },
+        },
+        graphFilter,
+      ]),
+      orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+      limit: 50,
+    });
+  } catch (err) {
+    if (!isOptionalDimensionError(err)) throw err;
+  }
 
   const counts = Object.fromEntries(eventCounts.map((row) => [
     row.dimensionValues?.[0]?.value,
@@ -198,6 +315,19 @@ async function main() {
   console.log('=== TOP CLICKED GRAPH PATHS ===\n');
   printTable(topClickRows, ['surface', 'group', 'target', 'clicks', 'label']);
 
+  if (byContextTaskSystem.length) {
+    const contextRows = byContextTaskSystem.map((row) => ({
+      surface: row.dimensionValues?.[0]?.value || '(not set)',
+      group: row.dimensionValues?.[1]?.value || '(not set)',
+      task: row.dimensionValues?.[2]?.value || '(not set)',
+      system: row.dimensionValues?.[3]?.value || '(not set)',
+      clicks: fmt(row.metricValues?.[0]?.value || 0),
+    }));
+
+    console.log('=== GRAPH CONTEXT BY TASK / SYSTEM ===\n');
+    printTable(contextRows, ['surface', 'group', 'task', 'system', 'clicks']);
+  }
+
   if (shouldExport) {
     const outPath = path.join(
       __dirname,
@@ -225,6 +355,8 @@ main().catch((err) => {
     console.error('  graph_group');
     console.error('  graph_target_kind');
     console.error('  graph_label');
+    console.error('  task');
+    console.error('  system');
   }
   process.exit(1);
 });

@@ -21,6 +21,78 @@ const PROPERTY_NAME = `properties/${GA_PROPERTY_ID}`;
 
 const REQUIRED_DIMENSIONS = [
   {
+    parameterName: 'page_surface',
+    displayName: 'Page Surface',
+    description: 'Primary page surface such as repair, vehicle, wiring, code, symptom, or landing.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'task',
+    displayName: 'Task',
+    description: 'Current repair task or task-like context emitted by the page.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'system',
+    displayName: 'System',
+    description: 'Current wiring or diagnostic system emitted by the page.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'code',
+    displayName: 'Code',
+    description: 'Diagnostic code emitted by the page.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'intent_cluster',
+    displayName: 'Intent Cluster',
+    description: 'Low-cardinality search intent cluster such as battery, lighting, brakes, oil, or filters.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'task_slug',
+    displayName: 'Task Slug',
+    description: 'Canonical repair task slug attached to repair and repair-adjacent events.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'system_slug',
+    displayName: 'System Slug',
+    description: 'Canonical wiring or diagnostic system slug attached to system events.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'code_family',
+    displayName: 'Code Family',
+    description: 'Low-cardinality diagnostic code family such as powertrain, body, chassis, or network.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'manual_mode',
+    displayName: 'Manual Mode',
+    description: 'Manual retrieval mode such as vector, kv, live, or none.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'search_method',
+    displayName: 'Search Method',
+    description: 'Search method used to reach the vehicle or repair context such as guide or diagnose.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'entry_surface',
+    displayName: 'Entry Surface',
+    description: 'Entry surface used to reach a route such as home_hero or home_dashboard.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'entry_destination',
+    displayName: 'Entry Destination',
+    description: 'Entry destination such as repair, wiring, codes, diagnose, vehicle_hub, or parts.',
+    scope: 'EVENT',
+  },
+  {
     parameterName: 'repair_answer_section',
     displayName: 'Repair Answer Section',
     description: 'Repair answer section or card rendered on the page.',

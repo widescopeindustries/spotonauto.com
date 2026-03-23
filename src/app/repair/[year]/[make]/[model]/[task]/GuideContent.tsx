@@ -9,6 +9,7 @@ import { RepairGuide } from '@/types';
 import { trackGuideGenerated, trackRepairGuideOpen, trackRepairPageView, trackRetrievalBackbone } from '@/lib/analytics';
 import VehicleHealthSnapshot from '@/components/VehicleHealthSnapshot';
 import { useT } from '@/lib/translations';
+import { deriveIntentCluster } from '@/lib/analyticsContext';
 
 interface GuideContentProps {
     params: {
@@ -50,8 +51,28 @@ export default function GuideContent({ params }: GuideContentProps) {
 
     useEffect(() => {
         const cleanTask = task.replace(/-/g, ' ');
-        trackRepairPageView(`${year} ${make} ${model}`, cleanTask);
-        trackRepairGuideOpen(`${year} ${make} ${model}`, cleanTask);
+        trackRepairPageView(`${year} ${make} ${model}`, cleanTask, {
+            pageSurface: 'repair_guide',
+            taskSlug: task,
+            vehicleYear: year,
+            vehicleMake: make,
+            vehicleModel: model,
+            intentCluster: deriveIntentCluster({
+                pageSurface: 'repair_guide',
+                task,
+            }),
+        });
+        trackRepairGuideOpen(`${year} ${make} ${model}`, cleanTask, {
+            pageSurface: 'repair_guide',
+            taskSlug: task,
+            vehicleYear: year,
+            vehicleMake: make,
+            vehicleModel: model,
+            intentCluster: deriveIntentCluster({
+                pageSurface: 'repair_guide',
+                task,
+            }),
+        });
     }, [year, make, model, task]);
 
     useEffect(() => {
@@ -87,12 +108,32 @@ export default function GuideContent({ params }: GuideContentProps) {
                     toolsCount: generatedGuide.tools?.length || 0,
                     manualMode: generatedGuide.retrieval?.manualMode,
                     manualSourceCount: generatedGuide.retrieval?.manualSourceCount,
+                    pageSurface: 'repair_guide',
+                    taskSlug: task,
+                    vehicleYear: year,
+                    vehicleMake: make,
+                    vehicleModel: model,
+                    intentCluster: deriveIntentCluster({
+                        pageSurface: 'repair_guide',
+                        task,
+                    }),
                 });
                 trackRetrievalBackbone(
                     `${year} ${make} ${model}`,
                     cleanTask,
                     generatedGuide.retrieval?.manualMode || 'none',
                     generatedGuide.retrieval?.manualSourceCount || 0,
+                    {
+                        pageSurface: 'repair_guide',
+                        taskSlug: task,
+                        vehicleYear: year,
+                        vehicleMake: make,
+                        vehicleModel: model,
+                        intentCluster: deriveIntentCluster({
+                            pageSurface: 'repair_guide',
+                            task,
+                        }),
+                    },
                 );
                 setGuide(generatedGuide);
             } catch (err: any) {
@@ -141,12 +182,32 @@ export default function GuideContent({ params }: GuideContentProps) {
                                 toolsCount: generatedGuide.tools?.length || 0,
                                 manualMode: generatedGuide.retrieval?.manualMode,
                                 manualSourceCount: generatedGuide.retrieval?.manualSourceCount,
+                                pageSurface: 'repair_guide',
+                                taskSlug: task,
+                                vehicleYear: year,
+                                vehicleMake: make,
+                                vehicleModel: model,
+                                intentCluster: deriveIntentCluster({
+                                    pageSurface: 'repair_guide',
+                                    task,
+                                }),
                             });
                             trackRetrievalBackbone(
                                 `${year} ${make} ${model}`,
                                 cleanTask,
                                 generatedGuide.retrieval?.manualMode || 'none',
                                 generatedGuide.retrieval?.manualSourceCount || 0,
+                                {
+                                    pageSurface: 'repair_guide',
+                                    taskSlug: task,
+                                    vehicleYear: year,
+                                    vehicleMake: make,
+                                    vehicleModel: model,
+                                    intentCluster: deriveIntentCluster({
+                                        pageSurface: 'repair_guide',
+                                        task,
+                                    }),
+                                },
                             );
                             setGuide(generatedGuide);
                         } catch (e: any) {

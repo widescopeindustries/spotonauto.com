@@ -15,6 +15,38 @@ const fs = require('fs');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
 const GA_PROPERTY_ID = '520432705';
+const KEY_EVENTS = [
+  'affiliate_click',
+  'guide_generated',
+  'manual_retrieval',
+  'diagnostic_start',
+  'vehicle_search',
+  'repair_page_view',
+  'repair_guide_open',
+  'repair_answer_impression',
+  'repair_answer_click',
+  'knowledge_graph_impression',
+  'knowledge_graph_click',
+  'entry_route_click',
+  'wiring_seo_view',
+  'wiring_cta_click',
+  'wiring_diagram_open',
+  'vehicle_hub_enter',
+  'shop_all_click',
+  'tool_affiliate_click',
+  'begin_checkout',
+  'upgrade_modal_shown',
+  'vin_decode',
+  'sign_up',
+  'login',
+];
+
+const OPTIONAL_DIMENSIONS = {
+  repairAnswer: ['repair_answer_section', 'repair_answer_target', 'repair_answer_label', 'repair_answer_task'],
+  graph: ['graph_surface', 'graph_group', 'graph_target_kind', 'graph_label', 'task', 'system'],
+  repairContext: ['page_surface', 'intent_cluster', 'task_slug', 'system_slug', 'code_family', 'task', 'system', 'code'],
+  behavior: ['manual_mode', 'search_method', 'entry_surface', 'entry_destination'],
+};
 
 async function getAuthClient() {
   if (!fs.existsSync(KEY_PATH)) {
@@ -27,23 +59,161 @@ async function getAuthClient() {
   return auth.getClient();
 }
 
+function getArgValue(name, fallback = null) {
+  const idx = process.argv.indexOf(`--${name}`);
+  if (idx === -1) return fallback;
+  return process.argv[idx + 1] || fallback;
+}
+
+function getAllArgValues(name) {
+  const values = [];
+  for (let i = 0; i < process.argv.length; i += 1) {
+    if (process.argv[i] !== `--${name}`) continue;
+    const value = process.argv[i + 1];
+    if (value && !value.startsWith('--')) values.push(value);
+  }
+  return values;
+}
+
+function parseCsv(value) {
+  return String(value || '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function parseFilterPairs() {
+  const pairs = [];
+  for (const raw of getAllArgValues('filter')) {
+    const eq = raw.indexOf('=');
+    if (eq === -1) continue;
+    const key = raw.slice(0, eq).trim();
+    const value = raw.slice(eq + 1).trim();
+    if (!key || !value) continue;
+    pairs.push([key, value]);
+  }
+  return pairs;
+}
+
+function isOptionalDimensionError(err) {
+  const msg = String(err?.message || err || '');
+  return (
+    msg.includes('customEvent:') ||
+    msg.includes('Unknown name') ||
+    msg.includes('unrecognized') ||
+    msg.includes('Invalid value')
+  );
+}
+
+function buildAndFilter(expressions) {
+  const validExpressions = expressions.filter(Boolean);
+  if (!validExpressions.length) return undefined;
+  if (validExpressions.length === 1) return validExpressions[0];
+  return { andGroup: { expressions: validExpressions } };
+}
+
+function buildSessionFilters(args = {}) {
+  const expressions = [];
+
+  if (args.organicOnly) {
+    expressions.push({
+      filter: {
+        fieldName: 'sessionMedium',
+        stringFilter: { value: 'organic' },
+      },
+    });
+  }
+
+  if (args.country) {
+    expressions.push({
+      filter: {
+        fieldName: 'countryId',
+        inListFilter: { values: parseCsv(args.country) },
+      },
+    });
+  }
+
+  if (args.source) {
+    expressions.push({
+      filter: {
+        fieldName: 'sessionSource',
+        inListFilter: { values: parseCsv(args.source) },
+      },
+    });
+  }
+
+  if (args.medium) {
+    expressions.push({
+      filter: {
+        fieldName: 'sessionMedium',
+        inListFilter: { values: parseCsv(args.medium) },
+      },
+    });
+  }
+
+  if (args.pagePrefix) {
+    expressions.push({
+      filter: {
+        fieldName: 'pagePath',
+        stringFilter: { value: args.pagePrefix, matchType: 'BEGINS_WITH' },
+      },
+    });
+  }
+
+  return buildAndFilter(expressions);
+}
+
+function buildEventFilters(args = {}) {
+  const expressions = [];
+
+  if (args.events?.length) {
+    expressions.push({
+      filter: {
+        fieldName: 'eventName',
+        inListFilter: { values: args.events },
+      },
+    });
+  }
+
+  for (const [key, value] of args.customFilters || []) {
+    const values = parseCsv(value);
+    expressions.push({
+      filter: {
+        fieldName: `customEvent:${key}`,
+        ...(values.length > 1
+          ? { inListFilter: { values } }
+          : { stringFilter: { value: values[0] } }),
+      },
+    });
+  }
+
+  return buildAndFilter(expressions);
+}
+
 async function runReport(authClient, startDate, endDate) {
   const analyticsdata = google.analyticsdata({ version: 'v1beta', auth: authClient });
-  const keyEvents = [
-    'affiliate_click',
-    'guide_generated',
-    'diagnostic_start',
-    'vehicle_search',
-    'shop_all_click',
-    'tool_affiliate_click',
-    'begin_checkout',
-    'upgrade_modal_shown',
-    'vin_decode',
-    'sign_up',
-    'login',
-    'repair_answer_impression',
-    'repair_answer_click',
-  ];
+  const customFilters = parseFilterPairs();
+  const sessionFilters = buildSessionFilters({
+    organicOnly: process.argv.includes('--organic-only'),
+    country: getArgValue('country', ''),
+    source: getArgValue('source', ''),
+    medium: getArgValue('medium', ''),
+    pagePrefix: getArgValue('page-prefix', ''),
+  });
+  const eventFilters = buildEventFilters({
+    events: parseCsv(getArgValue('event', '')).length ? parseCsv(getArgValue('event', '')) : KEY_EVENTS,
+    customFilters,
+  });
+
+  const filterSummary = [
+    parseCsv(getArgValue('event', '')).length ? `event=${parseCsv(getArgValue('event', '')).join(',')}` : null,
+    process.argv.includes('--organic-only') ? 'organic-only' : null,
+    getArgValue('country', null) ? `country=${getArgValue('country', null)}` : null,
+    getArgValue('source', null) ? `source=${getArgValue('source', null)}` : null,
+    getArgValue('medium', null) ? `medium=${getArgValue('medium', null)}` : null,
+    getArgValue('page-prefix', null) ? `page-prefix=${getArgValue('page-prefix', null)}` : null,
+    ...customFilters.map(([key, value]) => `${key}=${value}`),
+  ].filter(Boolean);
 
   // Top pages by sessions
   console.log('=== TOP PAGES BY SESSIONS ===\n');
@@ -58,6 +228,7 @@ async function runReport(authClient, startDate, endDate) {
         { name: 'bounceRate' },
         { name: 'averageSessionDuration' },
       ],
+      ...(sessionFilters ? { dimensionFilter: sessionFilters } : {}),
       orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
       limit: 25,
     },
@@ -80,6 +251,7 @@ async function runReport(authClient, startDate, endDate) {
       dateRanges: [{ startDate, endDate }],
       dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }],
       metrics: [{ name: 'sessions' }, { name: 'activeUsers' }],
+      ...(sessionFilters ? { dimensionFilter: sessionFilters } : {}),
       orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
       limit: 15,
     },
@@ -101,14 +273,7 @@ async function runReport(authClient, startDate, endDate) {
       dateRanges: [{ startDate, endDate }],
       dimensions: [{ name: 'eventName' }],
       metrics: [{ name: 'eventCount' }],
-      dimensionFilter: {
-        filter: {
-          fieldName: 'eventName',
-          inListFilter: {
-            values: keyEvents,
-          },
-        },
-      },
+      ...(eventFilters ? { dimensionFilter: eventFilters } : {}),
       orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
     },
   });
@@ -166,12 +331,7 @@ async function runReport(authClient, startDate, endDate) {
       dateRanges: [{ startDate, endDate }],
       dimensions: [{ name: 'landingPagePlusQueryString' }],
       metrics: [{ name: 'sessions' }, { name: 'activeUsers' }],
-      dimensionFilter: {
-        filter: {
-          fieldName: 'sessionMedium',
-          stringFilter: { value: 'organic' },
-        },
-      },
+      dimensionFilter: buildSessionFilters({ organicOnly: true }),
       orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
       limit: 15,
     },
@@ -185,6 +345,72 @@ async function runReport(authClient, startDate, endDate) {
   }
   if (!organicReport.data.rows?.length) {
     console.log('  No organic traffic yet');
+  }
+
+  console.log('\n=== CURATED FILTERS ===\n');
+  if (filterSummary.length) {
+    console.log(`  Active filters: ${filterSummary.join(' | ')}\n`);
+  } else {
+    console.log('  Active filters: none\n');
+  }
+
+  const breakdowns = [
+    { title: 'Repair answers by section', events: ['repair_answer_click'], dimensions: ['customEvent:repair_answer_section', 'customEvent:repair_answer_target'] },
+    { title: 'Knowledge graph by surface', events: ['knowledge_graph_click'], dimensions: ['customEvent:graph_surface', 'customEvent:graph_group', 'customEvent:graph_target_kind', 'customEvent:graph_label'] },
+    { title: 'Repair context by task/system', events: ['repair_page_view', 'repair_guide_open', 'guide_generated', 'manual_retrieval'], dimensions: ['customEvent:task', 'customEvent:system', 'customEvent:manual_mode'] },
+    { title: 'Entry routes by surface/destination', events: ['entry_route_click'], dimensions: ['customEvent:entry_surface', 'customEvent:entry_destination'] },
+    { title: 'Search methods', events: ['vehicle_search'], dimensions: ['customEvent:search_method', 'customEvent:task'] },
+  ];
+
+  for (const breakdown of breakdowns) {
+    try {
+      const rows = await analyticsdata.properties.runReport({
+        property: `properties/${GA_PROPERTY_ID}`,
+        requestBody: {
+          dateRanges: [{ startDate, endDate }],
+          dimensions: breakdown.dimensions.map((name) => ({ name })),
+          metrics: [{ name: 'eventCount' }],
+          dimensionFilter: buildAndFilter([
+            {
+              filter: {
+                fieldName: 'eventName',
+                inListFilter: { values: breakdown.events },
+              },
+            },
+            eventFilters,
+            sessionFilters,
+          ]),
+          orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+          limit: 10,
+        },
+      });
+
+      console.log(`=== ${breakdown.title.toUpperCase()} ===\n`);
+      if (!rows.data.rows?.length) {
+        console.log('  No rows\n');
+        continue;
+      }
+
+      const columns = breakdown.dimensions.map((name) => name.replace('customEvent:', '').replace(/_/g, '_'));
+      printTable(
+        rows.data.rows.map((row) => {
+          const out = {};
+          breakdown.dimensions.forEach((dimension, index) => {
+            out[columns[index]] = row.dimensionValues?.[index]?.value || '(not set)';
+          });
+          out.eventCount = row.metricValues?.[0]?.value || '0';
+          return out;
+        }),
+        [...columns, 'eventCount'],
+      );
+    } catch (err) {
+      if (isOptionalDimensionError(err)) {
+        console.log(`=== ${breakdown.title.toUpperCase()} ===\n`);
+        console.log('  Skipped until the required GA4 custom dimensions are available.\n');
+        continue;
+      }
+      throw err;
+    }
   }
 }
 

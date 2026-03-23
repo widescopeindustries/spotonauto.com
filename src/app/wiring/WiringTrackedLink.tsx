@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ReactNode } from 'react';
 import { trackWiringCtaClick } from '@/lib/analytics';
+import { deriveIntentCluster, parseVehicleLabel } from '@/lib/analyticsContext';
 
 interface WiringTrackedLinkProps {
   href: string;
@@ -33,7 +34,16 @@ export default function WiringTrackedLink({
     <Link
       href={href}
       className={className}
-      onClick={() => trackWiringCtaClick(vehicle, system, target)}
+      onClick={() => trackWiringCtaClick(vehicle, system, target, {
+        pageSurface: 'wiring',
+        systemSlug: system,
+        intentCluster: deriveIntentCluster({
+          pageSurface: 'wiring',
+          system,
+          vehicle,
+        }),
+        ...parseVehicleLabel(vehicle),
+      })}
     >
       {children}
     </Link>
