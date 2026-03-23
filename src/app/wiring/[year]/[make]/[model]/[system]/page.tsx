@@ -375,9 +375,13 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
       nodes: relatedCodeLinks.map((link) => ({
         ...link,
         targetKind: 'dtc' as const,
-      })),
+        })),
     }] : []),
-  ]);
+  ], {
+    system: systemSlug,
+    vehicle: vehicleLabel,
+    query: `${vehicleLabel} ${systemMeta.shortLabel} ${systemMeta.title}`.trim(),
+  });
   const knowledgeGraphExport = buildKnowledgeGraphExport({
     surface: 'wiring',
     rootNodeId: buildWiringNodeId(vehicle.year, vehicle.make, vehicle.model, systemSlug),

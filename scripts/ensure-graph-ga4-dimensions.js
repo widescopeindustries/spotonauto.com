@@ -2,7 +2,8 @@
  * SpotOn Auto - Ensure GA4 Knowledge Graph Custom Dimensions
  *
  * Lists the required event-scoped GA4 custom dimensions for graph analytics and
- * can create any missing dimensions when the service account has edit access.
+ * repair-answer analytics, and can create any missing dimensions when the
+ * service account has edit access.
  *
  * Usage:
  *   node scripts/ensure-graph-ga4-dimensions.js
@@ -19,6 +20,36 @@ const GA_PROPERTY_ID = '520432705';
 const PROPERTY_NAME = `properties/${GA_PROPERTY_ID}`;
 
 const REQUIRED_DIMENSIONS = [
+  {
+    parameterName: 'repair_answer_section',
+    displayName: 'Repair Answer Section',
+    description: 'Repair answer section or card rendered on the page.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'repair_answer_target',
+    displayName: 'Repair Answer Target',
+    description: 'Repair answer click target such as guide, vehicle hub, or manual path.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'repair_answer_label',
+    displayName: 'Repair Answer Label',
+    description: 'Repair answer button or chip label used for reporting.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'repair_answer_vehicle',
+    displayName: 'Repair Answer Vehicle',
+    description: 'Exact vehicle context attached to repair answer events.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'repair_answer_task',
+    displayName: 'Repair Answer Task',
+    description: 'Repair task context attached to repair answer events.',
+    scope: 'EVENT',
+  },
   {
     parameterName: 'graph_surface',
     displayName: 'Graph Surface',

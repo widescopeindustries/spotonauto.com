@@ -29,6 +29,21 @@ async function getAuthClient() {
 
 async function runReport(authClient, startDate, endDate) {
   const analyticsdata = google.analyticsdata({ version: 'v1beta', auth: authClient });
+  const keyEvents = [
+    'affiliate_click',
+    'guide_generated',
+    'diagnostic_start',
+    'vehicle_search',
+    'shop_all_click',
+    'tool_affiliate_click',
+    'begin_checkout',
+    'upgrade_modal_shown',
+    'vin_decode',
+    'sign_up',
+    'login',
+    'repair_answer_impression',
+    'repair_answer_click',
+  ];
 
   // Top pages by sessions
   console.log('=== TOP PAGES BY SESSIONS ===\n');
@@ -90,19 +105,7 @@ async function runReport(authClient, startDate, endDate) {
         filter: {
           fieldName: 'eventName',
           inListFilter: {
-            values: [
-              'affiliate_click',
-              'guide_generated',
-              'diagnostic_start',
-              'vehicle_search',
-              'shop_all_click',
-              'tool_affiliate_click',
-              'begin_checkout',
-              'upgrade_modal_shown',
-              'vin_decode',
-              'sign_up',
-              'login',
-            ],
+            values: keyEvents,
           },
         },
       },

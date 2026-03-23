@@ -120,7 +120,12 @@ export default function CodePageClient({
                 targetKind: 'wiring' as const,
             })),
         }] : []),
-    ]);
+    ], {
+        code: code.code,
+        system: code.affectedSystem,
+        task: code.repairTaskSlug,
+        query: `${code.code} ${code.title} ${code.commonFix} ${code.affectedSystem}`.trim(),
+    });
     const knowledgeGraphExport = buildKnowledgeGraphExport({
         surface: 'code',
         rootNodeId: buildCodeNodeId(code.code),

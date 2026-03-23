@@ -10,6 +10,7 @@ import { isCanonicalHost } from '@/lib/host';
  *   - guide_generated    (user got a repair guide)
  *   - affiliate_click    (user clicked an affiliate product link)
  *   - sign_up            (user created an account)
+ *   - repair_answer_impression / repair_answer_click (repair answer-layer engagement)
  */
 
 declare global {
@@ -182,6 +183,54 @@ export function trackRepairGuideOpen(vehicle: string, task: string): void {
     event_label: `${vehicle}_${task}`,
     vehicle,
     task,
+  });
+}
+
+interface RepairAnswerImpressionEvent {
+  vehicle: string;
+  task: string;
+  section: string;
+  label?: string;
+  target?: string;
+  itemCount?: number;
+}
+
+interface RepairAnswerClickEvent {
+  vehicle: string;
+  task: string;
+  section: string;
+  target: string;
+  label: string;
+  href?: string;
+}
+
+export function trackRepairAnswerImpression(event: RepairAnswerImpressionEvent): void {
+  trackEvent('repair_answer_impression', {
+    event_category: 'repair_answer',
+    event_label: `${event.section}_${event.label || 'impression'}`.slice(0, 120),
+    vehicle: event.vehicle,
+    task: event.task,
+    repair_answer_vehicle: event.vehicle,
+    repair_answer_task: event.task,
+    repair_answer_section: event.section,
+    repair_answer_target: event.target,
+    repair_answer_label: event.label?.slice(0, 120),
+    item_count: event.itemCount,
+  });
+}
+
+export function trackRepairAnswerClick(event: RepairAnswerClickEvent): void {
+  trackEvent('repair_answer_click', {
+    event_category: 'repair_answer',
+    event_label: `${event.section}_${event.target}`,
+    vehicle: event.vehicle,
+    task: event.task,
+    repair_answer_vehicle: event.vehicle,
+    repair_answer_task: event.task,
+    repair_answer_section: event.section,
+    repair_answer_target: event.target,
+    repair_answer_label: event.label.slice(0, 120),
+    href: event.href?.slice(0, 200),
   });
 }
 

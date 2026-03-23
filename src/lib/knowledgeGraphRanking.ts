@@ -11,8 +11,30 @@ export interface KnowledgeGraphBlock<TNode = unknown> {
   nodes: TNode[];
 }
 
+export interface KnowledgeGraphRankingContext {
+  task?: string;
+  system?: string;
+  code?: string;
+  vehicle?: string;
+  query?: string;
+}
+
+interface KnowledgeGraphRankingRuleMatch {
+  tasks?: string[];
+  systems?: string[];
+  codes?: string[];
+  keywords?: string[];
+}
+
+interface KnowledgeGraphRankingRule {
+  when: KnowledgeGraphRankingRuleMatch;
+  groupBoosts: Partial<Record<KnowledgeGraphKind, number>>;
+  note?: string;
+}
+
 interface SurfaceOverride {
   groupWeights?: Partial<Record<KnowledgeGraphKind, number>>;
+  contextRules?: KnowledgeGraphRankingRule[];
 }
 
 interface KnowledgeGraphOverrides {
@@ -74,18 +96,93 @@ const DEFAULT_GROUP_WEIGHTS: Record<KnowledgeGraphSurface, Record<KnowledgeGraph
   },
 };
 
-function getGroupWeight(surface: KnowledgeGraphSurface, kind: KnowledgeGraphKind): number {
-  const overrideWeight = GRAPH_OVERRIDES.surfaces?.[surface]?.groupWeights?.[kind];
-  if (typeof overrideWeight === 'number') return overrideWeight;
-  return DEFAULT_GROUP_WEIGHTS[surface][kind] ?? 0;
+function normalizeRankingToken(value: string): string {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    decoded = raw;
+  }
+
+  return decoded
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[_\s/]+/g, '-')
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function buildContextTerms(context?: KnowledgeGraphRankingContext): Set<string> {
+  const terms = new Set<string>();
+  const rawValues = [context?.task, context?.system, context?.code, context?.vehicle, context?.query];
+
+  for (const value of rawValues) {
+    if (!value) continue;
+    const normalized = normalizeRankingToken(value);
+    if (!normalized) continue;
+    terms.add(normalized);
+    for (const token of normalized.split('-')) {
+      if (token) terms.add(token);
+    }
+  }
+
+  return terms;
+}
+
+function ruleMatches(contextTerms: Set<string>, match: KnowledgeGraphRankingRuleMatch): boolean {
+  const selectors = [
+    ...(match.tasks || []),
+    ...(match.systems || []),
+    ...(match.codes || []),
+    ...(match.keywords || []),
+  ];
+
+  if (!selectors.length) return false;
+
+  return selectors.some((selector) => {
+    const normalized = normalizeRankingToken(selector);
+    return normalized ? contextTerms.has(normalized) : false;
+  });
+}
+
+function getGroupWeight(
+  surface: KnowledgeGraphSurface,
+  kind: KnowledgeGraphKind,
+  contextTerms: Set<string>,
+): number {
+  const surfaceOverride = GRAPH_OVERRIDES.surfaces?.[surface];
+  const overrideWeight = surfaceOverride?.groupWeights?.[kind];
+  const baseWeight = typeof overrideWeight === 'number' ? overrideWeight : DEFAULT_GROUP_WEIGHTS[surface][kind] ?? 0;
+
+  if (!surfaceOverride?.contextRules?.length || contextTerms.size === 0) {
+    return baseWeight;
+  }
+
+  let boostedWeight = baseWeight;
+  for (const rule of surfaceOverride.contextRules) {
+    if (!ruleMatches(contextTerms, rule.when)) continue;
+    const boost = rule.groupBoosts?.[kind];
+    if (typeof boost === 'number') {
+      boostedWeight += boost;
+    }
+  }
+
+  return boostedWeight;
 }
 
 export function rankKnowledgeGraphBlocks<TNode, TBlock extends KnowledgeGraphBlock<TNode>>(
   surface: KnowledgeGraphSurface,
   blocks: TBlock[],
+  context?: KnowledgeGraphRankingContext,
 ): TBlock[] {
+  const contextTerms = buildContextTerms(context);
+
   return [...blocks].sort((a, b) => {
-    const weightDiff = getGroupWeight(surface, b.kind) - getGroupWeight(surface, a.kind);
+    const weightDiff = getGroupWeight(surface, b.kind, contextTerms) - getGroupWeight(surface, a.kind, contextTerms);
     if (weightDiff !== 0) return weightDiff;
     const nodeDiff = b.nodes.length - a.nodes.length;
     if (nodeDiff !== 0) return nodeDiff;

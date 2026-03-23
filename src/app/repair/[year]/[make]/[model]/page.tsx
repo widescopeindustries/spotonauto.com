@@ -40,6 +40,7 @@ interface DiyQuickStartBlueprint {
   primaryTask: string;
   primaryLabel: string;
   relatedTasks: Array<{ task: string; label: string }>;
+  matchTerms: string[];
   supportGroup?: 'wiring' | 'tool';
   supportPatterns?: RegExp[];
 }
@@ -50,28 +51,30 @@ const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
   {
     eyebrow: 'DIY favorite',
     title: 'Brakes',
-    description: 'Pads and rotors are still one of the clearest DIY wins when the instructions stay vehicle-specific and the parts list is simple.',
-    guideHint: 'Exact guide includes pad hardware, rotor notes, torque path, and the consumables people forget to buy.',
+    description: 'Brake jobs stay one of the clearest DIY wins when the page gives you the exact pad, rotor, and hardware path for this vehicle.',
+    guideHint: 'Use the exact guide for pad hardware, rotor notes, torque path, and the consumables people forget to buy.',
     tone: 'cyan',
     primaryTask: 'brake-pad-replacement',
     primaryLabel: 'Open brake pad guide',
     relatedTasks: [
       { task: 'brake-rotor-replacement', label: 'Rotor guide' },
     ],
+    matchTerms: ['brake', 'rotor', 'pad', 'pads', 'braking'],
     supportGroup: 'tool',
     supportPatterns: [/brake/i, /pad/i, /rotor/i, /fluid/i],
   },
   {
     eyebrow: 'DIY favorite',
     title: 'Lighting',
-    description: 'When the job is a headlight, tail light, or other exterior-light issue, owners usually want the fastest exact guide first.',
-    guideHint: 'Exact guide includes bulb fitment, access path, and purchase links before you pull trim.',
+    description: 'When the job is a headlight, tail light, or bulb issue, owners want the fastest exact guide and fitment answer first.',
+    guideHint: 'Use the exact guide for bulb fitment, access path, and purchase links before you pull trim.',
     tone: 'amber',
     primaryTask: 'headlight-bulb-replacement',
     primaryLabel: 'Open headlight guide',
     relatedTasks: [
       { task: 'tail-light-replacement', label: 'Tail light guide' },
     ],
+    matchTerms: ['lighting', 'headlight', 'headlight bulb', 'tail light', 'bulb'],
     supportGroup: 'wiring',
     supportPatterns: [/lighting/i, /headlight/i, /tail/i, /exterior/i],
   },
@@ -79,7 +82,7 @@ const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
     eyebrow: 'Stranded-car fix',
     title: 'Battery and Starting',
     description: 'Start with the battery, then move cleanly into alternator or starter checks without leaving the exact vehicle context.',
-    guideHint: 'Exact guide includes group size, terminal order, and the install supplies people forget to buy.',
+    guideHint: 'Use the exact guide for group size, terminal order, and the install supplies people forget to buy.',
     tone: 'emerald',
     primaryTask: 'battery-replacement',
     primaryLabel: 'Open battery guide',
@@ -87,14 +90,15 @@ const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
       { task: 'alternator-replacement', label: 'Alternator guide' },
       { task: 'starter-replacement', label: 'Starter guide' },
     ],
+    matchTerms: ['battery', 'starting', 'starter', 'alternator', 'charging'],
     supportGroup: 'wiring',
     supportPatterns: [/charging/i, /starting/i, /ignition/i, /battery/i, /power/i],
   },
   {
     eyebrow: 'Recurring maintenance',
     title: 'Oil and Fluids',
-    description: 'Routine fluid work needs to be easy to find because it is one of the first places owners save money themselves.',
-    guideHint: 'Exact guide includes oil type, capacity, filter support, and the basic consumables to buy in one pass.',
+    description: 'Routine fluid work needs a direct path because oil, coolant, and transmission jobs are easy to do when the exact spec is clear.',
+    guideHint: 'Use the exact guide for oil type, capacity, filter support, and the basic consumables to buy in one pass.',
     tone: 'violet',
     primaryTask: 'oil-change',
     primaryLabel: 'Open oil guide',
@@ -102,14 +106,15 @@ const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
       { task: 'transmission-fluid-change', label: 'Transmission fluid' },
       { task: 'coolant-flush', label: 'Coolant flush' },
     ],
+    matchTerms: ['oil', 'fluid', 'fluids', 'coolant', 'transmission', 'capacity', 'spec'],
     supportGroup: 'tool',
     supportPatterns: [/oil/i, /fluid/i, /capacity/i, /spec/i, /transmission/i, /coolant/i],
   },
   {
     eyebrow: 'Low-risk win',
     title: 'Filters and Tune-Up',
-    description: 'Filters, plugs, and other light maintenance jobs are confidence-builders for non-tech owners.',
-    guideHint: 'Exact guides keep the job simple, then hand off to the right parts and fitment notes before checkout.',
+    description: 'Filters, plugs, and light maintenance jobs are confidence-builders when the page gives a direct parts-and-fitment answer.',
+    guideHint: 'Use the exact guide to keep the job simple, then hand off to the right parts and fitment notes before checkout.',
     tone: 'slate',
     primaryTask: 'cabin-air-filter-replacement',
     primaryLabel: 'Open cabin filter guide',
@@ -117,6 +122,7 @@ const DIY_QUICK_START_BLUEPRINTS: DiyQuickStartBlueprint[] = [
       { task: 'engine-air-filter-replacement', label: 'Engine air filter' },
       { task: 'spark-plug-replacement', label: 'Spark plug guide' },
     ],
+    matchTerms: ['filter', 'filters', 'spark plug', 'ignition', 'tune up', 'maintenance'],
     supportGroup: 'tool',
     supportPatterns: [/filter/i, /spark/i, /plug/i, /maintenance/i],
   },
@@ -264,6 +270,69 @@ function dedupePreviewLinks(links: PreviewLink[], limit: number): PreviewLink[] 
   return out;
 }
 
+function normalizeIntentText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function matchesIntentTerms(text: string, terms: string[]): boolean {
+  const normalizedText = normalizeIntentText(text);
+  return terms.some((term) => normalizedText.includes(normalizeIntentText(term)));
+}
+
+function scoreQuickStartBlueprint(
+  blueprint: DiyQuickStartBlueprint,
+  opportunityTasks: Array<{ task: string; label: string; weight: number; cluster: string }>,
+): number {
+  if (!opportunityTasks.length) return 0;
+
+  const primaryTask = normalizeIntentText(blueprint.primaryTask);
+  const relatedTasks = new Set(blueprint.relatedTasks.map((task) => normalizeIntentText(task.task)));
+
+  return opportunityTasks.reduce((score, task) => {
+    const taskText = `${task.task} ${task.label} ${task.cluster}`;
+    if (!matchesIntentTerms(taskText, blueprint.matchTerms)) return score;
+
+    let boostedScore = score + task.weight;
+    const normalizedTask = normalizeIntentText(task.task);
+    if (normalizedTask === primaryTask) boostedScore += 18;
+    if (relatedTasks.has(normalizedTask)) boostedScore += 10;
+    if (matchesIntentTerms(taskText, [blueprint.title])) boostedScore += 6;
+    return boostedScore;
+  }, 0);
+}
+
+function buildQuickStartSpotlight(
+  blueprint: DiyQuickStartBlueprint,
+  opportunityTasks: Array<{ task: string; label: string; weight: number; cluster: string }>,
+): string | null {
+  const matches = opportunityTasks.filter((task) =>
+    matchesIntentTerms(`${task.task} ${task.label} ${task.cluster}`, blueprint.matchTerms),
+  );
+
+  if (!matches.length) return null;
+
+  return matches
+    .slice(0, 2)
+    .map((task) => task.label)
+    .join(' • ');
+}
+
+function buildDemandSummary(cards: Array<{ title: string }>): string {
+  if (!cards.length) {
+    return 'Battery, lighting, brakes, oil, and filter jobs are the main DIY lanes to keep first.';
+  }
+
+  const titles = cards.map((card) => card.title);
+  if (titles.length === 1) return titles[0];
+  if (titles.length === 2) return `${titles[0]} and ${titles[1]}`;
+  if (titles.length === 3) return `${titles[0]}, ${titles[1]}, and ${titles[2]}`;
+  return `${titles[0]}, ${titles[1]}, ${titles[2]}, and ${titles[3]}`;
+}
+
 function formatSignedDelta(value: number): string {
   return value > 0 ? `+${value}` : String(value);
 }
@@ -329,7 +398,15 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     displayMake: originalMake,
     displayModel: originalModel,
   });
-  const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('vehicle', vehicleHub.groups);
+  const exactOpportunity = getExactVehicleCommandCenterOpportunity(canonicalYear, originalMake, originalModel);
+  const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('vehicle', vehicleHub.groups, {
+    vehicle: vehicleLabel,
+    task: exactOpportunity?.topTasks[0]?.task,
+    query: exactOpportunity?.topTasks
+      ?.slice(0, 4)
+      .map((task) => `${task.label} ${task.cluster}`)
+      .join(' '),
+  });
   const knowledgeGraphExport = buildKnowledgeGraphExport({
     surface: 'vehicle',
     rootNodeId: buildVehicleNodeId(canonicalYear, canonicalMake, canonicalModel),
@@ -367,7 +444,6 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
   const modelTier1Pages = getTier1RescuePagesForVehicle(originalMake, originalModel)
     .filter((entry) => entry.year !== resolvedYear)
     .slice(0, 4);
-  const exactOpportunity = getExactVehicleCommandCenterOpportunity(canonicalYear, originalMake, originalModel);
   const familyOpportunities = getVehicleFamilyCommandCenterOpportunities(originalMake, originalModel, {
     excludeYear: canonicalYear,
     limit: 4,
@@ -389,9 +465,13 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     const supportLink = blueprint.supportPatterns
       ? findSupportingPreviewLink(supportNodes, vehicleLabel, blueprint.supportPatterns)
       : null;
+    const priorityScore = scoreQuickStartBlueprint(blueprint, exactOpportunity?.topTasks ?? []);
+    const spotlight = buildQuickStartSpotlight(blueprint, exactOpportunity?.topTasks ?? []);
 
     return {
       ...blueprint,
+      priorityScore,
+      spotlight,
       primaryHref: buildRepairUrl(canonicalYear, canonicalMake, canonicalModel, blueprint.primaryTask),
       previewLinks: [
         ...blueprint.relatedTasks.map((task) => buildExactTaskLink(
@@ -404,7 +484,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
         ...(supportLink ? [supportLink] : []),
       ].slice(0, 3),
     };
-  });
+  }).sort((left, right) => right.priorityScore - left.priorityScore || left.title.localeCompare(right.title));
   const commandCards: Array<{
     eyebrow: string;
     title: string;
@@ -418,11 +498,11 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'Most-used path',
       title: 'Exact Repair Guides',
-      description: `Open the jobs people actually perform on a ${vehicleLabel}, with the vehicle locked in from the start.`,
+      description: `Open the jobs Google is already testing for this ${vehicleLabel}. The highest-demand repairs stay first so the next click is obvious.`,
       countLabel: `${vehicleHub.repairCount} exact paths`,
       tone: 'cyan',
       primaryHref: repairGroup?.nodes[0]?.href || '/repairs',
-      primaryLabel: repairGroup ? 'Open exact repairs' : 'Browse repair categories',
+      primaryLabel: repairGroup ? 'Open highest-demand repairs' : 'Browse repair categories',
       previewLinks: buildPriorityRepairPreviewLinks(
         exactVehicleTier1Pages.length > 0 ? exactVehicleTier1Pages.map((entry) => ({
           href: entry.href,
@@ -436,7 +516,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'Electrical first',
       title: 'Wiring Diagrams',
-      description: 'Jump straight into the exact system diagrams for this vehicle instead of hunting through the homepage.',
+      description: 'Jump straight into the exact system diagrams for this vehicle instead of hunting through the homepage or a generic system list.',
       countLabel: `${vehicleHub.wiringCount} systems`,
       tone: 'violet',
       primaryHref: wiringGroup?.nodes[0]?.href || '/wiring',
@@ -459,7 +539,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'If you have a code',
       title: 'Trouble Code Pages',
-      description: 'Move from the exact vehicle into shared code clusters that connect back to likely repairs and systems.',
+      description: 'Move from the exact vehicle into shared code clusters that connect back to the likely repair, wiring, and symptom pages.',
       countLabel: `${vehicleHub.codeCount} code paths`,
       tone: 'emerald',
       primaryHref: codeGroup?.nodes[0]?.href || '/codes',
@@ -469,7 +549,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'Fitment and reference',
       title: 'Specs and Tools',
-      description: 'Pull fitment, capacities, locations, and other reference pages that support the job before teardown.',
+      description: 'Pull fitment, capacities, locations, and other reference pages that support the job before teardown or parts ordering.',
       countLabel: `${vehicleHub.toolCount} tool pages`,
       tone: 'emerald',
       primaryHref: toolGroup?.nodes[0]?.href || '/tools',
@@ -566,7 +646,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
         </h1>
         <p className="text-lg text-gray-300 max-w-3xl">
           One canonical page for your exact vehicle. Enter here, then branch into repairs, wiring, codes, symptoms, specs, and
-          OEM manual paths without losing the {canonicalYear} {originalMake} {originalModel} context.
+          OEM manual paths without losing the {canonicalYear} {originalMake} {originalModel} context. The quick-start lane below is ordered around the DIY searches we are already seeing most often.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8">
@@ -586,6 +666,25 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               and filters. Each exact guide already carries the tools, parts, fitment notes, and consumable-buying context that make the job easier to finish.
             </p>
           </div>
+          {exactOpportunity && (
+            <div className="mt-5 rounded-2xl border border-white/10 bg-slate-900/45 p-4">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400">Current search focus</p>
+              <p className="mt-2 text-sm leading-6 text-gray-200">
+                {buildDemandSummary(diyQuickStartCards.slice(0, 4))}. These lanes are ranked first because they line up with the strongest current DIY intent.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {opportunityTaskPreviewLinks.slice(0, 4).map((link) => (
+                  <Link
+                    key={`${link.href}-${link.label}`}
+                    href={link.href}
+                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-gray-100 transition-colors hover:border-white/20 hover:bg-white/10"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="grid md:grid-cols-2 xl:grid-cols-5 gap-4 mt-6">
             {diyQuickStartCards.map((card) => (
               <DiyQuickStartCard
@@ -594,6 +693,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
                 title={card.title}
                 description={card.description}
                 guideHint={card.guideHint}
+                spotlight={card.spotlight}
                 tone={card.tone}
                 primaryHref={card.primaryHref}
                 primaryLabel={card.primaryLabel}
@@ -1084,6 +1184,7 @@ function DiyQuickStartCard({
   title,
   description,
   guideHint,
+  spotlight,
   tone,
   primaryHref,
   primaryLabel,
@@ -1093,6 +1194,7 @@ function DiyQuickStartCard({
   title: string;
   description: string;
   guideHint: string;
+  spotlight?: string | null;
   tone: CommandCardTone;
   primaryHref: string;
   primaryLabel: string;
@@ -1104,6 +1206,9 @@ function DiyQuickStartCard({
     <div className={`rounded-2xl border p-5 ${toneClasses.shell}`}>
       <p className={`text-[11px] uppercase tracking-[0.2em] ${toneClasses.eyebrow}`}>{eyebrow}</p>
       <h3 className="text-xl font-semibold text-white mt-2">{title}</h3>
+      {spotlight && (
+        <p className="text-[11px] uppercase tracking-[0.18em] text-gray-400 mt-2">{spotlight}</p>
+      )}
       <p className="text-sm leading-6 text-gray-300 mt-3">{description}</p>
       <p className="text-xs leading-5 text-gray-400 mt-3">{guideHint}</p>
       <Link

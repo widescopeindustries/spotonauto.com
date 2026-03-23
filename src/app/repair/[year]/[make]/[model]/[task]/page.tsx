@@ -7,6 +7,8 @@ import Link from 'next/link';
 import AffiliateLink from '@/components/AffiliateLink';
 import AdUnit from '@/components/AdUnit';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
+import RepairSectionTracker from '@/components/RepairSectionTracker';
+import RepairTrackedLink from '@/components/RepairTrackedLink';
 import { getTier1RescueEntryByHref, getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
 import { buildSymptomHref, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart } from '@/data/vehicles';
@@ -31,6 +33,30 @@ function buildRepairPath(year: string, make: string, model: string, task: string
 
 function buildManualBrowserPath(...segments: string[]): string {
     return `/manual/${segments.map((segment) => encodeURIComponent(segment)).join('/')}`;
+}
+
+function getRepairAnswerTarget(args: {
+    href: string;
+    year: string;
+    make: string;
+    model: string;
+    task: string;
+    vehicleHubHref: string;
+    manualMakeHref: string;
+    manualYearHref: string;
+    fullGuideHref: string;
+}): string {
+    if (args.href === '#quick-answer') return 'jump_to_quick_answer';
+    if (args.href === '#parts-needed') return 'parts_needed';
+    if (args.href === args.fullGuideHref) return 'full_guide';
+    if (args.href === args.vehicleHubHref) return 'vehicle_hub';
+    if (args.href === args.manualYearHref) return 'manual_year';
+    if (args.href === args.manualMakeHref) return 'manual_make';
+    if (args.href.startsWith(`/repair/${args.year}/${args.make}/${args.model}/`) && !args.href.endsWith(`/${args.task}`)) {
+        return 'related_repair';
+    }
+
+    return 'support_link';
 }
 
 function getSparkPlugIgnitionNote(
@@ -622,6 +648,55 @@ interface ExactGuideProfile {
     faq?: { question: string; answer: string };
 }
 
+interface IntentQuickAnswerLink {
+    href: string;
+    label: string;
+}
+
+interface IntentQuickAnswerCard {
+    eyebrow: string;
+    title: string;
+    summary: string;
+    bullets: string[];
+    links: IntentQuickAnswerLink[];
+    tone: TaskSupportNote['tone'];
+}
+
+interface IntentQuickAnswerModule {
+    eyebrow: string;
+    title: string;
+    intro: string;
+    tone: TaskSupportNote['tone'];
+    cards: IntentQuickAnswerCard[];
+}
+
+interface QuickAnswerContext {
+    year: string;
+    make: string;
+    model: string;
+    task: string;
+    cleanTask: string;
+    vehicleName: string;
+    vehicleHubHref: string;
+    manualMakeHref: string;
+    manualYearHref: string;
+    fullGuideHref: string;
+    repairData: {
+        difficulty: string;
+        time: string;
+        tools: string[];
+        parts: string[];
+        warnings: string[];
+        steps: string[];
+    };
+    commercialConfig: CommercialTaskConfig;
+    vehicleSignals?: {
+        vehicleNotes?: string[];
+        torqueSpecs?: string;
+        beltRouting?: string;
+    };
+}
+
 const TASK_SUPPORT_NOTES: Partial<Record<string, TaskSupportNote>> = {
     'tail-light-replacement': {
         eyebrow: 'Quick check',
@@ -878,6 +953,639 @@ function getCommercialTaskConfig(task: string): CommercialTaskConfig {
     return COMMERCIAL_TASK_CONFIG[task] || DEFAULT_COMMERCIAL_TASK_CONFIG;
 }
 
+function getIntentQuickAnswerModule({
+    year,
+    make,
+    model,
+    task,
+    cleanTask,
+    vehicleName,
+    vehicleHubHref,
+    manualMakeHref,
+    manualYearHref,
+    fullGuideHref,
+    repairData,
+    commercialConfig,
+    vehicleSignals,
+}: QuickAnswerContext): IntentQuickAnswerModule {
+    const primaryPart = repairData.parts[0] || cleanTask;
+    const vehicleNote = vehicleSignals?.vehicleNotes?.[0];
+    const torqueSpecs = vehicleSignals?.torqueSpecs;
+    const beltRouting = vehicleSignals?.beltRouting;
+
+    const taskLinks = (taskSlugs: string[]) => taskSlugs
+        .filter((slug, index, array) => VALID_TASKS.includes(slug) && array.indexOf(slug) === index && slug !== task)
+        .slice(0, 2)
+        .map((slug) => ({
+            href: buildRepairPath(year, make, model, slug),
+            label: toTitleCase(slug),
+        }));
+
+    switch (task) {
+        case 'battery-replacement':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Battery fitment is the first thing to verify',
+                intro: 'This page starts with the shortest path to the right battery, then points you to the full guide only if you need the longer procedure or reset notes.',
+                tone: 'emerald',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm the battery before you order',
+                        summary: `${vehicleName} battery jobs are won by fitment first, not by generic search results.`,
+                        bullets: [
+                            `Battery part: ${primaryPart}`,
+                            'Confirm the CCA rating before checkout.',
+                            'Verify group size, terminal orientation, and hold-down shape before checkout.',
+                            'Use the negative-off / positive-on order when you install it.',
+                            'Keep module reset or registration notes in view if your vehicle needs them.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review battery parts' },
+                            { href: fullGuideHref, label: 'Open battery guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Match the fitment checks on this page',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'If the symptom looks bigger than the battery',
+                        summary: 'Charging and starter issues often show up next when a battery test is not the full story.',
+                        bullets: [
+                            'Use the vehicle hub to keep the exact year, make, and model context in view.',
+                            'Compare the alternator and starter pages if the car still cranks slowly or not at all.',
+                        ],
+                        links: [
+                            ...taskLinks(['alternator-replacement', 'starter-replacement']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'headlight-bulb-replacement':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Headlight bulb jobs hinge on fitment and access',
+                intro: 'The page is organized around the exact bulb, the beam split, and the access path so you can buy once and install cleanly.',
+                tone: 'amber',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm bulb size and beam position first',
+                        summary: `${vehicleName} headlight jobs usually come down to the correct bulb and the correct side.`,
+                        bullets: [
+                            `Correct bulb: ${primaryPart}`,
+                            'Confirm high-beam and low-beam fitment before checkout.',
+                            'Keep the DRL notes on screen if your trim uses daytime running lights.',
+                            'Access may be from the engine bay or wheel well, and some vehicles need bumper removal.',
+                            'Do not touch the bulb glass with bare hands, and test the lights before reassembly.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review bulb parts' },
+                            { href: fullGuideHref, label: 'Open headlight guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Use the exact vehicle path to avoid the wrong lamp',
+                        summary: 'Headlight fitment changes with trim, connector access, and whether the job is bulb-only or assembly-level.',
+                        bullets: [
+                            'Check whether you need a bulb, socket, or full lamp assembly.',
+                            'Confirm driver or passenger side before checkout if the repair is one-sided.',
+                            'Use the vehicle-specific manual path when the housing is tight behind the bumper or liner.',
+                        ],
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Use the related lighting path if the job is bigger',
+                        summary: 'If the lamp assembly is damaged, the tail-light and manual links keep the rest of the lighting cluster nearby.',
+                        bullets: [
+                            'Check the related lighting page if the assembly is cracked or moisture is present.',
+                            'Keep the exact vehicle hub open so the rest of the lighting system stays in context.',
+                        ],
+                        links: [
+                            ...taskLinks(['tail-light-replacement']),
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'brake-pad-replacement':
+        case 'brake-rotor-replacement':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Brake jobs start with the exact axle-side fitment',
+                intro: 'This page keeps the pad or rotor decision, the torque checks, and the bed-in sequence together so the job stays straightforward.',
+                tone: 'amber',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: task === 'brake-pad-replacement' ? 'Confirm pad shape and piston direction' : 'Confirm rotor size and minimum thickness',
+                        summary: `${vehicleName} brake jobs convert best when the right axle and the right part are matched before teardown.`,
+                        bullets: task === 'brake-pad-replacement'
+                            ? [
+                                `Brake part: ${primaryPart}`,
+                                'Confirm front versus rear before ordering.',
+                                'Compress the caliper piston in the right direction and bed the pads in after install.',
+                                torqueSpecs ? `Use the vehicle torque notes already shown on this page: ${torqueSpecs}` : 'Use the torque notes already shown on this page before you close the job.',
+                            ]
+                            : [
+                                `Brake part: ${primaryPart}`,
+                                'Confirm rotor diameter and minimum thickness before ordering.',
+                                'Replace rotors in pairs and clean the hub surface before install.',
+                                torqueSpecs ? `Use the vehicle torque notes already shown on this page: ${torqueSpecs}` : 'Use the torque notes already shown on this page before you close the job.',
+                            ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review brake parts' },
+                            { href: fullGuideHref, label: 'Open brake guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Validate the exact brake fitment path',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Keep the paired brake page one click away',
+                        summary: task === 'brake-pad-replacement'
+                            ? 'Pad jobs often go faster when the rotor page is nearby for wear, thickness, and replacement checks.'
+                            : 'Rotor jobs are easier when the pad page stays nearby for hardware and bed-in context.',
+                        bullets: task === 'brake-pad-replacement'
+                            ? [
+                                'Open the rotor page if the disc surface is scored or below thickness.',
+                                'Keep the vehicle hub open so the rest of the braking cluster stays visible.',
+                            ]
+                            : [
+                                'Open the pad page if the wear pattern suggests the full brake stack needs attention.',
+                                'Keep the vehicle hub open so the rest of the braking cluster stays visible.',
+                            ],
+                        links: [
+                            ...taskLinks([task === 'brake-pad-replacement' ? 'brake-rotor-replacement' : 'brake-pad-replacement']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'oil-change':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Oil service is about the exact spec, not the generic label',
+                intro: 'This page keeps the viscosity, capacity, filter, and drain-plug checks together so owners can order confidently and move quickly.',
+                tone: 'violet',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm the exact oil spec before checkout',
+                        summary: `${vehicleName} oil service is only simple when the oil type, capacity, and filter match the vehicle data.`,
+                        bullets: [
+                            'Use the exact oil viscosity and capacity shown on the page before you order.',
+                            `Oil/filter kit starts with: ${primaryPart}`,
+                            'Keep the drain plug torque and change-interval notes in view while you work.',
+                            'Approved brands and filter part details belong in the final fitment check, not the guesswork stage.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review oil parts' },
+                            { href: fullGuideHref, label: 'Open oil guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Make the service method match the car',
+                        summary: 'Oil jobs fail when the buyer grabs the wrong drain hardware or ignores the service method the car actually uses.',
+                        bullets: [
+                            'Confirm the filter and drain hardware listed on the page before checkout.',
+                            'Use the service notes for your exact vehicle rather than a generic oil recommendation.',
+                            'Keep the change interval and approved-brand notes on screen while you compare listings.',
+                        ],
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Oil service pairs well with the other maintenance lanes',
+                        summary: 'When owners are already under the hood, air filters and spark plugs are often the next useful checks.',
+                        bullets: [
+                            'Use the vehicle hub to keep the broader maintenance cluster visible.',
+                            'Check the related filter and ignition pages if you are batching maintenance.',
+                        ],
+                        links: [
+                            ...taskLinks(['engine-air-filter-replacement', 'cabin-air-filter-replacement', 'spark-plug-replacement']),
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'cabin-air-filter-replacement':
+        case 'engine-air-filter-replacement':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Filter jobs are won by size, access, and airflow direction',
+                intro: 'This page keeps the exact filter fitment, access path, and install direction close to the top so the job stays quick.',
+                tone: 'cyan',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: task === 'cabin-air-filter-replacement' ? 'Confirm cabin filter size and airflow arrow' : 'Confirm engine filter size and seal',
+                        summary: `${vehicleName} filter service is straightforward once you know the exact filter path and access point.`,
+                        bullets: task === 'cabin-air-filter-replacement'
+                            ? [
+                                `Filter part: ${primaryPart}`,
+                                'Confirm the filter size before checkout.',
+                                'Check the access panel or glove box path first.',
+                                'Install with the airflow arrow pointing the right way.',
+                            ]
+                            : [
+                                `Filter part: ${primaryPart}`,
+                                'Confirm the filter size and airbox fitment before checkout.',
+                                'Open the housing carefully so the seal closes properly on reinstall.',
+                                'Use the performance-filter notes on the page if you are comparing reusable or higher-flow options.',
+                            ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review filter parts' },
+                            { href: fullGuideHref, label: 'Open filter guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Use the exact vehicle path and replacement interval',
+                        summary: vehicleNote || 'The fitment and access notes already on this page are the ones to trust before you buy.',
+                        bullets: [
+                            'Keep the replacement interval and access notes visible while you compare listings.',
+                            'Use the vehicle-specific manual path when the housing or glove-box access is tight.',
+                            task === 'engine-air-filter-replacement'
+                                ? 'Check the housing seals and do not over-oil a reusable filter.'
+                                : 'Clear out dust or debris in the housing before installing the new cabin filter.',
+                        ],
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Pair the filter page with the rest of the maintenance cluster',
+                        summary: 'Filter pages work best when they stay linked to the rest of the maintenance stack owners often batch together.',
+                        bullets: [
+                            'Keep the vehicle hub open so the matching maintenance paths stay visible.',
+                            'Open the oil page if you are batching a service reset or a wider maintenance visit.',
+                        ],
+                        links: [
+                            ...taskLinks(['oil-change', task === 'cabin-air-filter-replacement' ? 'engine-air-filter-replacement' : 'cabin-air-filter-replacement']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'alternator-replacement':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Charging-system jobs start with the alternator and belt path',
+                intro: 'This page is organized around the checks owners actually need first: charging output, belt condition, connector fit, and battery follow-up.',
+                tone: 'emerald',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm charging output and belt condition first',
+                        summary: `${vehicleName} alternator jobs only make sense when the charging symptom points to the alternator, not just the battery.`,
+                        bullets: [
+                            `Alternator part: ${primaryPart}`,
+                            'Check charging voltage before ordering.',
+                            'Inspect the serpentine belt, pulley style, and electrical connector layout.',
+                            'Disconnect the battery before removal and test the new alternator output before closing up.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review alternator parts' },
+                            { href: fullGuideHref, label: 'Open alternator guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Match the exact charging-system fitment',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Keep the battery and starter pages nearby',
+                        summary: 'Charging complaints often overlap with battery or starter symptoms, so those pages should stay one click away.',
+                        bullets: [
+                            'Use the battery page if the car also needs a fresh battery or memory-safe swap.',
+                            'Use the starter page if the symptom is no-crank or click/no-crank rather than charging loss.',
+                        ],
+                        links: [
+                            ...taskLinks(['battery-replacement', 'starter-replacement', 'serpentine-belt-replacement']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'starter-replacement':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Starter jobs start with the no-crank diagnosis',
+                intro: 'This page keeps the click/no-crank symptom, battery follow-up, and access steps near the top so owners can decide quickly if the starter is the real problem.',
+                tone: 'emerald',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm the starter before you order',
+                        summary: `${vehicleName} starter jobs are usually decided by symptom pattern, battery health, and access path.`,
+                        bullets: [
+                            `Starter part: ${primaryPart}`,
+                            'Use the click/no-crank symptom before replacing the starter.',
+                            'Check battery condition, wiring connections, and the mounting area first.',
+                            'Plan for under-vehicle access on many layouts and clean the mounting surface for a strong ground.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review starter parts' },
+                            { href: fullGuideHref, label: 'Open starter guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Match the starter fitment and access path',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Keep the battery and charging pages nearby',
+                        summary: 'A weak battery or charging system can mimic a starter problem, so the follow-up pages matter here.',
+                        bullets: [
+                            'Use the battery page if the symptom started after low voltage or a dead battery.',
+                            'Use the alternator page if the charging light or battery warning is part of the story.',
+                        ],
+                        links: [
+                            ...taskLinks(['battery-replacement', 'alternator-replacement']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'serpentine-belt-replacement':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Belt jobs are about routing, tension, and accessory fitment',
+                intro: 'This page keeps the belt length, routing path, and tensioner checks near the top so the install can go once without guesswork.',
+                tone: 'cyan',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm belt routing and accessory alignment first',
+                        summary: `${vehicleName} belt jobs only stay easy when the routing path and accessory layout match the vehicle data.`,
+                        bullets: [
+                            `Belt part: ${primaryPart}`,
+                            'Note the routing diagram before removal.',
+                            'Inspect the tensioner and pulleys for wear while the belt is off.',
+                            'Verify alignment before releasing tension.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review belt parts' },
+                            { href: fullGuideHref, label: 'Open belt guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Use the engine-specific length and rib count',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Keep the charging and cooling pages nearby',
+                        summary: 'The belt often feeds the alternator and water pump, so the adjacent pages stay relevant while the belt is off.',
+                        bullets: [
+                            'Open the alternator page if charging output was part of the symptom.',
+                            'Open the coolant or water-pump path if belt wear came with overheating or coolant loss.',
+                        ],
+                        links: [
+                            ...taskLinks(['alternator-replacement', 'water-pump-replacement', 'battery-replacement']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'transmission-fluid-change':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Transmission fluid service is spec-sensitive',
+                intro: 'This page keeps the exact ATF, the service method, and the refill path at the top so the job does not stall after the drain plug comes out.',
+                tone: 'violet',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm the exact ATF spec before opening the transmission',
+                        summary: `${vehicleName} transmission service is only straightforward when the fluid spec and service method are both correct.`,
+                        bullets: [
+                            `Fluid part: ${primaryPart}`,
+                            'Match the exact ATF spec before ordering.',
+                            'Confirm whether the vehicle uses drain-and-fill or pan-drop service.',
+                            'Plan for a washer, gasket, or filter only if the transmission uses them.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review fluid parts' },
+                            { href: fullGuideHref, label: 'Open transmission guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Use the service method shown for this exact vehicle',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Keep the fluid maintenance stack nearby',
+                        summary: 'Transmission service often lives next to coolant and oil maintenance, so those links stay relevant while the vehicle is open.',
+                        bullets: [
+                            'Use the coolant page if you are already planning a cooling-system refresh.',
+                            'Use the oil page if you are batching routine maintenance on the same visit.',
+                        ],
+                        links: [
+                            ...taskLinks(['coolant-flush', 'oil-change']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'coolant-flush':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Coolant service is about chemistry and the bleed sequence',
+                intro: 'This page keeps coolant type, refill method, and air-bleed reminders near the top so the cooling system ends up full and stable.',
+                tone: 'emerald',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm coolant chemistry before you start',
+                        summary: `${vehicleName} coolant jobs go best when the coolant type and refill sequence are already decided.`,
+                        bullets: [
+                            `Coolant part: ${primaryPart}`,
+                            'Match the coolant chemistry and color family before mixing anything.',
+                            'Let the engine cool completely before opening the system.',
+                            'Bleed air and recheck the level after the first heat cycle.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review coolant parts' },
+                            { href: fullGuideHref, label: 'Open coolant guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Use the refill path shown for this vehicle',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Keep the thermostat and radiator pages nearby',
+                        summary: 'Cooling-system problems usually overlap, so the adjacent pages help if the flush reveals a bigger issue.',
+                        bullets: [
+                            'Open the thermostat page if overheating was part of the original complaint.',
+                            'Open the radiator page if you found leaks, crust, or damage while inspecting the system.',
+                        ],
+                        links: [
+                            ...taskLinks(['thermostat-replacement', 'radiator-replacement', 'water-pump-replacement']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        case 'fuel-filter-replacement':
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Fuel filter jobs depend on layout and flow direction',
+                intro: 'This page keeps the filter location, line orientation, and pressure-relief steps near the top so the replacement stays clean and safe.',
+                tone: 'cyan',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm the filter design before ordering',
+                        summary: `${vehicleName} fuel filter service can be simple or buried, depending on the layout.`,
+                        bullets: [
+                            `Fuel part: ${primaryPart}`,
+                            'Confirm external filter versus in-tank design before ordering.',
+                            'Check flow direction and line orientation if the filter is inline.',
+                            'Relieve fuel pressure and keep the service area spark-free.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review fuel parts' },
+                            { href: fullGuideHref, label: 'Open fuel filter guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Use the layout notes shown on the page',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Keep the fuel and intake pages nearby',
+                        summary: 'Fuel-filter work often pairs with fuel-pump or air-filter checks when the car is already in service mode.',
+                        bullets: [
+                            'Open the fuel-pump page if the symptom is broader than filter restriction.',
+                            'Open the engine-air-filter page if you are already batching intake maintenance.',
+                        ],
+                        links: [
+                            ...taskLinks(['fuel-pump-replacement', 'engine-air-filter-replacement']),
+                            { href: vehicleHubHref, label: 'Vehicle hub' },
+                        ],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+        default:
+            return {
+                eyebrow: 'Quick answer',
+                title: 'Start with the exact fitment check',
+                intro: `This page keeps the ${cleanTask} fitment, timing, and procedure notes close to the top so the vehicle stays in view while you work.`,
+                tone: 'cyan',
+                cards: [
+                    {
+                        eyebrow: 'Direct answer',
+                        title: 'Confirm the repair data before ordering',
+                        summary: `${vehicleName} is already validated for this task, so the safest next step is the exact part and service check on the page.`,
+                        bullets: [
+                            `Difficulty: ${repairData.difficulty}`,
+                            `Time: ${repairData.time}`,
+                            `Primary part: ${primaryPart}`,
+                            repairData.warnings[0] || 'Use the warning section before you start.',
+                        ],
+                        links: [
+                            { href: '#parts-needed', label: 'Review parts' },
+                            { href: fullGuideHref, label: 'Open full guide' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Before you order',
+                        title: 'Use the fitment checks already on this page',
+                        summary: commercialConfig.primaryActionHint,
+                        bullets: commercialConfig.fitmentChecks,
+                        links: [
+                            { href: manualYearHref, label: 'Browse year manual' },
+                            { href: manualMakeHref, label: 'Browse make manual' },
+                        ],
+                    },
+                    {
+                        eyebrow: 'Next step',
+                        title: 'Keep the exact vehicle hub open',
+                        summary: 'The hub keeps repair, wiring, codes, and manual paths in the same context while you compare the next move.',
+                        bullets: [
+                            vehicleNote || 'Use the vehicle notes above for any exact-fit caveat before teardown.',
+                            torqueSpecs ? `Torque notes: ${torqueSpecs}` : 'Use the service notes on this page for torque and order of operations.',
+                            beltRouting ? `Belt routing: ${beltRouting}` : 'Use the linked manual if you need a factory reference for access or routing.',
+                        ],
+                        links: [{ href: vehicleHubHref, label: 'Vehicle hub' }],
+                    },
+                ].map((card) => ({ ...card, tone: 'cyan' as TaskSupportNote['tone'] })),
+            };
+    }
+}
+
 function getPartActionLabel(task: string, partName: string): string {
     const lower = partName.toLowerCase();
 
@@ -1096,7 +1804,11 @@ export default async function Page({ params }: PageProps) {
         }] : []),
         ...knowledgeGraph.groups,
     ];
-    const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('repair', repairGraphGroups);
+    const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('repair', repairGraphGroups, {
+        task: canonicalTask,
+        vehicle: vehicleName,
+        query: `${vehicleName} ${cleanTask} ${repairData.parts.slice(0, 2).join(' ')}`.trim(),
+    });
     const knowledgeGraphExport = buildKnowledgeGraphExport({
         surface: 'repair',
         rootNodeId: buildRepairNodeId(resolvedYear, displayMake, displayModel, canonicalTask),
@@ -1155,10 +1867,29 @@ export default async function Page({ params }: PageProps) {
     const commercialConfig = getCommercialTaskConfig(canonicalTask);
     const taskSupportNote = TASK_SUPPORT_NOTES[canonicalTask];
     const exactGuideProfile = getExactGuideProfile(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
+    const fullGuideHref = '?fullGuide=1#full-ai-guide';
+    const quickAnswerModule = getIntentQuickAnswerModule({
+        year: resolvedYear,
+        make: canonicalMake,
+        model: canonicalModel,
+        task: canonicalTask,
+        cleanTask,
+        vehicleName,
+        vehicleHubHref,
+        manualMakeHref,
+        manualYearHref,
+        fullGuideHref,
+        repairData,
+        commercialConfig,
+        vehicleSignals: vehicleSpec ? {
+            vehicleNotes: vehicleSpec.vehicleNotes,
+            torqueSpecs: vehicleSpec.torqueSpecs,
+            beltRouting: vehicleSpec.beltRouting,
+        } : undefined,
+    });
     const primaryAffiliatePart = affiliateSpotlightParts[0];
     const primaryAffiliateQuery = primaryAffiliatePart?.query || `${vehicleName} ${cleanTask}`;
     const primaryAffiliateName = primaryAffiliatePart?.name || `${cleanTask} parts`;
-    const fullGuideHref = '?fullGuide=1#full-ai-guide';
     // Convert "30-45 minutes" / "1-2 hours" to ISO 8601 duration (upper bound)
     function toIso8601Duration(timeStr: string): string {
         const lower = timeStr.toLowerCase();
@@ -1368,6 +2099,13 @@ export default async function Page({ params }: PageProps) {
             <article className="max-w-5xl mx-auto px-4 py-8 md:py-10">
                 {/* Hero */}
                 <header className="mb-8 md:mb-10">
+                    <RepairSectionTracker
+                        vehicle={vehicleName}
+                        task={canonicalTask}
+                        section="hero"
+                        label={`${vehicleName} ${cleanTask} hero`}
+                        itemCount={2}
+                    />
                     <p className="text-sm font-medium tracking-wide text-cyan-300/80 mb-3">
                         DIY repair guide for {vehicleName}
                     </p>
@@ -1375,17 +2113,111 @@ export default async function Page({ params }: PageProps) {
                         {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guide {'\u2014'} {vehicleName}
                     </h1>
                     <p className="text-base md:text-lg leading-7 text-gray-300 max-w-3xl">
-                        Complete DIY repair guide with step-by-step instructions. Find exact parts on Amazon for your vehicle.
+                        Start with the exact-fit quick answer below, then open the full guide when you want the longer procedure, parts, and factory references.
                     </p>
-                    <div className="mt-5">
-                        <Link
-                            href={vehicleHubHref}
+                    <div className="mt-5 flex flex-wrap gap-3">
+                        <RepairTrackedLink
+                            href="#quick-answer"
+                            vehicle={vehicleName}
+                            task={canonicalTask}
+                            section="hero"
+                            target="jump_to_quick_answer"
+                            label="Jump to quick answer"
                             className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/25 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-200 hover:border-cyan-400/40 hover:bg-cyan-500/15 transition-all"
                         >
+                            Jump to quick answer
+                        </RepairTrackedLink>
+                        <RepairTrackedLink
+                            href={vehicleHubHref}
+                            vehicle={vehicleName}
+                            task={canonicalTask}
+                            section="hero"
+                            target="vehicle_hub"
+                            label={`Browse the full ${vehicleName} vehicle hub`}
+                            className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-gray-200 hover:border-cyan-400/30 hover:bg-white/[0.06] transition-all"
+                        >
                             Browse the full {vehicleName} vehicle hub
-                        </Link>
+                        </RepairTrackedLink>
                     </div>
                 </header>
+
+                <section
+                    id="quick-answer"
+                    className={`mb-8 rounded-2xl border p-6 md:p-7 ${TASK_SUPPORT_TONE_CLASSES[quickAnswerModule.tone].shell}`}
+                >
+                    <RepairSectionTracker
+                        vehicle={vehicleName}
+                        task={canonicalTask}
+                        section="quick_answer"
+                        label={quickAnswerModule.title}
+                        itemCount={quickAnswerModule.cards.length}
+                    />
+                    <div className="max-w-3xl">
+                        <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${TASK_SUPPORT_TONE_CLASSES[quickAnswerModule.tone].eyebrow}`}>
+                            {quickAnswerModule.eyebrow}
+                        </p>
+                        <h2 className={`mt-3 text-2xl md:text-3xl font-semibold tracking-tight ${TASK_SUPPORT_TONE_CLASSES[quickAnswerModule.tone].title}`}>
+                            {quickAnswerModule.title}
+                        </h2>
+                        <p className="mt-3 text-sm leading-7 text-gray-200/90">
+                            {quickAnswerModule.intro}
+                        </p>
+                    </div>
+                    <div className="mt-6 grid gap-4 lg:grid-cols-3">
+                        {quickAnswerModule.cards.map((card) => {
+                            const toneClasses = TASK_SUPPORT_TONE_CLASSES[card.tone === 'cyan' ? quickAnswerModule.tone : card.tone];
+
+                            return (
+                                <div key={`${card.eyebrow}-${card.title}`} className="rounded-xl border border-white/10 bg-black/20 p-4">
+                                    <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${toneClasses.eyebrow}`}>
+                                        {card.eyebrow}
+                                    </p>
+                                    <h3 className={`mt-3 text-lg font-semibold tracking-tight ${toneClasses.title}`}>
+                                        {card.title}
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-gray-200/90">
+                                        {card.summary}
+                                    </p>
+                                    <ul className="mt-4 space-y-2">
+                                        {card.bullets.map((bullet) => (
+                                            <li key={bullet} className={`text-sm leading-6 ${toneClasses.bullet}`}>
+                                                • {bullet}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    {card.links.length > 0 && (
+                                        <div className="mt-4 flex flex-wrap gap-2">
+                                            {card.links.map((link) => (
+                                                <RepairTrackedLink
+                                                    key={`${card.title}-${link.href}`}
+                                                    href={link.href}
+                                                    vehicle={vehicleName}
+                                                    task={canonicalTask}
+                                                    section="quick_answer"
+                                                    target={getRepairAnswerTarget({
+                                                        href: link.href,
+                                                        year: resolvedYear,
+                                                        make: canonicalMake,
+                                                        model: canonicalModel,
+                                                        task: canonicalTask,
+                                                        vehicleHubHref,
+                                                        manualMakeHref,
+                                                        manualYearHref,
+                                                        fullGuideHref,
+                                                    })}
+                                                    label={`${card.title}: ${link.label}`}
+                                                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-gray-100 transition-colors hover:border-white/20 hover:bg-white/[0.08]"
+                                                >
+                                                    {link.label}
+                                                </RepairTrackedLink>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </section>
 
                 {taskSupportNote && (
                     <section className={`mb-8 rounded-2xl border p-6 md:p-7 ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].shell}`}>
@@ -1439,22 +2271,22 @@ export default async function Page({ params }: PageProps) {
                 })()}
 
                 <section className="mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-7">
-                    <h2 className="text-xl font-semibold text-white tracking-tight">Why this guide is trustworthy</h2>
+                    <h2 className="text-xl font-semibold text-white tracking-tight">How this page is grounded</h2>
                     <p className="mt-2 text-sm leading-7 text-emerald-50/90">
-                        This page is generated from a structured repair template, then constrained with vehicle-specific validation so impossible year/make/model combinations are rejected before content is produced.
+                        The answer starts from a structured repair template, then narrows to the exact vehicle, task, fitment notes, and linked manual paths already available for this page.
                     </p>
                     <div className="mt-4 grid gap-3 md:grid-cols-3">
                         <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Vehicle validation</p>
-                            <p className="mt-2 text-sm leading-6 text-gray-200">Invalid vehicle combinations are blocked, then redirected or 404’d instead of being hallucinated.</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Exact vehicle context</p>
+                            <p className="mt-2 text-sm leading-6 text-gray-200">This page only renders after the year, make, model, and task are validated into a real repair path.</p>
                         </div>
                         <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Structured data</p>
-                            <p className="mt-2 text-sm leading-6 text-gray-200">HowTo, FAQ, and breadcrumb schema are embedded to keep guidance machine-readable and consistent.</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Structured repair data</p>
+                            <p className="mt-2 text-sm leading-6 text-gray-200">The page pulls from repair timing, tools, parts, warnings, and step data before it renders the guide body.</p>
                         </div>
                         <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Factory references</p>
-                            <p className="mt-2 text-sm leading-6 text-gray-200">Use the linked manual and spec pages below to verify torque specs, fitment, and service steps before teardown.</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200/80">Manual and spec cross-checks</p>
+                            <p className="mt-2 text-sm leading-6 text-gray-200">Use the linked manual and spec paths to verify fitment, torque, and service order before teardown.</p>
                         </div>
                     </div>
                 </section>

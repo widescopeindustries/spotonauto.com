@@ -1,3 +1,516 @@
 {
-  "surfaces": {}
+  "surfaces": {
+    "repair": {
+      "groupWeights": {
+        "symptom": 86,
+        "manual": 92,
+        "spec": 84,
+        "vehicle": 76,
+        "tool": 66,
+        "wiring": 56,
+        "dtc": 38,
+        "repair": 32
+      },
+      "contextRules": [
+        {
+          "when": {
+            "tasks": [
+              "battery-replacement",
+              "alternator-replacement",
+              "starter-replacement"
+            ],
+            "keywords": [
+              "battery",
+              "starting",
+              "charging",
+              "alternator",
+              "starter",
+              "no-start"
+            ]
+          },
+          "groupBoosts": {
+            "wiring": 24,
+            "tool": 20,
+            "manual": 18,
+            "vehicle": 12,
+            "symptom": 10,
+            "repair": 8
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "headlight-bulb-replacement",
+              "tail-light-replacement"
+            ],
+            "keywords": [
+              "headlight",
+              "bulb",
+              "lighting",
+              "tail-light",
+              "taillight",
+              "lamp"
+            ]
+          },
+          "groupBoosts": {
+            "wiring": 26,
+            "tool": 18,
+            "manual": 14,
+            "vehicle": 10,
+            "repair": 8,
+            "symptom": 6
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "brake-pad-replacement",
+              "brake-rotor-replacement"
+            ],
+            "keywords": [
+              "brake",
+              "rotor",
+              "pad",
+              "caliper"
+            ]
+          },
+          "groupBoosts": {
+            "tool": 24,
+            "manual": 20,
+            "spec": 18,
+            "repair": 10,
+            "vehicle": 8
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "oil-change",
+              "transmission-fluid-change",
+              "coolant-flush"
+            ],
+            "keywords": [
+              "oil",
+              "fluid",
+              "coolant",
+              "transmission",
+              "capacity",
+              "spec"
+            ]
+          },
+          "groupBoosts": {
+            "spec": 26,
+            "manual": 20,
+            "tool": 14,
+            "repair": 8,
+            "vehicle": 6
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "cabin-air-filter-replacement",
+              "engine-air-filter-replacement",
+              "spark-plug-replacement"
+            ],
+            "keywords": [
+              "filter",
+              "tune-up",
+              "spark-plug",
+              "spark",
+              "air-filter"
+            ]
+          },
+          "groupBoosts": {
+            "tool": 20,
+            "manual": 16,
+            "repair": 10,
+            "spec": 8,
+            "vehicle": 6
+          }
+        }
+      ]
+    },
+    "vehicle": {
+      "groupWeights": {
+        "vehicle": 100,
+        "manual": 92,
+        "symptom": 82,
+        "repair": 88,
+        "wiring": 86,
+        "tool": 80,
+        "dtc": 70,
+        "spec": 44
+      },
+      "contextRules": [
+        {
+          "when": {
+            "tasks": [
+              "battery-replacement",
+              "alternator-replacement",
+              "starter-replacement"
+            ],
+            "keywords": [
+              "battery",
+              "starting",
+              "charging",
+              "alternator",
+              "starter",
+              "no-start"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 24,
+            "wiring": 18,
+            "tool": 14,
+            "manual": 12,
+            "symptom": 10
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "headlight-bulb-replacement",
+              "tail-light-replacement"
+            ],
+            "keywords": [
+              "headlight",
+              "bulb",
+              "lighting",
+              "tail-light",
+              "taillight",
+              "lamp"
+            ]
+          },
+          "groupBoosts": {
+            "wiring": 20,
+            "repair": 18,
+            "tool": 14,
+            "manual": 10
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "brake-pad-replacement",
+              "brake-rotor-replacement"
+            ],
+            "keywords": [
+              "brake",
+              "rotor",
+              "pad",
+              "caliper"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 20,
+            "tool": 16,
+            "spec": 14,
+            "manual": 12
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "oil-change",
+              "transmission-fluid-change",
+              "coolant-flush"
+            ],
+            "keywords": [
+              "oil",
+              "fluid",
+              "coolant",
+              "transmission",
+              "capacity",
+              "spec"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 20,
+            "spec": 18,
+            "manual": 14,
+            "tool": 10
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "cabin-air-filter-replacement",
+              "engine-air-filter-replacement",
+              "spark-plug-replacement"
+            ],
+            "keywords": [
+              "filter",
+              "tune-up",
+              "spark-plug",
+              "spark",
+              "air-filter"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 16,
+            "tool": 14,
+            "manual": 12,
+            "spec": 8
+          }
+        }
+      ]
+    },
+    "wiring": {
+      "groupWeights": {
+        "vehicle": 96,
+        "manual": 92,
+        "symptom": 70,
+        "repair": 80,
+        "dtc": 72,
+        "wiring": 56,
+        "tool": 40,
+        "spec": 26
+      },
+      "contextRules": [
+        {
+          "when": {
+            "tasks": [
+              "battery-replacement",
+              "alternator-replacement",
+              "starter-replacement"
+            ],
+            "keywords": [
+              "battery",
+              "starting",
+              "charging",
+              "alternator",
+              "starter"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 22,
+            "tool": 18,
+            "vehicle": 12,
+            "manual": 10
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "headlight-bulb-replacement",
+              "tail-light-replacement"
+            ],
+            "keywords": [
+              "headlight",
+              "bulb",
+              "lighting",
+              "tail-light",
+              "taillight",
+              "lamp"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 20,
+            "tool": 18,
+            "vehicle": 12,
+            "manual": 10
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "brake-pad-replacement",
+              "brake-rotor-replacement"
+            ],
+            "keywords": [
+              "brake",
+              "rotor",
+              "pad",
+              "caliper"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 14,
+            "manual": 12,
+            "tool": 10,
+            "vehicle": 8
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "oil-change",
+              "transmission-fluid-change",
+              "coolant-flush",
+              "cabin-air-filter-replacement",
+              "engine-air-filter-replacement"
+            ],
+            "keywords": [
+              "oil",
+              "fluid",
+              "coolant",
+              "filter",
+              "spec"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 12,
+            "manual": 10,
+            "spec": 8,
+            "tool": 6
+          }
+        }
+      ]
+    },
+    "code": {
+      "groupWeights": {
+        "manual": 92,
+        "vehicle": 86,
+        "symptom": 88,
+        "repair": 82,
+        "wiring": 72,
+        "dtc": 52,
+        "tool": 34,
+        "spec": 22
+      },
+      "contextRules": [
+        {
+          "when": {
+            "tasks": [
+              "battery-replacement",
+              "alternator-replacement",
+              "starter-replacement"
+            ],
+            "keywords": [
+              "battery",
+              "starting",
+              "charging",
+              "alternator",
+              "starter"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 18,
+            "wiring": 14,
+            "tool": 10,
+            "symptom": 10
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "headlight-bulb-replacement",
+              "tail-light-replacement"
+            ],
+            "keywords": [
+              "headlight",
+              "bulb",
+              "lighting",
+              "tail-light",
+              "taillight",
+              "lamp"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 16,
+            "wiring": 14,
+            "tool": 10
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "brake-pad-replacement",
+              "brake-rotor-replacement",
+              "oil-change",
+              "transmission-fluid-change",
+              "coolant-flush",
+              "cabin-air-filter-replacement",
+              "engine-air-filter-replacement",
+              "spark-plug-replacement"
+            ],
+            "keywords": [
+              "brake",
+              "oil",
+              "fluid",
+              "coolant",
+              "filter",
+              "spark"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 14,
+            "manual": 12,
+            "tool": 10,
+            "spec": 8
+          }
+        }
+      ]
+    },
+    "symptom": {
+      "groupWeights": {
+        "symptom": 100,
+        "repair": 102,
+        "dtc": 90,
+        "vehicle": 80,
+        "manual": 72,
+        "wiring": 58,
+        "tool": 46,
+        "spec": 20
+      },
+      "contextRules": [
+        {
+          "when": {
+            "tasks": [
+              "battery-replacement",
+              "alternator-replacement",
+              "starter-replacement"
+            ],
+            "keywords": [
+              "battery",
+              "starting",
+              "charging",
+              "alternator",
+              "starter",
+              "no-start"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 16,
+            "vehicle": 12,
+            "wiring": 10,
+            "tool": 8
+          }
+        },
+        {
+          "when": {
+            "tasks": [
+              "headlight-bulb-replacement",
+              "tail-light-replacement",
+              "brake-pad-replacement",
+              "brake-rotor-replacement",
+              "oil-change",
+              "transmission-fluid-change",
+              "coolant-flush",
+              "cabin-air-filter-replacement",
+              "engine-air-filter-replacement",
+              "spark-plug-replacement"
+            ],
+            "keywords": [
+              "headlight",
+              "bulb",
+              "brake",
+              "oil",
+              "fluid",
+              "coolant",
+              "filter",
+              "spark"
+            ]
+          },
+          "groupBoosts": {
+            "repair": 14,
+            "manual": 10,
+            "vehicle": 10,
+            "tool": 8
+          }
+        }
+      ]
+    }
+  }
 }

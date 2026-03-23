@@ -54,7 +54,10 @@ export default async function SymptomHubPage({ params }: PageProps) {
   const symptomHub = buildSymptomHubGraph(matchedCluster);
   const priorityCodePages = getPriorityCodePagesForSymptomCluster(matchedCluster, 6);
   const supportGapRepairs = getSupportGapRepairsForTasks(matchedCluster.likelyTasks, 6);
-  const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('symptom', symptomHub.groups);
+  const rankedKnowledgeGroups = rankKnowledgeGraphBlocks('symptom', symptomHub.groups, {
+    task: matchedCluster.likelyTasks[0],
+    query: `${matchedCluster.label} ${matchedCluster.likelyTasks.join(' ')}`.trim(),
+  });
   const knowledgeGraphExport = buildKnowledgeGraphExport({
     surface: 'symptom',
     rootNodeId: buildSymptomNodeId(matchedCluster.slug),
