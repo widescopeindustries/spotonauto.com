@@ -8,21 +8,42 @@ const ALLOWED_ORIGINS = [
     ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
 ];
 
+function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean, isRobots: boolean) {
+    response.headers.set('Vary', 'Accept-Encoding');
+    response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');
+    if (shouldNoindexHost) {
+        response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    }
+    if (isRobots) {
+        response.headers.set('Content-Type', 'text/plain; charset=utf-8');
+    } else {
+        response.headers.set('Content-Type', 'application/xml; charset=utf-8');
+    }
+    return response;
+}
+
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const host = normalizeHost(request.headers.get('x-forwarded-host') || request.headers.get('host'));
+    const shouldNoindexHost = !isCanonicalHost(host) && isPreviewHost(host);
+    const isRootOrNestedSitemap =
+        pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
+    const isNestedSitemapChunk =
+        pathname.includes('/sitemap/') && pathname.endsWith('.xml');
+    const isRobots = pathname === '/robots.txt';
+    const isCrawlerEndpoint = isRootOrNestedSitemap || isNestedSitemapChunk || isRobots;
 
     if (pathname === '/wiring/sitemap.xml') {
         const url = request.nextUrl.clone();
         url.pathname = '/api/wiring-xml-index';
-        return NextResponse.rewrite(url);
+        return applyCrawlerHeaders(NextResponse.rewrite(url), shouldNoindexHost, false);
     }
 
     const wiringChunkMatch = pathname.match(/^\/wiring\/sitemap\/(\d+)\.xml$/);
     if (wiringChunkMatch) {
         const url = request.nextUrl.clone();
         url.pathname = `/api/wiring-xml/${wiringChunkMatch[1]}`;
-        return NextResponse.rewrite(url);
+        return applyCrawlerHeaders(NextResponse.rewrite(url), shouldNoindexHost, false);
     }
 
     if (isLegacyRedirectHost(host)) {
@@ -43,29 +64,10 @@ export function middleware(request: NextRequest) {
         });
     }
 
-    const shouldNoindexHost = !isCanonicalHost(host) && isPreviewHost(host);
-
     // Crawler endpoints — force plain cache/Vary semantics (no RSC vary headers)
     // so search engines consistently parse robots + sitemap responses.
-    const isRootOrNestedSitemap =
-        pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
-    const isNestedSitemapChunk =
-        pathname.includes('/sitemap/') && pathname.endsWith('.xml');
-    const isRobots = pathname === '/robots.txt';
-
-    if (isRootOrNestedSitemap || isNestedSitemapChunk || isRobots) {
-        const response = NextResponse.next();
-        response.headers.set('Vary', 'Accept-Encoding');
-        response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');
-        if (shouldNoindexHost) {
-            response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
-        }
-        if (isRobots) {
-            response.headers.set('Content-Type', 'text/plain; charset=utf-8');
-        } else {
-            response.headers.set('Content-Type', 'application/xml; charset=utf-8');
-        }
-        return response;
+    if (isCrawlerEndpoint) {
+        return applyCrawlerHeaders(NextResponse.next(), shouldNoindexHost, isRobots);
     }
 
     const response = NextResponse.next();
