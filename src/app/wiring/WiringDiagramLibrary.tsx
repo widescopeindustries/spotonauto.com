@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { trackWiringDiagramOpen } from '@/lib/analytics';
+import {
+  trackWiringDiagramExit,
+  trackWiringDiagramInteract,
+  trackWiringDiagramOpen,
+  trackWiringDiagramSearch,
+  trackWiringSystemToggle,
+} from '@/lib/analytics';
 import type { WiringSelectorData } from '@/lib/wiringCoverage';
 
 interface DiagramEntry {
@@ -89,8 +95,11 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
   const [expandedSystem, setExpandedSystem] = useState<string | null>(null);
   const [selectedDiagram, setSelectedDiagram] = useState<{ entry: DiagramEntry; images: DiagramImage } | null>(null);
   const [search, setSearch] = useState('');
+  const [diagramZoom, setDiagramZoom] = useState(1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [variantLookupError, setVariantLookupError] = useState<string | null>(null);
   const [diagramError, setDiagramError] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
   // Loading states
   const [loadingVariants, setLoadingVariants] = useState(false);
@@ -100,6 +109,7 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
   const prefillModelRef = useRef<string>('');
   const autoOpenRef = useRef(false);
   const autoOpenConsumedRef = useRef(false);
+  const searchTrackRef = useRef('');
 
   const makes = selectedYear ? selectorData.makesByYear[selectedYear] || [] : [];
   const models = selectedYear && selectedMake
@@ -276,6 +286,13 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           `${selectedYear} ${selectedMake} ${selectedModel || selectedVariant}`,
           systemName,
           entry.name,
+          {
+            pageSurface: 'wiring',
+            systemSlug: systemName,
+            vehicleYear: selectedYear,
+            vehicleMake: selectedMake,
+            vehicleModel: selectedModel || selectedVariant,
+          },
         );
       }
     } catch {
@@ -295,6 +312,83 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
     .filter(sys => search ? sys.diagrams.length > 0 : true) || [];
 
   const filteredCount = filteredSystems.reduce((sum, s) => sum + s.diagrams.length, 0);
+  const currentVehicleLabel = selectedYear && selectedMake
+    ? `${selectedYear} ${selectedMake} ${selectedModel || selectedVariant || ''}`.trim()
+    : '';
+  const currentDiagram = selectedDiagram?.images.images[selectedImageIndex] || '';
+
+  const buildDiagramShareUrl = useCallback((includeDiagram = true) => {
+    if (typeof window === 'undefined') return '';
+    const url = new URL(window.location.href);
+    if (selectedYear) url.searchParams.set('year', selectedYear);
+    if (selectedMake) url.searchParams.set('make', selectedMake);
+    if (selectedModel) url.searchParams.set('model', selectedModel);
+    if (selectedVariant) url.searchParams.set('variant', selectedVariant);
+    if (selectedDiagram && includeDiagram) {
+      url.searchParams.set('q', selectedDiagram.entry.name);
+      url.searchParams.set('open', '1');
+    } else if (search) {
+      url.searchParams.set('q', search);
+    }
+    return url.toString();
+  }, [search, selectedDiagram, selectedMake, selectedModel, selectedVariant, selectedYear]);
+
+  const closeDiagram = useCallback((reason: 'close_button' | 'backdrop' | 'escape') => {
+    if (selectedDiagram) {
+      trackWiringDiagramExit({
+        vehicle: currentVehicleLabel,
+        system: expandedSystem || 'diagram-library',
+        kind: reason,
+        openDiagrams: selectedDiagram.images.images.length,
+        pageSurface: 'wiring',
+        systemSlug: expandedSystem || undefined,
+        vehicleYear: selectedYear,
+        vehicleMake: selectedMake,
+        vehicleModel: selectedModel || selectedVariant,
+      });
+    }
+    setSelectedDiagram(null);
+  }, [
+    currentVehicleLabel,
+    expandedSystem,
+    selectedDiagram,
+    selectedMake,
+    selectedModel,
+    selectedVariant,
+    selectedYear,
+  ]);
+
+  useEffect(() => {
+    if (!currentVehicleLabel || !search.trim()) return;
+    if (searchTrackRef.current === search) return;
+
+    const timer = window.setTimeout(() => {
+      searchTrackRef.current = search;
+      trackWiringDiagramSearch({
+        vehicle: currentVehicleLabel,
+        system: expandedSystem || 'diagram-library',
+        query: search.trim(),
+        resultCount: filteredCount,
+        scope: expandedSystem ? 'system_list' : 'diagram_library',
+        pageSurface: 'wiring',
+        systemSlug: expandedSystem || undefined,
+        vehicleYear: selectedYear,
+        vehicleMake: selectedMake,
+        vehicleModel: selectedModel || selectedVariant,
+      });
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    currentVehicleLabel,
+    expandedSystem,
+    filteredCount,
+    search,
+    selectedMake,
+    selectedModel,
+    selectedVariant,
+    selectedYear,
+  ]);
 
   useEffect(() => {
     if (!search || filteredSystems.length === 0) return;
@@ -313,6 +407,177 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
     setExpandedSystem(firstSystem.system);
     void openDiagram(firstDiagram, firstSystem.system);
   }, [filteredSystems, loadingDiagrams, loadingImage, openDiagram, selectedDiagram]);
+
+  useEffect(() => {
+    if (!selectedDiagram) return;
+    setDiagramZoom(1);
+    setSelectedImageIndex(0);
+  }, [selectedDiagram]);
+
+  useEffect(() => {
+    if (!selectedDiagram) return undefined;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeDiagram('escape');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [closeDiagram, selectedDiagram]);
+
+  const updateZoom = useCallback((nextZoom: number, action: 'zoom_in' | 'zoom_out' | 'reset_zoom') => {
+    const boundedZoom = Math.max(0.5, Math.min(2.5, nextZoom));
+    setDiagramZoom(boundedZoom);
+    if (selectedDiagram) {
+      trackWiringDiagramInteract({
+        vehicle: currentVehicleLabel,
+        system: expandedSystem || 'diagram-library',
+        action,
+        diagramName: selectedDiagram.entry.name,
+        interactionTarget: 'modal_zoom',
+        pageSurface: 'wiring',
+        systemSlug: expandedSystem || undefined,
+        vehicleYear: selectedYear,
+        vehicleMake: selectedMake,
+        vehicleModel: selectedModel || selectedVariant,
+      });
+    }
+  }, [
+    currentVehicleLabel,
+    expandedSystem,
+    selectedDiagram,
+    selectedMake,
+    selectedModel,
+    selectedVariant,
+    selectedYear,
+  ]);
+
+  const handleCopyLink = useCallback(async () => {
+    const shareUrl = buildDiagramShareUrl(true);
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopyStatus('Link copied');
+    } catch {
+      setCopyStatus('Copy failed');
+    }
+    if (selectedDiagram) {
+      trackWiringDiagramInteract({
+        vehicle: currentVehicleLabel,
+        system: expandedSystem || 'diagram-library',
+        action: 'copy_link',
+        diagramName: selectedDiagram.entry.name,
+        interactionTarget: 'share_link',
+        pageSurface: 'wiring',
+        systemSlug: expandedSystem || undefined,
+        vehicleYear: selectedYear,
+        vehicleMake: selectedMake,
+        vehicleModel: selectedModel || selectedVariant,
+      });
+    }
+    window.setTimeout(() => setCopyStatus(null), 1800);
+  }, [
+    buildDiagramShareUrl,
+    currentVehicleLabel,
+    expandedSystem,
+    selectedDiagram,
+    selectedMake,
+    selectedModel,
+    selectedVariant,
+    selectedYear,
+  ]);
+
+  const handleShare = useCallback(async () => {
+    const shareUrl = buildDiagramShareUrl(true);
+    if (!shareUrl) return;
+    if (selectedDiagram) {
+      trackWiringDiagramInteract({
+        vehicle: currentVehicleLabel,
+        system: expandedSystem || 'diagram-library',
+        action: 'share',
+        diagramName: selectedDiagram.entry.name,
+        interactionTarget: 'share_link',
+        pageSurface: 'wiring',
+        systemSlug: expandedSystem || undefined,
+        vehicleYear: selectedYear,
+        vehicleMake: selectedMake,
+        vehicleModel: selectedModel || selectedVariant,
+      });
+    }
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: selectedDiagram?.entry.name || 'Wiring diagram',
+          url: shareUrl,
+        });
+        setCopyStatus('Shared');
+        window.setTimeout(() => setCopyStatus(null), 1800);
+        return;
+      }
+
+      await navigator.clipboard.writeText(shareUrl);
+      setCopyStatus('Link copied');
+    } catch {
+      setCopyStatus('Share unavailable');
+    }
+    window.setTimeout(() => setCopyStatus(null), 1800);
+  }, [
+    buildDiagramShareUrl,
+    currentVehicleLabel,
+    expandedSystem,
+    selectedDiagram,
+    selectedMake,
+    selectedModel,
+    selectedVariant,
+    selectedYear,
+  ]);
+
+  const handleDownload = useCallback(async () => {
+    if (!currentDiagram) return;
+    if (selectedDiagram) {
+      trackWiringDiagramInteract({
+        vehicle: currentVehicleLabel,
+        system: expandedSystem || 'diagram-library',
+        action: 'download',
+        diagramName: selectedDiagram.entry.name,
+        interactionTarget: 'diagram_image',
+        pageSurface: 'wiring',
+        systemSlug: expandedSystem || undefined,
+        vehicleYear: selectedYear,
+        vehicleMake: selectedMake,
+        vehicleModel: selectedModel || selectedVariant,
+      });
+    }
+
+    try {
+      const response = await fetch(currentDiagram);
+      if (!response.ok) throw new Error('Download failed');
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = objectUrl;
+      anchor.download = `${selectedDiagram?.entry.name || 'wiring-diagram'}.png`.replace(/[^a-z0-9._-]+/gi, '_');
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+    } catch {
+      setCopyStatus('Download unavailable');
+      window.setTimeout(() => setCopyStatus(null), 1800);
+    }
+  }, [
+    currentDiagram,
+    currentVehicleLabel,
+    expandedSystem,
+    selectedDiagram,
+    selectedMake,
+    selectedModel,
+    selectedVariant,
+    selectedYear,
+  ]);
 
   return (
     <div className="wiring-library">
@@ -435,7 +700,22 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                 <div key={sys.system} className="wl-system">
                   <button
                     className={`wl-system-header ${expandedSystem === sys.system ? 'expanded' : ''}`}
-                    onClick={() => setExpandedSystem(expandedSystem === sys.system ? null : sys.system)}
+                    onClick={() => {
+                      const nextExpanded = expandedSystem === sys.system ? null : sys.system;
+                      setExpandedSystem(nextExpanded);
+                      trackWiringSystemToggle({
+                        vehicle: currentVehicleLabel,
+                        system: sys.system,
+                        action: nextExpanded ? 'expand' : 'collapse',
+                        diagramCount: sys.diagrams.length,
+                        scope: 'system_list',
+                        pageSurface: 'wiring',
+                        systemSlug: sys.system,
+                        vehicleYear: selectedYear,
+                        vehicleMake: selectedMake,
+                        vehicleModel: selectedModel || selectedVariant,
+                      });
+                    }}
                   >
                     <span className="wl-system-name">{sys.system}</span>
                     <span className="wl-system-count">{sys.diagrams.length}</span>
@@ -474,23 +754,91 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
 
         {/* Diagram Viewer Modal */}
         {selectedDiagram && (
-          <div className="wl-modal-overlay" onClick={() => setSelectedDiagram(null)}>
+          <div className="wl-modal-overlay" onClick={() => closeDiagram('backdrop')}>
             <div className="wl-modal" onClick={e => e.stopPropagation()}>
               <div className="wl-modal-header">
-                <h3 className="wl-modal-title">{selectedDiagram.images.title || selectedDiagram.entry.name}</h3>
-                <button className="wl-modal-close" onClick={() => setSelectedDiagram(null)}>&times;</button>
+                <div>
+                  <h3 className="wl-modal-title">{selectedDiagram.images.title || selectedDiagram.entry.name}</h3>
+                  <p className="wl-modal-subtitle">
+                    {selectedDiagram.images.images.length > 0
+                      ? `Image ${selectedImageIndex + 1} of ${selectedDiagram.images.images.length}`
+                      : 'Factory service manual image'}
+                  </p>
+                </div>
+                <button className="wl-modal-close" onClick={() => closeDiagram('close_button')}>&times;</button>
               </div>
               <div className="wl-modal-body">
                 {loadingImage ? (
                   <div className="wl-loading"><div className="wl-spinner" /><p>Loading diagram...</p></div>
                 ) : selectedDiagram.images.images.length > 0 ? (
-                  selectedDiagram.images.images.map((src, idx) => (
-                    <div key={idx} className="wl-modal-img-wrap">
+                  <div className="wl-modal-content">
+                    <div className="wl-modal-toolbar">
+                      <div className="wl-modal-toolbar-group">
+                        <button className="wl-modal-btn" onClick={() => updateZoom(diagramZoom - 0.15, 'zoom_out')}>-</button>
+                        <button className="wl-modal-btn" onClick={() => updateZoom(1, 'reset_zoom')}>Reset</button>
+                        <button className="wl-modal-btn" onClick={() => updateZoom(diagramZoom + 0.15, 'zoom_in')}>+</button>
+                      </div>
+                      <div className="wl-modal-toolbar-group">
+                        {selectedDiagram.images.images.length > 1 && (
+                          <>
+                            <button
+                              className="wl-modal-btn"
+                              onClick={() => {
+                                const nextIndex = Math.max(0, selectedImageIndex - 1);
+                                setSelectedImageIndex(nextIndex);
+                                trackWiringDiagramInteract({
+                                  vehicle: currentVehicleLabel,
+                                  system: expandedSystem || 'diagram-library',
+                                  action: 'image_prev',
+                                  diagramName: selectedDiagram.entry.name,
+                                  interactionTarget: 'image_pager',
+                                  pageSurface: 'wiring',
+                                  systemSlug: expandedSystem || undefined,
+                                  vehicleYear: selectedYear,
+                                  vehicleMake: selectedMake,
+                                  vehicleModel: selectedModel || selectedVariant,
+                                });
+                              }}
+                              disabled={selectedImageIndex === 0}
+                            >
+                              Prev
+                            </button>
+                            <button
+                              className="wl-modal-btn"
+                              onClick={() => {
+                                const nextIndex = Math.min(selectedDiagram.images.images.length - 1, selectedImageIndex + 1);
+                                setSelectedImageIndex(nextIndex);
+                                trackWiringDiagramInteract({
+                                  vehicle: currentVehicleLabel,
+                                  system: expandedSystem || 'diagram-library',
+                                  action: 'image_next',
+                                  diagramName: selectedDiagram.entry.name,
+                                  interactionTarget: 'image_pager',
+                                  pageSurface: 'wiring',
+                                  systemSlug: expandedSystem || undefined,
+                                  vehicleYear: selectedYear,
+                                  vehicleMake: selectedMake,
+                                  vehicleModel: selectedModel || selectedVariant,
+                                });
+                              }}
+                              disabled={selectedImageIndex >= selectedDiagram.images.images.length - 1}
+                            >
+                              Next
+                            </button>
+                          </>
+                        )}
+                        <button className="wl-modal-btn" onClick={handleDownload}>Download</button>
+                        <button className="wl-modal-btn" onClick={handleCopyLink}>Copy link</button>
+                        <button className="wl-modal-btn" onClick={handleShare}>Share</button>
+                      </div>
+                    </div>
+                    <div className="wl-modal-img-wrap">
                       <img
-                        src={src}
-                        alt={`${selectedDiagram.entry.name} - Diagram ${idx + 1}`}
+                        src={currentDiagram}
+                        alt={`${selectedDiagram.entry.name} - Diagram ${selectedImageIndex + 1}`}
                         className="wl-modal-img"
                         loading="lazy"
+                        style={{ transform: `scale(${diagramZoom})` }}
                       />
                       <img
                         src="/diagram-watermark.svg"
@@ -499,7 +847,8 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                         className="wl-modal-watermark"
                       />
                     </div>
-                  ))
+                    {copyStatus && <p className="wl-modal-status">{copyStatus}</p>}
+                  </div>
                 ) : (
                   <div className="wl-empty">No diagram image found for this page.</div>
                 )}
@@ -844,6 +1193,12 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           color: white;
         }
 
+        .wl-modal-subtitle {
+          margin: 0.25rem 0 0;
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, 0.55);
+        }
+
         .wl-modal-close {
           background: none;
           border: none;
@@ -863,6 +1218,48 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           flex: 1;
         }
 
+        .wl-modal-content {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .wl-modal-toolbar {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          gap: 0.75rem;
+        }
+
+        .wl-modal-toolbar-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .wl-modal-btn {
+          padding: 0.55rem 0.85rem;
+          border: 1px solid rgba(0, 229, 255, 0.18);
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.04);
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 0.8rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+
+        .wl-modal-btn:hover {
+          background: rgba(0, 229, 255, 0.08);
+          border-color: rgba(0, 229, 255, 0.35);
+          color: white;
+        }
+
+        .wl-modal-btn:disabled {
+          opacity: 0.35;
+          cursor: not-allowed;
+        }
+
         .wl-modal-img-wrap {
           background: white;
           border-radius: 8px;
@@ -870,6 +1267,7 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           margin-bottom: 1rem;
           text-align: center;
           position: relative;
+          overflow: auto;
         }
 
         .wl-modal-img {
@@ -877,6 +1275,8 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           height: auto;
           display: block;
           margin: 0 auto;
+          transform-origin: center top;
+          transition: transform 0.12s ease;
         }
 
         .wl-modal-watermark {
@@ -903,6 +1303,13 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           font-style: italic;
         }
 
+        .wl-modal-status {
+          margin: 0;
+          font-size: 0.8rem;
+          color: #00e5ff;
+          text-align: center;
+        }
+
         @media (max-width: 640px) {
           .wl-title { font-size: 1.75rem; }
           .wl-main { padding: 1rem; }
@@ -912,6 +1319,10 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           .wl-system-header { padding: 0.875rem 1rem; }
           .wl-diagram-list { padding: 0 0.5rem 0.5rem 1rem; }
           .wl-modal { width: 100%; max-width: 100vw; border-radius: 8px; }
+          .wl-modal-header { align-items: flex-start; }
+          .wl-modal-toolbar { flex-direction: column; }
+          .wl-modal-toolbar-group { width: 100%; }
+          .wl-modal-btn { flex: 1 1 auto; justify-content: center; }
           .wl-modal-watermark {
             right: 3px;
             height: min(220px, 64%);

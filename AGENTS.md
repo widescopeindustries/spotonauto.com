@@ -25,6 +25,12 @@ Update it when product decisions, traps, or standing preferences change.
   That remount was causing scroll resets back to the top while users were moving down the page.
 - Diagnostic chat now has browser-local persistent thread memory.
   Preserve resume behavior and the explicit `New thread` reset unless intentionally replacing that system.
+- Railway targeting is easy to misread for this repo.
+  - as of `2026-03-21`, live `spotonauto.com` is attached to Railway project `reliable-bravery` / service `reliable-bravery`
+  - the separate Railway project `sweet-endurance` also deploys this repo but is not the live custom-domain target
+  - before assuming a Railway deploy is live, check `railway status --json` and confirm `domains.customDomains` contains `spotonauto.com`
+- GA4 realtime snapshots with heavy `direct / (none)` concentration and large Singapore-style city clusters are not reliable SEO recovery proof.
+  Use GSC daily visibility plus GA4 organic sessions / landing pages for recovery reads.
 
 ## Current Durable Changes
 
@@ -96,8 +102,12 @@ Update it when product decisions, traps, or standing preferences change.
   - exact wiring pages now emit graph-driven exact vehicle hub links and a direct hub CTA
   - current Search Console enrichment priority is:
     - cluster level: lighting first, then brakes, battery, oil/fluids, and filters
-    - repeated exact-vehicle hubs: `2014 Ford Escape`, `2016 Ford Fusion`, `2016 Nissan Rogue`, `2014 Nissan Altima`, `2018 Toyota Camry`, `2016 Hyundai Elantra`
-    - repeated family-level demand to keep enriching: `Jeep Grand Cherokee`, `Ford Explorer`, `Ford Fusion`, `Ford Escape`, `Nissan Altima`, `Nissan Rogue`, `Toyota Tacoma`, `Kia Optima`, `Hyundai Tucson`, `Jeep Cherokee`
+    - coverage-backed exact-vehicle hubs to actively push right now: `2004 Acura TSX`, `2008 Honda Civic`
+    - watchlist family demand to revisit once coverage is real: `Jeep Grand Cherokee`, `Ford Escape`, `Ford Fusion`, `Nissan Altima`, `Ford Explorer`, `Jeep Cherokee`, `Nissan Rogue`, `Toyota Tacoma`, `Hyundai Elantra`, `Kia Optima`, `Hyundai Tucson`
+    - `npm run analytics:command-centers` is the combined weekly command-center report:
+      - it pulls current GSC exact-repair page visibility, current GA4 organic exact-repair sessions, and the latest 24-hour GSC query snapshot
+      - it writes `scripts/seo-reports/command-center-opportunities-YYYY-MM-DD.json` and `.md`
+      - homepage command-center cards should follow the coverage-backed shortlist from that report, not raw weekly page breakouts or uncovered vehicle watchlist demand
   - graph-priority helpers now also surface report-backed orphan symptom hubs and orphan code pages:
     - `src/lib/graphPriorityLinks.ts`
   - repair category pages now reinforce report-backed symptom hubs, support-gap exact repair pages, and priority code pages:
@@ -107,6 +117,16 @@ Update it when product decisions, traps, or standing preferences change.
   - symptom hubs now reinforce priority orphan/underlinked code pages in addition to exact repair support gaps:
     - `src/app/symptoms/[symptom]/page.tsx`
   - repair sitemap generation now includes exact vehicle hub URLs under `/repair/{year}/{make}/{model}`
+  - wiring sitemap production state as of `2026-03-21`:
+    - public `/wiring/sitemap.xml` rewrites to `src/app/api/wiring-xml-index/route.ts`
+    - public `/wiring/sitemap/{id}.xml` rewrites to `src/app/api/wiring-xml/[id]/route.ts`
+    - `src/lib/static-xml.ts` serves the generated XML files from disk with XML cache headers
+    - wiring sitemap chunk size is `10000`; current public set is `17` chunks, with `/wiring/sitemap/16.xml` holding `8413` URLs
+    - keep `npm run smoke:prod` checking `/wiring/sitemap/16.xml`, not just the sitemap index, because partial/stale public flips can make the index look healthy while later chunks still fail
+  - SpotOn Auto Search Console submissions should use:
+    - credential file `~/Desktop/_credentials/gen-lang-client-0236137325-629b7b811bc1.json`
+    - service account `spotonauto@gen-lang-client-0236137325.iam.gserviceaccount.com`
+    - the unrelated `~/Desktop/_credentials/static-dock-486114-g9-f8a997de0021.json` credential does not have permission on `sc-domain:spotonauto.com`
   - `scripts/generate-graph-link-suggestions.ts` writes graph-derived internal-link suggestions to `scripts/seo-reports/`
   - `npm run seo:graph-link-suggestions` currently emits JSON + CSV suggestions grouped by `guide-model`, `code`, and `wiring` source surfaces
   - node metadata is canonical; relation copy belongs on edges in the export model
@@ -132,5 +152,6 @@ Update it when product decisions, traps, or standing preferences change.
 ## Working Norms
 
 - This repo is often dirty with unrelated local edits. Stage only task-relevant files.
+- If production deploys must exclude unrelated local work, build a clean deploy bundle from `git archive HEAD` and overlay only the task-relevant files before `railway up`.
 - For TypeScript changes, verify with `npx tsc --noEmit`.
 - Prefer direct, user-visible fixes over speculative refactors.

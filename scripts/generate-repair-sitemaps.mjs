@@ -3,7 +3,7 @@
  * Run before `next build` so Vercel serves them directly from CDN
  * with NO Next.js processing (no Vary: rsc headers, no RSC pipeline).
  */
-import { writeFileSync, mkdirSync, readdirSync, readFileSync, unlinkSync } from 'fs';
+import { existsSync, writeFileSync, mkdirSync, readdirSync, readFileSync, unlinkSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -125,6 +125,10 @@ function buildAllEntries() {
 }
 
 function findLatestRecrawlPriorityReport() {
+    if (!existsSync(REPORTS_DIR)) {
+        return null;
+    }
+
     const reports = readdirSync(REPORTS_DIR)
         .map((name) => {
             const match = name.match(/^recrawl-priority-(\d{4}-\d{2}-\d{2})\.txt$/);

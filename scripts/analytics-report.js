@@ -18,6 +18,9 @@ const GA_PROPERTY_ID = '520432705';
 const KEY_EVENTS = [
   'affiliate_click',
   'guide_generated',
+  'guide_step_view',
+  'guide_step_expand',
+  'guide_completion',
   'manual_retrieval',
   'diagnostic_start',
   'vehicle_search',
@@ -31,6 +34,10 @@ const KEY_EVENTS = [
   'wiring_seo_view',
   'wiring_cta_click',
   'wiring_diagram_open',
+  'wiring_diagram_search',
+  'wiring_system_toggle',
+  'wiring_diagram_exit',
+  'wiring_diagram_interact',
   'vehicle_hub_enter',
   'shop_all_click',
   'tool_affiliate_click',
@@ -43,8 +50,11 @@ const KEY_EVENTS = [
 
 const OPTIONAL_DIMENSIONS = {
   repairAnswer: ['repair_answer_section', 'repair_answer_target', 'repair_answer_label', 'repair_answer_task'],
+  repairCta: ['repair_answer_cta_layer', 'repair_answer_cta_kind'],
+  guideProgress: ['guide_step', 'guide_step_bucket', 'guide_step_action', 'guide_completion_reason', 'guide_completion_total_steps', 'guide_completion_viewed_steps'],
   graph: ['graph_surface', 'graph_group', 'graph_target_kind', 'graph_label', 'task', 'system'],
   repairContext: ['page_surface', 'intent_cluster', 'task_slug', 'system_slug', 'code_family', 'task', 'system', 'code'],
+  wiring: ['wiring_search_scope', 'wiring_search_length_bucket', 'wiring_search_result_bucket', 'wiring_system_action', 'wiring_diagram_action', 'wiring_exit_kind'],
   behavior: ['manual_mode', 'search_method', 'entry_surface', 'entry_destination'],
 };
 
@@ -347,14 +357,11 @@ async function runReport(authClient, startDate, endDate) {
     console.log('  No organic traffic yet');
   }
 
-  console.log('\n=== CURATED FILTERS ===\n');
-  if (filterSummary.length) {
-    console.log(`  Active filters: ${filterSummary.join(' | ')}\n`);
-  } else {
-    console.log('  Active filters: none\n');
-  }
-
+  // Guide progression and wiring interactions
   const breakdowns = [
+    { title: 'Guide progression', events: ['guide_step_view', 'guide_step_expand', 'guide_completion'], dimensions: ['customEvent:guide_step_action', 'customEvent:guide_step', 'customEvent:guide_step_bucket', 'customEvent:guide_completion_reason'] },
+    { title: 'Wiring interactions', events: ['wiring_diagram_search', 'wiring_system_toggle', 'wiring_diagram_exit', 'wiring_diagram_interact'], dimensions: ['customEvent:wiring_diagram_action', 'customEvent:wiring_search_scope', 'customEvent:wiring_search_length_bucket', 'customEvent:wiring_search_result_bucket', 'customEvent:wiring_system_action', 'customEvent:wiring_exit_kind'] },
+    { title: 'Repair CTA layers', events: ['repair_answer_click'], dimensions: ['customEvent:repair_answer_section', 'customEvent:repair_answer_target', 'customEvent:repair_answer_cta_layer', 'customEvent:repair_answer_cta_kind'] },
     { title: 'Repair answers by section', events: ['repair_answer_click'], dimensions: ['customEvent:repair_answer_section', 'customEvent:repair_answer_target'] },
     { title: 'Knowledge graph by surface', events: ['knowledge_graph_click'], dimensions: ['customEvent:graph_surface', 'customEvent:graph_group', 'customEvent:graph_target_kind', 'customEvent:graph_label'] },
     { title: 'Repair context by task/system', events: ['repair_page_view', 'repair_guide_open', 'guide_generated', 'manual_retrieval'], dimensions: ['customEvent:task', 'customEvent:system', 'customEvent:manual_mode'] },
@@ -385,13 +392,13 @@ async function runReport(authClient, startDate, endDate) {
         },
       });
 
-      console.log(`=== ${breakdown.title.toUpperCase()} ===\n`);
+      console.log(`\n=== ${breakdown.title.toUpperCase()} ===\n`);
       if (!rows.data.rows?.length) {
         console.log('  No rows\n');
         continue;
       }
 
-      const columns = breakdown.dimensions.map((name) => name.replace('customEvent:', '').replace(/_/g, '_'));
+      const columns = breakdown.dimensions.map((name) => name.replace('customEvent:', ''));
       printTable(
         rows.data.rows.map((row) => {
           const out = {};
@@ -405,12 +412,19 @@ async function runReport(authClient, startDate, endDate) {
       );
     } catch (err) {
       if (isOptionalDimensionError(err)) {
-        console.log(`=== ${breakdown.title.toUpperCase()} ===\n`);
+        console.log(`\n=== ${breakdown.title.toUpperCase()} ===\n`);
         console.log('  Skipped until the required GA4 custom dimensions are available.\n');
         continue;
       }
       throw err;
     }
+  }
+
+  console.log('\n=== CURATED FILTERS ===\n');
+  if (filterSummary.length) {
+    console.log(`  Active filters: ${filterSummary.join(' | ')}\n`);
+  } else {
+    console.log('  Active filters: none\n');
   }
 }
 

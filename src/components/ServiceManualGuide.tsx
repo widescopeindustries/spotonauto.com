@@ -1,20 +1,144 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { RepairGuide } from '../types';
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
-import { trackAffiliateClick, trackToolClick } from '../lib/analytics';
-import { motion, AnimatePresence } from 'framer-motion';
+import {
+    trackAffiliateClick,
+    trackGuideCompletion,
+    trackGuideStepExpand,
+    trackGuideStepView,
+    trackToolClick,
+} from '../lib/analytics';
+import { motion } from 'framer-motion';
+import type { AnalyticsContextInput } from '@/lib/analyticsContext';
 
 interface ServiceManualGuideProps {
     guide: RepairGuide;
     onReset: () => void;
+    analyticsContext?: AnalyticsContextInput & {
+        task?: string;
+    };
 }
 
-const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset }) => {
+function deriveGuideTask(guide: RepairGuide): string {
+    const title = guide.title?.trim() || '';
+    const vehicle = guide.vehicle?.trim() || '';
+    if (!title) return '';
+    if (!vehicle) return title;
+
+    const lowerTitle = title.toLowerCase();
+    const lowerVehicle = vehicle.toLowerCase();
+    if (lowerTitle.startsWith(lowerVehicle)) {
+        return title.slice(vehicle.length).replace(/^[\s:,\-–—]+/, '').trim() || title;
+    }
+
+    return title;
+}
+
+const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset, analyticsContext }) => {
     const [activeStep, setActiveStep] = useState<number | null>(null);
+    const stepRefs = useRef(new Map<number, HTMLDivElement>());
+    const viewedStepsRef = useRef<Set<number>>(new Set());
+    const completionFiredRef = useRef(false);
+    const guideTask = analyticsContext?.task || deriveGuideTask(guide);
+    const steps = guide.steps || [];
+    const totalSteps = steps.length;
+    const lastStepNumber = steps.length ? steps[steps.length - 1].step : null;
+    const guideAnalyticsContext: AnalyticsContextInput = {
+        pageSurface: analyticsContext?.pageSurface || 'repair_guide',
+        intentCluster: analyticsContext?.intentCluster,
+        task: guideTask,
+        taskSlug: analyticsContext?.taskSlug,
+        vehicleYear: analyticsContext?.vehicleYear,
+        vehicleMake: analyticsContext?.vehicleMake,
+        vehicleModel: analyticsContext?.vehicleModel,
+    };
 
     const partsWithLinks = generateAllPartsWithLinks(guide.parts || [], guide.vehicle);
+
+    useEffect(() => {
+        viewedStepsRef.current = new Set();
+        completionFiredRef.current = false;
+        setActiveStep(null);
+    }, [guide.id, guide.vehicle, guide.title, totalSteps]);
+
+    useEffect(() => {
+        if (!totalSteps) return undefined;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (!entry.isIntersecting || entry.intersectionRatio < 0.55) continue;
+
+                    const stepNumber = Number((entry.target as HTMLElement).dataset.stepNumber);
+                    if (!Number.isFinite(stepNumber) || viewedStepsRef.current.has(stepNumber)) continue;
+
+                    viewedStepsRef.current.add(stepNumber);
+                    const step = steps.find((item) => item.step === stepNumber);
+                    trackGuideStepView({
+                        vehicle: guide.vehicle,
+                        task: guideTask,
+                        step: stepNumber,
+                        stepLabel: step?.instruction,
+                        totalSteps,
+                        ...guideAnalyticsContext,
+                    });
+
+                    if (
+                        !completionFiredRef.current &&
+                        (stepNumber === lastStepNumber || viewedStepsRef.current.size === totalSteps)
+                    ) {
+                        completionFiredRef.current = true;
+                        trackGuideCompletion({
+                            vehicle: guide.vehicle,
+                            task: guideTask,
+                            totalSteps,
+                            viewedSteps: viewedStepsRef.current.size,
+                            reason: stepNumber === lastStepNumber ? 'last_step_viewed' : 'all_steps_viewed',
+                            ...guideAnalyticsContext,
+                        });
+                    }
+                }
+            },
+            {
+                threshold: 0.55,
+                rootMargin: '0px 0px -15% 0px',
+            },
+        );
+
+        stepRefs.current.forEach((node) => observer.observe(node));
+
+        return () => observer.disconnect();
+    }, [guide.id, guide.title, guide.vehicle, guideTask, lastStepNumber, totalSteps]);
+
+    function handleStepToggle(stepNumber: number): void {
+        const nextActiveStep = activeStep === stepNumber ? null : stepNumber;
+
+        if (nextActiveStep === stepNumber) {
+            const step = steps.find((item) => item.step === stepNumber);
+            trackGuideStepExpand({
+                vehicle: guide.vehicle,
+                task: guideTask,
+                step: stepNumber,
+                stepLabel: step?.instruction,
+                totalSteps,
+                ...guideAnalyticsContext,
+            });
+        }
+
+        setActiveStep(nextActiveStep);
+    }
+
+    function setStepRef(stepNumber: number) {
+        return (node: HTMLDivElement | null) => {
+            if (node) {
+                stepRefs.current.set(stepNumber, node);
+            } else {
+                stepRefs.current.delete(stepNumber);
+            }
+        };
+    }
 
     return (
         <div className="service-manual">
@@ -156,7 +280,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                                     vehicle: guide.vehicle,
                                                     isHighTicket: part.isHighTicket,
                                                     pageType: 'repair_guide',
-                                                })}
+                                                }, guideAnalyticsContext)}
                                                 className="part-amazon-btn"
                                             >
                                                 <svg className="amazon-logo" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
@@ -198,7 +322,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                                     href={links[0].url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    onClick={() => trackToolClick(tool, guide.vehicle)}
+                                                    onClick={() => trackToolClick(tool, guide.vehicle, guideAnalyticsContext)}
                                                     className="tool-buy"
                                                 >
                                                     Buy
@@ -219,12 +343,14 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                         </div>
 
                         <div className="steps-container">
-                            {guide.steps?.map((step, idx) => (
+                            {steps.map((step, idx) => (
                                 <motion.div
                                     key={step.step}
                                     id={`step-${step.step}`}
+                                    ref={setStepRef(step.step)}
+                                    data-step-number={step.step}
                                     className={`step-card ${activeStep === step.step ? 'active' : ''}`}
-                                    onClick={() => setActiveStep(activeStep === step.step ? null : step.step)}
+                                    onClick={() => handleStepToggle(step.step)}
                                     
                                     // Storytelling Animation: Slide in from bottom-left like a timeline entry
                                     initial={{ opacity: 0, x: -50, y: 20 }}
@@ -259,7 +385,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset 
                                     )}
 
 
-                                    {idx < (guide.steps?.length || 0) - 1 && (
+                                    {idx < totalSteps - 1 && (
                                         <div className="step-connector">
                                             <motion.div 
                                                 className="connector-line"

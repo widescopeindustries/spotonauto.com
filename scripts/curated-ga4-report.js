@@ -35,6 +35,9 @@ const GA_PROPERTY_ID = '520432705';
 
 const DEFAULT_KEY_EVENTS = [
   'guide_generated',
+  'guide_step_view',
+  'guide_step_expand',
+  'guide_completion',
   'repair_page_view',
   'repair_guide_open',
   'repair_answer_impression',
@@ -49,6 +52,10 @@ const DEFAULT_KEY_EVENTS = [
   'wiring_seo_view',
   'wiring_cta_click',
   'wiring_diagram_open',
+  'wiring_diagram_search',
+  'wiring_system_toggle',
+  'wiring_diagram_exit',
+  'wiring_diagram_interact',
   'diagnostic_start',
   'vin_decode',
   'sign_up',
@@ -72,15 +79,29 @@ const SURFACE_PREFIXES = {
 const CUSTOM_DIMENSION_CANDIDATES = [
   'intent_cluster',
   'page_surface',
+  'guide_step',
+  'guide_step_bucket',
+  'guide_step_action',
+  'guide_completion_reason',
+  'guide_completion_total_steps',
+  'guide_completion_viewed_steps',
   'repair_answer_section',
   'repair_answer_target',
   'repair_answer_label',
+  'repair_answer_cta_layer',
+  'repair_answer_cta_kind',
   'repair_answer_vehicle',
   'repair_answer_task',
   'graph_surface',
   'graph_group',
   'graph_target_kind',
   'graph_label',
+  'wiring_search_scope',
+  'wiring_search_length_bucket',
+  'wiring_search_result_bucket',
+  'wiring_system_action',
+  'wiring_diagram_action',
+  'wiring_exit_kind',
   'entry_surface',
   'entry_destination',
 ];
@@ -429,6 +450,71 @@ async function main() {
     limit: 100,
   }, 'knowledge-graph funnel');
 
+  const guideProgressDimensions = [
+    'eventName',
+    ...(availableDims.guide_step_action ? ['customEvent:guide_step_action'] : []),
+    ...(availableDims.guide_step ? ['customEvent:guide_step'] : []),
+    ...(availableDims.guide_step_bucket ? ['customEvent:guide_step_bucket'] : []),
+    ...(availableDims.guide_completion_reason ? ['customEvent:guide_completion_reason'] : []),
+  ];
+
+  const guideProgressRows = await runReport(analyticsdata, {
+    dateRanges: [{ startDate, endDate }],
+    dimensions: guideProgressDimensions.map((name) => ({ name })),
+    metrics: [{ name: 'eventCount' }],
+    dimensionFilter: andExpressions([
+      fieldInList('eventName', ['guide_step_view', 'guide_step_expand', 'guide_completion']),
+      filters.filter,
+      intentFilterExpr,
+    ]),
+    orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+    limit: 100,
+  }, 'guide progression');
+
+  const wiringInteractionDimensions = [
+    'eventName',
+    ...(availableDims.wiring_diagram_action ? ['customEvent:wiring_diagram_action'] : []),
+    ...(availableDims.wiring_search_scope ? ['customEvent:wiring_search_scope'] : []),
+    ...(availableDims.wiring_search_length_bucket ? ['customEvent:wiring_search_length_bucket'] : []),
+    ...(availableDims.wiring_search_result_bucket ? ['customEvent:wiring_search_result_bucket'] : []),
+    ...(availableDims.wiring_system_action ? ['customEvent:wiring_system_action'] : []),
+    ...(availableDims.wiring_exit_kind ? ['customEvent:wiring_exit_kind'] : []),
+  ];
+
+  const wiringInteractionRows = await runReport(analyticsdata, {
+    dateRanges: [{ startDate, endDate }],
+    dimensions: wiringInteractionDimensions.map((name) => ({ name })),
+    metrics: [{ name: 'eventCount' }],
+    dimensionFilter: andExpressions([
+      fieldInList('eventName', ['wiring_diagram_search', 'wiring_system_toggle', 'wiring_diagram_exit', 'wiring_diagram_interact']),
+      filters.filter,
+      intentFilterExpr,
+    ]),
+    orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+    limit: 100,
+  }, 'wiring interactions');
+
+  const repairCtaDimensions = [
+    'eventName',
+    ...(availableDims.repair_answer_section ? ['customEvent:repair_answer_section'] : []),
+    ...(availableDims.repair_answer_target ? ['customEvent:repair_answer_target'] : []),
+    ...(availableDims.repair_answer_cta_layer ? ['customEvent:repair_answer_cta_layer'] : []),
+    ...(availableDims.repair_answer_cta_kind ? ['customEvent:repair_answer_cta_kind'] : []),
+  ];
+
+  const repairCtaRows = await runReport(analyticsdata, {
+    dateRanges: [{ startDate, endDate }],
+    dimensions: repairCtaDimensions.map((name) => ({ name })),
+    metrics: [{ name: 'eventCount' }],
+    dimensionFilter: andExpressions([
+      fieldInList('eventName', ['repair_answer_click']),
+      filters.filter,
+      intentFilterExpr,
+    ]),
+    orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+    limit: 100,
+  }, 'repair CTA layers');
+
   const pageRows = await runReport(analyticsdata, {
     dateRanges: [{ startDate, endDate }],
     dimensions: [{ name: 'pagePath' }],
@@ -471,6 +557,24 @@ async function main() {
     return acc;
   }, {});
 
+  const guideTotals = guideProgressRows.reduce((acc, row) => {
+    const eventName = row.dimensionValues?.[0]?.value || '';
+    acc[eventName] = (acc[eventName] || 0) + Number(row.metricValues?.[0]?.value || 0);
+    return acc;
+  }, {});
+
+  const wiringTotals = wiringInteractionRows.reduce((acc, row) => {
+    const eventName = row.dimensionValues?.[0]?.value || '';
+    acc[eventName] = (acc[eventName] || 0) + Number(row.metricValues?.[0]?.value || 0);
+    return acc;
+  }, {});
+
+  const repairCtaTotals = repairCtaRows.reduce((acc, row) => {
+    const eventName = row.dimensionValues?.[0]?.value || '';
+    acc[eventName] = (acc[eventName] || 0) + Number(row.metricValues?.[0]?.value || 0);
+    return acc;
+  }, {});
+
   const repairBySection = {};
   for (const row of repairAnswerRows) {
     const eventName = row.dimensionValues?.[0]?.value || '';
@@ -494,6 +598,50 @@ async function main() {
     if (!kgByGroup[key]) kgByGroup[key] = { surface, group, target, impressions: 0, clicks: 0 };
     if (eventName === 'knowledge_graph_impression') kgByGroup[key].impressions += count;
     if (eventName === 'knowledge_graph_click') kgByGroup[key].clicks += count;
+  }
+
+  const guideByStep = {};
+  const guideProgressIndex = Object.fromEntries(guideProgressDimensions.map((name, index) => [name, index]));
+  for (const row of guideProgressRows) {
+    const eventName = row.dimensionValues?.[guideProgressIndex.eventName]?.value || '';
+    const action = guideProgressIndex['customEvent:guide_step_action'] !== undefined ? row.dimensionValues?.[guideProgressIndex['customEvent:guide_step_action']]?.value || '(not set)' : '(not set)';
+    const step = guideProgressIndex['customEvent:guide_step'] !== undefined ? row.dimensionValues?.[guideProgressIndex['customEvent:guide_step']]?.value || '(not set)' : '(not set)';
+    const bucket = guideProgressIndex['customEvent:guide_step_bucket'] !== undefined ? row.dimensionValues?.[guideProgressIndex['customEvent:guide_step_bucket']]?.value || '(not set)' : '(not set)';
+    const reason = guideProgressIndex['customEvent:guide_completion_reason'] !== undefined ? row.dimensionValues?.[guideProgressIndex['customEvent:guide_completion_reason']]?.value || '(not set)' : '(not set)';
+    const count = Number(row.metricValues?.[0]?.value || 0);
+    const key = `${action}::${step}::${bucket}::${reason}`;
+    if (!guideByStep[key]) guideByStep[key] = { action, step, bucket, reason, count: 0 };
+    guideByStep[key].count += count;
+  }
+
+  const wiringByAction = {};
+  const wiringInteractionIndex = Object.fromEntries(wiringInteractionDimensions.map((name, index) => [name, index]));
+  for (const row of wiringInteractionRows) {
+    const eventName = row.dimensionValues?.[wiringInteractionIndex.eventName]?.value || '';
+    const action = wiringInteractionIndex['customEvent:wiring_diagram_action'] !== undefined ? row.dimensionValues?.[wiringInteractionIndex['customEvent:wiring_diagram_action']]?.value || '(not set)' : '(not set)';
+    const scope = wiringInteractionIndex['customEvent:wiring_search_scope'] !== undefined ? row.dimensionValues?.[wiringInteractionIndex['customEvent:wiring_search_scope']]?.value || '(not set)' : '(not set)';
+    const lengthBucket = wiringInteractionIndex['customEvent:wiring_search_length_bucket'] !== undefined ? row.dimensionValues?.[wiringInteractionIndex['customEvent:wiring_search_length_bucket']]?.value || '(not set)' : '(not set)';
+    const resultBucket = wiringInteractionIndex['customEvent:wiring_search_result_bucket'] !== undefined ? row.dimensionValues?.[wiringInteractionIndex['customEvent:wiring_search_result_bucket']]?.value || '(not set)' : '(not set)';
+    const systemAction = wiringInteractionIndex['customEvent:wiring_system_action'] !== undefined ? row.dimensionValues?.[wiringInteractionIndex['customEvent:wiring_system_action']]?.value || '(not set)' : '(not set)';
+    const exitKind = wiringInteractionIndex['customEvent:wiring_exit_kind'] !== undefined ? row.dimensionValues?.[wiringInteractionIndex['customEvent:wiring_exit_kind']]?.value || '(not set)' : '(not set)';
+    const count = Number(row.metricValues?.[0]?.value || 0);
+    const key = `${action}::${scope}::${lengthBucket}::${resultBucket}::${systemAction}::${exitKind}`;
+    if (!wiringByAction[key]) wiringByAction[key] = { action, scope, lengthBucket, resultBucket, systemAction, exitKind, count: 0 };
+    wiringByAction[key].count += count;
+  }
+
+  const repairCtaByLayer = {};
+  const repairCtaIndex = Object.fromEntries(repairCtaDimensions.map((name, index) => [name, index]));
+  for (const row of repairCtaRows) {
+    const eventName = row.dimensionValues?.[repairCtaIndex.eventName]?.value || '';
+    const section = repairCtaIndex['customEvent:repair_answer_section'] !== undefined ? row.dimensionValues?.[repairCtaIndex['customEvent:repair_answer_section']]?.value || '(not set)' : '(not set)';
+    const target = repairCtaIndex['customEvent:repair_answer_target'] !== undefined ? row.dimensionValues?.[repairCtaIndex['customEvent:repair_answer_target']]?.value || '(not set)' : '(not set)';
+    const layer = repairCtaIndex['customEvent:repair_answer_cta_layer'] !== undefined ? row.dimensionValues?.[repairCtaIndex['customEvent:repair_answer_cta_layer']]?.value || '(not set)' : '(not set)';
+    const kind = repairCtaIndex['customEvent:repair_answer_cta_kind'] !== undefined ? row.dimensionValues?.[repairCtaIndex['customEvent:repair_answer_cta_kind']]?.value || '(not set)' : '(not set)';
+    const count = Number(row.metricValues?.[0]?.value || 0);
+    const key = `${section}::${target}::${layer}::${kind}`;
+    if (!repairCtaByLayer[key]) repairCtaByLayer[key] = { section, target, layer, kind, clicks: 0 };
+    if (eventName === 'repair_answer_click') repairCtaByLayer[key].clicks += count;
   }
 
   const surfaceRows = summarizeSurfaces(pageRows).slice(0, limit);
@@ -546,6 +694,58 @@ async function main() {
       .map((event) => ({ event, count: fmt(keyTotals[event] || 0) }))
       .sort((a, b) => Number(b.count.replace(/,/g, '')) - Number(a.count.replace(/,/g, ''))),
     ['event', 'count'],
+  );
+
+  console.log('=== GUIDE PROGRESSION ===\n');
+  console.log(`  guide_step_view: ${fmt(guideTotals.guide_step_view || 0)}`);
+  console.log(`  guide_step_expand: ${fmt(guideTotals.guide_step_expand || 0)}`);
+  console.log(`  guide_completion: ${fmt(guideTotals.guide_completion || 0)}\n`);
+  printTable(
+    Object.values(guideByStep)
+      .map((row) => ({
+        action: row.action,
+        step: row.step,
+        bucket: row.bucket,
+        reason: row.reason,
+        count: fmt(row.count),
+      }))
+      .slice(0, limit),
+    ['action', 'step', 'bucket', 'reason', 'count'],
+  );
+
+  console.log('=== WIRING INTERACTIONS ===\n');
+  console.log(`  wiring_diagram_search: ${fmt(wiringTotals.wiring_diagram_search || 0)}`);
+  console.log(`  wiring_system_toggle: ${fmt(wiringTotals.wiring_system_toggle || 0)}`);
+  console.log(`  wiring_diagram_exit: ${fmt(wiringTotals.wiring_diagram_exit || 0)}`);
+  console.log(`  wiring_diagram_interact: ${fmt(wiringTotals.wiring_diagram_interact || 0)}\n`);
+  printTable(
+    Object.values(wiringByAction)
+      .map((row) => ({
+        action: row.action,
+        scope: row.scope,
+        length_bucket: row.lengthBucket,
+        result_bucket: row.resultBucket,
+        system_action: row.systemAction,
+        exit_kind: row.exitKind,
+        count: fmt(row.count),
+      }))
+      .slice(0, limit),
+    ['action', 'scope', 'length_bucket', 'result_bucket', 'system_action', 'exit_kind', 'count'],
+  );
+
+  console.log('=== REPAIR CTA LAYERS ===\n');
+  console.log(`  repair_answer_click: ${fmt(repairCtaTotals.repair_answer_click || 0)}\n`);
+  printTable(
+    Object.values(repairCtaByLayer)
+      .map((row) => ({
+        section: row.section,
+        target: row.target,
+        layer: row.layer,
+        kind: row.kind,
+        clicks: fmt(row.clicks),
+      }))
+      .slice(0, limit),
+    ['section', 'target', 'layer', 'kind', 'clicks'],
   );
 
   console.log('=== REPAIR-ANSWER FUNNEL ===\n');

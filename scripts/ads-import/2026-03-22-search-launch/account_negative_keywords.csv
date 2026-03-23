@@ -1,0 +1,32 @@
+Negative keyword,Match type,Status
+jobs,Phrase,Enabled
+job,Phrase,Enabled
+career,Phrase,Enabled
+careers,Phrase,Enabled
+salary,Phrase,Enabled
+training,Phrase,Enabled
+course,Phrase,Enabled
+courses,Phrase,Enabled
+certification,Phrase,Enabled
+pdf,Phrase,Enabled
+manual pdf,Phrase,Enabled
+download,Phrase,Enabled
+torrent,Phrase,Enabled
+ebook,Phrase,Enabled
+forum,Phrase,Enabled
+forums,Phrase,Enabled
+reddit,Phrase,Enabled
+youtube,Phrase,Enabled
+video,Phrase,Enabled
+near me,Phrase,Enabled
+dealer,Phrase,Enabled
+dealership,Phrase,Enabled
+repair shop,Phrase,Enabled
+mechanic,Phrase,Enabled
+used,Phrase,Enabled
+for sale,Phrase,Enabled
+junkyard,Phrase,Enabled
+motorcycle,Phrase,Enabled
+boat,Phrase,Enabled
+tractor,Phrase,Enabled
+lawn mower,Phrase,Enabled

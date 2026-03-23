@@ -19,6 +19,8 @@ import {
  *   - affiliate_click    (user clicked an affiliate product link)
  *   - sign_up            (user created an account)
  *   - repair_answer_impression / repair_answer_click (repair answer-layer engagement)
+ *   - guide_step_view / guide_step_expand / guide_completion (guide progression)
+ *   - wiring_diagram_search / wiring_system_toggle / wiring_diagram_exit / wiring_diagram_interact (wiring engagement)
  */
 
 declare global {
@@ -89,6 +91,80 @@ function trackEvent(eventName: string, params?: Record<string, any>): void {
   if (process.env.NODE_ENV === 'development') {
     console.log(`[Analytics] ${eventName}`, params);
   }
+}
+
+function clampText(value: string, maxLength = 120): string {
+  return String(value || '').slice(0, maxLength);
+}
+
+function bucketGuideStep(step: number, totalSteps?: number): string {
+  const normalized = Number(step || 0);
+  if (!normalized || normalized < 0) return 'unknown';
+  if (normalized === 1) return 'step_1';
+  if (normalized === 2) return 'step_2';
+  if (totalSteps && normalized >= totalSteps) return 'last';
+  if (normalized <= 4) return 'step_3_4';
+  if (normalized <= 7) return 'step_5_7';
+  return 'step_8_plus';
+}
+
+function bucketSearchLength(query: string): string {
+  const length = String(query || '').trim().length;
+  if (!length) return 'empty';
+  if (length <= 12) return 'short';
+  if (length <= 24) return 'medium';
+  return 'long';
+}
+
+function bucketSearchResults(resultCount?: number): string {
+  const normalized = Number(resultCount);
+  if (!Number.isFinite(normalized) || normalized < 0) return 'unknown';
+  if (normalized === 0) return 'none';
+  if (normalized <= 3) return '1_3';
+  if (normalized <= 10) return '4_10';
+  if (normalized <= 25) return '11_25';
+  return '26_plus';
+}
+
+export type RepairAnswerCtaLayer = 'primary' | 'secondary' | 'supporting' | 'reference' | 'other';
+export type RepairAnswerCtaKind = 'guide' | 'vehicle_hub' | 'manual' | 'parts' | 'tool' | 'diagram' | 'other';
+export type GuideStepAction = 'view' | 'expand';
+export type GuideCompletionReason = 'all_steps_viewed' | 'last_step_viewed' | 'manual_complete';
+export type WiringDiagramAction =
+  | 'open'
+  | 'close'
+  | 'zoom_in'
+  | 'zoom_out'
+  | 'reset_zoom'
+  | 'download'
+  | 'copy_link'
+  | 'share'
+  | 'image_prev'
+  | 'image_next';
+export type WiringDiagramSearchScope = 'diagram_library' | 'system_list' | 'modal' | 'deep_link' | 'other';
+export type WiringSystemToggleAction = 'expand' | 'collapse';
+export type WiringDiagramExitKind = 'close_button' | 'backdrop' | 'escape' | 'reset' | 'other';
+
+function deriveRepairAnswerCtaKind(target: string, href?: string): RepairAnswerCtaKind {
+  const targetText = String(target || '').toLowerCase();
+  const hrefText = String(href || '').toLowerCase();
+  if (targetText.includes('vehicle_hub')) return 'vehicle_hub';
+  if (targetText.includes('guide') || hrefText.includes('/repair/')) return 'guide';
+  if (targetText.includes('manual') || hrefText.includes('/manual')) return 'manual';
+  if (targetText.includes('parts')) return 'parts';
+  if (targetText.includes('tool') || hrefText.includes('/tools/')) return 'tool';
+  if (targetText.includes('diagram') || hrefText.includes('/wiring')) return 'diagram';
+  return 'other';
+}
+
+function deriveRepairAnswerCtaLayer(section: string, kind: RepairAnswerCtaKind): RepairAnswerCtaLayer {
+  const normalizedSection = String(section || '').toLowerCase();
+  if (normalizedSection === 'hero' || normalizedSection === 'quick_answer') return 'primary';
+  if (kind === 'guide' || kind === 'vehicle_hub') return 'secondary';
+  if (kind === 'manual' || kind === 'diagram') return 'reference';
+  if (kind === 'parts' || kind === 'tool') return 'supporting';
+  if (normalizedSection.includes('support')) return 'supporting';
+  return 'other';
 }
 
 // ─── Affiliate Events ───────────────────────────────────────────────────────
@@ -310,6 +386,8 @@ interface RepairAnswerClickEvent {
   target: string;
   label: string;
   href?: string;
+  ctaLayer?: RepairAnswerCtaLayer;
+  ctaKind?: RepairAnswerCtaKind;
   pageSurface?: AnalyticsPageSurface;
   taskSlug?: string;
   vehicleYear?: string;
@@ -350,6 +428,8 @@ export function trackRepairAnswerImpression(event: RepairAnswerImpressionEvent):
 }
 
 export function trackRepairAnswerClick(event: RepairAnswerClickEvent): void {
+  const ctaKind = event.ctaKind || deriveRepairAnswerCtaKind(event.target, event.href);
+  const ctaLayer = event.ctaLayer || deriveRepairAnswerCtaLayer(event.section, ctaKind);
   const structuredContext = buildAnalyticsContext({
     pageSurface: event.pageSurface || 'repair_guide',
     intentCluster: deriveIntentCluster({
@@ -376,8 +456,122 @@ export function trackRepairAnswerClick(event: RepairAnswerClickEvent): void {
     vehicle_model: structuredContext.vehicle_model,
     repair_answer_section: event.section,
     repair_answer_target: event.target,
-    repair_answer_label: event.label.slice(0, 120),
+    repair_answer_label: clampText(event.label),
+    repair_answer_cta_layer: ctaLayer,
+    repair_answer_cta_kind: ctaKind,
     href: event.href?.slice(0, 200),
+  });
+}
+
+interface GuideStepEvent {
+  vehicle: string;
+  task: string;
+  step: number;
+  totalSteps?: number;
+  stepLabel?: string;
+  pageSurface?: AnalyticsPageSurface;
+  taskSlug?: string;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+}
+
+interface GuideCompletionEvent {
+  vehicle: string;
+  task: string;
+  reason?: GuideCompletionReason;
+  totalSteps?: number;
+  viewedSteps?: number;
+  pageSurface?: AnalyticsPageSurface;
+  taskSlug?: string;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+}
+
+export function trackGuideStepView(event: GuideStepEvent): void {
+  const stepBucket = bucketGuideStep(event.step, event.totalSteps);
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: event.pageSurface || 'repair_guide',
+    intentCluster: deriveIntentCluster({
+      pageSurface: event.pageSurface || 'repair_guide',
+      task: event.taskSlug || event.task,
+    }),
+    taskSlug: event.taskSlug || event.task,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
+  trackEvent('guide_step_view', {
+    event_category: 'engagement',
+    event_label: `step_${event.step}`,
+    vehicle: event.vehicle,
+    task: event.task,
+    guide_step: String(event.step),
+    guide_step_bucket: stepBucket,
+    guide_step_action: 'view',
+    guide_step_label: clampText(event.stepLabel || ''),
+    ...structuredContext,
+  });
+}
+
+export function trackGuideStepExpand(event: GuideStepEvent): void {
+  const stepBucket = bucketGuideStep(event.step, event.totalSteps);
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: event.pageSurface || 'repair_guide',
+    intentCluster: deriveIntentCluster({
+      pageSurface: event.pageSurface || 'repair_guide',
+      task: event.taskSlug || event.task,
+    }),
+    taskSlug: event.taskSlug || event.task,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
+  trackEvent('guide_step_expand', {
+    event_category: 'engagement',
+    event_label: `step_${event.step}`,
+    vehicle: event.vehicle,
+    task: event.task,
+    guide_step: String(event.step),
+    guide_step_bucket: stepBucket,
+    guide_step_action: 'expand',
+    guide_step_label: clampText(event.stepLabel || ''),
+    ...structuredContext,
+  });
+}
+
+export function trackGuideCompletion(event: GuideCompletionEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    pageSurface: event.pageSurface || 'repair_guide',
+    intentCluster: deriveIntentCluster({
+      pageSurface: event.pageSurface || 'repair_guide',
+      task: event.taskSlug || event.task,
+    }),
+    taskSlug: event.taskSlug || event.task,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
+  const reason = event.reason || (typeof event.totalSteps === 'number' && typeof event.viewedSteps === 'number' && event.viewedSteps >= event.totalSteps
+    ? 'all_steps_viewed'
+    : 'last_step_viewed');
+
+  trackEvent('guide_completion', {
+    event_category: 'engagement',
+    event_label: reason,
+    vehicle: event.vehicle,
+    task: event.task,
+    guide_completion_reason: reason,
+    guide_completion_total_steps: event.totalSteps,
+    guide_completion_viewed_steps: event.viewedSteps,
+    ...structuredContext,
   });
 }
 
@@ -598,6 +792,174 @@ export function trackWiringDiagramOpen(
     vehicle,
     system,
     diagram_name: diagramName.slice(0, 120),
+    ...structuredContext,
+  });
+}
+
+interface WiringDiagramSearchEvent {
+  vehicle: string;
+  system: string;
+  query: string;
+  resultCount?: number;
+  scope?: WiringDiagramSearchScope;
+  pageSurface?: AnalyticsPageSurface;
+  systemSlug?: string;
+  intentCluster?: AnalyticsIntentCluster;
+  code?: string;
+  codeFamily?: string;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+}
+
+interface WiringSystemToggleEvent {
+  vehicle: string;
+  system: string;
+  action: WiringSystemToggleAction;
+  diagramCount?: number;
+  scope?: WiringDiagramSearchScope;
+  pageSurface?: AnalyticsPageSurface;
+  systemSlug?: string;
+  intentCluster?: AnalyticsIntentCluster;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+}
+
+interface WiringDiagramExitEvent {
+  vehicle: string;
+  system: string;
+  kind?: WiringDiagramExitKind;
+  openDiagrams?: number;
+  pageSurface?: AnalyticsPageSurface;
+  systemSlug?: string;
+  intentCluster?: AnalyticsIntentCluster;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+}
+
+interface WiringDiagramInteractEvent {
+  vehicle: string;
+  system: string;
+  action: WiringDiagramAction;
+  diagramName?: string;
+  interactionTarget?: string;
+  pageSurface?: AnalyticsPageSurface;
+  systemSlug?: string;
+  intentCluster?: AnalyticsIntentCluster;
+  vehicleYear?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+}
+
+export function trackWiringDiagramSearch(event: WiringDiagramSearchEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(event.vehicle),
+    pageSurface: event.pageSurface || 'wiring',
+    intentCluster: event.intentCluster || deriveIntentCluster({
+      pageSurface: event.pageSurface || 'wiring',
+      system: event.system,
+      vehicle: event.vehicle,
+    }),
+    systemSlug: event.systemSlug || event.system,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
+  trackEvent('wiring_diagram_search', {
+    event_category: 'wiring',
+    event_label: `${structuredContext.system_slug || event.system}_search`,
+    vehicle: event.vehicle,
+    system: event.system,
+    wiring_search_scope: event.scope || 'diagram_library',
+    wiring_search_length_bucket: bucketSearchLength(event.query),
+    wiring_search_result_bucket: bucketSearchResults(event.resultCount),
+    ...structuredContext,
+  });
+}
+
+export function trackWiringSystemToggle(event: WiringSystemToggleEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(event.vehicle),
+    pageSurface: event.pageSurface || 'wiring',
+    intentCluster: event.intentCluster || deriveIntentCluster({
+      pageSurface: event.pageSurface || 'wiring',
+      system: event.system,
+      vehicle: event.vehicle,
+    }),
+    systemSlug: event.systemSlug || event.system,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
+  trackEvent('wiring_system_toggle', {
+    event_category: 'wiring',
+    event_label: `${event.system}_${event.action}`,
+    vehicle: event.vehicle,
+    system: event.system,
+    wiring_system_action: event.action,
+    wiring_system_diagram_count: event.diagramCount,
+    wiring_search_scope: event.scope || 'system_list',
+    ...structuredContext,
+  });
+}
+
+export function trackWiringDiagramExit(event: WiringDiagramExitEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(event.vehicle),
+    pageSurface: event.pageSurface || 'wiring',
+    intentCluster: event.intentCluster || deriveIntentCluster({
+      pageSurface: event.pageSurface || 'wiring',
+      system: event.system,
+      vehicle: event.vehicle,
+    }),
+    systemSlug: event.systemSlug || event.system,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
+  trackEvent('wiring_diagram_exit', {
+    event_category: 'wiring',
+    event_label: `${event.system}_${event.kind || 'other'}`,
+    vehicle: event.vehicle,
+    system: event.system,
+    wiring_exit_kind: event.kind || 'other',
+    wiring_open_diagrams: event.openDiagrams,
+    ...structuredContext,
+  });
+}
+
+export function trackWiringDiagramInteract(event: WiringDiagramInteractEvent): void {
+  const structuredContext = buildAnalyticsContext({
+    ...parseVehicleLabel(event.vehicle),
+    pageSurface: event.pageSurface || 'wiring',
+    intentCluster: event.intentCluster || deriveIntentCluster({
+      pageSurface: event.pageSurface || 'wiring',
+      system: event.system,
+      vehicle: event.vehicle,
+    }),
+    systemSlug: event.systemSlug || event.system,
+    vehicleYear: event.vehicleYear,
+    vehicleMake: event.vehicleMake,
+    vehicleModel: event.vehicleModel,
+    vehicle: event.vehicle,
+  });
+
+  trackEvent('wiring_diagram_interact', {
+    event_category: 'wiring',
+    event_label: `${event.system}_${event.action}`,
+    vehicle: event.vehicle,
+    system: event.system,
+    wiring_diagram_action: event.action,
+    wiring_diagram_name: clampText(event.diagramName || ''),
+    wiring_interaction_target: clampText(event.interactionTarget || ''),
     ...structuredContext,
   });
 }

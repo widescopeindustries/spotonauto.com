@@ -43,6 +43,11 @@ function formatGuideError(error: unknown): string {
 export default function GuideContent({ params }: GuideContentProps) {
     const router = useRouter();
     const { year, make, model, task } = params;
+    const cleanTask = task.replace(/-/g, ' ');
+    const guideIntentCluster = deriveIntentCluster({
+        pageSurface: 'repair_guide',
+        task,
+    });
 
     const [guide, setGuide] = useState<RepairGuide | null>(null);
     const [loading, setLoading] = useState(true);
@@ -50,17 +55,13 @@ export default function GuideContent({ params }: GuideContentProps) {
     const t = useT();
 
     useEffect(() => {
-        const cleanTask = task.replace(/-/g, ' ');
         trackRepairPageView(`${year} ${make} ${model}`, cleanTask, {
             pageSurface: 'repair_guide',
             taskSlug: task,
             vehicleYear: year,
             vehicleMake: make,
             vehicleModel: model,
-            intentCluster: deriveIntentCluster({
-                pageSurface: 'repair_guide',
-                task,
-            }),
+            intentCluster: guideIntentCluster,
         });
         trackRepairGuideOpen(`${year} ${make} ${model}`, cleanTask, {
             pageSurface: 'repair_guide',
@@ -68,12 +69,9 @@ export default function GuideContent({ params }: GuideContentProps) {
             vehicleYear: year,
             vehicleMake: make,
             vehicleModel: model,
-            intentCluster: deriveIntentCluster({
-                pageSurface: 'repair_guide',
-                task,
-            }),
+            intentCluster: guideIntentCluster,
         });
-    }, [year, make, model, task]);
+    }, [cleanTask, guideIntentCluster, make, model, task, year]);
 
     useEffect(() => {
         const fetchGuide = async () => {
@@ -81,7 +79,6 @@ export default function GuideContent({ params }: GuideContentProps) {
             setLoading(true);
 
             try {
-                const cleanTask = task.replace(/-/g, ' ');
                 const vehicle = { year, make, model };
                 const guideId = `${year}-${make}-${model}-${cleanTask}`.toLowerCase().replace(/\s+/g, '-');
 
@@ -113,10 +110,7 @@ export default function GuideContent({ params }: GuideContentProps) {
                     vehicleYear: year,
                     vehicleMake: make,
                     vehicleModel: model,
-                    intentCluster: deriveIntentCluster({
-                        pageSurface: 'repair_guide',
-                        task,
-                    }),
+                    intentCluster: guideIntentCluster,
                 });
                 trackRetrievalBackbone(
                     `${year} ${make} ${model}`,
@@ -129,10 +123,7 @@ export default function GuideContent({ params }: GuideContentProps) {
                         vehicleYear: year,
                         vehicleMake: make,
                         vehicleModel: model,
-                        intentCluster: deriveIntentCluster({
-                            pageSurface: 'repair_guide',
-                            task,
-                        }),
+                        intentCluster: guideIntentCluster,
                     },
                 );
                 setGuide(generatedGuide);
@@ -144,7 +135,7 @@ export default function GuideContent({ params }: GuideContentProps) {
         };
 
         fetchGuide();
-    }, [year, make, model, task]);
+    }, [cleanTask, guideIntentCluster, make, model, task, year]);
 
     if (loading) return (
         <div className="min-h-[60vh] flex flex-col items-center justify-center p-4 bg-[#f8f6f1]">
@@ -170,7 +161,6 @@ export default function GuideContent({ params }: GuideContentProps) {
                     onClick={async () => {
                         setError(null);
                         setLoading(true);
-                        const cleanTask = task.replace(/-/g, ' ');
                         const vehicle = { year, make, model };
                         try {
                             const generatedGuide = await generateFullRepairGuide(vehicle, cleanTask);
@@ -187,10 +177,7 @@ export default function GuideContent({ params }: GuideContentProps) {
                                 vehicleYear: year,
                                 vehicleMake: make,
                                 vehicleModel: model,
-                                intentCluster: deriveIntentCluster({
-                                    pageSurface: 'repair_guide',
-                                    task,
-                                }),
+                                intentCluster: guideIntentCluster,
                             });
                             trackRetrievalBackbone(
                                 `${year} ${make} ${model}`,
@@ -203,10 +190,7 @@ export default function GuideContent({ params }: GuideContentProps) {
                                     vehicleYear: year,
                                     vehicleMake: make,
                                     vehicleModel: model,
-                                    intentCluster: deriveIntentCluster({
-                                        pageSurface: 'repair_guide',
-                                        task,
-                                    }),
+                                    intentCluster: guideIntentCluster,
                                 },
                             );
                             setGuide(generatedGuide);
@@ -240,6 +224,15 @@ export default function GuideContent({ params }: GuideContentProps) {
                     <ServiceManualGuide
                         guide={guide}
                         onReset={() => router.push('/')}
+                        analyticsContext={{
+                            pageSurface: 'repair_guide',
+                            intentCluster: guideIntentCluster,
+                            task: cleanTask,
+                            taskSlug: task,
+                            vehicleYear: year,
+                            vehicleMake: make,
+                            vehicleModel: model,
+                        }}
                     />
                 </>
             )}

@@ -22,6 +22,8 @@ const checks = [
   { path: '/codes', expectedStatus: [200], bodyIncludes: 'DTC' },
   { path: '/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
   { path: '/repair/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
+  { path: '/wiring/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
+  { path: '/wiring/sitemap/16.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
   { path: '/blog', expectedStatus: [404] },
   { path: '/pricing', expectedStatus: [404] },
 ];

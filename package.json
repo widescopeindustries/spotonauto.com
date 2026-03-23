@@ -14,6 +14,7 @@
     "start": "next start",
     "lint": "next lint",
     "analytics:recovery": "node scripts/recovery-scoreboard.js",
+    "analytics:command-centers": "node scripts/command-center-opportunities.js",
     "analytics:backbone": "node --experimental-strip-types scripts/manual-backbone-scoreboard.ts",
     "analytics:wiring": "node scripts/wiring-analytics-report.js",
     "analytics:graph": "node scripts/graph-analytics-report.js",
