@@ -95,7 +95,7 @@ export default function CodePageClient({
         }] : []),
         ...(symptomHubLinks.length > 0 ? [{
             kind: 'symptom' as const,
-            title: 'Canonical Symptom Hubs',
+            title: 'Related Symptoms',
             browseHref: '/symptoms',
             theme: 'amber' as const,
             nodes: symptomHubLinks,
@@ -294,7 +294,7 @@ export default function CodePageClient({
                 <section className="mb-12 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
                     <h3 className="text-xl font-bold text-white mb-4">Priority exact repair pages for this code family</h3>
                     <p className="text-gray-300 text-sm mb-5">
-                        These exact repair pages are in the current recovery lane. Linking them from code pages helps push authority into the repair surfaces most likely to win first.
+                        Popular repair guides related to this code.
                     </p>
                     <div className="grid sm:grid-cols-2 gap-3">
                         {tier1RepairLinks.map((link) => (
@@ -305,7 +305,7 @@ export default function CodePageClient({
                             >
                                 <div className="flex items-center justify-between gap-3">
                                     <span className="text-violet-300 font-mono text-sm">{link.label}</span>
-                                    <span className="text-[11px] uppercase tracking-wider text-violet-200/80">Tier-1 winner</span>
+                                    <span className="text-[11px] uppercase tracking-wider text-violet-200/80">Popular guide</span>
                                 </div>
                                 <p className="text-xs text-gray-400 mt-2 leading-relaxed">{link.description}</p>
                             </Link>
@@ -318,10 +318,10 @@ export default function CodePageClient({
                             >
                                 <div className="flex items-center justify-between gap-3">
                                     <span className="text-violet-300 font-mono text-sm">{link.label}</span>
-                                    <span className="text-[11px] uppercase tracking-wider text-violet-200/80">Support gap</span>
+                                    <span className="text-[11px] uppercase tracking-wider text-violet-200/80">Repair guide</span>
                                 </div>
                                 <p className="text-xs text-gray-400 mt-2 leading-relaxed">
-                                    Opportunity score {link.opportunityScore}. Use this page to reinforce the repair family behind {code.code}.
+                                    Related repair guide for vehicles with {code.code}.
                                 </p>
                             </Link>
                         ))}

@@ -248,12 +248,12 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
   }> = [
     {
       eyebrow: 'Keep context',
-      title: 'Exact Vehicle Command Center',
+      title: 'Vehicle Repair Hub',
       description: `Step out of raw diagrams and into the full ${vehicleLabel} hub with repairs, specs, codes, and other systems already tied to this car.`,
       tone: 'emerald',
       primaryLink: {
         href: vehicleHubHref,
-        label: 'Open vehicle command center',
+        label: 'View vehicle repair hub',
         target: 'vehicle_hub',
       },
       secondaryLinks: [

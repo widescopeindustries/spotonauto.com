@@ -138,7 +138,7 @@ export default async function SymptomHubPage({ params }: PageProps) {
           <span className="text-gray-300">{matchedCluster.label}</span>
         </nav>
 
-        <p className="text-amber-300 text-xs uppercase tracking-[0.2em] font-bold mb-3">Canonical Symptom Cluster</p>
+        <p className="text-amber-300 text-xs uppercase tracking-[0.2em] font-bold mb-3">Symptom Guide</p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
           {matchedCluster.label} <span className="text-amber-400">Symptom Hub</span>
         </h1>
