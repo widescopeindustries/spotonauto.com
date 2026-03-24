@@ -89,49 +89,32 @@ function HeroSection() {
             <div className="relative z-10 mx-auto max-w-7xl">
                 <div className="grid items-start gap-12 lg:grid-cols-[0.92fr,1.08fr] lg:gap-16">
                     <div className="space-y-8">
-                        <div className="inline-flex items-center gap-2 rounded-full matte-panel-soft px-4 py-2">
-                            <span className="status-dot" />
-                            <span className="font-body text-xs uppercase tracking-widest text-cyan-300">
-                                Vehicle-first repair routing
-                            </span>
-                        </div>
-
                         <div className="space-y-5">
                             <h1 className="font-display text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
-                                Start with your
+                                Fix Your Car.
                                 <br />
                                 <span className="bg-gradient-to-r from-cyan-300 to-white bg-clip-text text-transparent glow-text">
-                                    exact vehicle
+                                    Understand What&apos;s Wrong.
                                 </span>
                             </h1>
                             <p className="max-w-2xl font-body text-lg text-gray-300 sm:text-xl">
-                                Pick year, make, and model. From there, the exact vehicle hub becomes the front door to repair guides,
-                                wiring diagrams, codes, symptoms, manuals, specs, and parts for that car.
+                                Pick your year, make, and model to get repair guides, wiring diagrams, trouble codes, and more
+                                — all tailored to your exact vehicle.
                             </p>
                         </div>
 
-                        <div className="rounded-[28px] matte-panel-soft p-6">
-                            <div className="space-y-3">
-                                <p className="text-xs uppercase tracking-[0.22em] text-cyan-300/80">Why this route is faster</p>
-                                <p className="text-sm leading-7 text-gray-400">
-                                    The homepage now keeps the first interaction path focused on year, make, and model. VIN decode,
-                                    symptom-first diagnosis, and deeper AI flows still exist, but they no longer sit inside the first
-                                    above-the-fold client bundle.
-                                </p>
+                        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                            <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
+                                <h3 className="text-base font-semibold text-white">Repair Guides</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-400">Step-by-step instructions, tools, parts, and torque specs for your exact car.</p>
                             </div>
-                            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                                <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
-                                    <h3 className="text-base font-semibold text-white">Vehicle hub</h3>
-                                    <p className="mt-2 text-sm leading-6 text-gray-400">Open repairs, symptoms, tools, and related support pages for that exact car.</p>
-                                </div>
-                                <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
-                                    <h3 className="text-base font-semibold text-white">Diagnosis</h3>
-                                    <p className="mt-2 text-sm leading-6 text-gray-400">Use the chat flow when the symptom is still vague or you only have a complaint.</p>
-                                </div>
-                                <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
-                                    <h3 className="text-base font-semibold text-white">Wiring</h3>
-                                    <p className="mt-2 text-sm leading-6 text-gray-400">Jump straight to electrical diagrams when the job is already known to be circuit-related.</p>
-                                </div>
+                            <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
+                                <h3 className="text-base font-semibold text-white">AI Diagnosis</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-400">Describe what&apos;s happening and get help figuring out the problem.</p>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
+                                <h3 className="text-base font-semibold text-white">Wiring Diagrams</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-400">Factory electrical diagrams for 148K+ systems across 82 makes.</p>
                             </div>
                         </div>
                     </div>
@@ -293,13 +276,13 @@ function CommandCenterMomentumSection({ commandCenterMomentum }: { commandCenter
                 <div className="rounded-[32px] matte-panel p-8 sm:p-10">
                     <div className="mb-8 max-w-3xl space-y-4">
                         <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
-                            Popular vehicle hubs
+                            Popular vehicles
                         </span>
                         <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
-                            Start from an exact vehicle hub when you already know the car
+                            Find everything for your car in one place
                         </h2>
                         <p className="text-lg text-gray-300">
-                            These exact vehicle hubs make it easier to move from the car you own into the right repair guide, wiring page, symptom path, or code page without starting over.
+                            Repair guides, wiring diagrams, trouble codes, and more — all organized by your exact vehicle.
                         </p>
                     </div>
 
@@ -313,7 +296,7 @@ function CommandCenterMomentumSection({ commandCenterMomentum }: { commandCenter
                                 >
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="space-y-3">
-                                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Exact vehicle hub</p>
+                                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Vehicle page</p>
                                             <h3 className="font-display text-2xl font-bold text-white">{vehicle.label}</h3>
                                             <p className="text-sm leading-6 text-gray-400">{vehicle.note}</p>
                                         </div>
@@ -323,7 +306,7 @@ function CommandCenterMomentumSection({ commandCenterMomentum }: { commandCenter
                                     </div>
 
                                     <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-100">
-                                        Open command center
+                                        View vehicle page
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                     </div>
                                 </Link>

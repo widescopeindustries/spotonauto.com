@@ -9,7 +9,7 @@ const WiringDiagramLibrary = dynamic(() => import('./WiringDiagramLibrary'), {
   ssr: false,
   loading: () => (
     <div className="min-h-[40vh] flex items-center justify-center px-4">
-      <p className="text-sm text-gray-500">Loading the interactive wiring browser...</p>
+      <p className="text-sm text-gray-500">Loading wiring diagrams...</p>
     </div>
   ),
 });
@@ -79,14 +79,11 @@ export default function DeferredWiringDiagramBrowser() {
     <main className="max-w-5xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
       <section className="rounded-[2rem] border border-cyan-500/15 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.14),_transparent_48%),rgba(255,255,255,0.03)] p-8 sm:p-10">
         <div className="max-w-3xl">
-          <div className="inline-flex items-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-200">
-            Factory electrical archive
-          </div>
-          <h1 className="mt-5 font-display text-4xl font-black tracking-tight text-white sm:text-5xl">
-            Open the interactive wiring browser only when you need it
+          <h1 className="font-display text-4xl font-black tracking-tight text-white sm:text-5xl">
+            Find Wiring Diagrams for Your Vehicle
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-gray-300 sm:text-lg">
-            This keeps the wiring landing page lighter on mobile. When you open the browser, SpotOnAuto will load the verified year, make, and model coverage plus the full diagram search interface.
+            Browse 148,000+ factory electrical diagrams covering 82 makes from 1982 to 2013. Select your vehicle below to find the exact diagram you need.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <button
@@ -94,29 +91,23 @@ export default function DeferredWiringDiagramBrowser() {
               onClick={() => setShouldLoad(true)}
               className="inline-flex items-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-cyan-300"
             >
-              Open wiring browser
+              Search wiring diagrams
             </button>
-            <a
-              href="/wiring#diagram-browser"
-              className="inline-flex items-center rounded-full border border-white/12 px-6 py-3 text-sm font-medium text-gray-200 transition-colors hover:border-cyan-400/40 hover:text-white"
-            >
-              Direct link
-            </a>
           </div>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">Coverage</p>
-            <p className="mt-3 text-sm leading-6 text-gray-300">Verified factory wiring coverage from 1982 to 2013 across the supported makes and models.</p>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">148K+ diagrams</p>
+            <p className="mt-3 text-sm leading-6 text-gray-300">Factory electrical diagrams for 82 makes and hundreds of models, from 1982 to 2013.</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">Search</p>
-            <p className="mt-3 text-sm leading-6 text-gray-300">Search by system, deep-link from SEO wiring pages, and open the exact diagram only when you need it.</p>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">Search by system</p>
+            <p className="mt-3 text-sm leading-6 text-gray-300">Find diagrams by electrical system — headlights, power windows, fuel injection, starting, and more.</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">Mobile first</p>
-            <p className="mt-3 text-sm leading-6 text-gray-300">The heavy browser stays off the main thread until the user intentionally opens the diagram flow.</p>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">Year, make, model</p>
+            <p className="mt-3 text-sm leading-6 text-gray-300">Select your exact vehicle to see only the diagrams that apply to your car, truck, or SUV.</p>
           </div>
         </div>
 

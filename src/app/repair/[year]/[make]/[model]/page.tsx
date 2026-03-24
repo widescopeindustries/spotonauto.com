@@ -360,7 +360,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const vehicleLabel = `${resolvedYear} ${originalMake} ${originalModel}`;
   return {
     title: `${vehicleLabel} Repair Hub | Guides, Wiring, Codes & Manuals`,
-    description: `Graph-driven repair hub for the ${vehicleLabel}. Open exact DIY repair guides, wiring diagrams, factory manual paths, tool pages, and likely trouble code clusters from one place.`,
+    description: `Everything you need to fix your ${vehicleLabel}: step-by-step repair guides, wiring diagrams, trouble codes, specs, and factory manual references.`,
     alternates: {
       canonical: `https://spotonauto.com/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`,
     },
@@ -498,8 +498,8 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'Most-used path',
       title: 'Exact Repair Guides',
-      description: `Open the jobs Google is already testing for this ${vehicleLabel}. The highest-demand repairs stay first so the next click is obvious.`,
-      countLabel: `${vehicleHub.repairCount} exact paths`,
+      description: `Step-by-step repair guides for the most common ${vehicleLabel} jobs — brakes, oil, battery, and more.`,
+      countLabel: `${vehicleHub.repairCount} guides`,
       tone: 'cyan',
       primaryHref: repairGroup?.nodes[0]?.href || '/repairs',
       primaryLabel: repairGroup ? 'Open highest-demand repairs' : 'Browse repair categories',
@@ -516,8 +516,8 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'Electrical first',
       title: 'Wiring Diagrams',
-      description: 'Jump straight into the exact system diagrams for this vehicle instead of hunting through the homepage or a generic system list.',
-      countLabel: `${vehicleHub.wiringCount} systems`,
+      description: 'Factory electrical diagrams for this vehicle — headlights, starting, charging, fuel injection, and more.',
+      countLabel: `${vehicleHub.wiringCount} diagrams`,
       tone: 'violet',
       primaryHref: wiringGroup?.nodes[0]?.href || '/wiring',
       primaryLabel: wiringGroup ? 'Open exact wiring' : 'Browse wiring pages',
@@ -526,8 +526,8 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'Complaint-led path',
       title: 'Symptoms and Diagnosis',
-      description: 'Start from the symptom when you know what the car is doing, but not yet which repair or system is behind it.',
-      countLabel: `${vehicleHub.symptomCount} shared symptoms`,
+      description: 'Describe what your car is doing and get help narrowing down the problem before you start a repair.',
+      countLabel: `${vehicleHub.symptomCount} symptoms`,
       tone: 'amber',
       primaryHref: symptomGroup?.nodes[0]?.href || '/diagnose',
       primaryLabel: symptomGroup ? 'Open symptom hubs' : 'Start diagnosis',
@@ -539,8 +539,8 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'If you have a code',
       title: 'Trouble Code Pages',
-      description: 'Move from the exact vehicle into shared code clusters that connect back to the likely repair, wiring, and symptom pages.',
-      countLabel: `${vehicleHub.codeCount} code paths`,
+      description: 'Look up check engine light codes commonly seen on this vehicle, with causes, symptoms, and fix costs.',
+      countLabel: `${vehicleHub.codeCount} codes`,
       tone: 'emerald',
       primaryHref: codeGroup?.nodes[0]?.href || '/codes',
       primaryLabel: codeGroup ? 'Open code pages' : 'Browse all codes',
@@ -549,8 +549,8 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'Fitment and reference',
       title: 'Specs and Tools',
-      description: 'Pull fitment, capacities, locations, and other reference pages that support the job before teardown or parts ordering.',
-      countLabel: `${vehicleHub.toolCount} tool pages`,
+      description: 'Oil type, tire size, battery group size, fluid capacities, and other specs for your vehicle.',
+      countLabel: `${vehicleHub.toolCount} spec pages`,
       tone: 'emerald',
       primaryHref: toolGroup?.nodes[0]?.href || '/tools',
       primaryLabel: toolGroup ? 'Open specs and tools' : 'Browse tool pages',
@@ -559,8 +559,8 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'OEM source',
       title: 'Factory Manual Paths',
-      description: 'Open the nearest year-level or make-level manual index without losing the canonical vehicle identity.',
-      countLabel: `${manualGroup?.nodes.length || 0} archive paths`,
+      description: 'Browse factory service manual sections and OEM repair procedures for this vehicle.',
+      countLabel: `${manualGroup?.nodes.length || 0} manual sections`,
       tone: 'slate',
       primaryHref: manualGroup?.nodes[1]?.href || manualGroup?.nodes[0]?.href || '/manual',
       primaryLabel: 'Open OEM manual paths',
@@ -570,16 +570,16 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
 
   const faqItems = [
     {
-      question: `What can I do from the ${vehicleLabel} repair hub?`,
-      answer: `This hub connects the strongest pages for the ${vehicleLabel}: exact repair guides, factory manual entry points, wiring diagrams, spec pages, and likely trouble code clusters. It is meant to get you from vehicle selection to the right repair surface quickly.`,
+      question: `What can I find on the ${vehicleLabel} repair hub?`,
+      answer: `This page brings together everything for the ${vehicleLabel}: step-by-step repair guides, factory wiring diagrams, trouble codes, vehicle specs, and factory manual references — all in one place.`,
     },
     {
-      question: `Does this hub only show exact ${vehicleLabel} pages?`,
-      answer: `Yes. Repair and wiring links are built around the exact ${vehicleLabel} identity. Manual archive links can step out to the make or year index when the source material is organized that way, but the hub itself stays tied to your exact vehicle.`,
+      question: `Is this information specific to the ${vehicleLabel}?`,
+      answer: `Yes. Repair guides and wiring diagrams are tailored to the exact ${vehicleLabel}. Factory manual links may point to make-level or year-level sections depending on how the original manuals are organized.`,
     },
     {
-      question: `Why are factory manual links at the make or year level?`,
-      answer: `The factory manual archive is not always organized as a clean year-make-model tree. This hub normalizes the vehicle identity first, then links you into the closest exact OEM entry points without losing the canonical ${vehicleLabel} context.`,
+      question: `Why do some factory manual links go to a make or year page?`,
+      answer: `Factory service manuals aren't always split by exact year, make, and model. We link you to the closest matching section so you can find the right procedure for your ${vehicleLabel}.`,
     },
   ];
 
@@ -611,7 +611,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: `${vehicleLabel} Repair Hub`,
-    description: `Graph-driven repair hub for the ${vehicleLabel} with exact repair guides, wiring pages, factory manual entry points, and code clusters.`,
+    description: `Repair guides, wiring diagrams, trouble codes, and factory manual references for the ${vehicleLabel}.`,
     url: `https://spotonauto.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}`,
   };
 
@@ -640,21 +640,19 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           <span className="text-gray-300">{canonicalYear}</span>
         </nav>
 
-        <p className="text-cyan-400 text-xs uppercase tracking-[0.2em] font-bold mb-3">Exact Vehicle Command Center</p>
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
-          {vehicleLabel} <span className="text-cyan-400">Command Center</span>
+          {vehicleLabel} <span className="text-cyan-400">Repair Hub</span>
         </h1>
         <p className="text-lg text-gray-300 max-w-3xl">
-          One canonical page for your exact vehicle. Enter here, then branch into repairs, wiring, codes, symptoms, specs, and
-          OEM manual paths without losing the {canonicalYear} {originalMake} {originalModel} context. The quick-start lane below is ordered around the DIY searches we are already seeing most often.
+          Everything you need for your {canonicalYear} {originalMake} {originalModel} in one place — repair guides, wiring diagrams, trouble codes, specs, and factory manual references.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8">
-          <StatCard label="Repair paths" value={String(vehicleHub.repairCount)} />
-          <StatCard label="Wiring systems" value={String(vehicleHub.wiringCount)} />
-          <StatCard label="Symptom spokes" value={String(vehicleHub.symptomCount)} />
+          <StatCard label="Repair guides" value={String(vehicleHub.repairCount)} />
+          <StatCard label="Wiring diagrams" value={String(vehicleHub.wiringCount)} />
+          <StatCard label="Related symptoms" value={String(vehicleHub.symptomCount)} />
           <StatCard label="Spec pages" value={String(vehicleHub.toolCount)} />
-          <StatCard label="Code clusters" value={String(vehicleHub.codeCount)} />
+          <StatCard label="Trouble codes" value={String(vehicleHub.codeCount)} />
         </div>
 
         <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/[0.05] p-6 md:p-8 mt-8">
@@ -668,9 +666,9 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           </div>
           {exactOpportunity && (
             <div className="mt-5 rounded-2xl border border-white/10 bg-slate-900/45 p-4">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400">Current search focus</p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400">Most popular repairs</p>
               <p className="mt-2 text-sm leading-6 text-gray-200">
-                {buildDemandSummary(diyQuickStartCards.slice(0, 4))}. These lanes are ranked first because they line up with the strongest current DIY intent.
+                {buildDemandSummary(diyQuickStartCards.slice(0, 4))} — these are the most common DIY jobs for this vehicle right now.
               </p>
               <div className="flex flex-wrap gap-2 mt-4">
                 {opportunityTaskPreviewLinks.slice(0, 4).map((link) => (
@@ -708,7 +706,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
             <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-300/85">Start Here</p>
             <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Everything for this vehicle, arranged by job</h2>
             <p className="text-sm md:text-base text-gray-300 mt-3">
-              The homepage now gets people into the vehicle first. This page is where the richer options belong, because every path below already pertains to the exact car they selected.
+              Browse repair guides, wiring diagrams, trouble codes, specs, factory manuals, and more — all for your {vehicleLabel}.
             </p>
           </div>
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
@@ -733,51 +731,26 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
         <section className="max-w-6xl mx-auto px-4 pb-12">
           <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-8">
             <div className="max-w-4xl">
-              <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-300/85">Search Demand Snapshot</p>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-300/85">Popular Right Now</p>
               <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">
                 {exactOpportunity
-                  ? `Current query and page pickup around the ${vehicleLabel}`
-                  : `Current demand stacking on the ${originalMake} ${originalModel} line`}
+                  ? `What ${vehicleLabel} owners are looking for`
+                  : `Popular repairs for the ${originalMake} ${originalModel}`}
               </h2>
               <p className="text-sm md:text-base text-gray-300 mt-3">
                 {exactOpportunity
-                  ? `${exactOpportunity.note} Use these exact task and symptom links to keep the strongest current search lanes one click away from the command center.`
-                  : `This model line is already showing live exact-year demand. Route people into the strongest year hubs instead of relying on a generic fallback year.`}
+                  ? `${exactOpportunity.note} These are the repairs and topics ${vehicleLabel} owners search for most.`
+                  : `See what other ${originalMake} ${originalModel} owners are fixing right now.`}
               </p>
             </div>
-
-            {exactOpportunity && (
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4 mt-6">
-                <DemandStatCard
-                  label="24h repeated queries"
-                  value={String(exactOpportunity.query24hCount)}
-                  detail={`${exactOpportunity.query24hImpressions} impressions`}
-                />
-                <DemandStatCard
-                  label="Weekly GSC impressions"
-                  value={String(exactOpportunity.gscCurrentImpressions)}
-                  detail={`${formatSignedDelta(exactOpportunity.gscDeltaImpressions)} vs prior week`}
-                />
-                <DemandStatCard
-                  label="Weekly GSC clicks"
-                  value={String(exactOpportunity.gscCurrentClicks)}
-                  detail={`${exactOpportunity.topClusters.slice(0, 2).map((cluster) => cluster.label).join(' • ') || 'Live repair pickup'}`}
-                />
-                <DemandStatCard
-                  label="Weekly GA organic sessions"
-                  value={String(exactOpportunity.gaCurrentSessions)}
-                  detail={`${formatSignedDelta(exactOpportunity.gaDeltaSessions)} vs prior week`}
-                />
-              </div>
-            )}
 
             {exactOpportunity?.topTasks.length ? (
               <div className="mt-6">
                 <div className="flex items-end justify-between gap-3 mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-white">Exact repair tasks already surfacing for this vehicle</h3>
+                    <h3 className="text-xl font-semibold text-white">Most-searched repairs for this vehicle</h3>
                     <p className="text-sm text-gray-300 mt-2">
-                      Push users into these exact paths first when they line up with what they searched.
+                      These are the repairs {vehicleLabel} owners search for most often.
                     </p>
                   </div>
                 </div>
@@ -790,7 +763,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
                     >
                       <p className="text-xs uppercase tracking-[0.18em] text-emerald-300/85 mb-2">{task.cluster}</p>
                       <h3 className="text-base font-semibold text-white">{task.label}</h3>
-                      <p className="text-sm text-gray-400 mt-2">Demand weight {task.weight}</p>
+                      <p className="text-sm text-gray-400 mt-2">Popular repair</p>
                     </Link>
                   ))}
                 </div>
@@ -799,7 +772,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
 
             {exactOpportunity?.symptomHubs.length ? (
               <div className="mt-6">
-                <h3 className="text-xl font-semibold text-white">Symptom hubs that should keep feeding this vehicle</h3>
+                <h3 className="text-xl font-semibold text-white">Common symptoms for this vehicle</h3>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {exactOpportunity.symptomHubs.slice(0, 4).map((hub) => (
                     <Link
@@ -818,9 +791,9 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               <div className="mt-6">
                 <div className="flex items-end justify-between gap-3 mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-white">Nearby hot years on this model line</h3>
+                    <h3 className="text-xl font-semibold text-white">Other {originalMake} {originalModel} years</h3>
                     <p className="text-sm text-gray-300 mt-2">
-                      These year hubs are picking up demand now and should stay tightly linked to the rest of the model family.
+                      Popular repair hubs for other model years of the {originalMake} {originalModel}.
                     </p>
                   </div>
                 </div>
@@ -834,13 +807,10 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
                         href={entry.hubPath}
                         className="block transition-colors hover:text-emerald-300"
                       >
-                        <p className="text-xs uppercase tracking-[0.18em] text-emerald-300/85 mb-2">Model-line demand</p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-emerald-300/85 mb-2">Other model year</p>
                         <h3 className="text-base font-semibold text-white">{entry.label}</h3>
                       </Link>
                       <p className="text-sm text-gray-400 mt-2">{entry.note}</p>
-                      <p className="text-xs text-gray-500 mt-3">
-                        {entry.query24hCount} repeated queries • {entry.gscCurrentImpressions} GSC impressions • {entry.gaCurrentSessions} GA organic sessions
-                      </p>
                       {entry.topTasks.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-4">
                           {entry.topTasks.slice(0, 2).map((task) => (
@@ -869,7 +839,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
             {symptomGroup && (
               <EntryPanel
                 title="Start from the complaint"
-                description={`Symptom hubs give the ${vehicleLabel} a calmer entry path when the user knows what the car is doing, but not what to fix yet.`}
+                description={`Not sure what the problem is? Start from what your ${vehicleLabel} is doing — noise, warning light, leak, or other symptom.`}
                 tone="amber"
                 browseHref="/symptoms"
                 entries={[
@@ -885,7 +855,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
             {codeGroup && (
               <EntryPanel
                 title="Have a code already"
-                description="These shared code clusters connect the exact vehicle hub back into code-specific diagnosis, likely repairs, and affected systems."
+                description="Got a check engine light code? Look it up to see what it means, common causes, and how much it costs to fix."
                 tone="emerald"
                 browseHref="/codes"
                 entries={codeGroup.nodes.slice(0, 5).map((node) => ({
@@ -903,15 +873,15 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
         <section className="max-w-6xl mx-auto px-4 pb-12">
           <div className="rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
             <div className="mb-5">
-              <h2 className="text-2xl font-bold text-white">High-priority exact pages around this vehicle line</h2>
+              <h2 className="text-2xl font-bold text-white">Featured Repair Guides</h2>
               <p className="text-sm text-gray-300 mt-2">
-                These are the exact repair pages and nearby model-line pages still worth keeping close to the hub while traffic is climbing.
+                Popular repair guides for the {vehicleLabel} and nearby model years.
               </p>
             </div>
             <div className="grid gap-6 xl:grid-cols-2">
               {exactVehicleTier1Pages.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-3">Exact {vehicleLabel} priority pages</h3>
+                  <h3 className="text-lg font-semibold text-white mb-3">{vehicleLabel} Guides</h3>
                   <div className="space-y-3">
                     {exactVehicleTier1Pages.map((entry) => (
                       <Link
@@ -928,7 +898,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               )}
               {modelTier1Pages.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-3">More exact pages across this model line</h3>
+                  <h3 className="text-lg font-semibold text-white mb-3">More {originalMake} {originalModel} Guides</h3>
                   <div className="space-y-3">
                     {modelTier1Pages.map((entry) => (
                       <Link
@@ -954,7 +924,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
             <div>
               <h2 className="text-2xl font-bold text-white">Exact Repair Guides for {vehicleLabel}</h2>
               <p className="text-sm text-gray-400 mt-1">
-                These are the strongest exact-match repair flows currently connected to this vehicle cluster.
+                Step-by-step guides for common {vehicleLabel} repairs.
               </p>
             </div>
             <Link href="/repairs" className="text-sm text-cyan-400 hover:underline">
@@ -983,9 +953,9 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
         <section className="max-w-6xl mx-auto px-4 pb-12">
           <div className="flex items-end justify-between gap-3 mb-5">
             <div>
-              <h2 className="text-2xl font-bold text-white">Exact Wiring Surfaces</h2>
+              <h2 className="text-2xl font-bold text-white">Wiring Diagrams</h2>
               <p className="text-sm text-gray-400 mt-1">
-                Wiring pages tied directly to the {vehicleLabel} node.
+                Factory electrical diagrams for the {vehicleLabel}.
               </p>
             </div>
             <Link href="/wiring" className="text-sm text-cyan-400 hover:underline">
@@ -1013,9 +983,9 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
       {rankedKnowledgeGroups.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 pb-12 border-t border-white/10 pt-10">
           <div className="max-w-3xl mb-6">
-            <h2 className="text-xl font-bold text-white">Knowledge Paths for This Vehicle</h2>
+            <h2 className="text-xl font-bold text-white">Related Resources</h2>
             <p className="text-sm text-gray-400 mt-1">
-              Canonical graph blocks grounded in the exact {vehicleLabel} identity. These groups are exported in machine-readable form for audit and future hub generation.
+              More guides, diagrams, and reference pages connected to the {vehicleLabel}.
             </p>
           </div>
           <div className="grid xl:grid-cols-2 gap-6">

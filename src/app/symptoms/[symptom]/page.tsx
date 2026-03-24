@@ -192,9 +192,9 @@ export default async function SymptomHubPage({ params }: PageProps) {
       {rankedKnowledgeGroups.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 pb-14">
           <div className="mb-5">
-            <h2 className="text-2xl font-semibold text-white">Graph paths from this symptom</h2>
+            <h2 className="text-2xl font-semibold text-white">Related Resources</h2>
             <p className="text-gray-400 mt-2">
-              These links are generated from the canonical symptom cluster, not from one-off page copy.
+              Repair guides, wiring diagrams, and other pages related to this symptom.
             </p>
           </div>
 
@@ -222,9 +222,9 @@ export default async function SymptomHubPage({ params }: PageProps) {
         <section className="max-w-6xl mx-auto px-4 pb-14">
           <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">
             <div className="mb-5">
-              <h2 className="text-2xl font-semibold text-white">Priority code pages this symptom should reinforce</h2>
+              <h2 className="text-2xl font-semibold text-white">Related Trouble Codes</h2>
               <p className="text-gray-300 mt-2">
-                These code pages are still light on inbound support. Linking them from the canonical symptom hub helps push more authority into the code-to-repair path.
+                These check engine light codes are often associated with this symptom.
               </p>
             </div>
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -237,7 +237,6 @@ export default async function SymptomHubPage({ params }: PageProps) {
                   <p className="text-xs uppercase tracking-[0.2em] text-emerald-300/80 mb-2">{entry.affectedSystem} Code</p>
                   <h3 className="text-base font-semibold text-white">{entry.label}</h3>
                   <p className="text-xs text-gray-400 mt-2">{entry.action}</p>
-                  <p className="text-xs text-gray-500 mt-1">Opportunity score {entry.opportunityScore}</p>
                 </Link>
               ))}
             </div>
@@ -249,9 +248,9 @@ export default async function SymptomHubPage({ params }: PageProps) {
         <section className="max-w-6xl mx-auto px-4 pb-14">
           <div className="rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
             <div className="mb-5">
-              <h2 className="text-2xl font-semibold text-white">Priority exact repair pages this symptom should support</h2>
+              <h2 className="text-2xl font-semibold text-white">Repairs That May Fix This</h2>
               <p className="text-gray-300 mt-2">
-                The graph-priority report says these repair pages match this symptom family but still need stronger inbound support.
+                These repair guides are commonly needed when you experience this symptom.
               </p>
             </div>
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -261,9 +260,8 @@ export default async function SymptomHubPage({ params }: PageProps) {
                   href={entry.href}
                   className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
                 >
-                  <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Support Gap</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Repair guide</p>
                   <h3 className="text-base font-semibold text-white">{entry.label}</h3>
-                  <p className="text-xs text-gray-400 mt-2">Opportunity score {entry.opportunityScore}</p>
                 </Link>
               ))}
             </div>

@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 const OG_IMAGE = 'https://spotonauto.com/og-default.svg';
 
 export const metadata: Metadata = {
-  title: 'Diagnostic Core | AI Car Problem Diagnosis | SpotOnAuto',
+  title: 'AI Car Diagnosis | Describe Your Problem, Get Answers | SpotOnAuto',
   description: 'Describe your car symptoms or enter OBD codes to get instant AI-powered diagnostic steps and repair advice.',
   openGraph: {
     images: [OG_IMAGE],

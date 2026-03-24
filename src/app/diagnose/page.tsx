@@ -24,7 +24,7 @@ export default async function DiagnosticPage({
 
     return (
         <>
-            <h1 className="pt-24 mb-4 text-center text-2xl font-display font-bold text-white">AI Car Diagnosis</h1>
+            <h1 className="pt-24 mb-4 text-center text-2xl font-display font-bold text-white">What&apos;s Wrong with Your Car?</h1>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -46,7 +46,7 @@ export default async function DiagnosticPage({
             {hasVehicle ? (
                 <div className="flex min-h-[calc(100vh-80px)] w-full flex-col items-center p-4 md:p-8">
                     <h2 className="mb-8 text-2xl font-mono uppercase tracking-widest text-neon-cyan">
-                        SYSTEM DIAGNOSTICS
+                        AI DIAGNOSIS
                     </h2>
                     <DiagnosticChatRoute />
                 </div>

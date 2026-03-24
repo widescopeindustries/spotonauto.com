@@ -212,7 +212,7 @@ export default function CodePageClient({
                 </ul>
                 {symptomHubLinks.length > 0 && (
                     <div className="mt-5 border-t border-white/10 pt-4">
-                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-300 mb-3">Canonical symptom paths</p>
+                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-300 mb-3">Related Symptoms</p>
                         <div className="flex flex-wrap gap-2">
                             {symptomHubLinks.map((link) => (
                                 <Link
@@ -333,9 +333,9 @@ export default function CodePageClient({
             {(manualLinks.length > 0 || symptomHubLinks.length > 0 || repairLinks.length > 0 || wiringLinks.length > 0) && (
                 <section className="mb-12">
                     <div className="mb-5">
-                        <h3 className="text-xl font-bold text-white mb-2">Knowledge Paths from This Code</h3>
+                        <h3 className="text-xl font-bold text-white mb-2">Related Resources</h3>
                         <p className="text-gray-400 text-sm">
-                            These links connect {code.code} to the most relevant symptom hubs, repair workflows, and wiring surfaces across SpotOnAuto.
+                            Repair guides, symptom pages, and wiring diagrams related to {code.code}.
                         </p>
                     </div>
 

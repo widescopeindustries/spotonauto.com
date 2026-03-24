@@ -29,15 +29,14 @@ export default function SymptomsIndexPage() {
         SpotOnAuto <span className="text-amber-400">Symptom Hubs</span>
       </h1>
       <p className="text-gray-300 max-w-3xl mb-8">
-        Start from the symptom the way drivers actually describe it. These hubs normalize plain-English complaints into repair categories,
-        trouble codes, and exact vehicle repair pages so the graph can route you to the shortest valid fix path.
+        Describe what your car is doing — we'll help you figure out what's wrong and which repair you need.
       </p>
 
       {prioritySymptomHubs.length > 0 && (
         <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-6">
-          <h2 className="text-xl font-bold text-white mb-2">Priority symptom hubs</h2>
+          <h2 className="text-xl font-bold text-white mb-2">Common Symptoms</h2>
           <p className="text-sm text-gray-300 mb-5">
-            The graph-priority report says these symptom clusters deserve the strongest crawl and link support right now.
+            The most common car problems drivers search for right now.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             {prioritySymptomHubs.map((cluster) => (
@@ -46,9 +45,8 @@ export default function SymptomsIndexPage() {
                 href={cluster.href}
                 className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
               >
-                <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Priority Hub</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Common symptom</p>
                 <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
-                <p className="text-xs text-gray-400 mt-2">Opportunity score {cluster.opportunityScore}</p>
               </Link>
             ))}
           </div>
@@ -57,9 +55,9 @@ export default function SymptomsIndexPage() {
 
       {supportGapRepairs.length > 0 && (
         <section className="mb-10 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
-          <h2 className="text-xl font-bold text-white mb-2">Exact repair pages symptom hubs should reinforce</h2>
+          <h2 className="text-xl font-bold text-white mb-2">Related Repair Guides</h2>
           <p className="text-sm text-gray-300 mb-5">
-            These exact repair pages are valuable but still under-supported. Strong symptom-hub links help move crawl depth into deeper repair inventory.
+            Vehicle-specific repair guides connected to these symptoms.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             {supportGapRepairs.map((entry) => (
@@ -68,7 +66,7 @@ export default function SymptomsIndexPage() {
                 href={entry.href}
                 className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
               >
-                <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Support Gap</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Repair guide</p>
                 <h3 className="text-base font-semibold text-white">{entry.label}</h3>
                 <p className="text-xs text-gray-400 mt-2">{entry.action}</p>
               </Link>
@@ -103,9 +101,9 @@ export default function SymptomsIndexPage() {
 
       {orphanSymptoms.length > 0 && (
         <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-          <h2 className="text-xl font-bold text-white mb-2">Symptom hubs still light on inbound support</h2>
+          <h2 className="text-xl font-bold text-white mb-2">More Symptoms</h2>
           <p className="text-sm text-gray-300 mb-5">
-            These are canonical symptom pages the graph still sees as underlinked. Keeping them prominent here helps fix that.
+            Additional symptom pages you might find helpful.
           </p>
           <div className="flex flex-wrap gap-3">
             {orphanSymptoms.map((entry) => (

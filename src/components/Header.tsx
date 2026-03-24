@@ -3,11 +3,10 @@ import { Cpu } from 'lucide-react';
 import HeaderChrome from '@/components/HeaderChrome';
 
 const desktopNavItems = [
-  { label: 'Guides', href: '/guides' },
-  { label: 'Wiring', href: '/wiring' },
-  { label: 'Codes', href: '/codes' },
-  { label: 'Repair Hub', href: '/repair' },
-  { label: 'Parts', href: '/parts' },
+  { label: 'Repair Guides', href: '/repair' },
+  { label: 'Wiring Diagrams', href: '/wiring' },
+  { label: 'Look Up a Code', href: '/codes' },
+  { label: 'AI Diagnosis', href: '/diagnose' },
   { label: 'Community', href: '/community' },
 ];
 

@@ -147,7 +147,7 @@ export default function DiagnosticVehicleSelector({
             <div className="mb-10 text-center">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-2">
                     <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-                    <span className="text-xs font-mono uppercase tracking-widest text-amber-400">AI Diagnostic Core Online</span>
+                    <span className="text-xs font-mono uppercase tracking-widest text-amber-400">AI Diagnosis Ready</span>
                 </div>
                 <h2 className="mb-3 font-display text-3xl font-black text-white sm:text-4xl">
                     What&apos;s wrong with
@@ -155,7 +155,7 @@ export default function DiagnosticVehicleSelector({
                     <span className="bg-gradient-to-r from-cyan-400 to-cyan-200 bg-clip-text text-transparent">your vehicle?</span>
                 </h2>
                 <p className="max-w-md mx-auto font-body text-gray-400">
-                    Select the car first, then start the chat. The heavier diagnostic runtime only loads after you enter the session.
+                    Select your vehicle, describe the problem, and get free AI-powered diagnosis in seconds.
                 </p>
             </div>
 
@@ -281,7 +281,7 @@ export default function DiagnosticVehicleSelector({
                 </button>
 
                 <p className="text-center text-xs text-gray-600">
-                    Free - No credit card required - Chat runtime loads only after you enter the session
+                    Free — No credit card required
                 </p>
             </div>
         </div>

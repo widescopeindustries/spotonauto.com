@@ -1797,7 +1797,7 @@ export default async function Page({ params }: PageProps) {
     const repairGraphGroups = [
         ...(symptomNodes.length > 0 ? [{
             kind: 'symptom' as const,
-            title: 'Canonical Symptom Hubs',
+            title: 'Related Symptoms',
             browseHref: '/symptoms',
             theme: 'amber' as const,
             nodes: symptomNodes,
@@ -2296,23 +2296,15 @@ export default async function Page({ params }: PageProps) {
                         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                             <div className="max-w-3xl">
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80">
-                                    Tier-1 recovery lane
+                                    Related Pages
                                 </p>
                                 <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                                    Push more authority into the strongest exact repair pages
+                                    More resources for this repair
                                 </h2>
                                 <p className="mt-3 text-sm leading-7 text-violet-50/85">
-                                    {tier1RescueEntry
-                                        ? 'This exact repair page is part of the winner set. Keep it tightly connected to vehicle, model, symptom, and code surfaces so Google sees it as a primary destination.'
-                                        : 'This repair family is part of the current recovery lane. The links below reinforce exact repair pages the graph says deserve more internal authority.'}
+                                    Browse related vehicle pages, model guides, and other {cleanTask} resources.
                                 </p>
                             </div>
-                            <Link
-                                href="/repair/winners/sitemap.xml"
-                                className="inline-flex items-center justify-center rounded-full bg-violet-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-400"
-                            >
-                                Open winner sitemap
-                            </Link>
                         </div>
 
                         <div className="mt-5 grid gap-3 md:grid-cols-3">
@@ -2321,30 +2313,30 @@ export default async function Page({ params }: PageProps) {
                                 className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
                             >
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Vehicle hub</p>
-                                <h3 className="text-base font-semibold text-white">Support the exact {vehicleName} cluster</h3>
-                                <p className="mt-2 text-sm leading-6 text-gray-300">Keep repair, wiring, manual, and code links flowing through the exact vehicle hub.</p>
+                                <h3 className="text-base font-semibold text-white">{vehicleName} Repair Hub</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-300">See all repairs, wiring diagrams, and codes for your {vehicleName}.</p>
                             </Link>
                             <Link
                                 href={`/guides/${canonicalMake}/${canonicalModel}`}
                                 className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
                             >
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Model cluster</p>
-                                <h3 className="text-base font-semibold text-white">{displayMake} {displayModel} guide cluster</h3>
-                                <p className="mt-2 text-sm leading-6 text-gray-300">Route broader make/model traffic into the exact repair pages that already have recovery potential.</p>
+                                <h3 className="text-base font-semibold text-white">{displayMake} {displayModel} Guides</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-300">Browse all repair guides for the {displayMake} {displayModel}.</p>
                             </Link>
                             <Link
                                 href={`/repairs/${canonicalTask}`}
                                 className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
                             >
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Repair family</p>
-                                <h3 className="text-base font-semibold text-white">Reinforce the {cleanTask} category hub</h3>
-                                <p className="mt-2 text-sm leading-6 text-gray-300">Use the category hub to keep task-level crawl flow pointed into the exact pages that matter most.</p>
+                                <h3 className="text-base font-semibold text-white">All {cleanTask} guides</h3>
+                                <p className="mt-2 text-sm leading-6 text-gray-300">See {cleanTask} guides for every vehicle we cover.</p>
                             </Link>
                         </div>
 
                         {sameTaskSupportGapPages.length > 0 && (
                             <div className="mt-6">
-                                <h3 className="text-lg font-semibold text-white mb-3">High-opportunity exact pages in this repair family</h3>
+                                <h3 className="text-lg font-semibold text-white mb-3">More {cleanTask} guides</h3>
                                 <div className="grid gap-3 md:grid-cols-3">
                                     {sameTaskSupportGapPages.map((entry) => (
                                         <Link
@@ -2352,9 +2344,9 @@ export default async function Page({ params }: PageProps) {
                                             href={entry.href}
                                             className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
                                         >
-                                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Support Gap</p>
+                                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Repair guide</p>
                                             <h3 className="text-base font-semibold text-white">{entry.label}</h3>
-                                            <p className="mt-2 text-xs leading-6 text-gray-400">Opportunity score {entry.opportunityScore}</p>
+                                            <p className="mt-2 text-xs leading-6 text-gray-400">{entry.action || 'Related repair'}</p>
                                         </Link>
                                     ))}
                                 </div>
@@ -2365,7 +2357,7 @@ export default async function Page({ params }: PageProps) {
                             <div className="mt-6 grid gap-6 xl:grid-cols-2">
                                 {exactVehicleTier1Pages.length > 0 && (
                                     <div>
-                                        <h3 className="text-lg font-semibold text-white mb-3">Other winner pages for this exact vehicle</h3>
+                                        <h3 className="text-lg font-semibold text-white mb-3">Other {vehicleName} guides</h3>
                                         <div className="space-y-3">
                                             {exactVehicleTier1Pages.map((entry) => (
                                                 <Link
@@ -2382,7 +2374,7 @@ export default async function Page({ params }: PageProps) {
                                 )}
                                 {modelTier1Pages.length > 0 && (
                                     <div>
-                                        <h3 className="text-lg font-semibold text-white mb-3">Winner pages for this model line</h3>
+                                        <h3 className="text-lg font-semibold text-white mb-3">More {displayMake} {displayModel} guides</h3>
                                         <div className="space-y-3">
                                             {modelTier1Pages.map((entry) => (
                                                 <Link
@@ -2433,7 +2425,6 @@ export default async function Page({ params }: PageProps) {
                                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200/80 mb-2">Symptom Hub</p>
                                     <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
                                     <p className="mt-2 text-sm leading-6 text-gray-300">{cluster.summary}</p>
-                                    <p className="mt-2 text-xs leading-6 text-gray-500">Opportunity score {cluster.opportunityScore}</p>
                                 </Link>
                             ))}
                         </div>
@@ -2448,10 +2439,10 @@ export default async function Page({ params }: PageProps) {
                                     Code reinforcement
                                 </p>
                                 <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                                    Priority code pages this repair should support
+                                    Related Trouble Codes
                                 </h2>
                                 <p className="mt-3 text-sm leading-7 text-emerald-50/85">
-                                    These code pages are still light on inbound support. Promoting them from repair surfaces helps strengthen code-to-repair discovery and keeps the graph tighter.
+                                    These check engine light codes are often connected to this repair.
                                 </p>
                             </div>
                             <Link
@@ -2471,7 +2462,7 @@ export default async function Page({ params }: PageProps) {
                                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200/80 mb-2">{entry.affectedSystem} Code</p>
                                     <h3 className="text-base font-semibold text-white">{entry.label}</h3>
                                     <p className="mt-2 text-xs leading-6 text-gray-400">{entry.action}</p>
-                                    <p className="mt-1 text-xs leading-6 text-gray-500">Opportunity score {entry.opportunityScore}</p>
+                                    <p className="mt-1 text-xs leading-6 text-gray-500">{entry.action || 'Related repair'}</p>
                                 </Link>
                             ))}
                         </div>
@@ -2919,9 +2910,9 @@ export default async function Page({ params }: PageProps) {
             {rankedKnowledgeGroups.length > 0 && (
                 <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">
                     <div className="max-w-3xl mb-6">
-                        <h2 className="text-lg font-bold text-white">Knowledge Paths for This Repair</h2>
+                        <h2 className="text-lg font-bold text-white">Related Resources</h2>
                         <p className="text-sm text-gray-400 mt-1">
-                            This graph connects the current repair to the strongest next surfaces: symptom hubs, factory manuals, specs, tool pages, wiring, and likely trouble codes.
+                            Symptom guides, factory manuals, specs, wiring diagrams, and trouble codes related to this repair.
                         </p>
                     </div>
                     <div className="grid xl:grid-cols-2 gap-6">

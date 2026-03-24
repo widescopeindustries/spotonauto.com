@@ -129,9 +129,9 @@ export default async function TaskCategoryPage({ params }: PageProps) {
 
         {priorityPages.length > 0 && (
           <section className="mb-10 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
-            <h2 className="text-xl font-bold text-white mb-2">Priority {taskName} Guides</h2>
+            <h2 className="text-xl font-bold text-white mb-2">Popular {taskName} Guides</h2>
             <p className="text-sm text-gray-400 mb-5">
-              These exact pages were part of the late-February winner set and now have stronger vehicle-specific detail.
+              The most popular {taskName.toLowerCase()} guides with detailed, vehicle-specific instructions.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
               {priorityPages.map((entry) => (
@@ -141,7 +141,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
                   className="rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
                 >
                   <p className="text-xs font-mono uppercase tracking-widest text-cyan-400/80 mb-2">
-                    Priority page
+                    Popular guide
                   </p>
                   <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
                     {entry.year} {entry.make} {entry.model}
@@ -156,9 +156,9 @@ export default async function TaskCategoryPage({ params }: PageProps) {
           <section className="mb-10 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
               <div>
-                <h2 className="text-xl font-bold text-white">Graph-priority exact pages for {taskName}</h2>
+                <h2 className="text-xl font-bold text-white">More {taskName} Guides</h2>
                 <p className="text-sm text-gray-300 mt-1">
-                  These exact repair pages match this task family but still need stronger inbound support from category, symptom, and code surfaces.
+                  Additional vehicle-specific {taskName.toLowerCase()} guides you might find helpful.
                 </p>
               </div>
               <Link href="/repair" className="text-sm text-violet-300 hover:text-violet-200 transition-colors">
@@ -172,9 +172,8 @@ export default async function TaskCategoryPage({ params }: PageProps) {
                   href={entry.href}
                   className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/40 hover:bg-black/30 transition-all"
                 >
-                  <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Support Gap</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80 mb-2">Repair guide</p>
                   <h3 className="text-base font-semibold text-white">{entry.label}</h3>
-                  <p className="text-xs text-gray-400 mt-2">Opportunity score {entry.opportunityScore}</p>
                 </Link>
               ))}
             </div>
@@ -185,9 +184,9 @@ export default async function TaskCategoryPage({ params }: PageProps) {
           <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-6">
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
               <div>
-                <h2 className="text-xl font-bold text-white">Priority symptom hubs that resolve into {taskName}</h2>
+                <h2 className="text-xl font-bold text-white">Symptoms That May Need {taskName}</h2>
                 <p className="text-sm text-gray-300 mt-1">
-                  These are the strongest report-backed symptom entry points for this repair family. Keeping them prominent helps route plain-English demand into exact repair pages faster.
+                  If your car is showing any of these symptoms, a {taskName.toLowerCase()} may be the fix.
                 </p>
               </div>
               <Link href="/symptoms" className="text-sm text-amber-300 hover:text-amber-200 transition-colors">
@@ -201,10 +200,9 @@ export default async function TaskCategoryPage({ params }: PageProps) {
                   href={cluster.href}
                   className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-amber-400/35 hover:bg-black/30 transition-all"
                 >
-                  <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Symptom Cluster</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80 mb-2">Related symptom</p>
                   <h3 className="text-base font-semibold text-white">{cluster.label}</h3>
                   <p className="text-sm text-gray-300 mt-2">{cluster.summary}</p>
-                  <p className="text-xs text-gray-500 mt-2">Opportunity score {cluster.opportunityScore}</p>
                 </Link>
               ))}
             </div>
@@ -215,9 +213,9 @@ export default async function TaskCategoryPage({ params }: PageProps) {
           <section className="mb-10 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
               <div>
-                <h2 className="text-xl font-bold text-white">Priority code pages tied to {taskName}</h2>
+                <h2 className="text-xl font-bold text-white">Trouble Codes Related to {taskName}</h2>
                 <p className="text-sm text-gray-300 mt-1">
-                  The graph report still sees these code pages as light on support. Promoting them here helps reinforce code-to-repair routing.
+                  These check engine light codes are often connected to {taskName.toLowerCase()} repairs.
                 </p>
               </div>
               <Link href="/codes" className="text-sm text-emerald-300 hover:text-emerald-200 transition-colors">
@@ -234,7 +232,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
                   <p className="text-xs uppercase tracking-[0.2em] text-emerald-300/80 mb-2">{entry.affectedSystem} Code</p>
                   <h3 className="text-base font-semibold text-white">{entry.label}</h3>
                   <p className="text-xs text-gray-400 mt-2">
-                    {entry.action} · Opportunity score {entry.opportunityScore}
+                    {entry.action}
                   </p>
                 </Link>
               ))}

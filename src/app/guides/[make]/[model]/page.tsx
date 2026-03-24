@@ -174,9 +174,9 @@ export default async function ModelGuidesPage({ params }: PageProps) {
         <section className="mb-12 rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-xl font-bold text-white">Exact Vehicle Hub</h2>
+              <h2 className="text-xl font-bold text-white">Vehicle Repair Hub</h2>
               <p className="text-sm text-gray-300 mt-2">
-                Start from the canonical {targetYear} {originalMake} {originalModel} hub to move between exact repair, wiring, manual, and code surfaces.
+                Jump to the {targetYear} {originalMake} {originalModel} repair hub for guides, wiring diagrams, codes, and more.
               </p>
             </div>
             <Link
@@ -192,16 +192,16 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           <section className="mb-12 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div className="max-w-3xl">
-                <h2 className="text-xl font-bold text-white">Current demand on the {originalMake} {originalModel} line</h2>
+                <h2 className="text-xl font-bold text-white">Popular {originalMake} {originalModel} Years</h2>
                 <p className="text-sm text-gray-300 mt-2">
-                  These exact-year hubs are where query repetition and page pickup are already showing. Keep the model page feeding them instead of pointing users into a generic representative year.
+                  The most popular model years for the {originalMake} {originalModel} — click through for year-specific repair guides and resources.
                 </p>
               </div>
               <Link
                 href={`/repair/${targetYear}/${canonicalMake}/${canonicalModel}`}
                 className="inline-flex items-center rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 hover:border-emerald-400/40 hover:bg-emerald-500/20 transition-all"
               >
-                Open lead year hub
+                View top year
               </Link>
             </div>
 
@@ -213,15 +213,12 @@ export default async function ModelGuidesPage({ params }: PageProps) {
                     className="rounded-xl border border-white/10 bg-black/20 p-4"
                   >
                     <Link href={entry.hubPath} className="block group">
-                      <p className="text-xs uppercase tracking-[0.18em] text-emerald-300/80 mb-2">Exact-year demand</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-emerald-300/80 mb-2">Popular year</p>
                       <h3 className="text-base font-semibold text-white group-hover:text-emerald-300 transition-colors">
                         {entry.label}
                       </h3>
                     </Link>
                     <p className="text-sm text-gray-300 mt-2">{entry.note}</p>
-                    <p className="text-xs text-gray-500 mt-3">
-                      {entry.query24hCount} repeated queries • {entry.gscCurrentImpressions} weekly GSC impressions • {entry.gaCurrentSessions} weekly GA organic sessions
-                    </p>
                     {entry.topTasks.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-4">
                         {entry.topTasks.slice(0, 3).map((task) => (
@@ -242,7 +239,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
 
             {queryOnlySignals.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-lg font-semibold text-white">Also showing fresh query pickup</h3>
+                <h3 className="text-lg font-semibold text-white">Other popular years</h3>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {queryOnlySignals.map((entry) => (
                     <Link
@@ -250,7 +247,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
                       href={entry.hubPath}
                       className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-gray-200 transition-colors hover:border-emerald-400/35 hover:text-emerald-200"
                     >
-                      {entry.label} • {entry.queryCount} queries / {entry.impressions} impressions
+                      {entry.label}
                     </Link>
                   ))}
                 </div>
@@ -263,17 +260,11 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           <section className="mb-12 rounded-2xl border border-violet-500/20 bg-violet-500/[0.06] p-6">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
-                <h2 className="text-xl font-bold text-white">Tier-1 winner repair pages for the {originalMake} {originalModel}</h2>
+                <h2 className="text-xl font-bold text-white">Popular {originalMake} {originalModel} Repair Guides</h2>
                 <p className="text-sm text-gray-300 mt-2">
-                  These exact repair pages are in the recovery lane already. Keep them linked from the model cluster so authority flows into the pages with the best current ranking potential.
+                  The most-visited repair guides for the {originalMake} {originalModel}.
                 </p>
               </div>
-              <Link
-                href="/repair/winners/sitemap.xml"
-                className="inline-flex items-center rounded-lg border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:border-violet-400/40 hover:bg-violet-500/20 transition-all"
-              >
-                Winner sitemap
-              </Link>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {tier1ModelPages.map((entry) => (
@@ -282,7 +273,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
                   href={entry.href}
                   className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
                 >
-                  <p className="text-xs uppercase tracking-[0.18em] text-violet-300/80 mb-2">Tier-1 winner</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-violet-300/80 mb-2">Popular guide</p>
                   <h3 className="text-base font-semibold text-white">{entry.year} {entry.make} {entry.model}</h3>
                   <p className="text-sm text-gray-300 mt-2 capitalize">{entry.task.replace(/-/g, ' ')}</p>
                 </Link>
@@ -315,7 +306,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
         <section className="mt-16">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <h2 className="text-xl font-bold text-white">
-              Factory Manual Paths
+              Factory Service Manuals
             </h2>
             <Link href="/manual" className="text-sm text-cyan-400 hover:underline">
               Browse all manuals →
@@ -330,7 +321,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
               <h3 className="text-base font-semibold text-gray-200 group-hover:text-white transition">
                 Browse {originalMake} manual categories
               </h3>
-              <p className="text-xs text-gray-500 mt-2">Step into OEM section trees for every supported {originalMake} year.</p>
+              <p className="text-xs text-gray-500 mt-2">Browse factory manual sections for all supported {originalMake} years.</p>
             </Link>
             <Link
               href={representativeManualNodes[1]?.href || `/manual/${encodeURIComponent(originalMake)}/${targetYear}`}
@@ -340,7 +331,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
               <h3 className="text-base font-semibold text-gray-200 group-hover:text-white transition">
                 Open the {targetYear} {originalMake} manual
               </h3>
-              <p className="text-xs text-gray-500 mt-2">Start from the year-level OEM index, then drill into the procedures that match this model.</p>
+              <p className="text-xs text-gray-500 mt-2">Browse repair procedures from the {targetYear} {originalMake} factory manual.</p>
             </Link>
           </div>
         </section>
@@ -380,7 +371,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           <section className="mt-16">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <h2 className="text-xl font-bold text-white">
-                Exact {targetYear} Wiring Paths
+                {targetYear} Wiring Diagrams
               </h2>
               <Link href="/wiring" className="text-sm text-cyan-400 hover:underline">
                 Browse all wiring pages →
@@ -408,7 +399,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           <section className="mt-16">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <h2 className="text-xl font-bold text-white">
-                Likely Trouble Code Clusters
+                Common Trouble Codes
               </h2>
               <Link href="/codes" className="text-sm text-cyan-400 hover:underline">
                 Browse all DTC codes →
