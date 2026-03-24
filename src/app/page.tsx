@@ -104,10 +104,7 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeStructuredData) }}
       />
-      <ClientHome
-        momentumClusters={homepageMomentum.clusters}
-        commandCenterMomentum={homepageMomentum.commandCenters}
-      />
+      <ClientHome />
     </>
   );
 }

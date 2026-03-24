@@ -1,337 +1,364 @@
-import type { ComponentType } from 'react';
+'use client';
+
+import { startTransition, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Battery, CircleDot, Cpu, Droplets, Lightbulb, Route, Search, Wrench } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import {
+    Activity,
+    ArrowRight,
+    Battery,
+    Car,
+    CircleDot,
+    Cog,
+    Droplets,
+    Hash,
+    Lightbulb,
+    MessageCircle,
+    RotateCcw,
+    Route,
+    Thermometer,
+    Wrench,
+    Zap,
+} from 'lucide-react';
 
-import HomeVehiclePicker from './HomeVehiclePicker';
+import { fetchModels, getMakesForYear, getYears } from '@/services/vehicleData';
+import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
-const FALLBACK_PATHS = [
-    {
-        eyebrow: 'Need help first',
-        title: 'Start with diagnosis',
-        description: 'Use the diagnostic flow when you only know the symptom and need help narrowing the repair path first.',
-        href: '/diagnose',
-        cta: 'Run diagnosis',
-        icon: Search,
-    },
-    {
-        eyebrow: 'Have a code',
-        title: 'Open OBD2 code pages',
-        description: 'If the warning light already gave you a code, go straight into the code library and its repair paths.',
-        href: '/codes',
-        cta: 'Browse codes',
-        icon: Cpu,
-    },
-    {
-        eyebrow: 'Need wiring now',
-        title: 'Open wiring diagrams',
-        description: 'Jump directly into the factory wiring library when electrical work is the reason you came.',
-        href: '/wiring',
-        cta: 'Browse wiring',
-        icon: Route,
-    },
+const VEHICLE_SYSTEMS = [
+    { label: 'Engine', icon: Cog },
+    { label: 'Brakes', icon: CircleDot },
+    { label: 'Electrical', icon: Zap },
+    { label: 'Suspension', icon: Activity },
+    { label: 'Cooling', icon: Thermometer },
+    { label: 'Transmission', icon: RotateCcw },
+    { label: 'Body', icon: Car },
+    { label: 'Fluids', icon: Droplets },
 ];
 
-const DIAGNOSIS_QUICK_STARTS = [
-    { label: 'Car won\'t start', task: 'car won\'t start' },
-    { label: 'Check engine light', task: 'check engine light on' },
-    { label: 'Squeaky brakes', task: 'squeaky brakes' },
-    { label: 'Battery light', task: 'battery light on' },
-    { label: 'Overheating', task: 'overheating' },
-    { label: 'AC not cold', task: 'AC not cold' },
+const POPULAR_REPAIRS = [
+    { label: 'Brake Pads', href: '/repairs/brake-pad-replacement', icon: CircleDot },
+    { label: 'Oil Change', href: '/repairs/oil-change', icon: Droplets },
+    { label: 'Battery', href: '/repairs/battery-replacement', icon: Battery },
+    { label: 'Spark Plugs', href: '/repairs/spark-plug-replacement', icon: Zap },
+    { label: 'Headlight', href: '/repairs/headlight-replacement', icon: Lightbulb },
+    { label: 'Serpentine Belt', href: '/repairs/serpentine-belt-replacement', icon: Route },
+    { label: 'Alternator', href: '/repairs/alternator-replacement', icon: Battery },
+    { label: 'Thermostat', href: '/repairs/thermostat-replacement', icon: Thermometer },
 ];
 
-interface MomentumClusterCard {
-    cluster: string;
-    eyebrow: string;
-    title: string;
-    description: string;
-    href: string;
-    cta: string;
-    queries: number;
-    impressions: number;
-    links: Array<{ href: string; label: string }>;
-}
+const SELECT_CLASS =
+    'w-full appearance-none rounded-lg border border-slate-700 bg-slate-900/55 px-4 py-3 text-sm font-medium text-gray-200 shadow-lg transition-all hover:border-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 disabled:cursor-not-allowed disabled:opacity-50';
 
-interface CommandCenterMomentumCard {
-    year: string;
-    make: string;
-    model: string;
-    label: string;
-    note: string;
-    href: string;
-    score: number;
-}
+export default function ClientHome() {
+    const router = useRouter();
+    const [lane2Open, setLane2Open] = useState(false);
+    const [vehicle, setVehicle] = useState({ year: '', make: '', model: '' });
+    const [availableModels, setAvailableModels] = useState<string[]>([]);
+    const [loadingModels, setLoadingModels] = useState(false);
+    const [dtcCode, setDtcCode] = useState('');
 
-interface ClientHomeProps {
-    momentumClusters: MomentumClusterCard[];
-    commandCenterMomentum: CommandCenterMomentumCard[];
-}
+    const availableYears = getYears();
+    const availableMakes = vehicle.year ? getMakesForYear(vehicle.year) : [];
+    const hasVehicle = Boolean(vehicle.year && vehicle.make && vehicle.model);
+    const vehicleLabel = hasVehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : '';
+    const vehicleHubUrl = hasVehicle
+        ? buildVehicleHubUrl(vehicle.year, vehicle.make, vehicle.model)
+        : '';
 
-const CLUSTER_ICONS: Record<string, ComponentType<{ className?: string }>> = {
-    lighting: Lightbulb,
-    battery: Battery,
-    brakes: CircleDot,
-    oil_fluids: Droplets,
-    filters: Wrench,
-    belts_cooling: Route,
-    starting_charging: Battery,
-    ignition_tuneup: Wrench,
-};
+    useEffect(() => {
+        if (!vehicle.make || !vehicle.year) {
+            setAvailableModels([]);
+            return;
+        }
 
-function HeroSection() {
+        let cancelled = false;
+        setLoadingModels(true);
+
+        void fetchModels(vehicle.make, vehicle.year)
+            .then((models) => {
+                if (!cancelled) setAvailableModels(models);
+            })
+            .catch(() => {
+                if (!cancelled) setAvailableModels([]);
+            })
+            .finally(() => {
+                if (!cancelled) setLoadingModels(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [vehicle.make, vehicle.year]);
+
+    function handleCodeSubmit(e: FormEvent) {
+        e.preventDefault();
+        const code = dtcCode.trim().toLowerCase();
+        if (code) {
+            router.push(`/codes/${code}`);
+        }
+    }
+
     return (
-        <section className="relative px-4 pb-16 pt-24 sm:px-6 lg:px-8">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,212,255,0.12),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.03),transparent_16%)]" />
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-500/35 to-transparent" />
-            <div className="absolute left-[-4rem] top-28 h-72 w-72 rounded-full bg-cyan-500/10 blur-[140px]" />
-            <div className="absolute bottom-12 right-[-4rem] h-80 w-80 rounded-full bg-cyan-500/8 blur-[180px]" />
-
-            <div className="relative z-10 mx-auto max-w-7xl">
-                <div className="grid items-start gap-12 lg:grid-cols-[0.92fr,1.08fr] lg:gap-16">
-                    <div className="space-y-8">
-                        <div className="space-y-5">
-                            <h1 className="font-display text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
-                                Fix Your Car.
-                                <br />
-                                <span className="bg-gradient-to-r from-cyan-300 to-white bg-clip-text text-transparent glow-text">
-                                    Understand What&apos;s Wrong.
-                                </span>
-                            </h1>
-                            <p className="max-w-2xl font-body text-lg text-gray-300 sm:text-xl">
-                                Pick your year, make, and model to get repair guides, wiring diagrams, trouble codes, and more
-                                — all tailored to your exact vehicle.
-                            </p>
-                        </div>
-
-                        <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                            <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
-                                <h3 className="text-base font-semibold text-white">Repair Guides</h3>
-                                <p className="mt-2 text-sm leading-6 text-gray-400">Step-by-step instructions, tools, parts, and torque specs for your exact car.</p>
-                            </div>
-                            <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
-                                <h3 className="text-base font-semibold text-white">AI Diagnosis</h3>
-                                <p className="mt-2 text-sm leading-6 text-gray-400">Describe what&apos;s happening and get help figuring out the problem.</p>
-                            </div>
-                            <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
-                                <h3 className="text-base font-semibold text-white">Wiring Diagrams</h3>
-                                <p className="mt-2 text-sm leading-6 text-gray-400">Factory electrical diagrams for 148K+ systems across 82 makes.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="relative lg:pl-4">
-                        <HomeVehiclePicker />
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function AlternateEntrySection() {
-    return (
-        <section className="px-4 pb-20 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl">
-                <div className="rounded-[32px] matte-panel p-8 sm:p-10">
-                    <div className="mb-8 max-w-3xl space-y-4">
-                        <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
-                            Need a different starting point?
-                        </span>
-                        <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
-                            Start with diagnosis, a code, or wiring when that is what you already know
-                        </h2>
-                        <p className="text-lg text-gray-300">
-                            Not every visit starts with an exact repair. These routes help when you already have a trouble code,
-                            need wiring diagrams, or want help narrowing the problem before opening a guide.
-                        </p>
-                    </div>
-
-                    <div className="grid gap-4 lg:grid-cols-3">
-                        {FALLBACK_PATHS.map((path) => {
-                            const Icon = path.icon;
-
-                            return (
-                                <Link
-                                    key={path.title}
-                                    href={path.href}
-                                    className="group rounded-[24px] matte-panel-soft p-6 transition-all hover:border-cyan-500/30 hover:bg-white/[0.035]"
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="space-y-3">
-                                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">{path.eyebrow}</p>
-                                            <h3 className="font-display text-2xl font-bold text-white">{path.title}</h3>
-                                            <p className="text-sm leading-6 text-gray-400">{path.description}</p>
-                                        </div>
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300">
-                                            <Icon className="h-5 w-5" />
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-100">
-                                        {path.cta}
-                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                    </div>
-                                </Link>
-                            );
-                        })}
-                    </div>
-
-                    <div className="mt-8 rounded-[24px] matte-panel-soft p-6">
-                        <div className="max-w-3xl space-y-3">
-                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Common starting points</p>
-                            <h3 className="font-display text-2xl font-bold text-white">If you only know the symptom, start here</h3>
-                            <p className="text-sm leading-6 text-gray-400">
-                                These quick starts open diagnosis with the symptom already filled in, so you can add the vehicle on the next screen and keep moving.
-                            </p>
-                        </div>
-
-                        <div className="mt-5 flex flex-wrap gap-3">
-                            {DIAGNOSIS_QUICK_STARTS.map((quickStart) => (
-                                <Link
-                                    key={quickStart.task}
-                                    href={{ pathname: '/diagnose', query: { task: quickStart.task } }}
-                                    className="rounded-full border border-white/10 bg-slate-900/50 px-4 py-2 text-sm text-gray-200 transition-all hover:border-cyan-400/35 hover:bg-slate-900/70 hover:text-cyan-100"
-                                >
-                                    {quickStart.label}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function SearchMomentumSection({ momentumClusters }: { momentumClusters: MomentumClusterCard[] }) {
-    return (
-        <section className="px-4 pb-20 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl">
-                <div className="rounded-[32px] matte-panel p-8 sm:p-10">
-                    <div className="mb-8 max-w-3xl space-y-4">
-                        <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
-                            Popular DIY repairs
-                        </span>
-                        <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
-                            Start with the repairs drivers handle most often
-                        </h2>
-                        <p className="text-lg text-gray-300">
-                            These are common jobs many owners can usually do themselves: lights, brakes, batteries, fluids, and filters.
-                            Open an exact guide to get the right parts, specs, and next steps for your vehicle.
-                        </p>
-                    </div>
-
-                    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-5">
-                        {momentumClusters.map((cluster) => {
-                            const Icon = CLUSTER_ICONS[cluster.cluster] || Wrench;
-
-                            return (
-                                <div
-                                    key={cluster.title}
-                                    className="rounded-[24px] matte-panel-soft p-6"
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="space-y-3">
-                                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">{cluster.eyebrow}</p>
-                                            <h3 className="font-display text-2xl font-bold text-white">{cluster.title}</h3>
-                                            <p className="text-sm leading-6 text-gray-400">{cluster.description}</p>
-                                        </div>
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300">
-                                            <Icon className="h-5 w-5" />
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-5 space-y-2">
-                                        {cluster.links.map((link) => (
-                                            <Link
-                                                key={link.href}
-                                                href={link.href}
-                                                className="block rounded-2xl border border-white/10 bg-slate-900/45 px-4 py-3 text-sm text-gray-200 transition-all hover:border-cyan-500/30 hover:bg-slate-900/70 hover:text-cyan-100"
-                                            >
-                                                {link.label}
-                                            </Link>
-                                        ))}
-                                    </div>
-
-                                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-100">
-                                        <Link href={cluster.href} className="inline-flex items-center gap-2">
-                                            {cluster.cta}
-                                            <ArrowRight className="h-4 w-4" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function CommandCenterMomentumSection({ commandCenterMomentum }: { commandCenterMomentum: CommandCenterMomentumCard[] }) {
-    return (
-        <section className="px-4 pb-24 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl">
-                <div className="rounded-[32px] matte-panel p-8 sm:p-10">
-                    <div className="mb-8 max-w-3xl space-y-4">
-                        <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
-                            Popular vehicles
-                        </span>
-                        <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
-                            Find everything for your car in one place
-                        </h2>
-                        <p className="text-lg text-gray-300">
-                            Repair guides, wiring diagrams, trouble codes, and more — all organized by your exact vehicle.
-                        </p>
-                    </div>
-
-                    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-                        {commandCenterMomentum.map((vehicle) => {
-                            return (
-                                <Link
-                                    key={vehicle.href}
-                                    href={vehicle.href}
-                                    className="group rounded-[24px] matte-panel-soft p-6 transition-all hover:border-cyan-500/30 hover:bg-white/[0.035]"
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="space-y-3">
-                                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Vehicle page</p>
-                                            <h3 className="font-display text-2xl font-bold text-white">{vehicle.label}</h3>
-                                            <p className="text-sm leading-6 text-gray-400">{vehicle.note}</p>
-                                        </div>
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300">
-                                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-100">
-                                        View vehicle page
-                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                    </div>
-                                </Link>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-export default function ClientHome({ momentumClusters, commandCenterMomentum }: ClientHomeProps) {
-    return (
-        <div className="relative min-h-screen overflow-x-hidden matte-shell text-white">
+        <div className="relative min-h-screen overflow-x-hidden text-white">
+            {/* Background */}
             <div className="pointer-events-none fixed inset-0 -z-10">
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.025),transparent_14%,transparent_86%,rgba(255,255,255,0.025))]" />
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
             </div>
 
             <div className="relative z-10">
-                <HeroSection />
-                <AlternateEntrySection />
-                <SearchMomentumSection momentumClusters={momentumClusters} />
-                <CommandCenterMomentumSection commandCenterMomentum={commandCenterMomentum} />
+                {/* Hero */}
+                <section className="relative px-4 pt-24 pb-14 sm:px-6 lg:px-8">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,212,255,0.10),transparent_40%)]" />
+                    <div className="absolute left-[-4rem] top-20 h-72 w-72 rounded-full bg-cyan-500/8 blur-[140px]" />
+                    <div className="absolute right-[-4rem] top-32 h-64 w-64 rounded-full bg-cyan-500/6 blur-[160px]" />
+                    <div className="relative mx-auto max-w-4xl text-center">
+                        <h1 className="font-display text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
+                            What&apos;s going on with{' '}
+                            <span className="bg-gradient-to-r from-cyan-300 to-white bg-clip-text text-transparent">
+                                your car?
+                            </span>
+                        </h1>
+                    </div>
+                </section>
+
+                {/* 3 Lanes */}
+                <section className="px-4 pb-20 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl grid gap-6 lg:grid-cols-3 lg:items-start">
+
+                        {/* Lane 1: Not sure what's wrong */}
+                        <Link
+                            href="/diagnose"
+                            className="group flex flex-col rounded-3xl border border-white/10 bg-slate-900/50 p-8 transition-all hover:border-cyan-500/30 hover:bg-white/[0.04]"
+                        >
+                            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300">
+                                <MessageCircle className="h-8 w-8" />
+                            </div>
+                            <h2 className="font-display text-2xl font-bold text-white mb-3">
+                                I&apos;m not sure what&apos;s wrong
+                            </h2>
+                            <p className="text-gray-400 leading-relaxed mb-6">
+                                Describe what&apos;s happening and our AI will help you figure it out
+                            </p>
+                            <div className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 group-hover:text-cyan-200">
+                                Start diagnosis
+                                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </div>
+                        </Link>
+
+                        {/* Lane 2: Know what needs fixing */}
+                        <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-8 transition-all">
+                            {!lane2Open ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setLane2Open(true)}
+                                    className="flex w-full flex-col text-left group"
+                                >
+                                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300">
+                                        <Wrench className="h-8 w-8" />
+                                    </div>
+                                    <h2 className="font-display text-2xl font-bold text-white mb-3">
+                                        I know what needs fixing
+                                    </h2>
+                                    <p className="text-gray-400 leading-relaxed mb-6">
+                                        Pick your vehicle and find the exact repair guide, wiring diagram, or manual
+                                    </p>
+                                    <div className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 group-hover:text-cyan-200">
+                                        Pick your vehicle
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </div>
+                                </button>
+                            ) : (
+                                <div>
+                                    <div className="mb-5 flex items-center gap-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
+                                            <Wrench className="h-5 w-5" />
+                                        </div>
+                                        <h2 className="font-display text-xl font-bold text-white">
+                                            Pick your vehicle
+                                        </h2>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <div className="relative">
+                                            <label htmlFor="lane2-year" className="sr-only">Year</label>
+                                            <select
+                                                id="lane2-year"
+                                                className={SELECT_CLASS}
+                                                value={vehicle.year}
+                                                onChange={(e) => {
+                                                    startTransition(() => {
+                                                        setVehicle({ year: e.target.value, make: '', model: '' });
+                                                        setAvailableModels([]);
+                                                    });
+                                                }}
+                                            >
+                                                <option value="">Year</option>
+                                                {availableYears.map((y) => (
+                                                    <option key={y} value={y}>{y}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="relative">
+                                            <label htmlFor="lane2-make" className="sr-only">Make</label>
+                                            <select
+                                                id="lane2-make"
+                                                className={SELECT_CLASS}
+                                                value={vehicle.make}
+                                                onChange={(e) => {
+                                                    startTransition(() => {
+                                                        setVehicle((prev) => ({
+                                                            ...prev,
+                                                            make: e.target.value,
+                                                            model: '',
+                                                        }));
+                                                        setAvailableModels([]);
+                                                    });
+                                                }}
+                                                disabled={!vehicle.year}
+                                            >
+                                                <option value="">Make</option>
+                                                {availableMakes.map((m) => (
+                                                    <option key={m} value={m}>{m.toUpperCase()}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="relative">
+                                            <label htmlFor="lane2-model" className="sr-only">Model</label>
+                                            <select
+                                                id="lane2-model"
+                                                className={SELECT_CLASS}
+                                                value={vehicle.model}
+                                                onChange={(e) => {
+                                                    startTransition(() => {
+                                                        setVehicle((prev) => ({
+                                                            ...prev,
+                                                            model: e.target.value,
+                                                        }));
+                                                    });
+                                                }}
+                                                disabled={!vehicle.make || loadingModels}
+                                            >
+                                                <option value="">
+                                                    {loadingModels ? 'Loading...' : 'Model'}
+                                                </option>
+                                                {availableModels.map((m) => (
+                                                    <option key={m} value={m}>{m}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {hasVehicle && (
+                                        <div className="mt-6">
+                                            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300 mb-3">
+                                                {vehicleLabel}
+                                            </p>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {VEHICLE_SYSTEMS.map((sys) => {
+                                                    const Icon = sys.icon;
+                                                    return (
+                                                        <Link
+                                                            key={sys.label}
+                                                            href={vehicleHubUrl}
+                                                            className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/45 px-3 py-2.5 text-sm text-gray-200 transition-all hover:border-cyan-500/30 hover:text-cyan-100"
+                                                        >
+                                                            <Icon className="h-4 w-4 shrink-0 text-cyan-400" />
+                                                            {sys.label}
+                                                        </Link>
+                                                    );
+                                                })}
+                                            </div>
+                                            <Link
+                                                href={vehicleHubUrl}
+                                                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-black transition-all hover:bg-cyan-300"
+                                            >
+                                                Open {vehicleLabel}
+                                                <ArrowRight className="h-4 w-4" />
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Lane 3: Have a code */}
+                        <div className="flex flex-col rounded-3xl border border-white/10 bg-slate-900/50 p-8">
+                            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300">
+                                <Hash className="h-8 w-8" />
+                            </div>
+                            <h2 className="font-display text-2xl font-bold text-white mb-3">
+                                I have a code
+                            </h2>
+                            <p className="text-gray-400 leading-relaxed mb-6">
+                                Look up any OBD-II diagnostic trouble code
+                            </p>
+                            <form onSubmit={handleCodeSubmit} className="mt-auto flex gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="P0420"
+                                    value={dtcCode}
+                                    onChange={(e) => setDtcCode(e.target.value)}
+                                    className="flex-1 rounded-lg border border-slate-700 bg-slate-900/55 px-4 py-3 font-mono text-sm font-medium text-gray-200 placeholder:text-gray-500 shadow-lg transition-all hover:border-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={!dtcCode.trim()}
+                                    className="rounded-lg bg-cyan-400 px-5 py-3 text-sm font-bold text-black transition-all hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Look Up
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </section>
+
+                {/* Popular right now */}
+                <section className="px-4 pb-16 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl">
+                        <h2 className="font-display text-2xl font-bold text-white mb-6">
+                            Popular right now
+                        </h2>
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            {POPULAR_REPAIRS.map((repair) => {
+                                const Icon = repair.icon;
+                                return (
+                                    <Link
+                                        key={repair.href}
+                                        href={repair.href}
+                                        className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-4 text-sm text-gray-200 transition-all hover:border-cyan-500/30 hover:text-cyan-100"
+                                    >
+                                        <Icon className="h-5 w-5 shrink-0 text-cyan-400" />
+                                        {repair.label}
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Wiring callout */}
+                <section className="px-4 pb-24 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl">
+                        <Link
+                            href="/wiring"
+                            className="group flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 p-6 sm:p-8 transition-all hover:border-cyan-500/30 hover:bg-white/[0.03]"
+                        >
+                            <div>
+                                <h3 className="font-display text-lg font-bold text-white mb-2">
+                                    Need wiring diagrams?
+                                </h3>
+                                <p className="text-sm text-gray-400 leading-relaxed">
+                                    We have 148,000+ factory electrical diagrams for vehicles from 1982&ndash;2013.
+                                </p>
+                            </div>
+                            <ArrowRight className="h-5 w-5 shrink-0 text-cyan-300 transition-transform group-hover:translate-x-1" />
+                        </Link>
+                    </div>
+                </section>
             </div>
         </div>
     );
