@@ -1,24 +1,8 @@
-'use client';
-
-import React from 'react';
-import dynamic from 'next/dynamic';
+import type { ComponentType } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Battery, CircleDot, Cpu, Droplets, Lightbulb, Route, Search, Wrench } from 'lucide-react';
-import { trackEntryRouteClick } from '@/lib/analytics';
-import { useT } from '@/lib/translations';
-import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
-const HolographicDashboard = dynamic(() => import('@/components/HolographicDashboard'), {
-    ssr: false,
-    loading: () => (
-        <div className="space-y-4" aria-hidden="true">
-            <div className="h-10 rounded-lg bg-white/10 animate-pulse" />
-            <div className="h-10 rounded-lg bg-white/10 animate-pulse" />
-            <div className="h-10 rounded-lg bg-white/10 animate-pulse" />
-            <div className="h-12 rounded-lg bg-cyan-500/20 animate-pulse" />
-        </div>
-    ),
-});
+import HomeVehiclePicker from './HomeVehiclePicker';
 
 const FALLBACK_PATHS = [
     {
@@ -28,7 +12,6 @@ const FALLBACK_PATHS = [
         href: '/diagnose',
         cta: 'Run diagnosis',
         icon: Search,
-        destination: 'diagnose' as const,
     },
     {
         eyebrow: 'Have a code',
@@ -37,7 +20,6 @@ const FALLBACK_PATHS = [
         href: '/codes',
         cta: 'Browse codes',
         icon: Cpu,
-        destination: 'codes' as const,
     },
     {
         eyebrow: 'Need wiring now',
@@ -46,7 +28,6 @@ const FALLBACK_PATHS = [
         href: '/wiring',
         cta: 'Browse wiring',
         icon: Route,
-        destination: 'wiring' as const,
     },
 ];
 
@@ -57,39 +38,6 @@ const DIAGNOSIS_QUICK_STARTS = [
     { label: 'Battery light', task: 'battery light on' },
     { label: 'Overheating', task: 'overheating' },
     { label: 'AC not cold', task: 'AC not cold' },
-];
-
-const HUB_SURFACES = [
-    {
-        label: 'Repair guides',
-        href: '/repair',
-        description: 'Vehicle-specific repair flows and related exact pages.',
-    },
-    {
-        label: 'Wiring diagrams',
-        href: '/wiring',
-        description: 'Factory electrical diagrams and connector views.',
-    },
-    {
-        label: 'Codes',
-        href: '/codes',
-        description: 'DTC pages linked back into symptoms and repairs.',
-    },
-    {
-        label: 'Symptoms',
-        href: '/symptoms',
-        description: 'Plain-English complaint hubs for faster routing.',
-    },
-    {
-        label: 'Parts',
-        href: '/parts',
-        description: 'Fitment and parts research before teardown.',
-    },
-    {
-        label: 'Guide directory',
-        href: '/guides',
-        description: 'Browse by make, model, and repair intent.',
-    },
 ];
 
 interface MomentumClusterCard {
@@ -119,7 +67,7 @@ interface ClientHomeProps {
     commandCenterMomentum: CommandCenterMomentumCard[];
 }
 
-const CLUSTER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+const CLUSTER_ICONS: Record<string, ComponentType<{ className?: string }>> = {
     lighting: Lightbulb,
     battery: Battery,
     brakes: CircleDot,
@@ -131,21 +79,6 @@ const CLUSTER_ICONS: Record<string, React.ComponentType<{ className?: string }>>
 };
 
 function HeroSection() {
-    const [selectedVehicle, setSelectedVehicle] = React.useState<{ year: string; make: string; model: string } | null>(null);
-    const t = useT();
-    const hasVehicleLock = Boolean(selectedVehicle?.year && selectedVehicle?.make && selectedVehicle?.model);
-    const vehicleLabel = hasVehicleLock ? `${selectedVehicle!.year} ${selectedVehicle!.make} ${selectedVehicle!.model}` : null;
-    const vehicleHubHref = hasVehicleLock
-        ? buildVehicleHubUrl(selectedVehicle!.year, selectedVehicle!.make, selectedVehicle!.model)
-        : '/repair';
-    const wiringHref = hasVehicleLock
-        ? `/wiring?${new URLSearchParams({
-            year: selectedVehicle!.year,
-            make: selectedVehicle!.make,
-            model: selectedVehicle!.model,
-        }).toString()}`
-        : '/wiring';
-
     return (
         <section className="relative px-4 pb-16 pt-24 sm:px-6 lg:px-8">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,212,255,0.12),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.03),transparent_16%)]" />
@@ -158,8 +91,8 @@ function HeroSection() {
                     <div className="space-y-8">
                         <div className="inline-flex items-center gap-2 rounded-full matte-panel-soft px-4 py-2">
                             <span className="status-dot" />
-                            <span className="font-body text-xs tracking-widest text-cyan-300 uppercase">
-                                {t('status.aiOnline')}
+                            <span className="font-body text-xs uppercase tracking-widest text-cyan-300">
+                                Vehicle-first repair routing
                             </span>
                         </div>
 
@@ -177,70 +110,34 @@ function HeroSection() {
                             </p>
                         </div>
 
-                        <div className="flex flex-wrap gap-3">
-                            <Link
-                                href={vehicleHubHref}
-                                onClick={() => {
-                                    trackEntryRouteClick(
-                                        'home_hero',
-                                        hasVehicleLock ? 'vehicle_hub' : 'repair',
-                                        vehicleLabel || 'open vehicle hub',
-                                    );
-                                }}
-                                className="inline-flex items-center justify-center gap-3 rounded-xl bg-cyan-400 px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-black transition-all hover:bg-cyan-300"
-                            >
-                                {vehicleLabel ? `Open ${vehicleLabel}` : 'Open vehicle hub'}
-                                <ArrowRight className="h-4 w-4" />
-                            </Link>
-                            <Link
-                                href={wiringHref}
-                                onClick={() => {
-                                    trackEntryRouteClick('home_hero', 'wiring', vehicleLabel ? `${vehicleLabel} wiring` : 'wiring diagrams');
-                                }}
-                                className="inline-flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-6 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-white transition-all hover:border-cyan-400/30 hover:text-cyan-100"
-                            >
-                                Wiring diagrams
-                            </Link>
-                        </div>
-
                         <div className="rounded-[28px] matte-panel-soft p-6">
-                            <div className="flex items-center justify-between gap-3">
-                                <div>
-                                    <p className="text-xs uppercase tracking-[0.22em] text-cyan-300/80">Inside the vehicle hub</p>
-                                    <p className="mt-2 text-sm text-gray-400">Everything important for that exact year, make, and model stays grouped around one canonical node.</p>
-                                </div>
-                                {vehicleLabel && (
-                                    <span className="rounded-full border border-cyan-500/25 bg-cyan-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-200">
-                                        {vehicleLabel}
-                                    </span>
-                                )}
+                            <div className="space-y-3">
+                                <p className="text-xs uppercase tracking-[0.22em] text-cyan-300/80">Why this route is faster</p>
+                                <p className="text-sm leading-7 text-gray-400">
+                                    The homepage now keeps the first interaction path focused on year, make, and model. VIN decode,
+                                    symptom-first diagnosis, and deeper AI flows still exist, but they no longer sit inside the first
+                                    above-the-fold client bundle.
+                                </p>
                             </div>
-                            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                                {HUB_SURFACES.map((surface) => (
-                                    <Link
-                                        key={surface.label}
-                                        href={surface.href}
-                                        className="rounded-2xl border border-white/10 bg-slate-900/45 p-4 transition-all hover:border-cyan-500/30 hover:bg-slate-900/70"
-                                    >
-                                        <h3 className="text-base font-semibold text-white">{surface.label}</h3>
-                                        <p className="mt-2 text-sm leading-6 text-gray-400">{surface.description}</p>
-                                    </Link>
-                                ))}
+                            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                                <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
+                                    <h3 className="text-base font-semibold text-white">Vehicle hub</h3>
+                                    <p className="mt-2 text-sm leading-6 text-gray-400">Open repairs, symptoms, tools, and related support pages for that exact car.</p>
+                                </div>
+                                <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
+                                    <h3 className="text-base font-semibold text-white">Diagnosis</h3>
+                                    <p className="mt-2 text-sm leading-6 text-gray-400">Use the chat flow when the symptom is still vague or you only have a complaint.</p>
+                                </div>
+                                <div className="rounded-2xl border border-white/10 bg-slate-900/45 p-4">
+                                    <h3 className="text-base font-semibold text-white">Wiring</h3>
+                                    <p className="mt-2 text-sm leading-6 text-gray-400">Jump straight to electrical diagrams when the job is already known to be circuit-related.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="relative lg:pl-4">
-                        <div className="rounded-[28px] matte-panel p-6 sm:p-8 glow-border">
-                            <div className="mb-6">
-                                <h2 className="font-display text-xl font-bold text-white">{t('hero.configPanel')}</h2>
-                                <p className="mt-1 font-body text-sm text-gray-400">
-                                    Pick the vehicle first. Add a symptom or task only if you want to jump deeper immediately.
-                                </p>
-                            </div>
-
-                            <HolographicDashboard onVehicleChange={setSelectedVehicle} />
-                        </div>
+                        <HomeVehiclePicker />
                     </div>
                 </div>
             </div>
@@ -274,7 +171,6 @@ function AlternateEntrySection() {
                                 <Link
                                     key={path.title}
                                     href={path.href}
-                                    onClick={() => trackEntryRouteClick('home_alternate', path.destination, path.title)}
                                     className="group rounded-[24px] matte-panel-soft p-6 transition-all hover:border-cyan-500/30 hover:bg-white/[0.035]"
                                 >
                                     <div className="flex items-start justify-between gap-4">
@@ -311,7 +207,6 @@ function AlternateEntrySection() {
                                 <Link
                                     key={quickStart.task}
                                     href={{ pathname: '/diagnose', query: { task: quickStart.task } }}
-                                    onClick={() => trackEntryRouteClick('home_symptom_quick_start', 'diagnose', quickStart.task)}
                                     className="rounded-full border border-white/10 bg-slate-900/50 px-4 py-2 text-sm text-gray-200 transition-all hover:border-cyan-400/35 hover:bg-slate-900/70 hover:text-cyan-100"
                                 >
                                     {quickStart.label}

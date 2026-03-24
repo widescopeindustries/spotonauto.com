@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, Suspense } from 'react';
 import AuthForm from '@/components/AuthForm';
+import AuthProviders from '@/components/AuthProviders';
 
 function AuthPageInner() {
     const router = useRouter();
@@ -41,7 +42,9 @@ export default function AuthPage() {
                 <div className="animate-pulse text-cyan-400">Loading...</div>
             </div>
         }>
-            <AuthPageInner />
+            <AuthProviders>
+                <AuthPageInner />
+            </AuthProviders>
         </Suspense>
     );
 }

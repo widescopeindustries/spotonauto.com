@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Send } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabaseClient';
+import AuthProviders from '@/components/AuthProviders';
 
 interface ReplyFormProps {
     threadId: string;
 }
 
-export default function ReplyForm({ threadId }: ReplyFormProps) {
+function ReplyFormInner({ threadId }: ReplyFormProps) {
     const { user } = useAuth();
     const router = useRouter();
     const [body, setBody] = useState('');
@@ -73,5 +74,13 @@ export default function ReplyForm({ threadId }: ReplyFormProps) {
                 </button>
             </div>
         </form>
+    );
+}
+
+export default function ReplyForm({ threadId }: ReplyFormProps) {
+    return (
+        <AuthProviders>
+            <ReplyFormInner threadId={threadId} />
+        </AuthProviders>
     );
 }

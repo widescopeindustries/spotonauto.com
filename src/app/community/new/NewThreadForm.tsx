@@ -10,8 +10,9 @@ import { VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { generateThreadSlug, randomSuffix } from '@/lib/forumUtils';
 import { FadeInUp } from '@/components/MotionWrappers';
 import ForumBreadcrumbs from '@/components/forum/ForumBreadcrumbs';
+import AuthProviders from '@/components/AuthProviders';
 
-export default function NewThreadForm() {
+function NewThreadFormInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user, loading: authLoading } = useAuth();
@@ -235,5 +236,13 @@ export default function NewThreadForm() {
                 </div>
             </form>
         </FadeInUp>
+    );
+}
+
+export default function NewThreadForm() {
+    return (
+        <AuthProviders>
+            <NewThreadFormInner />
+        </AuthProviders>
     );
 }

@@ -6,8 +6,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getGuideById } from '@/services/storageService';
 import { RepairGuide } from '@/types';
 import { ArrowLeft, Wrench, AlertTriangle } from 'lucide-react';
+import AuthProviders from '@/components/AuthProviders';
 
-export default function HistoryDetailPage() {
+function HistoryDetailPageInner() {
   const router = useRouter();
   const params = useParams();
   const { user, loading: authLoading } = useAuth();
@@ -134,5 +135,13 @@ export default function HistoryDetailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function HistoryDetailPage() {
+  return (
+    <AuthProviders>
+      <HistoryDetailPageInner />
+    </AuthProviders>
   );
 }

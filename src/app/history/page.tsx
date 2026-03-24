@@ -6,8 +6,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getHistory } from '@/services/storageService';
 import { HistoryItem } from '@/types';
 import { History, ArrowRight, Clock } from 'lucide-react';
+import AuthProviders from '@/components/AuthProviders';
 
-export default function HistoryPage() {
+function HistoryPageInner() {
     const router = useRouter();
     const { user, loading } = useAuth();
     const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -94,5 +95,13 @@ export default function HistoryPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function HistoryPage() {
+    return (
+        <AuthProviders>
+            <HistoryPageInner />
+        </AuthProviders>
     );
 }

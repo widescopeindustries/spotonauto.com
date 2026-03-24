@@ -8,7 +8,7 @@ interface AuthFormProps {
   redirectAfter?: string; // Where to send user after Google OAuth completes
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, redirectAfter }) => {
+const AuthFormInner: React.FC<AuthFormProps> = ({ onAuthSuccess, redirectAfter }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -149,4 +149,4 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, redirectAfter }) => 
   );
 };
 
-export default AuthForm;
+export default AuthFormInner;

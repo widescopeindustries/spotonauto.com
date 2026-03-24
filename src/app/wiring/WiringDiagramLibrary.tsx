@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useDeferredValue, useState, useEffect, useCallback, useRef } from 'react';
 import {
   trackWiringDiagramExit,
   trackWiringDiagramInteract,
@@ -115,6 +115,7 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
   const models = selectedYear && selectedMake
     ? selectorData.modelsByYearMake[`${selectedYear}:${selectedMake}`] || []
     : [];
+  const deferredSearch = useDeferredValue(search);
 
   // Read optional query params for deep links from SEO pages
   useEffect(() => {
@@ -305,11 +306,11 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
   const filteredSystems = diagramData?.systems
     .map(sys => ({
       ...sys,
-      diagrams: search
-        ? sys.diagrams.filter(d => d.name.toLowerCase().includes(search.toLowerCase()))
+      diagrams: deferredSearch
+        ? sys.diagrams.filter(d => d.name.toLowerCase().includes(deferredSearch.toLowerCase()))
         : sys.diagrams,
     }))
-    .filter(sys => search ? sys.diagrams.length > 0 : true) || [];
+    .filter(sys => deferredSearch ? sys.diagrams.length > 0 : true) || [];
 
   const filteredCount = filteredSystems.reduce((sum, s) => sum + s.diagrams.length, 0);
   const currentVehicleLabel = selectedYear && selectedMake
@@ -359,15 +360,16 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
   ]);
 
   useEffect(() => {
-    if (!currentVehicleLabel || !search.trim()) return;
-    if (searchTrackRef.current === search) return;
+    const query = deferredSearch.trim();
+    if (!currentVehicleLabel || !query) return;
+    if (searchTrackRef.current === query) return;
 
     const timer = window.setTimeout(() => {
-      searchTrackRef.current = search;
+      searchTrackRef.current = query;
       trackWiringDiagramSearch({
         vehicle: currentVehicleLabel,
         system: expandedSystem || 'diagram-library',
-        query: search.trim(),
+        query,
         resultCount: filteredCount,
         scope: expandedSystem ? 'system_list' : 'diagram_library',
         pageSurface: 'wiring',
@@ -381,9 +383,9 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
     return () => window.clearTimeout(timer);
   }, [
     currentVehicleLabel,
+    deferredSearch,
     expandedSystem,
     filteredCount,
-    search,
     selectedMake,
     selectedModel,
     selectedVariant,
@@ -391,10 +393,10 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
   ]);
 
   useEffect(() => {
-    if (!search || filteredSystems.length === 0) return;
+    if (!deferredSearch || filteredSystems.length === 0) return;
     if (expandedSystem && filteredSystems.some(sys => sys.system === expandedSystem)) return;
     setExpandedSystem(filteredSystems[0].system);
-  }, [expandedSystem, filteredSystems, search]);
+  }, [deferredSearch, expandedSystem, filteredSystems]);
 
   useEffect(() => {
     if (!autoOpenRef.current || autoOpenConsumedRef.current) return;
