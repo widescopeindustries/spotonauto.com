@@ -19,15 +19,21 @@ function getSupabase() {
 
 async function getThread(categorySlug: string, threadSlug: string) {
     const sb = getSupabase();
-    if (!sb) return null;
+    if (!sb) {
+        console.error('[COMMUNITY] getSupabase() returned null. SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'MISSING', 'ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'MISSING');
+        return null;
+    }
 
-    const { data: catData } = await sb
+    const { data: catData, error: catError } = await sb
         .from('forum_categories')
         .select('id')
         .eq('slug', categorySlug)
         .single();
 
-    if (!catData) return null;
+    if (!catData) {
+        console.error('[COMMUNITY] Category not found:', categorySlug, 'error:', catError);
+        return null;
+    }
 
     const { data: thread } = await sb
         .from('forum_threads')
