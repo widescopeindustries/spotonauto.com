@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import AnalyticsScripts from "@/components/AnalyticsScripts";
+import TrackingScript from "@/components/TrackingScript";
 // SpotOnGuide moved into Providers (client component) for lazy loading
 
 export const metadata: Metadata = {
@@ -101,6 +102,7 @@ export default function RootLayout({
           </div>
           {/* SpotOnGuide rendered inside Providers */}
         </Providers>
+        <TrackingScript />
       </body>
     </html>
   );

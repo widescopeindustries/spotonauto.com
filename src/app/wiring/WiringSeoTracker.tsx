@@ -1,27 +1,19 @@
-'use client';
-
-import { useEffect } from 'react';
-import { trackWiringSeoView } from '@/lib/analytics';
-import { deriveIntentCluster, parseVehicleLabel } from '@/lib/analyticsContext';
-
 interface WiringSeoTrackerProps {
   vehicle: string;
   system: string;
 }
 
+/** Renders an invisible element with impression data; picked up by TrackingScript. */
 export default function WiringSeoTracker({ vehicle, system }: WiringSeoTrackerProps) {
-  useEffect(() => {
-    trackWiringSeoView(vehicle, system, {
-      pageSurface: 'wiring',
-      systemSlug: system,
-      intentCluster: deriveIntentCluster({
-        pageSurface: 'wiring',
-        system,
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none h-px w-px opacity-0"
+      data-track-impression={JSON.stringify({
+        event_category: 'wiring_seo_view',
         vehicle,
-      }),
-      ...parseVehicleLabel(vehicle),
-    });
-  }, [vehicle, system]);
-
-  return null;
+        system,
+      })}
+    />
+  );
 }

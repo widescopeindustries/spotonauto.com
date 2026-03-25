@@ -138,3 +138,38 @@ Starting from URL #839, 13204 remaining...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   This run: 212 succeeded, 0 failed
   Total progress: 1051/14042 URLs
+╔══════════════════════════════════════════════════════════════╗
+║       SpotOn Auto - Google Indexing API Repair Tool          ║
+║                  (With Progress Tracking)                    ║
+╚══════════════════════════════════════════════════════════════╝
+
+✓ Google Indexing API initialized
+  Service account: spoton@gen-lang-client-0367085621.iam.gserviceaccount.com
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                         PROGRESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Invalid URL Removals:  0/10150 (0.0%)
+  Valid URL Indexing:    1051/14042 (7.5%)
+  Last run:              2026-03-23T11:14:09.314Z
+  Successful removals:   0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+              REQUESTING INDEXING OF VALID URLs
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Starting from URL #1052, 12991 remaining...
+
+.................................................. [1101/14042]
+.................................................. [1151/14042]
+.................................................. [1201/14042]
+.................................................. [1251/14042]
+.......
+
+⚠️  QUOTA EXHAUSTED after 208 requests
+   Run again tomorrow to continue from URL #1259
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  This run: 207 succeeded, 0 failed
+  Total progress: 1259/14042 URLs

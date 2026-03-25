@@ -1,15 +1,5 @@
-'use client';
-
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
-import {
-  trackKnowledgeGraphClick,
-  trackKnowledgeGraphImpression,
-  type KnowledgeGraphContext,
-  type KnowledgeGraphKind,
-  type KnowledgeGraphSurface,
-} from '@/lib/analytics';
-import { buildAnalyticsContext, deriveIntentCluster, parseVehicleLabel } from '@/lib/analyticsContext';
+import type { KnowledgeGraphContext, KnowledgeGraphKind, KnowledgeGraphSurface } from '@/lib/analytics';
 import type { KnowledgeGraphReference } from '@/lib/knowledgeGraph';
 
 export type KnowledgeGraphTheme = 'cyan' | 'emerald' | 'amber' | 'violet' | 'slate';
@@ -86,105 +76,38 @@ export default function KnowledgeGraphGroup({
   context,
 }: KnowledgeGraphGroupProps) {
   const classes = THEME_CLASSES[theme];
-  const hasTrackedImpression = useRef(false);
-  const recentActivationKeys = useRef<Set<string>>(new Set());
-  const pageSurface = surface === 'vehicle' ? 'vehicle_hub' : surface === 'repair' ? 'repair_guide' : surface;
-  const structuredContext = buildAnalyticsContext({
-    ...parseVehicleLabel(context?.vehicle),
-    ...context,
-    pageSurface,
-    intentCluster: context?.intentCluster || deriveIntentCluster({
-      pageSurface,
-      task: context?.taskSlug || context?.task,
-      system: context?.systemSlug || context?.system,
-      code: context?.code,
-      vehicle: context?.vehicle,
-    }),
-  });
 
-  function trackActivationOnce(
-    activationKey: string,
-    payload: Parameters<typeof trackKnowledgeGraphClick>[0],
-  ) {
-    if (recentActivationKeys.current.has(activationKey)) return;
-    recentActivationKeys.current.add(activationKey);
-    trackKnowledgeGraphClick(payload);
-    window.setTimeout(() => {
-      recentActivationKeys.current.delete(activationKey);
-    }, 1500);
-  }
-
-  useEffect(() => {
-    if (!nodes.length || hasTrackedImpression.current) return;
-    trackKnowledgeGraphImpression({
-      surface,
-      groupKind,
-      title,
-      nodeCount: nodes.length,
-      ...structuredContext,
-      ...context,
-    });
-    hasTrackedImpression.current = true;
-  }, [
+  const impressionData = JSON.stringify({
+    event_category: 'kg_impression',
     surface,
     groupKind,
     title,
-    nodes.length,
-    context?.vehicle,
-    context?.task,
-    context?.taskSlug,
-    context?.code,
-    context?.codeFamily,
-    context?.system,
-    context?.systemSlug,
-    context?.vehicleYear,
-    context?.vehicleMake,
-    context?.vehicleModel,
-    context?.pageSurface,
-    context?.intentCluster,
-  ]);
+    nodeCount: nodes.length,
+    vehicle: context?.vehicle,
+    task: context?.task,
+  });
 
   return (
-    <div className={`rounded-2xl border p-5 md:p-6 ${classes.container}`}>
+    <div
+      className={`rounded-2xl border p-5 md:p-6 ${classes.container}`}
+      data-track-impression={impressionData}
+    >
       <div className="flex items-center justify-between gap-3 mb-4">
         <h3 className={`text-base font-semibold tracking-tight ${classes.title}`}>{title}</h3>
         {browseHref && (
           <Link
             href={browseHref}
             className={`text-sm hover:underline ${classes.link}`}
-            onMouseDown={() => trackActivationOnce(`browse:${groupKind}:${browseHref}`, {
+            data-track-click={JSON.stringify({
+              event_category: 'kg_click',
               surface,
               sourceKind: groupKind,
               targetKind: groupKind,
               label: `Browse ${title}`,
               href: browseHref,
               isBrowseLink: true,
-              ...structuredContext,
-              ...context,
+              vehicle: context?.vehicle,
             })}
-            onClick={() => trackActivationOnce(`browse:${groupKind}:${browseHref}`, {
-              surface,
-              sourceKind: groupKind,
-              targetKind: groupKind,
-              label: `Browse ${title}`,
-              href: browseHref,
-              isBrowseLink: true,
-              ...structuredContext,
-              ...context,
-            })}
-            onKeyDown={(event) => {
-              if (event.key !== 'Enter' && event.key !== ' ') return;
-              trackActivationOnce(`browse:${groupKind}:${browseHref}`, {
-                surface,
-                sourceKind: groupKind,
-                targetKind: groupKind,
-                label: `Browse ${title}`,
-                href: browseHref,
-                isBrowseLink: true,
-                ...structuredContext,
-                ...context,
-              });
-            }}
           >
             Browse →
           </Link>
@@ -196,36 +119,15 @@ export default function KnowledgeGraphGroup({
             key={node.nodeId || `${groupKind}-${node.targetKind}-${node.href}-${node.label}`}
             href={node.href}
             className={`block rounded-xl border bg-slate-900/45 p-4 transition-all hover:bg-slate-900/65 ${classes.card}`}
-            onMouseDown={() => trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
+            data-track-click={JSON.stringify({
+              event_category: 'kg_click',
               surface,
               sourceKind: groupKind,
               targetKind: node.targetKind,
               label: node.label,
               href: node.href,
-              ...structuredContext,
-              ...context,
+              vehicle: context?.vehicle,
             })}
-            onClick={() => trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
-              surface,
-              sourceKind: groupKind,
-              targetKind: node.targetKind,
-              label: node.label,
-              href: node.href,
-              ...structuredContext,
-              ...context,
-            })}
-            onKeyDown={(event) => {
-              if (event.key !== 'Enter' && event.key !== ' ') return;
-              trackActivationOnce(`${groupKind}:${node.targetKind}:${node.href}`, {
-                surface,
-                sourceKind: groupKind,
-                targetKind: node.targetKind,
-                label: node.label,
-                href: node.href,
-                ...structuredContext,
-                ...context,
-              });
-            }}
           >
             <div className="flex items-center justify-between gap-3">
               <span className="font-medium leading-6 text-white">{node.label}</span>

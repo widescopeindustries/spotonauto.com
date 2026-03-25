@@ -31,9 +31,9 @@ const Footer = () => {
                         <ul className="space-y-3">
                             {[
                                 { href: '/diagnose', label: 'AI Diagnostic Chat', icon: Zap, accent: true },
-                                { href: '/guides', label: 'Repair Guides', icon: BookOpen },
+                                { href: '/repair', label: 'Repair Guides', icon: BookOpen },
                                 { href: '/parts', label: 'Parts Finder', icon: Car },
-                                { href: '/cel', label: 'Check Engine Light', icon: Shield },
+                                { href: '/codes', label: 'Check Engine Light', icon: Shield },
                                 { href: '/codes', label: 'DTC Code Lookup', icon: BookOpen },
                                 { href: '/wiring', label: 'Wiring Diagrams', icon: Cpu },
                                 { href: '/community', label: 'Community Forum', icon: MessageSquare },

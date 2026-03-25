@@ -1,7 +1,3 @@
-'use client';
-
-import { trackAffiliateClick } from '@/lib/analytics';
-
 interface AffiliateLinkProps {
   href: string;
   partName: string;
@@ -21,23 +17,20 @@ export default function AffiliateLink({
   className,
   children,
 }: AffiliateLinkProps) {
-  const handleClick = () => {
-    trackAffiliateClick({
-      provider: 'Amazon',
-      partName,
-      vehicle,
-      isHighTicket,
-      pageType,
-    });
-  };
-
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={handleClick}
       className={className}
+      data-track-click={JSON.stringify({
+        event_category: 'affiliate_click',
+        provider: 'Amazon',
+        partName,
+        vehicle,
+        isHighTicket,
+        pageType,
+      })}
     >
       {children}
     </a>

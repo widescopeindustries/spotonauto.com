@@ -1,8 +1,5 @@
-'use client';
-
 import Link from 'next/link';
 import { ReactNode } from 'react';
-import { trackRepairAnswerClick } from '@/lib/analytics';
 
 interface RepairTrackedLinkProps {
   href: string;
@@ -29,7 +26,8 @@ export default function RepairTrackedLink({
     <Link
       href={href}
       className={className}
-      onClick={() => trackRepairAnswerClick({
+      data-track-click={JSON.stringify({
+        event_category: 'repair_answer',
         vehicle,
         task,
         section,
