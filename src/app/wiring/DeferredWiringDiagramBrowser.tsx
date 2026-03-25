@@ -224,14 +224,24 @@ export default function DeferredWiringDiagramBrowser() {
             </div>
           </div>
 
-          {hasVehicle && vehicleHubHref && (
+          {hasVehicle && (
             <div className="mt-4">
-              <Link
-                href={vehicleHubHref}
+              <button
+                type="button"
+                onClick={() => {
+                  // Push vehicle into URL params so WiringDiagramLibrary picks them up
+                  const params = new URLSearchParams(window.location.search);
+                  params.set('year', vehicle.year);
+                  params.set('make', vehicle.make);
+                  params.set('model', vehicle.model);
+                  params.set('open', '1');
+                  window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}#diagram-browser`);
+                  setShouldLoad(true);
+                }}
                 className="inline-flex items-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-cyan-300"
               >
-                View {vehicle.year} {vehicle.make} {vehicle.model} wiring diagrams &rarr;
-              </Link>
+                Find {vehicle.year} {vehicle.make} {vehicle.model} wiring diagrams &rarr;
+              </button>
             </div>
           )}
         </div>
