@@ -51,10 +51,7 @@ export default async function CodePage({ params }: PageProps) {
     const { code: slug } = await params;
     const dtc = DTC_CODES_MAP.get(slug.toUpperCase());
     if (!dtc) notFound();
-    const [manualLinks, oemCoverage] = await Promise.all([
-        getManualSectionLinksForCode(dtc, 4),
-        getDtcCrossVehicleSummary(dtc.code),
-    ]);
+    const manualLinks = await getManualSectionLinksForCode(dtc, 4);
     const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
     const schemaDate = '2026-03-05';
     const schemaAuthor = {
@@ -107,7 +104,7 @@ export default async function CodePage({ params }: PageProps) {
                     ],
                 }) }}
             />
-            <CodePageClient code={dtc} manualLinks={manualLinks} oemCoverage={oemCoverage} />
+            <CodePageClient code={dtc} manualLinks={manualLinks} />
         </div>
     );
 }
