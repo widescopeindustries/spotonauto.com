@@ -17,6 +17,7 @@ import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { buildVehicleHubLinksForCode } from '@/lib/vehicleHubLinks';
+import type { DtcCrossVehicleSummary } from '@/lib/dtcCrossVehicle';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -34,9 +35,11 @@ const LIKELIHOOD_BADGE: Record<string, string> = {
 export default function CodePageClient({
     code,
     manualLinks = [],
+    oemCoverage,
 }: {
     code: DTCCode;
     manualLinks?: DiagnosticCrossLink[];
+    oemCoverage?: DtcCrossVehicleSummary | null;
 }) {
     const sev = SEVERITY_CONFIG[code.severity] || SEVERITY_CONFIG.medium;
     const repairLinks = getRepairLinksForCode(code, 6);
@@ -198,6 +201,43 @@ export default function CodePageClient({
                     </div>
                 </div>
             </div>
+
+            {/* OEM Manual Coverage — from cross-vehicle KG index */}
+            {oemCoverage && oemCoverage.n > 0 && (
+                <div className="mb-8 bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                        <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider">OEM Manual Coverage</h3>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 text-[11px] font-bold">
+                            {oemCoverage.n.toLocaleString()} vehicles
+                        </span>
+                    </div>
+                    <p className="text-gray-300 text-sm mb-4">
+                        Code {code.code} appears in factory service manuals for{' '}
+                        <strong className="text-white">{oemCoverage.n.toLocaleString()} vehicle configurations</strong>
+                        {oemCoverage.yr && (
+                            <> spanning model years <strong className="text-white">{oemCoverage.yr[0]}–{oemCoverage.yr[1]}</strong></>
+                        )}
+                        .
+                    </p>
+                    {oemCoverage.makes.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                            {oemCoverage.makes.map((m) => (
+                                <span
+                                    key={m.make}
+                                    className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-100"
+                                >
+                                    {m.make} ({m.count})
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                    {oemCoverage.sys.length > 0 && (
+                        <p className="text-xs text-gray-500 mt-3">
+                            Systems: {oemCoverage.sys.join(', ')}
+                        </p>
+                    )}
+                </div>
+            )}
 
             {/* Symptoms */}
             <div className="mb-8 bg-white/[0.03] border border-white/10 rounded-xl p-6">

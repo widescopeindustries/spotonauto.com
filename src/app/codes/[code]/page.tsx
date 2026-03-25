@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { DTC_CODES, DTC_CODES_MAP } from '@/data/dtc-codes-data';
 import CodePageClient from './CodePageClient';
 import { getManualSectionLinksForCode } from '@/lib/manualSectionLinks';
+import { getDtcCrossVehicleSummary } from '@/lib/dtcCrossVehicle';
 
 interface PageProps {
     params: Promise<{ code: string }>;
@@ -19,8 +20,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!dtc) return { title: 'Code Not Found' };
     const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
 
+    const oemMeta = await getDtcCrossVehicleSummary(dtc.code);
+    const oemSuffix = oemMeta && oemMeta.n > 0
+        ? ` Found in factory manuals for ${oemMeta.n} vehicles.`
+        : '';
     const title = `${dtc.code}: ${dtc.title} — Symptoms, Causes & Fix | SpotOn Auto`;
-    const description = `${dtc.code} means ${dtc.title}. ${dtc.description} Estimated fix cost: ${dtc.estimatedCostRange}. Free diagnosis and repair guide.`;
+    const description = `${dtc.code} means ${dtc.title}. ${dtc.description} Estimated fix cost: ${dtc.estimatedCostRange}.${oemSuffix} Free diagnosis and repair guide.`;
 
     return {
         title,
@@ -46,7 +51,10 @@ export default async function CodePage({ params }: PageProps) {
     const { code: slug } = await params;
     const dtc = DTC_CODES_MAP.get(slug.toUpperCase());
     if (!dtc) notFound();
-    const manualLinks = await getManualSectionLinksForCode(dtc, 4);
+    const [manualLinks, oemCoverage] = await Promise.all([
+        getManualSectionLinksForCode(dtc, 4),
+        getDtcCrossVehicleSummary(dtc.code),
+    ]);
     const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
     const schemaDate = '2026-03-05';
     const schemaAuthor = {
@@ -99,7 +107,7 @@ export default async function CodePage({ params }: PageProps) {
                     ],
                 }) }}
             />
-            <CodePageClient code={dtc} manualLinks={manualLinks} />
+            <CodePageClient code={dtc} manualLinks={manualLinks} oemCoverage={oemCoverage} />
         </div>
     );
 }
