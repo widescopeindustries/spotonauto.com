@@ -42,6 +42,13 @@ async function fetchCharmText(
   throw new Error(errorMessage);
 }
 
+/** encodeURIComponent does not encode parentheses, but the CHARM server requires them encoded. */
+function encodeCharmSegment(value: string): string {
+  return encodeURIComponent(value)
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29');
+}
+
 function extractLinks(html: string): string[] {
   const matches = html.matchAll(/href=['"]([^'"]+)['"]/g);
   return [...matches].map(m => m[1]);
@@ -121,7 +128,7 @@ export async function fetchWiringMakes(): Promise<string[]> {
 
 export async function fetchWiringYears(make: string): Promise<number[]> {
   const html = await fetchCharmText(
-    `${CHARM_BASE}/${encodeURIComponent(make)}/`,
+    `${CHARM_BASE}/${encodeCharmSegment(make)}/`,
     86400,
     'Make not found',
   );
@@ -139,7 +146,7 @@ export async function fetchWiringYears(make: string): Promise<number[]> {
 
 export async function fetchWiringVariants(make: string, year: string): Promise<string[]> {
   const html = await fetchCharmText(
-    `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`,
+    `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/`,
     86400,
     'Year not found',
   );
@@ -182,8 +189,8 @@ async function fetchRepairAndDiagnosisHtml(
   year: string,
   variant: string,
 ): Promise<{ html: string; resolvedVariant: string }> {
-  const encodedMake = encodeURIComponent(make);
-  const encodedVariant = encodeURIComponent(variant);
+  const encodedMake = encodeCharmSegment(make);
+  const encodedVariant = encodeCharmSegment(variant);
   const directUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodedVariant}/Repair%20and%20Diagnosis/`;
 
   try {
@@ -196,7 +203,7 @@ async function fetchRepairAndDiagnosisHtml(
       throw new Error('Repair data not found');
     }
 
-    const matchedUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodeURIComponent(matchedVariant)}/Repair%20and%20Diagnosis/`;
+    const matchedUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodeCharmSegment(matchedVariant)}/Repair%20and%20Diagnosis/`;
     const html = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
     return { html, resolvedVariant: matchedVariant };
   }
@@ -217,8 +224,8 @@ async function resolveVariantIfDiagramBucketIsEmpty(args: {
     return null;
   }
 
-  const encodedMake = encodeURIComponent(args.make);
-  const matchedUrl = `${CHARM_BASE}/${encodedMake}/${args.year}/${encodeURIComponent(matchedVariant)}/Repair%20and%20Diagnosis/`;
+  const encodedMake = encodeCharmSegment(args.make);
+  const matchedUrl = `${CHARM_BASE}/${encodedMake}/${args.year}/${encodeCharmSegment(matchedVariant)}/Repair%20and%20Diagnosis/`;
 
   try {
     const html = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
@@ -234,7 +241,7 @@ export async function fetchWiringDiagramIndex(
   variant: string,
 ): Promise<WiringDiagramIndex> {
   let { html, resolvedVariant } = await fetchRepairAndDiagnosisHtml(make, year, variant);
-  let repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${encodeURIComponent(resolvedVariant)}/Repair%20and%20Diagnosis/`;
+  let repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
   let allLinks = extractLinks(html);
   let diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
 
@@ -249,7 +256,7 @@ export async function fetchWiringDiagramIndex(
   if (matchedVariantBucket) {
     html = matchedVariantBucket.html;
     resolvedVariant = matchedVariantBucket.resolvedVariant;
-    repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${encodeURIComponent(resolvedVariant)}/Repair%20and%20Diagnosis/`;
+    repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
     allLinks = extractLinks(html);
     diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
   }

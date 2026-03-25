@@ -157,6 +157,11 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
 const CHARM_BASE = 'https://data.spotonauto.com';
 const CHARM_HEADERS = { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' };
 
+/** encodeURIComponent leaves parens unencoded; CHARM requires them percent-encoded. */
+function encodeCharmSegment(value: string): string {
+  return encodeURIComponent(value).replace(/\(/g, '%28').replace(/\)/g, '%29');
+}
+
 function charmFetchOpts(): RequestInit {
   return {
     headers: CHARM_HEADERS,
@@ -501,14 +506,14 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     if (kvData && kvData.sys && Object.keys(kvData.sys).length > 0) {
       const relevant = findRelevantKVContent(kvData.sys, task ?? '');
       if (relevant.length > 0) {
-        const variantEncoded = encodeURIComponent(kvData.v.variant);
+        const variantEncoded = encodeCharmSegment(kvData.v.variant);
         console.log(`[KV] ✓ Found ${relevant.length} relevant entries for "${task}" on ${kvData.v.variant}`);
 
         // Fetch actual content from charm by reconstructed path (still need VPS for HTML)
         const contentPages = await Promise.all(
           relevant.slice(0, 3).map(async ({ system, entry }) => {
             try {
-              const sectionUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${variantEncoded}/Repair%20and%20Diagnosis/${encodeURIComponent(system)}/${encodeURIComponent(entry.title)}/`;
+              const sectionUrl = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/${variantEncoded}/Repair%20and%20Diagnosis/${encodeCharmSegment(system)}/${encodeCharmSegment(entry.title)}/`;
               const resp = await fetch(sectionUrl, charmFetchOpts());
               if (!resp.ok) return null;
               const html = await resp.text();
@@ -546,7 +551,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
   // Fall through to live archive fetch if vector search AND KV returned nothing
   try {
     // Step 1: Get year page to find vehicle variants
-    const yearUrl = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/`;
+    const yearUrl = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/`;
     const yearResp = await fetch(yearUrl, charmFetchOpts());
     if (!yearResp.ok) { console.warn(`[MANUAL ARCHIVE] Make/year not found: ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
     const yearHtml = await yearResp.text();
@@ -564,7 +569,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     const bestPath = bestVariantMatch(model, variantPaths);
     if (!bestPath) return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
 
-    const variantBase = `${CHARM_BASE}/${encodeURIComponent(make)}/${year}/${bestPath}`;
+    const variantBase = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/${bestPath}`;
     const variantDecoded = decodeURIComponent(bestPath);
     console.log(`[MANUAL ARCHIVE] ✓ Matched "${model}" → "${variantDecoded}"`);
 

@@ -103,7 +103,7 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
   }
 
   // Re-encode each segment for the upstream URL
-  const encodedPath = pathSegments.map(s => encodeURIComponent(s)).join('/');
+  const encodedPath = pathSegments.map(s => encodeURIComponent(s).replace(/\(/g, '%28').replace(/\)/g, '%29')).join('/');
   // Ensure trailing slash — the LMDB proxy requires it for directory listings
   const url = `${CHARM_BASE}/${encodedPath}${encodedPath ? '/' : ''}`;
   try {
