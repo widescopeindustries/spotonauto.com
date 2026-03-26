@@ -3,6 +3,7 @@
 
 import { AffiliateLink, AffiliateProvider, PartWithLinks } from '../types';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { buildTopdonProductUrl, TOPDON_PRODUCTS } from '@/lib/topdonAffiliate';
 
 // Part category detection for smarter linking
 const PART_CATEGORIES = {
@@ -85,13 +86,18 @@ export function generateAllPartsWithLinks(parts: string[], vehicleString: string
   return parts.map(part => generatePartWithLinks(part, vehicleString));
 }
 
+// Keywords that indicate a diagnostic/scan tool context
+const DIAGNOSTIC_TOOL_RE = /scan\s*tool|obd|diagnostic|code\s*reader|scanner|multimeter|test\s*light/i;
+const BATTERY_TOOL_RE = /battery\s*tester|load\s*tester|charging\s*system|hydrometer/i;
+
 /**
- * Generate tool affiliate links (Amazon-only for tools)
+ * Generate tool affiliate links.
+ * Includes Topdon alongside Amazon for scan tools and battery testers.
  */
 export function generateToolLinks(toolName: string): AffiliateLink[] {
   const amazonUrl = buildAmazonSearchUrl(toolName);
 
-  return [
+  const links: AffiliateLink[] = [
     {
       provider: 'Amazon',
       url: amazonUrl,
@@ -101,6 +107,32 @@ export function generateToolLinks(toolName: string): AffiliateLink[] {
       icon: 'amazon'
     }
   ];
+
+  // Add Topdon for diagnostic scan tools
+  if (DIAGNOSTIC_TOOL_RE.test(toolName)) {
+    links.push({
+      provider: 'Topdon',
+      url: buildTopdonProductUrl(TOPDON_PRODUCTS.topscan.slug),
+      buttonText: `Topdon TopScan — $${TOPDON_PRODUCTS.topscan.price}`,
+      badge: 'OEM Parts',
+      priceRange: 'mid',
+      icon: 'topdon'
+    });
+  }
+
+  // Add Topdon battery tester for battery tools
+  if (BATTERY_TOOL_RE.test(toolName)) {
+    links.push({
+      provider: 'Topdon',
+      url: buildTopdonProductUrl(TOPDON_PRODUCTS.bt50.slug),
+      buttonText: `Topdon BT50 — $${TOPDON_PRODUCTS.bt50.price}`,
+      badge: 'Best Value',
+      priceRange: 'low',
+      icon: 'topdon'
+    });
+  }
+
+  return links;
 }
 
 /**

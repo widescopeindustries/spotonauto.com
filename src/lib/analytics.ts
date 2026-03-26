@@ -169,7 +169,7 @@ function deriveRepairAnswerCtaLayer(section: string, kind: RepairAnswerCtaKind):
 
 // ─── Affiliate Events ───────────────────────────────────────────────────────
 
-export type AffiliateProvider = 'Amazon';
+export type AffiliateProvider = 'Amazon' | 'Topdon';
 
 interface AffiliateClickEvent {
   provider: AffiliateProvider;

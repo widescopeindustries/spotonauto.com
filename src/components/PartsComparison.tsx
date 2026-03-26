@@ -27,6 +27,14 @@ const RETAILER_STYLES: Record<AffiliateProvider, {
         border: 'border-amber-500/30',
         accent: 'text-amber-400',
         gradient: 'from-amber-500 to-orange-500'
+    },
+    Topdon: {
+        bg: 'bg-emerald-500',
+        bgHover: 'hover:bg-emerald-400',
+        text: 'text-black',
+        border: 'border-emerald-500/30',
+        accent: 'text-emerald-400',
+        gradient: 'from-emerald-500 to-teal-500'
     }
 };
 

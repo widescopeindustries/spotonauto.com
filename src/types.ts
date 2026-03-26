@@ -93,7 +93,7 @@ export interface HistoryItem {
   timestamp: number;
 }
 
-export type AffiliateProvider = 'Amazon';
+export type AffiliateProvider = 'Amazon' | 'Topdon';
 
 export interface AffiliateLink {
   provider: AffiliateProvider;

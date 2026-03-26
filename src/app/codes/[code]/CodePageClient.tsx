@@ -16,6 +16,7 @@ import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { buildTopdonProductUrl, getTopdonRecommendations, getContextFromCode } from '@/lib/topdonAffiliate';
 import { buildVehicleHubLinksForCode } from '@/lib/vehicleHubLinks';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
@@ -263,18 +264,52 @@ export default function CodePageClient({
             {/* Ad placement */}
             <AdUnit slot="code-after-diagnosis" />
 
-            {/* OBD2 Scanner CTA */}
-            <div className="mb-8 bg-amber-500/5 border border-amber-500/20 rounded-xl p-6 text-center">
-                <p className="text-amber-200 text-sm mb-3">Need to read or clear this code?</p>
-                <a
-                    href={buildAmazonSearchUrl('obd2 scanner bluetooth')}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 text-black text-sm font-bold rounded-lg hover:bg-amber-400 transition"
-                >
-                    Shop OBD2 Scanners on Amazon →
-                </a>
-            </div>
+            {/* Scanner & Diagnostic Tool CTA */}
+            {(() => {
+                const ctx = getContextFromCode(code.code);
+                const topdonPicks = getTopdonRecommendations(ctx);
+                return (
+                    <div className="mb-8 rounded-xl border border-amber-500/20 bg-amber-500/5 p-6">
+                        <p className="text-amber-200 text-sm mb-4 text-center">Need to read or clear this code?</p>
+                        <div className="grid sm:grid-cols-2 gap-3">
+                            {topdonPicks.slice(0, 1).map((product) => (
+                                <a
+                                    key={product.slug}
+                                    href={buildTopdonProductUrl(product.slug)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 transition"
+                                >
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-0.5">
+                                            <span className="text-white text-sm font-bold">{product.shortName}</span>
+                                            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold px-1.5 py-0.5 bg-emerald-500/10 rounded">From ${product.price}</span>
+                                        </div>
+                                        <p className="text-gray-400 text-xs truncate">{product.description}</p>
+                                    </div>
+                                    <span className="text-emerald-400 text-sm shrink-0">→</span>
+                                </a>
+                            ))}
+                            <a
+                                href={buildAmazonSearchUrl('obd2 scanner bluetooth')}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 px-4 py-3 bg-amber-500/10 border border-amber-500/20 rounded-lg hover:bg-amber-500/20 transition"
+                            >
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <span className="text-white text-sm font-bold">OBD2 Scanners</span>
+                                        <span className="text-[10px] uppercase tracking-wider text-amber-400 font-bold px-1.5 py-0.5 bg-amber-500/10 rounded">Amazon</span>
+                                    </div>
+                                    <p className="text-gray-400 text-xs">Browse all scanners with Prime shipping</p>
+                                </div>
+                                <span className="text-amber-400 text-sm shrink-0">→</span>
+                            </a>
+                        </div>
+                    </div>
+                );
+            })()}
+
 
             {/* Repair link */}
             {code.repairTaskSlug && (
