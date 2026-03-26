@@ -107,28 +107,41 @@ async function sendCommand(conn: OBD2Connection, cmd: string): Promise<string> {
 
   if (conn.usePolling) {
     // Polling mode: write command, then repeatedly read until we get '>'
+    // Try multiple read sources since notify char may not support read
     if (conn.writeChar.properties.writeWithoutResponse) {
       await conn.writeChar.writeValueWithoutResponse(data);
     } else {
       await conn.writeChar.writeValueWithResponse(data);
     }
 
-    // Poll for response
+    // Determine which characteristic to poll — try write char first (many
+    // ELM327 BLE devices echo responses on the write characteristic),
+    // fall back to notify char
+    const readTargets: BluetoothRemoteGATTCharacteristic[] = [];
+    if (conn.writeChar.properties.read) readTargets.push(conn.writeChar);
+    if (conn.notifyChar.properties.read) readTargets.push(conn.notifyChar);
+    // Always try both even if properties don't advertise read
+    if (readTargets.length === 0) {
+      readTargets.push(conn.writeChar, conn.notifyChar);
+    }
+
     let response = '';
     const deadline = Date.now() + 5000;
     while (Date.now() < deadline) {
-      await new Promise(r => setTimeout(r, 100)); // 100ms between polls
-      try {
-        const value = await conn.notifyChar.readValue();
-        const chunk = decoder.decode(value);
-        if (chunk && chunk.length > 0) {
-          response += chunk;
-          if (response.includes('>')) {
-            return response.replace(/>/g, '').trim();
+      await new Promise(r => setTimeout(r, 150));
+      for (const target of readTargets) {
+        try {
+          const value = await target.readValue();
+          const chunk = decoder.decode(value);
+          if (chunk && chunk.length > 0 && chunk !== '\0') {
+            response += chunk;
+            if (response.includes('>')) {
+              return response.replace(/>/g, '').trim();
+            }
           }
+        } catch {
+          // expected — not all chars support read
         }
-      } catch {
-        // readValue can fail between responses — just retry
       }
     }
     return response.replace(/>/g, '').trim() || 'NO DATA';
@@ -239,15 +252,24 @@ export async function connectOBD2(
     );
   }
 
-  // Start notifications — some devices fail here, so we fall back to polling
+  // Start notifications — try multiple approaches before falling back to polling
   let usePolling = false;
   try {
     await notifyChar.startNotifications();
     notifyChar.addEventListener('characteristicvaluechanged', handleNotification);
     onLog('Notifications started');
   } catch (notifyErr) {
-    onLog(`Notify failed: ${notifyErr} — using polling mode`);
-    usePolling = true;
+    onLog(`Notify failed: ${notifyErr}`);
+    // Try manually writing to CCCD descriptor to enable notifications
+    try {
+      const cccd = await notifyChar.getDescriptor(0x2902);
+      await cccd.writeValue(new Uint8Array([1, 0])); // Enable notifications
+      notifyChar.addEventListener('characteristicvaluechanged', handleNotification);
+      onLog('Notifications enabled via CCCD descriptor');
+    } catch {
+      onLog('CCCD failed too — using polling mode');
+      usePolling = true;
+    }
   }
 
   const conn: OBD2Connection = { device, server, writeChar, notifyChar, usePolling };
