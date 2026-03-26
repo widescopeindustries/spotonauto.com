@@ -58,6 +58,33 @@ export interface ManualEmbeddingsHealth {
 let vpsPool: Pool | null | undefined;
 let supabaseAdmin: SupabaseClient | null | undefined;
 
+// ─── VPS Circuit Breaker ─────────────────────────────────────────────────────
+// When the VPS database is unreachable or slow, stop trying for a cooldown
+// period instead of burning all 4 pool connections on timeouts.
+const VPS_FAILURE_THRESHOLD = 3;
+const VPS_COOLDOWN_MS = 2 * 60 * 1000; // 2 minutes
+let vpsFailures = 0;
+let vpsOpenUntil = 0;
+
+function isVpsCircuitOpen(): boolean {
+  if (vpsFailures >= VPS_FAILURE_THRESHOLD && Date.now() < vpsOpenUntil) return true;
+  if (Date.now() >= vpsOpenUntil) vpsFailures = 0;
+  return false;
+}
+
+function recordVpsFailure(): void {
+  vpsFailures++;
+  if (vpsFailures >= VPS_FAILURE_THRESHOLD) {
+    vpsOpenUntil = Date.now() + VPS_COOLDOWN_MS;
+    console.warn(`[VPS] Circuit breaker OPEN — ${VPS_FAILURE_THRESHOLD} consecutive failures, cooling down ${VPS_COOLDOWN_MS / 1000}s`);
+  }
+}
+
+function recordVpsSuccess(): void {
+  vpsFailures = 0;
+  vpsOpenUntil = 0;
+}
+
 function getConfiguredBackend(): ManualEmbeddingsBackend {
   const explicit = (process.env.MANUAL_EMBEDDINGS_BACKEND || '').trim().toLowerCase();
   if (explicit === 'vps' || explicit === 'supabase' || explicit === 'none') {
@@ -89,6 +116,9 @@ function getTimeoutMs(value: string | undefined, fallback: number): number {
 }
 
 function getVpsPool(): Pool | null {
+  // Circuit breaker: don't even try if VPS has been failing
+  if (isVpsCircuitOpen()) return null;
+
   if (vpsPool !== undefined) return vpsPool;
 
   if (!process.env.VPS_DATABASE_URL) {
@@ -98,18 +128,23 @@ function getVpsPool(): Pool | null {
 
   const connectionTimeoutMs = getTimeoutMs(
     process.env.VPS_DATABASE_CONNECT_TIMEOUT_MS || process.env.PGCONNECT_TIMEOUT_MS,
-    2000,  // 2s instead of 5s — fail fast when VPS is down
+    1500,  // 1.5s — fail fast when VPS is down
   );
-  const queryTimeoutMs = getTimeoutMs(process.env.VPS_DATABASE_QUERY_TIMEOUT_MS, 3000);  // 3s instead of 10s
+  const queryTimeoutMs = getTimeoutMs(process.env.VPS_DATABASE_QUERY_TIMEOUT_MS, 2000);  // 2s — reduced from 3s
 
   vpsPool = new Pool({
     connectionString: process.env.VPS_DATABASE_URL,
     ssl: { rejectUnauthorized: false },
-    max: 4,
+    max: 3,  // reduced from 4 — fewer blocked connections
     connectionTimeoutMillis: connectionTimeoutMs,
     query_timeout: queryTimeoutMs,
     statement_timeout: queryTimeoutMs,
-    idleTimeoutMillis: 10000,
+    idleTimeoutMillis: 8000,
+  });
+
+  // Track pool errors for circuit breaker
+  vpsPool.on('error', () => {
+    recordVpsFailure();
   });
 
   return vpsPool;
@@ -384,6 +419,7 @@ export async function searchManualEmbeddings(params: ManualEmbeddingSearchParams
     const pool = getVpsPool();
     if (!pool) return [];
 
+    try {
     const vector = embeddingToVectorLiteral(params.embedding);
     const { rows } = await pool.query(
       `SELECT
@@ -413,7 +449,12 @@ export async function searchManualEmbeddings(params: ManualEmbeddingSearchParams
       [vector, params.make, params.year, params.threshold, params.maxResults, exact, prefix],
     );
 
+    recordVpsSuccess();
     return mapSearchRows(rows);
+    } catch (error) {
+      recordVpsFailure();
+      throw error;
+    }
   }
 
   if (backend === 'supabase') {
@@ -452,6 +493,7 @@ export async function findManualSectionsByTerms(args: {
     const pool = getVpsPool();
     if (!pool) return [];
 
+    try {
     const { exact, prefix } = getModelHints(args.model);
     const params: Array<string | number> = [args.make, args.year, Math.max(1, args.limit), exact, prefix];
     const relevanceParts: string[] = [];
@@ -501,7 +543,12 @@ export async function findManualSectionsByTerms(args: {
       params,
     );
 
+    recordVpsSuccess();
     return mapSectionRows(rows);
+    } catch (error) {
+      recordVpsFailure();
+      throw error;
+    }
   }
 
   if (backend === 'supabase') {
@@ -564,6 +611,7 @@ export async function findDiagnosticTroubleCodeIndexes(code: string, limit: numb
     const pool = getVpsPool();
     if (!pool) return [];
 
+    try {
     const { rows } = await pool.query(
       `SELECT path, make, year, model
        FROM manual_embeddings
@@ -574,12 +622,17 @@ export async function findDiagnosticTroubleCodeIndexes(code: string, limit: numb
       [`%${code.toUpperCase()}%`, limit],
     );
 
+    recordVpsSuccess();
     return rows.map((row) => ({
       path: String(row.path || ''),
       make: String(row.make || ''),
       year: Number(row.year || 0),
       model: String(row.model || ''),
     }));
+    } catch (error) {
+      recordVpsFailure();
+      throw error;
+    }
   }
 
   if (backend === 'supabase') {
@@ -614,6 +667,7 @@ export async function findDiagnosticTroubleCodeSections(code: string, limit: num
     const pool = getVpsPool();
     if (!pool) return [];
 
+    try {
     const { rows } = await pool.query(
       `SELECT
          path,
@@ -634,7 +688,12 @@ export async function findDiagnosticTroubleCodeSections(code: string, limit: num
       [`%${code.toUpperCase()}%`, Math.max(1, limit)],
     );
 
+    recordVpsSuccess();
     return mapSectionRows(rows);
+    } catch (error) {
+      recordVpsFailure();
+      throw error;
+    }
   }
 
   if (backend === 'supabase') {
