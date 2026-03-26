@@ -6,27 +6,40 @@
  */
 
 // Common ELM327 BLE service/characteristic UUIDs
-// Different manufacturers use different UUIDs — we try multiple
+// Different manufacturers use different UUIDs — we try ALL known ones
 const KNOWN_SERVICES = [
   '0000fff0-0000-1000-8000-00805f9b34fb', // Most common ELM327 BLE
-  '0000ffe0-0000-1000-8000-00805f9b34fb', // Veepeak, cheap BLE clones
-  '000018f0-0000-1000-8000-00805f9b34fb', // Alternative
+  '0000ffe0-0000-1000-8000-00805f9b34fb', // Veepeak OBDCheck BLE, cheap clones
+  '0000ffe5-0000-1000-8000-00805f9b34fb', // Veepeak BLE+ variant
+  '000018f0-0000-1000-8000-00805f9b34fb', // Alternative ELM327
   'e7810a71-73ae-499d-8c15-faa9aef0c3f2', // Vgate/iCar
   '00001101-0000-1000-8000-00805f9b34fb', // SPP-like BLE bridge
+  '0000abf0-0000-1000-8000-00805f9b34fb', // Some Veepeak models
+  '00001800-0000-1000-8000-00805f9b34fb', // Generic Access (required by some)
+  '00001801-0000-1000-8000-00805f9b34fb', // Generic Attribute
+  '0000180a-0000-1000-8000-00805f9b34fb', // Device Information
+  '49535343-fe7d-4ae5-8fa9-9fafd205e455', // ISSC Transparent UART (common in BLE bridges)
+  'be8bdf07-5b91-b003-6876-5e5a0100d6db', // Carista/Veepeak variant
 ];
 
 const WRITE_CHARACTERISTICS = [
   '0000fff1-0000-1000-8000-00805f9b34fb',
   '0000ffe1-0000-1000-8000-00805f9b34fb', // Veepeak, cheap BLE clones
+  '0000ffe9-0000-1000-8000-00805f9b34fb', // Veepeak BLE+ variant
+  '0000abf1-0000-1000-8000-00805f9b34fb', // Some Veepeak models
   '00002af0-0000-1000-8000-00805f9b34fb',
   'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f',
+  '49535343-8841-43f4-a8d4-ecbe34729bb3', // ISSC write
 ];
 
 const NOTIFY_CHARACTERISTICS = [
   '0000fff2-0000-1000-8000-00805f9b34fb',
   '0000ffe1-0000-1000-8000-00805f9b34fb', // Veepeak — same char for read/write/notify
+  '0000ffe4-0000-1000-8000-00805f9b34fb', // Veepeak notify variant
+  '0000abf2-0000-1000-8000-00805f9b34fb', // Some Veepeak models
   '00002af1-0000-1000-8000-00805f9b34fb',
   'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f',
+  '49535343-1e4d-4bd9-ba61-23c647249616', // ISSC notify
 ];
 
 export interface OBD2Connection {
