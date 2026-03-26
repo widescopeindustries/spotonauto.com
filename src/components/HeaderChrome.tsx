@@ -5,17 +5,19 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
 import HeaderAccountControls from '@/components/HeaderAccountControls';
+import { useT } from '@/lib/translations';
 
 const mobileNavItems = [
-  { label: 'Repair Guides', href: '/repair' },
-  { label: 'Wiring Diagrams', href: '/wiring' },
-  { label: 'Look Up a Code', href: '/codes' },
-  { label: 'AI Diagnosis', href: '/diagnose' },
-  { label: 'Community', href: '/community' },
+  { key: 'nav.repairGuides', href: '/repair' },
+  { key: 'nav.wiringDiagrams', href: '/wiring' },
+  { key: 'nav.codes', href: '/codes' },
+  { key: 'nav.diagnose', href: '/diagnose' },
+  { key: 'nav.community', href: '/community' },
 ];
 
 export default function HeaderChrome() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const t = useT();
 
   return (
     <>
@@ -46,13 +48,13 @@ export default function HeaderChrome() {
               className="block font-body text-gray-300 hover:text-cyan-400 transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              {item.label}
+              {t(item.key)}
             </Link>
           ))}
 
           <div className="pt-4 border-t border-cyan-500/20 space-y-3">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-sm text-gray-500">Guide language</span>
+              <span className="text-sm text-gray-500">{t('nav.guideLanguage')}</span>
               <LanguageSelector />
             </div>
 
@@ -61,7 +63,7 @@ export default function HeaderChrome() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="btn-cyber block w-full text-center"
             >
-              Sign In
+              {t('nav.signIn')}
             </Link>
           </div>
         </div>

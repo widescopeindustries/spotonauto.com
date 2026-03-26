@@ -1,16 +1,21 @@
+'use client';
+
 import Link from 'next/link';
 import { Cpu } from 'lucide-react';
 import HeaderChrome from '@/components/HeaderChrome';
+import { useT } from '@/lib/translations';
 
 const desktopNavItems = [
-  { label: 'Repair Guides', href: '/repair' },
-  { label: 'Wiring Diagrams', href: '/wiring' },
-  { label: 'Look Up a Code', href: '/codes' },
-  { label: 'AI Diagnosis', href: '/diagnose' },
-  { label: 'Community', href: '/community' },
+  { key: 'nav.repairGuides', href: '/repair' },
+  { key: 'nav.wiringDiagrams', href: '/wiring' },
+  { key: 'nav.codes', href: '/codes' },
+  { key: 'nav.diagnose', href: '/diagnose' },
+  { key: 'nav.community', href: '/community' },
 ];
 
 export default function Header() {
+  const t = useT();
+
   return (
     <header className="header-slide-in fixed top-0 left-0 right-0 z-50 glass-strong">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,7 +41,7 @@ export default function Header() {
                 href={item.href}
                 className="font-body text-sm text-gray-300 hover:text-cyan-400 transition-colors relative group"
               >
-                {item.label}
+                {t(item.key)}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
