@@ -209,9 +209,20 @@ export default function DeferredWiringDiagramBrowser() {
                 className="w-full appearance-none rounded-lg border border-slate-700 bg-slate-900/55 px-4 py-3 text-sm font-medium text-gray-200 shadow-lg transition-all hover:border-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
                 value={vehicle.model}
                 onChange={(e) => {
+                  const model = e.target.value;
                   startTransition(() => {
-                    setVehicle((prev) => ({ ...prev, model: e.target.value }));
+                    setVehicle((prev) => ({ ...prev, model }));
                   });
+                  // Auto-load diagram library when model is selected
+                  if (model && vehicle.year && vehicle.make) {
+                    const params = new URLSearchParams(window.location.search);
+                    params.set('year', vehicle.year);
+                    params.set('make', vehicle.make);
+                    params.set('model', model);
+                    params.set('open', '1');
+                    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}#diagram-browser`);
+                    setShouldLoad(true);
+                  }
                 }}
                 disabled={!vehicle.make || loadingModels}
               >
