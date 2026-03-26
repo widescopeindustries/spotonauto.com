@@ -106,23 +106,42 @@ export async function getDtcCrossVehicleDetail(code: string): Promise<DtcCrossVe
 
 /**
  * Get compact summary for a DTC code (vehicle count, top makes, year range).
- * Falls back to the full summary shard if individual key not available.
+ * Looks up the individual dtc:{CODE} key first (small, cacheable),
+ * then falls back to the per-prefix shard (under 1MB each).
+ * Never fetches the full 3.1MB dtc:summary — too large for Next.js cache.
  */
 export async function getDtcCrossVehicleSummary(code: string): Promise<DtcCrossVehicleSummary | null> {
   const upperCode = code.toUpperCase();
 
-  // Try the summary index
-  const raw = await kvGet('dtc:summary');
-  if (raw) {
+  // Try individual code key first — small and cacheable
+  const detailRaw = await kvGet(`dtc:${upperCode}`);
+  if (detailRaw) {
     try {
-      const summary = JSON.parse(raw) as Record<string, DtcCrossVehicleSummary>;
-      return summary[upperCode] ?? null;
+      const detail = JSON.parse(detailRaw) as DtcCrossVehicleDetail;
+      // Build a summary from the detail
+      const makeCounts: Record<string, number> = {};
+      let minYear = 9999;
+      let maxYear = 0;
+      for (const v of detail.vehicles) {
+        makeCounts[v.make] = (makeCounts[v.make] || 0) + 1;
+        if (v.year < minYear) minYear = v.year;
+        if (v.year > maxYear) maxYear = v.year;
+      }
+      return {
+        n: detail.vehicleCount,
+        sys: detail.systems.slice(0, 3),
+        makes: Object.entries(makeCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8)
+          .map(([make, count]) => ({ make, count })),
+        yr: minYear < 9999 ? [minYear, maxYear] : null,
+      };
     } catch {
       // fall through
     }
   }
 
-  // Try prefix shard
+  // Try prefix shard (B, P, C, or U — each under 1MB)
   const prefix = upperCode.charAt(0);
   const shardRaw = await kvGet(`dtc:summary:${prefix}`);
   if (shardRaw) {
