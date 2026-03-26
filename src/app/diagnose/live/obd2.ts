@@ -47,6 +47,7 @@ export interface OBD2Connection {
   server: BluetoothRemoteGATTServer;
   writeChar: BluetoothRemoteGATTCharacteristic;
   notifyChar: BluetoothRemoteGATTCharacteristic;
+  usePolling: boolean;
 }
 
 export interface OBD2PIDResult {
@@ -101,16 +102,46 @@ function waitForResponse(timeoutMs = 5000): Promise<string> {
 
 async function sendCommand(conn: OBD2Connection, cmd: string): Promise<string> {
   const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
   const data = encoder.encode(cmd + '\r');
-  const responsePromise = waitForResponse();
 
-  // Use writeWithoutResponse if available (faster, more compatible)
-  if (conn.writeChar.properties.writeWithoutResponse) {
-    await conn.writeChar.writeValueWithoutResponse(data);
+  if (conn.usePolling) {
+    // Polling mode: write command, then repeatedly read until we get '>'
+    if (conn.writeChar.properties.writeWithoutResponse) {
+      await conn.writeChar.writeValueWithoutResponse(data);
+    } else {
+      await conn.writeChar.writeValueWithResponse(data);
+    }
+
+    // Poll for response
+    let response = '';
+    const deadline = Date.now() + 5000;
+    while (Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, 100)); // 100ms between polls
+      try {
+        const value = await conn.notifyChar.readValue();
+        const chunk = decoder.decode(value);
+        if (chunk && chunk.length > 0) {
+          response += chunk;
+          if (response.includes('>')) {
+            return response.replace(/>/g, '').trim();
+          }
+        }
+      } catch {
+        // readValue can fail between responses — just retry
+      }
+    }
+    return response.replace(/>/g, '').trim() || 'NO DATA';
   } else {
-    await conn.writeChar.writeValueWithResponse(data);
+    // Notification mode: write and wait for notification callback
+    const responsePromise = waitForResponse();
+    if (conn.writeChar.properties.writeWithoutResponse) {
+      await conn.writeChar.writeValueWithoutResponse(data);
+    } else {
+      await conn.writeChar.writeValueWithResponse(data);
+    }
+    return responsePromise;
   }
-  return responsePromise;
 }
 
 export async function connectOBD2(
@@ -208,12 +239,18 @@ export async function connectOBD2(
     );
   }
 
-  // Start notifications
-  await notifyChar.startNotifications();
-  notifyChar.addEventListener('characteristicvaluechanged', handleNotification);
-  onLog('Notifications started');
+  // Start notifications — some devices fail here, so we fall back to polling
+  let usePolling = false;
+  try {
+    await notifyChar.startNotifications();
+    notifyChar.addEventListener('characteristicvaluechanged', handleNotification);
+    onLog('Notifications started');
+  } catch (notifyErr) {
+    onLog(`Notify failed: ${notifyErr} — using polling mode`);
+    usePolling = true;
+  }
 
-  const conn: OBD2Connection = { device, server, writeChar, notifyChar };
+  const conn: OBD2Connection = { device, server, writeChar, notifyChar, usePolling };
 
   // Initialize ELM327
   onLog('Initializing ELM327...');
