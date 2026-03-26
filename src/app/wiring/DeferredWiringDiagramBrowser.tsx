@@ -135,6 +135,9 @@ export default function DeferredWiringDiagramBrowser() {
   }, [vehicle.make, vehicle.year]);
 
   if (shouldLoad && selectorData) {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     return <WiringDiagramLibrary selectorData={selectorData} />;
   }
 
@@ -235,24 +238,10 @@ export default function DeferredWiringDiagramBrowser() {
             </div>
           </div>
 
-          {hasVehicle && (
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  // Push vehicle into URL params so WiringDiagramLibrary picks them up
-                  const params = new URLSearchParams(window.location.search);
-                  params.set('year', vehicle.year);
-                  params.set('make', vehicle.make);
-                  params.set('model', vehicle.model);
-                  params.set('open', '1');
-                  window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}#diagram-browser`);
-                  setShouldLoad(true);
-                }}
-                className="inline-flex items-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-cyan-300"
-              >
-                Find {vehicle.year} {vehicle.make} {vehicle.model} wiring diagrams &rarr;
-              </button>
+          {hasVehicle && loadingSelectorData && (
+            <div className="mt-4 flex items-center gap-3 text-sm text-cyan-300">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
+              Loading {vehicle.year} {vehicle.make} {vehicle.model} wiring diagrams...
             </div>
           )}
         </div>
