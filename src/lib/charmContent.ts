@@ -103,11 +103,25 @@ export async function fetchContentByHash(hash: string): Promise<ContentPage> {
     }
   }
 
-  // Fall back to VPS raw-html proxy
-  // The charm server doesn't serve by hash directly, so we'd need a small
-  // endpoint for this. For now, return unavailable.
-  // TODO: Add /content/:hash endpoint to VPS charm server
-  return { html: '', title: '', status: 404 };
+  // Fall back to VPS raw-html proxy (nginx serves /content/{hash} from disk)
+  try {
+    const vpsUrl = `${CONTENT_BASE}/content/${hash}`;
+    const res = await fetch(vpsUrl, {
+      signal: AbortSignal.timeout ? AbortSignal.timeout(5000) : undefined,
+      next: { revalidate: 86400 },
+    });
+    if (res.ok) {
+      recordSuccess();
+      const raw = await res.text();
+      const html = sanitizeHtml(raw);
+      return { html, title: extractTitle(raw), status: 200 };
+    }
+    recordFailure();
+    return { html: '', title: '', status: res.status };
+  } catch {
+    recordFailure();
+    return { html: '', title: '', status: 503 };
+  }
 }
 
 /**
