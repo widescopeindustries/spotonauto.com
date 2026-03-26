@@ -9,20 +9,24 @@
 // Different manufacturers use different UUIDs — we try multiple
 const KNOWN_SERVICES = [
   '0000fff0-0000-1000-8000-00805f9b34fb', // Most common ELM327 BLE
+  '0000ffe0-0000-1000-8000-00805f9b34fb', // Veepeak, cheap BLE clones
   '000018f0-0000-1000-8000-00805f9b34fb', // Alternative
   'e7810a71-73ae-499d-8c15-faa9aef0c3f2', // Vgate/iCar
+  '00001101-0000-1000-8000-00805f9b34fb', // SPP-like BLE bridge
 ];
 
 const WRITE_CHARACTERISTICS = [
   '0000fff1-0000-1000-8000-00805f9b34fb',
+  '0000ffe1-0000-1000-8000-00805f9b34fb', // Veepeak, cheap BLE clones
   '00002af0-0000-1000-8000-00805f9b34fb',
   'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f',
 ];
 
 const NOTIFY_CHARACTERISTICS = [
   '0000fff2-0000-1000-8000-00805f9b34fb',
+  '0000ffe1-0000-1000-8000-00805f9b34fb', // Veepeak — same char for read/write/notify
   '00002af1-0000-1000-8000-00805f9b34fb',
-  'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f', // Some use same char for read/write
+  'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f',
 ];
 
 export interface OBD2Connection {
@@ -86,7 +90,13 @@ async function sendCommand(conn: OBD2Connection, cmd: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(cmd + '\r');
   const responsePromise = waitForResponse();
-  await conn.writeChar.writeValue(data);
+
+  // Use writeWithoutResponse if available (faster, more compatible)
+  if (conn.writeChar.properties.writeWithoutResponse) {
+    await conn.writeChar.writeValueWithoutResponse(data);
+  } else {
+    await conn.writeChar.writeValueWithResponse(data);
+  }
   return responsePromise;
 }
 
@@ -95,24 +105,12 @@ export async function connectOBD2(
 ): Promise<OBD2Connection> {
   onLog('Requesting Bluetooth device...');
 
-  // Request any device that advertises one of our known services
-  // Also accept any device with name containing 'OBD', 'ELM', 'Vgate', etc.
+  // Accept all BLE devices — scanner names vary wildly across manufacturers.
+  // Veepeak shows as "Veepeak", "OBDCheck", or "V-LINK";
+  // cheap clones show as "OBDII", "BLE-OBD", random strings, etc.
   const device = await navigator.bluetooth.requestDevice({
-    filters: [
-      { namePrefix: 'OBD' },
-      { namePrefix: 'ELM' },
-      { namePrefix: 'Vgate' },
-      { namePrefix: 'iCar' },
-      { namePrefix: 'TOPDON' },
-      { namePrefix: 'V-LINK' },
-    ],
+    acceptAllDevices: true,
     optionalServices: KNOWN_SERVICES,
-  }).catch(() => {
-    // If name filters fail, try accepting all devices
-    return navigator.bluetooth.requestDevice({
-      acceptAllDevices: true,
-      optionalServices: KNOWN_SERVICES,
-    });
   });
 
   onLog(`Found device: ${device.name || 'Unknown'}`);
@@ -152,26 +150,49 @@ export async function connectOBD2(
   }
 
   if (!writeChar || !notifyChar) {
-    // Fallback: enumerate all services and characteristics
+    // Fallback: enumerate ALL services and characteristics on the device
     onLog('Known UUIDs failed, scanning all services...');
-    const services = await server.getPrimaryServices();
-    for (const service of services) {
-      onLog(`Service: ${service.uuid}`);
-      const chars = await service.getCharacteristics();
-      for (const char of chars) {
-        onLog(`  Char: ${char.uuid} props: ${JSON.stringify(char.properties)}`);
-        if (char.properties.write || char.properties.writeWithoutResponse) {
-          writeChar = char;
-        }
-        if (char.properties.notify) {
-          notifyChar = char;
+    try {
+      const services = await server.getPrimaryServices();
+      onLog(`Found ${services.length} service(s)`);
+      for (const service of services) {
+        onLog(`Service: ${service.uuid}`);
+        try {
+          const chars = await service.getCharacteristics();
+          for (const char of chars) {
+            const props = [];
+            if (char.properties.write) props.push('write');
+            if (char.properties.writeWithoutResponse) props.push('writeNoResp');
+            if (char.properties.notify) props.push('notify');
+            if (char.properties.read) props.push('read');
+            if (char.properties.indicate) props.push('indicate');
+            onLog(`  Char: ${char.uuid} [${props.join(',')}]`);
+
+            if (!writeChar && (char.properties.write || char.properties.writeWithoutResponse)) {
+              writeChar = char;
+              onLog(`  → Using as write char`);
+            }
+            if (!notifyChar && (char.properties.notify || char.properties.indicate)) {
+              notifyChar = char;
+              onLog(`  → Using as notify char`);
+            }
+          }
+        } catch (charErr) {
+          onLog(`  Could not read characteristics: ${charErr}`);
         }
       }
+    } catch (svcErr) {
+      onLog(`Service scan failed: ${svcErr}`);
+      onLog('This device may be Bluetooth Classic (not BLE). Web Bluetooth requires BLE.');
     }
   }
 
   if (!writeChar || !notifyChar) {
-    throw new Error('Could not find OBD2 characteristics. Device may not be BLE compatible.');
+    throw new Error(
+      'Could not find compatible characteristics. ' +
+      'Your Veepeak may be Bluetooth Classic (not BLE). ' +
+      'Try a BLE-capable scanner, or check the connection log for details.'
+    );
   }
 
   // Start notifications
