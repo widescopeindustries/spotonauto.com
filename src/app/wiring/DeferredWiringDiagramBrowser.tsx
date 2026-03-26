@@ -135,10 +135,18 @@ export default function DeferredWiringDiagramBrowser() {
   }, [vehicle.make, vehicle.year]);
 
   if (shouldLoad && selectorData) {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
     return <WiringDiagramLibrary selectorData={selectorData} />;
+  }
+
+  if (shouldLoad && !selectorData) {
+    return (
+      <main className="max-w-5xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center gap-3 text-cyan-300 min-h-[40vh]">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
+          <span className="text-sm">Loading wiring diagram library...</span>
+        </div>
+      </main>
+    );
   }
 
   return (
