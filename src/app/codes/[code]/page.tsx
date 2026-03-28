@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const oemMeta = await getDtcCrossVehicleSummary(dtc.code);
     const oemSuffix = oemMeta && oemMeta.n > 0
-        ? ` Found in factory manuals for ${oemMeta.n} vehicles.`
+        ? ` Covers ${oemMeta.n}+ vehicles.`
         : '';
-    const title = `${dtc.code}: ${dtc.title} — Symptoms, Causes & Fix | SpotOn Auto`;
-    const description = `${dtc.code} means ${dtc.title}. ${dtc.description} Estimated fix cost: ${dtc.estimatedCostRange}.${oemSuffix} Free diagnosis and repair guide.`;
+    const title = `${dtc.code}: ${dtc.title} — Causes & Fix | SpotOnAuto`;
+    const description = `What is ${dtc.code}? ${dtc.title} — ${dtc.severity} severity. Typical fix: ${dtc.estimatedCostRange}.${oemSuffix} Free step-by-step diagnosis and repair guide.`;
 
     return {
         title,

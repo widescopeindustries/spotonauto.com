@@ -359,8 +359,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const vehicleLabel = `${resolvedYear} ${originalMake} ${originalModel}`;
   return {
-    title: `${vehicleLabel} Repair Hub | Guides, Wiring, Codes & Manuals`,
-    description: `Everything you need to fix your ${vehicleLabel}: step-by-step repair guides, wiring diagrams, trouble codes, specs, and factory manual references.`,
+    title: `${vehicleLabel} Repair Hub — Free DIY Guides & Specs | SpotOnAuto`,
+    description: `Fix your ${vehicleLabel} yourself. Free step-by-step repair guides, wiring diagrams, trouble codes, and factory specs. Save hundreds vs. the shop.`,
     alternates: {
       canonical: `https://spotonauto.com/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`,
     },

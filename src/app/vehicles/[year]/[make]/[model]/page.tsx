@@ -13,8 +13,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { year, make, model } = await params;
   const dm = decodeURIComponent(make);
   const dmo = decodeURIComponent(model);
-  const title = `${year} ${dm} ${dmo} — Factory Diagnostics & Service Data | SpotOn Auto`;
-  const description = `OEM diagnostic flowcharts, trouble codes, wiring diagrams, and repair procedures for the ${year} ${dm} ${dmo} — straight from the factory service manual.`;
+  const title = `${year} ${dm} ${dmo} — Factory Service Data & Diagnostics | SpotOnAuto`;
+  const description = `Free access to OEM diagnostic flowcharts, trouble codes, wiring diagrams, and repair procedures for the ${year} ${dm} ${dmo}. Straight from the factory service manual.`;
   const pageUrl = `https://spotonauto.com/vehicles/${year}/${make}/${model}`;
 
   return {
