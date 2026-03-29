@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs",
+    "prebuild": "node --experimental-strip-types scripts/content-integrity-check.mjs && node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs",
     "build": "next build --webpack",
     "prestart": "node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs",
     "start": "(sleep 30 && node scripts/submit-indexnow.js --limit 50000 > /dev/null 2>&1) & next start",
