@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
-import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { getTier1RescuePagesForTask } from '@/data/rescuePriority';
 import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 
@@ -75,6 +75,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
     const vehicles: { year: number; model: string; makeSlug: string; modelSlug: string }[] = [];
 
     for (const [model, years] of Object.entries(models)) {
+      if (isNonUsModel(makeSlug, slugify(model))) continue;
       // Pick a representative year: 2013 if in range (charm.li sweet spot), else latest
       const targetYear = years.end >= 2013 && years.start <= 2013 ? 2013 : years.end;
       vehicles.push({

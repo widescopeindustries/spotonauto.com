@@ -9,7 +9,7 @@
  * (they have richer, manually researched specs).
  */
 
-import { NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from './vehicles';
+import { NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, isEvModel } from './vehicles';
 import type { ToolPage, ToolGeneration, ToolFAQ } from './tools-pages';
 
 // ── Helpers ───────────────────────────────────────────────────────────
@@ -59,13 +59,13 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
         slugSuffix: 'oil-type',
         titleTemplate: '{make} {model} Oil Type & Capacity | All Years Guide',
         descTemplate: 'Find the correct oil type, weight, and capacity for your {make} {model}. Covers all model years with filter recommendations and drain intervals.',
-        quickAnswerTemplate: 'The {make} {model} uses synthetic motor oil — typically 0W-20 for newer models (2010+) or 5W-30 for older ones. Capacity varies by engine; check below for your specific year.',
+        quickAnswerTemplate: 'The {make} {model} uses synthetic motor oil — typically 0W-20 for newer models (2010+) or 5W-30 for older ones. Check your owner\'s manual for exact capacity — it varies by engine option. See the year breakdown below.',
         specsForGen: (make, model, gen) => {
             const isModern = gen.endYear >= 2012;
             return {
                 'Recommended Oil': isModern ? '0W-20 Full Synthetic' : '5W-30 Conventional or Synthetic',
-                'Oil Capacity (with filter)': '4.0 - 6.5 quarts (varies by engine)',
-                'Oil Change Interval': isModern ? '7,500 - 10,000 miles' : '3,000 - 5,000 miles',
+                'Oil Capacity (with filter)': 'Varies by engine — check owner\'s manual (typically 4-8+ quarts)',
+                'Oil Change Interval': isModern ? '5,000 - 10,000 miles (follow owner\'s manual or oil life monitor)' : '3,000 - 5,000 miles',
                 'Drain Plug Torque': '25 - 35 ft-lbs (check service manual)',
             };
         },
@@ -79,7 +79,7 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
         },
         faqTemplates: (make, model) => [
             { q: `What type of oil does a ${make} ${model} use?`, a: `Most newer ${make} ${model} models (2010+) use 0W-20 full synthetic oil. Older models typically use 5W-30. The exact specification depends on your engine — check the oil cap or owner's manual for the definitive answer.` },
-            { q: `How many quarts of oil does a ${make} ${model} take?`, a: `Oil capacity for the ${make} ${model} ranges from 4.0 to 6.5 quarts depending on engine size and whether you're replacing the filter. Four-cylinder engines are typically on the lower end, V6 and V8 on the higher end.` },
+            { q: `How many quarts of oil does a ${make} ${model} take?`, a: `Oil capacity for the ${make} ${model} varies by engine — four-cylinder engines typically take 4-5 quarts, V6 engines 5-6 quarts, and V8 or truck engines can take 7-8+ quarts (all with filter). Check your owner's manual for the exact amount.` },
             { q: `Can I use conventional oil in my ${make} ${model}?`, a: `For 2010+ ${make} ${model} models, full synthetic is strongly recommended (and often required). Older models can typically use conventional, but synthetic provides better protection, longer drain intervals, and improved fuel economy.` },
             { q: `How often should I change the oil in my ${make} ${model}?`, a: `Modern ${make} ${model} models typically call for oil changes every 5,000 - 10,000 miles depending on driving conditions. Older models should stick to 3,000 - 5,000 miles. Severe driving (towing, extreme heat, short trips) may require more frequent changes.` },
             { q: `What happens if I use the wrong oil in my ${make} ${model}?`, a: `Using oil that's too thick can reduce fuel economy and increase engine wear during cold starts. Oil that's too thin may not protect adequately under load. For best results, always use the manufacturer-specified weight.` },
@@ -102,7 +102,7 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
         quickAnswerTemplate: 'The {make} {model} battery is located in the engine bay on most models. Some years may have the battery in the trunk or under the rear seat — see the year-by-year breakdown below.',
         specsForGen: (make, model, gen) => ({
             'Battery Location': gen.endYear >= 2015 ? 'Engine bay (right side) — some variants in trunk' : 'Engine bay',
-            'Battery Group Size': 'Group 35, 24F, or 48 (varies by engine)',
+            'Battery Group Size': 'Varies by vehicle — check owner\'s manual or battery label for correct group size',
             'CCA (Cold Cranking Amps)': '500 - 700 CCA recommended',
             'Battery Type': gen.endYear >= 2018 ? 'AGM recommended for start-stop systems' : 'Standard flooded or AGM',
         }),
@@ -116,7 +116,7 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
         },
         faqTemplates: (make, model) => [
             { q: `Where is the battery on a ${make} ${model}?`, a: `On most ${make} ${model} models, the battery is in the engine bay. Some European-influenced designs and certain model years place it in the trunk or under the rear seat for better weight distribution. Check your specific year below.` },
-            { q: `What size battery does a ${make} ${model} need?`, a: `The ${make} ${model} typically uses a Group 35, 24F, or 48 battery depending on the engine and model year. CCA requirements range from 500-700. Vehicles with start-stop systems require an AGM battery.` },
+            { q: `What size battery does a ${make} ${model} need?`, a: `The ${make} ${model} battery group size varies by engine and model year — check your owner's manual or the label on your current battery. CCA requirements range from 500-700. Vehicles with start-stop systems require an AGM battery.` },
             { q: `How long does a ${make} ${model} battery last?`, a: `A ${make} ${model} battery typically lasts 3-5 years. In hot climates like Texas and the Southwest, expect closer to 3 years. AGM batteries in start-stop equipped models may last 4-6 years.` },
             { q: `Can I replace the ${make} ${model} battery myself?`, a: `Yes, battery replacement is a straightforward DIY job on most ${make} ${model} models. You'll need a 10mm wrench for the terminals and possibly a 12mm or 13mm for the hold-down bracket. Some newer models may need a battery registration scan with an OBD2 tool.` },
         ],
@@ -134,9 +134,9 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
         slugSuffix: 'tire-size',
         titleTemplate: '{make} {model} Tire Size | All Years & Trims Guide',
         descTemplate: 'Find the correct tire size for your {make} {model}. Covers all model years and trim levels with pressure specs and recommended brands.',
-        quickAnswerTemplate: 'The {make} {model} tire size varies by trim level and model year. Common sizes include 205/55R16, 215/55R17, and 225/45R18 — see the full year-by-year breakdown below.',
+        quickAnswerTemplate: 'The {make} {model} tire size varies by trim level and model year. Check the door jamb sticker or owner\'s manual for the exact OEM size — see the year-by-year breakdown below.',
         specsForGen: (make, model, gen) => ({
-            'Common Tire Sizes': gen.endYear >= 2015 ? '215/55R17 or 225/45R18' : '205/55R16 or 215/60R16',
+            'Common Tire Sizes': 'Varies by trim level — check door jamb sticker or owner\'s manual for exact OEM size',
             'Tire Pressure (Front/Rear)': '32 - 36 PSI (check door jamb sticker)',
             'Bolt Pattern': '5x100 or 5x114.3 (varies by model)',
             'Speed Rating': gen.endYear >= 2015 ? 'H (130 mph) or V (149 mph)' : 'H (130 mph)',
@@ -254,7 +254,7 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
         descTemplate: 'All fluid capacities for your {make} {model}: engine oil, coolant, transmission fluid, brake fluid, power steering, and more.',
         quickAnswerTemplate: 'The {make} {model} requires multiple fluids maintained at specific levels. Engine oil, coolant, transmission fluid, brake fluid, and power steering fluid all have different capacities depending on your engine and model year.',
         specsForGen: (make, model, gen) => ({
-            'Engine Oil': '4.0 - 6.5 quarts (varies by engine)',
+            'Engine Oil': 'Varies by engine — check owner\'s manual (typically 4-8+ quarts)',
             'Coolant (total system)': '6.0 - 10.0 quarts',
             'Transmission Fluid': gen.endYear >= 2010 ? '3.5 - 4.0 quarts (drain & fill) / 7-9 quarts (total)' : '3.0 - 4.0 quarts (drain & fill)',
             'Brake Fluid': 'DOT 3 or DOT 4 — ~1 quart for full flush',
@@ -271,7 +271,7 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
         },
         faqTemplates: (make, model) => [
             { q: `How much coolant does a ${make} ${model} hold?`, a: `The ${make} ${model} cooling system holds 6-10 quarts total depending on the engine. A drain-and-fill replaces about 50-60% of the coolant. For a complete flush, you'll need the full capacity amount.` },
-            { q: `What type of transmission fluid does a ${make} ${model} use?`, a: `The ${make} ${model} transmission fluid type depends on whether it's an automatic or manual transmission and the model year. Automatic transmissions typically use ATF WS, Dexron VI, or manufacturer-specific fluid. Manual transmissions use 75W-90 gear oil.` },
+            { q: `What type of transmission fluid does a ${make} ${model} use?`, a: `The ${make} ${model} transmission fluid type depends on whether it's an automatic or manual transmission and the model year. Always use the manufacturer-specified fluid — check your owner's manual for the exact ATF or manual transmission fluid required.` },
             { q: `Does a ${make} ${model} have power steering fluid?`, a: `2015+ ${make} ${model} models with electric power steering don't use power steering fluid. Older models with hydraulic power steering use ATF or manufacturer-specific fluid — check your owner's manual.` },
             { q: `What brake fluid does a ${make} ${model} use?`, a: `Most ${make} ${model} models use DOT 3 or DOT 4 brake fluid. DOT 4 has a higher boiling point and is preferred for performance driving. Never use DOT 5 (silicone-based) in a system designed for DOT 3/4.` },
         ],
@@ -440,21 +440,21 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
         slugSuffix: 'transmission-fluid-type',
         titleTemplate: '{make} {model} Transmission Fluid Type & Capacity | Guide',
         descTemplate: 'Find the correct transmission fluid type and capacity for your {make} {model}. Covers automatic and manual transmissions for all years.',
-        quickAnswerTemplate: 'The {make} {model} transmission fluid type depends on your transmission — automatic models typically use ATF WS, Dexron, or manufacturer-specific fluid. Manual transmissions use gear oil. See the year breakdown below.',
+        quickAnswerTemplate: 'The {make} {model} transmission fluid type depends on your transmission — automatic models require the manufacturer-specified automatic transmission fluid. Manual transmissions use manufacturer-specified manual transmission fluid. See the year breakdown below.',
         specsForGen: (make, model, gen) => {
             if (gen.endYear >= 2015) return {
-                'Automatic Fluid Type': 'ATF WS, Dexron VI, or manufacturer-specific (varies)',
+                'Automatic Fluid Type': 'Manufacturer-specified ATF (check owner\'s manual)',
                 'Auto Drain & Fill': '3.5 - 4.0 quarts',
                 'Auto Total Capacity': '7.0 - 12.0 quarts',
-                'Manual Fluid Type': '75W-90 gear oil or MTF (if equipped)',
+                'Manual Fluid Type': 'Manufacturer-specified manual transmission fluid (if equipped)',
                 'Manual Capacity': '2.0 - 3.0 quarts',
                 'Change Interval': '60,000 - 100,000 miles (auto), 30,000 - 60,000 (manual)',
             };
             return {
-                'Automatic Fluid Type': 'Dexron III/VI or manufacturer-specific ATF',
+                'Automatic Fluid Type': 'Manufacturer-specified ATF (check owner\'s manual)',
                 'Auto Drain & Fill': '3.0 - 4.0 quarts',
                 'Auto Total Capacity': '7.0 - 12.0 quarts',
-                'Manual Fluid Type': '75W-90 gear oil',
+                'Manual Fluid Type': 'Manufacturer-specified manual transmission fluid',
                 'Manual Capacity': '2.0 - 3.0 quarts',
                 'Change Interval': '30,000 - 60,000 miles',
             };
@@ -468,7 +468,7 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
             return tips;
         },
         faqTemplates: (make, model) => [
-            { q: `What transmission fluid does a ${make} ${model} use?`, a: `The ${make} ${model} transmission fluid type depends on the year and transmission. Automatic transmissions use ATF WS, Dexron VI, or manufacturer-specific fluid. Manual transmissions use 75W-90 gear oil. See below for your specific year.` },
+            { q: `What transmission fluid does a ${make} ${model} use?`, a: `The ${make} ${model} transmission fluid type depends on the year and transmission. Automatic transmissions require the manufacturer-recommended ATF — using the wrong type can cause shifting problems or damage. Manual transmissions use manufacturer-specified manual transmission fluid. See below for your specific year.` },
             { q: `How much transmission fluid does a ${make} ${model} take?`, a: `A drain-and-fill on the ${make} ${model} automatic transmission typically takes 3.5-4.0 quarts. The total system capacity is 7-12 quarts. For a complete fluid exchange, you'll need the full capacity amount.` },
             { q: `How often should I change transmission fluid in my ${make} ${model}?`, a: `Change your ${make} ${model} automatic transmission fluid every 60,000-100,000 miles under normal conditions. For severe duty (towing, mountain driving, hot climates), change every 30,000-60,000 miles.` },
             { q: `Does the ${make} ${model} have a transmission dipstick?`, a: `Many 2010+ ${make} ${model} models have sealed transmissions with no dipstick. Fluid level is checked via a fill plug underneath the vehicle. Older models typically have a traditional dipstick under the hood.` },
@@ -530,12 +530,19 @@ export function generateAllToolPages(): ToolPage[] {
     const pages: ToolPage[] = [];
     const toolTypes = Object.keys(TEMPLATES);
 
+    // ICE-specific tool types that should not be generated for electric vehicles
+    const ICE_TOOL_TYPES = new Set(['oil-type', 'spark-plug-type', 'serpentine-belt', 'coolant-type', 'transmission-fluid-type']);
+
     for (const [make, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
         // Skip low-volume brands that are intentionally noindex in US SEO strategy.
         if (NOINDEX_MAKES.has(make.toLowerCase())) continue;
 
         for (const model of Object.keys(models)) {
+            if (isNonUsModel(make.toLowerCase(), model.toLowerCase().replace(/\s+/g, '-'))) continue;
             for (const typeKey of toolTypes) {
+                // Skip ICE-specific tool types for EVs
+                if (isEvModel(make, model) && ICE_TOOL_TYPES.has(typeKey)) continue;
+
                 const page = generateToolPage(make, model, typeKey);
                 if (page) pages.push(page);
             }

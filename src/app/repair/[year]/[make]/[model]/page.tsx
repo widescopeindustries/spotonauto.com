@@ -5,6 +5,7 @@ import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import VehicleHubTracker from '@/components/VehicleHubTracker';
 import {
   NOINDEX_MAKES,
+  isNonUsModel,
   VEHICLE_PRODUCTION_YEARS,
   slugifyRoutePart,
 } from '@/data/vehicles';
@@ -364,7 +365,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: `https://spotonauto.com/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`,
     },
-    ...(NOINDEX_MAKES.has(canonicalMake) ? { robots: { index: false, follow: true } } : {}),
+    ...(NOINDEX_MAKES.has(canonicalMake) || isNonUsModel(canonicalMake, canonicalModel) ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

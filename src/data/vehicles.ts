@@ -14,7 +14,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Yaris: { start: 1999, end: 2020 },
         '4Runner': { start: 1984, end: 2024 },
         Avalon: { start: 1995, end: 2022 },
-        Supra: { start: 1978, end: 2024 },
+        Supra: { start: 2020, end: 2024 },
         'Land Cruiser': { start: 1958, end: 2024 },
         // ADDED
         Sequoia: { start: 2001, end: 2024 },
@@ -54,7 +54,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Mustang: { start: 1965, end: 2024 },
         Edge: { start: 2007, end: 2024 },
         Ranger: { start: 1983, end: 2024 },
-        Bronco: { start: 1966, end: 2024 },
+        Bronco: { start: 2021, end: 2024 },
         Expedition: { start: 1997, end: 2024 },
         Taurus: { start: 1986, end: 2019 },
         'F-250': { start: 1999, end: 2024 },
@@ -78,15 +78,15 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
     Chevrolet: {
         Silverado: { start: 1999, end: 2024 },
         Equinox: { start: 2005, end: 2024 },
-        Malibu: { start: 1964, end: 2024 },
+        Malibu: { start: 1997, end: 2024 },
         Tahoe: { start: 1995, end: 2024 },
         Suburban: { start: 1935, end: 2024 },
         Impala: { start: 1958, end: 2020 },
         Traverse: { start: 2009, end: 2024 },
         Colorado: { start: 2004, end: 2024 },
         Trax: { start: 2013, end: 2024 },              // FIXED: was 2015
-        Blazer: { start: 1969, end: 2024 },
-        Camaro: { start: 1967, end: 2024 },
+        Blazer: { start: 2019, end: 2024 },
+        Camaro: { start: 2010, end: 2024 },
         Corvette: { start: 1953, end: 2024 },
         // ADDED
         Cavalier: { start: 1982, end: 2005 },
@@ -122,7 +122,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Titan: { start: 2004, end: 2024 },
         Kicks: { start: 2018, end: 2024 },
         Qashqai: { start: 2007, end: 2024 },
-        Juke: { start: 2011, end: 2024 },
+        Juke: { start: 2011, end: 2017 },
         Micra: { start: 1982, end: 2024 },
         Note: { start: 2004, end: 2024 },
         // ADDED
@@ -149,7 +149,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         i20: { start: 2009, end: 2024 },
         i30: { start: 2007, end: 2024 },
         // ADDED
-        Accent: { start: 1995, end: 2024 },
+        Accent: { start: 1995, end: 2022 },
         Tiburon: { start: 1997, end: 2008 },
         Azera: { start: 2006, end: 2017 },
         Genesis: { start: 2009, end: 2016 },
@@ -293,13 +293,13 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Metris: { start: 2016, end: 2024 },
     },
     Volkswagen: {
-        Golf: { start: 1974, end: 2024 },
+        Golf: { start: 1985, end: 2021 },
         Jetta: { start: 1980, end: 2024 },
-        Passat: { start: 1973, end: 2024 },
+        Passat: { start: 1990, end: 2022 },
         Tiguan: { start: 2008, end: 2024 },
         Polo: { start: 1975, end: 2024 },
         'T-Roc': { start: 2018, end: 2024 },
-        Touareg: { start: 2003, end: 2024 },
+        Touareg: { start: 2004, end: 2017 },
         Beetle: { start: 1938, end: 2019 },
         Atlas: { start: 2018, end: 2024 },
         Arteon: { start: 2017, end: 2024 },
@@ -392,7 +392,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         XC40: { start: 2018, end: 2024 },
         S60: { start: 2001, end: 2024 },
         V60: { start: 2011, end: 2024 },
-        S90: { start: 1998, end: 2024 },              // FIXED: was 2017
+        S90: { start: 2017, end: 2024 },
         V40: { start: 2000, end: 2019 },               // FIXED: was 2013
         V70: { start: 1997, end: 2016 },
         // ADDED
@@ -469,9 +469,9 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         'Wagoneer (new)': { start: 2022, end: 2024 },
     },
     Dodge: {
-        Ram: { start: 1981, end: 2024 },
-        Charger: { start: 1966, end: 2024 },
-        Challenger: { start: 1970, end: 2024 },
+        Ram: { start: 1981, end: 2010 },
+        Charger: { start: 2006, end: 2024 },
+        Challenger: { start: 2008, end: 2024 },
         Durango: { start: 1998, end: 2024 },
         Caravan: { start: 1984, end: 2020 },
         // ADDED
@@ -491,7 +491,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         '300': { start: 1999, end: 2024 },              // FIXED: was 2005
         Pacifica: { start: 2004, end: 2024 },            // FIXED: was 2017
         'Town and Country': { start: 1990, end: 2016 },
-        Voyager: { start: 2000, end: 2024 },             // FIXED: was 2020
+        Voyager: { start: 2020, end: 2024 },
         // ADDED
         'PT Cruiser': { start: 2001, end: 2010 },
         Sebring: { start: 1995, end: 2010 },
@@ -565,7 +565,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
     },
     Lincoln: {
         Navigator: { start: 1998, end: 2024 },
-        Aviator: { start: 2003, end: 2024 },
+        Aviator: { start: 2020, end: 2024 },
         Corsair: { start: 2020, end: 2024 },
         MKZ: { start: 2007, end: 2020 },
         // ADDED
@@ -873,6 +873,147 @@ export const NOINDEX_MAKES = new Set([
     'renault', 'fiat', 'smart', 'isuzu',
 ]);
 
+/**
+ * Models that were never sold in the US market (or only briefly under a different name).
+ * These generate false content for a US-focused site. Format: 'make:model' (lowercase, hyphenated).
+ * Pages for these models get noindex + excluded from sitemaps.
+ */
+export const NON_US_MODELS = new Set([
+    // Nissan
+    'nissan:qashqai',
+    'nissan:micra',
+    'nissan:note',
+    'nissan:juke',  // US ended 2017, listed to 2024
+    // Hyundai
+    'hyundai:i10',
+    'hyundai:i20',
+    'hyundai:i30',
+    // Kia
+    'kia:ceed',
+    'kia:picanto',
+    // Volkswagen
+    'volkswagen:polo',
+    'volkswagen:t-roc',
+    'volkswagen:caddy',
+    'volkswagen:transporter',
+    'volkswagen:up',
+    // Audi
+    'audi:a1',
+    'audi:q2',
+    // Mitsubishi
+    'mitsubishi:pajero',
+    'mitsubishi:l200',
+    'mitsubishi:asx',
+    // Suzuki (all cars after 2013 are non-US, but Suzuki is not in NOINDEX_MAKES)
+    'suzuki:jimny',
+    'suzuki:ignis',
+    'suzuki:swift',  // US ended ~2001
+    'suzuki:vitara', // US ended ~2004
+    'suzuki:sx4',    // US ended ~2013
+    'suzuki:baleno',
+    'suzuki:celerio',
+    'suzuki:s-cross',
+    // Ford
+    'ford:mondeo',  // EU only, US = Fusion
+    // Acura
+    'acura:cdx',    // China only
+    // Volvo
+    'volvo:v40',    // US ended 2004, 2nd gen EU only
+]);
+
+export function isNonUsModel(make: string, model: string): boolean {
+    const key = `${make.toLowerCase()}:${model.toLowerCase().replace(/\s+/g, '-')}`;
+    return NON_US_MODELS.has(key);
+}
+
+/** Pure electric vehicles — no combustion engine, no oil, no spark plugs, no belts */
+export const EV_MODELS = new Set([
+    'toyota:bz4x',
+    'honda:prologue',
+    'ford:mustang-mach-e',
+    'chevrolet:bolt-ev',
+    'chevrolet:bolt-euv',
+    'chevrolet:bolt-incomplete',
+    'chevrolet:equinox-ev',
+    'chevrolet:blazer-ev',
+    'nissan:leaf',
+    'nissan:ariya',
+    'hyundai:ioniq-5',
+    'hyundai:ioniq-6',
+    'kia:ev6',
+    'kia:ev9',
+    'bmw:i3',
+    'bmw:i4',
+    'bmw:i7',
+    'bmw:ix',
+    'mercedes-benz:eqs-class-sedan',
+    'mercedes-benz:eqe-class-sedan',
+    'mercedes-benz:eqb-class',
+    'mercedes-benz:eqs-class-suv',
+    'mercedes-benz:eqe-class-suv',
+    'mercedes-benz:esprinter',
+    'volkswagen:id.4',
+    'volkswagen:id4',
+    'audi:e-tron',
+    'audi:e-tron-sportback',
+    'audi:rs-e-tron-gt',
+    'audi:e-tron-gt',
+    'audi:q4-(e-tron)',
+    'audi:q4-e-tron',
+    'audi:q8-e-tron',
+    'subaru:solterra',
+    'mazda:mx-30',
+    'mitsubishi:i-miev',
+    'gmc:hummer-ev-pickup',
+    'gmc:hummer-ev-suv',
+    'gmc:cruise-origin-av',
+    'cadillac:lyriq',
+    'porsche:taycan',
+    'fiat:500e',
+    'mini:cooper-se',
+    'volvo:ex30',
+    'volvo:ex90',
+    'volvo:xc40-recharge',
+    'genesis:gv60',
+    'genesis:electrified-gv70',
+    'rivian:r1t',
+    'rivian:r1s',
+    'lucid:air',
+    'polestar:2',
+    'tesla:model-3',
+    'tesla:model-y',
+    'tesla:model-s',
+    'tesla:model-x',
+    'tesla:cybertruck',
+]);
+
+/** Repair tasks that only apply to internal combustion engines */
+export const ICE_ONLY_TASKS = new Set([
+    'oil-change',
+    'spark-plug-replacement',
+    'serpentine-belt-replacement',
+    'timing-belt-replacement',
+    'alternator-replacement',
+    'starter-replacement',
+    'oxygen-sensor-replacement',
+    'ignition-coil-replacement',
+    'catalytic-converter-replacement',
+    'engine-air-filter-replacement',
+    'fuel-filter-replacement',
+    'fuel-pump-replacement',
+    'valve-cover-gasket-replacement',
+]);
+
+export function isEvModel(make: string, model: string): boolean {
+    const key = `${make.toLowerCase()}:${model.toLowerCase().replace(/\s+/g, '-')}`;
+    return EV_MODELS.has(key);
+}
+
+export function isTaskValidForVehicle(make: string, model: string, task: string): boolean {
+    if (isEvModel(make, model) && ICE_ONLY_TASKS.has(task)) return false;
+    return true;
+}
+
 export function slugifyRoutePart(value: string): string {
     return decodeURIComponent(value)
         .trim()
@@ -926,6 +1067,9 @@ export function isValidVehicleCombination(
             }
         }
     }
+
+    // Block ICE-only tasks for electric vehicles
+    if (isEvModel(make, model) && ICE_ONLY_TASKS.has(task)) return false;
 
     // Unknown makes/models pass through - NHTSA has thousands we don't track
     return true;

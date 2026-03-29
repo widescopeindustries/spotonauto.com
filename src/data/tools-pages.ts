@@ -58,7 +58,7 @@ const oilPages: ToolPage[] = [
         generations: [
             { name: 'XV70 (2018-2024)', years: '2018-2024', specs: { 'Oil Type (4-cyl)': '0W-20 Full Synthetic', 'Capacity (4-cyl)': '4.8 quarts with filter', 'Oil Type (V6)': '0W-20 Full Synthetic', 'Capacity (V6)': '5.7 quarts with filter', 'Filter': 'Toyota 04152-YZZA1' }, notes: ['Only use 0W-20 — thicker oils void warranty', 'V6 3.5L uses same oil type but more capacity'] },
             { name: 'XV50 (2012-2017)', years: '2012-2017', specs: { 'Oil Type (4-cyl)': '0W-20 Synthetic', 'Capacity (4-cyl)': '4.6 quarts with filter', 'Oil Type (V6)': '0W-20 Synthetic', 'Capacity (V6)': '6.4 quarts with filter', 'Filter': 'Toyota 04152-YZZA1' }, notes: ['2.5L engine introduced in this generation'] },
-            { name: 'XV40 (2007-2011)', years: '2007-2011', specs: { 'Oil Type (4-cyl)': '0W-20 or 5W-20', 'Capacity (4-cyl)': '4.5 quarts with filter', 'Oil Type (V6)': '5W-30', 'Capacity (V6)': '6.4 quarts with filter', 'Filter': 'Toyota 90915-YZZD1' } },
+            { name: 'XV40 (2007-2011)', years: '2007-2011', specs: { 'Oil Type (4-cyl)': '5W-20 or 5W-30', 'Capacity (4-cyl)': '4.5 quarts with filter', 'Oil Type (V6)': '5W-30', 'Capacity (V6)': '6.4 quarts with filter', 'Filter': 'Toyota 90915-YZZD1' } },
             { name: 'XV30 (2002-2006)', years: '2002-2006', specs: { 'Oil Type (4-cyl)': '5W-30', 'Capacity (4-cyl)': '4.0 quarts with filter', 'Oil Type (V6)': '5W-30', 'Capacity (V6)': '5.0 quarts with filter', 'Filter': 'Toyota 90915-YZZD1' } },
         ],
         faq: [
@@ -91,9 +91,9 @@ const oilPages: ToolPage[] = [
         title: 'Toyota Corolla Oil Type & Capacity | All Years Guide',
         description: 'Find the correct oil type and capacity for your Toyota Corolla. All years 1990-2024 covered with filter part numbers.',
         keywords: ['toyota corolla oil type', 'corolla oil capacity', 'toyota corolla oil weight'],
-        quickAnswer: 'The 2020-2024 Toyota Corolla uses 0W-20 full synthetic oil with a capacity of 4.4 quarts (2.0L) or 4.8 quarts (1.8L hybrid).',
+        quickAnswer: 'The 2020-2024 Toyota Corolla uses 0W-20 full synthetic oil with a capacity of 4.4 quarts (2.0L) or 3.9 quarts (1.8L hybrid).',
         generations: [
-            { name: 'E210 (2020-2024)', years: '2020-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity (2.0L)': '4.4 quarts with filter', 'Capacity (1.8L Hybrid)': '4.8 quarts with filter', 'Filter': 'Toyota 04152-YZZA1' } },
+            { name: 'E210 (2020-2024)', years: '2020-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity (2.0L)': '4.4 quarts with filter', 'Capacity (1.8L Hybrid)': '3.9 quarts with filter', 'Filter': 'Toyota 04152-YZZA1' } },
             { name: 'E170 (2014-2019)', years: '2014-2019', specs: { 'Oil Type': '0W-20 Synthetic', 'Capacity': '4.4 quarts with filter', 'Filter': 'Toyota 04152-YZZA1' } },
             { name: 'E140 (2009-2013)', years: '2009-2013', specs: { 'Oil Type': '0W-20 or 5W-20', 'Capacity': '4.4 quarts with filter', 'Filter': 'Toyota 90915-YZZD1' } },
             { name: 'E120 (2003-2008)', years: '2003-2008', specs: { 'Oil Type': '5W-30', 'Capacity': '3.9 quarts with filter', 'Filter': 'Toyota 90915-YZZD1' } },
@@ -109,9 +109,9 @@ const oilPages: ToolPage[] = [
         title: 'Honda Accord Oil Type & Capacity | All Years Guide',
         description: 'Find the correct oil type and capacity for your Honda Accord. All years covered with filter recommendations.',
         keywords: ['honda accord oil type', 'accord oil capacity', 'honda accord oil weight'],
-        quickAnswer: 'The 2018-2024 Honda Accord uses 0W-20 full synthetic oil. The 1.5T holds 3.7 quarts and the 2.0T holds 4.6 quarts with filter.',
+        quickAnswer: 'The 2018-2024 Honda Accord uses 0W-20 full synthetic oil. The 1.5T holds 3.7 quarts and the 2.0T holds 4.0 quarts with filter.',
         generations: [
-            { name: '10th Gen (2018-2024)', years: '2018-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity (1.5T)': '3.7 quarts with filter', 'Capacity (2.0T)': '4.6 quarts with filter', 'Filter': 'Honda 15400-PLM-A02' } },
+            { name: '10th Gen (2018-2024)', years: '2018-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity (1.5T)': '3.7 quarts with filter', 'Capacity (2.0T)': '4.0 quarts with filter', 'Filter': 'Honda 15400-PLM-A02' } },
             { name: '9th Gen (2013-2017)', years: '2013-2017', specs: { 'Oil Type (4-cyl)': '0W-20 Synthetic', 'Capacity (4-cyl)': '4.4 quarts with filter', 'Oil Type (V6)': '0W-20 Synthetic', 'Capacity (V6)': '4.5 quarts with filter' } },
             { name: '8th Gen (2008-2012)', years: '2008-2012', specs: { 'Oil Type (4-cyl)': '5W-20', 'Capacity (4-cyl)': '4.4 quarts with filter', 'Oil Type (V6)': '5W-20', 'Capacity (V6)': '4.5 quarts with filter' } },
         ],
@@ -125,9 +125,9 @@ const oilPages: ToolPage[] = [
         title: 'Chevrolet Silverado Oil Type & Capacity | All Years Guide',
         description: 'Find the correct oil type and capacity for your Chevy Silverado 1500. Covers 5.3L V8, 6.2L V8, 2.7T, and 3.0 Duramax.',
         keywords: ['chevy silverado oil type', 'silverado oil capacity', 'silverado 5.3 oil type', 'silverado oil change'],
-        quickAnswer: 'The 2019-2024 Silverado 5.3L V8 uses 0W-20 full synthetic (8.0 quarts). The 6.2L V8 uses 0W-20 (8.0 quarts). The 3.0L Duramax diesel uses 0W-20 Dexos D (8.0 quarts).',
+        quickAnswer: 'The 2019-2024 Silverado 5.3L V8 uses 0W-20 full synthetic (8.0 quarts). The 6.2L V8 uses 0W-20 (8.0 quarts). The 3.0L Duramax diesel uses 0W-20 Dexos D (7.0 quarts).',
         generations: [
-            { name: 'T1XX (2019-2024)', years: '2019-2024', specs: { 'Oil Type (2.7L Turbo)': '0W-20 Full Synthetic', 'Capacity (2.7L)': '7.0 quarts with filter', 'Oil Type (5.3L V8)': '0W-20 Dexos 1 Gen 3', 'Capacity (5.3L)': '8.0 quarts with filter', 'Oil Type (6.2L V8)': '0W-20 Dexos 1 Gen 3', 'Capacity (6.2L)': '8.0 quarts with filter', 'Oil Type (3.0L Diesel)': '0W-20 Dexos D', 'Capacity (3.0L Diesel)': '8.0 quarts with filter' }, notes: ['All engines now use 0W-20', 'Must use Dexos-approved oil'] },
+            { name: 'T1XX (2019-2024)', years: '2019-2024', specs: { 'Oil Type (2.7L Turbo)': '0W-20 Full Synthetic', 'Capacity (2.7L)': '6.0 quarts with filter', 'Oil Type (5.3L V8)': '0W-20 Dexos 1 Gen 3', 'Capacity (5.3L)': '8.0 quarts with filter', 'Oil Type (6.2L V8)': '0W-20 Dexos 1 Gen 3', 'Capacity (6.2L)': '8.0 quarts with filter', 'Oil Type (3.0L Diesel)': '0W-20 Dexos D', 'Capacity (3.0L Diesel)': '7.0 quarts with filter' }, notes: ['All engines now use 0W-20', 'Must use Dexos-approved oil'] },
             { name: 'K2XX (2014-2018)', years: '2014-2018', specs: { 'Oil Type (5.3L V8)': '5W-30 or 0W-20', 'Capacity (5.3L)': '8.0 quarts with filter', 'Oil Type (6.2L V8)': '5W-30', 'Capacity (6.2L)': '8.0 quarts with filter' }, notes: ['2015.5+ switched to 0W-20 for 5.3L'] },
         ],
         faq: [
@@ -141,14 +141,14 @@ const oilPages: ToolPage[] = [
         title: 'Toyota RAV4 Oil Type & Capacity | All Years Guide',
         description: 'Find the correct oil type and capacity for your Toyota RAV4. Covers all years including RAV4 Hybrid and Prime.',
         keywords: ['toyota rav4 oil type', 'rav4 oil capacity', 'rav4 oil weight', 'rav4 hybrid oil type'],
-        quickAnswer: 'The 2019-2024 Toyota RAV4 uses 0W-20 full synthetic oil with a capacity of 4.8 quarts (2.5L) or 4.4 quarts (Hybrid).',
+        quickAnswer: 'The 2019-2024 Toyota RAV4 uses 0W-20 full synthetic oil with a capacity of 4.8 quarts (2.5L) or 4.8 quarts (Hybrid).',
         generations: [
-            { name: 'XA50 (2019-2024)', years: '2019-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity (2.5L)': '4.8 quarts with filter', 'Capacity (Hybrid)': '4.4 quarts with filter', 'Filter': 'Toyota 04152-YZZA1' } },
+            { name: 'XA50 (2019-2024)', years: '2019-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity (2.5L)': '4.8 quarts with filter', 'Capacity (Hybrid)': '4.8 quarts with filter', 'Filter': 'Toyota 04152-YZZA1' } },
             { name: 'XA40 (2013-2018)', years: '2013-2018', specs: { 'Oil Type': '0W-20 Synthetic', 'Capacity': '4.6 quarts with filter', 'Filter': 'Toyota 04152-YZZA1' } },
             { name: 'XA30 (2006-2012)', years: '2006-2012', specs: { 'Oil Type (4-cyl)': '0W-20 or 5W-20', 'Capacity (4-cyl)': '4.5 quarts with filter', 'Oil Type (V6)': '5W-30', 'Capacity (V6)': '6.4 quarts with filter' } },
         ],
         faq: [
-            { q: 'Does the RAV4 Hybrid use different oil?', a: 'Same type (0W-20 full synthetic) but slightly different capacity. The hybrid holds about 4.4 quarts vs 4.8 for the non-hybrid. Same filter.' },
+            { q: 'Does the RAV4 Hybrid use different oil?', a: 'Same type (0W-20 full synthetic) and same capacity — both the hybrid and non-hybrid hold 4.8 quarts with filter. They use the same A25A-FXS engine family. Same filter too.' },
         ],
     },
     {
@@ -173,14 +173,14 @@ const oilPages: ToolPage[] = [
         title: 'Hyundai Elantra Oil Type & Capacity | All Years Guide',
         description: 'Find the correct oil type and capacity for your Hyundai Elantra. All years with filter recommendations.',
         keywords: ['hyundai elantra oil type', 'elantra oil capacity', 'hyundai elantra oil weight'],
-        quickAnswer: 'The 2021-2024 Hyundai Elantra uses 0W-20 full synthetic oil with a capacity of 4.2 quarts (2.0L) or 4.0 quarts (1.6T N Line).',
+        quickAnswer: 'The 2021-2024 Hyundai Elantra uses 0W-20 full synthetic oil with a capacity of 4.2 quarts (2.0L) or 4.8 quarts (1.6T N Line).',
         generations: [
-            { name: 'CN7 (2021-2024)', years: '2021-2024', specs: { 'Oil Type (2.0L)': '0W-20 Full Synthetic', 'Capacity (2.0L)': '4.2 quarts with filter', 'Oil Type (1.6T)': '0W-20 Full Synthetic', 'Capacity (1.6T)': '4.0 quarts with filter' } },
+            { name: 'CN7 (2021-2024)', years: '2021-2024', specs: { 'Oil Type (2.0L)': '0W-20 Full Synthetic', 'Capacity (2.0L)': '4.2 quarts with filter', 'Oil Type (1.6T)': '0W-20 Full Synthetic', 'Capacity (1.6T)': '4.8 quarts with filter' } },
             { name: 'AD (2017-2020)', years: '2017-2020', specs: { 'Oil Type': '0W-20 Synthetic', 'Capacity (2.0L)': '4.2 quarts with filter', 'Filter': 'Hyundai 26300-35505' } },
             { name: 'MD/UD (2011-2016)', years: '2011-2016', specs: { 'Oil Type': '5W-20 or 5W-30', 'Capacity': '4.2 quarts with filter' } },
         ],
         faq: [
-            { q: 'Is there an oil consumption recall on the Elantra?', a: 'Hyundai extended warranties on certain 2011-2019 Theta II engines due to excessive oil consumption. Check with your dealer for your specific VIN. The Smartstream engines (2021+) do not have this issue.' },
+            { q: 'Is there an oil consumption recall on the Elantra?', a: 'Some 2011-2016 Elantras with the Nu 1.8L or 2.0L engine had oil consumption concerns. Hyundai issued technical service bulletins and extended warranties on affected engines. Check with your dealer using your VIN. The Smartstream engines (2021+) do not have this issue. Note: the Theta II recall applies to Sonata and Santa Fe, not the Elantra.' },
         ],
     },
     {
@@ -235,9 +235,9 @@ const oilPages: ToolPage[] = [
         title: 'Nissan Rogue Oil Type & Capacity | All Years Guide',
         description: 'Find the correct oil type and capacity for your Nissan Rogue. All years 2008-2024.',
         keywords: ['nissan rogue oil type', 'rogue oil capacity', 'nissan rogue oil weight'],
-        quickAnswer: 'The 2021-2024 Nissan Rogue uses 0W-20 full synthetic oil with a capacity of 5.0 quarts with filter.',
+        quickAnswer: 'The 2021-2024 Nissan Rogue uses 0W-20 full synthetic oil with a capacity of 4.4 quarts with filter.',
         generations: [
-            { name: 'T33 (2021-2024)', years: '2021-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity': '5.0 quarts with filter', 'Filter': 'Nissan 15208-9HP0A' } },
+            { name: 'T33 (2021-2024)', years: '2021-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity': '4.4 quarts with filter', 'Filter': 'Nissan 15208-9HP0A' } },
             { name: 'T32 (2014-2020)', years: '2014-2020', specs: { 'Oil Type': '0W-20 Synthetic', 'Capacity': '5.1 quarts with filter' } },
             { name: 'S35 (2008-2013)', years: '2008-2013', specs: { 'Oil Type': '5W-30', 'Capacity': '4.9 quarts with filter' } },
         ],
@@ -296,7 +296,7 @@ const batteryPages: ToolPage[] = [
             { name: '11th Gen (2022-2024)', years: '2022-2024', specs: { 'Location': 'Under hood, passenger side', 'Battery Size': 'Group 51R', 'CCA': '410 CCA minimum', 'Type': 'Standard or AGM', 'Difficulty': 'Easy — 15 min' } },
             { name: '10th Gen (2016-2021)', years: '2016-2021', specs: { 'Location': 'Under hood, passenger side', 'Battery Size': 'Group 51R', 'CCA': '410 CCA', 'Type': 'Standard lead-acid', 'Difficulty': 'Easy — 15 min' } },
             { name: '9th Gen (2012-2015)', years: '2012-2015', specs: { 'Location': 'Under hood, passenger side', 'Battery Size': 'Group 51R', 'CCA': '410 CCA', 'Type': 'Standard lead-acid', 'Difficulty': 'Easy — 15 min' } },
-            { name: '8th Gen (2006-2011)', years: '2006-2011', specs: { 'Location': 'Under hood, driver\'s side', 'Battery Size': 'Group 51R', 'CCA': '410 CCA', 'Difficulty': 'Easy — 15 min' }, notes: ['Moved from driver side to passenger side in 10th gen'] },
+            { name: '8th Gen (2006-2011)', years: '2006-2011', specs: { 'Location': 'Under hood, passenger side', 'Battery Size': 'Group 51R', 'CCA': '410 CCA', 'Difficulty': 'Easy — 15 min' }, notes: ['Battery has been on the passenger side since the 8th gen'] },
         ],
         faq: [
             { q: 'Why is the Civic battery so small?', a: 'Honda uses a Group 51R battery which is smaller than many competitors. This is fine for the Civic\'s electrical demands. If you want more starting power in cold climates, look for a 51R with higher CCA (500+).' },

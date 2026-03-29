@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
-import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
 interface PageProps {
@@ -48,7 +48,9 @@ export default async function MakeGuidesPage({ params }: PageProps) {
     permanentRedirect(`/guides/${canonicalMake}`);
   }
 
-  const models = Object.keys(VEHICLE_PRODUCTION_YEARS[originalMake]).sort();
+  const models = Object.keys(VEHICLE_PRODUCTION_YEARS[originalMake])
+    .filter((m) => !isNonUsModel(canonicalMake, slugifyPart(m)))
+    .sort();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">

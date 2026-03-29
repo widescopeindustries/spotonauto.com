@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
-import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, slugifyRoutePart } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { getToolPagesForVehicle, TOOL_TYPE_META } from '@/data/tools-pages';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Wrench } from 'lucide-react';
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: PageProps) {
     alternates: {
       canonical: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}`,
     },
-    ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
+    ...(NOINDEX_MAKES.has(make.toLowerCase()) || isNonUsModel(make.toLowerCase(), model.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

@@ -11,7 +11,7 @@ import RepairSectionTracker from '@/components/RepairSectionTracker';
 import RepairTrackedLink from '@/components/RepairTrackedLink';
 import { getTier1RescueEntryByHref, getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
 import { buildSymptomHref, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
-import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart } from '@/data/vehicles';
+import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart } from '@/data/vehicles';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
 import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
@@ -1690,7 +1690,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title,
         description,
         keywords,
-        ...(NOINDEX_MAKES.has(canonicalMake) ? { robots: { index: false, follow: true } } : {}),
+        ...(NOINDEX_MAKES.has(canonicalMake) || isNonUsModel(canonicalMake, canonicalModel) ? { robots: { index: false, follow: true } } : {}),
         openGraph: {
             title,
             description,
@@ -3033,6 +3033,7 @@ export default async function Page({ params }: PageProps) {
                             for (const [mo, years] of Object.entries(models)) {
                                 const moSlug = slugifyRoutePart(mo);
                                 if (mSlug === currentMakeLower && moSlug === currentModelLower) continue;
+                                if (isNonUsModel(mSlug, moSlug)) continue;
                                 const targetYear = years.end >= 2013 && years.start <= 2013 ? 2013 : years.end;
                                 crossVehicles.push({ y: String(targetYear), mk: mSlug, mo: moSlug, display: `${targetYear} ${m} ${mo}` });
                             }

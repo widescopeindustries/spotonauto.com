@@ -3,6 +3,7 @@ import 'server-only';
 import { buildSymptomHref } from '@/data/symptomGraph';
 import {
   NOINDEX_MAKES,
+  isNonUsModel,
   VALID_TASKS,
   VEHICLE_PRODUCTION_YEARS,
   slugifyRoutePart,
@@ -191,6 +192,7 @@ function getToolNodes(args: {
   limit: number;
 }): VehicleHubNode[] {
   if (NOINDEX_MAKES.has(slugifyRoutePart(args.make))) return [];
+  if (isNonUsModel(slugifyRoutePart(args.make), slugifyRoutePart(args.model))) return [];
 
   return getToolPagesForVehicle(args.displayMake, args.displayModel)
     .slice(0, Math.max(1, args.limit))

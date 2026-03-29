@@ -6,6 +6,7 @@ import { DTC_CODES } from '../src/data/dtc-codes-data.ts';
 import {
   VEHICLE_PRODUCTION_YEARS,
   NOINDEX_MAKES,
+  isNonUsModel,
   slugifyRoutePart,
 } from '../src/data/vehicles.ts';
 import {
@@ -54,6 +55,7 @@ async function collectGuideModelSuggestions(): Promise<Suggestion[]> {
 
     for (const [model, production] of Object.entries(models)) {
       const modelSlug = slugifyRoutePart(model);
+      if (isNonUsModel(makeSlug, modelSlug)) continue;
       const year = buildRepresentativeYear(production.start, production.end);
       const vehicleGraph = await buildVehicleHubGraph({
         year: String(year),

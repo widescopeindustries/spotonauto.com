@@ -55,7 +55,7 @@ function getEligibleTasksForYear(year) {
 
 // Inline the vehicle data and tasks to avoid TS import issues
 // These must stay in sync with src/data/vehicles.ts
-const { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES } = await import(
+const { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, isEvModel, ICE_ONLY_TASKS } = await import(
     '../src/data/vehicles.ts'
 ).catch(() => {
     // Fallback: read and eval the TS file (strips types at import)
@@ -90,6 +90,7 @@ function buildAllEntries() {
 
         for (const [model, years] of Object.entries(models)) {
             const modelSlug = slugify(model);
+            if (isNonUsModel(makeSlug, modelSlug)) continue;
 
             const sampledYears = new Set();
             if (years.start >= MAIN_SITEMAP_MIN_YEAR) {
@@ -110,6 +111,9 @@ function buildAllEntries() {
 
                 const eligibleTasks = getEligibleTasksForYear(year);
                 for (const task of eligibleTasks) {
+                    // Skip ICE-only tasks for electric vehicles
+                    if (isEvModel(make, model) && ICE_ONLY_TASKS.has(task)) continue;
+
                     entries.push({
                         url: `${BASE_URL}/repair/${year}/${makeSlug}/${modelSlug}/${task}`,
                         lastmod: LAST_MOD,

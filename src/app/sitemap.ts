@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { SYMPTOM_CLUSTERS } from '@/data/symptomGraph';
-import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES, isNonUsModel } from '@/data/vehicles';
 import { TOOL_PAGES, TOOL_TYPE_META } from '@/data/tools-pages';
 import { getSitemapLastMod } from '@/lib/sitemap';
 
@@ -80,6 +80,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         if (!models) continue;
         for (const model of Object.keys(models)) {
             if (!model) continue;
+            if (isNonUsModel(makeSlug, slugify(model))) continue;
             entries.push({
                 url: `${baseUrl}/guides/${makeSlug}/${slugify(model)}`,
                 lastModified: LAST_MOD,
