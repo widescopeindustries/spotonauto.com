@@ -1102,7 +1102,8 @@ export function isEvModel(make: string, model: string): boolean {
 const DIESEL_ONLY_TASKS = new Set(['glow-plug-replacement']);
 
 export function isTaskValidForVehicle(make: string, model: string, task: string): boolean {
-    if (isEvModel(make, model) && ICE_ONLY_TASKS.has(task)) return false;
+    // EVs have ZERO corpus data — block ALL tasks, not just ICE tasks
+    if (isEvModel(make, model)) return false;
     // Glow plugs are diesel-only — block unless model name indicates diesel
     if (DIESEL_ONLY_TASKS.has(task)) {
         const m = model.toLowerCase();

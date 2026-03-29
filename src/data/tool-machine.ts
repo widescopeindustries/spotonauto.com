@@ -530,19 +530,15 @@ export function generateAllToolPages(): ToolPage[] {
     const pages: ToolPage[] = [];
     const toolTypes = Object.keys(TEMPLATES);
 
-    // ICE-specific tool types that should not be generated for electric vehicles
-    const ICE_TOOL_TYPES = new Set(['oil-type', 'spark-plug-type', 'serpentine-belt', 'coolant-type', 'transmission-fluid-type']);
-
     for (const [make, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
         // Skip low-volume brands that are intentionally noindex in US SEO strategy.
         if (NOINDEX_MAKES.has(make.toLowerCase())) continue;
 
         for (const model of Object.keys(models)) {
             if (isNonUsModel(make.toLowerCase(), model.toLowerCase().replace(/\s+/g, '-'))) continue;
+            // EVs have zero corpus data — skip ALL tool page types
+            if (isEvModel(make, model)) continue;
             for (const typeKey of toolTypes) {
-                // Skip ICE-specific tool types for EVs
-                if (isEvModel(make, model) && ICE_TOOL_TYPES.has(typeKey)) continue;
-
                 const page = generateToolPage(make, model, typeKey);
                 if (page) pages.push(page);
             }
