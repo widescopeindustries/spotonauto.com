@@ -348,28 +348,29 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         e_tron: { start: 2019, end: 2024 },
     },
     Renault: {
-        Clio: { start: 1990, end: 2024 },
-        Megane: { start: 1996, end: 2024 },
-        Captur: { start: 2013, end: 2024 },
-        Kadjar: { start: 2015, end: 2022 },
-        Scenic: { start: 1997, end: 2024 },
-        Twingo: { start: 1993, end: 2024 },
-        Kangoo: { start: 1998, end: 2024 },
-        Laguna: { start: 1994, end: 2015 },
-        Zoe: { start: 2013, end: 2024 },
-        Arkana: { start: 2021, end: 2024 },
-        Duster: { start: 2010, end: 2024 },
+        // OEM corpus models (1982-1987) — serves international audience
+        'Alliance-Encore': { start: 1983, end: 1987 },
+        Fuego: { start: 1982, end: 1986 },
+        '18i-Sportwagon': { start: 1982, end: 1986 },
+        'R5-LeCar': { start: 1982, end: 1983 },
+        GTA: { start: 1987, end: 1987 },
     },
-    // Peugeot removed — exited US market 1991, 0 GSC impressions
+    Peugeot: {
+        // OEM corpus models (1982-1991) — serves Africa, Middle East, Europe
+        '504': { start: 1982, end: 1983 },
+        '505': { start: 1982, end: 1991 },
+        '604': { start: 1982, end: 1984 },
+        '405': { start: 1989, end: 1991 },
+    },
     Fiat: {
-        '500': { start: 2007, end: 2024 },
-        Panda: { start: 1980, end: 2024 },
-        Punto: { start: 1993, end: 2018 },
-        Tipo: { start: 2016, end: 2024 },
-        Ducato: { start: 1981, end: 2024 },
-        Doblo: { start: 2001, end: 2024 },
+        // OEM corpus models (1982-1983, 2012-2013) — serves Europe, Latin America
+        '124-Spider': { start: 1982, end: 1983 },
+        'X1-9': { start: 1982, end: 1983 },
+        '500': { start: 2012, end: 2024 },
+        '500c': { start: 2012, end: 2024 },
+        '500-Abarth': { start: 2012, end: 2024 },
         '500X': { start: 2015, end: 2024 },
-        '500L': { start: 2013, end: 2024 },
+        '500L': { start: 2013, end: 2020 },
     },
     Porsche: {
         '911': { start: 1964, end: 2024 },
@@ -447,10 +448,18 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Convertible: { start: 2005, end: 2024 },
     },
     Smart: {
-        ForTwo: { start: 1998, end: 2024 },
-        ForFour: { start: 2004, end: 2024 },
+        // OEM corpus models (2008-2013) — serves Europe
+        ForTwo: { start: 2008, end: 2013 },
     },
-    // Saab removed — defunct 2012, 0 GSC impressions
+    Saab: {
+        // OEM corpus models — serves Scandinavia, Europe. Defunct 2012 but huge international following.
+        '900': { start: 1982, end: 1998 },
+        '9000': { start: 1986, end: 1998 },
+        '9-3': { start: 1999, end: 2011 },
+        '9-5': { start: 1999, end: 2011 },
+        '9-2X': { start: 2005, end: 2006 },
+        '9-7X': { start: 2005, end: 2009 },
+    },
     // ── US LEGACY / OTHER ──────────────────────────────────────────────
     Jeep: {
         'Grand Cherokee': { start: 1993, end: 2024 },
@@ -683,7 +692,11 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         'I-Mark': { start: 1982, end: 1989 },
         Impulse: { start: 1983, end: 1993 },
     },
-    // Daihatsu removed — not sold in US, 0 GSC impressions
+    Daihatsu: {
+        // OEM corpus models — serves Japan, SE Asia, Australia
+        Charade: { start: 1988, end: 1992 },
+        Rocky: { start: 1990, end: 1992 },
+    },
     // ── DEFUNCT / CLASSIC ──────────────────────────────────────────────
     Pontiac: {
         'Grand Am': { start: 1973, end: 2005 },
@@ -817,7 +830,12 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         // ADDED
         H1: { start: 1992, end: 2006 },
     },
-    // Daewoo removed — defunct 2002, 0 GSC impressions
+    Daewoo: {
+        // OEM corpus models — serves Korea, Eastern Europe, Latin America
+        Lanos: { start: 1999, end: 2002 },
+        Nubira: { start: 1999, end: 2002 },
+        Leganza: { start: 1999, end: 2002 },
+    },
 };
 
 export const VALID_TASKS = [
@@ -868,9 +886,9 @@ export const VALID_TASKS = [
     'camshaft-sensor-replacement',
 ];
 
-/** Brands with minimal US search volume — noindex to save crawl budget */
+/** Brands with minimal search volume — noindex to save crawl budget */
 export const NOINDEX_MAKES = new Set([
-    'renault', 'fiat', 'smart', 'isuzu',
+    'isuzu',  // Commercial trucks only — Renault/Fiat/Smart removed to enable international coverage
 ]);
 
 /**
