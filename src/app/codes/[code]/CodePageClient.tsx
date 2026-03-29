@@ -268,43 +268,34 @@ export default function CodePageClient({
             {(() => {
                 const ctx = getContextFromCode(code.code);
                 const topdonPicks = getTopdonRecommendations(ctx);
+                const ctaText = ctx === 'advanced'
+                    ? `${code.code} requires a scanner that reads ${code.code.startsWith('B') ? 'body' : code.code.startsWith('C') ? 'chassis' : 'network'} modules — basic code readers won't see it.`
+                    : ctx === 'battery'
+                    ? 'Test your battery and charging system before replacing parts.'
+                    : `Read live data and freeze frame for ${code.code} to pinpoint the cause before buying parts.`;
                 return (
-                    <div className="mb-8 rounded-xl border border-amber-500/20 bg-amber-500/5 p-6">
-                        <p className="text-amber-200 text-sm mb-4 text-center">Need to read or clear this code?</p>
+                    <div className="mb-8 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-6">
+                        <p className="text-emerald-200 text-sm mb-4">{ctaText}</p>
                         <div className="grid sm:grid-cols-2 gap-3">
-                            {topdonPicks.slice(0, 1).map((product) => (
+                            {topdonPicks.map((product) => (
                                 <a
                                     key={product.slug}
                                     href={buildTopdonProductUrl(product.slug)}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    data-track-click={JSON.stringify({ event: 'affiliate_click', provider: 'topdon', product: product.slug, surface: 'code-page', code: code.code })}
                                     className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 transition"
                                 >
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-0.5">
                                             <span className="text-white text-sm font-bold">{product.shortName}</span>
-                                            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold px-1.5 py-0.5 bg-emerald-500/10 rounded">From ${product.price}</span>
+                                            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold px-1.5 py-0.5 bg-emerald-500/10 rounded">${product.price}</span>
                                         </div>
                                         <p className="text-gray-400 text-xs truncate">{product.description}</p>
                                     </div>
-                                    <span className="text-emerald-400 text-sm shrink-0">→</span>
+                                    <span className="text-emerald-400 text-sm shrink-0">View &rarr;</span>
                                 </a>
                             ))}
-                            <a
-                                href={buildAmazonSearchUrl('obd2 scanner bluetooth')}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-3 px-4 py-3 bg-amber-500/10 border border-amber-500/20 rounded-lg hover:bg-amber-500/20 transition"
-                            >
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <span className="text-white text-sm font-bold">OBD2 Scanners</span>
-                                        <span className="text-[10px] uppercase tracking-wider text-amber-400 font-bold px-1.5 py-0.5 bg-amber-500/10 rounded">Amazon</span>
-                                    </div>
-                                    <p className="text-gray-400 text-xs">Browse all scanners with Prime shipping</p>
-                                </div>
-                                <span className="text-amber-400 text-sm shrink-0">→</span>
-                            </a>
                         </div>
                     </div>
                 );
