@@ -107,7 +107,7 @@ export default function DeferredWiringDiagramBrowser() {
     return () => {
       cancelled = true;
     };
-  }, [loadingSelectorData, selectorData, shouldLoad]);
+  }, [selectorData, shouldLoad]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!vehicle.make || !vehicle.year) {
@@ -139,6 +139,22 @@ export default function DeferredWiringDiagramBrowser() {
   }
 
   if (shouldLoad && !selectorData) {
+    // If fetch failed, show error with retry instead of infinite spinner
+    if (selectorError) {
+      return (
+        <main className="max-w-5xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-center gap-4 text-gray-300 min-h-[40vh]">
+            <p className="text-sm text-red-400">{selectorError}</p>
+            <button
+              onClick={() => { setSelectorError(null); setLoadingSelectorData(false); }}
+              className="px-4 py-2 text-sm rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 hover:bg-cyan-500/20 transition"
+            >
+              Retry
+            </button>
+          </div>
+        </main>
+      );
+    }
     return (
       <main className="max-w-5xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center gap-3 text-cyan-300 min-h-[40vh]">
