@@ -886,6 +886,14 @@ export const VALID_TASKS = [
     'camshaft-sensor-replacement',
 ];
 
+/** CHARM corpus coverage boundaries — OEM factory manual data */
+export const CORPUS_YEAR_MIN = 1982;
+export const CORPUS_YEAR_MAX = 2013;
+
+export function isCorpusBacked(year: number): boolean {
+    return year >= CORPUS_YEAR_MIN && year <= CORPUS_YEAR_MAX;
+}
+
 /** Brands with minimal search volume — noindex to save crawl budget */
 export const NOINDEX_MAKES = new Set([
     'isuzu',  // Commercial trucks only — Renault/Fiat/Smart removed to enable international coverage

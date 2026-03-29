@@ -11,7 +11,9 @@ import RepairSectionTracker from '@/components/RepairSectionTracker';
 import RepairTrackedLink from '@/components/RepairTrackedLink';
 import { getTier1RescueEntryByHref, getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
 import { buildSymptomHref, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
-import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart } from '@/data/vehicles';
+import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart, CORPUS_YEAR_MAX } from '@/data/vehicles';
+import CorpusBadge from '@/components/CorpusBadge';
+import CoverageWaitlist from '@/components/CoverageWaitlist';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
 import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
@@ -2142,6 +2144,8 @@ export default async function Page({ params }: PageProps) {
                     </div>
                 </header>
 
+                <CorpusBadge year={Number(resolvedYear)} vehicleName={vehicleName} />
+
                 <section
                     id="quick-answer"
                     className={`mb-8 rounded-2xl border p-6 md:p-7 ${TASK_SUPPORT_TONE_CLASSES[quickAnswerModule.tone].shell}`}
@@ -3080,6 +3084,8 @@ export default async function Page({ params }: PageProps) {
                     </Link>
                 </div>
             </section>
+
+            <CoverageWaitlist vehicleName={vehicleName} year={Number(resolvedYear)} />
         </>
     );
 }
