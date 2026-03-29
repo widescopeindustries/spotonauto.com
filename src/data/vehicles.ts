@@ -290,7 +290,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         'AMG GT': { start: 2016, end: 2024 },
         'G-Class': { start: 1979, end: 2024 },
         GLS: { start: 2017, end: 2024 },
-        Metris: { start: 2016, end: 2024 },
+        Metris: { start: 2016, end: 2023 },  // Discontinued after 2023
     },
     Volkswagen: {
         Golf: { start: 1985, end: 2021 },
@@ -1098,8 +1098,17 @@ export function isEvModel(make: string, model: string): boolean {
     return EV_MODELS.has(key);
 }
 
+/** Tasks that only apply to diesel engines — block for all gas/EV vehicles */
+const DIESEL_ONLY_TASKS = new Set(['glow-plug-replacement']);
+
 export function isTaskValidForVehicle(make: string, model: string, task: string): boolean {
     if (isEvModel(make, model) && ICE_ONLY_TASKS.has(task)) return false;
+    // Glow plugs are diesel-only — block unless model name indicates diesel
+    if (DIESEL_ONLY_TASKS.has(task)) {
+        const m = model.toLowerCase();
+        const isDiesel = /diesel|tdi|cdi|duramax|powerstroke|power\s*stroke|cummins|bluetec|d4d|hdi|dci|jtd|cdti/.test(m);
+        if (!isDiesel) return false;
+    }
     return true;
 }
 
