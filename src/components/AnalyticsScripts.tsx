@@ -11,7 +11,12 @@ export default function AnalyticsScripts() {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    setEnabled(window.location.hostname === CANONICAL_HOST);
+    if (window.location.hostname !== CANONICAL_HOST) return;
+    // Skip headless/automated browsers (Puppeteer, Playwright, etc.)
+    if (navigator.webdriver) return;
+    // Delay 3s to filter zero-engagement bot traffic (Singapore bots bounce in <1s)
+    const timer = setTimeout(() => setEnabled(true), 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!enabled) return null;
