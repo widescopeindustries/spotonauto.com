@@ -23,6 +23,10 @@ interface PageProps {
  */
 const TOOL_PREBUILD_LIMIT = 320;
 
+// Cache dynamically-rendered tool pages for 24 hours — prevents re-rendering
+// on every crawl request and ensures non-prebuilt pages serve fast.
+export const revalidate = 86400;
+
 export async function generateStaticParams() {
     return getHighPriorityToolPages(TOOL_PREBUILD_LIMIT).map((tp) => ({ slug: tp.slug }));
 }
@@ -32,20 +36,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const page = getToolPage(slug);
     if (!page) return { title: 'Tool Not Found' };
 
+    // Lead description with the quick answer so actual specs appear in SERP snippet
+    const description = page.quickAnswer
+        ? `${page.quickAnswer} All years covered with part numbers — free lookup.`
+        : page.description;
+
     return {
         title: page.title,
-        description: page.description,
+        description,
         keywords: page.keywords,
         openGraph: {
             title: page.title,
-            description: page.description,
+            description,
             type: 'article',
             url: `https://spotonauto.com/tools/${page.slug}`,
         },
         twitter: {
             card: 'summary',
             title: page.title,
-            description: page.description,
+            description,
         },
         alternates: {
             canonical: `https://spotonauto.com/tools/${page.slug}`,
