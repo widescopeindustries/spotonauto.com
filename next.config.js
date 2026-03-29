@@ -89,6 +89,48 @@ const nextConfig = {
       { source: '/repairs', destination: '/repair', permanent: true },
       { source: '/cel', destination: '/codes', permanent: true },
       { source: '/second-opinion', destination: '/diagnose', permanent: true },
+
+      // ── International model name redirects ──────────────────────────────
+      // Nissan Qashqai → Rogue Sport
+      { source: '/repair/:year/nissan/qashqai/:task', destination: '/repair/:year/nissan/rogue-sport/:task', permanent: true },
+      { source: '/wiring/:year/nissan/qashqai/:system', destination: '/wiring/:year/nissan/rogue-sport/:system', permanent: true },
+      { source: '/tools/nissan-qashqai-:tool', destination: '/tools/nissan-rogue-sport-:tool', permanent: true },
+      // Mitsubishi Pajero → Montero
+      { source: '/repair/:year/mitsubishi/pajero/:task', destination: '/repair/:year/mitsubishi/montero/:task', permanent: true },
+      { source: '/wiring/:year/mitsubishi/pajero/:system', destination: '/wiring/:year/mitsubishi/montero/:system', permanent: true },
+      { source: '/tools/mitsubishi-pajero-:tool', destination: '/tools/mitsubishi-montero-:tool', permanent: true },
+      // Mitsubishi ASX → Outlander Sport
+      { source: '/repair/:year/mitsubishi/asx/:task', destination: '/repair/:year/mitsubishi/outlander-sport/:task', permanent: true },
+      { source: '/wiring/:year/mitsubishi/asx/:system', destination: '/wiring/:year/mitsubishi/outlander-sport/:system', permanent: true },
+      { source: '/tools/mitsubishi-asx-:tool', destination: '/tools/mitsubishi-outlander-sport-:tool', permanent: true },
+      // Hyundai i30 → Elantra GT
+      { source: '/repair/:year/hyundai/i30/:task', destination: '/repair/:year/hyundai/elantra-gt/:task', permanent: true },
+      { source: '/wiring/:year/hyundai/i30/:system', destination: '/wiring/:year/hyundai/elantra-gt/:system', permanent: true },
+      { source: '/tools/hyundai-i30-:tool', destination: '/tools/hyundai-elantra-gt-:tool', permanent: true },
+      // Ford Mondeo → Fusion
+      { source: '/repair/:year/ford/mondeo/:task', destination: '/repair/:year/ford/fusion/:task', permanent: true },
+      { source: '/wiring/:year/ford/mondeo/:system', destination: '/wiring/:year/ford/fusion/:system', permanent: true },
+      { source: '/tools/ford-mondeo-:tool', destination: '/tools/ford-fusion-:tool', permanent: true },
+      // Toyota Hilux → Tacoma
+      { source: '/repair/:year/toyota/hilux/:task', destination: '/repair/:year/toyota/tacoma/:task', permanent: true },
+      { source: '/wiring/:year/toyota/hilux/:system', destination: '/wiring/:year/toyota/tacoma/:system', permanent: true },
+      { source: '/tools/toyota-hilux-:tool', destination: '/tools/toyota-tacoma-:tool', permanent: true },
+      // Toyota Auris → Corolla
+      { source: '/repair/:year/toyota/auris/:task', destination: '/repair/:year/toyota/corolla/:task', permanent: true },
+      { source: '/wiring/:year/toyota/auris/:system', destination: '/wiring/:year/toyota/corolla/:system', permanent: true },
+      { source: '/tools/toyota-auris-:tool', destination: '/tools/toyota-corolla-:tool', permanent: true },
+      // Honda Jazz → Fit
+      { source: '/repair/:year/honda/jazz/:task', destination: '/repair/:year/honda/fit/:task', permanent: true },
+      { source: '/wiring/:year/honda/jazz/:system', destination: '/wiring/:year/honda/fit/:system', permanent: true },
+      { source: '/tools/honda-jazz-:tool', destination: '/tools/honda-fit-:tool', permanent: true },
+      // Volkswagen Polo → Golf
+      { source: '/repair/:year/volkswagen/polo/:task', destination: '/repair/:year/volkswagen/golf/:task', permanent: true },
+      { source: '/wiring/:year/volkswagen/polo/:system', destination: '/wiring/:year/volkswagen/golf/:system', permanent: true },
+      { source: '/tools/volkswagen-polo-:tool', destination: '/tools/volkswagen-golf-:tool', permanent: true },
+      // Kia Ceed → Forte
+      { source: '/repair/:year/kia/ceed/:task', destination: '/repair/:year/kia/forte/:task', permanent: true },
+      { source: '/wiring/:year/kia/ceed/:system', destination: '/wiring/:year/kia/forte/:system', permanent: true },
+      { source: '/tools/kia-ceed-:tool', destination: '/tools/kia-forte-:tool', permanent: true },
     ];
   },
 }

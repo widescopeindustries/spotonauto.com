@@ -944,6 +944,77 @@ export function isNonUsModel(make: string, model: string): boolean {
     return NON_US_MODELS.has(key);
 }
 
+/**
+ * International model name aliases — maps non-US names to their US corpus equivalent.
+ * Same vehicle, same platform, same wiring — just different name by market.
+ * Format: 'make:international-model' → { usMake: string, usModel: string }
+ */
+export const INTERNATIONAL_ALIASES: Record<string, { usMake: string; usModel: string }> = {
+    // Nissan
+    'nissan:qashqai': { usMake: 'Nissan', usModel: 'Rogue Sport' },
+    'nissan:micra': { usMake: 'Nissan', usModel: 'Versa' },
+    'nissan:note': { usMake: 'Nissan', usModel: 'Versa Note' },
+    'nissan:x-trail': { usMake: 'Nissan', usModel: 'Rogue' },
+    'nissan:navara': { usMake: 'Nissan', usModel: 'Frontier' },
+    'nissan:patrol': { usMake: 'Nissan', usModel: 'Armada' },
+    'nissan:pulsar': { usMake: 'Nissan', usModel: 'Sentra' },
+    // Mitsubishi
+    'mitsubishi:pajero': { usMake: 'Mitsubishi', usModel: 'Montero' },
+    'mitsubishi:asx': { usMake: 'Mitsubishi', usModel: 'Outlander Sport' },
+    'mitsubishi:l200': { usMake: 'Mitsubishi', usModel: 'Mighty Max' },
+    'mitsubishi:triton': { usMake: 'Mitsubishi', usModel: 'Mighty Max' },
+    'mitsubishi:colt': { usMake: 'Mitsubishi', usModel: 'Mirage' },
+    // Hyundai
+    'hyundai:i30': { usMake: 'Hyundai', usModel: 'Elantra GT' },
+    'hyundai:i20': { usMake: 'Hyundai', usModel: 'Accent' },
+    'hyundai:i10': { usMake: 'Hyundai', usModel: 'Accent' },
+    'hyundai:ix35': { usMake: 'Hyundai', usModel: 'Tucson' },
+    'hyundai:ix55': { usMake: 'Hyundai', usModel: 'Veracruz' },
+    // Kia
+    'kia:ceed': { usMake: 'Kia', usModel: 'Forte' },
+    'kia:picanto': { usMake: 'Kia', usModel: 'Rio' },
+    'kia:stonic': { usMake: 'Kia', usModel: 'Soul' },
+    // Volkswagen
+    'volkswagen:polo': { usMake: 'Volkswagen', usModel: 'Golf' },
+    'volkswagen:transporter': { usMake: 'Volkswagen', usModel: 'Eurovan' },
+    'volkswagen:caddy': { usMake: 'Volkswagen', usModel: 'Rabbit Pickup' },
+    'volkswagen:touran': { usMake: 'Volkswagen', usModel: 'Golf' },
+    // Audi
+    'audi:a1': { usMake: 'Audi', usModel: 'A3' },
+    // Ford
+    'ford:mondeo': { usMake: 'Ford', usModel: 'Fusion' },
+    'ford:galaxy': { usMake: 'Ford', usModel: 'Freestyle' },
+    'ford:fiesta': { usMake: 'Ford', usModel: 'Fiesta' },
+    'ford:ka': { usMake: 'Ford', usModel: 'Fiesta' },
+    // Toyota
+    'toyota:hilux': { usMake: 'Toyota', usModel: 'Tacoma' },
+    'toyota:fortuner': { usMake: 'Toyota', usModel: '4Runner' },
+    'toyota:land-cruiser-prado': { usMake: 'Toyota', usModel: '4Runner' },
+    'toyota:yaris': { usMake: 'Toyota', usModel: 'Echo' },
+    'toyota:auris': { usMake: 'Toyota', usModel: 'Corolla' },
+    'toyota:avensis': { usMake: 'Toyota', usModel: 'Camry' },
+    // Honda
+    'honda:jazz': { usMake: 'Honda', usModel: 'Fit' },
+    'honda:city': { usMake: 'Honda', usModel: 'Fit' },
+    // Suzuki
+    'suzuki:jimny': { usMake: 'Suzuki', usModel: 'Samurai' },
+    'suzuki:swift': { usMake: 'Suzuki', usModel: 'Swift' },
+    'suzuki:vitara': { usMake: 'Suzuki', usModel: 'Grand Vitara' },
+    'suzuki:sx4': { usMake: 'Suzuki', usModel: 'SX4' },
+    'suzuki:ignis': { usMake: 'Suzuki', usModel: 'Swift' },
+    // Volvo
+    'volvo:v40': { usMake: 'Volvo', usModel: 'S40' },
+    // Acura / Honda
+    'acura:cdx': { usMake: 'Acura', usModel: 'RDX' },
+    // Land Rover
+    'land-rover:freelander': { usMake: 'Land Rover', usModel: 'LR2' },
+};
+
+export function getUsEquivalent(make: string, model: string): { usMake: string; usModel: string } | null {
+    const key = `${make.toLowerCase()}:${model.toLowerCase().replace(/\s+/g, '-')}`;
+    return INTERNATIONAL_ALIASES[key] || null;
+}
+
 /** Pure electric vehicles — no combustion engine, no oil, no spark plugs, no belts */
 export const EV_MODELS = new Set([
     'toyota:bz4x',
