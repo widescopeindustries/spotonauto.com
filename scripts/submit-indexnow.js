@@ -25,6 +25,8 @@ const SITEMAP_URLS = [
   'https://spotonauto.com/sitemap.xml',
   'https://spotonauto.com/community/sitemap.xml',
   'https://spotonauto.com/codes/sitemap.xml',
+  'https://spotonauto.com/codes/sitemap/0.xml',
+  'https://spotonauto.com/vehicles/sitemap.xml',
   'https://spotonauto.com/repair/sitemap.xml',
   'https://spotonauto.com/repair/winners/sitemap.xml',
   'https://spotonauto.com/manual/sitemap.xml',
