@@ -7,7 +7,7 @@
  * - Battery testers for charging system diagnosis
  */
 
-export const TOPDON_REF_CODE = 'nhsqdwuq';
+export const TOPDON_REF_CODE = 'spoton';
 
 const TOPDON_BASE = 'https://www.topdon.us';
 
