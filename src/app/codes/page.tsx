@@ -4,7 +4,7 @@ import CodesIndex from './CodesIndex';
 
 export const metadata: Metadata = {
     title: 'OBD2 Code Lookup | SpotOnAuto',
-    description: 'Free OBD2 trouble code lookup. Find what your check engine light means with 300+ DTC codes explained in plain English. Symptoms, causes, and fixes.',
+    description: 'Free OBD2 trouble code lookup. Find what your check engine light means with 8,500+ DTC codes explained in plain English — symptoms, likely causes, and DIY fixes.',
     keywords: ['OBD2 codes', 'DTC codes', 'check engine light codes', 'trouble codes', 'P0420', 'engine codes', 'car diagnostic codes'],
     openGraph: {
         title: 'OBD2 DTC Trouble Code Lookup — SpotOn Auto',

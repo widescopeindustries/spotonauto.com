@@ -6,7 +6,7 @@ import PartsVehiclePicker from './PartsVehiclePicker';
 
 export const metadata: Metadata = {
     title: 'Auto Parts | Shop Amazon & More | SpotOn Auto',
-    description: 'Find the best prices on auto parts. Shop Amazon for OEM and aftermarket parts for all makes and models. Fast shipping available.',
+    description: 'Compare prices on OEM and aftermarket auto parts from Amazon. Find the right fit for your exact year, make, and model with fast shipping and verified compatibility.',
     keywords: [
         'auto parts',
         'car parts',

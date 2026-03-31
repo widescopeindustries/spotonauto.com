@@ -5,7 +5,7 @@ import { getHighValueSymptomHubs, getTier1RepairSupportGaps, getTopOrphanSymptom
 
 export const metadata: Metadata = {
   title: 'Symptom Hubs | SpotOnAuto',
-  description: 'Browse graph-driven symptom hubs that map plain-English car complaints into repair categories, code lookups, and exact vehicle repair paths.',
+  description: 'Describe what your car is doing in plain English and find the right repair path. Symptom hubs map noises, leaks, and warning lights to causes, codes, and fixes.',
   alternates: {
     canonical: 'https://spotonauto.com/symptoms',
   },

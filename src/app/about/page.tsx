@@ -4,7 +4,7 @@ import { Shield, Star, Cpu, BookOpen } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'About SpotOnAuto | Veteran-Owned AI Auto Repair Guides',
-  description: 'SpotOnAuto is a Service-Disabled Veteran-Owned Small Business (SDVOSB) providing AI-powered automotive repair diagnosis and guides.',
+  description: 'SpotOnAuto is a Service-Disabled Veteran-Owned Small Business (SDVOSB) offering free AI-powered auto repair guides, diagnostic tools, and factory service manuals.',
   alternates: {
     canonical: 'https://spotonauto.com/about',
   },

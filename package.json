@@ -11,7 +11,7 @@
     "prebuild": "node --experimental-strip-types scripts/content-integrity-check.mjs && node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs",
     "build": "next build --webpack",
     "prestart": "node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs",
-    "start": "(sleep 30 && node scripts/submit-indexnow.js --limit 50000 > /dev/null 2>&1) & next start",
+    "start": "(sleep 30 && node scripts/submit-indexnow.js 2>&1 | head -100) & next start",
     "lint": "next lint",
     "analytics:recovery": "node scripts/recovery-scoreboard.js",
     "analytics:command-centers": "node scripts/command-center-opportunities.js",

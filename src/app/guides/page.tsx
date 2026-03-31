@@ -6,7 +6,7 @@ import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrap
 
 export const metadata: Metadata = {
   title: 'Repair Guide Directory | Browse by Make | SpotOnAuto',
-  description: 'Select your vehicle manufacturer to browse our comprehensive library of AI-powered DIY repair guides.',
+  description: 'Select your vehicle manufacturer to browse free DIY repair guides. Step-by-step instructions, parts lists, and torque specs for 1982–2024 cars and trucks.',
   alternates: {
     canonical: 'https://spotonauto.com/guides',
   },

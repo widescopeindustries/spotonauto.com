@@ -1,44 +1,89 @@
 #!/usr/bin/env node
 /**
- * IndexNow Bulk URL Submission for spotonauto.com
+ * IndexNow URL Submission for spotonauto.com
  *
- * Fetches all sitemaps, extracts URLs, and submits them to IndexNow
- * (picked up by Bing, Yandex, Seznam, Naver).
+ * DEFAULT (streaming mode): Detects which files changed in the latest deploy
+ * via git diff, maps them to affected sitemaps, and submits only those URLs.
+ * This avoids server overload and gets changed pages indexed faster.
  *
  * Usage:
- *   node scripts/submit-indexnow.js              # Submit all URLs from all sitemaps
- *   node scripts/submit-indexnow.js --dry-run    # Just count URLs, don't submit
- *   node scripts/submit-indexnow.js --limit 1000 # Submit first N URLs only
+ *   node scripts/submit-indexnow.js              # Streaming: submit only changed URLs
+ *   node scripts/submit-indexnow.js --full        # Full: submit ALL URLs from all sitemaps
+ *   node scripts/submit-indexnow.js --dry-run     # Just show what would be submitted
+ *   node scripts/submit-indexnow.js --limit 500   # Cap total URLs submitted
  */
 
+const { execSync } = require('child_process');
 const https = require('https');
 const http = require('http');
 
 const INDEXNOW_KEY = 'b2e1ed9a4693444c8bf73f80fe75f1e0';
 const HOST = 'spotonauto.com';
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/IndexNow';
-const BATCH_SIZE = 10000; // IndexNow max per request
-const DELAY_BETWEEN_BATCHES_MS = 2000;
+const BATCH_SIZE = 100; // Small batches for streaming
+const DELAY_BETWEEN_BATCHES_MS = 3000; // 3s between batches
 
-// All sitemaps from robots.ts
-const SITEMAP_URLS = [
-  'https://spotonauto.com/sitemap.xml',
-  'https://spotonauto.com/community/sitemap.xml',
-  'https://spotonauto.com/codes/sitemap.xml',
-  'https://spotonauto.com/codes/sitemap/0.xml',
-  'https://spotonauto.com/vehicles/sitemap.xml',
-  'https://spotonauto.com/repair/sitemap.xml',
-  'https://spotonauto.com/repair/winners/sitemap.xml',
-  'https://spotonauto.com/manual/sitemap.xml',
-  'https://spotonauto.com/wiring/sitemap.xml',
+// ── Sitemap sections and their git triggers ─────────────────────────
+// Each entry maps a sitemap URL to file patterns that, when changed,
+// mean that sitemap's URLs need resubmission.
+const SITEMAP_TRIGGERS = [
+  {
+    sitemap: 'https://spotonauto.com/sitemap.xml',
+    triggers: ['src/app/page.tsx', 'src/app/tools/', 'src/app/guides/', 'src/app/symptoms/',
+               'src/app/cel/', 'src/app/about/', 'src/app/contact/', 'src/app/parts/',
+               'src/app/second-opinion/', 'src/data/tools-pages', 'src/data/symptomGraph',
+               'src/data/vehicles', 'src/app/sitemap.ts', 'src/app/wiring/page'],
+  },
+  {
+    sitemap: 'https://spotonauto.com/vehicles/sitemap.xml',
+    triggers: ['src/app/vehicles/', 'src/data/vehicles', 'src/data/knowledge-graph',
+               'src/lib/knowledge-graph'],
+  },
+  {
+    sitemap: 'https://spotonauto.com/codes/sitemap.xml',
+    triggers: ['src/app/codes/', 'src/data/dtc', 'src/data/codes'],
+  },
+  {
+    sitemap: 'https://spotonauto.com/codes/sitemap/0.xml',
+    triggers: ['src/app/codes/', 'src/data/dtc', 'src/data/codes', 'src/data/knowledge-graph'],
+  },
+  {
+    sitemap: 'https://spotonauto.com/community/sitemap.xml',
+    triggers: ['src/app/community/'],
+  },
+  {
+    sitemap: 'https://spotonauto.com/repair/sitemap.xml',
+    triggers: ['src/app/repair/', 'scripts/generate-repair-sitemaps', 'src/data/repair',
+               'src/app/charm-repair/'],
+  },
+  {
+    sitemap: 'https://spotonauto.com/repair/winners/sitemap.xml',
+    triggers: ['src/app/repair/winners/'],
+  },
+  {
+    sitemap: 'https://spotonauto.com/manual/sitemap.xml',
+    triggers: ['src/app/manual/', 'src/data/manual'],
+  },
+  {
+    sitemap: 'https://spotonauto.com/wiring/sitemap.xml',
+    triggers: ['src/app/wiring/', 'scripts/generate-wiring-sitemaps', 'src/data/wiring'],
+  },
 ];
 
-function fetch(url) {
+// Global files: if these change, submit a sample from every sitemap
+const GLOBAL_TRIGGERS = [
+  'src/app/layout.tsx', 'src/components/', 'src/lib/', 'tailwind.config',
+  'next.config', 'package.json',
+];
+
+// ── Helpers ──────────────────────────────────────────────────────────
+
+function fetchUrl(url) {
   return new Promise((resolve, reject) => {
     const client = url.startsWith('https') ? https : http;
-    client.get(url, { headers: { 'User-Agent': 'SpotOnAuto-IndexNow/1.0' } }, (res) => {
+    client.get(url, { headers: { 'User-Agent': 'SpotOnAuto-IndexNow/2.0' } }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return fetch(res.headers.location).then(resolve).catch(reject);
+        return fetchUrl(res.headers.location).then(resolve).catch(reject);
       }
       if (res.statusCode !== 200) {
         return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
@@ -70,17 +115,11 @@ function isSitemapIndex(xml) {
 }
 
 async function fetchSitemapUrls(sitemapUrl, depth = 0) {
-  if (depth > 3) {
-    console.log(`  [skip] Max depth reached for ${sitemapUrl}`);
-    return [];
-  }
-
+  if (depth > 3) return [];
   try {
-    const xml = await fetch(sitemapUrl);
+    const xml = await fetchUrl(sitemapUrl);
     const urls = extractUrls(xml);
-
     if (isSitemapIndex(xml)) {
-      // It's a sitemap index — URLs are child sitemaps
       console.log(`  [index] ${sitemapUrl} → ${urls.length} child sitemaps`);
       const allUrls = [];
       for (const childUrl of urls) {
@@ -89,7 +128,6 @@ async function fetchSitemapUrls(sitemapUrl, depth = 0) {
       }
       return allUrls;
     } else {
-      // Regular sitemap — URLs are page URLs
       console.log(`  [sitemap] ${sitemapUrl} → ${urls.length} URLs`);
       return urls;
     }
@@ -127,6 +165,69 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// ── Change detection ────────────────────────────────────────────────
+
+function getChangedFiles() {
+  try {
+    // Try git diff against the previous commit
+    const output = execSync('git diff HEAD~1 --name-only 2>/dev/null', {
+      encoding: 'utf-8',
+      timeout: 10000,
+    });
+    const files = output.trim().split('\n').filter(Boolean);
+    if (files.length > 0) return files;
+  } catch {
+    // git not available or no previous commit
+  }
+
+  try {
+    // Fallback: files changed in the last commit
+    const output = execSync('git show --name-only --format="" HEAD 2>/dev/null', {
+      encoding: 'utf-8',
+      timeout: 10000,
+    });
+    const files = output.trim().split('\n').filter(Boolean);
+    if (files.length > 0) return files;
+  } catch {
+    // git not available
+  }
+
+  return null; // Can't determine changes
+}
+
+function getAffectedSitemaps(changedFiles) {
+  const affected = new Set();
+  let isGlobalChange = false;
+
+  for (const file of changedFiles) {
+    // Check global triggers
+    for (const trigger of GLOBAL_TRIGGERS) {
+      if (file.startsWith(trigger) || file === trigger) {
+        isGlobalChange = true;
+        break;
+      }
+    }
+
+    // Check per-sitemap triggers
+    for (const entry of SITEMAP_TRIGGERS) {
+      for (const trigger of entry.triggers) {
+        if (file.startsWith(trigger) || file === trigger) {
+          affected.add(entry.sitemap);
+        }
+      }
+    }
+  }
+
+  if (isGlobalChange) {
+    // Global change: include all sitemaps but we'll cap URLs later
+    return { sitemaps: SITEMAP_TRIGGERS.map(e => e.sitemap), isGlobal: true };
+  }
+
+  return { sitemaps: [...affected], isGlobal: false };
+}
+
+// ── Submission ──────────────────────────────────────────────────────
+
 async function submitBatch(urls) {
   const payload = {
     host: HOST,
@@ -134,78 +235,37 @@ async function submitBatch(urls) {
     keyLocation: `https://${HOST}/${INDEXNOW_KEY}.txt`,
     urlList: urls,
   };
-
-  const res = await postJson(INDEXNOW_ENDPOINT, payload);
-  return res;
+  return postJson(INDEXNOW_ENDPOINT, payload);
 }
 
-async function main() {
-  const args = process.argv.slice(2);
-  const dryRun = args.includes('--dry-run');
-  const limitIdx = args.indexOf('--limit');
-  const limit = limitIdx !== -1 ? parseInt(args[limitIdx + 1]) : Infinity;
-
-  console.log('\n╔══════════════════════════════════════════════════════════════╗');
-  console.log('║         SpotOnAuto - IndexNow Bulk Submission               ║');
-  console.log('╚══════════════════════════════════════════════════════════════╝\n');
-
-  if (dryRun) console.log('[DRY RUN MODE — no URLs will be submitted]\n');
-
-  // Step 1: Fetch all URLs from all sitemaps
-  console.log('Fetching sitemaps...');
-  let allUrls = [];
-
-  for (const sitemapUrl of SITEMAP_URLS) {
-    const urls = await fetchSitemapUrls(sitemapUrl);
-    for (const u of urls) allUrls.push(u);
-  }
-
-  // Deduplicate
-  const seen = new Set();
-  const uniqueUrls = [];
-  for (const url of allUrls) {
-    if (!seen.has(url)) {
-      seen.add(url);
-      uniqueUrls.push(url);
-    }
-  }
-  console.log(`\nTotal URLs found: ${allUrls.length}`);
-  console.log(`Unique URLs: ${uniqueUrls.length}`);
-
-  // Apply limit
-  const urlsToSubmit = uniqueUrls.slice(0, limit);
-  if (limit < uniqueUrls.length) {
-    console.log(`Limiting to first ${limit} URLs`);
-  }
-
-  if (dryRun) {
-    console.log('\n[DRY RUN] Would submit ' + urlsToSubmit.length + ' URLs');
-    console.log('Sample URLs:');
-    for (const url of urlsToSubmit.slice(0, 10)) {
-      console.log('  ' + url);
-    }
-    if (urlsToSubmit.length > 10) {
-      console.log('  ... and ' + (urlsToSubmit.length - 10) + ' more');
-    }
+async function submitUrls(urls, dryRun) {
+  if (urls.length === 0) {
+    console.log('\nNo URLs to submit.');
     return;
   }
 
-  // Step 2: Submit in batches
-  const totalBatches = Math.ceil(urlsToSubmit.length / BATCH_SIZE);
-  console.log(`\nSubmitting ${urlsToSubmit.length} URLs in ${totalBatches} batch(es)...`);
+  if (dryRun) {
+    console.log(`\n[DRY RUN] Would submit ${urls.length} URLs`);
+    console.log('Sample URLs:');
+    for (const url of urls.slice(0, 15)) console.log('  ' + url);
+    if (urls.length > 15) console.log(`  ... and ${urls.length - 15} more`);
+    return;
+  }
+
+  const totalBatches = Math.ceil(urls.length / BATCH_SIZE);
+  console.log(`\nSubmitting ${urls.length} URLs in ${totalBatches} batch(es) of ${BATCH_SIZE}...`);
 
   let submitted = 0;
   let errors = 0;
 
-  for (let i = 0; i < urlsToSubmit.length; i += BATCH_SIZE) {
-    const batch = urlsToSubmit.slice(i, i + BATCH_SIZE);
+  for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+    const batch = urls.slice(i, i + BATCH_SIZE);
     const batchNum = Math.floor(i / BATCH_SIZE) + 1;
 
     process.stdout.write(`  Batch ${batchNum}/${totalBatches} (${batch.length} URLs)... `);
 
     try {
       const res = await submitBatch(batch);
-      // 200 = OK, 202 = Accepted (key validation pending)
       if (res.status === 200 || res.status === 202) {
         console.log(`✓ (HTTP ${res.status})`);
         submitted += batch.length;
@@ -219,15 +279,105 @@ async function main() {
     }
 
     // Rate limit between batches
-    if (i + BATCH_SIZE < urlsToSubmit.length) {
+    if (i + BATCH_SIZE < urls.length) {
       await sleep(DELAY_BETWEEN_BATCHES_MS);
     }
   }
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log(`  Submitted: ${submitted}`);
-  console.log(`  Errors:    ${errors}`);
+  if (errors > 0) console.log(`  Errors:    ${errors}`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+}
+
+// ── Main ────────────────────────────────────────────────────────────
+
+async function main() {
+  const args = process.argv.slice(2);
+  const dryRun = args.includes('--dry-run');
+  const fullMode = args.includes('--full');
+  const limitIdx = args.indexOf('--limit');
+  const limit = limitIdx !== -1 ? parseInt(args[limitIdx + 1]) : Infinity;
+
+  console.log('\n╔══════════════════════════════════════════════════════════════╗');
+  console.log('║       SpotOnAuto - IndexNow Streaming Submission            ║');
+  console.log('╚══════════════════════════════════════════════════════════════╝\n');
+
+  if (dryRun) console.log('[DRY RUN MODE]\n');
+
+  // ── Determine which sitemaps to process ───────────────────────────
+  let sitemapsToFetch;
+  let globalSampleCap = Infinity; // Per-sitemap URL cap for global changes
+
+  if (fullMode) {
+    console.log('[FULL MODE] Submitting all URLs from all sitemaps.\n');
+    sitemapsToFetch = SITEMAP_TRIGGERS.map(e => e.sitemap);
+  } else {
+    // Streaming mode: detect changes
+    console.log('Detecting changed files...');
+    const changedFiles = getChangedFiles();
+
+    if (!changedFiles) {
+      console.log('  Could not detect changes (no git). Falling back to full mode.\n');
+      sitemapsToFetch = SITEMAP_TRIGGERS.map(e => e.sitemap);
+    } else if (changedFiles.length === 0) {
+      console.log('  No files changed. Nothing to submit.\n');
+      return;
+    } else {
+      console.log(`  ${changedFiles.length} file(s) changed.`);
+      const { sitemaps, isGlobal } = getAffectedSitemaps(changedFiles);
+
+      if (sitemaps.length === 0) {
+        console.log('  No sitemap-affecting changes detected. Nothing to submit.\n');
+        return;
+      }
+
+      if (isGlobal) {
+        console.log('  Global change detected — sampling from all sitemaps.');
+        // For global changes, cap to 50 URLs per sitemap to keep total reasonable
+        globalSampleCap = 50;
+      }
+
+      console.log(`  Affected sitemaps: ${sitemaps.length}`);
+      for (const s of sitemaps) console.log(`    • ${s}`);
+      console.log();
+      sitemapsToFetch = sitemaps;
+    }
+  }
+
+  // ── Fetch URLs from affected sitemaps ─────────────────────────────
+  console.log('Fetching sitemaps...');
+  let allUrls = [];
+
+  for (const sitemapUrl of sitemapsToFetch) {
+    const urls = await fetchSitemapUrls(sitemapUrl);
+    // Apply per-sitemap cap for global changes
+    if (globalSampleCap < Infinity && urls.length > globalSampleCap) {
+      // Take evenly spaced sample
+      const step = Math.floor(urls.length / globalSampleCap);
+      const sampled = [];
+      for (let i = 0; i < urls.length && sampled.length < globalSampleCap; i += step) {
+        sampled.push(urls[i]);
+      }
+      console.log(`    ↳ Sampled ${sampled.length} of ${urls.length} URLs`);
+      allUrls.push(...sampled);
+    } else {
+      allUrls.push(...urls);
+    }
+  }
+
+  // Deduplicate
+  const uniqueUrls = [...new Set(allUrls)];
+  console.log(`\nTotal unique URLs: ${uniqueUrls.length}`);
+
+  // Apply limit
+  const urlsToSubmit = uniqueUrls.slice(0, limit);
+  if (limit < uniqueUrls.length) {
+    console.log(`Capped to ${limit} URLs`);
+  }
+
+  // ── Submit ────────────────────────────────────────────────────────
+  await submitUrls(urlsToSubmit, dryRun);
 }
 
 main().catch(err => {
