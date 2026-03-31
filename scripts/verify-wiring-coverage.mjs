@@ -2,7 +2,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import validatedVehicles from '../src/data/validated-vehicles.json' with { type: 'json' };
 
-const CHARM_BASE = 'https://data.spotonauto.com';
+// Use localhost when running on VPS for ~10x speed
+const CHARM_BASE = process.env.CHARM_BASE || 'https://data.spotonauto.com';
 const OUTPUT_PATH = path.resolve(process.cwd(), 'src/data/wiring-coverage.json');
 const YEAR_MIN = 1982;
 const YEAR_MAX = 2013;
@@ -12,15 +13,45 @@ const DEFAULT_WRITE_EVERY = 50;
 const WIRING_SYSTEMS = {
   starter: {
     matchTerms: ['starter', 'starting', 'start circuit', 'crank', 'ignition switch'],
-    tasks: ['starter-replacement', 'battery-replacement'],
   },
   alternator: {
     matchTerms: ['alternator', 'charging', 'generator', 'charge indicator', 'charging system'],
-    tasks: ['alternator-replacement', 'battery-replacement'],
   },
   'fuel-pump': {
     matchTerms: ['fuel pump', 'fuel sender', 'fuel level', 'fuel delivery', 'fuel system'],
-    tasks: ['fuel-pump-replacement'],
+  },
+  headlight: {
+    matchTerms: ['headlight', 'headlamp', 'head light', 'head lamp', 'low beam', 'high beam', 'drl', 'daytime running'],
+  },
+  abs: {
+    matchTerms: ['abs', 'anti lock', 'anti-lock', 'antilock', 'wheel speed sensor', 'brake pressure', 'traction control'],
+  },
+  'ac-heater': {
+    matchTerms: ['a/c', 'air condition', 'blower', 'heater', 'hvac', 'compressor clutch', 'climate control', 'evaporator'],
+  },
+  'power-windows': {
+    matchTerms: ['power window', 'window motor', 'window regulator', 'window lift', 'power lock'],
+  },
+  'instrument-cluster': {
+    matchTerms: ['instrument', 'cluster', 'gauge', 'speedometer', 'tachometer', 'warning light', 'dash light'],
+  },
+  wipers: {
+    matchTerms: ['wiper', 'washer', 'rain sensor', 'intermittent wipe'],
+  },
+  transmission: {
+    matchTerms: ['transmission', 'transaxle', 'shift solenoid', 'torque converter', 'tcm', 'speed sensor'],
+  },
+  'cruise-control': {
+    matchTerms: ['cruise', 'speed control', 'cruise control'],
+  },
+  airbag: {
+    matchTerms: ['airbag', 'air bag', 'srs', 'restraint', 'squib', 'crash sensor', 'pretensioner', 'supplemental'],
+  },
+  'engine-management': {
+    matchTerms: ['ecu', 'pcm', 'ecm', 'ignition coil', 'injector', 'oxygen sensor', 'throttle', 'fuel injection', 'engine control', 'powertrain management'],
+  },
+  'body-electrical': {
+    matchTerms: ['door lock', 'horn', 'keyless', 'trunk', 'interior light', 'courtesy', 'cigar', 'power outlet', 'central lock', 'dome light'],
   },
 };
 
@@ -90,12 +121,10 @@ function buildCandidates() {
 
   for (const [make, models] of Object.entries(validatedVehicles)) {
     for (const [model, entry] of Object.entries(models)) {
-      if (!entry || !Array.isArray(entry.tasks) || !Array.isArray(entry.confirmedYears)) continue;
+      if (!entry || !Array.isArray(entry.confirmedYears)) continue;
       if (NON_ROAD_VEHICLE_PATTERN.test(`${make} ${model}`.toLowerCase())) continue;
 
-      const systems = Object.entries(WIRING_SYSTEMS)
-        .filter(([, config]) => config.tasks.some((task) => entry.tasks.includes(task)))
-        .map(([system]) => system);
+      const systems = Object.keys(WIRING_SYSTEMS);
       if (!systems.length) continue;
 
       const years = [...new Set(entry.confirmedYears)]
