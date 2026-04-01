@@ -1,3 +1,5 @@
+import { getCharmMakesForDisplay } from '@/lib/wiringCoverage';
+
 const CHARM_BASE = 'https://data.spotonauto.com';
 const CHARM_HEADERS = {
   'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) wiring-diagrams',
@@ -127,46 +129,67 @@ export async function fetchWiringMakes(): Promise<string[]> {
 }
 
 export async function fetchWiringYears(make: string): Promise<number[]> {
-  const html = await fetchCharmText(
-    `${CHARM_BASE}/${encodeCharmSegment(make)}/`,
-    86400,
-    'Make not found',
-  );
-  const links = extractLinks(html);
+  const charmMakes = getCharmMakesForDisplay(make);
+  const allYears = new Set<number>();
 
-  return [...new Set(
-    links
-      .map(link => {
+  for (const charmMake of charmMakes) {
+    try {
+      const html = await fetchCharmText(
+        `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/`,
+        86400,
+        'Make not found',
+      );
+      const links = extractLinks(html);
+      for (const link of links) {
         const segments = link.split('/').filter(Boolean);
-        return Number.parseInt(segments[segments.length - 1], 10);
-      })
-      .filter(year => Number.isFinite(year) && year >= 1982 && year <= 2013),
-  )].sort((a, b) => b - a);
+        const year = Number.parseInt(segments[segments.length - 1], 10);
+        if (Number.isFinite(year) && year >= 1982 && year <= 2013) {
+          allYears.add(year);
+        }
+      }
+    } catch {
+      // This CHARM make may not exist — continue
+    }
+  }
+
+  return [...allYears].sort((a, b) => b - a);
 }
 
 export async function fetchWiringVariants(make: string, year: string): Promise<string[]> {
-  const html = await fetchCharmText(
-    `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/`,
-    86400,
-    'Year not found',
-  );
-  const links = extractLinks(html);
-  const variants = links
-    .filter(link => {
-      if (
-        link.startsWith('/') ||
-        link.startsWith('http') ||
-        link.includes('.css') ||
-        link.includes('.js')
-      ) {
-        return false;
-      }
-      const segments = link.split('/').filter(Boolean);
-      return segments.length === 1 && link.endsWith('/');
-    })
-    .map(link => decodeSegment(link.split('/').filter(Boolean)[0]));
+  // Try all CHARM makes that map to this display make (e.g. "Ford" → ["Ford", "Ford Truck"])
+  const charmMakes = getCharmMakesForDisplay(make);
+  const allVariants = new Set<string>();
 
-  return [...new Set(variants)].sort((a, b) => a.localeCompare(b));
+  for (const charmMake of charmMakes) {
+    try {
+      const html = await fetchCharmText(
+        `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${year}/`,
+        86400,
+        'Year not found',
+      );
+      const links = extractLinks(html);
+      const variants = links
+        .filter(link => {
+          if (
+            link.startsWith('/') ||
+            link.startsWith('http') ||
+            link.includes('.css') ||
+            link.includes('.js')
+          ) {
+            return false;
+          }
+          const segments = link.split('/').filter(Boolean);
+          return segments.length === 1 && link.endsWith('/');
+        })
+        .map(link => decodeSegment(link.split('/').filter(Boolean)[0]));
+
+      for (const v of variants) allVariants.add(v);
+    } catch {
+      // This CHARM make may not exist for this year — continue to next
+    }
+  }
+
+  return [...allVariants].sort((a, b) => a.localeCompare(b));
 }
 
 export function resolveVariantForModel(variants: string[], model: string): string | null {
@@ -188,51 +211,72 @@ async function fetchRepairAndDiagnosisHtml(
   make: string,
   year: string,
   variant: string,
-): Promise<{ html: string; resolvedVariant: string }> {
-  const encodedMake = encodeCharmSegment(make);
-  const encodedVariant = encodeCharmSegment(variant);
-  const directUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodedVariant}/Repair%20and%20Diagnosis/`;
+): Promise<{ html: string; resolvedVariant: string; resolvedMake: string }> {
+  // Try all CHARM makes for this display make (e.g. "Ford" → ["Ford", "Ford Truck"])
+  const charmMakes = getCharmMakesForDisplay(make);
 
-  try {
-    const html = await fetchCharmText(directUrl, 3600, 'Repair data not found');
-    return { html, resolvedVariant: variant };
-  } catch {
-    const variants = await fetchWiringVariants(make, year);
-    const matchedVariant = resolveVariantForModel(variants, variant);
-    if (!matchedVariant || matchedVariant === variant) {
-      throw new Error('Repair data not found');
+  for (const charmMake of charmMakes) {
+    const encodedMake = encodeCharmSegment(charmMake);
+
+    // Try direct variant match first
+    try {
+      const directUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodeCharmSegment(variant)}/Repair%20and%20Diagnosis/`;
+      const html = await fetchCharmText(directUrl, 3600, 'Repair data not found');
+      return { html, resolvedVariant: variant, resolvedMake: charmMake };
+    } catch {
+      // Direct match failed — try fuzzy variant matching within this CHARM make
     }
 
-    const matchedUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodeCharmSegment(matchedVariant)}/Repair%20and%20Diagnosis/`;
-    const html = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
-    return { html, resolvedVariant: matchedVariant };
+    try {
+      const html = await fetchCharmText(`${CHARM_BASE}/${encodedMake}/${year}/`, 86400, 'Year not found');
+      const links = extractLinks(html);
+      const variants = links
+        .filter(link => !link.startsWith('/') && !link.startsWith('http') && !link.includes('.css') && !link.includes('.js') && link.endsWith('/') && link.split('/').filter(Boolean).length === 1)
+        .map(link => decodeSegment(link.split('/').filter(Boolean)[0]));
+      const matched = resolveVariantForModel(variants, variant);
+      if (matched) {
+        const matchedUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodeCharmSegment(matched)}/Repair%20and%20Diagnosis/`;
+        const repairHtml = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
+        return { html: repairHtml, resolvedVariant: matched, resolvedMake: charmMake };
+      }
+    } catch {
+      // This CHARM make doesn't have data — try next
+    }
   }
+
+  throw new Error('Repair data not found');
 }
 
 async function resolveVariantIfDiagramBucketIsEmpty(args: {
   make: string;
+  resolvedMake: string;
   year: string;
   variant: string;
   currentVariant: string;
   hasDiagrams: boolean;
-}): Promise<{ html: string; resolvedVariant: string } | null> {
+}): Promise<{ html: string; resolvedVariant: string; resolvedMake: string } | null> {
   if (args.hasDiagrams || args.currentVariant !== args.variant) return null;
 
-  const variants = await fetchWiringVariants(args.make, args.year);
-  const matchedVariant = resolveVariantForModel(variants, args.variant);
-  if (!matchedVariant || matchedVariant === args.currentVariant) {
-    return null;
+  const charmMakes = getCharmMakesForDisplay(args.make);
+  for (const charmMake of charmMakes) {
+    try {
+      const html = await fetchCharmText(`${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${args.year}/`, 86400, 'Year not found');
+      const links = extractLinks(html);
+      const variants = links
+        .filter(link => !link.startsWith('/') && !link.startsWith('http') && !link.includes('.css') && !link.includes('.js') && link.endsWith('/') && link.split('/').filter(Boolean).length === 1)
+        .map(link => decodeSegment(link.split('/').filter(Boolean)[0]));
+      const matched = resolveVariantForModel(variants, args.variant);
+      if (matched && matched !== args.currentVariant) {
+        const matchedUrl = `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${args.year}/${encodeCharmSegment(matched)}/Repair%20and%20Diagnosis/`;
+        const repairHtml = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
+        return { html: repairHtml, resolvedVariant: matched, resolvedMake: charmMake };
+      }
+    } catch {
+      // Continue to next CHARM make
+    }
   }
 
-  const encodedMake = encodeCharmSegment(args.make);
-  const matchedUrl = `${CHARM_BASE}/${encodedMake}/${args.year}/${encodeCharmSegment(matchedVariant)}/Repair%20and%20Diagnosis/`;
-
-  try {
-    const html = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
-    return { html, resolvedVariant: matchedVariant };
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 export async function fetchWiringDiagramIndex(
@@ -240,13 +284,14 @@ export async function fetchWiringDiagramIndex(
   year: string,
   variant: string,
 ): Promise<WiringDiagramIndex> {
-  let { html, resolvedVariant } = await fetchRepairAndDiagnosisHtml(make, year, variant);
-  let repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
+  let { html, resolvedVariant, resolvedMake } = await fetchRepairAndDiagnosisHtml(make, year, variant);
+  let repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(resolvedMake)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
   let allLinks = extractLinks(html);
   let diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
 
   const matchedVariantBucket = await resolveVariantIfDiagramBucketIsEmpty({
     make,
+    resolvedMake,
     year,
     variant,
     currentVariant: resolvedVariant,
@@ -256,7 +301,8 @@ export async function fetchWiringDiagramIndex(
   if (matchedVariantBucket) {
     html = matchedVariantBucket.html;
     resolvedVariant = matchedVariantBucket.resolvedVariant;
-    repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
+    resolvedMake = matchedVariantBucket.resolvedMake;
+    repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(resolvedMake)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
     allLinks = extractLinks(html);
     diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
   }
