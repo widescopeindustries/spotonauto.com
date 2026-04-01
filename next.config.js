@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'www.topdon.us', pathname: '/cdn/shop/**' },
+      { protocol: 'https', hostname: 'creatives.goaffpro.com' },
+    ],
+  },
   // Ensure API routes work properly
   experimental: {
     serverActions: {

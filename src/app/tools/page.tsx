@@ -79,6 +79,23 @@ const TOOLS = [
                 description: 'Describe your car problem and get AI-powered diagnosis',
                 href: '/diagnose',
             },
+            {
+                name: 'Best TOPDON Scanner Guide',
+                description: 'Find the right OBD2 scanner for your car — interactive quiz + full comparison',
+                href: '/tools/best-topdon-scanner',
+                badge: 'New',
+                badgeColor: 'bg-orange-500',
+            },
+            {
+                name: 'TOPDON Scanner Comparison',
+                description: 'Every TOPDON scanner compared side-by-side — features, prices, and our picks',
+                href: '/tools/topdon-scanner-comparison',
+            },
+            {
+                name: 'TOPDON Battery Tester Guide',
+                description: 'BT50 vs BT100 vs BT200 vs BT600 — which battery tester do you need?',
+                href: '/tools/topdon-battery-tester',
+            },
         ],
     },
     {
