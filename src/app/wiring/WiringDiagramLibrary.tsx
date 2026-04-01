@@ -1264,13 +1264,14 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
         }
 
         .wl-modal-img-wrap {
-          background: white;
+          background: #1a1a1a;
           border-radius: 8px;
           padding: 1rem;
           margin-bottom: 1rem;
           text-align: center;
           position: relative;
           overflow: auto;
+          color: rgba(255, 255, 255, 0.6);
         }
 
         .wl-modal-img {
@@ -1280,6 +1281,8 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           margin: 0 auto;
           transform-origin: center top;
           transition: transform 0.12s ease;
+          background: white;
+          border-radius: 4px;
         }
 
         .wl-modal-watermark {
