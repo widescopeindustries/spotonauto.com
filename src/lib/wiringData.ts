@@ -220,33 +220,43 @@ async function fetchRepairAndDiagnosisHtml(
   // Try all CHARM makes for this display make (e.g. "Ford" → ["Ford", "Ford Truck"])
   const charmMakes = getCharmMakesForDisplay(make);
 
+  // 1. Try exact variant match across all CHARM makes first
   for (const charmMake of charmMakes) {
-    const encodedMake = encodeCharmSegment(charmMake);
-
-    // Try direct variant match first
     try {
-      const directUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodeCharmSegment(variant)}/Repair%20and%20Diagnosis/`;
+      const directUrl = `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${year}/${encodeCharmSegment(variant)}/Repair%20and%20Diagnosis/`;
       const html = await fetchCharmText(directUrl, 3600, 'Repair data not found');
       return { html, resolvedVariant: variant, resolvedMake: charmMake };
     } catch {
-      // Direct match failed — try fuzzy variant matching within this CHARM make
+      // Not found under this CHARM make — continue
     }
+  }
 
+  // 2. Fuzzy match: find the BEST match across ALL CHARM makes (don't stop at first weak match)
+  let bestMatch: { variant: string; score: number; charmMake: string } | null = null;
+
+  for (const charmMake of charmMakes) {
     try {
-      const html = await fetchCharmText(`${CHARM_BASE}/${encodedMake}/${year}/`, 86400, 'Year not found');
+      const html = await fetchCharmText(`${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${year}/`, 86400, 'Year not found');
       const links = extractLinks(html);
       const variants = links
         .filter(link => !link.startsWith('/') && !link.startsWith('http') && !link.includes('.css') && !link.includes('.js') && link.endsWith('/') && link.split('/').filter(Boolean).length === 1)
         .map(link => decodeSegment(link.split('/').filter(Boolean)[0]));
-      const matched = resolveVariantForModel(variants, variant);
-      if (matched) {
-        const matchedUrl = `${CHARM_BASE}/${encodedMake}/${year}/${encodeCharmSegment(matched)}/Repair%20and%20Diagnosis/`;
-        const repairHtml = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
-        return { html: repairHtml, resolvedVariant: matched, resolvedMake: charmMake };
+
+      for (const v of variants) {
+        const score = scoreVariantMatch(v, variant);
+        if (score >= 60 && (!bestMatch || score > bestMatch.score)) {
+          bestMatch = { variant: v, score, charmMake };
+        }
       }
     } catch {
-      // This CHARM make doesn't have data — try next
+      // This CHARM make doesn't have data for this year — continue
     }
+  }
+
+  if (bestMatch) {
+    const matchedUrl = `${CHARM_BASE}/${encodeCharmSegment(bestMatch.charmMake)}/${year}/${encodeCharmSegment(bestMatch.variant)}/Repair%20and%20Diagnosis/`;
+    const html = await fetchCharmText(matchedUrl, 3600, 'Repair data not found');
+    return { html, resolvedVariant: bestMatch.variant, resolvedMake: bestMatch.charmMake };
   }
 
   throw new Error('Repair data not found');
