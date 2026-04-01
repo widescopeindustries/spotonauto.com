@@ -841,6 +841,7 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                         className="wl-modal-img"
                         loading="lazy"
                         style={{ transform: `scale(${diagramZoom})` }}
+                        onLoad={e => (e.target as HTMLImageElement).classList.add('loaded')}
                       />
                       <img
                         src="/diagram-watermark.svg"
@@ -1281,8 +1282,12 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           margin: 0 auto;
           transform-origin: center top;
           transition: transform 0.12s ease;
-          background: white;
           border-radius: 4px;
+        }
+
+        /* White background only when image actually loads — prevents white box on broken images */
+        .wl-modal-img.loaded {
+          background: white;
         }
 
         .wl-modal-watermark {
