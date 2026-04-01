@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { startTransition, useEffect, useState } from 'react';
 
 import type { WiringSelectorData } from '@/lib/wiringCoverage';
@@ -16,35 +15,6 @@ const WiringDiagramLibrary = dynamic(() => import('./WiringDiagramLibrary'), {
     </div>
   ),
 });
-
-const POPULAR_MAKES = [
-  'Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'BMW',
-  'Dodge', 'Jeep', 'GMC', 'Hyundai', 'Kia', 'Subaru',
-  'Acura', 'Volkswagen', 'Mazda',
-];
-
-const SYSTEM_TAGS = [
-  { slug: 'headlight', label: 'Headlights' },
-  { slug: 'power-windows', label: 'Power Windows' },
-  { slug: 'ac-heater', label: 'A/C & Heater' },
-  { slug: 'alternator', label: 'Alternator / Charging' },
-  { slug: 'starter', label: 'Starter' },
-  { slug: 'abs', label: 'ABS Brakes' },
-  { slug: 'airbag', label: 'Airbag SRS' },
-  { slug: 'engine-management', label: 'Engine Management' },
-  { slug: 'fuel-pump', label: 'Fuel Pump' },
-  { slug: 'cruise-control', label: 'Cruise Control' },
-  { slug: 'instrument-cluster', label: 'Instrument Cluster' },
-  { slug: 'body-electrical', label: 'Body Electrical' },
-];
-
-function wiringSlug(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/&/g, ' and ')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
 
 function shouldAutoOpenLibrary() {
   if (typeof window === 'undefined') return false;
@@ -270,59 +240,8 @@ export default function DeferredWiringDiagramBrowser() {
           )}
         </div>
 
-        {/* ── Popular Makes ────────────────────────────────────────────── */}
-        <div className="mt-8">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75 mb-4">
-            Popular makes
-          </p>
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-            {POPULAR_MAKES.map((make) => (
-              <Link
-                key={make}
-                href={`/wiring?make=${encodeURIComponent(make)}`}
-                className="rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-center text-sm font-medium text-gray-200 transition-all hover:border-cyan-400/35 hover:text-cyan-200 hover:bg-cyan-400/[0.06]"
-              >
-                {make}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Browse by System ─────────────────────────────────────────── */}
-        <div className="mt-8">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75 mb-4">
-            Browse by electrical system
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {SYSTEM_TAGS.map(({ slug, label }) => {
-              const href = hasVehicle
-                ? `/wiring/${vehicle.year}/${wiringSlug(vehicle.make)}/${wiringSlug(vehicle.model)}/${slug}`
-                : `/wiring?q=${encodeURIComponent(label)}&open=1`;
-              return (
-                <Link
-                  key={slug}
-                  href={href}
-                  className="rounded-full border border-white/10 bg-slate-900/50 px-4 py-2 text-xs font-medium text-gray-300 transition-all hover:border-cyan-400/35 hover:text-cyan-200"
-                >
-                  {label}
-                </Link>
-              );
-            })}
-          </div>
-          {hasVehicle && (
-            <p className="mt-2 text-xs text-gray-500">
-              Links go directly to {vehicle.year} {vehicle.make} {vehicle.model} diagrams for each system.
-            </p>
-          )}
-        </div>
-
         {/* ── Full browser toggle ──────────────────────────────────────── */}
-        <div className="mt-8 flex items-center gap-4">
-          <div className="h-px flex-1 bg-white/10" />
-          <span className="text-xs text-gray-500 uppercase tracking-widest">or</span>
-          <div className="h-px flex-1 bg-white/10" />
-        </div>
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <button
             type="button"
             onClick={() => setShouldLoad(true)}
