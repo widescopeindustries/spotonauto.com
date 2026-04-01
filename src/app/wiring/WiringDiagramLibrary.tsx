@@ -868,6 +868,7 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           max-width: 1200px;
           margin: 0 auto;
           min-height: 100vh;
+          color-scheme: dark;
         }
 
         .wl-header {
