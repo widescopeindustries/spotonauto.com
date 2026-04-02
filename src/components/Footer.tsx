@@ -88,6 +88,7 @@ const Footer = () => {
                                 { href: '/auth', label: 'Sign In / Sign Up' },
                                 { href: '/privacy', label: 'Privacy Policy' },
                                 { href: '/terms', label: 'Terms of Service' },
+                                { href: '/disclosure', label: 'Affiliate Disclosure' },
                                 { href: '/contact', label: 'Contact Us' },
                             ].map((item) => (
                                 <li key={item.href}>
