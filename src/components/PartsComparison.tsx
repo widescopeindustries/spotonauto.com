@@ -96,7 +96,7 @@ const RetailerButton: React.FC<{ link: AffiliateLink; partName: string; vehicle:
         <a
             href={link.url}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="sponsored noopener noreferrer"
             onClick={handleClick}
             className={`
                 group relative flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl
@@ -242,7 +242,7 @@ const PartsComparison: React.FC<PartsComparisonProps> = ({ parts, vehicle }) => 
                 <a
                     href={buildAmazonSearchUrl(`${vehicle} parts`)}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="sponsored noopener noreferrer"
                     onClick={() => trackShopAllClick('Amazon', vehicle)}
                     className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-black font-bold rounded-lg hover:scale-105 transition-transform"
                 >

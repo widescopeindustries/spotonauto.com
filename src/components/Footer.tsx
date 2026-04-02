@@ -132,6 +132,15 @@ const Footer = () => {
                     </a>
                 </div>
 
+                {/* Affiliate Disclosure — Amazon Associates required statement */}
+                <div className="mt-4 pt-4 border-t border-white/5 text-center">
+                    <p className="font-body text-xs text-gray-600">
+                        As an Amazon Associate, SpotOnAuto earns from qualifying purchases.
+                        We also earn commissions from TOPDON purchases via our referral links.{' '}
+                        <Link href="/disclosure" className="text-gray-500 hover:text-cyan-400 underline transition-colors">Full disclosure</Link>.
+                    </p>
+                </div>
+
                 {/* Bottom bar */}
                 <div className="mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="font-body text-xs text-gray-600">
