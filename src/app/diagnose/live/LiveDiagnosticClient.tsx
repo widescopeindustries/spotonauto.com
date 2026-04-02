@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { buildTopdonProductUrl, TOPDON_PRODUCTS } from '@/lib/topdonAffiliate';
+import TopdonProductCard from '@/components/TopdonProductCard';
 import {
   connectOBD2,
   disconnectOBD2,
@@ -339,41 +340,20 @@ export default function LiveDiagnosticClient() {
         </div>
 
         {/* Scanner recommendation — highest intent placement */}
-        <div className="mt-4 p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
-          <p className="text-emerald-300 text-sm font-semibold mb-3">Need a BLE scanner?</p>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <a
-              href={buildTopdonProductUrl(TOPDON_PRODUCTS.topscan.slug)}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-track-click={JSON.stringify({ event: 'affiliate_click', provider: 'topdon', product: 'topscan', surface: 'live-diagnostic' })}
-              className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 transition"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-white text-sm font-bold">{TOPDON_PRODUCTS.topscan.shortName}</span>
-                  <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold px-1.5 py-0.5 bg-emerald-500/10 rounded">${TOPDON_PRODUCTS.topscan.price}</span>
-                </div>
-                <p className="text-gray-400 text-xs">BLE scanner — works with this tool. Reads codes, live data, freeze frame.</p>
-              </div>
-              <span className="text-emerald-400 text-sm shrink-0">View &rarr;</span>
-            </a>
-            <a
-              href={buildTopdonProductUrl(TOPDON_PRODUCTS.artilink300.slug)}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-track-click={JSON.stringify({ event: 'affiliate_click', provider: 'topdon', product: 'artilink300', surface: 'live-diagnostic' })}
-              className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 transition"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-white text-sm font-bold">{TOPDON_PRODUCTS.artilink300.shortName}</span>
-                  <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold px-1.5 py-0.5 bg-emerald-500/10 rounded">${TOPDON_PRODUCTS.artilink300.price}</span>
-                </div>
-                <p className="text-gray-400 text-xs">Budget pick — reads &amp; clears codes, freeze frame, O2 test.</p>
-              </div>
-              <span className="text-emerald-400 text-sm shrink-0">View &rarr;</span>
-            </a>
+        <div className="mt-4">
+          <p className="text-gray-300 text-sm font-semibold mb-3">Need a BLE scanner?</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <TopdonProductCard
+              product={TOPDON_PRODUCTS.topscan}
+              badge="Best for This Tool"
+              surface="live-diagnostic"
+              compact
+            />
+            <TopdonProductCard
+              product={TOPDON_PRODUCTS.artilink300}
+              surface="live-diagnostic"
+              compact
+            />
           </div>
         </div>
       </div>

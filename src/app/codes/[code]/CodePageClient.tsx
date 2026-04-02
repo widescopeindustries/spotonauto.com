@@ -17,6 +17,7 @@ import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { buildTopdonProductUrl, getTopdonRecommendations, getContextFromCode } from '@/lib/topdonAffiliate';
+import TopdonProductCard from '@/components/TopdonProductCard';
 import { buildVehicleHubLinksForCode } from '@/lib/vehicleHubLinks';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
@@ -274,27 +275,17 @@ export default function CodePageClient({
                     ? 'Test your battery and charging system before replacing parts.'
                     : `Read live data and freeze frame for ${code.code} to pinpoint the cause before buying parts.`;
                 return (
-                    <div className="mb-8 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-6">
-                        <p className="text-emerald-200 text-sm mb-4">{ctaText}</p>
-                        <div className="grid sm:grid-cols-2 gap-3">
-                            {topdonPicks.map((product) => (
-                                <a
+                    <div className="mb-8">
+                        <p className="text-gray-300 text-sm mb-4">{ctaText}</p>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            {topdonPicks.map((product, i) => (
+                                <TopdonProductCard
                                     key={product.slug}
-                                    href={buildTopdonProductUrl(product.slug)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    data-track-click={JSON.stringify({ event: 'affiliate_click', provider: 'topdon', product: product.slug, surface: 'code-page', code: code.code })}
-                                    className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 transition"
-                                >
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-0.5">
-                                            <span className="text-white text-sm font-bold">{product.shortName}</span>
-                                            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold px-1.5 py-0.5 bg-emerald-500/10 rounded">${product.price}</span>
-                                        </div>
-                                        <p className="text-gray-400 text-xs truncate">{product.description}</p>
-                                    </div>
-                                    <span className="text-emerald-400 text-sm shrink-0">View &rarr;</span>
-                                </a>
+                                    product={product}
+                                    badge={i === 0 ? 'Recommended' : undefined}
+                                    surface={`code-page-${code.code}`}
+                                    compact
+                                />
                             ))}
                         </div>
                     </div>
