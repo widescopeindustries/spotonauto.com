@@ -24,6 +24,9 @@ import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildRepairUrl } from '@/lib/vehicleIdentity';
 import { buildVehicleHubGraph } from '@/lib/vehicleHubGraph';
 
+// ISR: cache repair pages for 6 hours (matches wiring pages)
+export const revalidate = 21600;
+
 // Helper — title-case a hyphenated slug (fallback for unknown makes/models)
 function toTitleCase(slug: string): string {
     return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());

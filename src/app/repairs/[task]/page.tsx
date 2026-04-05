@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
+
+export const revalidate = 86400; // 1 day ISR
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { getTier1RescuePagesForTask } from '@/data/rescuePriority';
 import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';

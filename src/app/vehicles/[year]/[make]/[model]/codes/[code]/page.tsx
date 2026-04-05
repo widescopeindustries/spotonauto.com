@@ -5,6 +5,8 @@ import { getVehicleDtcFlow } from '@/lib/vehicleLane';
 import { fetchContentByHash } from '@/lib/charmContent';
 import { slugifyRoutePart } from '@/data/vehicles';
 
+export const revalidate = 21600; // 6 hour ISR
+
 interface PageProps {
   params: Promise<{ year: string; make: string; model: string; code: string }>;
 }

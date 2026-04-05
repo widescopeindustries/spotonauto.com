@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import VehicleHubTracker from '@/components/VehicleHubTracker';
+
+export const revalidate = 21600; // 6 hour ISR
 import {
   NOINDEX_MAKES,
   isNonUsModel,

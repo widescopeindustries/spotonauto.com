@@ -4,6 +4,8 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
+export const revalidate = 86400; // 1 day ISR
+
 interface PageProps {
   params: Promise<{
     make: string;

@@ -2,6 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
+
+export const revalidate = 86400; // 1 day ISR
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { getToolPagesForVehicle, TOOL_TYPE_META } from '@/data/tools-pages';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';

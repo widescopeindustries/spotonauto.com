@@ -9,6 +9,8 @@ interface PageProps {
     params: Promise<{ code: string }>;
 }
 
+export const revalidate = 21600; // 6 hour ISR
+
 /** Pre-render top 50 codes at build time. Rest use ISR. */
 export async function generateStaticParams() {
     return DTC_CODES.slice(0, 50).map(c => ({ code: c.code.toLowerCase() }));

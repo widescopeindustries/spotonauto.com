@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import { buildSymptomHref, getSymptomClusterBySlug, getSymptomClusterFromText, SYMPTOM_CLUSTERS } from '@/data/symptomGraph';
+
+export const revalidate = 86400; // 1 day ISR
 import { getPriorityCodePagesForSymptomCluster, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildSymptomNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';

@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getToolPagesForType, TOOL_TYPE_META, type ToolType } from '@/data/tools-pages';
 
+export const revalidate = 86400; // 1 day ISR
+
 interface PageProps {
     params: Promise<{ toolType: string }>;
 }

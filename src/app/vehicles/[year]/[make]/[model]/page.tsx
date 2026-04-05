@@ -5,6 +5,8 @@ import { buildVehicleLaneData } from '@/lib/vehicleLane';
 import { slugifyRoutePart } from '@/data/vehicles';
 import VehicleLaneClient from './VehicleLaneClient';
 
+export const revalidate = 21600; // 6 hour ISR
+
 interface PageProps {
   params: Promise<{ year: string; make: string; model: string }>;
 }
