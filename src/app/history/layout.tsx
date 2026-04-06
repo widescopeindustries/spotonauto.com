@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'My Garage | Repair History | SpotOnAuto',
-  description: 'View your saved vehicle diagnostics and repair guides in your personal garage.',
+  description: 'View your saved vehicle diagnostics, repair guides, and maintenance history in your personal garage. Track past repairs and pick up where you left off.',
   robots: {
     index: false,
     follow: true,

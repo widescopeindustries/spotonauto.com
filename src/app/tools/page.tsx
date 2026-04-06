@@ -4,7 +4,7 @@ import { getToolPagesForType, TOOL_TYPE_META, type ToolType } from '@/data/tools
 
 export const metadata: Metadata = {
     title: 'Free Auto Repair Tools | SpotOnAuto',
-    description: 'Free DIY auto repair tools: VIN decoder, repair cost calculator, maintenance schedules, torque specs, and more. Solve your car problems instantly.',
+    description: 'Free DIY auto repair tools: oil type lookup, spark plug gap finder, serpentine belt diagrams, battery location guides, and more. No signup required, instant results.',
     keywords: [
         'free auto repair tools',
         'car repair calculator',

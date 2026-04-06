@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Sign In | SpotOnAuto',
   description:
-    'Sign in or create your free SpotOnAuto account for personalized repair guides and diagnostics.',
+    'Sign in or create your free SpotOnAuto account to save vehicles, track repair history, and get personalized diagnostic guides for your car or truck.',
   robots: {
     index: false,
     follow: true,

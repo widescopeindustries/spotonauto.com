@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | SpotOnAuto',
-  description: 'Terms and conditions for using SpotOnAuto, including AI-generated content disclaimers, affiliate disclosures, and liability limitations.',
+  description: 'Terms and conditions for using SpotOnAuto, including AI-generated content disclaimers, affiliate disclosures, liability limitations, and data usage policies.',
   alternates: { canonical: 'https://spotonauto.com/terms' },
 };
 

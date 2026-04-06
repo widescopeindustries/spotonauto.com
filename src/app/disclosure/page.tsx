@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Affiliate Disclosure | SpotOnAuto',
-  description: 'FTC-compliant affiliate disclosure for SpotOnAuto. How we earn revenue through Amazon Associates, TOPDON affiliate program, and Google AdSense.',
+  description: 'FTC-compliant affiliate disclosure for SpotOnAuto. How we earn revenue through Amazon Associates, TOPDON affiliate program, and Google AdSense while keeping all repair content free.',
   alternates: { canonical: 'https://spotonauto.com/disclosure' },
 };
 

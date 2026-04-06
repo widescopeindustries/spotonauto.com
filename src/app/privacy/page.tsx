@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | SpotOnAuto',
-  description: 'How SpotOnAuto collects, uses, and protects your personal information. Covers vehicle data, analytics, affiliate links, and your rights.',
+  description: 'How SpotOnAuto collects, uses, and protects your personal information. Covers vehicle data, analytics, affiliate links, cookies, and your privacy rights.',
   alternates: { canonical: 'https://spotonauto.com/privacy' },
 };
 
