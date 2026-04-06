@@ -11,8 +11,10 @@ import RepairSectionTracker from '@/components/RepairSectionTracker';
 import RepairTrackedLink from '@/components/RepairTrackedLink';
 import { getTier1RescueEntryByHref, getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
 import { buildSymptomHref, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
-import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart, CORPUS_YEAR_MAX } from '@/data/vehicles';
+import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart, CORPUS_YEAR_MAX, isCorpusBacked } from '@/data/vehicles';
+import { getOEMExcerptsForRepair } from '@/lib/manualSectionLinks';
 import CorpusBadge from '@/components/CorpusBadge';
+import OEMExcerpt from '@/components/OEMExcerpt';
 import CoverageWaitlist from '@/components/CoverageWaitlist';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
@@ -1776,6 +1778,17 @@ export default async function Page({ params }: PageProps) {
         repairTools: repairData.tools,
         vehicleSpec: vehicleSpec ?? undefined,
     });
+    const oemExcerpts = isCorpusBacked(Number(resolvedYear))
+        ? await getOEMExcerptsForRepair({
+            make: canonicalMake,
+            year: Number(resolvedYear),
+            model: canonicalModel,
+            task: canonicalTask,
+            displayMake,
+            displayModel,
+            limit: 3,
+          })
+        : [];
     const symptomClusters = getSymptomClustersForRepairTask(canonicalTask, [
         cleanTask,
         TASK_META[canonicalTask]?.title || '',
@@ -2148,6 +2161,8 @@ export default async function Page({ params }: PageProps) {
                 </header>
 
                 <CorpusBadge year={Number(resolvedYear)} vehicleName={vehicleName} />
+
+                <OEMExcerpt excerpts={oemExcerpts} vehicleName={vehicleName} task={canonicalTask} />
 
                 <section
                     id="quick-answer"

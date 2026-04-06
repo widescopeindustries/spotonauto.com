@@ -99,6 +99,54 @@ export async function getManualSectionLinksForWiringVehicle(
   }));
 }
 
+// ─── OEM Excerpt support ────────────────────────────────────────────────────
+
+export interface OEMExcerptData {
+  path: string;
+  make: string;
+  year: number;
+  model: string;
+  sectionTitle: string;
+  contentPreview: string;
+  manualHref: string;
+}
+
+export async function getOEMExcerptsForRepair(args: {
+  make: string;
+  year: number;
+  model: string;
+  task: string;
+  displayMake: string;
+  displayModel: string;
+  limit?: number;
+}): Promise<OEMExcerptData[]> {
+  const profile = getRepairTaskProfile(args.task);
+  const taskLabel = args.task.replace(/-/g, ' ');
+  const rows = await safeFindRows(
+    `excerpt:${args.year}-${args.displayMake}-${args.displayModel}-${args.task}`,
+    () =>
+      findManualSectionsByTerms({
+        make: args.displayMake,
+        year: args.year,
+        model: args.displayModel,
+        terms: [...profile.keywords, taskLabel],
+        limit: args.limit || 3,
+      }),
+  );
+
+  return rows
+    .filter((row) => row.contentPreview && row.contentPreview.length > 80)
+    .map((row) => ({
+      path: row.path,
+      make: row.make,
+      year: row.year,
+      model: row.model,
+      sectionTitle: row.sectionTitle,
+      contentPreview: row.contentPreview,
+      manualHref: buildManualUrl(row.path),
+    }));
+}
+
 export async function getManualSectionLinksForRepair(args: {
   make: string;
   year: number;
