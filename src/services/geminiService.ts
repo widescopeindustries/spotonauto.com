@@ -154,7 +154,7 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
 // We fetch live at query time — no local copy stored.
 // For 2014+ vehicles we fall back silently to AI-only.
 
-const CHARM_BASE = 'https://data.spotonauto.com';
+const CHARM_BASE = process.env.CHARM_CONTENT_BASE ?? 'https://data.spotonauto.com';
 const CHARM_HEADERS = { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' };
 
 /** encodeURIComponent leaves parens unencoded; CHARM requires them percent-encoded. */

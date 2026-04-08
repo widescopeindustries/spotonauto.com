@@ -1,7 +1,7 @@
 import type { LiveDtcFlowStep, LiveDtcFlowchart } from '@/types/dtc-flowchart';
 import { findDiagnosticTroubleCodeIndexes } from '@/lib/manualEmbeddingsStore';
 
-const CHARM_BASE = 'https://data.spotonauto.com';
+const CHARM_BASE = process.env.CHARM_CONTENT_BASE ?? 'https://data.spotonauto.com';
 const REQUEST_TIMEOUT_MS = 12000;
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const MAX_CANDIDATES = 12;

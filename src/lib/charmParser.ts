@@ -2,7 +2,7 @@
 // Parses HTML responses from data.spotonauto.com (Operation CHARM LMDB proxy)
 // into structured data for the /manual/* browser route.
 
-const CHARM_BASE = 'https://data.spotonauto.com';
+const CHARM_BASE = process.env.CHARM_CONTENT_BASE ?? 'https://data.spotonauto.com';
 const CHARM_IMAGE_BASE = CHARM_BASE;
 
 // ─── Circuit Breaker ───────────────────────────────────────────────────────────

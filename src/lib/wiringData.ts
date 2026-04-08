@@ -1,6 +1,6 @@
 import { getCharmMakesForDisplay } from '@/lib/wiringCoverage';
 
-const CHARM_BASE = 'https://data.spotonauto.com';
+const CHARM_BASE = process.env.CHARM_CONTENT_BASE ?? 'https://data.spotonauto.com';
 const CHARM_HEADERS = {
   'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) wiring-diagrams',
 };
