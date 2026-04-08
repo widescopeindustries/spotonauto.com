@@ -11,7 +11,7 @@ function charmFetchOpts(revalidateSeconds = 3600, timeoutMs = 15000): RequestIni
   return {
     headers: CHARM_HEADERS,
     signal: AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : undefined,
-    next: { revalidate: revalidateSeconds },
+    cache: 'no-store' as RequestCache,
   };
 }
 
