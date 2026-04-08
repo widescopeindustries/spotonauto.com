@@ -48,20 +48,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(data, { headers: { 'Cache-Control': 'public, max-age=86400' } });
     }
 
-    if (action === 'debug') {
-      const charmBase = process.env.CHARM_CONTENT_BASE ?? 'https://data.spotonauto.com';
-      const testUrl = `${charmBase}/Toyota/2005/?_v=3`;
-      try {
-        const res = await fetch(testUrl, { cache: 'no-store' as RequestCache });
-        const text = await res.text();
-        const hasCamry = text.includes('Camry');
-        const linkCount = (text.match(/href=/g) || []).length;
-        return NextResponse.json({ charmBase, testUrl, status: res.status, bodyLength: text.length, hasCamry, linkCount });
-      } catch (e) {
-        return NextResponse.json({ charmBase, testUrl, error: String(e) });
-      }
-    }
-
     return NextResponse.json({ error: 'Invalid action. Use: makes, years, variants, diagrams, image' }, { status: 400 });
   } catch (error) {
     console.error('[Wiring API]', error);
