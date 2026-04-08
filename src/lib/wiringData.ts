@@ -16,7 +16,7 @@ function charmFetchOpts(revalidateSeconds = 3600, timeoutMs = 15000): RequestIni
 }
 
 // Bump to invalidate stale Next.js fetch cache after infra changes (e.g. nginx redirect fixes)
-const CHARM_CACHE_BUST = '_v=2';
+const CHARM_CACHE_BUST = '_v=3';
 
 async function fetchCharmText(
   url: string,
