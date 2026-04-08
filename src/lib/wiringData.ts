@@ -56,9 +56,21 @@ function encodeCharmSegment(value: string): string {
     .replace(/\)/g, '%29');
 }
 
-function extractLinks(html: string): string[] {
+function extractLinks(html: string, pageUrl?: string): string[] {
   const matches = html.matchAll(/href=['"]([^'"]+)['"]/g);
-  return [...matches].map(m => m[1]);
+  return [...matches].map(m => {
+    let link = m[1];
+    // charm.li serves absolute paths (/Make/Year/Variant/) while the old VPS
+    // served relative ones (Variant/).  Normalise absolute hrefs to relative
+    // by stripping the parent directory prefix so downstream filters work.
+    if (pageUrl && link.startsWith('/')) {
+      const base = new URL(pageUrl).pathname.replace(/\/$/, '') + '/';
+      if (link.startsWith(base)) {
+        link = link.slice(base.length);
+      }
+    }
+    return link;
+  });
 }
 
 function decodeSegment(value: string): string {
@@ -122,8 +134,9 @@ export interface WiringImageData {
 }
 
 export async function fetchWiringMakes(): Promise<string[]> {
-  const html = await fetchCharmText(`${CHARM_BASE}/`, 86400, 'Cannot reach wiring data source');
-  const links = extractLinks(html);
+  const pageUrl = `${CHARM_BASE}/`;
+  const html = await fetchCharmText(pageUrl, 86400, 'Cannot reach wiring data source');
+  const links = extractLinks(html, pageUrl);
   return links
     .filter(link => {
       const segments = link.split('/').filter(Boolean);
@@ -139,12 +152,9 @@ export async function fetchWiringYears(make: string): Promise<number[]> {
 
   for (const charmMake of charmMakes) {
     try {
-      const html = await fetchCharmText(
-        `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/`,
-        86400,
-        'Make not found',
-      );
-      const links = extractLinks(html);
+      const makeUrl = `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/`;
+      const html = await fetchCharmText(makeUrl, 86400, 'Make not found');
+      const links = extractLinks(html, makeUrl);
       for (const link of links) {
         const segments = link.split('/').filter(Boolean);
         const year = Number.parseInt(segments[segments.length - 1], 10);
@@ -167,12 +177,9 @@ export async function fetchWiringVariants(make: string, year: string): Promise<s
 
   for (const charmMake of charmMakes) {
     try {
-      const html = await fetchCharmText(
-        `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${year}/`,
-        86400,
-        'Year not found',
-      );
-      const links = extractLinks(html);
+      const yearUrl = `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${year}/`;
+      const html = await fetchCharmText(yearUrl, 86400, 'Year not found');
+      const links = extractLinks(html, yearUrl);
       const variants = links
         .filter(link => {
           if (
@@ -236,8 +243,9 @@ async function fetchRepairAndDiagnosisHtml(
 
   for (const charmMake of charmMakes) {
     try {
-      const html = await fetchCharmText(`${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${year}/`, 86400, 'Year not found');
-      const links = extractLinks(html);
+      const fuzzyYearUrl = `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${year}/`;
+      const html = await fetchCharmText(fuzzyYearUrl, 86400, 'Year not found');
+      const links = extractLinks(html, fuzzyYearUrl);
       const variants = links
         .filter(link => !link.startsWith('/') && !link.startsWith('http') && !link.includes('.css') && !link.includes('.js') && link.endsWith('/') && link.split('/').filter(Boolean).length === 1)
         .map(link => decodeSegment(link.split('/').filter(Boolean)[0]));
@@ -275,8 +283,9 @@ async function resolveVariantIfDiagramBucketIsEmpty(args: {
   const charmMakes = getCharmMakesForDisplay(args.make);
   for (const charmMake of charmMakes) {
     try {
-      const html = await fetchCharmText(`${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${args.year}/`, 86400, 'Year not found');
-      const links = extractLinks(html);
+      const resolveYearUrl = `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${args.year}/`;
+      const html = await fetchCharmText(resolveYearUrl, 86400, 'Year not found');
+      const links = extractLinks(html, resolveYearUrl);
       const variants = links
         .filter(link => !link.startsWith('/') && !link.startsWith('http') && !link.includes('.css') && !link.includes('.js') && link.endsWith('/') && link.split('/').filter(Boolean).length === 1)
         .map(link => decodeSegment(link.split('/').filter(Boolean)[0]));
@@ -301,7 +310,7 @@ export async function fetchWiringDiagramIndex(
 ): Promise<WiringDiagramIndex> {
   let { html, resolvedVariant, resolvedMake } = await fetchRepairAndDiagnosisHtml(make, year, variant);
   let repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(resolvedMake)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
-  let allLinks = extractLinks(html);
+  let allLinks = extractLinks(html, repairAndDiagnosisUrl);
   let diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
 
   const matchedVariantBucket = await resolveVariantIfDiagramBucketIsEmpty({
@@ -318,7 +327,7 @@ export async function fetchWiringDiagramIndex(
     resolvedVariant = matchedVariantBucket.resolvedVariant;
     resolvedMake = matchedVariantBucket.resolvedMake;
     repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(resolvedMake)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
-    allLinks = extractLinks(html);
+    allLinks = extractLinks(html, repairAndDiagnosisUrl);
     diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));
   }
 
