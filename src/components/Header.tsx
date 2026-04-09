@@ -6,6 +6,7 @@ import HeaderChrome from '@/components/HeaderChrome';
 import { useT } from '@/lib/translations';
 
 const desktopNavItems = [
+  { key: 'nav.factoryManuals', href: '/manual' },
   { key: 'nav.repairGuides', href: '/repair' },
   { key: 'nav.wiringDiagrams', href: '/wiring' },
   { key: 'nav.codes', href: '/codes' },

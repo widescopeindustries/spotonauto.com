@@ -20,6 +20,7 @@ const en = {
   'nav.guideLanguage': 'Guide language',
   'nav.diagnoseMycar': 'Diagnose My Car',
   'nav.partsFinder': 'Parts Finder',
+  'nav.factoryManuals': 'Factory Manuals',
   'nav.wiringDiagrams': 'Wiring Diagrams',
   'nav.codes': 'Look Up a Code',
   'nav.community': 'Community',

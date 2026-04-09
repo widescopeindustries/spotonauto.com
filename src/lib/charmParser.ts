@@ -1,8 +1,10 @@
-// ─── charm.li HTML Parser ──────────────────────────────────────────────────────
-// Parses HTML responses from data.spotonauto.com (Operation CHARM LMDB proxy)
-// into structured data for the /manual/* browser route.
+import { CHARM_ARCHIVE_BASE } from '@/lib/charmBase';
 
-const CHARM_BASE = process.env.CHARM_CONTENT_BASE ?? 'https://data.spotonauto.com';
+// ─── Factory Manual Archive HTML Parser ───────────────────────────────────────
+// Parses HTML responses from the cached manual archive into structured data
+// for the /manual/* browser route.
+
+const CHARM_BASE = CHARM_ARCHIVE_BASE;
 const CHARM_IMAGE_BASE = CHARM_BASE;
 
 // ─── Circuit Breaker ───────────────────────────────────────────────────────────
@@ -38,14 +40,16 @@ function recordSuccess(): void {
   circuitOpenUntil = 0;
 }
 
-const FETCH_TIMEOUT_MS = 3000; // 3s instead of 15s — fail fast
+const FETCH_TIMEOUT_MS = 8000;
 
-const FETCH_OPTS: RequestInit = {
-  headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' },
-  signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout
-    ? AbortSignal.timeout(FETCH_TIMEOUT_MS)
-    : undefined,
-};
+function buildFetchOpts(): RequestInit {
+  return {
+    headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' },
+    signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout
+      ? AbortSignal.timeout(FETCH_TIMEOUT_MS)
+      : undefined,
+  };
+}
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -107,7 +111,7 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
   // Ensure trailing slash — the LMDB proxy requires it for directory listings
   const url = `${CHARM_BASE}/${encodedPath}${encodedPath ? '/' : ''}`;
   try {
-    const res = await fetch(url, { ...FETCH_OPTS, next: { revalidate: 86400 } });
+    const res = await fetch(url, { ...buildFetchOpts(), next: { revalidate: 86400 } });
 
     if (!res.ok) {
       recordFailure();

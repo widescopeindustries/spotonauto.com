@@ -1,19 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-    CHARM_LI_DATABASE,
-    getCharmLiAvailableYears,
-    getCharmLiMakesForYear,
-    getCharmLiModelsForYearMake,
-    getCharmLiYears,
-    isInCharmLi,
-} from '@/data/charmLiDatabase';
 
 interface VehicleSelection {
     year: string;
     make: string;
     model: string;
+}
+
+interface CoverageStats {
+    makeCount: number;
+    modelCount: number;
+    comboCount: number;
 }
 
 interface CharmLiVehicleSelectorProps {
@@ -29,13 +27,36 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
     const [models, setModels] = useState<string[]>([]);
     const [selectedModel, setSelectedModel] = useState('');
     const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
+    const [availableModelYears, setAvailableModelYears] = useState<number[]>([]);
+    const [stats, setStats] = useState<CoverageStats | null>(null);
 
-    // Load years on mount
     useEffect(() => {
-        setYears(getCharmLiAvailableYears());
+        let cancelled = false;
+
+        void fetch('/api/manual-coverage?action=bootstrap')
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to load manual coverage');
+                }
+                return data;
+            })
+            .then((data) => {
+                if (cancelled) return;
+                setYears(Array.isArray(data.years) ? data.years : []);
+                setStats(data.stats || null);
+            })
+            .catch(() => {
+                if (cancelled) return;
+                setYears([]);
+                setStats(null);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
-    // Update makes when year changes
     useEffect(() => {
         if (!selectedYear) {
             setMakes([]);
@@ -43,44 +64,125 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
             setModels([]);
             setSelectedModel('');
             setIsAvailable(null);
+            setAvailableModelYears([]);
             return;
         }
 
-        setMakes(getCharmLiMakesForYear(parseInt(selectedYear, 10)));
-        setSelectedMake('');
-        setModels([]);
-        setSelectedModel('');
-        setIsAvailable(null);
+        let cancelled = false;
+
+        void fetch(`/api/manual-coverage?action=makes&year=${selectedYear}`)
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to load makes');
+                }
+                return data;
+            })
+            .then((data) => {
+                if (cancelled) return;
+                setMakes(Array.isArray(data.makes) ? data.makes : []);
+                setSelectedMake('');
+                setModels([]);
+                setSelectedModel('');
+                setIsAvailable(null);
+                setAvailableModelYears([]);
+            })
+            .catch(() => {
+                if (cancelled) return;
+                setMakes([]);
+                setSelectedMake('');
+                setModels([]);
+                setSelectedModel('');
+                setIsAvailable(null);
+                setAvailableModelYears([]);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, [selectedYear]);
 
-    // Update models when make changes
     useEffect(() => {
         if (!selectedYear || !selectedMake) {
             setModels([]);
             setSelectedModel('');
             setIsAvailable(null);
+            setAvailableModelYears([]);
             return;
         }
 
-        setModels(getCharmLiModelsForYearMake(parseInt(selectedYear, 10), selectedMake));
-        setSelectedModel('');
-        setIsAvailable(null);
+        let cancelled = false;
+
+        void fetch(`/api/manual-coverage?action=models&year=${selectedYear}&make=${encodeURIComponent(selectedMake)}`)
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to load models');
+                }
+                return data;
+            })
+            .then((data) => {
+                if (cancelled) return;
+                setModels(Array.isArray(data.models) ? data.models : []);
+                setSelectedModel('');
+                setIsAvailable(null);
+                setAvailableModelYears([]);
+            })
+            .catch(() => {
+                if (cancelled) return;
+                setModels([]);
+                setSelectedModel('');
+                setIsAvailable(null);
+                setAvailableModelYears([]);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, [selectedYear, selectedMake]);
 
-    // Check availability when all selected
     useEffect(() => {
-        if (selectedMake && selectedModel && selectedYear) {
-            const available = isInCharmLi(parseInt(selectedYear), selectedMake, selectedModel);
-            setIsAvailable(available);
-            
-            if (available) {
-                onSelect({
-                    year: selectedYear,
-                    make: selectedMake,
-                    model: selectedModel
-                });
-            }
+        if (!selectedMake || !selectedModel || !selectedYear) {
+            setIsAvailable(null);
+            setAvailableModelYears([]);
+            return;
         }
+
+        let cancelled = false;
+
+        void fetch(
+            `/api/manual-coverage?action=availability&year=${selectedYear}&make=${encodeURIComponent(selectedMake)}&model=${encodeURIComponent(selectedModel)}`,
+        )
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to verify manual coverage');
+                }
+                return data;
+            })
+            .then((data) => {
+                if (cancelled) return;
+                const available = Boolean(data.available);
+                setIsAvailable(available);
+                setAvailableModelYears(Array.isArray(data.years) ? data.years : []);
+
+                if (available) {
+                    onSelect({
+                        year: selectedYear,
+                        make: selectedMake,
+                        model: selectedModel,
+                    });
+                }
+            })
+            .catch(() => {
+                if (cancelled) return;
+                setIsAvailable(false);
+                setAvailableModelYears([]);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, [selectedMake, selectedModel, selectedYear, onSelect]);
 
     return (
@@ -165,7 +267,7 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
                                 We&apos;re expanding the archive-backed coverage over time.
                                 {selectedMake && selectedModel && (
                                     <span>
-                                        {' '}We have {selectedMake} {selectedModel} data for years: {getCharmLiYears(selectedMake, selectedModel).join(', ')}
+                                        {' '}We have {selectedMake} {selectedModel} data for years: {availableModelYears.join(', ')}
                                     </span>
                                 )}
                             </p>
@@ -177,8 +279,7 @@ export default function CharmLiVehicleSelector({ onSelect, selectedTask }: Charm
             {/* Database Stats */}
             <div className="mt-6 pt-4 border-t border-white/10 text-xs text-gray-500">
                 <p>
-                    Manual coverage database: {Object.keys(CHARM_LI_DATABASE).length} makes, {' '}
-                    {Object.values(CHARM_LI_DATABASE).reduce((acc, models) => acc + Object.keys(models).length, 0)} models
+                    Manual coverage database: {stats?.makeCount || 0} makes, {stats?.modelCount || 0} models, {stats?.comboCount || 0} year/model combinations
                 </p>
             </div>
         </div>

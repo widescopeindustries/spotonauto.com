@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
     Activity,
     ArrowRight,
+    BookOpen,
     Battery,
     Car,
     CircleDot,
@@ -271,13 +272,22 @@ export default function ClientHome() {
                                                     );
                                                 })}
                                             </div>
-                                            <Link
-                                                href={vehicleHubUrl}
-                                                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-black transition-all hover:bg-cyan-300"
-                                            >
-                                                Open {vehicleLabel}
-                                                <ArrowRight className="h-4 w-4" />
-                                            </Link>
+                                            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                                                <Link
+                                                    href={vehicleHubUrl}
+                                                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-black transition-all hover:bg-cyan-300"
+                                                >
+                                                    Open {vehicleLabel}
+                                                    <ArrowRight className="h-4 w-4" />
+                                                </Link>
+                                                <Link
+                                                    href="/manual-navigator"
+                                                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900/55 px-5 py-3 text-sm font-bold uppercase tracking-wide text-gray-100 transition-all hover:border-cyan-500/30 hover:text-cyan-100"
+                                                >
+                                                    Open Manual Navigator
+                                                    <BookOpen className="h-4 w-4" />
+                                                </Link>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -340,9 +350,23 @@ export default function ClientHome() {
                     </div>
                 </section>
 
-                {/* Wiring callout */}
+                {/* Archive and wiring callouts */}
                 <section className="px-4 pb-24 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-7xl">
+                    <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2">
+                        <Link
+                            href="/manual"
+                            className="group flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 p-6 sm:p-8 transition-all hover:border-cyan-500/30 hover:bg-white/[0.03]"
+                        >
+                            <div>
+                                <h3 className="font-display text-lg font-bold text-white mb-2">
+                                    Browse the factory manual archive
+                                </h3>
+                                <p className="text-sm text-gray-400 leading-relaxed">
+                                    Navigate manual coverage by make, year, vehicle, and section across the 1982&ndash;2013 archive.
+                                </p>
+                            </div>
+                            <BookOpen className="h-5 w-5 shrink-0 text-cyan-300 transition-transform group-hover:translate-x-1" />
+                        </Link>
                         <Link
                             href="/wiring"
                             className="group flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/40 p-6 sm:p-8 transition-all hover:border-cyan-500/30 hover:bg-white/[0.03]"

@@ -333,12 +333,20 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
 
                                     {step.imageUrl && (
                                         <div className="step-image-container">
-                                            <img
-                                                src={step.imageUrl}
-                                                alt={`Diagram for step ${step.step}`}
-                                                className="step-image"
-                                                loading="lazy"
-                                            />
+                                            <div className="step-image-frame">
+                                                <img
+                                                    src={step.imageUrl}
+                                                    alt={`Diagram for step ${step.step}`}
+                                                    className="step-image"
+                                                    loading="lazy"
+                                                />
+                                                <span className="step-image-watermark step-image-watermark-left" aria-hidden="true">
+                                                    SpotOnAuto.com
+                                                </span>
+                                                <span className="step-image-watermark step-image-watermark-right" aria-hidden="true">
+                                                    SpotOnAuto.com
+                                                </span>
+                                            </div>
                                             <p className="image-caption">Fig. {step.step} — Reference diagram</p>
                                         </div>
                                     )}
@@ -836,12 +844,49 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
                     text-align: center;
                 }
 
+                .step-image-frame {
+                    position: relative;
+                    display: inline-flex;
+                    align-items: stretch;
+                    justify-content: center;
+                    max-width: 100%;
+                    overflow: hidden;
+                }
+
                 .step-image {
                     max-width: 100%;
                     max-height: 400px;
                     border: 1px solid #d0ccc4;
                     border-radius: 4px;
                     background: #fafafa;
+                }
+
+                .step-image-watermark {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%) rotate(180deg);
+                    writing-mode: vertical-rl;
+                    text-orientation: mixed;
+                    font-family: 'Arial Black', sans-serif;
+                    font-size: 0.7rem;
+                    letter-spacing: 0.2em;
+                    text-transform: uppercase;
+                    color: rgba(30, 58, 95, 0.42);
+                    background: linear-gradient(180deg, rgba(248, 246, 241, 0.9), rgba(248, 246, 241, 0.72));
+                    padding: 0.6rem 0.3rem;
+                    border: 1px solid rgba(209, 204, 196, 0.85);
+                    border-radius: 999px;
+                    pointer-events: none;
+                    user-select: none;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                }
+
+                .step-image-watermark-left {
+                    left: 8px;
+                }
+
+                .step-image-watermark-right {
+                    right: 8px;
                 }
 
                 .image-caption {
@@ -925,6 +970,35 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
 
                 .source-link:hover {
                     text-decoration: underline;
+                }
+
+                @media (max-width: 640px) {
+                    .step-image-watermark {
+                        font-size: 0.6rem;
+                        letter-spacing: 0.16em;
+                        padding: 0.45rem 0.24rem;
+                        opacity: 0.9;
+                    }
+
+                    .step-image-watermark-left {
+                        left: 4px;
+                    }
+
+                    .step-image-watermark-right {
+                        right: 4px;
+                    }
+                }
+
+                @media print {
+                    .step-image-frame {
+                        overflow: visible;
+                    }
+
+                    .step-image-watermark {
+                        color: rgba(30, 58, 95, 0.7);
+                        background: rgba(255, 255, 255, 0.88);
+                        box-shadow: none;
+                    }
                 }
 
             `}</style>

@@ -29,10 +29,11 @@ const Footer = () => {
                     <div>
                         <h3 className="font-display font-bold text-sm text-white tracking-wide mb-4">Tools</h3>
                         <ul className="space-y-3">
-                            {[
-                                { href: '/diagnose', label: 'AI Diagnostic Chat', icon: Zap, accent: true },
-                                { href: '/repair', label: 'Repair Guides', icon: BookOpen },
-                                { href: '/parts', label: 'Parts Finder', icon: Car },
+                                {[
+                                    { href: '/diagnose', label: 'AI Diagnostic Chat', icon: Zap, accent: true },
+                                    { href: '/manual', label: 'Factory Manuals', icon: BookOpen },
+                                    { href: '/repair', label: 'Repair Guides', icon: BookOpen },
+                                    { href: '/parts', label: 'Parts Finder', icon: Car },
                                 { href: '/codes', label: 'Check Engine Light', icon: Shield },
                                 { href: '/codes', label: 'DTC Code Lookup', icon: BookOpen },
                                 { href: '/wiring', label: 'Wiring Diagrams', icon: Cpu },

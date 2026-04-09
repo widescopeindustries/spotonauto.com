@@ -8,6 +8,7 @@ import HeaderAccountControls from '@/components/HeaderAccountControls';
 import { useT } from '@/lib/translations';
 
 const mobileNavItems = [
+  { key: 'nav.factoryManuals', href: '/manual' },
   { key: 'nav.repairGuides', href: '/repair' },
   { key: 'nav.wiringDiagrams', href: '/wiring' },
   { key: 'nav.codes', href: '/codes' },

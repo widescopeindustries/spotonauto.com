@@ -31,6 +31,8 @@ interface DiagramImage {
   title: string;
 }
 
+const DIAGRAM_WATERMARK_SRC = '/diagram-watermark.svg';
+
 function normalizeModelText(value: string): string {
   return value
     .toLowerCase()
@@ -77,6 +79,91 @@ function resolveVariantForModel(variants: string[], model: string): string | nul
 
 function resolveModelForVariant(models: string[], variant: string): string | null {
   return resolveBestMatch(models, variant);
+}
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Unable to load image: ${src}`));
+    img.src = src;
+  });
+}
+
+async function composeWatermarkedDiagram(sourceBlob: Blob): Promise<Blob> {
+  const [diagramUrl, watermarkUrl] = [URL.createObjectURL(sourceBlob), DIAGRAM_WATERMARK_SRC];
+
+  try {
+    const [diagramImage, watermarkImage] = await Promise.all([
+      loadImage(diagramUrl),
+      loadImage(watermarkUrl),
+    ]);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = diagramImage.naturalWidth;
+    canvas.height = diagramImage.naturalHeight;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas unavailable');
+
+    ctx.drawImage(diagramImage, 0, 0);
+
+    const { width, height } = canvas;
+    const bandWidth = Math.max(72, Math.round(Math.min(width, height) * 0.075));
+    const bandPadding = Math.max(8, Math.round(bandWidth * 0.12));
+    const watermarkWidth = Math.max(40, bandWidth - bandPadding * 2);
+    const watermarkHeight = Math.round((watermarkImage.naturalHeight / watermarkImage.naturalWidth) * watermarkWidth);
+    const watermarkY = Math.round((height - watermarkHeight) / 2);
+    const watermarkX = bandPadding;
+
+    const paintBand = (x: number) => {
+      const gradient = ctx.createLinearGradient(x, 0, x + bandWidth, 0);
+      gradient.addColorStop(0, 'rgba(249, 253, 255, 0.90)');
+      gradient.addColorStop(0.55, 'rgba(249, 253, 255, 0.72)');
+      gradient.addColorStop(1, 'rgba(249, 253, 255, 0.14)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(x, 0, bandWidth, height);
+      ctx.strokeStyle = 'rgba(0, 212, 255, 0.38)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 0.5, 0.5, bandWidth - 1, height - 1);
+    };
+
+    paintBand(0);
+    paintBand(width - bandWidth);
+
+    ctx.save();
+    ctx.globalAlpha = 0.96;
+    ctx.drawImage(
+      watermarkImage,
+      watermarkX,
+      watermarkY,
+      watermarkWidth,
+      watermarkHeight,
+    );
+    ctx.drawImage(
+      watermarkImage,
+      width - bandWidth + watermarkX,
+      watermarkY,
+      watermarkWidth,
+      watermarkHeight,
+    );
+    ctx.restore();
+
+    const output = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((result) => {
+        if (!result) {
+          reject(new Error('Watermark export failed'));
+          return;
+        }
+        resolve(result);
+      }, 'image/png');
+    });
+
+    return output;
+  } finally {
+    URL.revokeObjectURL(diagramUrl);
+  }
 }
 
 interface WiringDiagramLibraryProps {
@@ -558,7 +645,8 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
       const response = await fetch(currentDiagram);
       if (!response.ok) throw new Error('Download failed');
       const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
+      const exportBlob = await composeWatermarkedDiagram(blob);
+      const objectUrl = URL.createObjectURL(exportBlob);
       const anchor = document.createElement('a');
       anchor.href = objectUrl;
       anchor.download = `${selectedDiagram?.entry.name || 'wiring-diagram'}.png`.replace(/[^a-z0-9._-]+/gi, '_');
@@ -847,7 +935,13 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                         src="/diagram-watermark.svg"
                         alt=""
                         aria-hidden="true"
-                        className="wl-modal-watermark"
+                        className="wl-modal-watermark wl-modal-watermark-left"
+                      />
+                      <img
+                        src="/diagram-watermark.svg"
+                        alt=""
+                        aria-hidden="true"
+                        className="wl-modal-watermark wl-modal-watermark-right"
                       />
                     </div>
                     {copyStatus && <p className="wl-modal-status">{copyStatus}</p>}
@@ -1292,7 +1386,6 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
 
         .wl-modal-watermark {
           position: absolute;
-          right: 6px;
           top: 50%;
           height: min(320px, 76%);
           width: auto;
@@ -1300,6 +1393,16 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           opacity: 0.88;
           pointer-events: none;
           filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
+        }
+
+        .wl-modal-watermark-left {
+          left: 6px;
+          right: auto;
+        }
+
+        .wl-modal-watermark-right {
+          right: 6px;
+          left: auto;
         }
 
         .wl-modal-footer {
@@ -1335,8 +1438,15 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           .wl-modal-toolbar-group { width: 100%; }
           .wl-modal-btn { flex: 1 1 auto; justify-content: center; }
           .wl-modal-watermark {
-            right: 3px;
             height: min(220px, 64%);
+          }
+
+          .wl-modal-watermark-left {
+            left: 3px;
+          }
+
+          .wl-modal-watermark-right {
+            right: 3px;
           }
         }
       `}</style>

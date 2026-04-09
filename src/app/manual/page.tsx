@@ -106,18 +106,26 @@ export default async function ManualLandingPage() {
       {/* Info / cross-sell section */}
       <section className="glass rounded-2xl p-8 text-center">
         <h2 className="text-xl font-display font-bold text-white mb-3">
-          Need a step-by-step repair guide?
+          Need a guided way in?
         </h2>
         <p className="text-gray-400 mb-6 max-w-lg mx-auto">
-          Our AI-powered repair guides combine factory manual data with clear instructions,
-          parts lists, and cost estimates for your exact vehicle.
+          Open the Manual Navigator to start from verified archive coverage, or jump straight
+          to AI repair guides grounded in factory manual material.
         </p>
-        <Link
-          href="/guides"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-display font-bold tracking-wider hover:shadow-lg hover:shadow-cyan-500/25 transition-all"
-        >
-          Browse AI Repair Guides
-        </Link>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href="/manual-navigator"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-display font-bold tracking-wider hover:shadow-lg hover:shadow-cyan-500/25 transition-all"
+          >
+            Open Manual Navigator
+          </Link>
+          <Link
+            href="/guides"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 bg-white/5 text-white font-display font-bold tracking-wider hover:border-cyan-500/30 hover:text-cyan-100 transition-all"
+          >
+            Browse AI Repair Guides
+          </Link>
+        </div>
       </section>
 
       {/* Schema.org structured data */}

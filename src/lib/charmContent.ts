@@ -1,4 +1,5 @@
 import 'server-only';
+import { CHARM_ARCHIVE_BASE, CHARM_RAW_CONTENT_BASE } from '@/lib/charmBase';
 
 /**
  * Fetch OEM content by content hash from the raw HTML store.
@@ -8,7 +9,8 @@ import 'server-only';
  * Falls back gracefully when content isn't available yet.
  */
 
-const CONTENT_BASE = process.env.CHARM_CONTENT_BASE ?? 'https://data.spotonauto.com';
+const CONTENT_BASE = CHARM_RAW_CONTENT_BASE;
+const IMAGE_BASE = CHARM_ARCHIVE_BASE;
 const R2_PUBLIC_BASE = process.env.R2_PUBLIC_BASE ?? '';
 
 // Circuit breaker
@@ -49,8 +51,8 @@ function sanitizeHtml(raw: string): string {
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     // Rewrite image src to our proxy
-    .replace(/src='\/images\//g, `src='${CONTENT_BASE}/images/`)
-    .replace(/src="\/images\//g, `src="${CONTENT_BASE}/images/`)
+    .replace(/src='\/images\//g, `src='${IMAGE_BASE}/images/`)
+    .replace(/src="\/images\//g, `src="${IMAGE_BASE}/images/`)
     // Rewrite internal hyperlinks to our manual route
     .replace(/href='\/hyperlink\//g, "href='/manual/")
     .replace(/href="\/hyperlink\//g, 'href="/manual/')
