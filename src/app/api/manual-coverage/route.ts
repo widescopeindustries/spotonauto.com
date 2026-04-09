@@ -6,6 +6,7 @@ import {
   getCharmCoverageStats,
   getCharmCoverageYears,
   isInCharmCoverage,
+  resolveCharmManualPath,
 } from '@/lib/charmCoverage';
 
 export const revalidate = 86400;
@@ -52,6 +53,18 @@ export async function GET(req: NextRequest) {
         available: isInCharmCoverage(year, make, model),
         years: getCharmCoverageYears(make, model),
       });
+    }
+
+    case 'resolve': {
+      const year = Number(searchParams.get('year'));
+      const make = searchParams.get('make') || '';
+      const model = searchParams.get('model') || '';
+      if (!Number.isFinite(year) || !make || !model) {
+        return NextResponse.json({ error: 'Missing year, make, or model' }, { status: 400 });
+      }
+
+      const resolved = resolveCharmManualPath(year, make, model);
+      return NextResponse.json(resolved);
     }
 
     default:

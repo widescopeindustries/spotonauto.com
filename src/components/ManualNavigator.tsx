@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CharmLiVehicleSelector from '@/components/CharmLiVehicleSelector';
 import { VALID_TASKS, slugifyRoutePart } from '@/data/vehicles';
@@ -11,21 +11,70 @@ interface VehicleSelection {
   model: string;
 }
 
+interface ManualRouteResolution {
+  path: string;
+  exact: boolean;
+}
+
 export default function ManualNavigator() {
   const router = useRouter();
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleSelection | null>(null);
   const [selectedTask, setSelectedTask] = useState('');
-
-  const manualBrowseUrl = useMemo(() => {
-    if (!selectedVehicle) return '';
-    return `/manual/${encodeURIComponent(selectedVehicle.make)}/${encodeURIComponent(selectedVehicle.year)}`;
-  }, [selectedVehicle]);
+  const [manualResolution, setManualResolution] = useState<ManualRouteResolution | null>(null);
+  const [manualRouteLoading, setManualRouteLoading] = useState(false);
 
   const guideUrl = useMemo(() => {
     if (!selectedVehicle || !selectedTask) return '';
     const { year, make, model } = selectedVehicle;
     return `/repair/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/${selectedTask}`;
   }, [selectedTask, selectedVehicle]);
+
+  useEffect(() => {
+    if (!selectedVehicle) {
+      setManualResolution(null);
+      setManualRouteLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    setManualRouteLoading(true);
+    void fetch(
+      `/api/manual-coverage?action=resolve&year=${encodeURIComponent(selectedVehicle.year)}&make=${encodeURIComponent(selectedVehicle.make)}&model=${encodeURIComponent(selectedVehicle.model)}`,
+      { signal: controller.signal },
+    )
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to resolve manual path');
+        }
+        return data as ManualRouteResolution;
+      })
+      .then((data) => {
+        setManualResolution(data);
+        setManualRouteLoading(false);
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+        console.warn('[manual-navigator] failed to resolve exact manual path', error);
+        setManualResolution({
+          path: `/manual/${encodeURIComponent(selectedVehicle.make)}/${encodeURIComponent(selectedVehicle.year)}`,
+          exact: false,
+        });
+        setManualRouteLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [selectedVehicle]);
+
+  const manualBrowseUrl = manualResolution?.path || '';
+  const manualBrowseLabel = !selectedVehicle
+    ? 'Open Factory Manuals'
+    : manualRouteLoading
+      ? 'Resolving Manual Branch...'
+      : manualResolution?.exact
+        ? `Open Exact Manual Branch For ${selectedVehicle.model}`
+        : `Open ${selectedVehicle.year} ${selectedVehicle.make} Manual Index`;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white py-12 px-4">
@@ -58,15 +107,19 @@ export default function ManualNavigator() {
                 Browse The Manual Tree
               </h2>
               <p className="text-sm text-gray-300 mb-5">
-                Start with the {selectedVehicle.year} {selectedVehicle.make} archive index, then drill into
-                the exact variant, subsystem, diagram, or procedure you need.
+                {manualResolution?.exact
+                  ? `Open the exact archive branch we resolved for ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}.`
+                  : `Start with the ${selectedVehicle.year} ${selectedVehicle.make} archive index, then drill into the exact variant, subsystem, diagram, or procedure you need.`}
               </p>
               <button
                 type="button"
-                onClick={() => router.push(manualBrowseUrl)}
-                className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-black transition-all hover:bg-cyan-300"
+                onClick={() => {
+                  if (manualBrowseUrl) router.push(manualBrowseUrl);
+                }}
+                disabled={!manualBrowseUrl || manualRouteLoading}
+                className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-black transition-all hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Open {selectedVehicle.year} {selectedVehicle.make} Manuals
+                {manualBrowseLabel}
               </button>
             </section>
 

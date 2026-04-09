@@ -13,13 +13,16 @@ const checks = [
   { path: '/', expectedStatus: [200], titleIncludes: 'SpotOnAuto' },
   { path: '/auth', expectedStatus: [200] },
   { path: '/diagnose', expectedStatus: [200], bodyIncludes: 'Diagnostic' },
-  { path: '/cel', expectedStatus: [200], bodyIncludes: 'LOOK UP' },
-  { path: '/second-opinion', expectedStatus: [200], bodyIncludes: '2nd Opinion' },
+  { path: '/cel', expectedStatus: [200], bodyIncludes: 'LOOK UP', followRedirects: true },
+  { path: '/second-opinion', expectedStatus: [200], bodyIncludes: 'Diagnose', followRedirects: true },
   { path: '/community', expectedStatus: [200], bodyIncludes: 'Community' },
   { path: '/community/new', expectedStatus: [200, 302, 307, 308] },
   { path: '/parts', expectedStatus: [200], bodyIncludes: 'earns from qualifying purchases' },
   { path: '/tools', expectedStatus: [200], bodyIncludes: 'Auto Repair Tools' },
   { path: '/codes', expectedStatus: [200], bodyIncludes: 'DTC' },
+  { path: '/manual', expectedStatus: [200], bodyIncludes: 'Factory Service Manuals', bodyExcludes: 'Unable to load the service manual database right now' },
+  { path: '/manual-navigator', expectedStatus: [200], bodyIncludes: 'Manual Navigator' },
+  { path: '/api/manual-coverage?action=bootstrap', expectedStatus: [200], bodyIncludes: 'makeCount' },
   { path: '/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
   { path: '/repair/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
   { path: '/wiring/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
@@ -38,8 +41,8 @@ function extractCanonical(html) {
   return m ? m[1].trim() : '';
 }
 
-async function fetchWithBody(url) {
-  const res = await fetch(url, { redirect: 'manual' });
+async function fetchWithBody(url, followRedirects = false) {
+  const res = await fetch(url, { redirect: followRedirects ? 'follow' : 'manual' });
   const text = await res.text();
   return { res, text };
 }
@@ -50,7 +53,7 @@ console.log(`Smoke testing: ${BASE_URL}`);
 for (const check of checks) {
   const url = `${BASE_URL}${check.path}`;
   try {
-    const { res, text } = await fetchWithBody(url);
+    const { res, text } = await fetchWithBody(url, check.followRedirects);
     const statusOk = check.expectedStatus.includes(res.status);
 
     let ok = statusOk;
@@ -74,6 +77,12 @@ for (const check of checks) {
       const bodyOk = text.toLowerCase().includes(check.bodyIncludes.toLowerCase());
       ok = ok && bodyOk;
       details.push(`bodyContains=${bodyOk ? 'yes' : 'no'}`);
+    }
+
+    if (check.bodyExcludes) {
+      const bodyExcluded = !text.toLowerCase().includes(check.bodyExcludes.toLowerCase());
+      ok = ok && bodyExcluded;
+      details.push(`bodyExcludes=${bodyExcluded ? 'yes' : 'no'}`);
     }
 
     if (check.path === '/diagnose') {
