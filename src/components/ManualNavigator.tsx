@@ -44,7 +44,7 @@ export default function ManualNavigator() {
 
     setManualRouteLoading(true);
     void fetch(
-      `/api/manual-coverage?action=resolve&year=${encodeURIComponent(selectedVehicle.year)}&make=${encodeURIComponent(selectedVehicle.make)}&model=${encodeURIComponent(selectedVehicle.model)}`,
+      `/api/manual-coverage?action=resolve&year=${encodeURIComponent(selectedVehicle.year)}&make=${encodeURIComponent(selectedVehicle.make)}&model=${encodeURIComponent(selectedVehicle.model)}&navigator=v2`,
       { signal: controller.signal, cache: 'no-store' },
     )
       .then(async (response) => {
