@@ -14,6 +14,10 @@ interface VehicleSelection {
 interface ManualRouteResolution {
   path: string;
   exact: boolean;
+  candidates: Array<{
+    label: string;
+    path: string;
+  }>;
 }
 
 export default function ManualNavigator() {
@@ -60,6 +64,7 @@ export default function ManualNavigator() {
         setManualResolution({
           path: `/manual/${encodeURIComponent(selectedVehicle.make)}/${encodeURIComponent(selectedVehicle.year)}`,
           exact: false,
+          candidates: [],
         });
         setManualRouteLoading(false);
       });
@@ -68,10 +73,14 @@ export default function ManualNavigator() {
   }, [selectedVehicle]);
 
   const manualBrowseUrl = manualResolution?.path || '';
+  const manualBrowseCandidates = manualResolution?.candidates || [];
+  const manualChoiceRequired = manualBrowseCandidates.length > 0;
   const manualBrowseLabel = !selectedVehicle
     ? 'Open Factory Manuals'
     : manualRouteLoading
       ? 'Resolving Manual Branch...'
+      : manualChoiceRequired
+        ? `Open ${selectedVehicle.year} ${selectedVehicle.make} Manual Index Instead`
       : manualResolution?.exact
         ? `Open Exact Manual Branch For ${selectedVehicle.model}`
         : `Open ${selectedVehicle.year} ${selectedVehicle.make} Manual Index`;
@@ -107,10 +116,29 @@ export default function ManualNavigator() {
                 Browse The Manual Tree
               </h2>
               <p className="text-sm text-gray-300 mb-5">
-                {manualResolution?.exact
+                {manualChoiceRequired
+                  ? `This ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model} selection maps to multiple archive branches. Pick the exact engine or trim below, or open the year index if you need to browse manually.`
+                  : manualResolution?.exact
                   ? `Open the exact archive branch we resolved for ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}.`
                   : `Start with the ${selectedVehicle.year} ${selectedVehicle.make} archive index, then drill into the exact variant, subsystem, diagram, or procedure you need.`}
               </p>
+              {manualChoiceRequired && (
+                <div className="mb-5 grid gap-3">
+                  {manualBrowseCandidates.map((candidate) => (
+                    <button
+                      key={candidate.path}
+                      type="button"
+                      onClick={() => router.push(candidate.path)}
+                      className="flex w-full items-center justify-between rounded-xl border border-cyan-400/20 bg-black/20 px-4 py-3 text-left text-sm text-cyan-50 transition-all hover:border-cyan-300/50 hover:bg-cyan-400/10"
+                    >
+                      <span>{candidate.label}</span>
+                      <span className="ml-4 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                        Open Branch
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
               <button
                 type="button"
                 onClick={() => {
@@ -131,7 +159,9 @@ export default function ManualNavigator() {
                 Generate A Repair Guide
               </h2>
               <p className="text-sm text-gray-300 mb-5">
-                Pick a common repair task and route into the AI guide flow for this exact vehicle.
+                {manualChoiceRequired
+                  ? 'Guide generation is disabled for this selection because the archive has multiple engine or trim branches. Pick an exact manual branch first.'
+                  : 'Pick a common repair task and route into the AI guide flow for this exact vehicle.'}
               </p>
 
               <div className="grid grid-cols-2 gap-3 mb-5">
@@ -156,10 +186,12 @@ export default function ManualNavigator() {
                 onClick={() => {
                   if (guideUrl) router.push(guideUrl);
                 }}
-                disabled={!guideUrl}
+                disabled={!guideUrl || manualChoiceRequired}
                 className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/10 px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition-all hover:border-cyan-500/30 hover:text-cyan-100 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {guideUrl
+                {manualChoiceRequired
+                  ? 'Choose An Exact Manual Branch First'
+                  : guideUrl
                   ? `Open Guide For ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`
                   : 'Select A Task To Continue'}
               </button>

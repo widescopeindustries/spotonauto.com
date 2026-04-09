@@ -1,10 +1,13 @@
 import coverageJson from '@/data/charmLiCoverage.json';
+import ambiguityIndexJson from '@/data/charmLiAmbiguityIndex.json';
 import pathIndexJson from '@/data/charmLiPathIndex.json';
 
 type CharmCoverageMap = Record<string, Record<string, number[]>>;
+type CharmAmbiguityIndex = Record<string, Record<string, Record<string, ResolvedCharmManualCandidate[]>>>;
 type CharmPathIndex = Record<string, Record<string, Record<string, string>>>;
 
 const coverage = coverageJson as CharmCoverageMap;
+const ambiguityIndex = ambiguityIndexJson as CharmAmbiguityIndex;
 const pathIndex = pathIndexJson as CharmPathIndex;
 const makeNames = Object.keys(coverage).sort();
 const availableYears = Array.from(
@@ -60,6 +63,12 @@ export function isInCharmCoverage(year: number, make: string, model: string): bo
 export interface ResolvedCharmManualPath {
   path: string;
   exact: boolean;
+  candidates: ResolvedCharmManualCandidate[];
+}
+
+export interface ResolvedCharmManualCandidate {
+  label: string;
+  path: string;
 }
 
 function encodeManualSegments(path: string): string {
@@ -80,16 +89,30 @@ function encodeManualSegments(path: string): string {
 export function resolveCharmManualPath(year: number, make: string, model: string): ResolvedCharmManualPath {
   const yearKey = String(year);
   const exactPath = pathIndex[make]?.[model]?.[yearKey];
+  const ambiguousCandidates = ambiguityIndex[make]?.[model]?.[yearKey];
 
   if (exactPath) {
     return {
       path: encodeManualSegments(exactPath),
       exact: true,
+      candidates: [],
+    };
+  }
+
+  if (ambiguousCandidates?.length) {
+    return {
+      path: `/manual/${encodeURIComponent(make)}/${encodeURIComponent(yearKey)}`,
+      exact: false,
+      candidates: ambiguousCandidates.map((candidate) => ({
+        label: candidate.label,
+        path: encodeManualSegments(candidate.path),
+      })),
     };
   }
 
   return {
     path: `/manual/${encodeURIComponent(make)}/${encodeURIComponent(yearKey)}`,
     exact: false,
+    candidates: [],
   };
 }
