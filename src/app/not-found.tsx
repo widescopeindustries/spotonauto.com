@@ -57,7 +57,7 @@ export default function NotFound() {
                         Page Not Found
                     </h1>
                     <p className="font-body text-gray-400 max-w-md mx-auto">
-                        This page doesn't exist or was moved. Let's get you back on the road — try one of these instead:
+                        This page doesn&apos;t exist or was moved. Let&apos;s get you back on the road — try one of these instead:
                     </p>
                 </motion.div>
 

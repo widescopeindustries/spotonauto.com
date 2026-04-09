@@ -23,6 +23,8 @@ Update it when product decisions, traps, or standing preferences change.
 
 - Do not reintroduce delayed provider remounting in `src/components/Providers.tsx`.
   That remount was causing scroll resets back to the top while users were moving down the page.
+- Next.js 16 now expects the request interception file to live at `src/proxy.ts` and export a `proxy` function.
+  `src/middleware.ts` still works today but emits a deprecation warning during build.
 - Diagnostic chat now has browser-local persistent thread memory.
   Preserve resume behavior and the explicit `New thread` reset unless intentionally replacing that system.
 - Railway targeting is easy to misread for this repo.
@@ -154,4 +156,5 @@ Update it when product decisions, traps, or standing preferences change.
 - This repo is often dirty with unrelated local edits. Stage only task-relevant files.
 - If production deploys must exclude unrelated local work, build a clean deploy bundle from `git archive HEAD` and overlay only the task-relevant files before `railway up`.
 - For TypeScript changes, verify with `npx tsc --noEmit`.
+- The root app `tsconfig.json` should exclude `workers/`; the Cloudflare worker is its own TypeScript project and should be checked separately.
 - Prefer direct, user-visible fixes over speculative refactors.

@@ -74,7 +74,7 @@ export default function Contact() {
               <h3 className="text-xl font-bold text-white mb-2">Opening Email Client</h3>
               <p className="text-gray-400">
                 Your email client should open with the message pre-filled. 
-                If it didn't, please email us directly at{' '}
+                If it didn&apos;t, please email us directly at{' '}
                 <a href="mailto:support@spotonauto.com" className="text-cyan-400">support@spotonauto.com</a>
               </p>
             </div>

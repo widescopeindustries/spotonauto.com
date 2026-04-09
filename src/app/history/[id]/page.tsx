@@ -43,7 +43,7 @@ function HistoryDetailPageInner() {
       <div className="min-h-screen pt-24 px-4 pb-12">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Guide not found</h1>
-          <p className="text-gray-400 mb-6">This repair guide may have been removed or doesn't exist.</p>
+          <p className="text-gray-400 mb-6">This repair guide may have been removed or doesn&apos;t exist.</p>
           <button onClick={() => router.push('/history')} className="btn-cyber-primary">
             Back to History
           </button>

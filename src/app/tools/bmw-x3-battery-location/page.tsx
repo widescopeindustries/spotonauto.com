@@ -155,7 +155,7 @@ export default function BMWX3BatteryLocationPage() {
                     <div className="bg-black/30 rounded-lg p-4">
                         <h3 className="font-bold mb-2">Jump Start Points (F25/G01):</h3>
                         <ul className="text-gray-300 space-y-1">
-                            <li>• <strong className="text-red-400">Positive (+):</strong> Red cap near the engine bay (says "+" on cover)</li>
+                            <li>• <strong className="text-red-400">Positive (+):</strong> Red cap near the engine bay (says &quot;+&quot; on cover)</li>
                             <li>• <strong className="text-gray-400">Negative (-):</strong> Any exposed metal bolt on the engine or chassis</li>
                         </ul>
                     </div>
@@ -246,7 +246,7 @@ export default function BMWX3BatteryLocationPage() {
                 <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mb-12">
                     <h2 className="text-xl font-bold text-red-400 mb-4">⚠️ Important: Battery Registration (2011+ Models)</h2>
                     <p className="text-gray-300 mb-4">
-                        On F25 and G01 BMW X3 models (2011+), the car's computer needs to "register" the new battery.
+                        On F25 and G01 BMW X3 models (2011+), the car&apos;s computer needs to &quot;register&quot; the new battery.
                         This tells the car that you installed a fresh battery so it can properly charge it.
                     </p>
                     <ul className="text-gray-400 space-y-2 text-sm">

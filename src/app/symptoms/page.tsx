@@ -29,7 +29,7 @@ export default function SymptomsIndexPage() {
         SpotOnAuto <span className="text-amber-400">Symptom Hubs</span>
       </h1>
       <p className="text-gray-300 max-w-3xl mb-8">
-        Describe what your car is doing — we'll help you figure out what's wrong and which repair you need.
+        Describe what your car is doing — we&apos;ll help you figure out what&apos;s wrong and which repair you need.
       </p>
 
       {prioritySymptomHubs.length > 0 && (

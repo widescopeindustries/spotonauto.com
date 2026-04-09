@@ -22,7 +22,7 @@ function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean,
     return response;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const host = normalizeHost(request.headers.get('x-forwarded-host') || request.headers.get('host'));
     const shouldNoindexHost = !isCanonicalHost(host) && isPreviewHost(host);
@@ -64,7 +64,7 @@ export function middleware(request: NextRequest) {
         });
     }
 
-    // Crawler endpoints — force plain cache/Vary semantics (no RSC vary headers)
+    // Crawler endpoints - force plain cache/Vary semantics (no RSC vary headers)
     // so search engines consistently parse robots + sitemap responses.
     if (isCrawlerEndpoint) {
         return applyCrawlerHeaders(NextResponse.next(), shouldNoindexHost, isRobots);
@@ -76,7 +76,7 @@ export function middleware(request: NextRequest) {
         response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
     }
 
-    // API routes — block external origins
+    // API routes - block external origins
     if (pathname.startsWith('/api/')) {
         const origin = request.headers.get('origin');
         const referer = request.headers.get('referer');

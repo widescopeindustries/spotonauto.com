@@ -333,7 +333,7 @@ export default function SecondOpinionPage() {
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">2nd Opinion</span>
         </h1>
         <p className="text-gray-400 font-body max-w-md mx-auto">
-          Enter your mechanic's quote and our AI will tell you if the price is fair, what to watch out for, and the right questions to ask.
+          Enter your mechanic&apos;s quote and our AI will tell you if the price is fair, what to watch out for, and the right questions to ask.
         </p>
       </motion.div>
 
@@ -396,7 +396,7 @@ export default function SecondOpinionPage() {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <span className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-xs font-bold">2</span>
-            <span className="font-display text-sm tracking-widest text-gray-300 uppercase">Mechanic's Diagnosis</span>
+            <span className="font-display text-sm tracking-widest text-gray-300 uppercase">Mechanic&apos;s Diagnosis</span>
           </div>
           <label htmlFor="mechanic-diagnosis" className="sr-only">Mechanic&apos;s Diagnosis</label>
           <textarea

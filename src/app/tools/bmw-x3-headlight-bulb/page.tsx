@@ -183,7 +183,7 @@ export default function BMWX3HeadlightPage() {
                             <div className="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center font-bold shrink-0">3</div>
                             <div>
                                 <h3 className="font-bold text-lg">Disconnect the Electrical Connector</h3>
-                                <p className="text-gray-400">Press the release tab and gently pull the connector off the bulb. Don't force it.</p>
+                                <p className="text-gray-400">Press the release tab and gently pull the connector off the bulb. Don&apos;t force it.</p>
                             </div>
                         </div>
 
@@ -199,7 +199,7 @@ export default function BMWX3HeadlightPage() {
                             <div className="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center font-bold shrink-0">5</div>
                             <div>
                                 <h3 className="font-bold text-lg">Install New Bulb</h3>
-                                <p className="text-gray-400"><strong>⚠️ Don't touch the glass!</strong> Use gloves. Insert the new bulb, ensuring tabs align. Secure the clip.</p>
+                                <p className="text-gray-400"><strong>⚠️ Don&apos;t touch the glass!</strong> Use gloves. Insert the new bulb, ensuring tabs align. Secure the clip.</p>
                             </div>
                         </div>
 
