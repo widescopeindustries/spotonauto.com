@@ -23,8 +23,8 @@ const checks = [
   { path: '/manual', expectedStatus: [200], bodyIncludes: 'Factory Service Manuals', bodyExcludes: 'Unable to load the service manual database right now' },
   { path: '/manual-navigator', expectedStatus: [200], bodyIncludes: 'Manual Navigator' },
   { path: '/api/manual-coverage?action=bootstrap', expectedStatus: [200], bodyIncludes: 'makeCount' },
-  { path: '/api/manual-coverage?action=resolve&year=2011&make=Toyota&model=Camry%20L4-2.4L%20(2AZ-FXE)%20Hybrid', expectedStatus: [200], bodyIncludes: '"exact":true' },
-  { path: '/api/manual-coverage?action=resolve&year=1992&make=Acura&model=Integra', expectedStatus: [200], bodyIncludes: '"candidates":[{' },
+  { path: '/api/manual-coverage?action=resolve&year=2011&make=Toyota&model=Camry%20L4-2.4L%20(2AZ-FXE)%20Hybrid', expectedStatus: [200], bodyIncludes: '"exact":true', cacheBust: true },
+  { path: '/api/manual-coverage?action=resolve&year=1992&make=Acura&model=Integra', expectedStatus: [200], bodyIncludes: '"candidates":[{', cacheBust: true },
   { path: '/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
   { path: '/repair/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
   { path: '/wiring/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
@@ -43,8 +43,11 @@ function extractCanonical(html) {
   return m ? m[1].trim() : '';
 }
 
-async function fetchWithBody(url, followRedirects = false) {
-  const res = await fetch(url, { redirect: followRedirects ? 'follow' : 'manual' });
+async function fetchWithBody(url, followRedirects = false, cacheBust = false) {
+  const requestUrl = cacheBust
+    ? `${url}${url.includes('?') ? '&' : '?'}_smoke=${Date.now()}`
+    : url;
+  const res = await fetch(requestUrl, { redirect: followRedirects ? 'follow' : 'manual' });
   const text = await res.text();
   return { res, text };
 }
@@ -55,7 +58,7 @@ console.log(`Smoke testing: ${BASE_URL}`);
 for (const check of checks) {
   const url = `${BASE_URL}${check.path}`;
   try {
-    const { res, text } = await fetchWithBody(url, check.followRedirects);
+    const { res, text } = await fetchWithBody(url, check.followRedirects, check.cacheBust);
     const statusOk = check.expectedStatus.includes(res.status);
 
     let ok = statusOk;

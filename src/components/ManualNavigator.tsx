@@ -45,7 +45,7 @@ export default function ManualNavigator() {
     setManualRouteLoading(true);
     void fetch(
       `/api/manual-coverage?action=resolve&year=${encodeURIComponent(selectedVehicle.year)}&make=${encodeURIComponent(selectedVehicle.make)}&model=${encodeURIComponent(selectedVehicle.model)}`,
-      { signal: controller.signal },
+      { signal: controller.signal, cache: 'no-store' },
     )
       .then(async (response) => {
         const data = await response.json();

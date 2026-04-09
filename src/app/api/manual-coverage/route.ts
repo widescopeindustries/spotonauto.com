@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { unstable_noStore as noStore } from 'next/cache';
 import {
   getCharmCoverageAvailableYears,
   getCharmCoverageMakesForYear,
@@ -56,6 +57,7 @@ export async function GET(req: NextRequest) {
     }
 
     case 'resolve': {
+      noStore();
       const year = Number(searchParams.get('year'));
       const make = searchParams.get('make') || '';
       const model = searchParams.get('model') || '';
