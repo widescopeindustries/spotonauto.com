@@ -95,6 +95,9 @@ const nextConfig = {
       { source: '/repairs', destination: '/repair', permanent: true },
       { source: '/cel', destination: '/codes', permanent: true },
       { source: '/second-opinion', destination: '/diagnose', permanent: true },
+      { source: '/pricing', destination: '/', permanent: true },
+      { source: '/scanner', destination: '/', permanent: true },
+      { source: '/simulation', destination: '/', permanent: true },
 
       // ── International model name redirects ──────────────────────────────
       // Nissan Qashqai → Rogue Sport
@@ -113,6 +116,13 @@ const nextConfig = {
       { source: '/repair/:year/hyundai/i30/:task', destination: '/repair/:year/hyundai/elantra-gt/:task', permanent: true },
       { source: '/wiring/:year/hyundai/i30/:system', destination: '/wiring/:year/hyundai/elantra-gt/:system', permanent: true },
       { source: '/tools/hyundai-i30-:tool', destination: '/tools/hyundai-elantra-gt-:tool', permanent: true },
+      // Hyundai i20 / Elite i20 → Accent
+      { source: '/repair/:year/hyundai/i20/:task', destination: '/repair/:year/hyundai/accent/:task', permanent: true },
+      { source: '/wiring/:year/hyundai/i20/:system', destination: '/wiring/:year/hyundai/accent/:system', permanent: true },
+      { source: '/tools/hyundai-i20-:tool', destination: '/tools/hyundai-accent-:tool', permanent: true },
+      { source: '/repair/:year/hyundai/elite-i20/:task', destination: '/repair/:year/hyundai/accent/:task', permanent: true },
+      { source: '/wiring/:year/hyundai/elite-i20/:system', destination: '/wiring/:year/hyundai/accent/:system', permanent: true },
+      { source: '/tools/hyundai-elite-i20-:tool', destination: '/tools/hyundai-accent-:tool', permanent: true },
       // Ford Mondeo → Fusion
       { source: '/repair/:year/ford/mondeo/:task', destination: '/repair/:year/ford/fusion/:task', permanent: true },
       { source: '/wiring/:year/ford/mondeo/:system', destination: '/wiring/:year/ford/fusion/:system', permanent: true },
@@ -137,6 +147,13 @@ const nextConfig = {
       { source: '/repair/:year/kia/ceed/:task', destination: '/repair/:year/kia/forte/:task', permanent: true },
       { source: '/wiring/:year/kia/ceed/:system', destination: '/wiring/:year/kia/forte/:system', permanent: true },
       { source: '/tools/kia-ceed-:tool', destination: '/tools/kia-forte-:tool', permanent: true },
+      // Mercedes GLK350 / GLK-Class → GLK
+      { source: '/repair/:year/mercedes/glk350/:task', destination: '/repair/:year/mercedes/glk/:task', permanent: true },
+      { source: '/wiring/:year/mercedes/glk350/:system', destination: '/wiring/:year/mercedes/glk/:system', permanent: true },
+      { source: '/tools/mercedes-glk350-:tool', destination: '/tools/mercedes-glk-:tool', permanent: true },
+      { source: '/repair/:year/mercedes/glk-class/:task', destination: '/repair/:year/mercedes/glk/:task', permanent: true },
+      { source: '/wiring/:year/mercedes/glk-class/:system', destination: '/wiring/:year/mercedes/glk/:system', permanent: true },
+      { source: '/tools/mercedes-glk-class-:tool', destination: '/tools/mercedes-glk-:tool', permanent: true },
     ];
   },
 }

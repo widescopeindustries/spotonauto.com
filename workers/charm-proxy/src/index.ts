@@ -30,58 +30,99 @@ export default {
 
     const key = cacheKey(url.pathname);
     const isImage = pathname.startsWith('/images/');
-    const cacheControl = isImage ? 'public, max-age=604800' : 'public, max-age=86400';
+    
+    // Set cache control for BOTH the worker and the Cloudflare edge CDN.
+    // This fixes the '0% Cache Rate' by allowing the CDN to cache the Worker's response.
+    const cacheControl = isImage 
+      ? 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400' 
+      : 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600';
 
-    // --- Try R2 cache first ---
-    const cached = await env.CACHE.get(key);
-    if (cached) {
-      const ct = cached.customMetadata?.contentType
-        || (isImage ? 'image/png' : 'text/html; charset=utf-8');
-      return new Response(cached.body, {
-        headers: { 'content-type': ct, 'cache-control': cacheControl, 'x-cache': 'HIT' },
-      });
+    // --- 1. Try R2 cache first ---
+    try {
+      const cached = await env.CACHE.get(key);
+      if (cached) {
+        const ct = cached.customMetadata?.contentType
+          || (isImage ? 'image/png' : 'text/html; charset=utf-8');
+        return new Response(cached.body, {
+          headers: { 
+            'content-type': ct, 
+            'cache-control': cacheControl, 
+            'x-cache': 'HIT' 
+          },
+        });
+      }
+    } catch (e) {
+      console.error(`R2 Cache GET error: ${e instanceof Error ? e.message : String(e)}`);
+      // Fall through to upstream if R2 fails (hardening)
     }
 
-    // --- Cache miss: fetch upstream ---
+    // --- 2. Cache miss or R2 failure: fetch upstream ---
     const upstream = `${env.UPSTREAM}${url.pathname}`;
     let upstreamRes: Response;
     try {
       upstreamRes = await fetch(upstream, {
         headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) charm-proxy' },
+        signal: AbortSignal.timeout(10000), // 10s timeout for upstream
       });
-    } catch {
-      return new Response('upstream error', { status: 502 });
+    } catch (e) {
+      console.error(`Upstream fetch error: ${e instanceof Error ? e.message : String(e)}`);
+      return new Response('upstream unreachable', { 
+        status: 502,
+        headers: { 'cache-control': 'no-store' }
+      });
     }
 
     if (!upstreamRes.ok) {
-      return new Response('not found', { status: upstreamRes.status });
+      // Don't cache errors, but return the status code correctly.
+      return new Response(upstreamRes.body, { 
+        status: upstreamRes.status,
+        headers: { 'cache-control': 'no-store' }
+      });
     }
 
+    // --- 3. Success: process and try to cache in background ---
     if (isImage) {
       const blob = await upstreamRes.arrayBuffer();
       const contentType = upstreamRes.headers.get('content-type') || 'image/png';
-      // Write to R2 in background
-      ctx.waitUntil(
-        env.CACHE.put(key, blob, {
-          customMetadata: { contentType, cached: new Date().toISOString() },
-        })
-      );
+      
+      try {
+        ctx.waitUntil(
+          env.CACHE.put(key, blob, {
+            customMetadata: { contentType, cached: new Date().toISOString() },
+          })
+        );
+      } catch (e) {
+        console.error(`R2 Cache PUT error (image): ${e instanceof Error ? e.message : String(e)}`);
+      }
+
       return new Response(blob, {
-        headers: { 'content-type': contentType, 'cache-control': cacheControl, 'x-cache': 'MISS' },
+        headers: { 
+          'content-type': contentType, 
+          'cache-control': cacheControl, 
+          'x-cache': 'MISS' 
+        },
       });
     }
 
     // HTML page
     const html = await upstreamRes.text();
-    ctx.waitUntil(
-      env.CACHE.put(key, html, {
-        httpMetadata: { contentType: 'text/html; charset=utf-8' },
-        customMetadata: { cached: new Date().toISOString() },
-      })
-    );
+    try {
+      ctx.waitUntil(
+        env.CACHE.put(key, html, {
+          httpMetadata: { contentType: 'text/html; charset=utf-8' },
+          customMetadata: { cached: new Date().toISOString() },
+        })
+      );
+    } catch (e) {
+      console.error(`R2 Cache PUT error (html): ${e instanceof Error ? e.message : String(e)}`);
+    }
 
     return new Response(html, {
-      headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': cacheControl, 'x-cache': 'MISS' },
+      headers: { 
+        'content-type': 'text/html; charset=utf-8', 
+        'cache-control': cacheControl, 
+        'x-cache': 'MISS' 
+      },
     });
   },
 };

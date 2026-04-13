@@ -11,6 +11,7 @@
  *   node scripts/submit-indexnow.js --full        # Full: submit ALL URLs from all sitemaps
  *   node scripts/submit-indexnow.js --dry-run     # Just show what would be submitted
  *   node scripts/submit-indexnow.js --limit 500   # Cap total URLs submitted
+ *   node scripts/submit-indexnow.js --dead /pricing /scanner  # Notify about dead/removed URLs
  */
 
 const { execSync } = require('child_process');
@@ -298,6 +299,27 @@ async function main() {
   const fullMode = args.includes('--full');
   const limitIdx = args.indexOf('--limit');
   const limit = limitIdx !== -1 ? parseInt(args[limitIdx + 1]) : Infinity;
+
+  // ── Dead-link mode ────────────────────────────────────────────────
+  // Submit specific removed/dead URLs so search engines re-crawl and
+  // discover the 404 or redirect, then drop them from the index.
+  const deadIdx = args.indexOf('--dead');
+  if (deadIdx !== -1) {
+    const paths = args.slice(deadIdx + 1).filter(a => !a.startsWith('--'));
+    if (paths.length === 0) {
+      console.error('Usage: --dead /path1 /path2 ...');
+      process.exit(1);
+    }
+    const deadUrls = paths.map(p => `https://${HOST}${p.startsWith('/') ? p : '/' + p}`);
+    console.log('\n╔══════════════════════════════════════════════════════════════╗');
+    console.log('║       SpotOnAuto - IndexNow Dead Link Notification          ║');
+    console.log('╚══════════════════════════════════════════════════════════════╝\n');
+    console.log(`Notifying IndexNow about ${deadUrls.length} dead/removed URL(s):`);
+    for (const u of deadUrls) console.log(`  • ${u}`);
+    console.log();
+    await submitUrls(deadUrls, dryRun);
+    return;
+  }
 
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
   console.log('║       SpotOnAuto - IndexNow Streaming Submission            ║');

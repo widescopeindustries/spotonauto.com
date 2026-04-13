@@ -109,7 +109,7 @@ export async function fetchContentByHash(hash: string): Promise<ContentPage> {
   try {
     const vpsUrl = `${CONTENT_BASE}/content/${hash}`;
     const res = await fetch(vpsUrl, {
-      signal: AbortSignal.timeout ? AbortSignal.timeout(5000) : undefined,
+      signal: AbortSignal.timeout ? AbortSignal.timeout(2500) : undefined, // Reduce to 2.5s
       next: { revalidate: 86400 },
     });
     if (res.ok) {
@@ -120,8 +120,9 @@ export async function fetchContentByHash(hash: string): Promise<ContentPage> {
     }
     recordFailure();
     return { html: '', title: '', status: res.status };
-  } catch {
+  } catch (e) {
     recordFailure();
+    console.error(`VPS content fetch failed for ${hash}: ${e instanceof Error ? e.message : String(e)}`);
     return { html: '', title: '', status: 503 };
   }
 }
