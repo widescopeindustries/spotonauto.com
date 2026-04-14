@@ -2,9 +2,5 @@ name = "spotonauto-charm-proxy"
 main = "src/index.ts"
 compatibility_date = "2024-09-25"
 
-[[r2_buckets]]
-binding = "CACHE"
-bucket_name = "spotonauto-content"
-
 [vars]
 UPSTREAM = "https://charm.li"

@@ -1,22 +1,12 @@
 /**
- * Cloudflare Worker: CHARM content caching proxy.
+ * Cloudflare Worker: CHARM content proxy.
  *
- * Serves Operation CHARM manual pages from R2 cache, falling back to
- * charm.li on cache miss (and storing the result for next time).
- *
- * R2 key scheme:  cache/{encoded-url-path}
- * Images cached:  cache/images/{rest-of-path}
+ * Serves Operation CHARM manual pages from charm.li.
+ * Cloudflare's edge cache will handle caching via Cache-Control headers.
  */
 
 export interface Env {
-  CACHE: R2Bucket;
   UPSTREAM: string;
-}
-
-/** Normalise a URL path into an R2 cache key. */
-function cacheKey(pathname: string): string {
-  const clean = pathname.replace(/^\/+/, '').replace(/\/+/g, '/');
-  return `cache/${clean || '_root'}`;
 }
 
 export default {
@@ -28,35 +18,13 @@ export default {
       return new Response('ok', { headers: { 'content-type': 'text/plain' } });
     }
 
-    const key = cacheKey(url.pathname);
     const isImage = pathname.startsWith('/images/');
     
-    // Set cache control for BOTH the worker and the Cloudflare edge CDN.
-    // This fixes the '0% Cache Rate' by allowing the CDN to cache the Worker's response.
+    // Set cache control for the Cloudflare edge CDN.
     const cacheControl = isImage 
       ? 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400' 
       : 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600';
 
-    // --- 1. Try R2 cache first ---
-    try {
-      const cached = await env.CACHE.get(key);
-      if (cached) {
-        const ct = cached.customMetadata?.contentType
-          || (isImage ? 'image/png' : 'text/html; charset=utf-8');
-        return new Response(cached.body, {
-          headers: { 
-            'content-type': ct, 
-            'cache-control': cacheControl, 
-            'x-cache': 'HIT' 
-          },
-        });
-      }
-    } catch (e) {
-      console.error(`R2 Cache GET error: ${e instanceof Error ? e.message : String(e)}`);
-      // Fall through to upstream if R2 fails (hardening)
-    }
-
-    // --- 2. Cache miss or R2 failure: fetch upstream ---
     const upstream = `${env.UPSTREAM}${url.pathname}`;
     let upstreamRes: Response;
     try {
@@ -80,21 +48,10 @@ export default {
       });
     }
 
-    // --- 3. Success: process and try to cache in background ---
     if (isImage) {
       const blob = await upstreamRes.arrayBuffer();
       const contentType = upstreamRes.headers.get('content-type') || 'image/png';
       
-      try {
-        ctx.waitUntil(
-          env.CACHE.put(key, blob, {
-            customMetadata: { contentType, cached: new Date().toISOString() },
-          })
-        );
-      } catch (e) {
-        console.error(`R2 Cache PUT error (image): ${e instanceof Error ? e.message : String(e)}`);
-      }
-
       return new Response(blob, {
         headers: { 
           'content-type': contentType, 
@@ -106,17 +63,7 @@ export default {
 
     // HTML page
     const html = await upstreamRes.text();
-    try {
-      ctx.waitUntil(
-        env.CACHE.put(key, html, {
-          httpMetadata: { contentType: 'text/html; charset=utf-8' },
-          customMetadata: { cached: new Date().toISOString() },
-        })
-      );
-    } catch (e) {
-      console.error(`R2 Cache PUT error (html): ${e instanceof Error ? e.message : String(e)}`);
-    }
-
+    
     return new Response(html, {
       headers: { 
         'content-type': 'text/html; charset=utf-8', 

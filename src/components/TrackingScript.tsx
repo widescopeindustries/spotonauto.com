@@ -28,7 +28,17 @@ const TRACKING_SCRIPT = `
       var el=e.target;
       while(el&&el!==document){
         var d=el.getAttribute('data-track-click');
-        if(d){try{fire('track_click',JSON.parse(d));}catch(e){} return;}
+        if(d){
+          try{
+            var data=JSON.parse(d);
+            var ev=data.event_name||'track_click';
+            if(data.event_category==='repair_answer') ev='repair_answer_click';
+            else if(data.event_category==='affiliate_click') ev='affiliate_click';
+            delete data.event_name;
+            fire(ev,data);
+          }catch(e){} 
+          return;
+        }
         el=el.parentElement;
       }
     });
@@ -38,7 +48,16 @@ const TRACKING_SCRIPT = `
         entries.forEach(function(entry){
           if(!entry.isIntersecting)return;
           var d=entry.target.getAttribute('data-track-impression');
-          if(d){try{fire('track_impression',JSON.parse(d));}catch(e){}}
+          if(d){
+            try{
+              var data=JSON.parse(d);
+              var ev=data.event_name||'track_impression';
+              if(data.event_category==='repair_answer') ev='repair_answer_impression';
+              else if(data.event_category==='kg_impression') ev='knowledge_graph_impression';
+              delete data.event_name;
+              fire(ev,data);
+            }catch(e){}
+          }
           obs.unobserve(entry.target);
         });
       },{threshold:0.35,rootMargin:'0px 0px -15% 0px'});

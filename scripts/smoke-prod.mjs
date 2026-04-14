@@ -30,7 +30,7 @@ const checks = [
   { path: '/wiring/sitemap.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
   { path: '/wiring/sitemap/16.xml', expectedStatus: [200], contentTypeIncludes: 'xml' },
   { path: '/blog', expectedStatus: [404] },
-  { path: '/pricing', expectedStatus: [404] },
+  { path: '/pricing', expectedStatus: [308] },
 ];
 
 function extractTitle(html) {
