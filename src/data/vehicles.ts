@@ -28,11 +28,11 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Solara: { start: 1999, end: 2008 },
     },
     Honda: {
-        Civic: { start: 1973, end: 2024 },
-        Accord: { start: 1976, end: 2024 },
-        'CR-V': { start: 1997, end: 2024 },
-        Pilot: { start: 2003, end: 2024 },
-        Odyssey: { start: 1995, end: 2024 },
+        Civic: { start: 1973, end: 2026 },
+        Accord: { start: 1976, end: 2026 },
+        'CR-V': { start: 1997, end: 2026 },
+        Pilot: { start: 2003, end: 2026 },
+        Odyssey: { start: 1995, end: 2026 },
         Fit: { start: 2007, end: 2020 },
         'HR-V': { start: 2016, end: 2024 },
         Ridgeline: { start: 2006, end: 2024 },
@@ -548,14 +548,14 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Allure: { start: 2005, end: 2010 },
         Electra: { start: 1954, end: 1990 },
         Roadmaster: { start: 1991, end: 1996 },
-    },
     Cadillac: {
-        Escalade: { start: 1999, end: 2024 },
-        XT5: { start: 2017, end: 2024 },
-        CT5: { start: 2020, end: 2024 },
-        XT4: { start: 2019, end: 2024 },
-        CTS: { start: 2003, end: 2019 },
-        SRX: { start: 2004, end: 2016 },
+        Escalade: { start: 1999, end: 2026 },
+        XT5: { start: 2017, end: 2026 },
+        CT5: { start: 2020, end: 2026 },
+        XT4: { start: 2019, end: 2026 },
+    ...
+        'Escalade ESV': { start: 2004, end: 2026 },
+        CT4: { start: 2020, end: 2026 },
         // ADDED
         DeVille: { start: 1960, end: 2005 },
         Seville: { start: 1976, end: 2004 },
@@ -888,7 +888,7 @@ export const VALID_TASKS = [
 
 /** CHARM corpus coverage boundaries — OEM factory manual data */
 export const CORPUS_YEAR_MIN = 1982;
-export const CORPUS_YEAR_MAX = 2013;
+export const CORPUS_YEAR_MAX = 2026;
 
 export function isCorpusBacked(year: number): boolean {
     return year >= CORPUS_YEAR_MIN && year <= CORPUS_YEAR_MAX;
