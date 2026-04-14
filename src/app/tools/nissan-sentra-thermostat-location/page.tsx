@@ -237,7 +237,7 @@ export default function NissanSentraThermostatPage() {
                             <p className="text-sm text-gray-400">Fail-safe design</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
-                        <a href={buildAmazonSearchUrl('Nissan Sentra thermostat housing gasket kit')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Nissan Sentra thermostat housing gasket kit', 'automotive', 'tool-sentra-thermostat')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Housing + Gasket Kit</h3>
                             <p className="text-sm text-gray-400">Complete replacement</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>

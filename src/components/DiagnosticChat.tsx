@@ -310,6 +310,14 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                         </motion.div>
                     ))}
 
+                    {/* Inject scanner recommendations if the last message pairs imply it's useful */}
+                    {messages.length >= 2 && !typing && (
+                        <TopdonDiagnosticInjected 
+                            lastUserMessage={messages.filter(m => m.type === 'user').slice(-1)[0]?.text || ''}
+                            lastAiMessage={messages.filter(m => m.type === 'system').slice(-1)[0]?.text || ''}
+                        />
+                    )}
+
                     {typing && (
                         <motion.div
                             layout

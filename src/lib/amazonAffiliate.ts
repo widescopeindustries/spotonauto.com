@@ -30,7 +30,7 @@ export function normalizeAmazonSearchQuery(query: string): string {
   return cleaned || original;
 }
 
-export function buildAmazonSearchUrl(query: string, department = 'automotive'): string {
+export function buildAmazonSearchUrl(query: string, department = 'automotive', subtag?: string): string {
   const normalizedQuery = normalizeAmazonSearchQuery(query);
   const params = new URLSearchParams({
     k: normalizedQuery,
@@ -39,6 +39,10 @@ export function buildAmazonSearchUrl(query: string, department = 'automotive'): 
 
   if (department) {
     params.set('i', department);
+  }
+
+  if (subtag) {
+    params.set('ascsubtag', subtag);
   }
 
   return `https://www.amazon.com/s?${params.toString()}`;

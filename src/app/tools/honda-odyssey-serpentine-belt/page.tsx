@@ -242,7 +242,7 @@ export default function HondaOdysseyBeltPage() {
                 <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-12">
                     <h2 className="text-xl font-bold mb-4">⭐ Recommended Belts for Odyssey</h2>
                     <div className="grid md:grid-cols-3 gap-4">
-                        <a href={buildAmazonSearchUrl('Bando serpentine belt Honda Odyssey')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Bando serpentine belt Honda Odyssey', 'automotive', 'tool-odyssey-belt')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Bando (OEM Supplier)</h3>
                             <p className="text-sm text-gray-400">Honda OEM quality, exact fit</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>

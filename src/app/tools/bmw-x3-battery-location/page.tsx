@@ -131,7 +131,7 @@ export default function BMWX3BatteryLocationPage() {
                                         </td>
                                         <td className="py-4 px-4">
                                             <a
-                                                href={buildAmazonSearchUrl(`BMW X3 battery ${gen.agm.includes('Yes') ? 'AGM ' : ''}H7 94R`)}
+                                                href={buildAmazonSearchUrl(`BMW X3 battery ${gen.agm.includes('Yes') ? 'AGM ' : ''}H7 94R`, 'automotive', 'tool-bmw-x3-battery')}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"

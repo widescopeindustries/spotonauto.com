@@ -6,6 +6,7 @@ interface AffiliateLinkProps {
   pageType?: 'repair_guide' | 'parts_page' | 'diagnostic';
   className?: string;
   children: React.ReactNode;
+  subtag?: string;
 }
 
 export default function AffiliateLink({
@@ -16,6 +17,7 @@ export default function AffiliateLink({
   pageType = 'repair_guide',
   className,
   children,
+  subtag,
 }: AffiliateLinkProps) {
   return (
     <a
@@ -30,6 +32,7 @@ export default function AffiliateLink({
         vehicle,
         isHighTicket,
         pageType,
+        subtag,
       })}
     >
       {children}

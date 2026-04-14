@@ -280,7 +280,7 @@ export default function BMWX3OilTypePage() {
                                             <td className="py-4 px-4 text-gray-300 text-xs">{e.interval}</td>
                                             <td className="py-4 px-4">
                                                 <a
-                                                    href={buildAmazonSearchUrl(`BMW ${e.spec} ${e.oilType} oil`)}
+                                                    href={buildAmazonSearchUrl(`BMW ${e.spec} ${e.oilType} oil`, 'automotive', 'tool-bmw-x3-oil')}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="px-3 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"
@@ -324,7 +324,7 @@ export default function BMWX3OilTypePage() {
                             <p className="text-amber-400 text-sm mt-3">Shop on Amazon →</p>
                         </a>
                         <a
-                            href={buildAmazonSearchUrl('Liqui Moly Synthoil 0W-40 BMW')}
+                            href={buildAmazonSearchUrl('Liqui Moly Synthoil 0W-40 BMW', 'automotive', 'tool-bmw-x3-oil')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-amber-400 transition"

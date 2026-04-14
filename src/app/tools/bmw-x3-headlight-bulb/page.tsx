@@ -229,7 +229,7 @@ export default function BMWX3HeadlightPage() {
                     <h2 className="text-xl font-bold mb-4">⭐ Recommended Bulbs</h2>
                     <div className="grid md:grid-cols-3 gap-4">
                         <a
-                            href={buildAmazonSearchUrl('Philips H7 headlight bulb')}
+                            href={buildAmazonSearchUrl('Philips H7 headlight bulb', 'automotive', 'tool-bmw-x3-headlight')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
@@ -239,7 +239,7 @@ export default function BMWX3HeadlightPage() {
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
                         <a
-                            href={buildAmazonSearchUrl('Sylvania Silverstar H7')}
+                            href={buildAmazonSearchUrl('Sylvania Silverstar H7', 'automotive', 'tool-bmw-x3-headlight')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"

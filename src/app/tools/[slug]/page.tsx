@@ -10,7 +10,9 @@ import {
     getRelatedRepairLinks,
 } from '@/data/tools-pages';
 import AdUnit from '@/components/AdUnit';
+import ToolManualConfirmation from '@/components/ToolManualConfirmation';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { getToolManualCitationGroups, getToolVerificationNote } from '@/lib/toolManualCitations';
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -69,6 +71,12 @@ export default async function ToolPage({ params }: PageProps) {
 
     const makeSlug = page.make.toLowerCase().replace(/\s+/g, '-');
     const modelSlug = page.model.toLowerCase().replace(/\s+/g, '-');
+    const toolLabel = TOOL_TYPE_META[page.toolType]?.label || 'Guide';
+    const vehicleName = `${page.make} ${page.model}`;
+    const manualCitationGroups = await getToolManualCitationGroups(page);
+    const verificationNote = getToolVerificationNote(page.toolType);
+    const makeManualHref = `/manual/${encodeURIComponent(page.make)}`;
+    const manualNavigatorHref = '/manual-navigator';
 
     const sameVehicleTools = getToolPagesForVehicle(page.make, page.model, page.slug).slice(0, 6);
     const sameTypeTools = getToolPagesForType(page.toolType, page.slug)
@@ -104,7 +112,7 @@ export default async function ToolPage({ params }: PageProps) {
     };
 
     // Amazon search links
-    const amazonSearch = (query: string) => buildAmazonSearchUrl(query);
+    const amazonSearch = (query: string) => buildAmazonSearchUrl(query, 'automotive', 'tool-dynamic');
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
@@ -140,11 +148,16 @@ export default async function ToolPage({ params }: PageProps) {
                     </p>
                 </div>
 
-                {/* Quick Answer Box — targets featured snippets */}
-                <div className="mb-12 bg-cyan-950/30 border border-cyan-500/30 rounded-xl p-6 max-w-3xl mx-auto">
-                    <h2 className="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2">Quick Answer</h2>
-                    <p className="text-white text-lg leading-relaxed">{page.quickAnswer}</p>
-                </div>
+                <ToolManualConfirmation
+                    vehicleName={vehicleName}
+                    modelName={page.model}
+                    toolLabel={toolLabel}
+                    quickAnswer={page.quickAnswer}
+                    verificationNote={verificationNote}
+                    manualNavigatorHref={manualNavigatorHref}
+                    makeManualHref={makeManualHref}
+                    citationGroups={manualCitationGroups}
+                />
 
                 {/* Generation Breakdown */}
                 <div className="space-y-8 mb-12">

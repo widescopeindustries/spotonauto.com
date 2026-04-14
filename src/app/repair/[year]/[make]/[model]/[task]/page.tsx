@@ -15,6 +15,7 @@ import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS,
 import { getOEMExcerptsForRepair } from '@/lib/manualSectionLinks';
 import CorpusBadge from '@/components/CorpusBadge';
 import OEMExcerpt from '@/components/OEMExcerpt';
+import TopdonProductSpotlight from '@/components/TopdonProductSpotlight';
 import CoverageWaitlist from '@/components/CoverageWaitlist';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
@@ -2505,7 +2506,7 @@ export default async function Page({ params }: PageProps) {
                         </p>
                         <div className="mt-5 flex flex-wrap gap-3">
                             <AffiliateLink
-                                href={buildAmazonSearchUrl(primaryAffiliateQuery)}
+                                href={buildAmazonSearchUrl(primaryAffiliateQuery, 'automotive', `${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}`)}
                                 partName={primaryAffiliateName}
                                 vehicle={vehicleName}
                                 isHighTicket={HIGH_TICKET_PART_PATTERN.test(primaryAffiliateName)}
@@ -2697,7 +2698,7 @@ export default async function Page({ params }: PageProps) {
                                             </div>
                                         </div>
                                         <AffiliateLink
-                                            href={buildAmazonSearchUrl(searchTerm)}
+                                            href={buildAmazonSearchUrl(searchTerm, 'automotive', `${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}`)}
                                             partName={part.name}
                                             vehicle={vehicleName}
                                             isHighTicket={HIGH_TICKET_PART_PATTERN.test(part.name)}
@@ -2714,7 +2715,7 @@ export default async function Page({ params }: PageProps) {
                                 <div key={i} className="flex flex-col gap-4 rounded-xl border border-white/10 bg-black/20 p-4 md:flex-row md:items-center md:justify-between">
                                     <span className="text-white font-medium">{part}</span>
                                     <AffiliateLink
-                                        href={buildAmazonSearchUrl(`${vehicleName} ${part}`)}
+                                        href={buildAmazonSearchUrl(`${vehicleName} ${part}`, 'automotive', `${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}`)}
                                         partName={part}
                                         vehicle={vehicleName}
                                         isHighTicket={HIGH_TICKET_PART_PATTERN.test(part)}
@@ -2739,7 +2740,7 @@ export default async function Page({ params }: PageProps) {
                                 </p>
                             </div>
                             <AffiliateLink
-                                href={buildAmazonSearchUrl(`${vehicleName} ${cleanTask}`)}
+                                href={buildAmazonSearchUrl(`${vehicleName} ${cleanTask}`, 'automotive', `${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}`)}
                                 partName={`${cleanTask} parts`}
                                 vehicle={vehicleName}
                                 isHighTicket={canonicalTask === 'radiator-replacement'}
@@ -2755,7 +2756,7 @@ export default async function Page({ params }: PageProps) {
                                     <p className="text-base font-medium text-white">{part.name}</p>
                                     <p className="mt-2 text-sm leading-6 text-gray-400">{part.detail}</p>
                                     <AffiliateLink
-                                        href={buildAmazonSearchUrl(part.query)}
+                                        href={buildAmazonSearchUrl(part.query, 'automotive', `${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}`)}
                                         partName={part.name}
                                         vehicle={vehicleName}
                                         isHighTicket={HIGH_TICKET_PART_PATTERN.test(part.name)}
@@ -3074,6 +3075,40 @@ export default async function Page({ params }: PageProps) {
                             >
                                 <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
                                 <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
+                                    {v.display} {toTitleCase(canonicalTask)}
+                                </span>
+                            </Link>
+                        ));
+                    })()}
+                </div>
+
+                <div className="mt-8 flex flex-wrap gap-4">
+                    <Link
+                        href={`/repairs/${canonicalTask}`}
+                        className="inline-flex items-center gap-2 text-cyan-500 hover:text-cyan-400 text-sm font-medium transition-colors"
+                    >
+                        View All {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides →
+                    </Link>
+                    <Link
+                        href={`/guides/${canonicalMake}/${canonicalModel}`}
+                        className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 text-sm font-medium transition-colors"
+                    >
+                        All {displayMake} {displayModel} Guides →
+                    </Link>
+                    <Link
+                        href="/repairs"
+                        className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-400 text-sm font-medium transition-colors"
+                    >
+                        Browse All Repair Categories →
+                    </Link>
+                </div>
+            </section>
+
+            <CoverageWaitlist vehicleName={vehicleName} year={Number(resolvedYear)} />
+        </>
+    );
+}
+xt-white transition-colors">
                                     {v.display} {toTitleCase(canonicalTask)}
                                 </span>
                             </Link>
