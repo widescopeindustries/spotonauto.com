@@ -65,7 +65,7 @@ function sanitizeCharmBrandingText(text: string): string {
  */
 export async function fetchCharmPage(pathSegments: string[] = []): Promise<CharmPage> {
   // Re-encode each segment for the upstream URL
-  const encodedPath = pathSegments.map(s => encodeURIComponent(s).replace(/\(/g, '%28').replace(/\)/g, '%29')).join('/');
+  const encodedPath = pathSegments.map((s) => encodeCharmPathSegment(s)).join('/');
   // Ensure trailing slash — the LMDB proxy requires it for directory listings
   const url = `${CHARM_BASE}/${encodedPath}${encodedPath ? '/' : ''}`;
 
@@ -367,13 +367,13 @@ function normalizeCharmHref(href: string, parentSegments: string[]): string {
 
   if (cleanHref.startsWith('/')) {
     // Absolute path from CHARM root — decode and rebuild
-    const segments = cleanHref.split('/').filter(Boolean).map(s => decodeURIComponent(s));
+    const segments = cleanHref.split('/').filter(Boolean).map(safeDecodeUriComponent);
     return '/manual/' + segments.map(s => encodeURIComponent(s)).join('/');
   }
 
   // Relative path — prepend parent segments
-  const relativeSegments = cleanHref.split('/').filter(Boolean).map(s => decodeURIComponent(s));
-  const fullSegments = [...parentSegments, ...relativeSegments];
+  const relativeSegments = cleanHref.split('/').filter(Boolean).map(safeDecodeUriComponent);
+  const fullSegments = [...parentSegments.map(safeDecodeUriComponent), ...relativeSegments];
   return '/manual/' + fullSegments.map(s => encodeURIComponent(s)).join('/');
 }
 
@@ -437,6 +437,28 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&#(\d+);/g, (_m, code) => String.fromCharCode(Number(code)));
 }
 
+function safeDecodeUriComponent(value: string): string {
+  let decoded = value;
+  for (let i = 0; i < 2; i += 1) {
+    if (!/%[0-9a-fA-F]{2}/.test(decoded)) break;
+    try {
+      const next = decodeURIComponent(decoded);
+      if (next === decoded) break;
+      decoded = next;
+    } catch {
+      break;
+    }
+  }
+  return decoded;
+}
+
+function encodeCharmPathSegment(value: string): string {
+  // Accept either already-encoded or decoded path segments.
+  return encodeURIComponent(safeDecodeUriComponent(value))
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29');
+}
+
 // ─── Breadcrumb Builder ────────────────────────────────────────────────────────
 
 export interface Breadcrumb {
@@ -451,8 +473,8 @@ export function buildBreadcrumbs(pathSegments: string[]): Breadcrumb[] {
   ];
 
   for (let i = 0; i < pathSegments.length; i++) {
-    const segment = sanitizeCharmBrandingText(decodeURIComponent(pathSegments[i]));
-    const href = '/manual/' + pathSegments.slice(0, i + 1).map(s => encodeURIComponent(s)).join('/');
+    const segment = sanitizeCharmBrandingText(safeDecodeUriComponent(pathSegments[i]));
+    const href = '/manual/' + pathSegments.slice(0, i + 1).map(s => encodeURIComponent(safeDecodeUriComponent(s))).join('/');
     crumbs.push({ label: segment, href });
   }
 
@@ -466,7 +488,7 @@ export function buildManualTitle(pathSegments: string[]): string {
     return 'Factory Service Manuals | 1982-2013 | SpotOnAuto';
   }
 
-  const decoded = pathSegments.map(s => sanitizeCharmBrandingText(decodeURIComponent(s)));
+  const decoded = pathSegments.map(s => sanitizeCharmBrandingText(safeDecodeUriComponent(s)));
   const last = decoded[decoded.length - 1];
 
   if (pathSegments.length === 1) {
@@ -487,7 +509,7 @@ export function buildManualDescription(pathSegments: string[]): string {
     return 'Browse free factory service manuals for 82 makes of cars and trucks (1982-2013). Includes repair procedures, torque specs, wiring diagrams, and TSBs.';
   }
 
-  const decoded = pathSegments.map(s => sanitizeCharmBrandingText(decodeURIComponent(s)));
+  const decoded = pathSegments.map(s => sanitizeCharmBrandingText(safeDecodeUriComponent(s)));
 
   if (pathSegments.length === 1) {
     return `Free ${decoded[0]} factory service manuals. Browse repair procedures, wiring diagrams, torque specs, and diagnostic information for all ${decoded[0]} models (1982-2013).`;
