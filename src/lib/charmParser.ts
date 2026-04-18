@@ -6,6 +6,8 @@ import { CHARM_ARCHIVE_BASE } from '@/lib/charmBase';
 
 const CHARM_BASE = CHARM_ARCHIVE_BASE;
 const CHARM_IMAGE_BASE = CHARM_BASE;
+const DIRECT_CHARM_FALLBACK_BASE = 'https://charm.li';
+const CHARM_ORIGINS = Array.from(new Set([CHARM_BASE, DIRECT_CHARM_FALLBACK_BASE]));
 
 const FETCH_TIMEOUT_MS = 8000;
 const FETCH_RETRIES = 1;
@@ -17,6 +19,8 @@ function buildFetchOpts(): RequestInit {
     signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout
       ? AbortSignal.timeout(FETCH_TIMEOUT_MS)
       : undefined,
+    // Prevent stale cached 404s from pinning valid manual pages as missing.
+    cache: 'no-store',
   };
 }
 
@@ -66,53 +70,50 @@ function sanitizeCharmBrandingText(text: string): string {
 export async function fetchCharmPage(pathSegments: string[] = []): Promise<CharmPage> {
   // Re-encode each segment for the upstream URL
   const encodedPath = pathSegments.map((s) => encodeCharmPathSegment(s)).join('/');
-  // Ensure trailing slash — the LMDB proxy requires it for directory listings
-  const url = `${CHARM_BASE}/${encodedPath}${encodedPath ? '/' : ''}`;
+  let sawNotFound = false;
+  let lastStatus = 504;
 
-  for (let attempt = 0; attempt <= FETCH_RETRIES; attempt += 1) {
-    try {
-      const res = await fetch(url, { ...buildFetchOpts(), next: { revalidate: 86400 } });
+  // Try the cached proxy first, then direct CHARM as a resilient fallback.
+  for (const origin of CHARM_ORIGINS) {
+    const url = `${origin}/${encodedPath}${encodedPath ? '/' : ''}`;
 
-      if (res.ok) {
-        const html = await res.text();
-        return parseCharmHtml(html, pathSegments);
+    for (let attempt = 0; attempt <= FETCH_RETRIES; attempt += 1) {
+      try {
+        const res = await fetch(url, buildFetchOpts());
+
+        if (res.ok) {
+          const html = await res.text();
+          return parseCharmHtml(html, pathSegments);
+        }
+
+        lastStatus = res.status;
+        if (res.status === 404) {
+          sawNotFound = true;
+          break;
+        }
+
+        if (attempt === FETCH_RETRIES) {
+          console.warn(`[manual] upstream returned ${res.status} for ${url}`);
+        }
+      } catch (error) {
+        if (attempt === FETCH_RETRIES) {
+          console.warn(`[manual] fetch failed for ${url}`, error);
+          lastStatus = 504;
+        }
       }
 
-      // A real 404 should not retry.
-      if (res.status === 404) {
-        return {
-          title: 'Page Not Found',
-          isNavigation: false,
-          links: [],
-          contentHtml: '',
-          status: res.status,
-        };
-      }
-
-      if (attempt === FETCH_RETRIES) {
-        console.warn(`[manual] upstream returned ${res.status} for ${url}`);
-        return {
-          title: 'Manual Temporarily Unavailable',
-          isNavigation: false,
-          links: [],
-          contentHtml: '',
-          status: res.status,
-        };
-      }
-    } catch (error) {
-      if (attempt === FETCH_RETRIES) {
-        console.warn(`[manual] fetch failed for ${url}`, error);
-        return {
-          title: 'Manual Temporarily Unavailable',
-          isNavigation: false,
-          links: [],
-          contentHtml: '',
-          status: 504,
-        };
-      }
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
     }
+  }
 
-    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+  if (sawNotFound) {
+    return {
+      title: 'Page Not Found',
+      isNavigation: false,
+      links: [],
+      contentHtml: '',
+      status: 404,
+    };
   }
 
   return {
@@ -120,7 +121,7 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
     isNavigation: false,
     links: [],
     contentHtml: '',
-    status: 504,
+    status: lastStatus,
   };
 }
 

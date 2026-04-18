@@ -9,6 +9,7 @@ import {
 } from '@/lib/charmParser';
 
 export const revalidate = 86400; // 1 day ISR
+export const dynamic = 'force-dynamic';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 

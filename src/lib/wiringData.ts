@@ -140,8 +140,18 @@ export async function fetchWiringMakes(): Promise<string[]> {
   const links = extractLinks(html, pageUrl);
   return links
     .filter(link => {
+      if (
+        !link ||
+        link.startsWith('/') ||
+        link.startsWith('http') ||
+        /^(javascript:|mailto:|#|\?)/i.test(link)
+      ) {
+        return false;
+      }
       const segments = link.split('/').filter(Boolean);
-      return segments.length === 1 && !segments[0].includes('.') && !segments[0].startsWith('_');
+      if (segments.length !== 1) return false;
+      const segment = segments[0];
+      return !segment.includes('.') && !segment.startsWith('_') && !segment.includes(':');
     })
     .map(link => decodeSegment(link.split('/').filter(Boolean)[0]))
     .sort((a, b) => a.localeCompare(b));
