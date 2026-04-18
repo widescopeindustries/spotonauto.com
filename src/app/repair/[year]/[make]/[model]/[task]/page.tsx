@@ -3108,37 +3108,3 @@ export default async function Page({ params }: PageProps) {
         </>
     );
 }
-xt-white transition-colors">
-                                    {v.display} {toTitleCase(canonicalTask)}
-                                </span>
-                            </Link>
-                        ));
-                    })()}
-                </div>
-
-                <div className="mt-8 flex flex-wrap gap-4">
-                    <Link
-                        href={`/repairs/${canonicalTask}`}
-                        className="inline-flex items-center gap-2 text-cyan-500 hover:text-cyan-400 text-sm font-medium transition-colors"
-                    >
-                        View All {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides →
-                    </Link>
-                    <Link
-                        href={`/guides/${canonicalMake}/${canonicalModel}`}
-                        className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 text-sm font-medium transition-colors"
-                    >
-                        All {displayMake} {displayModel} Guides →
-                    </Link>
-                    <Link
-                        href="/repairs"
-                        className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-400 text-sm font-medium transition-colors"
-                    >
-                        Browse All Repair Categories →
-                    </Link>
-                </div>
-            </section>
-
-            <CoverageWaitlist vehicleName={vehicleName} year={Number(resolvedYear)} />
-        </>
-    );
-}
