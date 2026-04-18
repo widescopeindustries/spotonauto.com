@@ -16,11 +16,19 @@ interface PageProps {
   params: Promise<{ path: string[] }>;
 }
 
+function safeDecodeSegment(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 // ─── Dynamic SEO Metadata ──────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { path } = await params;
-  const decodedPath = path.map(s => decodeURIComponent(s));
+  const decodedPath = path.map((s) => safeDecodeSegment(s));
 
   const title = buildManualTitle(decodedPath);
   const description = buildManualDescription(decodedPath);
@@ -43,8 +51,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ManualBrowserPage({ params }: PageProps) {
   const { path } = await params;
-  const page = await fetchCharmPage(path);
-  const breadcrumbs = buildBreadcrumbs(path);
+  const normalizedPath = path.map((s) => safeDecodeSegment(s));
+  const page = await fetchCharmPage(normalizedPath);
+  const breadcrumbs = buildBreadcrumbs(normalizedPath);
   const depth = path.length;
 
   // ── Error state ──
