@@ -71,6 +71,7 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
   // Re-encode each segment for the upstream URL
   const encodedPath = pathSegments.map((s) => encodeCharmPathSegment(s)).join('/');
   let sawNotFound = false;
+  let sawNonNotFoundFailure = false;
   let lastStatus = 504;
 
   // Try the cached proxy first, then direct CHARM as a resilient fallback.
@@ -92,10 +93,13 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
           break;
         }
 
+        sawNonNotFoundFailure = true;
+
         if (attempt === FETCH_RETRIES) {
           console.warn(`[manual] upstream returned ${res.status} for ${url}`);
         }
       } catch (error) {
+        sawNonNotFoundFailure = true;
         if (attempt === FETCH_RETRIES) {
           console.warn(`[manual] fetch failed for ${url}`, error);
           lastStatus = 504;
@@ -106,7 +110,10 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
     }
   }
 
-  if (sawNotFound) {
+  // Treat as true 404 only when every attempted origin resolved as 404.
+  // If at least one origin had a non-404 failure (timeout/5xx/403), surface
+  // a temporary error instead of a false "not found" page.
+  if (sawNotFound && !sawNonNotFoundFailure) {
     return {
       title: 'Page Not Found',
       isNavigation: false,
