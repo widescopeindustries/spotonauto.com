@@ -93,9 +93,6 @@ export async function fetchCharmPage(
 
         lastStatus = res.status;
         if (res.status === 404) {
-          if (pathSegments.length >= 3) {
-            console.warn(`[manual] upstream 404 for ${url} (path=${pathSegments.join(' / ')})`);
-          }
           sawNotFound = true;
           break;
         }
@@ -123,10 +120,8 @@ export async function fetchCharmPage(
   if (allowParentRecovery && sawNotFound && pathSegments.length >= 3) {
     const recovered = await recoverFromParentNavigation(pathSegments);
     if (recovered) {
-      console.warn(`[manual] recovered via parent navigation (path=${pathSegments.join(' / ')})`);
       return recovered;
     }
-    console.warn(`[manual] parent recovery failed (path=${pathSegments.join(' / ')})`);
   }
 
   // Treat as true 404 only when every attempted origin resolved as 404.
