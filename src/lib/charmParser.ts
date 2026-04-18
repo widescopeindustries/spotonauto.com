@@ -67,7 +67,11 @@ function sanitizeCharmBrandingText(text: string): string {
  * @param pathSegments - decoded path segments from Next.js catch-all route
  * @returns Parsed CharmPage
  */
-export async function fetchCharmPage(pathSegments: string[] = []): Promise<CharmPage> {
+export async function fetchCharmPage(
+  pathSegments: string[] = [],
+  options: { allowParentRecovery?: boolean } = {},
+): Promise<CharmPage> {
+  const { allowParentRecovery = true } = options;
   // Re-encode each segment for the upstream URL
   const encodedPath = pathSegments.map((s) => encodeCharmPathSegment(s)).join('/');
   let sawNotFound = false;
@@ -110,6 +114,16 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
     }
   }
 
+  // Recovery path:
+  // if the leaf URL 404s due encoding/variant drift, fetch the parent page,
+  // resolve the canonical child href, and retry once using that href.
+  if (allowParentRecovery && sawNotFound && pathSegments.length >= 3) {
+    const recovered = await recoverFromParentNavigation(pathSegments);
+    if (recovered) {
+      return recovered;
+    }
+  }
+
   // Treat as true 404 only when every attempted origin resolved as 404.
   // If at least one origin had a non-404 failure (timeout/5xx/403), surface
   // a temporary error instead of a false "not found" page.
@@ -130,6 +144,75 @@ export async function fetchCharmPage(pathSegments: string[] = []): Promise<Charm
     contentHtml: '',
     status: lastStatus,
   };
+}
+
+function normalizeLookupText(value: string): string {
+  return safeDecodeUriComponent(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function flattenLinks(links: CharmLink[]): CharmLink[] {
+  const out: CharmLink[] = [];
+  for (const link of links) {
+    if (link.href) out.push(link);
+    if (link.children && link.children.length > 0) {
+      out.push(...flattenLinks(link.children));
+    }
+  }
+  return out;
+}
+
+async function recoverFromParentNavigation(pathSegments: string[]): Promise<CharmPage | null> {
+  const parentSegments = pathSegments.slice(0, -1);
+  const requestedLeaf = normalizeLookupText(pathSegments[pathSegments.length - 1] ?? '');
+  if (!requestedLeaf) return null;
+
+  const parentPage = await fetchCharmPage(parentSegments, { allowParentRecovery: false });
+  if (parentPage.status !== 200 || !parentPage.isNavigation || parentPage.links.length === 0) {
+    return null;
+  }
+
+  const candidates = flattenLinks(parentPage.links).filter((link) => link.href.startsWith('/manual/'));
+  if (candidates.length === 0) return null;
+
+  let bestMatch: CharmLink | null = null;
+  let bestScore = 0;
+
+  for (const candidate of candidates) {
+    const labelNorm = normalizeLookupText(candidate.label);
+    if (!labelNorm) continue;
+
+    let score = 0;
+    if (labelNorm === requestedLeaf) score = 100;
+    else if (labelNorm.includes(requestedLeaf) || requestedLeaf.includes(labelNorm)) score = 80;
+    else {
+      const requestedTokens = requestedLeaf.split(' ').filter(Boolean);
+      const overlap = requestedTokens.filter((token) => token.length > 1 && labelNorm.includes(token)).length;
+      if (overlap > 0) score = 50 + overlap;
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = candidate;
+    }
+  }
+
+  if (!bestMatch || bestScore < 70) {
+    return null;
+  }
+
+  const recoveredSegments = bestMatch.href
+    .replace(/^\/manual\//, '')
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => safeDecodeUriComponent(segment));
+
+  if (recoveredSegments.length === 0) return null;
+
+  const recoveredPage = await fetchCharmPage(recoveredSegments, { allowParentRecovery: false });
+  return recoveredPage.status === 200 ? recoveredPage : null;
 }
 
 // ─── Parser ────────────────────────────────────────────────────────────────────
