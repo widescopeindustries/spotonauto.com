@@ -10,7 +10,7 @@ function normalizeBase(value: string): string {
  * Override with CHARM_ARCHIVE_BASE when needed.
  */
 export const CHARM_ARCHIVE_BASE = normalizeBase(
-  process.env.CHARM_ARCHIVE_BASE ?? DEFAULT_CHARM_ARCHIVE_BASE,
+  DEFAULT_CHARM_ARCHIVE_BASE,
 );
 
 /**
