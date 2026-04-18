@@ -348,7 +348,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!resolvedVehicle || !Number.isInteger(resolvedYear)) {
     return {
       title: 'Vehicle Repair Hub Not Found | SpotOnAuto',
-      description: 'Browse DIY repair hubs by exact year, make, and model on SpotOnAuto.',
+      description: 'Browse DIY repair hubs by exact year, make, and model on SpotOnAuto, with links to repair guides, wiring, codes, and factory specs.',
     };
   }
 
@@ -356,7 +356,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (resolvedYear < production.start || resolvedYear > production.end) {
     return {
       title: 'Vehicle Repair Hub Not Found | SpotOnAuto',
-      description: 'Browse DIY repair hubs by exact year, make, and model on SpotOnAuto.',
+      description: 'Browse DIY repair hubs by exact year, make, and model on SpotOnAuto, with links to repair guides, wiring, codes, and factory specs.',
     };
   }
 

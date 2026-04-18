@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps) {
   const displayModel = originalModel || model.charAt(0).toUpperCase() + model.slice(1).replace(/-/g, ' ');
   return {
     title: `${displayMake} ${displayModel} DIY Repair Guides | SpotOnAuto`,
-    description: `Complete step-by-step DIY repair guides for the ${displayMake} ${displayModel}. Fix common issues yourself and save.`,
+    description: `Complete step-by-step DIY repair guides for the ${displayMake} ${displayModel}, including maintenance, common fault tracing, and repair instructions.`,
     alternates: {
       canonical: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}`,
     },

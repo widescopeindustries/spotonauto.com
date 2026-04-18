@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     return {
         title: `${cat.name} — Community Forum | SpotOn Auto`,
-        description: `Discuss ${cat.name.toLowerCase()} with fellow DIY mechanics. ${cat.description}`,
+        description: `Discuss ${cat.name.toLowerCase()} with fellow DIY mechanics, compare repair notes, and share practical fixes. ${cat.description}`,
         openGraph: {
             title: `${cat.name} — SpotOn Auto Community`,
             description: cat.description,

@@ -4,7 +4,7 @@ import NewThreadForm from './NewThreadForm';
 
 export const metadata: Metadata = {
     title: 'New Thread — Community Forum | SpotOn Auto',
-    description: 'Start a new discussion in the SpotOnAuto community forum.',
+    description: 'Start a new discussion in the SpotOnAuto community forum. Ask for help, share a repair tip, or post a symptom question so other DIY mechanics can jump in with a useful answer.',
     robots: { index: false, follow: true },
 };
 

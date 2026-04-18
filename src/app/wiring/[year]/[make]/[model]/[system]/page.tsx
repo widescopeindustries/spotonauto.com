@@ -155,20 +155,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!vehicle || !systemMeta) {
     return {
       title: 'Wiring Diagram Not Found | SpotOnAuto',
-      description: 'Browse wiring diagrams by make, year, and model on SpotOnAuto.',
+      description: 'Browse wiring diagrams by make, year, and model on SpotOnAuto. Search OEM schematics, connector views, and system-specific electrical paths for the exact vehicle you are working on.',
     };
   }
   if (!supportsWiringSystem(vehicle, systemSlug)) {
     return {
       title: 'Wiring Diagram Not Found | SpotOnAuto',
-      description: 'Browse wiring diagrams by make, year, and model on SpotOnAuto.',
+      description: 'Browse wiring diagrams by make, year, and model on SpotOnAuto. Search OEM schematics, connector views, and system-specific electrical paths for the exact vehicle you are working on.',
     };
   }
 
   const vehicleLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
   const canonical = `https://spotonauto.com${buildWiringSeoHref(vehicle, systemSlug)}`;
   const title = `${vehicleLabel} ${systemMeta.title} | Free OEM Schematics`;
-  const description = `${vehicleLabel} ${systemMeta.title}: ${systemMeta.intro} Free access with searchable OEM electrical schematics.`;
+  const description = `${vehicleLabel} ${systemMeta.title}: ${systemMeta.intro} Free access to searchable OEM electrical schematics, connector views, and diagram jump points for the exact variant and system.`;
 
   return {
     title,

@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!cluster) {
     return {
       title: 'Symptom Hub Not Found | SpotOnAuto',
-      description: 'Browse graph-driven vehicle symptom hubs on SpotOnAuto.',
+      description: 'Browse graph-driven vehicle symptom hubs on SpotOnAuto. Map noises, leaks, warning lights, and drivability complaints to likely repairs, related codes, and exact vehicle workflows.',
     };
   }
 

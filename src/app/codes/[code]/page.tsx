@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         ? ` Covers ${oemMeta.n}+ vehicles.`
         : '';
     const title = `${dtc.code}: ${dtc.title} — Causes & Fix | SpotOnAuto`;
-    const description = `What is ${dtc.code}? ${dtc.title} — ${dtc.severity} severity. Typical fix: ${dtc.estimatedCostRange}.${oemSuffix} Free step-by-step diagnosis and repair guide.`;
+    const description = `What is ${dtc.code}? ${dtc.title} — ${dtc.severity} severity, likely causes, symptom clues, and typical fix cost: ${dtc.estimatedCostRange}.${oemSuffix} Free step-by-step diagnosis and repair guide.`;
 
     return {
         title,
