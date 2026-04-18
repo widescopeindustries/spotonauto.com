@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Activity, Camera, Cpu, HardDrive, ImageIcon, RotateCcw, Send } from 'lucide-react';
 import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/apiClient';
+import TopdonDiagnosticInjected from './TopdonDiagnosticInjected';
 import {
     findLatestDiagnosticSessionForVehicle,
     getDiagnosticSession,
