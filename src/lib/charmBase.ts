@@ -1,4 +1,4 @@
-const DEFAULT_CHARM_ARCHIVE_BASE = 'https://charm.li';
+const DEFAULT_CHARM_ARCHIVE_BASE = 'https://spotonauto-charm-proxy.wandering-frog-3cea.workers.dev';
 const DEFAULT_CHARM_RAW_CONTENT_BASE = 'https://data.spotonauto.com';
 
 function normalizeBase(value: string): string {
