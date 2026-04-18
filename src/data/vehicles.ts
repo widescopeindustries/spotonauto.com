@@ -548,15 +548,12 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Allure: { start: 2005, end: 2010 },
         Electra: { start: 1954, end: 1990 },
         Roadmaster: { start: 1991, end: 1996 },
+    },
     Cadillac: {
-        Escalade: { start: 1999, end: 2026 },
-        XT5: { start: 2017, end: 2026 },
-        CT5: { start: 2020, end: 2026 },
-        XT4: { start: 2019, end: 2026 },
-    ...
-        'Escalade ESV': { start: 2004, end: 2026 },
-        CT4: { start: 2020, end: 2026 },
-        // ADDED
+        Escalade: { start: 1999, end: 2024 },
+        XT5: { start: 2017, end: 2024 },
+        CT5: { start: 2020, end: 2024 },
+        XT4: { start: 2019, end: 2024 },
         DeVille: { start: 1960, end: 2005 },
         Seville: { start: 1976, end: 2004 },
         Eldorado: { start: 1953, end: 2002 },
