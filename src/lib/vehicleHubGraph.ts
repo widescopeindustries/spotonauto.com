@@ -59,6 +59,15 @@ export interface VehicleHubGraph {
   toolCount: number;
   codeCount: number;
   symptomCount: number;
+  source?: {
+    mode: 'legacy' | 'backbone';
+    provider: string;
+    reason?: string;
+    generatedAt?: string;
+    graphRoot?: string;
+    snapshotAgeHours?: number | null;
+    lastSuccessAgeHours?: number | null;
+  };
 }
 
 const PRIORITY_TASKS = [
@@ -411,5 +420,11 @@ export async function buildVehicleHubGraph(args: {
     toolCount: toolNodes.length,
     codeCount: codeNodes.length,
     symptomCount: symptomNodes.length,
+    source: {
+      mode: 'legacy',
+      provider: 'vehicleHubGraph',
+      reason: 'local-priority-graph',
+      generatedAt: new Date().toISOString(),
+    },
   };
 }

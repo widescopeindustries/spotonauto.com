@@ -27,7 +27,7 @@ import { buildWiringNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { getManualSectionLinksForWiringVehicle } from '@/lib/manualSectionLinks';
-import { buildVehicleHubLinkForWiring } from '@/lib/vehicleHubLinks';
+import { buildVehicleHubLinkForWiringViaGateway } from '@/lib/vehicleHubGateway';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 
 export const revalidate = 21600;
@@ -211,7 +211,7 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
   const systemDiagrams = rankDiagramsForSystem(data.index, systemMeta.matchTerms, 48);
   const vehicleLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
   const vehicleHubHref = buildVehicleHubUrl(vehicle.year, vehicle.make, vehicle.model);
-  const vehicleHubNode = buildVehicleHubLinkForWiring({
+  const vehicleHubNode = await buildVehicleHubLinkForWiringViaGateway({
     year: vehicle.year,
     make: vehicle.make,
     model: vehicle.model,

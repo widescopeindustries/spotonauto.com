@@ -18,7 +18,7 @@ import { getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { buildTopdonProductUrl, getTopdonRecommendations, getContextFromCode } from '@/lib/topdonAffiliate';
 import TopdonProductCard from '@/components/TopdonProductCard';
-import { buildVehicleHubLinksForCode } from '@/lib/vehicleHubLinks';
+import { buildVehicleHubLinksForCodeViaGateway } from '@/lib/vehicleHubGateway';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -33,7 +33,7 @@ const LIKELIHOOD_BADGE: Record<string, string> = {
     unlikely: 'bg-gray-500/10 text-gray-400 border-gray-500/30',
 };
 
-export default function CodePageClient({
+export default async function CodePageClient({
     code,
     manualLinks = [],
 }: {
@@ -67,7 +67,7 @@ export default function CodePageClient({
         badge: 'Symptom Hub',
         targetKind: 'symptom' as const,
     }));
-    const vehicleHubLinks = buildVehicleHubLinksForCode({
+    const vehicleHubLinks = await buildVehicleHubLinksForCodeViaGateway({
         code: code.code,
         repairLinks,
         wiringLinks,

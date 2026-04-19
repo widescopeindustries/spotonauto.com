@@ -19,7 +19,7 @@ import {
 import { buildRepairUrl, buildVehicleNodeId } from '@/lib/vehicleIdentity';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
-import { buildVehicleHubGraph } from '@/lib/vehicleHubGraph';
+import { buildVehicleHubGraphViaGateway } from '@/lib/vehicleHubGateway';
 
 interface PageProps {
   params: Promise<{
@@ -394,7 +394,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
   }
 
   const vehicleLabel = `${canonicalYear} ${originalMake} ${originalModel}`;
-  const vehicleHub = await buildVehicleHubGraph({
+  const vehicleHub = await buildVehicleHubGraphViaGateway({
     year: canonicalYear,
     make: canonicalMake,
     model: canonicalModel,

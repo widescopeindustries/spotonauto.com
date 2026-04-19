@@ -25,7 +25,7 @@ import { buildEdgeReference, buildRepairNodeId, buildSymptomNodeId } from '@/lib
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildRepairUrl } from '@/lib/vehicleIdentity';
-import { buildVehicleHubGraph } from '@/lib/vehicleHubGraph';
+import { buildVehicleHubGraphViaGateway } from '@/lib/vehicleHubGateway';
 
 // ISR: cache repair pages for 6 hours (matches wiring pages)
 export const revalidate = 21600;
@@ -1855,7 +1855,7 @@ export default async function Page({ params }: PageProps) {
             })),
         })),
     });
-    const vehicleHubGraph = await buildVehicleHubGraph({
+    const vehicleHubGraph = await buildVehicleHubGraphViaGateway({
         year: resolvedYear,
         make: canonicalMake,
         model: canonicalModel,
@@ -3075,40 +3075,6 @@ export default async function Page({ params }: PageProps) {
                             >
                                 <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
                                 <span className="text-gray-300 text-sm group-hover:text-white transition-colors">
-                                    {v.display} {toTitleCase(canonicalTask)}
-                                </span>
-                            </Link>
-                        ));
-                    })()}
-                </div>
-
-                <div className="mt-8 flex flex-wrap gap-4">
-                    <Link
-                        href={`/repairs/${canonicalTask}`}
-                        className="inline-flex items-center gap-2 text-cyan-500 hover:text-cyan-400 text-sm font-medium transition-colors"
-                    >
-                        View All {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides →
-                    </Link>
-                    <Link
-                        href={`/guides/${canonicalMake}/${canonicalModel}`}
-                        className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 text-sm font-medium transition-colors"
-                    >
-                        All {displayMake} {displayModel} Guides →
-                    </Link>
-                    <Link
-                        href="/repairs"
-                        className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-400 text-sm font-medium transition-colors"
-                    >
-                        Browse All Repair Categories →
-                    </Link>
-                </div>
-            </section>
-
-            <CoverageWaitlist vehicleName={vehicleName} year={Number(resolvedYear)} />
-        </>
-    );
-}
-xt-white transition-colors">
                                     {v.display} {toTitleCase(canonicalTask)}
                                 </span>
                             </Link>
