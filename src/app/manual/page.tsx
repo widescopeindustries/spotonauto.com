@@ -9,9 +9,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: 'Factory Service Manuals | 82 Makes, 1982-2013 | SpotOnAuto',
+  title: 'Factory Service Manuals | 82 Makes, 1982-2025 | SpotOnAuto',
   description:
-    'Browse free factory service manuals for 82 makes of cars and trucks (1982-2013). Repair procedures, torque specs, wiring diagrams, and TSBs.',
+    'Browse free factory service manuals for 82 makes of cars and trucks (1982-2025). Repair procedures, torque specs, wiring diagrams, and TSBs.',
   alternates: {
     canonical: 'https://spotonauto.com/manual',
   },
@@ -52,7 +52,7 @@ export default async function ManualLandingPage() {
         </h1>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2">
           Browse the complete factory service manual database covering <strong className="text-white">82 makes</strong> of
-          cars and trucks from <strong className="text-white">1982 to 2013</strong>.
+          cars and trucks from <strong className="text-white">1982 to 2025</strong>.
         </p>
         <p className="text-gray-500 text-sm max-w-xl mx-auto">
           Repair procedures, torque specs, wiring diagrams, TSBs, parts information, and labor times — all from OEM sources.
@@ -137,7 +137,7 @@ export default async function ManualLandingPage() {
             '@type': 'CollectionPage',
             name: 'Factory Service Manuals',
             description:
-              'Browse free factory service manuals for 82 makes of cars and trucks (1982-2013).',
+              'Browse free factory service manuals for 82 makes of cars and trucks (1982-2025).',
             url: 'https://spotonauto.com/manual',
             publisher: { '@id': 'https://spotonauto.com/#organization' },
             isPartOf: { '@id': 'https://spotonauto.com/#website' },

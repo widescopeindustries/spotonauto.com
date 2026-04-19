@@ -678,7 +678,7 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           <h1 className="wl-title">Wiring Diagram Library</h1>
           <p className="wl-subtitle">
             Original factory wiring diagrams, connector views, and electrical schematics.
-            <br />Coverage: 1982&ndash;2013 &middot; All makes and models.
+            <br />Coverage: 1982&ndash;2025 &middot; All makes and models.
           </p>
         </div>
       </header>

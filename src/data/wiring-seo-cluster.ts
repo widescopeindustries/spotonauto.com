@@ -60,7 +60,7 @@ const VERIFIED_WIRING_COVERAGE = verifiedWiringCoverage as {
   vehicles?: WiringSeoVehicle[];
 };
 const WIRING_YEAR_MIN = 1982;
-const WIRING_YEAR_MAX = 2013;
+const WIRING_YEAR_MAX = 2025;
 const PRIORITY_MAKES = [
   'Toyota',
   'Honda',

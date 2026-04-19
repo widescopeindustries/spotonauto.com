@@ -3057,7 +3057,7 @@ export default async function Page({ params }: PageProps) {
                                 const moSlug = slugifyRoutePart(mo);
                                 if (mSlug === currentMakeLower && moSlug === currentModelLower) continue;
                                 if (isNonUsModel(mSlug, moSlug)) continue;
-                                const targetYear = years.end >= 2013 && years.start <= 2013 ? 2013 : years.end;
+                                const targetYear = years.end >= 2025 && years.start <= 2025 ? 2025 : years.end;
                                 crossVehicles.push({ y: String(targetYear), mk: mSlug, mo: moSlug, display: `${targetYear} ${m} ${mo}` });
                             }
                         }

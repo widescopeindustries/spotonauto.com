@@ -105,8 +105,8 @@ function getMakeRank(make: string): number {
 
 function getRepresentativeYear(entry: ValidatedModelEntry): number {
   const confirmed = entry.confirmedYears || [];
-  if (confirmed.includes(2013)) return 2013;
-  return confirmed[0] || Math.min(2013, entry.end);
+  if (confirmed.includes(2025)) return 2025;
+  return confirmed[0] || Math.min(2025, entry.end);
 }
 
 function scoreVehicle(make: string, model: string, tasks: string[], task?: string): number {

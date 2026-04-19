@@ -151,9 +151,9 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
 };
 
 // ─── Factory manual archive live fetch ───────────────────────────────────────
-// Publicly accessible service manual archive covering 1982–2013.
+// Publicly accessible service manual archive covering 1982–2025.
 // We fetch live at query time — no local copy stored.
-// For 2014+ vehicles we fall back silently to AI-only.
+// For 2026+ vehicles we fall back silently to AI-only.
 
 const CHARM_BASE = CHARM_ARCHIVE_BASE;
 const CHARM_HEADERS = { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' };
@@ -466,10 +466,10 @@ function findTaskSections(sectionLinks: string[], task: string): string[] {
  * Never throws — always fails gracefully.
  */
 async function fetchFromCharmLi(year: string, make: string, model: string, task?: string): Promise<ManualContext> {
-  // Archive coverage is 1982–2013
+  // Archive coverage is 1982–2025
   const yearNum = parseInt(year, 10);
-  if (isNaN(yearNum) || yearNum > 2013 || yearNum < 1982) {
-    console.log(`[MANUAL ARCHIVE] Year ${year} outside coverage (1982-2013), skipping`);
+  if (isNaN(yearNum) || yearNum > 2025 || yearNum < 1982) {
+    console.log(`[MANUAL ARCHIVE] Year ${year} outside coverage (1982-2025), skipping`);
     return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
   }
 

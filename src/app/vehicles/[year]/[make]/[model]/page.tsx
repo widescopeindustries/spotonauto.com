@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function VehicleLanePage({ params }: PageProps) {
   const { year, make, model } = await params;
   const yearNum = parseInt(year, 10);
-  if (isNaN(yearNum) || yearNum < 1982 || yearNum > 2013) notFound();
+  if (isNaN(yearNum) || yearNum < 1982 || yearNum > 2025) notFound();
 
   const data = await buildVehicleLaneData(make, yearNum, model);
   if (!data) notFound();

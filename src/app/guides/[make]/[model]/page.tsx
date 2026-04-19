@@ -28,7 +28,7 @@ function slugifyPart(value: string): string {
 
 function clampRepresentativeYear(preferredYear: number | null, start: number, end: number): number {
   if (preferredYear && preferredYear >= start && preferredYear <= end) return preferredYear;
-  return Math.max(start, Math.min(2013, end));
+  return Math.max(start, Math.min(2025, end));
 }
 
 export async function generateMetadata({ params }: PageProps) {

@@ -581,7 +581,7 @@ export function buildBreadcrumbs(pathSegments: string[]): Breadcrumb[] {
 
 export function buildManualTitle(pathSegments: string[]): string {
   if (pathSegments.length === 0) {
-    return 'Factory Service Manuals | 1982-2013 | SpotOnAuto';
+    return 'Factory Service Manuals | 1982-2025 | SpotOnAuto';
   }
 
   const decoded = pathSegments.map(s => sanitizeCharmBrandingText(safeDecodeUriComponent(s)));
@@ -602,13 +602,13 @@ export function buildManualTitle(pathSegments: string[]): string {
 
 export function buildManualDescription(pathSegments: string[]): string {
   if (pathSegments.length === 0) {
-    return 'Browse free factory service manuals for 82 makes of cars and trucks (1982-2013). Includes repair procedures, torque specs, wiring diagrams, and TSBs.';
+    return 'Browse free factory service manuals for 82 makes of cars and trucks (1982-2025). Includes repair procedures, torque specs, wiring diagrams, and TSBs.';
   }
 
   const decoded = pathSegments.map(s => sanitizeCharmBrandingText(safeDecodeUriComponent(s)));
 
   if (pathSegments.length === 1) {
-    return `Free ${decoded[0]} factory service manuals. Browse repair procedures, wiring diagrams, torque specs, and diagnostic information for all ${decoded[0]} models (1982-2013).`;
+    return `Free ${decoded[0]} factory service manuals. Browse repair procedures, wiring diagrams, torque specs, and diagnostic information for all ${decoded[0]} models (1982-2025).`;
   }
 
   if (pathSegments.length === 2) {

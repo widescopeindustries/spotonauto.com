@@ -143,7 +143,7 @@ export default function DeferredWiringDiagramBrowser() {
             Find Wiring Diagrams for Your Vehicle
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-gray-300 sm:text-lg">
-            Browse 148,000+ factory electrical diagrams covering 82 makes from 1982 to 2013.
+            Browse 148,000+ factory electrical diagrams covering 82 makes from 1982 to 2025.
             Select your vehicle below to find the exact diagram you need.
           </p>
         </div>
@@ -255,7 +255,7 @@ export default function DeferredWiringDiagramBrowser() {
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
             <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">148K+ diagrams</p>
-            <p className="mt-3 text-sm leading-6 text-gray-300">Factory electrical diagrams for 82 makes and hundreds of models, from 1982 to 2013.</p>
+            <p className="mt-3 text-sm leading-6 text-gray-300">Factory electrical diagrams for 82 makes and hundreds of models, from 1982 to 2025.</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
             <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200/75">Search by system</p>

@@ -72,8 +72,8 @@ export default function PrivacyPolicy() {
           <h2 className="text-xl font-bold text-cyan-400">4. AI-Generated Content</h2>
           <p className="text-sm">
             Some content on SpotOnAuto is generated using artificial intelligence (Google Gemini). When we have factory service manual
-            (OEM) data for your vehicle (model years 1982–2013), our AI uses that data as its source and the page displays an
-            &quot;OEM Verified&quot; badge. For vehicles outside our corpus coverage (2014 and newer), content is AI-generated and clearly
+            (OEM) data for your vehicle (model years 1982–2025), our AI uses that data as its source and the page displays an
+            &quot;OEM Verified&quot; badge. For vehicles outside our corpus coverage (2026 and newer), content is AI-generated and clearly
             labeled as such. We never represent AI-generated content as OEM data.
           </p>
         </section>

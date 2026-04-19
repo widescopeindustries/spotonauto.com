@@ -6,7 +6,7 @@ const LAST_MOD = getSitemapLastMod();
 /**
  * Manual browser sitemap — landing page + all 82 make pages.
  * Year/model pages are discovered by Google crawling the make pages.
- * The LMDB database covers 1982-2013 and is fixed, so these won't change.
+ * The LMDB database covers 1982-2025 and is fixed, so these won't change.
  */
 
 const LMDB_MAKES = [

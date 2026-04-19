@@ -78,8 +78,8 @@ export default async function TaskCategoryPage({ params }: PageProps) {
 
     for (const [model, years] of Object.entries(models)) {
       if (isNonUsModel(makeSlug, slugify(model))) continue;
-      // Pick a representative year: 2013 if in range (charm.li sweet spot), else latest
-      const targetYear = years.end >= 2013 && years.start <= 2013 ? 2013 : years.end;
+      // Pick a representative year: 2025 if in range, else latest
+      const targetYear = years.end >= 2025 && years.start <= 2025 ? 2025 : years.end;
       vehicles.push({
         year: targetYear,
         model,

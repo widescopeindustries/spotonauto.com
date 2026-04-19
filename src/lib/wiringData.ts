@@ -169,7 +169,7 @@ export async function fetchWiringYears(make: string): Promise<number[]> {
       for (const link of links) {
         const segments = link.split('/').filter(Boolean);
         const year = Number.parseInt(segments[segments.length - 1], 10);
-        if (Number.isFinite(year) && year >= 1982 && year <= 2013) {
+        if (Number.isFinite(year) && year >= 1982 && year <= 2025) {
           allYears.add(year);
         }
       }

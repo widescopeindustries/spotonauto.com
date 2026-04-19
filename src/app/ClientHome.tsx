@@ -362,7 +362,7 @@ export default function ClientHome() {
                                     Browse the factory manual archive
                                 </h3>
                                 <p className="text-sm text-gray-400 leading-relaxed">
-                                    Navigate manual coverage by make, year, vehicle, and section across the 1982&ndash;2013 archive.
+                                    Navigate manual coverage by make, year, vehicle, and section across the 1982&ndash;2025 archive.
                                 </p>
                             </div>
                             <BookOpen className="h-5 w-5 shrink-0 text-cyan-300 transition-transform group-hover:translate-x-1" />
@@ -376,7 +376,7 @@ export default function ClientHome() {
                                     Need wiring diagrams?
                                 </h3>
                                 <p className="text-sm text-gray-400 leading-relaxed">
-                                    We have 148,000+ factory electrical diagrams for vehicles from 1982&ndash;2013.
+                                    We have 148,000+ factory electrical diagrams for vehicles from 1982&ndash;2025.
                                 </p>
                             </div>
                             <ArrowRight className="h-5 w-5 shrink-0 text-cyan-300 transition-transform group-hover:translate-x-1" />

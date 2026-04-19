@@ -12,7 +12,7 @@ export default function CoverageWaitlist({ vehicleName, year }: CoverageWaitlist
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    if (year >= 1982 && year <= 2013) return null;
+    if (year >= 1982 && year <= 2025) return null;
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();

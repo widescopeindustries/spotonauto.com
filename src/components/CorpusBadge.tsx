@@ -6,7 +6,7 @@ interface CorpusBadgeProps {
 }
 
 export default function CorpusBadge({ year }: CorpusBadgeProps) {
-    const isOem = year >= 1982 && year <= 2013;
+    const isOem = year >= 1982 && year <= 2025;
 
     if (isOem) {
         return (
@@ -33,7 +33,7 @@ export default function CorpusBadge({ year }: CorpusBadgeProps) {
                         <span className="font-semibold">AI-generated guide</span> — we don&apos;t have factory manual data for this vehicle yet. This content should be verified against your owner&apos;s manual.
                     </p>
                     <p className="mt-1.5 text-xs text-amber-300/60">
-                        Our verified OEM coverage currently spans 1982–2013 model years. We&apos;re actively working to expand.
+                        Our verified OEM coverage currently spans 1982–2025 model years. We&apos;re actively working to expand.
                     </p>
                 </div>
             </div>
