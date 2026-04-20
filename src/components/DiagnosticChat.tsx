@@ -12,6 +12,7 @@ import {
     type StoredDiagnosticMessage,
 } from '../services/diagnosticMemory';
 import type { Vehicle } from '../types';
+import TopdonDiagnosticInjected from './TopdonDiagnosticInjected';
 
 interface DiagnosticChatProps {
     vehicle?: Vehicle;
