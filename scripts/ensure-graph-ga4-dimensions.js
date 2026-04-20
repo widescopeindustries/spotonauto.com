@@ -230,6 +230,12 @@ const REQUIRED_DIMENSIONS = [
     description: 'Reason the user exited the wiring modal or browser.',
     scope: 'EVENT',
   },
+  {
+    parameterName: 'subtag',
+    displayName: 'Affiliate Subtag',
+    description: 'Affiliate attribution subtag used to distinguish module-level click sources (tool-intent, tool-spec, tool-supplies, etc.).',
+    scope: 'EVENT',
+  },
 ];
 
 function hasFlag(name) {

@@ -11,6 +11,9 @@ import {
 } from '@/data/tools-pages';
 import AdUnit from '@/components/AdUnit';
 import ToolManualConfirmation from '@/components/ToolManualConfirmation';
+import MaintenanceSupplies from '@/components/MaintenanceSupplies';
+import ToolIntentCommerce from '@/components/ToolIntentCommerce';
+import AffiliateLink from '@/components/AffiliateLink';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { getToolManualCitationGroups, getToolVerificationNote } from '@/lib/toolManualCitations';
 
@@ -195,14 +198,16 @@ export default async function ToolPage({ params }: PageProps) {
 
                                 {/* Shop CTA */}
                                 <div className="mt-4 flex flex-wrap gap-3">
-                                    <a
+                                    <AffiliateLink
                                         href={amazonSearch(`${page.make} ${page.model} ${gen.years.split('-')[0]} ${meta.label.toLowerCase()}`)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                        partName={`${page.make} ${page.model} ${meta.label}`}
+                                        vehicle={vehicleName}
+                                        pageType="parts_page"
+                                        subtag={`tool-spec-${page.toolType}`}
                                         className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded-lg hover:bg-amber-400 transition"
                                     >
                                         Shop on Amazon →
-                                    </a>
+                                    </AffiliateLink>
                                     <Link
                                         href={`/repair/${gen.years.split('-')[0]}/${makeSlug}/${modelSlug}/${primaryRepairTask}`}
                                         className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 text-cyan-400 text-sm font-semibold rounded-lg border border-cyan-500/30 hover:bg-cyan-500/20 transition"
@@ -214,6 +219,15 @@ export default async function ToolPage({ params }: PageProps) {
                         </div>
                     ))}
                 </div>
+
+                <ToolIntentCommerce page={page} />
+
+                {/* Suggested Supplies */}
+                <MaintenanceSupplies
+                    toolType={page.toolType}
+                    make={page.make}
+                    model={page.model}
+                />
 
                 {/* Ad: After Generation Breakdown */}
                 <AdUnit slot="tool-after-specs" />
