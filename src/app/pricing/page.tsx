@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
+import { PricingTrackedLink, PricingViewTracker } from '@/components/PricingTracking';
 
 export const metadata: Metadata = {
   title: 'Pricing | SpotOnAuto',
@@ -16,6 +16,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 to-black text-white">
       <section className="mx-auto max-w-5xl px-4 pb-20 pt-24">
+        <PricingViewTracker />
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">Pricing</p>
           <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
@@ -36,12 +37,14 @@ export default function PricingPage() {
               <li>Vehicle-specific verdict and price range</li>
               <li>Common misdiagnosis warnings</li>
             </ul>
-            <Link
+            <PricingTrackedLink
               href="/second-opinion"
+              target="starter_free"
+              label="starter_start_free"
               className="mt-6 inline-flex w-full items-center justify-center rounded-xl border border-white/15 px-4 py-3 text-sm font-semibold hover:border-cyan-400/40 hover:text-cyan-200"
             >
               Start Free
-            </Link>
+            </PricingTrackedLink>
           </article>
 
           <article className="rounded-2xl border border-cyan-400/40 bg-cyan-500/[0.08] p-6 shadow-[0_0_40px_rgba(34,211,238,0.15)]">
@@ -53,12 +56,14 @@ export default function PricingPage() {
               <li>Priority analysis for complex repairs</li>
               <li>Printable share-ready reports</li>
             </ul>
-            <Link
+            <PricingTrackedLink
               href={checkoutUrl || '/second-opinion'}
+              target={checkoutUrl ? 'pro_checkout' : 'pro_waitlist'}
+              label={checkoutUrl ? 'pro_upgrade' : 'pro_waitlist'}
               className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-cyan-400 px-4 py-3 text-sm font-bold text-black hover:bg-cyan-300"
             >
               {checkoutUrl ? 'Upgrade to Pro' : 'Join Pro Waitlist'}
-            </Link>
+            </PricingTrackedLink>
           </article>
         </div>
       </section>

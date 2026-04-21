@@ -19,6 +19,13 @@ import {
   TrendingDown,
 } from 'lucide-react';
 import { getYears, COMMON_MAKES, fetchModels } from '@/services/vehicleData';
+import {
+  trackPricingCtaClick,
+  trackSecondOpinionLimitHit,
+  trackSecondOpinionResult,
+  trackSecondOpinionSubmit,
+  trackSecondOpinionView,
+} from '@/lib/analytics';
 
 const FREE_CHECKS_PER_DAY = 1;
 const DAILY_QUOTE_KEY = 'spotonauto-second-opinion-daily-usage-v1';
@@ -308,10 +315,17 @@ export default function SecondOpinionPage() {
   useEffect(() => {
     const usage = loadDailyUsage();
     setDailyChecksUsed(usage.count);
+    trackSecondOpinionView();
   }, []);
 
   const freeChecksRemaining = Math.max(0, FREE_CHECKS_PER_DAY - dailyChecksUsed);
   const isFreeLimitReached = freeChecksRemaining === 0;
+
+  useEffect(() => {
+    if (isFreeLimitReached) {
+      trackSecondOpinionLimitHit(dailyChecksUsed);
+    }
+  }, [isFreeLimitReached, dailyChecksUsed]);
 
   const canSubmit =
     vehicle.year &&
@@ -330,6 +344,7 @@ export default function SecondOpinionPage() {
     setResult(null);
 
     try {
+      trackSecondOpinionSubmit(Boolean(symptoms.trim()));
       const res = await fetch('/api/second-opinion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -350,6 +365,7 @@ export default function SecondOpinionPage() {
 
       const data: SecondOpinionResult = await res.json();
       setResult(data);
+      trackSecondOpinionResult(data.verdict);
       const usage = loadDailyUsage();
       const nextUsage = { day: usage.day, count: usage.count + 1 };
       saveDailyUsage(nextUsage);
@@ -383,7 +399,11 @@ export default function SecondOpinionPage() {
         <p className="mt-3 text-xs text-gray-500">
           Free: {freeChecksRemaining} check{freeChecksRemaining === 1 ? '' : 's'} remaining today.
           {' '}
-          <Link href="/pricing" className="text-cyan-300 hover:text-cyan-200">
+          <Link
+            href="/pricing"
+            onClick={() => trackPricingCtaClick('pro_waitlist', 'second_opinion_inline_pricing')}
+            className="text-cyan-300 hover:text-cyan-200"
+          >
             Pro unlocks unlimited checks
           </Link>
           .
@@ -521,6 +541,7 @@ export default function SecondOpinionPage() {
         {isFreeLimitReached ? (
           <Link
             href="/pricing"
+            onClick={() => trackPricingCtaClick('pro_waitlist', 'limit_hit_upgrade')}
             className="flex w-full items-center justify-center gap-3 rounded-xl bg-cyan-400 py-4 text-base font-bold text-black transition-all hover:bg-cyan-300"
           >
             <Shield className="h-5 w-5" />

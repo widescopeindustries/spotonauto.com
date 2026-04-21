@@ -1093,6 +1093,80 @@ export function trackAuth(method: 'google' | 'email', action: 'login' | 'signup'
   trackEvent(action === 'signup' ? 'sign_up' : 'login', { method });
 }
 
+// ─── Revenue Funnel Events ──────────────────────────────────────────────────
+
+type PricingCtaTarget = 'starter_free' | 'pro_checkout' | 'pro_waitlist';
+
+export function trackPricingView(): void {
+  trackEvent('pricing_view', {
+    event_category: 'revenue_funnel',
+    event_label: 'pricing_page',
+    ...buildAnalyticsContext({
+      pageSurface: 'other',
+      intentCluster: 'other',
+    }),
+  });
+}
+
+export function trackPricingCtaClick(target: PricingCtaTarget, label: string): void {
+  trackEvent('pricing_cta_click', {
+    event_category: 'revenue_funnel',
+    event_label: `${target}_${label}`.slice(0, 120),
+    pricing_target: target,
+    pricing_label: label.slice(0, 80),
+    ...buildAnalyticsContext({
+      pageSurface: 'other',
+      intentCluster: 'other',
+    }),
+  });
+}
+
+export function trackSecondOpinionView(): void {
+  trackEvent('second_opinion_view', {
+    event_category: 'revenue_funnel',
+    event_label: 'second_opinion_page',
+    ...buildAnalyticsContext({
+      pageSurface: 'diagnostic',
+      intentCluster: 'diagnostic',
+    }),
+  });
+}
+
+export function trackSecondOpinionSubmit(hasSymptoms: boolean): void {
+  trackEvent('second_opinion_submit', {
+    event_category: 'revenue_funnel',
+    event_label: hasSymptoms ? 'with_symptoms' : 'without_symptoms',
+    ...buildAnalyticsContext({
+      pageSurface: 'diagnostic',
+      intentCluster: 'diagnostic',
+    }),
+  });
+}
+
+export function trackSecondOpinionResult(verdict: string): void {
+  trackEvent('second_opinion_result', {
+    event_category: 'revenue_funnel',
+    event_label: String(verdict || 'unknown').slice(0, 80).toLowerCase().replace(/\s+/g, '_'),
+    second_opinion_verdict: String(verdict || 'unknown').slice(0, 80),
+    ...buildAnalyticsContext({
+      pageSurface: 'diagnostic',
+      intentCluster: 'diagnostic',
+    }),
+  });
+}
+
+export function trackSecondOpinionLimitHit(checksUsed: number): void {
+  trackEvent('second_opinion_limit_hit', {
+    event_category: 'revenue_funnel',
+    event_label: `checks_used_${Math.max(0, Number(checksUsed || 0))}`,
+    checks_used: Math.max(0, Number(checksUsed || 0)),
+    ...buildAnalyticsContext({
+      pageSurface: 'diagnostic',
+      intentCluster: 'diagnostic',
+    }),
+  });
+}
+
 // ─── CEL Landing Page Events ────────────────────────────────────────────────
 
 export const Analytics = {

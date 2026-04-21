@@ -58,6 +58,12 @@ const DEFAULT_KEY_EVENTS = [
   'wiring_diagram_interact',
   'diagnostic_start',
   'vin_decode',
+  'pricing_view',
+  'pricing_cta_click',
+  'second_opinion_view',
+  'second_opinion_submit',
+  'second_opinion_result',
+  'second_opinion_limit_hit',
   'sign_up',
   'login',
 ];
