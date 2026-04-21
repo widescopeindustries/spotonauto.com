@@ -45,10 +45,6 @@ const SITEMAP_TRIGGERS = [
     triggers: ['src/app/codes/', 'src/data/dtc', 'src/data/codes'],
   },
   {
-    sitemap: 'https://spotonauto.com/codes/sitemap/0.xml',
-    triggers: ['src/app/codes/', 'src/data/dtc', 'src/data/codes', 'src/data/knowledge-graph'],
-  },
-  {
     sitemap: 'https://spotonauto.com/community/sitemap.xml',
     triggers: ['src/app/community/'],
   },

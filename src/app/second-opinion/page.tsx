@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
   Shield,
   ShieldCheck,
@@ -18,6 +19,36 @@ import {
   TrendingDown,
 } from 'lucide-react';
 import { getYears, COMMON_MAKES, fetchModels } from '@/services/vehicleData';
+
+const FREE_CHECKS_PER_DAY = 1;
+const DAILY_QUOTE_KEY = 'spotonauto-second-opinion-daily-usage-v1';
+
+type DailyUsage = { day: string; count: number };
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function loadDailyUsage(): DailyUsage {
+  if (typeof window === 'undefined') {
+    return { day: getTodayKey(), count: 0 };
+  }
+
+  try {
+    const raw = window.localStorage.getItem(DAILY_QUOTE_KEY);
+    const parsed = raw ? JSON.parse(raw) as DailyUsage : null;
+    const today = getTodayKey();
+    if (!parsed || parsed.day !== today) return { day: today, count: 0 };
+    return parsed;
+  } catch {
+    return { day: getTodayKey(), count: 0 };
+  }
+}
+
+function saveDailyUsage(usage: DailyUsage) {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(DAILY_QUOTE_KEY, JSON.stringify(usage));
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface SecondOpinionResult {
@@ -253,6 +284,7 @@ export default function SecondOpinionPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<SecondOpinionResult | null>(null);
+  const [dailyChecksUsed, setDailyChecksUsed] = useState(0);
 
   // Load models when make/year change
   useEffect(() => {
@@ -273,13 +305,22 @@ export default function SecondOpinionPage() {
     }
   }, [result]);
 
+  useEffect(() => {
+    const usage = loadDailyUsage();
+    setDailyChecksUsed(usage.count);
+  }, []);
+
+  const freeChecksRemaining = Math.max(0, FREE_CHECKS_PER_DAY - dailyChecksUsed);
+  const isFreeLimitReached = freeChecksRemaining === 0;
+
   const canSubmit =
     vehicle.year &&
     vehicle.make &&
     vehicle.model &&
     mechanicDiagnosis.trim() &&
     quotedPrice.trim() &&
-    !loading;
+    !loading &&
+    !isFreeLimitReached;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -309,6 +350,10 @@ export default function SecondOpinionPage() {
 
       const data: SecondOpinionResult = await res.json();
       setResult(data);
+      const usage = loadDailyUsage();
+      const nextUsage = { day: usage.day, count: usage.count + 1 };
+      saveDailyUsage(nextUsage);
+      setDailyChecksUsed(nextUsage.count);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
@@ -334,6 +379,14 @@ export default function SecondOpinionPage() {
         </h1>
         <p className="text-gray-400 font-body max-w-md mx-auto">
           Enter your mechanic&apos;s quote and our AI will tell you if the price is fair, what to watch out for, and the right questions to ask.
+        </p>
+        <p className="mt-3 text-xs text-gray-500">
+          Free: {freeChecksRemaining} check{freeChecksRemaining === 1 ? '' : 's'} remaining today.
+          {' '}
+          <Link href="/pricing" className="text-cyan-300 hover:text-cyan-200">
+            Pro unlocks unlimited checks
+          </Link>
+          .
         </p>
       </motion.div>
 
@@ -465,27 +518,38 @@ export default function SecondOpinionPage() {
         </AnimatePresence>
 
         {/* Submit */}
-        <button
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className="w-full flex items-center justify-center gap-3 py-4 bg-cyan-500 hover:bg-cyan-400 disabled:bg-gray-800 disabled:text-gray-600 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all text-base"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Analyzing Quote...
-            </>
-          ) : (
-            <>
-              <Shield className="w-5 h-5" />
-              Get My 2nd Opinion
-              <ArrowRight className="w-5 h-5" />
-            </>
-          )}
-        </button>
+        {isFreeLimitReached ? (
+          <Link
+            href="/pricing"
+            className="flex w-full items-center justify-center gap-3 rounded-xl bg-cyan-400 py-4 text-base font-bold text-black transition-all hover:bg-cyan-300"
+          >
+            <Shield className="h-5 w-5" />
+            Upgrade for Unlimited Checks
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className="w-full flex items-center justify-center gap-3 py-4 bg-cyan-500 hover:bg-cyan-400 disabled:bg-gray-800 disabled:text-gray-600 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all text-base"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Analyzing Quote...
+              </>
+            ) : (
+              <>
+                <Shield className="w-5 h-5" />
+                Get My 2nd Opinion
+                <ArrowRight className="w-5 h-5" />
+              </>
+            )}
+          </button>
+        )}
 
         <p className="text-center text-xs text-gray-600">
-          100% Free &middot; Unlimited checks &middot; Powered by AI
+          Powered by AI &middot; Upgrade to Pro for unlimited checks
         </p>
       </motion.div>
 

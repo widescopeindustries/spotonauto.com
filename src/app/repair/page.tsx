@@ -56,7 +56,7 @@ export default function RepairHubPage() {
           <p className="text-sm text-gray-300 mt-2">Use plain-English complaint pages to narrow the problem before you pick parts or a repair.</p>
         </Link>
         <Link
-          href="/repairs"
+          href="/repair"
           className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all"
         >
           <h2 className="text-lg font-bold text-white">Browse repair categories</h2>
@@ -80,7 +80,7 @@ export default function RepairHubPage() {
               These are quick starts into exact repair walkthroughs for real vehicles, with the parts, specs, and steps already narrowed down.
             </p>
           </div>
-          <Link href="/repairs" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors">
+          <Link href="/repair" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors">
             Browse all repair categories →
           </Link>
         </div>
@@ -106,7 +106,7 @@ export default function RepairHubPage() {
               These common jobs are good entry points when you want a faster path into the right guide, vehicle, and parts list.
             </p>
           </div>
-          <Link href="/repairs" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors">
+          <Link href="/repair" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors">
             Browse all repair categories →
           </Link>
         </div>

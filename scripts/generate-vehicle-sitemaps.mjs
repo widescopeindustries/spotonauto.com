@@ -4,7 +4,7 @@
  * Outputs:
  *   public/vehicles/sitemap.xml          — sitemap index
  *   public/vehicles/sitemap/0.xml ...    — chunked vehicle URLs
- *   public/codes/sitemap/all.xml         — all 8,506 DTC codes (static)
+ *   (optional) public/codes/sitemap/*.xml — full KV DTC sitemap shards (disabled by default)
  *
  * Run: node scripts/generate-vehicle-sitemaps.mjs
  */
@@ -17,6 +17,7 @@ const ROOT = join(__dirname, '..');
 const BASE_URL = 'https://spotonauto.com';
 const LAST_MOD = process.env.SITEMAP_LAST_MOD || new Date().toISOString().slice(0, 10);
 const URLS_PER_SITEMAP = 10000;
+const GENERATE_FULL_DTC_SITEMAPS = String(process.env.GENERATE_FULL_DTC_SITEMAPS || '').toLowerCase() === 'true';
 
 // Cloudflare KV config
 const ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID;
@@ -181,10 +182,15 @@ async function main() {
   const t0 = Date.now();
 
   const vehicleCount = await generateVehicleSitemaps();
-  const dtcCount = await generateDtcSitemaps();
+  let dtcCount = 0;
+  if (GENERATE_FULL_DTC_SITEMAPS) {
+    dtcCount = await generateDtcSitemaps();
+  } else {
+    console.log('Skipping full KV DTC sitemap generation (set GENERATE_FULL_DTC_SITEMAPS=true to enable).');
+  }
 
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-  console.log(`\nDone in ${elapsed}s — ${vehicleCount} vehicle URLs + ${dtcCount} DTC URLs`);
+  console.log(`\nDone in ${elapsed}s — ${vehicleCount} vehicle URLs${dtcCount ? ` + ${dtcCount} DTC URLs` : ''}`);
 }
 
 main().catch(err => { console.error(err); process.exit(1); });

@@ -2089,8 +2089,8 @@ export default async function Page({ params }: PageProps) {
                     "@context": "https://schema.org",
                     "@type": "BreadcrumbList",
                     "itemListElement": [
-                        { "@type": "ListItem", position: 1, name: "Repairs", item: "https://spotonauto.com/repairs" },
-                        { "@type": "ListItem", position: 2, name: cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1), item: `https://spotonauto.com/repairs/${canonicalTask}` },
+                        { "@type": "ListItem", position: 1, name: "Repair Hub", item: "https://spotonauto.com/repair" },
+                        { "@type": "ListItem", position: 2, name: cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1), item: "https://spotonauto.com/repair" },
                         { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com${vehicleHubHref}` },
                         { "@type": "ListItem", position: 4, name: `${resolvedYear}`, item: `https://spotonauto.com${canonicalPath}` },
                     ],
@@ -2106,11 +2106,11 @@ export default async function Page({ params }: PageProps) {
             <nav className="max-w-6xl mx-auto px-4 pt-6 text-sm text-gray-500">
                 <Link href="/" className="hover:text-cyan-400 transition-colors">Home</Link>
                 <span className="mx-2">/</span>
-                <Link href="/repairs" className="hover:text-cyan-400 transition-colors">Repairs</Link>
+                <Link href="/repair" className="hover:text-cyan-400 transition-colors">Repair Hub</Link>
                 <span className="mx-2">/</span>
-                <Link href={`/repairs/${canonicalTask}`} className="hover:text-cyan-400 transition-colors capitalize">{cleanTask}</Link>
+                <Link href="/repair" className="hover:text-cyan-400 transition-colors capitalize">{cleanTask}</Link>
                 <span className="mx-2">/</span>
-                <Link href={`/guides/${canonicalMake}`} className="hover:text-cyan-400 transition-colors">{displayMake}</Link>
+                <Link href={vehicleHubHref} className="hover:text-cyan-400 transition-colors">{displayMake}</Link>
                 <span className="mx-2">/</span>
                 <Link href={vehicleHubHref} className="hover:text-cyan-400 transition-colors">{displayModel}</Link>
                 <span className="mx-2">/</span>
@@ -2343,7 +2343,7 @@ export default async function Page({ params }: PageProps) {
                                 <p className="mt-2 text-sm leading-6 text-gray-300">See all repairs, wiring diagrams, and codes for your {vehicleName}.</p>
                             </Link>
                             <Link
-                                href={`/guides/${canonicalMake}/${canonicalModel}`}
+                                href={vehicleHubHref}
                                 className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
                             >
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Model cluster</p>
@@ -2351,7 +2351,7 @@ export default async function Page({ params }: PageProps) {
                                 <p className="mt-2 text-sm leading-6 text-gray-300">Browse all repair guides for the {displayMake} {displayModel}.</p>
                             </Link>
                             <Link
-                                href={`/repairs/${canonicalTask}`}
+                                href="/repair"
                                 className="rounded-xl border border-white/10 bg-black/20 p-4 hover:border-violet-400/35 hover:bg-black/30 transition-all"
                             >
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200/80 mb-2">Repair family</p>
@@ -3088,19 +3088,19 @@ export default async function Page({ params }: PageProps) {
 
                 <div className="mt-8 flex flex-wrap gap-4">
                     <Link
-                        href={`/repairs/${canonicalTask}`}
+                        href="/repair"
                         className="inline-flex items-center gap-2 text-cyan-500 hover:text-cyan-400 text-sm font-medium transition-colors"
                     >
                         View All {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guides →
                     </Link>
                     <Link
-                        href={`/guides/${canonicalMake}/${canonicalModel}`}
+                        href={vehicleHubHref}
                         className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 text-sm font-medium transition-colors"
                     >
                         All {displayMake} {displayModel} Guides →
                     </Link>
                     <Link
-                        href="/repairs"
+                        href="/repair"
                         className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-400 text-sm font-medium transition-colors"
                     >
                         Browse All Repair Categories →

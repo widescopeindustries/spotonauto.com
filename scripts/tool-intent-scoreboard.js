@@ -240,7 +240,7 @@ async function main() {
         page: pagePath,
         sessions,
         clicks,
-        clicks_per_100_sessions: pct(clicks, sessions) * 100,
+        clicks_per_100_sessions: pct(clicks, sessions),
         top_subtag: topSubtag,
       };
     })
@@ -270,7 +270,7 @@ async function main() {
   console.log('=== SUMMARY ===\n');
   console.log(`  Tool page sessions: ${fmt(totalSessions)}`);
   console.log(`  Affiliate clicks on /tools/: ${fmt(totalClicks)}`);
-  console.log(`  Clicks / 100 sessions: ${fmt(pct(totalClicks, totalSessions) * 100, 2)}`);
+  console.log(`  Clicks / 100 sessions: ${fmt(pct(totalClicks, totalSessions), 2)}`);
   console.log(`  tool-intent clicks: ${fmt(toolIntentClicks)}`);
   console.log(`  tool-spec clicks: ${fmt(toolSpecClicks)}`);
   console.log(`  tool-supplies clicks: ${fmt(toolSuppliesClicks)}\n`);

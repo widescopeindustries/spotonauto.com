@@ -506,7 +506,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
       description: `Step-by-step repair guides for the most common ${vehicleLabel} jobs — brakes, oil, battery, and more.`,
       countLabel: `${vehicleHub.repairCount} guides`,
       tone: 'cyan',
-      primaryHref: repairGroup?.nodes[0]?.href || '/repairs',
+      primaryHref: repairGroup?.nodes[0]?.href || '/repair',
       primaryLabel: repairGroup ? 'Open highest-demand repairs' : 'Browse repair categories',
       previewLinks: buildPriorityRepairPreviewLinks(
         exactVehicleTier1Pages.length > 0 ? exactVehicleTier1Pages.map((entry) => ({
@@ -606,8 +606,8 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Repair Hub', item: 'https://spotonauto.com/repair' },
-      { '@type': 'ListItem', position: 2, name: originalMake, item: `https://spotonauto.com/guides/${canonicalMake}` },
-      { '@type': 'ListItem', position: 3, name: `${originalMake} ${originalModel}`, item: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}` },
+      { '@type': 'ListItem', position: 2, name: originalMake, item: 'https://spotonauto.com/repair' },
+      { '@type': 'ListItem', position: 3, name: `${originalMake} ${originalModel}`, item: `https://spotonauto.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}` },
       { '@type': 'ListItem', position: 4, name: vehicleLabel, item: `https://spotonauto.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}` },
     ],
   };
@@ -638,9 +638,9 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           <span className="mx-2">/</span>
           <Link href="/repair" className="hover:text-cyan-400 transition-colors">Repair Hub</Link>
           <span className="mx-2">/</span>
-          <Link href={`/guides/${canonicalMake}`} className="hover:text-cyan-400 transition-colors">{originalMake}</Link>
+          <Link href="/repair" className="hover:text-cyan-400 transition-colors">{originalMake}</Link>
           <span className="mx-2">/</span>
-          <Link href={`/guides/${canonicalMake}/${canonicalModel}`} className="hover:text-cyan-400 transition-colors">{originalModel}</Link>
+          <Link href={`/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}`} className="hover:text-cyan-400 transition-colors">{originalModel}</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-300">{canonicalYear}</span>
         </nav>
@@ -932,7 +932,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
                 Step-by-step guides for common {vehicleLabel} repairs.
               </p>
             </div>
-            <Link href="/repairs" className="text-sm text-cyan-400 hover:underline">
+            <Link href="/repair" className="text-sm text-cyan-400 hover:underline">
               Browse all repair categories →
             </Link>
           </div>
