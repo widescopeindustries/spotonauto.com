@@ -93,6 +93,24 @@ const REQUIRED_DIMENSIONS = [
     scope: 'EVENT',
   },
   {
+    parameterName: 'pricing_target',
+    displayName: 'Pricing CTA Target',
+    description: 'Revenue funnel target such as starter_free, pro_checkout, or pro_waitlist.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'pricing_label',
+    displayName: 'Pricing CTA Label',
+    description: 'Revenue funnel label used to identify placement source for pricing CTA clicks.',
+    scope: 'EVENT',
+  },
+  {
+    parameterName: 'second_opinion_verdict',
+    displayName: 'Second Opinion Verdict',
+    description: 'Verdict emitted by quote-check analysis such as fair price, seems high, or red flag.',
+    scope: 'EVENT',
+  },
+  {
     parameterName: 'repair_answer_section',
     displayName: 'Repair Answer Section',
     description: 'Repair answer section or card rendered on the page.',

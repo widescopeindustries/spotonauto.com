@@ -9,6 +9,7 @@ import AdUnit from '@/components/AdUnit';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import RepairSectionTracker from '@/components/RepairSectionTracker';
 import RepairTrackedLink from '@/components/RepairTrackedLink';
+import { PricingTrackedLink } from '@/components/PricingTracking';
 import { getTier1RescueEntryByHref, getTier1RescuePagesForExactVehicle, getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
 import { buildSymptomHref, getSymptomClustersForRepairTask } from '@/data/symptomGraph';
 import { isValidVehicleCombination, getClampedYear, getDisplayName, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, slugifyRoutePart, CORPUS_YEAR_MAX, isCorpusBacked } from '@/data/vehicles';
@@ -2160,6 +2161,22 @@ export default async function Page({ params }: PageProps) {
                         >
                             Browse the full {vehicleName} vehicle hub
                         </RepairTrackedLink>
+                        <PricingTrackedLink
+                            href="/second-opinion"
+                            target="starter_free"
+                            label={`repair_${canonicalTask}_quote_check`}
+                            className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 hover:border-emerald-400/45 hover:bg-emerald-500/15 transition-all"
+                        >
+                            Free quote check
+                        </PricingTrackedLink>
+                        <PricingTrackedLink
+                            href="/pricing"
+                            target="pro_waitlist"
+                            label={`repair_${canonicalTask}_quote_pro`}
+                            className="inline-flex items-center gap-2 rounded-lg border border-emerald-300/25 bg-white/[0.03] px-4 py-2 text-sm font-medium text-emerald-100 hover:border-emerald-200/45 hover:bg-white/[0.06] transition-all"
+                        >
+                            Quote Shield Pro
+                        </PricingTrackedLink>
                     </div>
                 </header>
 

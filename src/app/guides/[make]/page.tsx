@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps) {
   const displayName = originalMake || make.charAt(0).toUpperCase() + make.slice(1).replace(/-/g, ' ');
   return {
     title: `${displayName} Repair Guides | SpotOnAuto`,
-    description: `Browse DIY repair guides for ${displayName} vehicles with step-by-step maintenance, diagnostics, and repair instructions for common jobs.`,
+    description: `Browse ${displayName} DIY repair guides with step-by-step instructions for maintenance, diagnostics, and common fixes. Compare model-specific procedures, tools, and parts before you start.`,
     alternates: {
       canonical: `https://spotonauto.com/guides/${canonicalMake}`,
     },

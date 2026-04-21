@@ -110,6 +110,9 @@ const CUSTOM_DIMENSION_CANDIDATES = [
   'wiring_exit_kind',
   'entry_surface',
   'entry_destination',
+  'pricing_target',
+  'pricing_label',
+  'second_opinion_verdict',
 ];
 
 function getArg(name, fallback = null) {
@@ -521,6 +524,27 @@ async function main() {
     limit: 100,
   }, 'repair CTA layers');
 
+  const quoteShieldDailyDimensions = [
+    'date',
+    'eventName',
+    ...(availableDims.pricing_target ? ['customEvent:pricing_target'] : []),
+    ...(availableDims.pricing_label ? ['customEvent:pricing_label'] : []),
+    ...(availableDims.second_opinion_verdict ? ['customEvent:second_opinion_verdict'] : []),
+  ];
+
+  const quoteShieldDailyRows = await runReport(analyticsdata, {
+    dateRanges: [{ startDate, endDate }],
+    dimensions: quoteShieldDailyDimensions.map((name) => ({ name })),
+    metrics: [{ name: 'eventCount' }],
+    dimensionFilter: andExpressions([
+      fieldInList('eventName', ['pricing_cta_click', 'second_opinion_view', 'second_opinion_submit', 'second_opinion_result', 'second_opinion_limit_hit']),
+      filters.filter,
+      intentFilterExpr,
+    ]),
+    orderBys: [{ dimension: { dimensionName: 'date' } }],
+    limit: 2000,
+  }, 'quote shield daily');
+
   const pageRows = await runReport(analyticsdata, {
     dateRanges: [{ startDate, endDate }],
     dimensions: [{ name: 'pagePath' }],
@@ -650,6 +674,38 @@ async function main() {
     if (eventName === 'repair_answer_click') repairCtaByLayer[key].clicks += count;
   }
 
+  const quoteDailyIndex = Object.fromEntries(quoteShieldDailyDimensions.map((name, index) => [name, index]));
+  const quoteDaily = {};
+  const pricingLabelTotals = {};
+
+  for (const row of quoteShieldDailyRows) {
+    const date = row.dimensionValues?.[quoteDailyIndex.date]?.value || '(not set)';
+    const eventName = row.dimensionValues?.[quoteDailyIndex.eventName]?.value || '(not set)';
+    const count = Number(row.metricValues?.[0]?.value || 0);
+    const pricingLabel = quoteDailyIndex['customEvent:pricing_label'] !== undefined
+      ? row.dimensionValues?.[quoteDailyIndex['customEvent:pricing_label']]?.value || ''
+      : '';
+
+    if (!quoteDaily[date]) {
+      quoteDaily[date] = {
+        date,
+        pricing_cta_click: 0,
+        second_opinion_view: 0,
+        second_opinion_submit: 0,
+        second_opinion_result: 0,
+        second_opinion_limit_hit: 0,
+      };
+    }
+
+    if (Object.prototype.hasOwnProperty.call(quoteDaily[date], eventName)) {
+      quoteDaily[date][eventName] += count;
+    }
+
+    if (eventName === 'pricing_cta_click' && pricingLabel) {
+      pricingLabelTotals[pricingLabel] = (pricingLabelTotals[pricingLabel] || 0) + count;
+    }
+  }
+
   const surfaceRows = summarizeSurfaces(pageRows).slice(0, limit);
   const repairRows = Object.values(repairBySection)
     .map((row) => ({
@@ -701,6 +757,34 @@ async function main() {
       .sort((a, b) => Number(b.count.replace(/,/g, '')) - Number(a.count.replace(/,/g, ''))),
     ['event', 'count'],
   );
+
+  console.log('=== QUOTE SHIELD DAILY ===\n');
+  printTable(
+    Object.values(quoteDaily)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .map((row) => ({
+        date: row.date,
+        quote_views: fmt(row.second_opinion_view),
+        quote_submits: fmt(row.second_opinion_submit),
+        quote_results: fmt(row.second_opinion_result),
+        limit_hits: fmt(row.second_opinion_limit_hit),
+        pricing_cta_clicks: fmt(row.pricing_cta_click),
+      })),
+    ['date', 'quote_views', 'quote_submits', 'quote_results', 'limit_hits', 'pricing_cta_clicks'],
+  );
+
+  console.log('=== QUOTE CTA LABELS ===\n');
+  if (availableDims.pricing_label) {
+    printTable(
+      Object.entries(pricingLabelTotals)
+        .map(([label, count]) => ({ label, clicks: fmt(count) }))
+        .sort((a, b) => Number(b.clicks.replace(/,/g, '')) - Number(a.clicks.replace(/,/g, '')))
+        .slice(0, limit),
+      ['label', 'clicks'],
+    );
+  } else {
+    console.log('  customEvent:pricing_label is missing; run scripts/ensure-graph-ga4-dimensions.js and add this custom dimension in GA4.\n');
+  }
 
   console.log('=== GUIDE PROGRESSION ===\n');
   console.log(`  guide_step_view: ${fmt(guideTotals.guide_step_view || 0)}`);
