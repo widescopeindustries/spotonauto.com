@@ -257,7 +257,7 @@ interface GuideGeneratedEvent {
   task: string;
   partsCount: number;
   toolsCount: number;
-  manualMode?: 'vector' | 'kv' | 'live' | 'none';
+  manualMode?: 'graph' | 'hybrid' | 'vector' | 'kv' | 'live' | 'none';
   manualSourceCount?: number;
   taskSlug?: string;
   pageSurface?: AnalyticsPageSurface;
@@ -297,7 +297,7 @@ export function trackGuideGenerated(event: GuideGeneratedEvent): void {
 export function trackRetrievalBackbone(
   vehicle: string,
   task: string,
-  manualMode: 'vector' | 'kv' | 'live' | 'none',
+  manualMode: 'graph' | 'hybrid' | 'vector' | 'kv' | 'live' | 'none',
   manualSourceCount: number,
   context: AnalyticsContextInput = {},
 ): void {

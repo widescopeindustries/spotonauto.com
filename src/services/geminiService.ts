@@ -6,6 +6,7 @@ import { Vehicle, VehicleInfo, RepairGuide, ChatMessage, GroundingSource } from 
 import { isValidVehicleCombination } from '@/data/vehicles';
 import { getVehicleNHTSAData, nhtsaToPromptContext, recallsToSafetyWarnings } from './nhtsaService';
 import { searchManualSections } from './vectorSearch';
+import { retrieveGraphManualContext, type ManualConfidenceGate, type ManualRetrievalMode } from './manualGraphRetrieval';
 import { CHARM_ARCHIVE_BASE } from '@/lib/charmBase';
 import { getVehicleFromKV, findRelevantKVContent } from '@/lib/cloudflareKV';
 
@@ -237,7 +238,10 @@ interface ManualContext {
   content: string | null;
   sources: GroundingSource[];
   sourceCount: number;
-  retrievalMode: 'vector' | 'kv' | 'live' | 'none';
+  retrievalMode: ManualRetrievalMode;
+  confidence?: number;
+  gate?: ManualConfidenceGate;
+  reason?: string;
 }
 
 interface RepairGuidePromptResult {
@@ -411,6 +415,8 @@ function makeManualSource(
   title: string,
   snippet: string,
   similarity?: number,
+  confidence?: number,
+  matchedTerms?: string[],
 ): GroundingSource {
   return {
     uri: buildManualUrl(path),
@@ -418,6 +424,8 @@ function makeManualSource(
     path,
     snippet: clipSnippet(snippet),
     similarity,
+    confidence,
+    matchedTerms,
     kind: 'manual',
   };
 }
@@ -470,10 +478,52 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
   const yearNum = parseInt(year, 10);
   if (isNaN(yearNum) || yearNum > 2025 || yearNum < 1982) {
     console.log(`[MANUAL ARCHIVE] Year ${year} outside coverage (1982-2025), skipping`);
-    return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
+    return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none', reason: 'year-out-of-coverage' };
   }
 
-  // Try RAG vector search first (single DB query vs 4-5 HTTP fetches)
+  const graphResult = await retrieveGraphManualContext({
+    year: yearNum,
+    make,
+    model,
+    task: task ?? '',
+    maxCandidates: 4,
+  });
+  const fallbackGate = graphResult.gate;
+  const noneContext = (reason: string): ManualContext => ({
+    content: null,
+    sources: [],
+    sourceCount: 0,
+    retrievalMode: 'none',
+    gate: fallbackGate,
+    reason,
+  });
+
+  if (graphResult.mode !== 'none') {
+    if (graphResult.gate.passed) {
+      console.log(
+        `[GRAPH] ✓ mode=${graphResult.mode} confidence=${(graphResult.confidence * 100).toFixed(1)}% sources=${graphResult.sources.length}`,
+      );
+      return {
+        content: graphResult.content,
+        sources: graphResult.sources,
+        sourceCount: graphResult.sources.length,
+        retrievalMode: graphResult.mode,
+        confidence: graphResult.confidence,
+        gate: graphResult.gate,
+      };
+    }
+
+    console.warn(
+      `[GRAPH] Confidence gate blocked graph context for "${task}" ` +
+      `(confidence ${(graphResult.gate.confidence * 100).toFixed(1)}% < threshold ${(graphResult.gate.threshold * 100).toFixed(1)}%; reason=${graphResult.gate.reason})`,
+    );
+
+    if (graphResult.gate.strict && graphResult.gate.reason === 'high-intent-confidence-fail') {
+      return noneContext('strict-high-intent-confidence-fail');
+    }
+  }
+
+  // Fallback 1: vector semantic retrieval
   const vectorResults = await searchManualSections(task ?? '', {
     make,
     year: yearNum,
@@ -487,18 +537,22 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
       `=== ${result.sectionTitle} (relevance: ${(result.similarity * 100).toFixed(0)}%) ===\n${result.contentFull}`
     );
     const sources = selected.map((result) =>
-      makeManualSource(result.path, result.sectionTitle, result.contentPreview, result.similarity)
+      makeManualSource(result.path, result.sectionTitle, result.contentPreview, result.similarity, result.similarity)
     );
     const header = `=== Factory Service Manual: ${year} ${make} ${model} ===\n`;
+    const confidence = selected.reduce((sum, result) => sum + result.similarity, 0) / selected.length;
     return {
       content: header + corpusSections.join('\n\n'),
       sources,
       sourceCount: sources.length,
       retrievalMode: 'vector',
+      confidence,
+      gate: fallbackGate,
+      reason: fallbackGate && !fallbackGate.passed ? fallbackGate.reason : undefined,
     };
   }
 
-  // ─── KV-assisted fetch: skip multi-hop navigation via pre-indexed graph ────
+  // Fallback 2: KV-assisted fetch to reduce archive navigation hops
   // One KV read gives us the vehicle's full system/section tree. We then fetch
   // only the relevant content pages from charm (1-3 targeted requests instead of
   // the 4-5 sequential navigation hops below).
@@ -541,6 +595,8 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
             sources: resolved.map(p => p.source),
             sourceCount: resolved.length,
             retrievalMode: 'kv',
+            gate: fallbackGate,
+            reason: fallbackGate && !fallbackGate.passed ? fallbackGate.reason : undefined,
           };
         }
       }
@@ -554,7 +610,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     // Step 1: Get year page to find vehicle variants
     const yearUrl = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/`;
     const yearResp = await fetch(yearUrl, charmFetchOpts());
-    if (!yearResp.ok) { console.warn(`[MANUAL ARCHIVE] Make/year not found: ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
+    if (!yearResp.ok) { console.warn(`[MANUAL ARCHIVE] Make/year not found: ${make}/${year}`); return noneContext('live-make-year-missing'); }
     const yearHtml = await yearResp.text();
 
     // Extract relative variant links (exclude breadcrumbs/nav)
@@ -563,12 +619,12 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
       l.startsWith(`/${make}/`) && l.split('/').length === 4 // /Make/Year/Variant/
     );
 
-    if (!variantLinks.length) { console.warn(`[MANUAL ARCHIVE] No variants found for ${make}/${year}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
+    if (!variantLinks.length) { console.warn(`[MANUAL ARCHIVE] No variants found for ${make}/${year}`); return noneContext('live-variant-missing'); }
 
     // Step 2: Fuzzy-match the user's model to available variants
     const variantPaths = variantLinks.map(l => l.split('/')[3]); // just the encoded variant segment
     const bestPath = bestVariantMatch(model, variantPaths);
-    if (!bestPath) return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
+    if (!bestPath) return noneContext('live-model-match-missing');
 
     const variantBase = `${CHARM_BASE}/${encodeCharmSegment(make)}/${year}/${bestPath}`;
     const variantDecoded = decodeURIComponent(bestPath);
@@ -577,7 +633,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
     // Step 3: Fetch Repair and Diagnosis index
     const rdUrl = `${variantBase}Repair%20and%20Diagnosis/`;
     const rdResp = await fetch(rdUrl, charmFetchOpts());
-    if (!rdResp.ok) { console.warn(`[MANUAL ARCHIVE] No Repair+Diagnosis for ${variantDecoded}`); return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' }; }
+    if (!rdResp.ok) { console.warn(`[MANUAL ARCHIVE] No Repair+Diagnosis for ${variantDecoded}`); return noneContext('live-repair-diagnosis-missing'); }
     const rdHtml = await rdResp.text();
 
     // Step 4: Find task-relevant sections
@@ -592,6 +648,8 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
         sources: [makeManualSource(rdUrl.replace(CHARM_BASE, ''), 'Repair & Diagnosis Index', indexSnippet)],
         sourceCount: 1,
         retrievalMode: 'live',
+        gate: fallbackGate,
+        reason: fallbackGate && !fallbackGate.passed ? fallbackGate.reason : undefined,
       };
     }
 
@@ -640,7 +698,7 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
 
     const resolvedPages = contentPages.filter(Boolean) as Array<{ text: string; source: GroundingSource }>;
     const content = resolvedPages.map((page) => page.text).join('\n\n');
-    if (!content.trim()) return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
+    if (!content.trim()) return noneContext('live-empty-content');
 
     const header = `=== Factory Service Manual Archive: ${year} ${make} ${variantDecoded} ===\n`;
     console.log(`[MANUAL ARCHIVE] ✓ Fetched ${contentPages.filter(Boolean).length} section(s) for "${task}"`);
@@ -649,11 +707,13 @@ async function fetchFromCharmLi(year: string, make: string, model: string, task?
       sources: resolvedPages.map((page) => page.source),
       sourceCount: resolvedPages.length,
       retrievalMode: 'live',
+      gate: fallbackGate,
+      reason: fallbackGate && !fallbackGate.passed ? fallbackGate.reason : undefined,
     };
 
   } catch (error) {
     console.error('[MANUAL ARCHIVE] Fetch error:', error);
-    return { content: null, sources: [], sourceCount: 0, retrievalMode: 'none' };
+    return noneContext('live-fetch-error');
   }
 }
 
@@ -742,6 +802,8 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
     retrieval: {
       manualMode: manualContext.retrievalMode,
       manualSourceCount: manualContext.sourceCount,
+      manualConfidence: manualContext.confidence,
+      manualGateReason: manualContext.reason,
     },
   };
 };
@@ -893,8 +955,10 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
     sources: usedManualContext && manualContext.sources.length > 0 ? manualContext.sources : rawSources,
     sourceCount: usedManualContext && manualContext.sources.length > 0 ? manualContext.sourceCount : rawSources.length,
     retrieval: {
-      manualMode: usedManualContext ? manualContext.retrievalMode : 'none',
-      manualSourceCount: usedManualContext ? manualContext.sourceCount : 0,
+      manualMode: manualContext.retrievalMode,
+      manualSourceCount: manualContext.sourceCount,
+      manualConfidence: manualContext.confidence,
+      manualGateReason: manualContext.reason,
     },
   };
 };

@@ -24,8 +24,10 @@ export interface RepairStep {
 }
 
 export interface RetrievalMetadata {
-  manualMode: 'vector' | 'kv' | 'live' | 'none';
+  manualMode: 'graph' | 'hybrid' | 'vector' | 'kv' | 'live' | 'none';
   manualSourceCount: number;
+  manualConfidence?: number;
+  manualGateReason?: string;
 }
 
 export interface RepairGuide {
@@ -74,6 +76,8 @@ export interface GroundingSource {
   similarity?: number;
   path?: string;
   kind?: 'manual' | 'nhtsa' | 'web';
+  confidence?: number;
+  matchedTerms?: string[];
 }
 
 export interface VehicleInfo {

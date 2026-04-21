@@ -13,6 +13,16 @@ export type KnowledgeGraphRelation =
   | 'references'
   | 'related';
 
+export interface KnowledgeGraphEvidence {
+  source: 'manual-embedding' | 'manual-archive' | 'vector' | 'kv' | 'graph';
+  href?: string;
+  path?: string;
+  snippet?: string;
+  matchedTerms?: string[];
+  score?: number;
+  observedAt?: string;
+}
+
 export interface KnowledgeGraphReference {
   nodeId?: string;
   edgeId?: string;
@@ -22,6 +32,8 @@ export interface KnowledgeGraphReference {
   taskNodeId?: string;
   systemNodeId?: string;
   codeNodeId?: string;
+  confidence?: number;
+  evidence?: KnowledgeGraphEvidence[];
 }
 
 function slugifyGraphPart(value: string): string {
@@ -91,6 +103,8 @@ export function buildEdgeReference(args: {
   task?: string;
   system?: string;
   code?: string;
+  confidence?: number;
+  evidence?: KnowledgeGraphEvidence[];
 }): KnowledgeGraphReference {
   return {
     nodeId: args.targetNodeId,
@@ -104,5 +118,7 @@ export function buildEdgeReference(args: {
     taskNodeId: args.task ? buildTaskNodeId(args.task) : undefined,
     systemNodeId: args.system ? buildSystemNodeId(args.system) : undefined,
     codeNodeId: args.code ? buildCodeNodeId(args.code) : undefined,
+    confidence: args.confidence,
+    evidence: args.evidence,
   };
 }

@@ -42,6 +42,9 @@ export interface ManualSectionMatchRow {
   model: string;
   sectionTitle: string;
   contentPreview: string;
+  contentFull?: string;
+  relevance?: number;
+  matchedTerms?: string[];
 }
 
 export interface ManualEmbeddingsHealth {
@@ -234,6 +237,8 @@ function mapSectionRows<T extends QueryResultRow>(rows: T[]): ManualSectionMatch
     model: String(row.model || ''),
     sectionTitle: String(row.section_title || ''),
     contentPreview: String(row.content_preview || ''),
+    contentFull: typeof row.content_full === 'string' ? String(row.content_full || '') : undefined,
+    relevance: row.relevance !== undefined ? Number(row.relevance || 0) : undefined,
   }));
 }
 
@@ -524,6 +529,7 @@ export async function findManualSectionsByTerms(args: {
          model,
          section_title,
          content_preview,
+         content_full,
          (${relevanceExpr}) AS relevance
        FROM manual_embeddings
        WHERE make = $1
@@ -544,7 +550,15 @@ export async function findManualSectionsByTerms(args: {
     );
 
     recordVpsSuccess();
-    return mapSectionRows(rows);
+    return mapSectionRows(rows).map((row) => {
+      const haystack = `${row.sectionTitle} ${row.contentPreview} ${row.contentFull || ''}`.toLowerCase();
+      const matchedTerms = normalizedTerms.filter((term) => haystack.includes(term));
+      return {
+        ...row,
+        matchedTerms,
+        relevance: row.relevance ?? matchedTerms.length,
+      };
+    });
     } catch (error) {
       recordVpsFailure();
       throw error;
@@ -576,11 +590,15 @@ export async function findManualSectionsByTerms(args: {
       }))
       .map((row) => {
         const haystack = `${row.sectionTitle} ${row.contentPreview} ${row.contentFull}`.toLowerCase();
+        const matchedTerms: string[] = [];
         let score = 0;
         for (const term of normalizedTerms) {
-          if (haystack.includes(term)) score += 1;
+          if (haystack.includes(term)) {
+            score += 1;
+            matchedTerms.push(term);
+          }
         }
-        return { row, score };
+        return { row, score, matchedTerms };
       })
       .filter(({ score }) => score > 0)
       .sort((a, b) => b.score - a.score)
@@ -591,9 +609,20 @@ export async function findManualSectionsByTerms(args: {
         model: row.model,
         sectionTitle: row.sectionTitle,
         contentPreview: row.contentPreview,
+        contentFull: row.contentFull,
       }));
 
-    return sortSectionMatchesByModelHints(filtered, args.model).slice(0, args.limit);
+    return sortSectionMatchesByModelHints(filtered, args.model)
+      .slice(0, args.limit)
+      .map((row) => {
+        const haystack = `${row.sectionTitle} ${row.contentPreview} ${row.contentFull || ''}`.toLowerCase();
+        const matchedTerms = normalizedTerms.filter((term) => haystack.includes(term));
+        return {
+          ...row,
+          relevance: matchedTerms.length,
+          matchedTerms,
+        };
+      });
   }
 
   return [];

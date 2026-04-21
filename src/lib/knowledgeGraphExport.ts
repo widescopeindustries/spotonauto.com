@@ -18,6 +18,8 @@ export interface KnowledgeGraphExportEdge {
   label?: string;
   description?: string;
   badge?: string;
+  confidence?: number;
+  evidence?: KnowledgeGraphReference['evidence'];
 }
 
 export interface KnowledgeGraphExportNodeInput extends KnowledgeGraphReference {
@@ -113,6 +115,8 @@ export function buildKnowledgeGraphExport(args: {
         taskNodeId: node.taskNodeId,
         systemNodeId: node.systemNodeId,
         codeNodeId: node.codeNodeId,
+        confidence: node.confidence,
+        evidence: node.evidence,
       });
 
       addEdge(edges, node.edgeId && node.sourceNodeId && node.targetNodeId ? {
@@ -125,6 +129,8 @@ export function buildKnowledgeGraphExport(args: {
         label: node.label,
         description: node.description,
         badge: node.badge,
+        confidence: node.confidence,
+        evidence: node.evidence,
       } : null);
     }
   }

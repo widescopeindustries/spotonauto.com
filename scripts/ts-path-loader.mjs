@@ -43,6 +43,13 @@ function resolveRelativePath(specifier, parentURL) {
 }
 
 export async function resolve(specifier, context, defaultResolve) {
+  if (specifier === 'server-only') {
+    return {
+      url: pathToFileURL(path.resolve(projectRoot, 'scripts', 'server-only-shim.mjs')).href,
+      shortCircuit: true,
+    };
+  }
+
   const aliasUrl = resolveAliasPath(specifier);
   if (aliasUrl) {
     return {

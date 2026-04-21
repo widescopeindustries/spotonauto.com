@@ -400,6 +400,8 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         taskNodeId: node.taskNodeId,
         systemNodeId: node.systemNodeId,
         codeNodeId: node.codeNodeId,
+        confidence: 'confidence' in node ? node.confidence : undefined,
+        evidence: 'evidence' in node ? node.evidence : undefined,
         href: node.href,
         label: node.label,
         description: node.description,

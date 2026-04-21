@@ -24,12 +24,14 @@
     "analytics:graph-dimensions:create": "node scripts/ensure-graph-ga4-dimensions.js --create-missing",
     "analytics:graph-scoreboard": "node scripts/graph-scoreboard.js",
     "analytics:graph-apply": "node scripts/graph-scoreboard.js --apply-live",
+    "analytics:graph-coverage": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/graph-coverage-audit.ts",
     "analytics:lost-pages": "node scripts/lost-pages-report.js",
     "analytics:indexing-trust": "node scripts/indexing-trust-monitor.js",
     "health:manual-backbone": "node --experimental-strip-types scripts/manual-backbone-health.ts",
     "index:manual-backbone": "node --experimental-strip-types scripts/index-lmdb-vectors.ts",
     "audit:internal-links": "node scripts/internal-link-audit.js",
     "audit:knowledge-graph": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/audit-knowledge-graph.ts",
+    "eval:graph-retrieval": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/eval-graph-retrieval.ts",
     "seo:graph-link-suggestions": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/generate-graph-link-suggestions.ts",
     "smoke:prod": "node scripts/smoke-prod.mjs",
     "smoke:local": "BASE_URL=http://localhost:3000 node scripts/smoke-prod.mjs"
@@ -49,6 +51,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-webcam": "^7.2.0",
+    "server-only": "^0.0.1",
     "stripe": "^17.7.0",
     "tailwind-merge": "^3.4.0"
   },

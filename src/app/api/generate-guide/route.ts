@@ -132,7 +132,9 @@ export async function POST(req: NextRequest) {
         }
         console.log(
           `[RETRIEVAL] vehicle-info mode=${result.retrieval?.manualMode || 'none'} ` +
-          `manual_sources=${result.retrieval?.manualSourceCount || 0}`
+          `manual_sources=${result.retrieval?.manualSourceCount || 0} ` +
+          `confidence=${(result.retrieval?.manualConfidence ?? 0).toFixed(3)} ` +
+          `gate_reason=${result.retrieval?.manualGateReason || 'none'}`
         );
         break;
 
@@ -143,7 +145,9 @@ export async function POST(req: NextRequest) {
         }
         console.log(
           `[RETRIEVAL] generate-guide mode=${result.retrieval?.manualMode || 'none'} ` +
-          `manual_sources=${result.retrieval?.manualSourceCount || 0}`
+          `manual_sources=${result.retrieval?.manualSourceCount || 0} ` +
+          `confidence=${(result.retrieval?.manualConfidence ?? 0).toFixed(3)} ` +
+          `gate_reason=${result.retrieval?.manualGateReason || 'none'}`
         );
         break;
 

@@ -13,6 +13,7 @@ import {
   findManualSectionsByTerms,
 } from '@/lib/manualEmbeddingsStore';
 import {
+  type KnowledgeGraphEvidence,
   buildCodeNodeId,
   buildEdgeReference,
   buildManualNodeId,
@@ -29,6 +30,33 @@ function clip(value: string, maxLength = 140): string {
   const normalized = value.replace(/\s+/g, ' ').trim();
   if (normalized.length <= maxLength) return normalized;
   return `${normalized.slice(0, maxLength - 1).trim()}...`;
+}
+
+function estimateConfidence(row: {
+  relevance?: number;
+  matchedTerms?: string[];
+}): number {
+  const relevance = Math.max(0, row.relevance || 0);
+  const matched = Math.max(0, row.matchedTerms?.length || 0);
+  const score = Math.min(1, 0.35 + relevance * 0.08 + matched * 0.06);
+  return Number(score.toFixed(3));
+}
+
+function toEvidence(row: {
+  path: string;
+  contentPreview: string;
+  matchedTerms?: string[];
+  relevance?: number;
+}): KnowledgeGraphEvidence[] {
+  return [{
+    source: 'manual-embedding',
+    path: row.path,
+    href: buildManualUrl(row.path),
+    snippet: clip(row.contentPreview, 220),
+    matchedTerms: row.matchedTerms?.slice(0, 8),
+    score: row.relevance,
+    observedAt: new Date().toISOString(),
+  }];
 }
 
 async function safeFindRows<T>(label: string, lookup: () => Promise<T[]>): Promise<T[]> {
@@ -56,6 +84,8 @@ export async function getManualSectionLinksForCode(code: DTCCode, limit = 4): Pr
       make: row.make,
       model: row.model,
       code: code.code,
+      confidence: estimateConfidence(row),
+      evidence: toEvidence(row),
     }),
     href: buildManualUrl(row.path),
     label: `${row.year} ${row.make} ${row.model} ${row.sectionTitle}`,
@@ -91,6 +121,8 @@ export async function getManualSectionLinksForWiringVehicle(
       make: vehicle.make,
       model: vehicle.model,
       system,
+      confidence: estimateConfidence(row),
+      evidence: toEvidence(row),
     }),
     href: buildManualUrl(row.path),
     label: `${vehicle.year} ${vehicle.make} ${vehicle.model} ${row.sectionTitle}`,
@@ -179,6 +211,8 @@ export async function getManualSectionLinksForRepair(args: {
       make: args.displayMake,
       model: args.displayModel,
       task: args.task,
+      confidence: estimateConfidence(row),
+      evidence: toEvidence(row),
     }),
     href: buildManualUrl(row.path),
     label: `${args.year} ${args.displayMake} ${args.displayModel} ${row.sectionTitle}`,

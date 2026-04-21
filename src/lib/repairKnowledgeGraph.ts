@@ -27,6 +27,7 @@ import {
   buildWiringNodeId,
 } from '@/lib/knowledgeGraph';
 import { getManualSectionLinksForRepair } from '@/lib/manualSectionLinks';
+import { rankKnowledgeGraphNodesHybrid } from '@/lib/knowledgeGraphRanking';
 import { getRepairTaskProfile, type RepairTaskProfile } from '@/lib/repairTaskProfiles';
 
 export type RepairKnowledgeKind = 'manual' | 'spec' | 'tool' | 'wiring' | 'dtc';
@@ -471,6 +472,8 @@ async function getManualNodes(args: {
       taskNodeId: link.taskNodeId,
       systemNodeId: link.systemNodeId,
       codeNodeId: link.codeNodeId,
+      confidence: link.confidence,
+      evidence: link.evidence,
       kind: 'manual',
       href: link.href,
       label: link.label,
@@ -515,6 +518,14 @@ async function getManualNodes(args: {
         make: args.displayMake,
         model: args.displayModel,
         task: args.task,
+        confidence: 0.68,
+        evidence: [{
+          source: 'manual-archive',
+          href: exactVariant.href,
+          path: exactVariant.href,
+          snippet: `Exact manual branch candidate for ${args.year} ${args.displayMake} ${args.displayModel}.`,
+          observedAt: new Date().toISOString(),
+        }],
       }),
       kind: 'manual',
       href: exactVariant.href,
@@ -540,6 +551,14 @@ async function getManualNodes(args: {
         make: args.displayMake,
         model: args.displayModel,
         task: args.task,
+        confidence: 0.56,
+        evidence: [{
+          source: 'manual-archive',
+          href: yearIndexHref,
+          path: yearIndexHref,
+          snippet: `${args.year} ${args.displayMake} manual index for variant selection.`,
+          observedAt: new Date().toISOString(),
+        }],
       }),
       kind: 'manual',
       href: yearIndexHref,
@@ -562,6 +581,14 @@ async function getManualNodes(args: {
         make: args.displayMake,
         model: args.displayModel,
         task: args.task,
+        confidence: 0.48,
+        evidence: [{
+          source: 'manual-archive',
+          href: libraryHref,
+          path: libraryHref,
+          snippet: `${args.displayMake} manual library root.`,
+          observedAt: new Date().toISOString(),
+        }],
       }),
       kind: 'manual',
       href: libraryHref,
@@ -581,6 +608,8 @@ function getGroups(args: {
   toolNodes: RepairKnowledgeNode[];
   wiringNodes: RepairKnowledgeNode[];
   dtcNodes: RepairKnowledgeNode[];
+  task: string;
+  vehicleLabel: string;
 }): RepairKnowledgeGroup[] {
   const groups: RepairKnowledgeGroup[] = [
     {
@@ -588,35 +617,50 @@ function getGroups(args: {
       title: 'OEM Manual Evidence & Paths',
       browseHref: '/manual',
       theme: 'slate',
-      nodes: args.manualNodes,
+      nodes: rankKnowledgeGraphNodesHybrid('repair', args.manualNodes, {
+        task: args.task,
+        vehicle: args.vehicleLabel,
+      }),
     },
     {
       kind: 'spec',
       title: 'Specs Already on This Page',
       browseHref: '#parts-needed',
       theme: 'emerald',
-      nodes: args.specNodes,
+      nodes: rankKnowledgeGraphNodesHybrid('repair', args.specNodes, {
+        task: args.task,
+        vehicle: args.vehicleLabel,
+      }),
     },
     {
       kind: 'tool',
       title: 'Specs & Reference Pages',
       browseHref: '/tools',
       theme: 'cyan',
-      nodes: args.toolNodes,
+      nodes: rankKnowledgeGraphNodesHybrid('repair', args.toolNodes, {
+        task: args.task,
+        vehicle: args.vehicleLabel,
+      }),
     },
     {
       kind: 'wiring',
       title: 'Relevant Wiring Paths',
       browseHref: '/wiring',
       theme: 'violet',
-      nodes: args.wiringNodes,
+      nodes: rankKnowledgeGraphNodesHybrid('repair', args.wiringNodes, {
+        task: args.task,
+        vehicle: args.vehicleLabel,
+      }),
     },
     {
       kind: 'dtc',
       title: 'Likely Trouble Codes',
       browseHref: '/codes',
       theme: 'amber',
-      nodes: args.dtcNodes,
+      nodes: rankKnowledgeGraphNodesHybrid('repair', args.dtcNodes, {
+        task: args.task,
+        vehicle: args.vehicleLabel,
+      }),
     },
   ];
 
@@ -641,7 +685,15 @@ export async function buildRepairKnowledgeGraph(args: {
   const toolNodes = getToolNodes(args.year, args.displayMake, args.displayModel, args.task);
   const wiringNodes = getWiringNodes(args);
   const dtcNodes = getDtcNodes(args.task, 4);
-  const groups = getGroups({ manualNodes, specNodes, toolNodes, wiringNodes, dtcNodes });
+  const groups = getGroups({
+    manualNodes,
+    specNodes,
+    toolNodes,
+    wiringNodes,
+    dtcNodes,
+    task: args.task,
+    vehicleLabel: `${args.year} ${args.displayMake} ${args.displayModel}`,
+  });
 
   return {
     groups,

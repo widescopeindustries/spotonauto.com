@@ -235,6 +235,8 @@ function buildCodeBlocks(code: (typeof DTC_CODES)[number]): KnowledgeGraphExport
       taskNodeId: node.taskNodeId,
       systemNodeId: node.systemNodeId,
       codeNodeId: node.codeNodeId,
+        confidence: 'confidence' in node ? node.confidence : undefined,
+        evidence: 'evidence' in node ? node.evidence : undefined,
       href: node.href,
       label: node.label,
       description: node.description,
@@ -298,6 +300,8 @@ function buildWiringBlocks(system: WiringSystemSlug, vehicle: typeof WIRING_SEO_
       taskNodeId: node.taskNodeId,
       systemNodeId: node.systemNodeId,
       codeNodeId: node.codeNodeId,
+        confidence: 'confidence' in node ? node.confidence : undefined,
+        evidence: 'evidence' in node ? node.evidence : undefined,
       href: node.href,
       label: node.label,
       description: node.description,
@@ -325,6 +329,8 @@ function buildSymptomBlocks(slug: string): KnowledgeGraphExportBlockInput[] {
       taskNodeId: node.taskNodeId,
       systemNodeId: node.systemNodeId,
       codeNodeId: node.codeNodeId,
+        confidence: 'confidence' in node ? node.confidence : undefined,
+        evidence: 'evidence' in node ? node.evidence : undefined,
       href: node.href,
       label: node.label,
       description: node.description,
@@ -334,10 +340,13 @@ function buildSymptomBlocks(slug: string): KnowledgeGraphExportBlockInput[] {
   }));
 }
 
-export async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
+export async function collectSnapshots(options?: { limit?: number }): Promise<SurfaceSnapshot[]> {
   const snapshots: SurfaceSnapshot[] = [];
+  const limit = options?.limit && options.limit > 0 ? options.limit : null;
+  const reachedLimit = () => limit !== null && snapshots.length >= limit;
 
   for (const code of DTC_CODES) {
+    if (reachedLimit()) return snapshots;
     const exportData = buildKnowledgeGraphExport({
       surface: 'code',
       rootNodeId: buildCodeNodeId(code.code),
@@ -355,6 +364,7 @@ export async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
   }
 
   for (const cluster of SYMPTOM_CLUSTERS) {
+    if (reachedLimit()) return snapshots;
     const exportData = buildKnowledgeGraphExport({
       surface: 'symptom',
       rootNodeId: buildSymptomNodeId(cluster.slug),
@@ -373,8 +383,10 @@ export async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
 
   const systems = Object.keys(WIRING_SEO_SYSTEMS) as WiringSystemSlug[];
   for (const vehicle of WIRING_SEO_VEHICLES) {
+    if (reachedLimit()) return snapshots;
     for (const system of systems) {
       if (!supportsWiringSystem(vehicle, system)) continue;
+      if (reachedLimit()) return snapshots;
 
       const exportData = buildKnowledgeGraphExport({
         surface: 'wiring',
@@ -392,6 +404,7 @@ export async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
       });
     }
 
+    if (reachedLimit()) return snapshots;
     const vehicleHub = await buildVehicleHubGraph({
       year: String(vehicle.year),
       make: slugifyRoutePart(vehicle.make),
@@ -418,6 +431,8 @@ export async function collectSnapshots(): Promise<SurfaceSnapshot[]> {
           taskNodeId: node.taskNodeId,
           systemNodeId: node.systemNodeId,
           codeNodeId: node.codeNodeId,
+        confidence: 'confidence' in node ? node.confidence : undefined,
+        evidence: 'evidence' in node ? node.evidence : undefined,
           href: node.href,
           label: node.label,
           description: node.description,

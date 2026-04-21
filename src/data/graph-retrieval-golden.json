@@ -1,0 +1,50 @@
+[
+  {
+    "id": "toyota-camry-brake-pads",
+    "year": 2010,
+    "make": "Toyota",
+    "model": "Camry",
+    "task": "brake pad replacement",
+    "expectedTerms": ["brake", "pad", "caliper", "rotor"]
+  },
+  {
+    "id": "ford-f150-alternator",
+    "year": 2014,
+    "make": "Ford",
+    "model": "F-150",
+    "task": "alternator replacement",
+    "expectedTerms": ["alternator", "charging", "battery", "generator"]
+  },
+  {
+    "id": "honda-civic-spark-plugs",
+    "year": 2012,
+    "make": "Honda",
+    "model": "Civic",
+    "task": "spark plug replacement",
+    "expectedTerms": ["spark plug", "ignition", "misfire"]
+  },
+  {
+    "id": "chevrolet-silverado-starter",
+    "year": 2016,
+    "make": "Chevrolet",
+    "model": "Silverado",
+    "task": "starter replacement",
+    "expectedTerms": ["starter", "starting", "crank", "solenoid"]
+  },
+  {
+    "id": "nissan-altima-coolant",
+    "year": 2013,
+    "make": "Nissan",
+    "model": "Altima",
+    "task": "coolant flush",
+    "expectedTerms": ["coolant", "radiator", "cooling", "thermostat"]
+  },
+  {
+    "id": "bmw-3-series-o2",
+    "year": 2011,
+    "make": "Bmw",
+    "model": "3 Series",
+    "task": "oxygen sensor replacement",
+    "expectedTerms": ["oxygen sensor", "o2", "emissions"]
+  }
+]

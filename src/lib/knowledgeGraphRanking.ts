@@ -19,6 +19,15 @@ export interface KnowledgeGraphRankingContext {
   query?: string;
 }
 
+export interface HybridKnowledgeGraphNode {
+  kind: KnowledgeGraphKind;
+  label?: string;
+  description?: string;
+  score?: number;
+  confidence?: number;
+  evidence?: unknown[];
+}
+
 interface KnowledgeGraphRankingRuleMatch {
   tasks?: string[];
   systems?: string[];
@@ -187,6 +196,49 @@ export function rankKnowledgeGraphBlocks<TNode, TBlock extends KnowledgeGraphBlo
     const nodeDiff = b.nodes.length - a.nodes.length;
     if (nodeDiff !== 0) return nodeDiff;
     return a.title.localeCompare(b.title);
+  });
+}
+
+function computeContextMatchScore(
+  contextTerms: Set<string>,
+  node: { label?: string; description?: string },
+): number {
+  if (contextTerms.size === 0) return 0;
+  const terms = buildContextTerms({
+    task: node.label,
+    query: node.description,
+  });
+  if (terms.size === 0) return 0;
+  let matches = 0;
+  for (const token of terms) {
+    if (contextTerms.has(token)) matches += 1;
+  }
+  return matches;
+}
+
+export function rankKnowledgeGraphNodesHybrid<TNode extends HybridKnowledgeGraphNode>(
+  surface: KnowledgeGraphSurface,
+  nodes: TNode[],
+  context?: KnowledgeGraphRankingContext,
+): TNode[] {
+  const contextTerms = buildContextTerms(context);
+
+  return [...nodes].sort((a, b) => {
+    const baseA = Number.isFinite(a.score) ? Number(a.score) : 0;
+    const baseB = Number.isFinite(b.score) ? Number(b.score) : 0;
+    const groupWeightA = getGroupWeight(surface, a.kind, contextTerms) * 0.4;
+    const groupWeightB = getGroupWeight(surface, b.kind, contextTerms) * 0.4;
+    const confidenceA = (a.confidence || 0) * 100;
+    const confidenceB = (b.confidence || 0) * 100;
+    const evidenceA = (a.evidence?.length || 0) * 6;
+    const evidenceB = (b.evidence?.length || 0) * 6;
+    const contextScoreA = computeContextMatchScore(contextTerms, a) * 8;
+    const contextScoreB = computeContextMatchScore(contextTerms, b) * 8;
+    const totalA = baseA + groupWeightA + confidenceA + evidenceA + contextScoreA;
+    const totalB = baseB + groupWeightB + confidenceB + evidenceB + contextScoreB;
+
+    if (totalB !== totalA) return totalB - totalA;
+    return (a.label || '').localeCompare(b.label || '');
   });
 }
 
