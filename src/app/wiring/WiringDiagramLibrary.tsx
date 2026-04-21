@@ -41,21 +41,60 @@ function normalizeModelText(value: string): string {
     .trim();
 }
 
+const VARIANT_NOISE_TOKENS = new Set([
+  '2wd',
+  '4wd',
+  'awd',
+  'fwd',
+  'rwd',
+  '4x4',
+  '2x4',
+  'lwb',
+  'swb',
+  'xl',
+  'xlt',
+  'base',
+  'sport',
+  'limited',
+  'premium',
+  'sedan',
+  'coupe',
+  'wagon',
+  'hatchback',
+  'suv',
+]);
+
+function normalizeVariantCore(value: string): string {
+  return normalizeModelText(value)
+    .split(' ')
+    .filter((token) => token.length > 1 && !VARIANT_NOISE_TOKENS.has(token))
+    .join(' ')
+    .trim();
+}
+
 function scoreTextMatch(candidate: string, needle: string): number {
   const candidateNorm = normalizeModelText(candidate);
   const needleNorm = normalizeModelText(needle);
+  const candidateCore = normalizeVariantCore(candidate);
+  const needleCore = normalizeVariantCore(needle);
   if (!candidateNorm || !needleNorm) return 0;
 
   if (candidateNorm === needleNorm) return 100;
+  if (candidateCore && needleCore && candidateCore === needleCore) return 98;
   if (candidateNorm.startsWith(`${needleNorm} `)) return 95;
   if (candidateNorm.includes(` ${needleNorm} `)) return 88;
   if (candidateNorm.includes(needleNorm)) return 80;
+  if (candidateCore && needleCore && candidateCore.includes(needleCore)) return 84;
 
   let tokenHits = 0;
-  for (const token of needleNorm.split(' ')) {
+  for (const token of needleCore.split(' ')) {
     if (token.length > 1 && candidateNorm.includes(token)) tokenHits += 1;
   }
-  return tokenHits > 0 ? 45 + tokenHits * 10 : 0;
+  if (tokenHits > 0) return 45 + tokenHits * 10;
+
+  const needleHead = needleCore.split(' ')[0];
+  if (needleHead && needleHead.length > 2 && candidateCore.includes(needleHead)) return 42;
+  return 0;
 }
 
 function resolveBestMatch(options: string[], needle: string): string | null {
@@ -70,7 +109,7 @@ function resolveBestMatch(options: string[], needle: string): string | null {
     }
   }
 
-  return bestScore >= 60 ? bestVariant : null;
+  return bestScore >= 42 ? bestVariant : null;
 }
 
 function resolveVariantForModel(variants: string[], model: string): string | null {
@@ -738,8 +777,8 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           {variantLookupError && (
             <p className="wl-hint wl-hint-warn">Archive variant lookup is unavailable right now. Trying the direct model path instead.</p>
           )}
-          {selectedYear && selectedMake && selectedModel && !loadingVariants && !selectedVariant && !variantLookupError && !loadingDiagrams && !diagramData && (
-            <p className="wl-hint">We found the vehicle, but could not resolve an exact archive variant for that model. Try another year or model.</p>
+          {selectedYear && selectedMake && selectedModel && !loadingVariants && !selectedVariant && !variantLookupError && !loadingDiagrams && !diagramData && !diagramError && (
+            <p className="wl-hint">No exact archive variant match yet. Trying the closest compatible variant for this model.</p>
           )}
           {isUsingDirectModelFallback && !loadingDiagrams && diagramData && (
             <p className="wl-hint">Opened diagrams using the direct model path because no engine-specific variant was required.</p>

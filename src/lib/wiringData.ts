@@ -90,23 +90,66 @@ function normalizeText(value: string): string {
     .trim();
 }
 
+const VARIANT_NOISE_TOKENS = new Set([
+  '2wd',
+  '4wd',
+  'awd',
+  'fwd',
+  'rwd',
+  '4x4',
+  '2x4',
+  'lwb',
+  'swb',
+  'xl',
+  'xlt',
+  'base',
+  'sport',
+  'limited',
+  'premium',
+  'sedan',
+  'coupe',
+  'wagon',
+  'hatchback',
+  'suv',
+]);
+
+function normalizeVariantCore(value: string): string {
+  return normalizeText(value)
+    .split(' ')
+    .filter((token) => token.length > 1 && !VARIANT_NOISE_TOKENS.has(token))
+    .join(' ')
+    .trim();
+}
+
 function scoreVariantMatch(variant: string, model: string): number {
   const variantNorm = normalizeText(variant);
   const modelNorm = normalizeText(model);
+  const variantCore = normalizeVariantCore(variant);
+  const modelCore = normalizeVariantCore(model);
 
   if (!variantNorm || !modelNorm) return 0;
   if (variantNorm === modelNorm) return 100;
+  if (variantCore && modelCore && variantCore === modelCore) return 98;
   if (variantNorm.startsWith(`${modelNorm} `)) return 95;
   if (variantNorm.includes(` ${modelNorm} `)) return 88;
   if (variantNorm.includes(modelNorm)) return 80;
+  if (variantCore && modelCore && variantCore.includes(modelCore)) return 84;
 
   let tokenHits = 0;
-  for (const token of modelNorm.split(' ')) {
+  for (const token of modelCore.split(' ')) {
     if (token.length > 1 && variantNorm.includes(token)) {
       tokenHits += 1;
     }
   }
-  return tokenHits > 0 ? 45 + tokenHits * 10 : 0;
+  if (tokenHits > 0) return 45 + tokenHits * 10;
+
+  // Last-resort compatibility for archive naming drift where model strings
+  // differ by trims/body markers but still share meaningful roots.
+  const modelHead = modelCore.split(' ')[0];
+  if (modelHead && modelHead.length > 2 && variantCore.includes(modelHead)) {
+    return 42;
+  }
+  return 0;
 }
 
 export interface WiringDiagramEntry {
@@ -227,7 +270,7 @@ export function resolveVariantForModel(variants: string[], model: string): strin
     }
   }
 
-  return bestScore >= 60 ? bestVariant : null;
+  return bestScore >= 42 ? bestVariant : null;
 }
 
 async function fetchRepairAndDiagnosisHtml(
@@ -263,7 +306,7 @@ async function fetchRepairAndDiagnosisHtml(
 
       for (const v of variants) {
         const score = scoreVariantMatch(v, variant);
-        if (score >= 60 && (!bestMatch || score > bestMatch.score)) {
+        if (score >= 42 && (!bestMatch || score > bestMatch.score)) {
           bestMatch = { variant: v, score, charmMake };
         }
       }
