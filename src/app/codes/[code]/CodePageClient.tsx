@@ -68,13 +68,18 @@ export default async function CodePageClient({
         badge: 'Symptom Hub',
         targetKind: 'symptom' as const,
     }));
-    const vehicleHubLinks = await buildVehicleHubLinksForCodeViaGateway({
-        code: code.code,
-        repairLinks,
-        wiringLinks,
-        manualLinks,
-        limit: 6,
-    });
+    let vehicleHubLinks: Awaited<ReturnType<typeof buildVehicleHubLinksForCodeViaGateway>> = [];
+    try {
+        vehicleHubLinks = await buildVehicleHubLinksForCodeViaGateway({
+            code: code.code,
+            repairLinks,
+            wiringLinks,
+            manualLinks,
+            limit: 6,
+        });
+    } catch (error) {
+        console.warn(`[codes] vehicle hub links unavailable for ${code.code}`, error);
+    }
     const graphBlocks = rankKnowledgeGraphBlocks('code', [
         ...(vehicleHubLinks.length > 0 ? [{
             kind: 'vehicle' as const,

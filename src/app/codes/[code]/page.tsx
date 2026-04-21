@@ -22,7 +22,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!dtc) return { title: 'Code Not Found' };
     const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
 
-    const oemMeta = await getDtcCrossVehicleSummary(dtc.code);
+    let oemMeta: Awaited<ReturnType<typeof getDtcCrossVehicleSummary>> = null;
+    try {
+        oemMeta = await getDtcCrossVehicleSummary(dtc.code);
+    } catch (error) {
+        console.warn(`[codes] cross-vehicle metadata unavailable for ${dtc.code}`, error);
+    }
     const oemSuffix = oemMeta && oemMeta.n > 0
         ? ` Covers ${oemMeta.n}+ vehicles.`
         : '';
@@ -53,7 +58,12 @@ export default async function CodePage({ params }: PageProps) {
     const { code: slug } = await params;
     const dtc = DTC_CODES_MAP.get(slug.toUpperCase());
     if (!dtc) notFound();
-    const manualLinks = await getManualSectionLinksForCode(dtc, 4);
+    let manualLinks: Awaited<ReturnType<typeof getManualSectionLinksForCode>> = [];
+    try {
+        manualLinks = await getManualSectionLinksForCode(dtc, 4);
+    } catch (error) {
+        console.warn(`[codes] manual links unavailable for ${dtc.code}`, error);
+    }
     const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
     const schemaDate = '2026-03-05';
     const schemaAuthor = {
