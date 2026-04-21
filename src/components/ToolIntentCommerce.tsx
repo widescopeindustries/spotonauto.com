@@ -1,4 +1,5 @@
 import AffiliateLink from '@/components/AffiliateLink';
+import { PricingTrackedLink } from '@/components/PricingTracking';
 import type { ToolPage } from '@/data/tools-pages';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { buildToolIntentOffers, getToolSpecHighlights } from '@/lib/toolIntentOffers';
@@ -72,6 +73,31 @@ export default function ToolIntentCommerce({ page }: ToolIntentCommerceProps) {
             </article>
           );
         })}
+      </div>
+
+      <div className="mt-6 rounded-xl border border-cyan-400/25 bg-cyan-500/[0.08] p-4">
+        <h3 className="text-base font-semibold text-cyan-100">Before you buy, sanity-check the repair quote</h3>
+        <p className="mt-2 text-sm text-cyan-50/85">
+          If your shop quote looks high, run it through Quote Shield to catch overpricing before checkout.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <PricingTrackedLink
+            href="/second-opinion"
+            target="starter_free"
+            label={`tools_${page.toolType}_quote_check`}
+            className="inline-flex items-center justify-center rounded-lg bg-cyan-300 px-4 py-2 text-sm font-bold text-black transition hover:bg-cyan-200"
+          >
+            Free Quote Check
+          </PricingTrackedLink>
+          <PricingTrackedLink
+            href="/pricing"
+            target="pro_waitlist"
+            label={`tools_${page.toolType}_quote_pro`}
+            className="inline-flex items-center justify-center rounded-lg border border-cyan-200/40 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-100 hover:text-white"
+          >
+            Quote Shield Pro
+          </PricingTrackedLink>
+        </div>
       </div>
     </section>
   );

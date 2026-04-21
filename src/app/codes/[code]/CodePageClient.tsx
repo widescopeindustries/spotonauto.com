@@ -19,6 +19,7 @@ import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { buildTopdonProductUrl, getTopdonRecommendations, getContextFromCode } from '@/lib/topdonAffiliate';
 import TopdonProductCard from '@/components/TopdonProductCard';
 import { buildVehicleHubLinksForCodeViaGateway } from '@/lib/vehicleHubGateway';
+import { PricingTrackedLink } from '@/components/PricingTracking';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -289,6 +290,29 @@ export default async function CodePageClient({
                                     compact
                                 />
                             ))}
+                        </div>
+                        <div className="mt-4 rounded-xl border border-cyan-500/25 bg-cyan-500/10 p-4">
+                            <p className="text-sm text-cyan-100">
+                                Got a repair estimate for {code.code}? Check if the quote is fair before ordering parts.
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-3">
+                                <PricingTrackedLink
+                                    href="/second-opinion"
+                                    target="starter_free"
+                                    label={`code_${code.code.toLowerCase()}_quote_check`}
+                                    className="inline-flex items-center justify-center rounded-lg bg-cyan-300 px-4 py-2 text-sm font-bold text-black transition hover:bg-cyan-200"
+                                >
+                                    Free Quote Check
+                                </PricingTrackedLink>
+                                <PricingTrackedLink
+                                    href="/pricing"
+                                    target="pro_waitlist"
+                                    label={`code_${code.code.toLowerCase()}_quote_pro`}
+                                    className="inline-flex items-center justify-center rounded-lg border border-cyan-200/40 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-100 hover:text-white"
+                                >
+                                    Quote Shield Pro
+                                </PricingTrackedLink>
+                            </div>
                         </div>
                     </div>
                 );
