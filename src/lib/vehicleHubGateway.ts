@@ -3,6 +3,7 @@ import 'server-only';
 import type { GraphHealthReport } from '@/lib/graphBackboneHealth';
 import { buildGraphHealthReport } from '@/lib/graphBackboneHealth';
 import { buildVehicleHubGraph, type VehicleHubGraph } from '@/lib/vehicleHubGraph';
+import { buildVehicleHubBackboneSignal } from '@/lib/vehicleHubBackboneSignals';
 import {
   buildVehicleHubLinkForWiring,
   buildVehicleHubLinksForCode,
@@ -81,6 +82,87 @@ function attachLegacyMeta(graph: VehicleHubGraph, reason: string): VehicleHubGra
   };
 }
 
+function parseTaskFromNodeId(nodeId?: string): string | null {
+  if (!nodeId || !nodeId.startsWith('repair:')) return null;
+  const parts = nodeId.split(':');
+  return parts.length >= 5 ? parts[4] : null;
+}
+
+function parseSystemFromNodeId(nodeId?: string): string | null {
+  if (!nodeId || !nodeId.startsWith('wiring:')) return null;
+  const parts = nodeId.split(':');
+  return parts.length >= 5 ? parts[4] : null;
+}
+
+async function buildBackbonePrioritizedVehicleGraph(args: VehicleHubGatewayArgs, legacyGraph: VehicleHubGraph): Promise<VehicleHubGraph> {
+  const repairGroup = legacyGraph.groups.find((group) => group.kind === 'repair');
+  const wiringGroup = legacyGraph.groups.find((group) => group.kind === 'wiring');
+
+  const repairTasks = [...new Set((repairGroup?.nodes || [])
+    .map((node) => parseTaskFromNodeId(node.nodeId))
+    .filter((value): value is string => Boolean(value)))];
+  const wiringSystems = [...new Set((wiringGroup?.nodes || [])
+    .map((node) => parseSystemFromNodeId(node.nodeId))
+    .filter((value): value is string => Boolean(value)))];
+
+  const signal = await buildVehicleHubBackboneSignal({
+    year: args.year,
+    make: args.make,
+    displayMake: args.displayMake,
+    model: args.model,
+    displayModel: args.displayModel,
+    tasks: repairTasks,
+    systems: wiringSystems,
+  });
+
+  if (signal.mode !== 'backbone' || signal.evidenceCount === 0) {
+    return attachLegacyMeta(legacyGraph, `backbone-no-vehicle-evidence-${signal.backend}`);
+  }
+
+  const groups = legacyGraph.groups.map((group) => {
+    if (group.kind === 'repair') {
+      return {
+        ...group,
+        nodes: [...group.nodes].sort((left, right) => {
+          const leftTask = parseTaskFromNodeId(left.nodeId) || '';
+          const rightTask = parseTaskFromNodeId(right.nodeId) || '';
+          const leftScore = signal.taskScores[leftTask] || 0;
+          const rightScore = signal.taskScores[rightTask] || 0;
+          if (leftScore !== rightScore) return rightScore - leftScore;
+          return left.label.localeCompare(right.label);
+        }),
+      };
+    }
+
+    if (group.kind === 'wiring') {
+      return {
+        ...group,
+        nodes: [...group.nodes].sort((left, right) => {
+          const leftSystem = parseSystemFromNodeId(left.nodeId) || '';
+          const rightSystem = parseSystemFromNodeId(right.nodeId) || '';
+          const leftScore = signal.systemScores[leftSystem] || 0;
+          const rightScore = signal.systemScores[rightSystem] || 0;
+          if (leftScore !== rightScore) return rightScore - leftScore;
+          return left.label.localeCompare(right.label);
+        }),
+      };
+    }
+
+    return group;
+  });
+
+  return {
+    ...legacyGraph,
+    groups,
+    source: {
+      mode: 'backbone',
+      provider: 'graph-backbone',
+      reason: `backbone-vehicle-signal-${signal.backend}`,
+      generatedAt: new Date().toISOString(),
+    },
+  };
+}
+
 async function resolveVehicleHubGatewayMeta(): Promise<VehicleHubGatewayMeta> {
   if (!isBackboneGatewayEnabled()) {
     return {
@@ -135,9 +217,12 @@ export async function buildVehicleHubGraphViaGateway(args: VehicleHubGatewayArgs
     return attachLegacyMeta(legacyGraph, 'backbone-unhealthy-fallback');
   }
 
-  // Vehicle-specific graph retrieval from backbone artifacts is the next cutover.
-  // For now, backbone health gates the primary source and legacy graph provides links.
-  return attachBackboneMeta(legacyGraph, health, 'health-gated-backbone');
+  try {
+    const graph = await buildBackbonePrioritizedVehicleGraph(args, legacyGraph);
+    return attachBackboneMeta(graph, health, graph.source?.reason || 'backbone-prioritized');
+  } catch {
+    return attachLegacyMeta(legacyGraph, 'backbone-prioritization-error-fallback');
+  }
 }
 
 export async function buildVehicleHubLinkForWiringViaGateway(args: {

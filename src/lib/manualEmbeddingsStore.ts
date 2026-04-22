@@ -628,6 +628,76 @@ export async function findManualSectionsByTerms(args: {
   return [];
 }
 
+export async function findVehicleManualSections(args: {
+  make: string;
+  year: number;
+  model?: string;
+  limit: number;
+}): Promise<ManualSectionMatchRow[]> {
+  const backend = getConfiguredBackend();
+  const limit = Math.max(1, args.limit);
+
+  if (backend === 'vps') {
+    const pool = getVpsPool();
+    if (!pool) return [];
+
+    try {
+      const { exact, prefix } = getModelHints(args.model);
+      const { rows } = await pool.query(
+        `SELECT
+           path,
+           make,
+           year,
+           model,
+           section_title,
+           content_preview,
+           content_full
+         FROM manual_embeddings
+         WHERE make = $1
+           AND year = $2
+         ORDER BY
+           CASE
+             WHEN $4::text <> '' AND lower(model) = lower($4) THEN 0
+             WHEN $4::text <> '' AND lower(model) LIKE lower('%' || $4 || '%') THEN 1
+             WHEN $5::text <> '' AND lower(model) LIKE lower($5 || '%') THEN 2
+             WHEN $5::text <> '' AND lower(model) LIKE lower('%' || $5 || '%') THEN 3
+             ELSE 4
+           END,
+           section_title ASC
+         LIMIT $3`,
+        [args.make, args.year, limit, exact, prefix],
+      );
+
+      recordVpsSuccess();
+      return mapSectionRows(rows);
+    } catch (error) {
+      recordVpsFailure();
+      throw error;
+    }
+  }
+
+  if (backend === 'supabase') {
+    const client = getSupabaseAdmin();
+    if (!client) return [];
+
+    const { data, error } = await client
+      .from('manual_embeddings')
+      .select('path, make, year, model, section_title, content_preview, content_full')
+      .eq('make', args.make)
+      .eq('year', args.year)
+      .limit(Math.max(400, limit));
+
+    if (error) throw error;
+
+    return sortSectionMatchesByModelHints(
+      mapSectionRows((data || []) as QueryResultRow[]),
+      args.model,
+    ).slice(0, limit);
+  }
+
+  return [];
+}
+
 export async function findDiagnosticTroubleCodeIndexes(code: string, limit: number): Promise<Array<{
   path: string;
   make: string;
