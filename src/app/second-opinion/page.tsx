@@ -17,6 +17,8 @@ import {
   CheckCircle2,
   XCircle,
   TrendingDown,
+  Upload,
+  FileImage,
 } from 'lucide-react';
 import { getYears, COMMON_MAKES, fetchModels } from '@/services/vehicleData';
 import {
@@ -286,6 +288,8 @@ export default function SecondOpinionPage() {
   const [mechanicDiagnosis, setMechanicDiagnosis] = useState('');
   const [quotedPrice, setQuotedPrice] = useState('');
   const [symptoms, setSymptoms] = useState('');
+  const [quoteImageDataUrl, setQuoteImageDataUrl] = useState('');
+  const [quoteImageName, setQuoteImageName] = useState('');
 
   // Submission state
   const [loading, setLoading] = useState(false);
@@ -327,14 +331,50 @@ export default function SecondOpinionPage() {
     }
   }, [isFreeLimitReached, dailyChecksUsed]);
 
+  const hasTypedQuoteDetails = Boolean(mechanicDiagnosis.trim() && quotedPrice.trim());
+  const hasQuoteImage = Boolean(quoteImageDataUrl);
   const canSubmit =
     vehicle.year &&
     vehicle.make &&
     vehicle.model &&
-    mechanicDiagnosis.trim() &&
-    quotedPrice.trim() &&
+    (hasTypedQuoteDetails || hasQuoteImage) &&
     !loading &&
     !isFreeLimitReached;
+
+  const handleQuoteImageSelect = async (file: File | null) => {
+    if (!file) {
+      setQuoteImageDataUrl('');
+      setQuoteImageName('');
+      return;
+    }
+
+    const supported = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!supported.includes(file.type)) {
+      setError('Use JPG, PNG, or WEBP for quote images.');
+      return;
+    }
+
+    const maxBytes = 5 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      setError('Quote image must be 5MB or smaller.');
+      return;
+    }
+
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(new Error('Failed to read image'));
+        reader.readAsDataURL(file);
+      });
+
+      setQuoteImageDataUrl(dataUrl);
+      setQuoteImageName(file.name);
+      setError('');
+    } catch {
+      setError('Could not read quote image. Try another file.');
+    }
+  };
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -352,9 +392,10 @@ export default function SecondOpinionPage() {
           year: vehicle.year,
           make: vehicle.make,
           model: vehicle.model,
-          mechanicDiagnosis: mechanicDiagnosis.trim(),
-          quotedPrice: quotedPrice.replace(/[^0-9.]/g, ''),
+          mechanicDiagnosis: mechanicDiagnosis.trim() || undefined,
+          quotedPrice: quotedPrice.replace(/[^0-9.]/g, '') || undefined,
           symptoms: symptoms.trim() || undefined,
+          quoteImageDataUrl: quoteImageDataUrl || undefined,
         }),
       });
 
@@ -365,6 +406,8 @@ export default function SecondOpinionPage() {
 
       const data: SecondOpinionResult = await res.json();
       setResult(data);
+      setMechanicDiagnosis((prev) => prev || data.mechanicDiagnosis || '');
+      setQuotedPrice((prev) => prev || String(data.quotedPrice || ''));
       trackSecondOpinionResult(data.verdict);
       const usage = loadDailyUsage();
       const nextUsage = { day: usage.day, count: usage.count + 1 };
@@ -394,7 +437,7 @@ export default function SecondOpinionPage() {
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">2nd Opinion</span>
         </h1>
         <p className="text-gray-400 font-body max-w-md mx-auto">
-          Enter your mechanic&apos;s quote and our AI will tell you if the price is fair, what to watch out for, and the right questions to ask.
+          Enter your mechanic&apos;s quote or upload a photo of the estimate. Our AI will check if the price is fair, what to watch out for, and what to ask next.
         </p>
         <p className="mt-3 text-xs text-gray-500">
           Free: {freeChecksRemaining} check{freeChecksRemaining === 1 ? '' : 's'} remaining today.
@@ -476,10 +519,11 @@ export default function SecondOpinionPage() {
             id="mechanic-diagnosis"
             value={mechanicDiagnosis}
             onChange={e => setMechanicDiagnosis(e.target.value)}
-            placeholder="e.g. Catalytic converter needs replacement, front brake pads and rotors, alternator is failing..."
+            placeholder="e.g. Catalytic converter needs replacement, front brake pads and rotors..."
             rows={3}
             className="w-full bg-gray-900/80 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 text-sm resize-none"
           />
+          <p className="mt-2 text-xs text-gray-500">Optional if you upload a quote photo below.</p>
         </div>
 
         {/* Step 3: Quoted Price */}
@@ -501,12 +545,58 @@ export default function SecondOpinionPage() {
               className="w-full bg-gray-900/80 border border-gray-700 rounded-lg pl-8 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 text-sm"
             />
           </div>
+          <p className="mt-2 text-xs text-gray-500">Optional if you upload a quote photo below.</p>
         </div>
 
-        {/* Step 4: Symptoms (optional) */}
+        {/* Step 4: Upload Quote Photo (optional) */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <span className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 text-xs font-bold">4</span>
+            <span className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-xs font-bold">4</span>
+            <span className="font-display text-sm tracking-widest text-gray-300 uppercase">
+              Upload Quote Photo <span className="text-gray-500 normal-case tracking-normal">(optional)</span>
+            </span>
+          </div>
+          <label
+            htmlFor="quote-image"
+            className="flex cursor-pointer items-center justify-between rounded-lg border border-dashed border-cyan-500/30 bg-cyan-500/[0.06] px-4 py-3 text-sm text-cyan-100 hover:border-cyan-400/40 hover:bg-cyan-500/[0.1] transition-colors"
+          >
+            <span className="inline-flex items-center gap-2">
+              <Upload className="w-4 h-4" />
+              Upload estimate image (JPG, PNG, WEBP)
+            </span>
+            <span className="text-xs text-cyan-200/80">Max 5MB</span>
+          </label>
+          <input
+            id="quote-image"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="sr-only"
+            onChange={(e) => void handleQuoteImageSelect(e.target.files?.[0] || null)}
+          />
+          {quoteImageName && (
+            <div className="mt-2 flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-gray-300">
+              <span className="inline-flex items-center gap-2">
+                <FileImage className="w-3.5 h-3.5 text-cyan-300" />
+                {quoteImageName}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setQuoteImageDataUrl('');
+                  setQuoteImageName('');
+                }}
+                className="text-gray-400 hover:text-cyan-300 transition-colors"
+              >
+                Remove
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Step 5: Symptoms (optional) */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 text-xs font-bold">5</span>
             <span className="font-display text-sm tracking-widest text-gray-500 uppercase">
               Symptoms You Noticed <span className="text-gray-600 normal-case tracking-normal">(optional)</span>
             </span>

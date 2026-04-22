@@ -85,6 +85,135 @@ const secondOpinionSchema = {
   ],
 };
 
+const quoteExtractionSchema = {
+  type: Type.OBJECT,
+  properties: {
+    mechanicDiagnosis: {
+      type: Type.STRING,
+      description: 'Short summary of what the shop says needs to be repaired.',
+    },
+    quotedPrice: {
+      type: Type.NUMBER,
+      description: 'Total quoted customer price in USD as a number without symbols.',
+    },
+  },
+  required: ['mechanicDiagnosis', 'quotedPrice'],
+};
+
+function sanitizePrice(value: unknown): number | null {
+  if (typeof value === 'number') {
+    if (Number.isFinite(value) && value > 0) return value;
+    return null;
+  }
+
+  if (typeof value !== 'string') return null;
+  const parsed = parseFloat(value.replace(/[^0-9.]/g, ''));
+  if (!Number.isFinite(parsed) || parsed <= 0) return null;
+  return parsed;
+}
+
+function parseDataUrl(dataUrl: string): { mimeType: string; base64Data: string } | null {
+  const match = String(dataUrl || '').match(/^data:(image\/(?:jpeg|jpg|png|webp));base64,([A-Za-z0-9+/=]+)$/i);
+  if (!match) return null;
+  return { mimeType: match[1].toLowerCase(), base64Data: match[2] };
+}
+
+async function extractQuoteFieldsWithGemini(input: {
+  imageDataUrl: string;
+  year: string;
+  make: string;
+  model: string;
+}): Promise<{ mechanicDiagnosis: string; quotedPrice: number }> {
+  if (!apiKey) throw new Error('Gemini API key unavailable for extraction');
+  const parsed = parseDataUrl(input.imageDataUrl);
+  if (!parsed) throw new Error('Invalid quote image format');
+
+  const response = await genAI.models.generateContent({
+    model: TEXT_MODEL,
+    contents: [
+      {
+        text: `Read this mechanic estimate image for a ${input.year} ${input.make} ${input.model}.
+
+Return JSON with:
+- mechanicDiagnosis: concise plain-English repair summary
+- quotedPrice: total quote amount in USD as a number
+
+If multiple totals appear, use the final customer pay amount (out-the-door total).`,
+      },
+      {
+        inlineData: {
+          mimeType: parsed.mimeType,
+          data: parsed.base64Data,
+        },
+      },
+    ],
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: quoteExtractionSchema,
+    },
+  });
+
+  const text = (response.text || '').trim().replace(/^```json\s*|```$/g, '');
+  const data = JSON.parse(text);
+  const quotedPrice = sanitizePrice(data.quotedPrice);
+  const mechanicDiagnosis = String(data.mechanicDiagnosis || '').trim();
+
+  if (!mechanicDiagnosis || !quotedPrice) {
+    throw new Error('Could not extract quote details from image');
+  }
+
+  return { mechanicDiagnosis, quotedPrice };
+}
+
+async function extractQuoteFieldsWithOpenAI(input: {
+  imageDataUrl: string;
+  year: string;
+  make: string;
+  model: string;
+}): Promise<{ mechanicDiagnosis: string; quotedPrice: number }> {
+  if (!openAI) throw new Error('OpenAI API key unavailable for extraction');
+
+  const completion = await openAI.chat.completions.create({
+    model: OPENAI_TEXT_MODEL,
+    response_format: { type: 'json_object' },
+    messages: [
+      {
+        role: 'system',
+        content: 'Extract mechanic estimate details from images. Return valid JSON only.',
+      },
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: `Read this mechanic estimate image for a ${input.year} ${input.make} ${input.model}.
+Return JSON with:
+- mechanicDiagnosis: concise plain-English repair summary
+- quotedPrice: total quote amount in USD as a number
+Use the final customer-pay total if multiple prices appear.`,
+          },
+          {
+            type: 'image_url',
+            image_url: { url: input.imageDataUrl },
+          },
+        ],
+      },
+    ],
+    temperature: 0.1,
+  });
+
+  const text = completion.choices[0]?.message?.content?.trim() || '';
+  const data = JSON.parse(text.replace(/^```json\s*|```$/g, ''));
+  const quotedPrice = sanitizePrice(data.quotedPrice);
+  const mechanicDiagnosis = String(data.mechanicDiagnosis || '').trim();
+
+  if (!mechanicDiagnosis || !quotedPrice) {
+    throw new Error('Could not extract quote details from image');
+  }
+
+  return { mechanicDiagnosis, quotedPrice };
+}
+
 export async function POST(req: NextRequest) {
   const limited = checkRateLimit(req, 5, 60_000); // 5 quotes/min per IP
   if (limited) return limited;
@@ -98,18 +227,60 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { year, make, model, mechanicDiagnosis, quotedPrice, symptoms } = body;
+    const { year, make, model, mechanicDiagnosis, quotedPrice, symptoms, quoteImageDataUrl } = body;
 
-    if (!year || !make || !model || !mechanicDiagnosis || !quotedPrice) {
+    if (!year || !make || !model) {
       return NextResponse.json(
-        { error: 'Missing required fields: year, make, model, mechanicDiagnosis, quotedPrice' },
+        { error: 'Missing required fields: year, make, model' },
         { status: 400 }
       );
     }
 
-    const price = parseFloat(quotedPrice);
-    if (isNaN(price) || price <= 0) {
-      return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
+    const normalizedDiagnosis = String(mechanicDiagnosis || '').trim();
+    const normalizedImage = String(quoteImageDataUrl || '').trim();
+    const imagePayload = normalizedImage ? parseDataUrl(normalizedImage) : null;
+    if (normalizedImage && !imagePayload) {
+      return NextResponse.json({ error: 'Invalid quote image format. Use JPG, PNG, or WEBP.' }, { status: 400 });
+    }
+
+    if (imagePayload) {
+      // Approx binary bytes from base64 length
+      const imageBytes = Math.floor((imagePayload.base64Data.length * 3) / 4);
+      const maxBytes = 5 * 1024 * 1024;
+      if (imageBytes > maxBytes) {
+        return NextResponse.json({ error: 'Quote image must be 5MB or smaller.' }, { status: 400 });
+      }
+    }
+
+    let resolvedDiagnosis = normalizedDiagnosis;
+    let resolvedPrice = sanitizePrice(quotedPrice);
+
+    if ((!resolvedDiagnosis || !resolvedPrice) && normalizedImage) {
+      try {
+        const extracted = preferOpenAI
+          ? await extractQuoteFieldsWithOpenAI({ imageDataUrl: normalizedImage, year, make, model })
+          : await extractQuoteFieldsWithGemini({ imageDataUrl: normalizedImage, year, make, model });
+
+        if (!resolvedDiagnosis) resolvedDiagnosis = extracted.mechanicDiagnosis;
+        if (!resolvedPrice) resolvedPrice = extracted.quotedPrice;
+      } catch (primaryError) {
+        const canFallback = preferOpenAI ? Boolean(apiKey) : Boolean(openAiApiKey);
+        if (!canFallback) throw primaryError;
+
+        const extracted = preferOpenAI
+          ? await extractQuoteFieldsWithGemini({ imageDataUrl: normalizedImage, year, make, model })
+          : await extractQuoteFieldsWithOpenAI({ imageDataUrl: normalizedImage, year, make, model });
+
+        if (!resolvedDiagnosis) resolvedDiagnosis = extracted.mechanicDiagnosis;
+        if (!resolvedPrice) resolvedPrice = extracted.quotedPrice;
+      }
+    }
+
+    if (!resolvedDiagnosis || !resolvedPrice) {
+      return NextResponse.json(
+        { error: 'Enter diagnosis + quote price, or upload a clear quote image so we can extract them.' },
+        { status: 400 }
+      );
     }
 
     const systemPrompt = `You are an expert automotive cost analyst and mechanic advisor. Your job is to evaluate mechanic repair quotes and help car owners determine if they are being charged fairly.
@@ -135,8 +306,8 @@ Provide actionable advice the owner can use when talking to their mechanic.`;
     const userPrompt = `Evaluate this mechanic quote:
 
 Vehicle: ${year} ${make} ${model}
-Mechanic's Diagnosis: ${mechanicDiagnosis}
-Quoted Price: $${price.toFixed(2)}
+Mechanic's Diagnosis: ${resolvedDiagnosis}
+Quoted Price: $${resolvedPrice.toFixed(2)}
 ${symptoms ? `Owner's Symptoms: ${symptoms}` : ''}
 
 Provide your analysis as JSON with: verdict, confidence, avgPrice, priceRange (low/high), summary, flags, commonMisdiagnoses, questionsToAsk, alternatives, partsBreakdown.`;
@@ -199,8 +370,8 @@ Provide your analysis as JSON with: verdict, confidence, avgPrice, priceRange (l
     return NextResponse.json({
       ...data,
       vehicle: { year, make, model },
-      quotedPrice: price,
-      mechanicDiagnosis,
+      quotedPrice: resolvedPrice,
+      mechanicDiagnosis: resolvedDiagnosis,
     });
   } catch (error: any) {
     console.error('Second Opinion API Error:', error);
