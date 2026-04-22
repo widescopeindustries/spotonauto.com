@@ -1658,6 +1658,130 @@ function getSpotlightActionLabel(task: string, partName: string): string {
     }
 }
 
+const PRIORITY_REPAIR_COMMERCE_TASKS = new Set([
+    'serpentine-belt-replacement',
+    'battery-replacement',
+    'alternator-replacement',
+    'starter-replacement',
+    'brake-pad-replacement',
+    'brake-rotor-replacement',
+    'oil-change',
+    'spark-plug-replacement',
+    'transmission-fluid-change',
+    'coolant-flush',
+    'tail-light-replacement',
+    'headlight-bulb-replacement',
+]);
+
+function normalizeCommercePartName(value: string): string {
+    return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function buildSupplementalRepairCommerceParts(task: string, vehicleName: string): PartSpec[] {
+    const partsByTask: Record<string, PartSpec[]> = {
+        'serpentine-belt-replacement': [
+            { name: 'Belt Tensioner', aftermarket: `${vehicleName} belt tensioner` },
+            { name: 'Idler Pulley', aftermarket: `${vehicleName} idler pulley` },
+            { name: 'Pulley Puller Set', aftermarket: 'pulley puller set automotive' },
+            { name: 'Breaker Bar', aftermarket: '1/2 inch breaker bar automotive' },
+            { name: 'Shop Towels', aftermarket: 'blue shop towels automotive' },
+        ],
+        'battery-replacement': [
+            { name: 'Battery Terminal Cleaner', aftermarket: `${vehicleName} battery terminal cleaner` },
+            { name: 'Memory Saver', aftermarket: 'OBD2 memory saver' },
+            { name: 'Battery Charger', aftermarket: 'automotive battery charger' },
+            { name: 'Battery Hold-Down Kit', aftermarket: `${vehicleName} battery hold down` },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'alternator-replacement': [
+            { name: 'Serpentine Belt', aftermarket: `${vehicleName} serpentine belt` },
+            { name: 'Belt Tensioner', aftermarket: `${vehicleName} belt tensioner` },
+            { name: 'Battery Tester', aftermarket: 'automotive battery tester' },
+            { name: 'Breaker Bar', aftermarket: '1/2 inch breaker bar automotive' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'starter-replacement': [
+            { name: 'Starter Relay', aftermarket: `${vehicleName} starter relay` },
+            { name: 'Socket and Extension Set', aftermarket: 'deep socket extension set automotive' },
+            { name: 'Battery Charger', aftermarket: 'automotive battery charger' },
+            { name: 'Jumper Cables', aftermarket: 'jumper cables automotive' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'brake-pad-replacement': [
+            { name: 'Brake Hardware Kit', aftermarket: `${vehicleName} brake hardware kit` },
+            { name: 'Brake Cleaner', aftermarket: 'brake cleaner spray automotive' },
+            { name: 'Caliper Grease', aftermarket: 'silicone brake grease' },
+            { name: 'Brake Fluid', aftermarket: `${vehicleName} brake fluid` },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'brake-rotor-replacement': [
+            { name: 'Brake Pads', aftermarket: `${vehicleName} brake pads` },
+            { name: 'Brake Hardware Kit', aftermarket: `${vehicleName} brake hardware kit` },
+            { name: 'Brake Cleaner', aftermarket: 'brake cleaner spray automotive' },
+            { name: 'Caliper Grease', aftermarket: 'silicone brake grease' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'oil-change': [
+            { name: 'Oil Filter', aftermarket: `${vehicleName} oil filter` },
+            { name: 'Drain Pan', aftermarket: 'oil drain pan' },
+            { name: 'Oil Filter Wrench', aftermarket: 'oil filter wrench' },
+            { name: 'Funnel Set', aftermarket: 'automotive funnel' },
+            { name: 'Shop Towels', aftermarket: 'blue shop towels automotive' },
+        ],
+        'spark-plug-replacement': [
+            { name: 'Spark Plug Socket', aftermarket: 'spark plug socket set' },
+            { name: 'Gap Gauge', aftermarket: 'spark plug gap gauge' },
+            { name: 'Torque Wrench', aftermarket: '3/8 inch torque wrench automotive' },
+            { name: 'Dielectric Grease', aftermarket: 'dielectric grease automotive' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'transmission-fluid-change': [
+            { name: 'Transmission Fluid Pump', aftermarket: 'fluid transfer pump automotive' },
+            { name: 'Transmission Filter Kit', aftermarket: `${vehicleName} transmission filter kit` },
+            { name: 'Drain Plug Washer', aftermarket: 'drain plug washer automotive' },
+            { name: 'Funnel Set', aftermarket: 'long neck funnel automotive' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'coolant-flush': [
+            { name: 'Spill-Free Funnel', aftermarket: 'spill free coolant funnel' },
+            { name: 'Coolant Tester', aftermarket: 'coolant tester automotive' },
+            { name: 'Hose Clamp Pliers', aftermarket: 'hose clamp pliers automotive' },
+            { name: 'Distilled Water', aftermarket: 'distilled water automotive coolant' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'tail-light-replacement': [
+            { name: 'Tail Light Bulb', aftermarket: `${vehicleName} tail light bulb` },
+            { name: 'Lamp Assembly', aftermarket: `${vehicleName} tail light assembly` },
+            { name: 'Dielectric Grease', aftermarket: 'dielectric grease automotive' },
+            { name: 'Trim Tool Set', aftermarket: 'trim removal tool set automotive' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+        'headlight-bulb-replacement': [
+            { name: 'Headlight Bulb Set', aftermarket: `${vehicleName} headlight bulbs` },
+            { name: 'Dielectric Grease', aftermarket: 'dielectric grease automotive' },
+            { name: 'Trim Tool Set', aftermarket: 'trim removal tool set automotive' },
+            { name: 'Work Gloves', aftermarket: 'mechanic work gloves' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
+    };
+
+    return partsByTask[task] ?? [];
+}
+
+function dedupeCommerceParts(parts: PartSpec[]): PartSpec[] {
+    const out: PartSpec[] = [];
+    const seen = new Set<string>();
+
+    for (const part of parts) {
+        const key = normalizeCommercePartName(part.name);
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        out.push(part);
+    }
+
+    return out;
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { year, make, model, task } = await params;
     const canonicalMake = slugifyRoutePart(make);
@@ -1879,9 +2003,12 @@ export default async function Page({ params }: PageProps) {
     const manualMakeHref = buildManualBrowserPath(displayMake);
     const manualYearHref = buildManualBrowserPath(displayMake, resolvedYear);
     const sparkPlugIgnitionNote = getSparkPlugIgnitionNote(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
-    const affiliateSourceParts: Array<PartSpec> = vehicleSpec?.parts ?? repairData.parts.map((partName) => ({ name: partName }));
+    const affiliateSourceParts = dedupeCommerceParts([
+        ...(vehicleSpec?.parts ?? repairData.parts.map((partName) => ({ name: partName }))),
+        ...buildSupplementalRepairCommerceParts(canonicalTask, vehicleName),
+    ]);
     const affiliateSpotlightParts = affiliateSourceParts
-        .slice(0, 3)
+        .slice(0, PRIORITY_REPAIR_COMMERCE_TASKS.has(canonicalTask) ? 5 : 3)
         .map((part) => ({
             name: part.name,
             detail: part.spec || part.aftermarket || part.oem || `Amazon results for ${vehicleName} ${part.name}`,

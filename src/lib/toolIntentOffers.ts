@@ -275,6 +275,20 @@ function buildDefaultToolIntentOffers(page: ToolPage): ToolIntentOffer[] {
           reason: 'This job is much easier with the correct leverage tool.',
           query: `${vehicleName} serpentine belt tool`,
         },
+        {
+          id: 'breaker-bar',
+          title: 'Breaker bar and ratchet set',
+          description: 'Helps release the automatic tensioner cleanly before routing the new belt.',
+          reason: 'A long handle saves knuckles when the belt path is tight.',
+          query: `1/2 inch breaker bar automotive`,
+        },
+        {
+          id: 'shop-towels',
+          title: 'Shop towels and cleaning supplies',
+          description: 'Keep the accessory drive clean while the belt is off.',
+          reason: 'Clean pulleys and hands make inspection easier and help reduce slip.',
+          query: 'blue shop towels automotive',
+        },
       ];
     case 'spark-plug-type':
       return [
@@ -298,6 +312,20 @@ function buildDefaultToolIntentOffers(page: ToolPage): ToolIntentOffer[] {
           description: 'Torque to spec and avoid stripping aluminum threads.',
           reason: 'Plug thread damage is expensive and fully avoidable.',
           query: `3/8 inch torque wrench automotive`,
+        },
+        {
+          id: 'gap-gauge',
+          title: 'Gap gauge and anti-seize kit',
+          description: 'Helpful for checking plug gap and protecting service threads.',
+          reason: 'Small install tools prevent big ignition problems later.',
+          query: `${vehicleName} spark plug gap gauge anti seize`,
+        },
+        {
+          id: 'coil-grease',
+          title: 'Dielectric grease and coil boots',
+          description: 'Protect connectors and coil boots during plug service.',
+          reason: 'Moisture protection helps prevent repeat misfires and corrosion.',
+          query: `${vehicleName} dielectric grease coil boot`,
         },
       ];
     case 'oil-type':
@@ -323,6 +351,20 @@ function buildDefaultToolIntentOffers(page: ToolPage): ToolIntentOffer[] {
           reason: 'Fresh crush washers reduce post-change seepage risk.',
           query: `${vehicleName} oil drain plug gasket`,
         },
+        {
+          id: 'drain-pan',
+          title: 'Oil drain pan and funnel',
+          description: 'Keep the oil change clean from drain to refill.',
+          reason: 'Simple cleanup tools reduce mess and save time in the garage.',
+          query: `${vehicleName} oil drain pan funnel`,
+        },
+        {
+          id: 'shop-towels',
+          title: 'Shop towels for cleanup',
+          description: 'Lint-free wipes for dipsticks, spills, and filter surfaces.',
+          reason: 'The smallest supplies are often the most-used during DIY service.',
+          query: 'shop towels automotive',
+        },
       ];
     case 'fluid-capacity':
       return [
@@ -346,6 +388,20 @@ function buildDefaultToolIntentOffers(page: ToolPage): ToolIntentOffer[] {
           description: 'DOT-rated fluid plus simple bleeding tools.',
           reason: 'Moisture-heavy brake fluid lowers boiling performance over time.',
           query: `${vehicleName} brake fluid DOT 3 DOT 4`,
+        },
+        {
+          id: 'funnel',
+          title: 'Long-neck funnel and extractor',
+          description: 'Useful for topping off and moving fluids cleanly.',
+          reason: 'These save time when the fill point is awkward or hidden.',
+          query: `${vehicleName} fluid funnel extractor`,
+        },
+        {
+          id: 'shop-towels',
+          title: 'Shop towels and gloves',
+          description: 'Basic cleanup gear for any fluid service job.',
+          reason: 'Cleanup tools make every service easier and safer.',
+          query: 'shop towels nitrile gloves automotive',
         },
       ];
     case 'transmission-fluid-type':
@@ -371,6 +427,20 @@ function buildDefaultToolIntentOffers(page: ToolPage): ToolIntentOffer[] {
           reason: 'A proper service kit helps avoid repeat labor.',
           query: `${vehicleName} transmission filter kit`,
         },
+        {
+          id: 'funnel',
+          title: 'Fluid transfer pump',
+          description: 'Helpful for sealed transmissions and bottom-fill service.',
+          reason: 'A pump keeps refill clean and reduces the chance of under-fill.',
+          query: `transmission fluid transfer pump`,
+        },
+        {
+          id: 'shop-towels',
+          title: 'Shop towels and pan gasket supplies',
+          description: 'Keep the service area clean and the pan sealed.',
+          reason: 'Transmission service is easier when cleanup gear is already on hand.',
+          query: `${vehicleName} shop towels transmission gasket`,
+        },
       ];
     case 'coolant-type':
       return [
@@ -394,6 +464,20 @@ function buildDefaultToolIntentOffers(page: ToolPage): ToolIntentOffer[] {
           description: 'Quickly verify freeze and boil protection after service.',
           reason: 'Simple testing reduces repeat failures and comeback risk.',
           query: `coolant tester automotive`,
+        },
+        {
+          id: 'funnel',
+          title: 'Spill-free funnel kit',
+          description: 'Makes coolant refills and burping much easier.',
+          reason: 'A good funnel cuts down on air pockets and messy refills.',
+          query: `${vehicleName} spill free coolant funnel`,
+        },
+        {
+          id: 'hose-tools',
+          title: 'Hose clamp pliers and shop towels',
+          description: 'Useful for clamp work, drips, and quick cleanup.',
+          reason: 'Cooling-system service almost always needs cleanup gear too.',
+          query: `${vehicleName} hose clamp pliers shop towels`,
         },
       ];
     default:
