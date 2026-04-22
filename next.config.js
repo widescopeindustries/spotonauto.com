@@ -94,8 +94,6 @@ const nextConfig = {
       // Consolidate overlapping routes
       { source: '/repairs', destination: '/repair', permanent: true },
       { source: '/cel', destination: '/codes', permanent: true },
-      { source: '/second-opinion', destination: '/diagnose', permanent: true },
-      { source: '/pricing', destination: '/', permanent: true },
       { source: '/scanner', destination: '/', permanent: true },
       { source: '/simulation', destination: '/', permanent: true },
 
