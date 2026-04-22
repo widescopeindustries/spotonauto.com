@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CharmLiVehicleSelector from '@/components/CharmLiVehicleSelector';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import { VALID_TASKS, slugifyRoutePart } from '@/data/vehicles';
 
 interface VehicleSelection {
@@ -100,6 +101,14 @@ export default function ManualNavigator() {
             browse the factory manual tree or generate a task-specific repair guide grounded in that archive.
           </p>
         </header>
+
+        <div className="mb-10">
+          <SearchLandingMonetizationRail
+            surface="manual_navigator"
+            intent="manual"
+            contextLabel="factory service manual"
+          />
+        </div>
 
         <CharmLiVehicleSelector
           onSelect={setSelectedVehicle}

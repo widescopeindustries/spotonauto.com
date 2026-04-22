@@ -24,6 +24,7 @@ import {
 
 import { fetchModels, getMakesForYear, getYears } from '@/services/vehicleData';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 const VEHICLE_SYSTEMS = [
     { label: 'Engine', icon: Cog },
@@ -120,6 +121,16 @@ export default function ClientHome() {
                                 your car?
                             </span>
                         </h1>
+                    </div>
+                </section>
+
+                <section className="px-4 pb-8 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl">
+                        <SearchLandingMonetizationRail
+                            surface="home_index"
+                            intent="repair"
+                            contextLabel="DIY repair"
+                        />
                     </div>
                 </section>
 

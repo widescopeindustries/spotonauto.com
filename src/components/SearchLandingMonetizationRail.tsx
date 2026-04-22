@@ -5,11 +5,15 @@ import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 type MonetizationIntent = 'diagnostic' | 'repair' | 'manual' | 'maintenance';
 
 type MonetizationSurface =
+  | 'home_index'
   | 'codes_index'
+  | 'diagnose_page'
+  | 'manual_navigator'
   | 'symptoms_index'
   | 'symptom_hub'
   | 'manual_index'
   | 'manual_page'
+  | 'tools_index'
   | 'repair_hub'
   | 'guides_index'
   | 'guides_make'
@@ -21,6 +25,13 @@ interface SearchLandingMonetizationRailProps {
   contextLabel?: string;
   className?: string;
 }
+
+type SupportingOffer = {
+  title: string;
+  description: string;
+  reason: string;
+  query: string;
+};
 
 const INTENT_COPY: Record<MonetizationIntent, { title: string; description: string; affiliateCta: string }> = {
   diagnostic: {
@@ -53,6 +64,98 @@ function buildOfferQuery(intent: MonetizationIntent, contextLabel?: string): str
   return context ? `${context} repair tools` : 'automotive repair tool kit';
 }
 
+function buildSupportingOffers(intent: MonetizationIntent, contextLabel?: string): SupportingOffer[] {
+  const context = contextLabel?.trim() || 'SpotOnAuto';
+
+  switch (intent) {
+    case 'diagnostic':
+      return [
+        {
+          title: 'OBD2 scanner',
+          description: 'Read codes and freeze-frame data before you guess at the fault.',
+          reason: 'Most diagnostic jobs start with a scan tool and a verified code path.',
+          query: `${context} OBD2 scanner`,
+        },
+        {
+          title: 'Battery tester',
+          description: 'Check cranking and charging health before replacing expensive parts.',
+          reason: 'A weak battery can mimic alternator or starter problems.',
+          query: `${context} battery tester`,
+        },
+        {
+          title: 'Multimeter kit',
+          description: 'Confirm voltage, continuity, and sensor power with one simple kit.',
+          reason: 'A meter is the cheapest way to rule out a bad circuit fast.',
+          query: `${context} multimeter automotive`,
+        },
+      ];
+    case 'manual':
+      return [
+        {
+          title: 'Torque wrench',
+          description: 'Use the factory procedure with the right tightening tool.',
+          reason: 'Manual-based work becomes much easier when you can torque correctly.',
+          query: `${context} torque wrench automotive`,
+        },
+        {
+          title: 'Trim tool set',
+          description: 'Useful for clips, covers, and trim pieces called out by the manual.',
+          reason: 'Most manual procedures assume you have a good trim removal kit.',
+          query: `${context} trim tool set`,
+        },
+        {
+          title: 'Multimeter kit',
+          description: 'Great for electrical troubleshooting and manual-tested circuits.',
+          reason: 'Electrical work in manuals often needs a meter more than another wrench.',
+          query: `${context} multimeter automotive`,
+        },
+      ];
+    case 'maintenance':
+      return [
+        {
+          title: 'Drain pan and funnel',
+          description: 'Keep oil and fluid services clean from the first drain to the refill.',
+          reason: 'These are the most-used consumable tools on maintenance pages.',
+          query: `${context} drain pan funnel`,
+        },
+        {
+          title: 'Oil filter wrench',
+          description: 'Match the wrench to the job before the filter gets stuck.',
+          reason: 'A better filter wrench prevents frustration and stripped housings.',
+          query: `${context} oil filter wrench`,
+        },
+        {
+          title: 'Shop towels',
+          description: 'Cleanup gear for spills, dipsticks, and filter surfaces.',
+          reason: 'Small maintenance jobs go smoother with the right cleanup supplies.',
+          query: `${context} shop towels automotive`,
+        },
+      ];
+    case 'repair':
+    default:
+      return [
+        {
+          title: 'Breaker bar',
+          description: 'Extra leverage for tight bolts and stubborn fasteners.',
+          reason: 'Repair pages turn into purchases when the right leverage tool is obvious.',
+          query: `${context} breaker bar automotive`,
+        },
+        {
+          title: 'Shop towels',
+          description: 'Keep hands, pulleys, and work areas clean during teardown.',
+          reason: 'Small cleanup items are easy add-ons and often bought with the repair part.',
+          query: `${context} shop towels automotive`,
+        },
+        {
+          title: 'Nitrile gloves',
+          description: 'Protect your hands while handling fluids and greasy hardware.',
+          reason: 'Consumable protection gear is a low-friction cart addition.',
+          query: `${context} nitrile gloves automotive`,
+        },
+      ];
+  }
+}
+
 export default function SearchLandingMonetizationRail({
   surface,
   intent,
@@ -61,6 +164,7 @@ export default function SearchLandingMonetizationRail({
 }: SearchLandingMonetizationRailProps) {
   const copy = INTENT_COPY[intent];
   const query = buildOfferQuery(intent, contextLabel);
+  const supportingOffers = buildSupportingOffers(intent, contextLabel);
   const subtag = `landing-${surface}-${intent}`;
   const vehicleName = contextLabel || 'SpotOnAuto';
   const wrapperClassName =
@@ -110,6 +214,34 @@ export default function SearchLandingMonetizationRail({
         >
           Quote Shield Pro
         </PricingTrackedLink>
+      </div>
+
+      <div className="mt-6">
+        <p className="text-xs uppercase tracking-[0.16em] text-emerald-100/80">
+          More supporting gear
+        </p>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          {supportingOffers.map((offer) => (
+            <AffiliateLink
+              key={offer.title}
+              href={buildAmazonSearchUrl(offer.query, 'automotive', `${subtag}-support`)}
+              partName={offer.title}
+              vehicle={vehicleName}
+              pageType="parts_page"
+              subtag={`${subtag}-support`}
+              className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-emerald-400/35 hover:bg-white/[0.07]"
+            >
+              <div className="flex h-full flex-col">
+                <h3 className="text-sm font-semibold text-white">{offer.title}</h3>
+                <p className="mt-2 text-xs leading-5 text-gray-300">{offer.description}</p>
+                <p className="mt-3 text-xs leading-5 text-emerald-100/80">{offer.reason}</p>
+                <span className="mt-4 inline-flex text-xs font-semibold text-amber-300">
+                  Shop on Amazon →
+                </span>
+              </div>
+            </AffiliateLink>
+          ))}
+        </div>
       </div>
     </section>
   );

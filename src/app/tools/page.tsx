@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getToolPagesForType, TOOL_TYPE_META, type ToolType } from '@/data/tools-pages';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
+import TopdonScannerQuiz from '@/components/TopdonScannerQuiz';
 
 export const metadata: Metadata = {
     title: 'Free Auto Repair Tools | SpotOnAuto',
@@ -168,6 +170,14 @@ export default function ToolsPage() {
                     </Link>
                 </div>
 
+                <div className="mb-12">
+                    <SearchLandingMonetizationRail
+                        surface="tools_index"
+                        intent="maintenance"
+                        contextLabel="maintenance tools"
+                    />
+                </div>
+
                 {/* Tools Grid */}
                 {TOOLS.map((category, i) => (
                     <div key={i} className="mb-12">
@@ -198,6 +208,10 @@ export default function ToolsPage() {
                         </div>
                     </div>
                 ))}
+
+                <div className="mb-12">
+                    <TopdonScannerQuiz />
+                </div>
 
                 {/* Vehicle Spec Guides — programmatic pages */}
                 {Object.entries(TOOL_TYPE_META).map(([type, meta]) => {

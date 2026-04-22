@@ -1,6 +1,8 @@
 import DiagnosticChatRoute from './DiagnosticChatRoute';
 import DiagnosticVehicleSelector from './DiagnosticVehicleSelector';
 import { PricingTrackedLink } from '@/components/PricingTracking';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
+import TopdonProductSpotlight from '@/components/TopdonProductSpotlight';
 
 interface SearchParams {
     [key: string]: string | string[] | undefined;
@@ -102,6 +104,22 @@ export default async function DiagnosticPage({
                     </div>
                 </div>
             )}
+
+            <div className="px-4 pb-16 md:px-8">
+                <div className="mx-auto w-full max-w-5xl space-y-8">
+                    <SearchLandingMonetizationRail
+                        surface="diagnose_page"
+                        intent="diagnostic"
+                        contextLabel="OBD2 scanner"
+                    />
+                    <TopdonProductSpotlight
+                        productKey="topscan"
+                        title="Better scan-tool follow-up"
+                        reason="If the diagnosis points to a wiring, battery, or module issue, a wireless scan tool keeps the workflow moving."
+                        surface="diagnose_page"
+                    />
+                </div>
+            </div>
         </>
     );
 }

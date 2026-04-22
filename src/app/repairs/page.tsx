@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { VALID_TASKS } from '@/data/vehicles';
 import { getHomepageMomentumData } from '@/lib/commandCenterOpportunities';
 import { getTier1RepairSupportGaps, getTopUnderlinkedRepairPages } from '@/lib/graphPriorityLinks';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import { Wrench } from 'lucide-react';
 
 function toTitleCase(slug: string): string {
@@ -38,6 +39,12 @@ export default function RepairsIndexPage() {
         Start with a common repair category, then open the exact guide that matches your vehicle. This page is meant to move you from a broad job like brakes,
         batteries, filters, fluids, or lighting into the right year-make-model walkthrough without extra searching.
       </p>
+
+      <SearchLandingMonetizationRail
+        surface="repair_hub"
+        intent="repair"
+        contextLabel="DIY repair"
+      />
 
       <section className="mb-12 rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.06] p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
