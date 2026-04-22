@@ -280,6 +280,12 @@ export async function POST(req: NextRequest) {
 
     const normalizedDiagnosis = String(mechanicDiagnosis || '').trim();
     const normalizedImage = String(quoteImageDataUrl || '').trim();
+    const typedPrice = sanitizePrice(quotedPrice);
+    const hadManualDetails = Boolean(normalizedDiagnosis && typedPrice);
+    const hadImageUpload = Boolean(normalizedImage);
+    const quoteInputMode = hadImageUpload
+      ? (hadManualDetails ? 'manual_plus_image' : 'image_only')
+      : 'manual_only';
     const imagePayload = normalizedImage ? parseDataUrl(normalizedImage) : null;
     if (normalizedImage && !imagePayload) {
       return NextResponse.json({ error: 'Invalid quote image format. Use JPG, PNG, or WEBP.' }, { status: 400 });
@@ -295,7 +301,8 @@ export async function POST(req: NextRequest) {
     }
 
     let resolvedDiagnosis = normalizedDiagnosis;
-    let resolvedPrice = sanitizePrice(quotedPrice);
+    let resolvedPrice = typedPrice;
+    let extractedFromImage = false;
 
     if ((!resolvedDiagnosis || !resolvedPrice) && normalizedImage) {
       try {
@@ -305,6 +312,7 @@ export async function POST(req: NextRequest) {
 
         if (!resolvedDiagnosis) resolvedDiagnosis = extracted.mechanicDiagnosis;
         if (!resolvedPrice) resolvedPrice = extracted.quotedPrice;
+        extractedFromImage = true;
       } catch (primaryError) {
         const canFallback = preferOpenAI ? Boolean(apiKey) : Boolean(openAiApiKey);
         if (!canFallback) throw primaryError;
@@ -315,6 +323,7 @@ export async function POST(req: NextRequest) {
 
         if (!resolvedDiagnosis) resolvedDiagnosis = extracted.mechanicDiagnosis;
         if (!resolvedPrice) resolvedPrice = extracted.quotedPrice;
+        extractedFromImage = true;
       }
     }
 
@@ -436,6 +445,8 @@ Provide your analysis as JSON with: verdict, confidence, avgPrice, priceRange (l
       vehicle: { year, make, model },
       quotedPrice: resolvedPrice,
       mechanicDiagnosis: resolvedDiagnosis,
+      quoteInputMode,
+      extractedFromImage,
     });
   } catch (error: any) {
     console.error('Second Opinion API Error:', error);

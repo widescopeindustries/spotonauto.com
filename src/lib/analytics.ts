@@ -1132,10 +1132,13 @@ export function trackSecondOpinionView(): void {
   });
 }
 
-export function trackSecondOpinionSubmit(hasSymptoms: boolean): void {
+export type SecondOpinionInputMode = 'manual_only' | 'image_only' | 'manual_plus_image';
+
+export function trackSecondOpinionSubmit(hasSymptoms: boolean, inputMode: SecondOpinionInputMode): void {
   trackEvent('second_opinion_submit', {
     event_category: 'revenue_funnel',
     event_label: hasSymptoms ? 'with_symptoms' : 'without_symptoms',
+    second_opinion_input_mode: inputMode,
     ...buildAnalyticsContext({
       pageSurface: 'diagnostic',
       intentCluster: 'diagnostic',
@@ -1143,11 +1146,17 @@ export function trackSecondOpinionSubmit(hasSymptoms: boolean): void {
   });
 }
 
-export function trackSecondOpinionResult(verdict: string): void {
+export function trackSecondOpinionResult(
+  verdict: string,
+  inputMode: SecondOpinionInputMode,
+  extractedFromImage: boolean
+): void {
   trackEvent('second_opinion_result', {
     event_category: 'revenue_funnel',
     event_label: String(verdict || 'unknown').slice(0, 80).toLowerCase().replace(/\s+/g, '_'),
     second_opinion_verdict: String(verdict || 'unknown').slice(0, 80),
+    second_opinion_input_mode: inputMode,
+    second_opinion_extracted_from_image: extractedFromImage ? 'true' : 'false',
     ...buildAnalyticsContext({
       pageSurface: 'diagnostic',
       intentCluster: 'diagnostic',

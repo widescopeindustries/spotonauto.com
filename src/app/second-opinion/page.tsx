@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { getYears, COMMON_MAKES, fetchModels } from '@/services/vehicleData';
 import {
+  type SecondOpinionInputMode,
   trackPricingCtaClick,
   trackSecondOpinionLimitHit,
   trackSecondOpinionResult,
@@ -74,6 +75,8 @@ interface SecondOpinionResult {
   vehicle: { year: string; make: string; model: string };
   quotedPrice: number;
   mechanicDiagnosis: string;
+  quoteInputMode?: SecondOpinionInputMode;
+  extractedFromImage?: boolean;
 }
 
 type VerdictStyle = {
@@ -384,7 +387,10 @@ export default function SecondOpinionPage() {
     setResult(null);
 
     try {
-      trackSecondOpinionSubmit(Boolean(symptoms.trim()));
+      const inputMode: SecondOpinionInputMode = hasQuoteImage
+        ? (hasTypedQuoteDetails ? 'manual_plus_image' : 'image_only')
+        : 'manual_only';
+      trackSecondOpinionSubmit(Boolean(symptoms.trim()), inputMode);
       const res = await fetch('/api/second-opinion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -408,7 +414,11 @@ export default function SecondOpinionPage() {
       setResult(data);
       setMechanicDiagnosis((prev) => prev || data.mechanicDiagnosis || '');
       setQuotedPrice((prev) => prev || String(data.quotedPrice || ''));
-      trackSecondOpinionResult(data.verdict);
+      trackSecondOpinionResult(
+        data.verdict,
+        data.quoteInputMode || inputMode,
+        Boolean(data.extractedFromImage)
+      );
       const usage = loadDailyUsage();
       const nextUsage = { day: usage.day, count: usage.count + 1 };
       saveDailyUsage(nextUsage);
