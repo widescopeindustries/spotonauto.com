@@ -15,6 +15,7 @@ type MonetizationSurface =
   | 'manual_page'
   | 'tools_index'
   | 'repair_hub'
+  | 'wiring_page'
   | 'guides_index'
   | 'guides_make'
   | 'guides_model';

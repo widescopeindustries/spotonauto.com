@@ -20,6 +20,7 @@ import { buildTopdonProductUrl, getTopdonRecommendations, getContextFromCode } f
 import TopdonProductCard from '@/components/TopdonProductCard';
 import { buildVehicleHubLinksForCodeViaGateway } from '@/lib/vehicleHubGateway';
 import { PricingTrackedLink } from '@/components/PricingTracking';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -283,9 +284,9 @@ export default async function CodePageClient({
                     ? 'Test your battery and charging system before replacing parts.'
                     : `Read live data and freeze frame for ${code.code} to pinpoint the cause before buying parts.`;
                 return (
-                    <div className="mb-8">
-                        <p className="text-gray-300 text-sm mb-4">{ctaText}</p>
-                        <div className="grid sm:grid-cols-2 gap-4">
+            <div className="mb-8">
+                <p className="text-gray-300 text-sm mb-4">{ctaText}</p>
+                <div className="grid sm:grid-cols-2 gap-4">
                             {topdonPicks.map((product, i) => (
                                 <TopdonProductCard
                                     key={product.slug}
@@ -322,6 +323,15 @@ export default async function CodePageClient({
                     </div>
                 );
             })()}
+
+            <div className="mb-8">
+                <SearchLandingMonetizationRail
+                    surface="codes_index"
+                    intent="diagnostic"
+                    contextLabel={`${code.code} ${code.title}`}
+                    className="rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
+                />
+            </div>
 
 
             {/* Repair link */}

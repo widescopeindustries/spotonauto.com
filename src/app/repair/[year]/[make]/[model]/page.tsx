@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import VehicleHubTracker from '@/components/VehicleHubTracker';
 
 export const revalidate = 21600; // 6 hour ISR
@@ -659,6 +660,13 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           <StatCard label="Spec pages" value={String(vehicleHub.toolCount)} />
           <StatCard label="Trouble codes" value={String(vehicleHub.codeCount)} />
         </div>
+
+        <SearchLandingMonetizationRail
+          surface="repair_hub"
+          intent="repair"
+          contextLabel={vehicleLabel}
+          className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
+        />
 
         <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/[0.05] p-6 md:p-8 mt-8">
           <div className="max-w-3xl">

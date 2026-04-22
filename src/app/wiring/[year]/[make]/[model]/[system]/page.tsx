@@ -19,6 +19,7 @@ import {
 import WiringSeoTracker from '@/app/wiring/WiringSeoTracker';
 import WiringTrackedLink from '@/app/wiring/WiringTrackedLink';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import {
   getCodeLinksForWiringSystem,
   getRepairLinksForWiringVehicle,
@@ -494,6 +495,15 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
           <StatCard label="Variant Used" value={data.resolvedVariant} />
           <StatCard label="Total Vehicle Diagrams" value={String(data.index.totalDiagrams)} />
         </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 pb-12">
+        <SearchLandingMonetizationRail
+          surface="wiring_page"
+          intent="manual"
+          contextLabel={`${vehicleLabel} ${systemMeta.shortLabel}`}
+          className="rounded-3xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
+        />
       </section>
 
       <section className="max-w-6xl mx-auto px-4 pb-12">
