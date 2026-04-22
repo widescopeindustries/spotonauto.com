@@ -158,7 +158,21 @@ export async function buildVehicleHubLinksForCodeViaGateway(args: {
   manualLinks: DiagnosticCrossLink[];
   limit?: number;
 }): Promise<VehicleHubLink[]> {
-  const meta = await resolveVehicleHubGatewayMeta();
+  // Keep /codes pages static-safe: these routes are pre-rendered and should not
+  // trigger runtime health fetches that force a static->dynamic transition.
+  const meta: VehicleHubGatewayMeta = isBackboneGatewayEnabled()
+    ? {
+      mode: 'backbone',
+      provider: 'graph-backbone',
+      reason: 'code-surface-static-safe',
+      generatedAt: new Date().toISOString(),
+    }
+    : {
+      mode: 'legacy',
+      provider: 'vehicleHubGraph',
+      reason: 'gateway-disabled',
+      generatedAt: new Date().toISOString(),
+    };
   const links = buildVehicleHubLinksForCode(args);
   return links.map((link) => attachLinkGatewayMeta(link, meta));
 }
