@@ -79,10 +79,10 @@ export default function KnowledgeGraphGroup({
 
   const impressionData = JSON.stringify({
     event_category: 'kg_impression',
-    surface,
-    groupKind,
-    title,
-    nodeCount: nodes.length,
+    graph_surface: surface,
+    graph_group: groupKind,
+    graph_title: title,
+    graph_node_count: nodes.length,
     vehicle: context?.vehicle,
     task: context?.task,
   });
@@ -100,10 +100,10 @@ export default function KnowledgeGraphGroup({
             className={`text-sm hover:underline ${classes.link}`}
             data-track-click={JSON.stringify({
               event_category: 'kg_click',
-              surface,
-              sourceKind: groupKind,
-              targetKind: groupKind,
-              label: `Browse ${title}`,
+              graph_surface: surface,
+              graph_group: groupKind,
+              graph_target_kind: groupKind,
+              graph_label: `Browse ${title}`,
               href: browseHref,
               isBrowseLink: true,
               vehicle: context?.vehicle,
@@ -121,10 +121,10 @@ export default function KnowledgeGraphGroup({
             className={`block rounded-xl border bg-slate-900/45 p-4 transition-all hover:bg-slate-900/65 ${classes.card}`}
             data-track-click={JSON.stringify({
               event_category: 'kg_click',
-              surface,
-              sourceKind: groupKind,
-              targetKind: node.targetKind,
-              label: node.label,
+              graph_surface: surface,
+              graph_group: groupKind,
+              graph_target_kind: node.targetKind,
+              graph_label: node.label,
               href: node.href,
               vehicle: context?.vehicle,
             })}

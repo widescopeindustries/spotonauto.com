@@ -33,6 +33,7 @@ const TRACKING_SCRIPT = `
             var data=JSON.parse(d);
             var ev=data.event_name||'track_click';
             if(data.event_category==='repair_answer') ev='repair_answer_click';
+            else if(data.event_category==='kg_click') ev='knowledge_graph_click';
             else if(data.event_category==='affiliate_click') ev='affiliate_click';
             delete data.event_name;
             fire(ev,data);
