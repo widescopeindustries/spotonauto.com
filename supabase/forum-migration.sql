@@ -74,53 +74,65 @@ ALTER TABLE forum_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE forum_profiles ENABLE ROW LEVEL SECURITY;
 
 -- Categories: public read
+DROP POLICY IF EXISTS "Anyone can read categories" ON forum_categories;
 CREATE POLICY "Anyone can read categories"
     ON forum_categories FOR SELECT
     USING (true);
 
 -- Threads: public read, auth insert, author update/delete
+DROP POLICY IF EXISTS "Anyone can read threads" ON forum_threads;
 CREATE POLICY "Anyone can read threads"
     ON forum_threads FOR SELECT
     USING (true);
 
+DROP POLICY IF EXISTS "Auth users can create threads" ON forum_threads;
 CREATE POLICY "Auth users can create threads"
     ON forum_threads FOR INSERT
     WITH CHECK (auth.uid() = author_id);
 
+DROP POLICY IF EXISTS "Authors can update own threads" ON forum_threads;
 CREATE POLICY "Authors can update own threads"
     ON forum_threads FOR UPDATE
     USING (auth.uid() = author_id);
 
+DROP POLICY IF EXISTS "Authors can delete own threads" ON forum_threads;
 CREATE POLICY "Authors can delete own threads"
     ON forum_threads FOR DELETE
     USING (auth.uid() = author_id);
 
 -- Posts: public read, auth insert, author update/delete
+DROP POLICY IF EXISTS "Anyone can read posts" ON forum_posts;
 CREATE POLICY "Anyone can read posts"
     ON forum_posts FOR SELECT
     USING (true);
 
+DROP POLICY IF EXISTS "Auth users can create posts" ON forum_posts;
 CREATE POLICY "Auth users can create posts"
     ON forum_posts FOR INSERT
     WITH CHECK (auth.uid() = author_id);
 
+DROP POLICY IF EXISTS "Authors can update own posts" ON forum_posts;
 CREATE POLICY "Authors can update own posts"
     ON forum_posts FOR UPDATE
     USING (auth.uid() = author_id);
 
+DROP POLICY IF EXISTS "Authors can delete own posts" ON forum_posts;
 CREATE POLICY "Authors can delete own posts"
     ON forum_posts FOR DELETE
     USING (auth.uid() = author_id);
 
 -- Profiles: public read, owner update
+DROP POLICY IF EXISTS "Anyone can read profiles" ON forum_profiles;
 CREATE POLICY "Anyone can read profiles"
     ON forum_profiles FOR SELECT
     USING (true);
 
+DROP POLICY IF EXISTS "Users can insert own profile" ON forum_profiles;
 CREATE POLICY "Users can insert own profile"
     ON forum_profiles FOR INSERT
     WITH CHECK (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON forum_profiles;
 CREATE POLICY "Users can update own profile"
     ON forum_profiles FOR UPDATE
     USING (auth.uid() = id);
