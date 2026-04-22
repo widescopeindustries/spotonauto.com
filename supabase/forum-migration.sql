@@ -140,7 +140,8 @@ BEGIN
         WHERE id = NEW.author_id;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public;
 
 CREATE OR REPLACE TRIGGER trg_thread_created
     AFTER INSERT ON forum_threads
@@ -162,7 +163,8 @@ BEGIN
         WHERE id = NEW.author_id;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public;
 
 CREATE OR REPLACE TRIGGER trg_post_created
     AFTER INSERT ON forum_posts
@@ -181,7 +183,8 @@ BEGIN
     ON CONFLICT (id) DO NOTHING;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public;
 
 CREATE OR REPLACE TRIGGER trg_create_forum_profile
     AFTER INSERT ON auth.users
@@ -198,7 +201,8 @@ BEGIN
         SET view_count = view_count + 1
         WHERE id = p_thread_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public;
 
 
 -- ── 5. SEED CATEGORIES ──────────────────────────────────────
