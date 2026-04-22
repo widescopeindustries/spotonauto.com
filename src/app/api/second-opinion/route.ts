@@ -118,6 +118,48 @@ function parseDataUrl(dataUrl: string): { mimeType: string; base64Data: string }
   return { mimeType: match[1].toLowerCase(), base64Data: match[2] };
 }
 
+function humanizeLabel(value: string): string {
+  return String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function toSafeText(value: unknown): string {
+  if (typeof value === 'string') return value.trim();
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (!value) return '';
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
+function coerceStringArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => toSafeText(item))
+      .filter(Boolean)
+      .slice(0, 12);
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([key, entry]) => {
+        const label = humanizeLabel(key);
+        const entryText = toSafeText(entry);
+        if (!entryText || entryText === 'true' || entryText === 'false') return label;
+        return `${label}: ${entryText}`;
+      })
+      .filter(Boolean)
+      .slice(0, 12);
+  }
+
+  const single = toSafeText(value);
+  return single ? [single] : [];
+}
+
 async function extractQuoteFieldsWithGemini(input: {
   imageDataUrl: string;
   year: string;
@@ -367,8 +409,30 @@ Provide your analysis as JSON with: verdict, confidence, avgPrice, priceRange (l
       data.verdict = 'Fair Price';
     }
 
-    return NextResponse.json({
+    const normalizedResponse = {
       ...data,
+      summary: toSafeText(data.summary) || 'Quote analyzed successfully.',
+      confidence: toSafeText(data.confidence) || 'Medium',
+      partsBreakdown: toSafeText(data.partsBreakdown) || 'Parts and labor mix varies by shop and region.',
+      avgPrice: sanitizePrice(data.avgPrice) || resolvedPrice,
+      priceRange: {
+        low: sanitizePrice(data?.priceRange?.low) || Math.max(50, Math.round(resolvedPrice * 0.7)),
+        high: sanitizePrice(data?.priceRange?.high) || Math.max(100, Math.round(resolvedPrice * 1.3)),
+      },
+      flags: coerceStringArray(data.flags),
+      commonMisdiagnoses: coerceStringArray(data.commonMisdiagnoses),
+      questionsToAsk: coerceStringArray(data.questionsToAsk),
+      alternatives: coerceStringArray(data.alternatives),
+    };
+
+    if (normalizedResponse.priceRange.high < normalizedResponse.priceRange.low) {
+      const low = normalizedResponse.priceRange.high;
+      normalizedResponse.priceRange.high = normalizedResponse.priceRange.low;
+      normalizedResponse.priceRange.low = low;
+    }
+
+    return NextResponse.json({
+      ...normalizedResponse,
       vehicle: { year, make, model },
       quotedPrice: resolvedPrice,
       mechanicDiagnosis: resolvedDiagnosis,
