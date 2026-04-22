@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const revalidate = 86400; // 1 day ISR
 
@@ -67,6 +68,12 @@ export default async function MakeGuidesPage({ params }: PageProps) {
           Select your {originalMake} model to view available repair and maintenance guides.
         </p>
       </FadeInUp>
+
+      <SearchLandingMonetizationRail
+        surface="guides_make"
+        intent="maintenance"
+        contextLabel={`${originalMake} maintenance`}
+      />
 
       <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {models.map((model) => (

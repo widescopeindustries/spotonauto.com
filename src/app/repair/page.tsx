@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import { TIER_1_RESCUE_PAGES } from '@/data/rescuePriority';
 import { getHomepageMomentumData } from '@/lib/commandCenterOpportunities';
 import { getHighValueSymptomHubs, getTier1RepairSupportGaps } from '@/lib/graphPriorityLinks';
@@ -39,6 +40,12 @@ export default function RepairHubPage() {
         Start with the kind of help you need: an exact vehicle hub, a common DIY job, a symptom page, or a vehicle-specific
         repair guide. This page is built to get you to the right instructions without extra category hopping.
       </p>
+
+      <SearchLandingMonetizationRail
+        surface="repair_hub"
+        intent="repair"
+        contextLabel="DIY repair"
+      />
 
       <section className="mb-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Link

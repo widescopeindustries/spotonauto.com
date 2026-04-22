@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { DTC_SYSTEMS } from '@/data/dtc-codes-data';
 import CodesIndex from './CodesIndex';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const metadata: Metadata = {
     title: 'OBD2 Code Lookup | SpotOnAuto',
@@ -77,6 +78,12 @@ export default function CodesPage() {
                         300+ diagnostic trouble codes explained in plain English. Find what your check engine light means, what it costs, and how to fix it.
                     </p>
                 </div>
+
+                <SearchLandingMonetizationRail
+                    surface="codes_index"
+                    intent="diagnostic"
+                    contextLabel="check engine light"
+                />
 
                 <CodesIndex systems={systems} />
             </section>

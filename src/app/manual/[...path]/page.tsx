@@ -7,6 +7,7 @@ import {
   buildManualDescription,
   type CharmLink,
 } from '@/lib/charmParser';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const revalidate = 86400; // 1 day ISR
 export const dynamic = 'force-dynamic';
@@ -95,6 +96,13 @@ export default async function ManualBrowserPage({ params }: PageProps) {
         {/* Cross-sell CTA for 3+ levels deep */}
         {depth >= 3 && <CrossSellCta pathSegments={path} />}
 
+        <SearchLandingMonetizationRail
+          surface="manual_page"
+          intent="manual"
+          contextLabel={page.title}
+          className="mb-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
+        />
+
         <nav aria-label="Manual sections">
           <LinkTree links={page.links} depth={depth} />
         </nav>
@@ -127,6 +135,13 @@ export default async function ManualBrowserPage({ params }: PageProps) {
 
       {/* Cross-sell CTA */}
       {depth >= 3 && <CrossSellCta pathSegments={path} />}
+
+      <SearchLandingMonetizationRail
+        surface="manual_page"
+        intent="manual"
+        contextLabel={page.title}
+        className="mb-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
+      />
 
       {/* Rendered content */}
       <article

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SYMPTOM_CLUSTERS, buildSymptomHref } from '@/data/symptomGraph';
 import { getHighValueSymptomHubs, getTier1RepairSupportGaps, getTopOrphanSymptoms } from '@/lib/graphPriorityLinks';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const metadata: Metadata = {
   title: 'Symptom Hubs | SpotOnAuto',
@@ -31,6 +32,12 @@ export default function SymptomsIndexPage() {
       <p className="text-gray-300 max-w-3xl mb-8">
         Describe what your car is doing — we&apos;ll help you figure out what&apos;s wrong and which repair you need.
       </p>
+
+      <SearchLandingMonetizationRail
+        surface="symptoms_index"
+        intent="diagnostic"
+        contextLabel="car symptom diagnosis"
+      />
 
       {prioritySymptomHubs.length > 0 && (
         <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-6">

@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { NOINDEX_MAKES, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const metadata: Metadata = {
   title: 'Repair Guide Directory | Browse by Make | SpotOnAuto',
@@ -25,6 +26,12 @@ export default function GuidesPage() {
           Select your vehicle manufacturer below to find step-by-step repair instructions, parts lists, and diagnostic advice for your specific model.
         </p>
       </FadeInUp>
+
+      <SearchLandingMonetizationRail
+        surface="guides_index"
+        intent="maintenance"
+        contextLabel="DIY maintenance"
+      />
 
       <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {makes.map((make) => (

@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { getTier1RescuePagesForVehicle } from '@/data/rescuePriority';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const revalidate = 86400; // 1 day ISR
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
@@ -189,6 +190,13 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             </Link>
           </div>
         </section>
+
+        <SearchLandingMonetizationRail
+          surface="guides_model"
+          intent="repair"
+          contextLabel={`${originalMake} ${originalModel}`}
+          className="mb-12 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
+        />
 
         {(familyOpportunities.length > 0 || queryOnlySignals.length > 0) && (
           <section className="mb-12 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import { buildSymptomHref, getSymptomClusterBySlug, getSymptomClusterFromText, SYMPTOM_CLUSTERS } from '@/data/symptomGraph';
 
 export const revalidate = 86400; // 1 day ISR
@@ -156,6 +157,13 @@ export default async function SymptomHubPage({ params }: PageProps) {
           <StatCard label="Exact vehicle paths" value={String(symptomHub.vehicleCount)} />
           <StatCard label="Systems" value={String(matchedCluster.systems.length)} />
         </div>
+
+        <SearchLandingMonetizationRail
+          surface="symptom_hub"
+          intent="diagnostic"
+          contextLabel={matchedCluster.label}
+          className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
+        />
 
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link

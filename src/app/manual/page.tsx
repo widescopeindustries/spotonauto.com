@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { fetchCharmPage } from '@/lib/charmParser';
+import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 // The CHARM index is fetched from the live manual backend and can time out during
 // static prerender on Vercel. Keep the route dynamic so production builds do not
@@ -58,6 +59,12 @@ export default async function ManualLandingPage() {
           Repair procedures, torque specs, wiring diagrams, TSBs, parts information, and labor times — all from OEM sources.
         </p>
       </section>
+
+      <SearchLandingMonetizationRail
+        surface="manual_index"
+        intent="manual"
+        contextLabel="factory service manual"
+      />
 
       {/* Cars section */}
       {cars.length > 0 && (
