@@ -502,6 +502,22 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     previewLinks: PreviewLink[];
   }> = [
     {
+      eyebrow: 'Start from the complaint',
+      title: 'Symptoms and diagnosis',
+      description: `The fastest ${vehicleLabel} wins usually start with the complaint first — battery light, overheating, no-start, brake noise, or a check engine light.`,
+      countLabel: `${vehicleHub.symptomCount} symptoms`,
+      tone: 'amber',
+      primaryHref: symptomGroup?.nodes[0]?.href || '/diagnose',
+      primaryLabel: symptomGroup ? 'Open symptom hubs' : 'Start diagnosis',
+      previewLinks: [
+        ...(exactOpportunity?.symptomHubs ?? []).slice(0, 3).map((hub) => ({
+          href: hub.href,
+          label: hub.label,
+        })),
+        { href: '/diagnose', label: 'Guided diagnosis' },
+      ].slice(0, 4),
+    },
+    {
       eyebrow: 'Most-used path',
       title: 'Exact Repair Guides',
       description: `Step-by-step repair guides for the most common ${vehicleLabel} jobs — brakes, oil, battery, and more.`,
@@ -528,19 +544,6 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
       primaryHref: wiringGroup?.nodes[0]?.href || '/wiring',
       primaryLabel: wiringGroup ? 'Open exact wiring' : 'Browse wiring pages',
       previewLinks: buildPreviewLinks(wiringGroup?.nodes ?? [], vehicleLabel, 3),
-    },
-    {
-      eyebrow: 'Complaint-led path',
-      title: 'Symptoms and Diagnosis',
-      description: 'Describe what your car is doing and get help narrowing down the problem before you start a repair.',
-      countLabel: `${vehicleHub.symptomCount} symptoms`,
-      tone: 'amber',
-      primaryHref: symptomGroup?.nodes[0]?.href || '/diagnose',
-      primaryLabel: symptomGroup ? 'Open symptom hubs' : 'Start diagnosis',
-      previewLinks: [
-        { href: '/diagnose', label: 'Guided diagnosis' },
-        ...buildPreviewLinks(symptomGroup?.nodes ?? [], vehicleLabel, 2),
-      ].slice(0, 3),
     },
     {
       eyebrow: 'If you have a code',
