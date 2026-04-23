@@ -11,9 +11,9 @@ function toTitleCase(slug: string): string {
 }
 
 export const metadata: Metadata = {
-  title: 'DIY Auto Repair Guides by Category | SpotOnAuto',
+  title: 'DIY Auto Repair Categories and Exact Vehicle Guides | SpotOnAuto',
   description:
-    'Browse DIY car repair guides by category and vehicle. Start with brakes, batteries, lighting, filters, fluids, and exact step-by-step repair walkthroughs.',
+    'Choose a repair family, symptom path, or exact vehicle guide. Start with brakes, batteries, lighting, filters, fluids, and exact step-by-step repair walkthroughs.',
   alternates: {
     canonical: 'https://spotonauto.com/repairs',
   },
@@ -33,10 +33,10 @@ export default function RepairsIndexPage() {
       </nav>
 
       <h1 className="text-4xl font-display font-bold text-white mb-4">
-        DIY Repair Guides by <span className="text-cyan-400">Category</span>
+        DIY Repair Guides by <span className="text-cyan-400">Repair Family</span>
       </h1>
       <p className="text-gray-400 mb-12 max-w-3xl">
-        Start with a common repair category, then open the exact guide that matches your vehicle. This page is meant to move you from a broad job like brakes,
+        Start with a common repair family, then open the exact guide that matches your vehicle. This page is meant to move you from a broad job like brakes,
         batteries, filters, fluids, or lighting into the right year-make-model walkthrough without extra searching.
       </p>
 
@@ -49,16 +49,13 @@ export default function RepairsIndexPage() {
       <section className="mb-12 rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.06] p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-cyan-300/80 mb-2">Popular DIY repairs</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-cyan-300/80 mb-2">Popular DIY repair families</p>
             <h2 className="text-xl font-bold text-white">Start with the categories drivers use most</h2>
             <p className="text-sm text-gray-300 mt-1 max-w-3xl">
               These common jobs are the fastest path into the right repair guide, parts list, and vehicle-specific steps.
             </p>
           </div>
-          <Link
-            href="/repair"
-            className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors"
-          >
+          <Link href="/repair" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors">
             Open repair hub →
           </Link>
         </div>
@@ -104,7 +101,7 @@ export default function RepairsIndexPage() {
             </p>
           </div>
           <Link href="/repair" className="text-sm text-emerald-300 hover:text-emerald-200 transition-colors">
-            Browse more exact repair guides →
+            Open more exact repair guides →
           </Link>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -146,9 +143,9 @@ export default function RepairsIndexPage() {
 
       <section className="mb-12">
         <div className="mb-5">
-          <h2 className="text-xl font-bold text-white">All repair categories</h2>
+          <h2 className="text-xl font-bold text-white">All repair families</h2>
           <p className="text-sm text-gray-400 mt-1 max-w-3xl">
-            Browse every repair category when you know the kind of job you want, but still need to choose the guide that matches your exact vehicle.
+            Choose the repair family first, then open the guide that matches your exact vehicle.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -165,7 +162,7 @@ export default function RepairsIndexPage() {
                 <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors capitalize">
                   {toTitleCase(task)}
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">Browse by make, model, and year</p>
+                <p className="text-xs text-gray-500 mt-0.5">Choose by make, model, and year</p>
               </div>
             </Link>
           ))}

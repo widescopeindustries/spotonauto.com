@@ -2444,9 +2444,9 @@ export default async function Page({ params }: PageProps) {
                     </div>
                 </header>
 
-                <CorpusBadge year={Number(resolvedYear)} vehicleName={vehicleName} />
-
                 <OEMExcerpt excerpts={oemExcerpts} vehicleName={vehicleName} task={canonicalTask} />
+
+                <CorpusBadge year={Number(resolvedYear)} vehicleName={vehicleName} />
 
                 <section
                     id="quick-answer"

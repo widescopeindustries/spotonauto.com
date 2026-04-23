@@ -92,6 +92,9 @@ export default async function ManualBrowserPage({ params }: PageProps) {
         <h1 className="text-3xl sm:text-4xl font-display font-bold text-white mb-8">
           {page.title}
         </h1>
+        <p className="max-w-3xl text-sm sm:text-base text-gray-300 mb-6">
+          Use the exact make, year, model, and section below to stay on the OEM answer path for this vehicle.
+        </p>
 
         {/* Cross-sell CTA for 3+ levels deep */}
         {depth >= 3 && <CrossSellCta pathSegments={path} />}
@@ -132,6 +135,9 @@ export default async function ManualBrowserPage({ params }: PageProps) {
       <h1 className="text-3xl sm:text-4xl font-display font-bold text-white mb-8">
         {page.title}
       </h1>
+      <div className="mb-6 rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.05] p-4 text-sm leading-6 text-gray-300">
+        This is the exact OEM manual section for the path above. Use the breadcrumb to move up or down the tree until you reach the precise year, make, model, and subsystem you need.
+      </div>
 
       {/* Cross-sell CTA */}
       {depth >= 3 && <CrossSellCta pathSegments={path} />}

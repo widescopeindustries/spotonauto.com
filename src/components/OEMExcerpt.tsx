@@ -25,6 +25,9 @@ function ExcerptCard({ excerpt }: { excerpt: OEMExcerptData }) {
     <div className="rounded-xl border border-emerald-500/15 bg-emerald-950/20 p-4 md:p-5">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="min-w-0">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-300/75 mb-1">
+            Exact OEM section
+          </p>
           <h4 className="text-base font-semibold text-white tracking-tight leading-snug">
             {excerpt.sectionTitle}
           </h4>
@@ -82,10 +85,10 @@ export default function OEMExcerpt({ excerpts, vehicleName, task }: OEMExcerptPr
         </p>
       </div>
       <h3 className="text-xl md:text-2xl font-semibold tracking-tight text-white mt-2">
-        What the OEM says about {cleanTask}
+        The exact OEM answer for {cleanTask}
       </h3>
       <p className="mt-2 text-sm leading-6 text-gray-400 max-w-2xl">
-        These excerpts come directly from the factory service manual for the {vehicleName}. This is what the manufacturer wrote for certified technicians.
+        These excerpts come directly from the factory service manual for the {vehicleName}. This is the source material we want Google and users to trust first.
       </p>
 
       <div className="mt-5 space-y-3">

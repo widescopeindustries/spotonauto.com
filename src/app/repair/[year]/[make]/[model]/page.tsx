@@ -502,29 +502,13 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     previewLinks: PreviewLink[];
   }> = [
     {
-      eyebrow: 'Start from the complaint',
-      title: 'Symptoms and diagnosis',
-      description: `The fastest ${vehicleLabel} wins usually start with the complaint first — battery light, overheating, no-start, brake noise, or a check engine light.`,
-      countLabel: `${vehicleHub.symptomCount} symptoms`,
-      tone: 'amber',
-      primaryHref: symptomGroup?.nodes[0]?.href || '/diagnose',
-      primaryLabel: symptomGroup ? 'Open symptom hubs' : 'Start diagnosis',
-      previewLinks: [
-        ...(exactOpportunity?.symptomHubs ?? []).slice(0, 3).map((hub) => ({
-          href: hub.href,
-          label: hub.label,
-        })),
-        { href: '/diagnose', label: 'Guided diagnosis' },
-      ].slice(0, 4),
-    },
-    {
-      eyebrow: 'Most-used path',
+      eyebrow: 'Exact answer',
       title: 'Exact Repair Guides',
-      description: `Step-by-step repair guides for the most common ${vehicleLabel} jobs — brakes, oil, battery, and more.`,
+      description: `Step-by-step exact-fit repair pages for the most common ${vehicleLabel} jobs — brakes, oil, battery, and more.`,
       countLabel: `${vehicleHub.repairCount} guides`,
       tone: 'cyan',
       primaryHref: repairGroup?.nodes[0]?.href || '/repair',
-      primaryLabel: repairGroup ? 'Open highest-demand repairs' : 'Browse repair categories',
+      primaryLabel: repairGroup ? 'Open exact repair pages' : 'Browse exact repair pages',
       previewLinks: buildPriorityRepairPreviewLinks(
         exactVehicleTier1Pages.length > 0 ? exactVehicleTier1Pages.map((entry) => ({
           href: entry.href,
@@ -546,9 +530,35 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
       previewLinks: buildPreviewLinks(wiringGroup?.nodes ?? [], vehicleLabel, 3),
     },
     {
+      eyebrow: 'OEM source',
+      title: 'Factory Manual Paths',
+      description: 'Open the exact OEM service manual sections and repair procedures for this vehicle.',
+      countLabel: `${manualGroup?.nodes.length || 0} manual sections`,
+      tone: 'slate',
+      primaryHref: manualGroup?.nodes[1]?.href || manualGroup?.nodes[0]?.href || '/manual',
+      primaryLabel: 'Open OEM manual paths',
+      previewLinks: buildPreviewLinks(manualGroup?.nodes ?? [], vehicleLabel, 3),
+    },
+    {
+      eyebrow: 'Start from the complaint',
+      title: 'Symptoms and diagnosis',
+      description: `Use symptoms to narrow into the exact ${vehicleLabel} answer when you are not sure which repair page to open yet.`,
+      countLabel: `${vehicleHub.symptomCount} symptoms`,
+      tone: 'amber',
+      primaryHref: symptomGroup?.nodes[0]?.href || '/diagnose',
+      primaryLabel: symptomGroup ? 'Open symptom hubs' : 'Start diagnosis',
+      previewLinks: [
+        ...(exactOpportunity?.symptomHubs ?? []).slice(0, 3).map((hub) => ({
+          href: hub.href,
+          label: hub.label,
+        })),
+        { href: '/diagnose', label: 'Guided diagnosis' },
+      ].slice(0, 4),
+    },
+    {
       eyebrow: 'If you have a code',
       title: 'Trouble Code Pages',
-      description: 'Look up check engine light codes commonly seen on this vehicle, with causes, symptoms, and fix costs.',
+      description: 'Look up check engine light codes for this vehicle, then jump into the exact repair path.',
       countLabel: `${vehicleHub.codeCount} codes`,
       tone: 'emerald',
       primaryHref: codeGroup?.nodes[0]?.href || '/codes',
@@ -558,22 +568,12 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     {
       eyebrow: 'Fitment and reference',
       title: 'Specs and Tools',
-      description: 'Oil type, tire size, battery group size, fluid capacities, and other specs for your vehicle.',
+      description: 'Oil type, tire size, battery group size, fluid capacities, and other exact fitment specs.',
       countLabel: `${vehicleHub.toolCount} spec pages`,
       tone: 'emerald',
       primaryHref: toolGroup?.nodes[0]?.href || '/tools',
       primaryLabel: toolGroup ? 'Open specs and tools' : 'Browse tool pages',
       previewLinks: buildPreviewLinks(toolGroup?.nodes ?? [], vehicleLabel, 3),
-    },
-    {
-      eyebrow: 'OEM source',
-      title: 'Factory Manual Paths',
-      description: 'Browse factory service manual sections and OEM repair procedures for this vehicle.',
-      countLabel: `${manualGroup?.nodes.length || 0} manual sections`,
-      tone: 'slate',
-      primaryHref: manualGroup?.nodes[1]?.href || manualGroup?.nodes[0]?.href || '/manual',
-      primaryLabel: 'Open OEM manual paths',
-      previewLinks: buildPreviewLinks(manualGroup?.nodes ?? [], vehicleLabel, 3),
     },
   ];
 
@@ -653,7 +653,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           {vehicleLabel} <span className="text-cyan-400">Repair Hub</span>
         </h1>
         <p className="text-lg text-gray-300 max-w-3xl">
-          Everything you need for your {canonicalYear} {originalMake} {originalModel} in one place — repair guides, wiring diagrams, trouble codes, specs, and factory manual references.
+          Everything for your {canonicalYear} {originalMake} {originalModel} should resolve to the exact answer path here — repair guides, wiring diagrams, trouble codes, specs, and factory manual references.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8">
@@ -671,10 +671,35 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
         />
 
+        <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6 md:p-8 mt-8">
+          <div className="max-w-3xl">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-300/85">Start Here</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Exact answer paths for this vehicle</h2>
+            <p className="text-sm md:text-base text-gray-300 mt-3">
+              Start with the exact repair pages first, then use the OEM manual sections, wiring, symptoms, codes, and specs to narrow to the right procedure for your {vehicleLabel}.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
+            {commandCards.map((card) => (
+              <HubActionCard
+                key={card.title}
+                eyebrow={card.eyebrow}
+                title={card.title}
+                description={card.description}
+                countLabel={card.countLabel}
+                tone={card.tone}
+                primaryHref={card.primaryHref}
+                primaryLabel={card.primaryLabel}
+                previewLinks={card.previewLinks}
+              />
+            ))}
+          </div>
+        </div>
+
         <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/[0.05] p-6 md:p-8 mt-8">
           <div className="max-w-3xl">
             <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-300/85">DIY Quick Starts</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Start with the jobs owners actually do themselves</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Short paths for the jobs owners do themselves</h2>
             <p className="text-sm md:text-base text-gray-300 mt-3">
               These are the lighter-maintenance paths most searchers are willing to take on: brakes, lights, battery, oil, fluids,
               and filters. Each exact guide already carries the tools, parts, fitment notes, and consumable-buying context that make the job easier to finish.
@@ -716,47 +741,22 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
             ))}
           </div>
         </div>
-
-        <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6 md:p-8 mt-8">
-          <div className="max-w-3xl">
-            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-300/85">Start Here</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">Everything for this vehicle, arranged by job</h2>
-            <p className="text-sm md:text-base text-gray-300 mt-3">
-              Browse repair guides, wiring diagrams, trouble codes, specs, factory manuals, and more — all for your {vehicleLabel}.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
-            {commandCards.map((card) => (
-              <HubActionCard
-                key={card.title}
-                eyebrow={card.eyebrow}
-                title={card.title}
-                description={card.description}
-                countLabel={card.countLabel}
-                tone={card.tone}
-                primaryHref={card.primaryHref}
-                primaryLabel={card.primaryLabel}
-                previewLinks={card.previewLinks}
-              />
-            ))}
-          </div>
-        </div>
       </section>
 
       {(exactOpportunity || familyOpportunities.length > 0) && (
         <section className="max-w-6xl mx-auto px-4 pb-12">
           <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-8">
             <div className="max-w-4xl">
-              <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-300/85">Popular Right Now</p>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-emerald-300/85">Exact Repair Focus</p>
               <h2 className="text-2xl md:text-3xl font-bold text-white mt-3">
                 {exactOpportunity
-                  ? `What ${vehicleLabel} owners are looking for`
-                  : `Popular repairs for the ${originalMake} ${originalModel}`}
+                  ? `What ${vehicleLabel} owners are searching for now`
+                  : `Exact repairs for the ${originalMake} ${originalModel}`}
               </h2>
               <p className="text-sm md:text-base text-gray-300 mt-3">
                 {exactOpportunity
-                  ? `${exactOpportunity.note} These are the repairs and topics ${vehicleLabel} owners search for most.`
-                  : `See what other ${originalMake} ${originalModel} owners are fixing right now.`}
+                  ? `${exactOpportunity.note} These are the exact repairs and topics ${vehicleLabel} owners search for most.`
+                  : `See the exact repairs other ${originalMake} ${originalModel} owners are fixing right now.`}
               </p>
             </div>
 
@@ -807,9 +807,9 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               <div className="mt-6">
                 <div className="flex items-end justify-between gap-3 mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-white">Other {originalMake} {originalModel} years</h3>
+                    <h3 className="text-xl font-semibold text-white">More exact {originalMake} {originalModel} years</h3>
                     <p className="text-sm text-gray-300 mt-2">
-                      Popular repair hubs for other model years of the {originalMake} {originalModel}.
+                      Exact repair hubs for other model years of the {originalMake} {originalModel}.
                     </p>
                   </div>
                 </div>
@@ -944,7 +944,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               </p>
             </div>
             <Link href="/repair" className="text-sm text-cyan-400 hover:underline">
-              Browse all repair categories →
+              Open exact repair categories →
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -975,7 +975,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
               </p>
             </div>
             <Link href="/wiring" className="text-sm text-cyan-400 hover:underline">
-              Browse all wiring pages →
+              Open exact wiring pages →
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-3">

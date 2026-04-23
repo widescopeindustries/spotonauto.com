@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: PageProps) {
   const displayModel = originalModel || model.charAt(0).toUpperCase() + model.slice(1).replace(/-/g, ' ');
   return {
     title: `${displayMake} ${displayModel} DIY Repair Guides | SpotOnAuto`,
-    description: `Get step-by-step DIY repair guides for the ${displayMake} ${displayModel}, including maintenance intervals, common fault diagnosis, parts planning, and exact year-by-year repair paths.`,
+    description: `Open step-by-step DIY repair guides for the ${displayMake} ${displayModel}, including maintenance intervals, common fault diagnosis, parts planning, and exact year-by-year repair paths.`,
     alternates: {
       canonical: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}`,
     },
@@ -170,7 +170,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             <span className="text-cyan-400">{originalMake} {originalModel}</span> Guides
           </h1>
           <p className="text-gray-400 mb-12 max-w-2xl">
-            Comprehensive DIY maintenance and repair guides for the {originalMake} {originalModel} ({production.start} - {production.end}).
+            Exact DIY maintenance and repair guides for the {originalMake} {originalModel} ({production.start} - {production.end}).
           </p>
         </FadeInUp>
 
@@ -179,7 +179,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             <div>
               <h2 className="text-xl font-bold text-white">Vehicle Repair Hub</h2>
               <p className="text-sm text-gray-300 mt-2">
-                Jump to the {targetYear} {originalMake} {originalModel} repair hub for guides, wiring diagrams, codes, and more.
+                Jump to the {targetYear} {originalMake} {originalModel} repair hub for guides, wiring diagrams, codes, and exact manual sections.
               </p>
             </div>
             <Link
@@ -204,14 +204,14 @@ export default async function ModelGuidesPage({ params }: PageProps) {
               <div className="max-w-3xl">
                 <h2 className="text-xl font-bold text-white">Popular {originalMake} {originalModel} Years</h2>
                 <p className="text-sm text-gray-300 mt-2">
-                  The most popular model years for the {originalMake} {originalModel} — click through for year-specific repair guides and resources.
+                  The most popular model years for the {originalMake} {originalModel} — open each year for year-specific repair guides and resources.
                 </p>
               </div>
               <Link
                 href={`/repair/${targetYear}/${canonicalMake}/${canonicalModel}`}
                 className="inline-flex items-center rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 hover:border-emerald-400/40 hover:bg-emerald-500/20 transition-all"
               >
-                View top year
+                Open top year
               </Link>
             </div>
 
@@ -249,7 +249,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
 
             {queryOnlySignals.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-lg font-semibold text-white">Other popular years</h3>
+                <h3 className="text-lg font-semibold text-white">Other exact years</h3>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {queryOnlySignals.map((entry) => (
                     <Link
@@ -319,7 +319,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
               Factory Service Manuals
             </h2>
             <Link href="/manual" className="text-sm text-cyan-400 hover:underline">
-              Browse all manuals →
+              Open all manuals →
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -329,9 +329,9 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             >
               <p className="text-sm text-cyan-400 mb-1">Make-level manual</p>
               <h3 className="text-base font-semibold text-gray-200 group-hover:text-white transition">
-                Browse {originalMake} manual categories
+                Open {originalMake} manual sections
               </h3>
-              <p className="text-xs text-gray-500 mt-2">Browse factory manual sections for all supported {originalMake} years.</p>
+              <p className="text-xs text-gray-500 mt-2">Open factory manual sections for all supported {originalMake} years.</p>
             </Link>
             <Link
               href={representativeManualNodes[1]?.href || `/manual/${encodeURIComponent(originalMake)}/${targetYear}`}
@@ -341,7 +341,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
               <h3 className="text-base font-semibold text-gray-200 group-hover:text-white transition">
                 Open the {targetYear} {originalMake} manual
               </h3>
-              <p className="text-xs text-gray-500 mt-2">Browse repair procedures from the {targetYear} {originalMake} factory manual.</p>
+              <p className="text-xs text-gray-500 mt-2">Open repair procedures from the {targetYear} {originalMake} factory manual.</p>
             </Link>
           </div>
         </section>
@@ -353,7 +353,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
                 {originalMake} {originalModel} Specs & Fitment
               </h2>
               <Link href="/tools" className="text-sm text-cyan-400 hover:underline">
-                Browse all spec pages →
+                Open all spec pages →
               </Link>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -384,7 +384,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
                 {targetYear} Wiring Diagrams
               </h2>
               <Link href="/wiring" className="text-sm text-cyan-400 hover:underline">
-                Browse all wiring pages →
+                Open all wiring pages →
               </Link>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -412,7 +412,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
                 Common Trouble Codes
               </h2>
               <Link href="/codes" className="text-sm text-cyan-400 hover:underline">
-                Browse all DTC codes →
+                Open all DTC codes →
               </Link>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -435,7 +435,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
 
         {/* Cross-link to repair category hubs */}
         <section className="mt-16">
-          <h2 className="text-xl font-bold text-white mb-4">Browse by Repair Type</h2>
+          <h2 className="text-xl font-bold text-white mb-4">Open by Repair Type</h2>
           <p className="text-gray-400 text-sm mb-4">
             See how {originalMake} {originalModel} compares to other vehicles for each repair:
           </p>
@@ -453,7 +453,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
               href="/repairs"
               className="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-400 hover:bg-cyan-500/20 transition-all"
             >
-              All Categories
+              All Repair Families
             </Link>
           </div>
         </section>

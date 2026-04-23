@@ -34,10 +34,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!VALID_TASKS.includes(canonicalTask)) return {};
   const taskName = toTitleCase(canonicalTask);
   return {
-    title: `${taskName} Guides for Every Vehicle | SpotOnAuto`,
-    description: `Step-by-step ${taskName.toLowerCase()} instructions for Toyota, Honda, Ford, Chevrolet, BMW, and 30+ more makes. Find your exact year, make, and model.`,
+    title: `Choose Your Exact ${taskName} Guide | SpotOnAuto`,
+    description: `Select your exact year, make, model, and engine to open the correct ${taskName.toLowerCase()} guide. SpotOnAuto routes you to the exact-fit OEM path.`,
     alternates: {
       canonical: `https://spotonauto.com/repairs/${canonicalTask}`,
+    },
+    robots: {
+      index: false,
+      follow: true,
     },
   };
 }
@@ -126,9 +130,45 @@ export default async function TaskCategoryPage({ params }: PageProps) {
         </h1>
         <p className="text-gray-400 mb-10 max-w-3xl">
           Step-by-step {taskName.toLowerCase()} instructions for {totalVehicles}+ vehicles.
-          Select your make and model below for a guide tailored to your exact car, truck, or SUV —
+          This page is a selector: choose your exact year, make, and model below for a guide tailored to your exact car, truck, or SUV —
           including tools, parts, torque specs, and safety warnings from factory service manuals.
         </p>
+
+        <section className="mb-10 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
+            <div>
+              <h2 className="text-xl font-bold text-white">Choose your exact vehicle</h2>
+              <p className="text-sm text-gray-300 mt-1">
+                The exact-fit guide is only useful when it matches the right year, make, model, and configuration.
+              </p>
+            </div>
+            <Link href="/repair" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors">
+              Open repair hub →
+            </Link>
+          </div>
+          {makeGroups.map(({ make, vehicles }) => (
+            <div key={make} className="mb-8 last:mb-0" id={slugify(make)}>
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-500" />
+                {make}
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {vehicles.map((v) => (
+                  <Link
+                    key={`${v.makeSlug}-${v.modelSlug}`}
+                    href={`/repair/${v.year}/${v.makeSlug}/${v.modelSlug}/${canonicalTask}`}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/60 flex-shrink-0" />
+                    <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+                      {v.year} {make} {v.model}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
 
         {priorityPages.length > 0 && (
           <section className="mb-10 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
@@ -242,29 +282,6 @@ export default async function TaskCategoryPage({ params }: PageProps) {
             </div>
           </section>
         )}
-
-        {makeGroups.map(({ make, vehicles }) => (
-          <section key={make} className="mb-10" id={slugify(make)}>
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-cyan-500" />
-              {make}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {vehicles.map((v) => (
-                <Link
-                  key={`${v.makeSlug}-${v.modelSlug}`}
-                  href={`/repair/${v.year}/${v.makeSlug}/${v.modelSlug}/${canonicalTask}`}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all group"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/60 flex-shrink-0" />
-                  <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
-                    {v.year} {make} {v.model}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        ))}
 
         {/* Quick-jump nav for makes */}
         <nav className="mt-12 pt-8 border-t border-white/10">

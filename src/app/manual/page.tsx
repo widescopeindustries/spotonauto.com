@@ -12,14 +12,14 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: 'Factory Service Manuals | 82 Makes, 1982-2025 | SpotOnAuto',
   description:
-    'Browse free factory service manuals for 82 makes of cars and trucks (1982-2025). Repair procedures, torque specs, wiring diagrams, and TSBs.',
+    'Open free factory service manuals for 82 makes of cars and trucks (1982-2025). Repair procedures, torque specs, wiring diagrams, and TSBs.',
   alternates: {
     canonical: 'https://spotonauto.com/manual',
   },
   openGraph: {
     title: 'Free Factory Service Manuals | SpotOnAuto',
     description:
-      'Browse OEM repair manuals for 82 makes of vehicles. Torque specs, wiring diagrams, step-by-step procedures, and more.',
+      'Open OEM repair manuals for 82 makes of vehicles. Torque specs, wiring diagrams, step-by-step procedures, and more.',
     type: 'website',
     url: 'https://spotonauto.com/manual',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
@@ -49,14 +49,17 @@ export default async function ManualLandingPage() {
       {/* Hero */}
       <section className="text-center mb-12 pt-12">
         <h1 className="text-4xl sm:text-5xl font-display font-bold text-white mb-4">
-          Factory Service <span className="text-cyan-400">Manuals</span>
+          Exact OEM <span className="text-cyan-400">Manual Sections</span>
         </h1>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2">
-          Browse the complete factory service manual database covering <strong className="text-white">82 makes</strong> of
-          cars and trucks from <strong className="text-white">1982 to 2025</strong>.
+          Open the complete factory service manual database covering <strong className="text-white">82 makes</strong> of
+          cars and trucks from <strong className="text-white">1982 to 2025</strong> and drill down to the exact year, make, model, and section.
         </p>
         <p className="text-gray-500 text-sm max-w-xl mx-auto">
           Repair procedures, torque specs, wiring diagrams, TSBs, parts information, and labor times — all from OEM sources.
+        </p>
+        <p className="text-cyan-200/85 text-sm max-w-xl mx-auto mt-4">
+          Choose the exact vehicle path first, then open the manual section that answers the question directly.
         </p>
       </section>
 
@@ -130,7 +133,7 @@ export default async function ManualLandingPage() {
             href="/guides"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 bg-white/5 text-white font-display font-bold tracking-wider hover:border-cyan-500/30 hover:text-cyan-100 transition-all"
           >
-            Browse AI Repair Guides
+            Open AI Repair Guides
           </Link>
         </div>
       </section>
@@ -144,7 +147,7 @@ export default async function ManualLandingPage() {
             '@type': 'CollectionPage',
             name: 'Factory Service Manuals',
             description:
-              'Browse free factory service manuals for 82 makes of cars and trucks (1982-2025).',
+              'Open free factory service manuals for 82 makes of cars and trucks (1982-2025).',
             url: 'https://spotonauto.com/manual',
             publisher: { '@id': 'https://spotonauto.com/#organization' },
             isPartOf: { '@id': 'https://spotonauto.com/#website' },

@@ -6,9 +6,9 @@ import { getHomepageMomentumData } from '@/lib/commandCenterOpportunities';
 import { getHighValueSymptomHubs, getTier1RepairSupportGaps } from '@/lib/graphPriorityLinks';
 
 export const metadata: Metadata = {
-  title: 'Repair Hub | SpotOnAuto',
+  title: 'Exact Repair Hub | SpotOnAuto',
   description:
-    'Start here to find trusted DIY repair guides by vehicle, symptom, and category. Explore brakes, batteries, lighting, filters, fluids, and exact repair walkthroughs.',
+    'Start here to find trusted DIY repair guides by vehicle, symptom, and exact repair family. Explore brakes, batteries, lighting, filters, fluids, and exact repair walkthroughs.',
   alternates: {
     canonical: 'https://spotonauto.com/repair',
   },
@@ -59,15 +59,15 @@ export default function RepairHubPage() {
           href="/symptoms"
           className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5 hover:border-amber-400/45 hover:bg-amber-500/15 transition-all"
         >
-          <h2 className="text-lg font-bold text-white">Browse symptom hubs</h2>
+          <h2 className="text-lg font-bold text-white">Open symptom hubs</h2>
           <p className="text-sm text-gray-300 mt-2">Use plain-English complaint pages to narrow the problem before you pick parts or a repair.</p>
         </Link>
         <Link
           href="/repair"
           className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-cyan-500/40 hover:bg-white/[0.06] transition-all"
         >
-          <h2 className="text-lg font-bold text-white">Browse repair categories</h2>
-          <p className="text-sm text-gray-300 mt-2">Jump into batteries, brakes, filters, fluids, lighting, and other common repair categories.</p>
+          <h2 className="text-lg font-bold text-white">Open repair families</h2>
+          <p className="text-sm text-gray-300 mt-2">Jump into batteries, brakes, filters, fluids, lighting, and other common repair families.</p>
         </Link>
         <Link
           href="/parts"
@@ -88,7 +88,7 @@ export default function RepairHubPage() {
             </p>
           </div>
           <Link href="/repair" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors">
-            Browse all repair categories →
+            Open all repair families →
           </Link>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -114,7 +114,7 @@ export default function RepairHubPage() {
             </p>
           </div>
           <Link href="/repair" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors">
-            Browse all repair categories →
+            Open all repair families →
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-5 lg:grid-cols-2">
@@ -184,7 +184,7 @@ export default function RepairHubPage() {
             </p>
           </div>
           <Link href="/symptoms" className="text-sm text-amber-300 hover:text-amber-200 transition-colors">
-            Browse all symptom hubs →
+            Open all symptom hubs →
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">

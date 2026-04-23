@@ -134,13 +134,13 @@
     "vehicle": {
       "groupWeights": {
         "vehicle": 100,
+        "repair": 98,
+        "wiring": 94,
         "manual": 92,
-        "symptom": 82,
-        "repair": 88,
-        "wiring": 86,
-        "tool": 80,
+        "symptom": 90,
+        "tool": 84,
         "dtc": 70,
-        "spec": 44
+        "spec": 48
       },
       "contextRules": [
         {
@@ -448,11 +448,11 @@
         "symptom": 100,
         "repair": 102,
         "dtc": 90,
-        "vehicle": 80,
-        "manual": 72,
-        "wiring": 58,
-        "tool": 46,
-        "spec": 20
+        "vehicle": 94,
+        "manual": 84,
+        "wiring": 80,
+        "tool": 70,
+        "spec": 44
       },
       "contextRules": [
         {

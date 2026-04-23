@@ -37,20 +37,34 @@ function normalize(value: string): string {
 
 function getRepairNodes(cluster: SymptomCluster): SymptomHubNode[] {
   const sourceNodeId = buildSymptomNodeId(cluster.slug);
+  const seen = new Set<string>();
+  const nodes: SymptomHubNode[] = [];
 
-  return cluster.likelyTasks.map((task) => ({
-    ...buildEdgeReference({
-      sourceNodeId,
-      targetNodeId: buildRepairNodeId('category', 'all', 'vehicles', task),
-      relation: 'has-repair',
-      task,
-    }),
-    kind: 'repair',
-    href: `/repairs/${task}`,
-    label: task.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
-    description: `Open the repair category that best matches ${cluster.shortLabel.toLowerCase()} complaints.`,
-    badge: 'Likely Repair',
-  }));
+  for (const task of cluster.likelyTasks) {
+    for (const entry of getTier1RescuePagesForTask(task)) {
+      if (seen.has(entry.href)) continue;
+      seen.add(entry.href);
+
+      nodes.push({
+        ...buildEdgeReference({
+          sourceNodeId,
+          targetNodeId: buildRepairNodeId(entry.year, entry.make, entry.model, task),
+          relation: 'has-repair',
+          year: entry.year,
+          make: entry.make,
+          model: entry.model,
+          task,
+        }),
+        kind: 'repair',
+        href: entry.href,
+        label: `${entry.year} ${entry.make} ${entry.model} ${task.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}`,
+        description: `Open the exact repair page most likely to match ${cluster.shortLabel.toLowerCase()} complaints.`,
+        badge: 'Exact Repair',
+      });
+    }
+  }
+
+  return nodes;
 }
 
 function getCodeNodes(cluster: SymptomCluster, limit: number): SymptomHubNode[] {
@@ -133,8 +147,8 @@ export function buildSymptomHubGraph(cluster: SymptomCluster): SymptomHubGraph {
   const groups: SymptomHubGroup[] = [
     {
       kind: 'repair' as const,
-      title: 'Likely Repair Categories',
-      browseHref: '/repairs',
+      title: 'Exact Repair Pages',
+      browseHref: '/repair',
       theme: 'cyan' as const,
       nodes: repairNodes,
     },
