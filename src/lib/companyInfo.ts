@@ -9,7 +9,7 @@ export const COMPANY_INFO = {
   phoneTel: 'tel:+16829990953',
   supportEmail: 'support@spotonauto.com',
   businessHours: 'Monday–Friday 9 AM – 5 PM CDT',
-  sbaVerificationUrl: 'https://veterans.certify.sba.gov/#search',
+  sbaVerificationUrl: 'https://search.certifications.sba.gov/profile/ZFMKUREKJF88/9Q5T8?page=1#performance-history',
 } as const;
 
 export function formatBusinessAddress(): string {
