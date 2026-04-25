@@ -127,16 +127,6 @@ export default function ClientHome() {
                     </div>
                 </section>
 
-                <section className="px-4 pb-8 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-7xl">
-                        <SearchLandingMonetizationRail
-                            surface="home_index"
-                            intent="repair"
-                            contextLabel="DIY repair"
-                        />
-                    </div>
-                </section>
-
                 {/* 3 Lanes */}
                 <section className="px-4 pb-20 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-7xl grid gap-6 lg:grid-cols-3 lg:items-start">
@@ -395,7 +385,7 @@ export default function ClientHome() {
                     </div>
                 </section>
 
-                <section className="px-4 pb-24 sm:px-6 lg:px-8">
+                <section className="px-4 pb-16 sm:px-6 lg:px-8">
                     <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2">
                         <Link
                             href="/manual"
@@ -425,6 +415,18 @@ export default function ClientHome() {
                             </div>
                             <ArrowRight className="h-5 w-5 shrink-0 text-cyan-300 transition-transform group-hover:translate-x-1" />
                         </Link>
+                    </div>
+                </section>
+
+                <section className="px-4 pb-24 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl">
+                        <SearchLandingMonetizationRail
+                            surface="home_index"
+                            intent="repair"
+                            contextLabel="DIY repair"
+                            className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+                            compact
+                        />
                     </div>
                 </section>
             </div>
