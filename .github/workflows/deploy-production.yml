@@ -72,9 +72,12 @@ jobs:
             < ./scripts/deploy-production.sh
 
       - name: External healthcheck
-        if: ${{ secrets.PROD_HEALTHCHECK_URL != '' }}
         env:
           PROD_HEALTHCHECK_URL: ${{ secrets.PROD_HEALTHCHECK_URL }}
         run: |
           set -euo pipefail
-          curl -fsS "$PROD_HEALTHCHECK_URL" >/dev/null
+          if [ -n "${PROD_HEALTHCHECK_URL:-}" ]; then
+            curl -fsS "$PROD_HEALTHCHECK_URL" >/dev/null
+          else
+            echo "Skipping external healthcheck: PROD_HEALTHCHECK_URL not set"
+          fi
