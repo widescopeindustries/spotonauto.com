@@ -2,7 +2,7 @@
 /**
  * index-lmdb-vectors.ts
  *
- * Crawls the LMDB-backed factory manual archive at data.spotonauto.com,
+ * Crawls the local KG server-backed factory manual archive,
  * extracts text from each Repair & Diagnosis section page, generates
  * vector embeddings via Gemini text-embedding-004, and upserts them
  * into the configured manual_embeddings backend.
@@ -15,10 +15,10 @@
  *
  * Requirements:
  *   - .env.local must contain GEMINI_API_KEY and either:
- *     - VPS_DATABASE_URL (preferred), or
- *     - NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY
+ *     - LOCAL_DATABASE_URL / DATABASE_URL (preferred), or
+ *     - VPS_DATABASE_URL / Supabase fallback for legacy setups
  *   - The manual_embeddings table must exist (run the SQL migration first)
- *   - data.spotonauto.com must be reachable
+ *   - the KG server archive endpoint must be reachable
  *
  * Features:
  *   - Incremental: skips paths already in the database
@@ -73,7 +73,7 @@ loadEnv();
 
 // ─── Configuration ───────────────────────────────────────────────────────────
 
-const CHARM_BASE = 'https://data.spotonauto.com';
+const CHARM_BASE = process.env.GRAPH_BACKEND_BASE_URL || 'http://116.202.210.109/graph-backbone';
 const EMBEDDING_MODEL = 'gemini-embedding-001';
 const MAX_CONTENT_LENGTH = 8000;     // Max chars of content to store per section
 const CONTENT_PREVIEW_LENGTH = 500;  // Chars for content_preview column
@@ -100,7 +100,7 @@ const geminiApiKey = process.env.GEMINI_API_KEY;
 const embeddingsBackend = getManualEmbeddingsBackend();
 
 if (!geminiApiKey || embeddingsBackend === 'none') {
-  console.error('ERROR: Missing required env vars. Need GEMINI_API_KEY and a manual embeddings backend (VPS_DATABASE_URL preferred).');
+  console.error('ERROR: Missing required env vars. Need GEMINI_API_KEY and a local manual embeddings backend.');
   process.exit(1);
 }
 
@@ -425,11 +425,12 @@ async function processYear(make: string, year: number): Promise<void> {
     console.log(`  (${indexedPaths.size} sections already indexed)`);
   }
 
+  const serverMake = make === 'Dodge' ? 'Dodge and Ram' : (make === 'Nissan' ? 'Nissan-Datsun' : make);
   // Fetch the year page to get variant links
-  const yearPath = `/${encodeURIComponent(make)}/${year}/`;
+  const yearPath = `/${encodeURIComponent(serverMake)}/${year}/`;
   const yearHtml = await fetchPage(yearPath);
   if (!yearHtml) {
-    console.warn(`  [SKIP] Year page not found: ${make}/${year}`);
+    console.warn(`  [SKIP] Year page not found: ${serverMake}/${year}`);
     return;
   }
 
@@ -471,10 +472,11 @@ async function processYear(make: string, year: number): Promise<void> {
 async function processMake(make: string): Promise<void> {
   console.log(`\n=== Processing: ${make} ===`);
 
-  const makePath = `/${encodeURIComponent(make)}/`;
+  const serverMake = make === 'Dodge' ? 'Dodge and Ram' : (make === 'Nissan' ? 'Nissan-Datsun' : make);
+  const makePath = `/${encodeURIComponent(serverMake)}/`;
   const makeHtml = await fetchPage(makePath);
   if (!makeHtml) {
-    console.warn(`[SKIP] Make page not found: ${make}`);
+    console.warn(`[SKIP] Make page not found: ${serverMake}`);
     return;
   }
 
@@ -539,7 +541,7 @@ async function main(): Promise<void> {
     console.log('Fetching make list from root page...');
     const rootHtml = await fetchPage('/');
     if (!rootHtml) {
-      console.error('ERROR: Cannot fetch root page from data.spotonauto.com');
+      console.error('ERROR: Cannot fetch root page from the KG server archive');
       process.exit(1);
     }
 

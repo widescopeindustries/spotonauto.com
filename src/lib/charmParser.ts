@@ -6,8 +6,10 @@ import { CHARM_ARCHIVE_BASE } from '@/lib/charmBase';
 
 const CHARM_BASE = CHARM_ARCHIVE_BASE;
 const CHARM_IMAGE_BASE = CHARM_BASE;
-const DIRECT_CHARM_FALLBACK_BASE = 'https://charm.li';
-const CHARM_ORIGINS = Array.from(new Set([CHARM_BASE, DIRECT_CHARM_FALLBACK_BASE]));
+const DIRECT_CHARM_FALLBACK_BASE = process.env.ALLOW_DIRECT_CHARM_FALLBACK === '1'
+  ? 'https://charm.li'
+  : '';
+const CHARM_ORIGINS = Array.from(new Set([CHARM_BASE, DIRECT_CHARM_FALLBACK_BASE].filter(Boolean)));
 
 const FETCH_TIMEOUT_MS = 8000;
 const FETCH_RETRIES = 1;
@@ -72,8 +74,16 @@ export async function fetchCharmPage(
   options: { allowParentRecovery?: boolean } = {},
 ): Promise<CharmPage> {
   const { allowParentRecovery = true } = options;
+
+  // Map makes to backend expectations
+  const backendSegments = [...pathSegments];
+  if (backendSegments.length > 0) {
+    if (backendSegments[0] === 'Dodge') backendSegments[0] = 'Dodge and Ram';
+    if (backendSegments[0] === 'Nissan') backendSegments[0] = 'Nissan-Datsun';
+  }
+
   // Re-encode each segment for the upstream URL
-  const encodedPath = pathSegments.map((s) => encodeCharmPathSegment(s)).join('/');
+  const encodedPath = backendSegments.map((s) => encodeCharmPathSegment(s)).join('/');
   let sawNotFound = false;
   let sawNonNotFoundFailure = false;
   let lastStatus = 504;
@@ -552,7 +562,8 @@ function encodeCharmPathSegment(value: string): string {
   // Accept either already-encoded or decoded path segments.
   return encodeURIComponent(safeDecodeUriComponent(value))
     .replace(/\(/g, '%28')
-    .replace(/\)/g, '%29');
+    .replace(/\)/g, '%29')
+    .replace(/%2C/g, ',');
 }
 
 // ─── Breadcrumb Builder ────────────────────────────────────────────────────────
