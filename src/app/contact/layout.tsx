@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
+import { COMPANY_INFO } from '@/lib/companyInfo';
 
 export const metadata: Metadata = {
   title: 'Contact SpotOnAuto | Support & Questions',
   description:
-    'Have questions about SpotOnAuto or need help with a repair guide? Reach out to our veteran-owned support team for assistance with diagnostics, guides, or tools.',
+    `Reach SpotOnAuto support at ${COMPANY_INFO.phoneDisplay}. ${COMPANY_INFO.legalName}, ${COMPANY_INFO.streetAddress}, ${COMPANY_INFO.city}, ${COMPANY_INFO.state} ${COMPANY_INFO.zip}.`,
   alternates: {
     canonical: 'https://spotonauto.com/contact',
   },

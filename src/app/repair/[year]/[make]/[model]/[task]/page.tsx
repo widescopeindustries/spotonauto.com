@@ -18,6 +18,9 @@ import CorpusBadge from '@/components/CorpusBadge';
 import OEMExcerpt from '@/components/OEMExcerpt';
 import TopdonProductSpotlight from '@/components/TopdonProductSpotlight';
 import CoverageWaitlist from '@/components/CoverageWaitlist';
+import SafetyWarningBox from '@/components/SafetyWarningBox';
+import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
+import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
 import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
@@ -2003,6 +2006,7 @@ export default async function Page({ params }: PageProps) {
     // Use display names for proper capitalization
     const displayMake = getDisplayName(canonicalMake, 'make') || toTitleCase(canonicalMake);
     const displayModel = getDisplayName(canonicalModel, 'model') || toTitleCase(canonicalModel);
+    const isAiAssistedGuide = Number(resolvedYear) > CORPUS_YEAR_MAX;
 
     const vehicleName = `${resolvedYear} ${displayMake} ${displayModel}`;
     const vehicleHubHref = `/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`;
@@ -2340,6 +2344,7 @@ export default async function Page({ params }: PageProps) {
 
     return (
         <>
+            <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
@@ -2447,6 +2452,13 @@ export default async function Page({ params }: PageProps) {
                 <OEMExcerpt excerpts={oemExcerpts} vehicleName={vehicleName} task={canonicalTask} />
 
                 <CorpusBadge year={Number(resolvedYear)} vehicleName={vehicleName} />
+                {isAiAssistedGuide && (
+                    <div className="mb-8 inline-flex items-center rounded-full border border-orange-400/40 bg-orange-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-orange-100">
+                        AI-Assisted Guide - Human Reviewed
+                    </div>
+                )}
+
+                <SafetyWarningBox className="mb-8" />
 
                 <section
                     id="quick-answer"
@@ -2927,6 +2939,8 @@ export default async function Page({ params }: PageProps) {
                         ))}
                     </ul>
                 </section>
+
+                <WhenToSeeMechanic className="mb-8" />
 
                 {/* Ad: After Safety Warnings */}
                 <AdUnit slot="repair-after-safety" format="horizontal" />

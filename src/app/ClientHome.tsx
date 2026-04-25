@@ -15,6 +15,7 @@ import {
     Hash,
     Lightbulb,
     MessageCircle,
+    MessageSquare,
     RotateCcw,
     Route,
     Thermometer,
@@ -25,6 +26,7 @@ import {
 import { fetchModels, getMakesForYear, getYears } from '@/services/vehicleData';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
+import { getRecentThreads } from '@/data/forumThreads';
 
 const VEHICLE_SYSTEMS = [
     { label: 'Engine', icon: Cog },
@@ -66,6 +68,7 @@ export default function ClientHome() {
     const vehicleHubUrl = hasVehicle
         ? buildVehicleHubUrl(vehicle.year, vehicle.make, vehicle.model)
         : '';
+    const recentThreads = getRecentThreads(6);
 
     useEffect(() => {
         if (!vehicle.make || !vehicle.year) {
@@ -362,6 +365,36 @@ export default function ClientHome() {
                 </section>
 
                 {/* Archive and wiring callouts */}
+                <section className="px-4 pb-16 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.07] p-6">
+                        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <h2 className="font-display text-2xl font-bold text-white">Recent Community Discussions</h2>
+                                <p className="mt-1 text-sm text-gray-300">Read-only access is open. Sign-in is only required to post.</p>
+                            </div>
+                            <Link href="/community" className="text-sm text-cyan-200 hover:text-cyan-100">Open forum →</Link>
+                        </div>
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {recentThreads.map((thread) => (
+                                <Link
+                                    key={thread.id}
+                                    href={`/community/${thread.categorySlug}/${thread.slug}`}
+                                    className="rounded-xl border border-white/10 bg-black/25 p-4 transition-all hover:border-cyan-400/35 hover:bg-black/35"
+                                >
+                                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-cyan-200/80">
+                                        <MessageSquare className="h-3.5 w-3.5" />
+                                        Community
+                                    </div>
+                                    <h3 className="mt-2 text-sm font-semibold text-white">{thread.title}</h3>
+                                    <p className="mt-2 text-xs text-gray-300">
+                                        {thread.reply_count} replies • {thread.view_count} views
+                                    </p>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
                 <section className="px-4 pb-24 sm:px-6 lg:px-8">
                     <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2">
                         <Link

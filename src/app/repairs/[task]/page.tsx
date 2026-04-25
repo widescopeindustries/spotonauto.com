@@ -7,6 +7,9 @@ export const revalidate = 86400; // 1 day ISR
 import { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { getTier1RescuePagesForTask } from '@/data/rescuePriority';
 import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
+import SafetyWarningBox from '@/components/SafetyWarningBox';
+import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
+import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
 
 function toTitleCase(slug: string): string {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -112,6 +115,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
 
   return (
     <>
+      <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
@@ -133,6 +137,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
           This page is a selector: choose your exact year, make, and model below for a guide tailored to your exact car, truck, or SUV —
           including tools, parts, torque specs, and safety warnings from factory service manuals.
         </p>
+        <SafetyWarningBox className="mb-10 max-w-4xl" />
 
         <section className="mb-10 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6">
           <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
@@ -320,6 +325,8 @@ export default async function TaskCategoryPage({ params }: PageProps) {
             </Link>
           </div>
         </section>
+
+        <WhenToSeeMechanic className="mt-12" />
       </div>
     </>
   );

@@ -34,7 +34,10 @@ export default function CommunityHome({ categories }: CommunityHomeProps) {
                         </h1>
                         <p className="font-body text-gray-400 mt-3 max-w-lg mx-auto">
                             Ask questions, share repair tips, and help fellow mechanics.
-                            Every thread is a free resource for the community.
+                            Reading is open to everyone; account sign-in is only required when posting.
+                        </p>
+                        <p className="font-body text-xs text-gray-500 mt-2 max-w-xl mx-auto">
+                            Moderation rules: include vehicle details, avoid unsafe instructions without warnings, and keep discussions respectful.
                         </p>
                         <Link
                             href="/community/new"

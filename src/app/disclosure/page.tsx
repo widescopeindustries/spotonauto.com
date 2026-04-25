@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { COMPANY_INFO } from '@/lib/companyInfo';
 
 export const metadata: Metadata = {
   title: 'Affiliate Disclosure | SpotOnAuto',
@@ -23,6 +24,9 @@ export default function AffiliateDisclosure() {
             Some links on this website are affiliate links, meaning we may earn a commission if you click through and make
             a purchase — <strong>at no additional cost to you</strong>. This is how we keep the site free and continue
             building tools for the DIY auto repair community.
+          </p>
+          <p className="text-amber-100/80 mt-3">
+            For complex or safety-critical repairs, we strongly recommend professional mechanical assistance.
           </p>
         </div>
 
@@ -119,7 +123,8 @@ export default function AffiliateDisclosure() {
           <h2 className="text-xl font-bold text-cyan-400">Questions?</h2>
           <p className="text-sm">
             If you have any questions about our affiliate relationships or how we earn revenue, contact us at:<br />
-            <a href="mailto:support@spotonauto.com" className="text-cyan-400 hover:underline">support@spotonauto.com</a>
+            <a href={COMPANY_INFO.phoneTel} className="text-cyan-400 hover:underline">{COMPANY_INFO.phoneDisplay}</a><br />
+            <a href={`mailto:${COMPANY_INFO.supportEmail}`} className="text-cyan-400 hover:underline">{COMPANY_INFO.supportEmail}</a>
           </p>
         </section>
       </div>

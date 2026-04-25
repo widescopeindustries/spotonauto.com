@@ -4,6 +4,8 @@ import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizatio
 import { TIER_1_RESCUE_PAGES } from '@/data/rescuePriority';
 import { getHomepageMomentumData } from '@/lib/commandCenterOpportunities';
 import { getHighValueSymptomHubs, getTier1RepairSupportGaps } from '@/lib/graphPriorityLinks';
+import SafetyWarningBox from '@/components/SafetyWarningBox';
+import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 
 export const metadata: Metadata = {
   title: 'Exact Repair Hub | SpotOnAuto',
@@ -40,6 +42,8 @@ export default function RepairHubPage() {
         Start with the kind of help you need: an exact vehicle hub, a common DIY job, a symptom page, or a vehicle-specific
         repair guide. This page is built to get you to the right instructions without extra category hopping.
       </p>
+
+      <SafetyWarningBox className="mb-8 max-w-4xl" />
 
       <SearchLandingMonetizationRail
         surface="repair_hub"
@@ -246,6 +250,8 @@ export default function RepairHubPage() {
           ))}
         </div>
       </section>
+
+      <WhenToSeeMechanic className="mt-10" />
     </div>
   );
 }

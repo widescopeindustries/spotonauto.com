@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { COMPANY_INFO } from '@/lib/companyInfo';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | SpotOnAuto',
@@ -45,6 +46,7 @@ export default function TermsOfService() {
               <li>You are solely responsible for your safety and the safety of others when performing vehicle repairs.</li>
               <li>SpotOnAuto, Widescope Industries LLC, and its operators are <strong>not liable</strong> for any damage, injury, or loss resulting from the use of information on this Site.</li>
               <li>If you are not confident in performing a repair, take your vehicle to a qualified mechanic.</li>
+              <li><strong>We strongly recommend professional assistance for complex or safety-critical repairs.</strong></li>
             </ul>
           </div>
         </section>
@@ -99,7 +101,7 @@ export default function TermsOfService() {
           <h2 className="text-xl font-bold text-cyan-400">6. User Accounts</h2>
           <p className="text-sm">
             If you create an account, you are responsible for maintaining the security of your login credentials.
-            You may delete your account and all associated data at any time by emailing support@spotonauto.com.
+            You may delete your account and all associated data at any time by emailing info@widescopeindustries.com.
           </p>
         </section>
 
@@ -132,8 +134,12 @@ export default function TermsOfService() {
           <h2 className="text-xl font-bold text-cyan-400">10. Contact</h2>
           <p className="text-sm">
             Questions about these Terms? Contact us at:<br />
-            <strong>Widescope Industries LLC</strong><br />
-            Email: <a href="mailto:support@spotonauto.com" className="text-cyan-400 hover:underline">support@spotonauto.com</a>
+            <strong>{COMPANY_INFO.legalName}</strong><br />
+            {COMPANY_INFO.streetAddress}<br />
+            {COMPANY_INFO.city}, {COMPANY_INFO.state} {COMPANY_INFO.zip}<br />
+            Phone: <a href={COMPANY_INFO.phoneTel} className="text-cyan-400 hover:underline">{COMPANY_INFO.phoneDisplay}</a><br />
+            Email: <a href={`mailto:${COMPANY_INFO.supportEmail}`} className="text-cyan-400 hover:underline">{COMPANY_INFO.supportEmail}</a><br />
+            Business hours: {COMPANY_INFO.businessHours}
           </p>
         </section>
       </div>

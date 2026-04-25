@@ -8,6 +8,9 @@ import {
   type CharmLink,
 } from '@/lib/charmParser';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
+import SafetyWarningBox from '@/components/SafetyWarningBox';
+import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
+import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 
 export const revalidate = 86400; // 1 day ISR
 export const dynamic = 'force-dynamic';
@@ -62,6 +65,8 @@ export default async function ManualBrowserPage({ params }: PageProps) {
   if (page.status !== 200) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-24">
+        <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
+        <SafetyWarningBox className="mb-6" />
         <Breadcrumbs items={breadcrumbs} />
         <div className="text-center py-16">
           <h1 className="text-4xl font-display font-bold text-white mb-4">Page Not Found</h1>
@@ -85,9 +90,11 @@ export default async function ManualBrowserPage({ params }: PageProps) {
   if (page.isNavigation) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12">
+        <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
         <div className="pt-12">
           <Breadcrumbs items={breadcrumbs} />
         </div>
+        <SafetyWarningBox className="mb-8" />
 
         <h1 className="text-3xl sm:text-4xl font-display font-bold text-white mb-8">
           {page.title}
@@ -128,9 +135,11 @@ export default async function ManualBrowserPage({ params }: PageProps) {
   // ── Content mode (leaf page) ──
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
+      <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
       <div className="pt-12">
         <Breadcrumbs items={breadcrumbs} />
       </div>
+      <SafetyWarningBox className="mb-8" />
 
       <h1 className="text-3xl sm:text-4xl font-display font-bold text-white mb-8">
         {page.title}
@@ -170,6 +179,7 @@ export default async function ManualBrowserPage({ params }: PageProps) {
           All Makes
         </Link>
       </div>
+      <WhenToSeeMechanic className="mt-8" />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Cpu, Zap, Car, BookOpen, Shield, Mail, MessageSquare } from 'lucide-react';
+import { Cpu, Zap, Car, BookOpen, Shield, Mail, MessageSquare, Phone, Clock3, MapPin } from 'lucide-react';
+import { COMPANY_INFO, formatBusinessAddress } from '@/lib/companyInfo';
 
 const Footer = () => {
     const year = new Date().getFullYear();
@@ -20,9 +21,17 @@ const Footer = () => {
                         <p className="font-body text-sm text-gray-500 leading-relaxed mb-4">
                             AI-powered auto repair guides. Save $200–$500 per repair with step-by-step instructions tailored to your exact vehicle.
                         </p>
-                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-black bg-cyan-400 px-3 py-1.5 rounded-full">
-                            100% Free
-                        </span>
+                        <div className="flex flex-wrap gap-2">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-black bg-cyan-400 px-3 py-1.5 rounded-full">
+                                100% Free
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-100 border border-cyan-400/40 bg-cyan-500/10 px-3 py-1.5 rounded-full">
+                                No Login Required for Most Features
+                            </span>
+                        </div>
+                        <p className="mt-4 text-xs text-gray-500 leading-5">
+                            {formatBusinessAddress()}
+                        </p>
                     </div>
 
                     {/* Tools */}
@@ -105,12 +114,27 @@ const Footer = () => {
 
                         <div className="mt-6 pt-4 border-t border-white/5">
                             <a
-                                href="mailto:support@spotonauto.com"
+                                href={COMPANY_INFO.phoneTel}
+                                className="mb-2 flex items-center gap-2 text-sm text-gray-300 hover:text-cyan-400 transition-colors"
+                            >
+                                <Phone className="w-3.5 h-3.5" />
+                                {COMPANY_INFO.phoneDisplay}
+                            </a>
+                            <a
+                                href={`mailto:${COMPANY_INFO.supportEmail}`}
                                 className="flex items-center gap-2 text-sm text-gray-500 hover:text-cyan-400 transition-colors"
                             >
                                 <Mail className="w-3.5 h-3.5" />
-                                support@spotonauto.com
+                                {COMPANY_INFO.supportEmail}
                             </a>
+                            <p className="mt-2 flex items-start gap-2 text-xs text-gray-500">
+                                <Clock3 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                                {COMPANY_INFO.businessHours}
+                            </p>
+                            <p className="mt-2 flex items-start gap-2 text-xs text-gray-500">
+                                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                                {COMPANY_INFO.streetAddress}, {COMPANY_INFO.city}, {COMPANY_INFO.state} {COMPANY_INFO.zip}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -118,19 +142,38 @@ const Footer = () => {
                 {/* SDVOSB Branding */}
                 <div className="mt-8 pt-6 border-t border-white/5 text-center">
                     <p className="font-body text-sm" style={{ color: '#D4A017' }}>
-                        🇺🇸 A Widescope Industries LLC Company — SDVOSB Certified | Service-Disabled Veteran-Owned Small Business
+                        SDVOSB Certified • Veteran-Owned &amp; Operated • Streetman, Texas
                     </p>
-                    <a href="https://www.veteranownedbusiness.com" target="_blank" rel="noopener noreferrer" className="inline-block mt-4" aria-label="Veteran Owned Business Directory">
-                        <img
-                            src="https://www.veteranownedbusiness.com/images/banner_links/SDVOSB-Member-Badge-Horizontal.jpg"
-                            alt="SDVOSB Member Badge - Service-Disabled Veteran-Owned Small Business"
-                            width={200}
-                            height={40}
-                            loading="lazy"
-                            decoding="async"
-                            style={{ maxWidth: '200px', height: 'auto' }}
-                        />
-                    </a>
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                        <Link
+                            href="/about"
+                            className="inline-flex items-center rounded-full border border-[#D4A017]/40 bg-[#D4A017]/10 px-4 py-2 text-xs font-semibold tracking-wide text-[#E6C36A] hover:bg-[#D4A017]/15"
+                        >
+                            About Widescope Industries LLC
+                        </Link>
+                        <a
+                            href={COMPANY_INFO.sbaVerificationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-xs font-semibold tracking-wide text-cyan-100 hover:bg-cyan-500/20"
+                            aria-label="Verify SDVOSB certification with SBA"
+                        >
+                            Verify SDVOSB on SBA
+                        </a>
+                    </div>
+                    <p className="mt-3 text-xs text-gray-500">
+                        {COMPANY_INFO.legalName} • {COMPANY_INFO.streetAddress}, {COMPANY_INFO.city}, {COMPANY_INFO.state} {COMPANY_INFO.zip}
+                    </p>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.08] p-4 text-center">
+                    <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/80">Trust Signals</p>
+                    <p className="mt-2 text-sm text-cyan-50">
+                        SDVOSB Certified • Veteran-Owned &amp; Operated • Streetman, Texas
+                    </p>
+                    <p className="mt-1 text-xs text-cyan-100/80">
+                        100% Free • No Login Required for Most Features
+                    </p>
                 </div>
 
                 {/* Affiliate Disclosure — Amazon Associates required statement */}

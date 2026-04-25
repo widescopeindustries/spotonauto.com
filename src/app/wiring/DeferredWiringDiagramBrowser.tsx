@@ -6,6 +6,9 @@ import { startTransition, useEffect, useState } from 'react';
 import type { WiringSelectorData } from '@/lib/wiringCoverage';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 import { fetchModels, getMakesForYear, getYears } from '@/services/vehicleData';
+import SafetyWarningBox from '@/components/SafetyWarningBox';
+import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
+import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
 
 const WiringDiagramLibrary = dynamic(() => import('./WiringDiagramLibrary'), {
   ssr: false,
@@ -105,7 +108,15 @@ export default function DeferredWiringDiagramBrowser() {
   }, [vehicle.make, vehicle.year]);
 
   if (shouldLoad && selectorData) {
-    return <WiringDiagramLibrary selectorData={selectorData} />;
+    return (
+      <>
+        <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
+        <div className="mx-auto mt-24 w-full max-w-6xl px-4">
+          <SafetyWarningBox className="mb-6" />
+        </div>
+        <WiringDiagramLibrary selectorData={selectorData} />
+      </>
+    );
   }
 
   if (shouldLoad && !selectorData) {
@@ -137,6 +148,8 @@ export default function DeferredWiringDiagramBrowser() {
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
+      <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
+      <SafetyWarningBox className="mb-6" />
       <section className="rounded-[2rem] border border-cyan-500/15 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.14),_transparent_48%),rgba(255,255,255,0.03)] p-8 sm:p-10">
         <div className="max-w-3xl">
           <h1 className="font-display text-4xl font-black tracking-tight text-white sm:text-5xl">
@@ -289,6 +302,8 @@ export default function DeferredWiringDiagramBrowser() {
             </button>
           </div>
         )}
+
+        <WhenToSeeMechanic className="mt-8" />
       </section>
     </main>
   );

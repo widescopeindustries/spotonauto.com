@@ -1,107 +1,80 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
 import { getCategoryBySlug, FORUM_CATEGORIES } from '@/data/forumCategories';
-import CategoryThreadList from './CategoryThreadList';
-
-export const revalidate = 60;
+import { getThreadsByCategory } from '@/data/forumThreads';
+import ThreadListItem from '@/components/forum/ThreadListItem';
+import Pagination from '@/components/forum/Pagination';
 
 const THREADS_PER_PAGE = 20;
 
 interface PageProps {
-    params: Promise<{ category: string }>;
-    searchParams: Promise<{ page?: string }>;
+  params: Promise<{ category: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 export async function generateStaticParams() {
-    return FORUM_CATEGORIES.map((c) => ({ category: c.slug }));
+  return FORUM_CATEGORIES.map((c) => ({ category: c.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { category: slug } = await params;
-    const cat = getCategoryBySlug(slug);
-    if (!cat) return {};
+  const { category: slug } = await params;
+  const cat = getCategoryBySlug(slug);
+  if (!cat) return {};
 
-    return {
-        title: `${cat.name} — Community Forum | SpotOn Auto`,
-        description: `Discuss ${cat.name.toLowerCase()} with fellow DIY mechanics, compare repair notes, and share practical fixes. ${cat.description}`,
-        openGraph: {
-            title: `${cat.name} — SpotOn Auto Community`,
-            description: cat.description,
-            url: `https://spotonauto.com/community/${slug}`,
-        },
-        alternates: { canonical: `https://spotonauto.com/community/${slug}` },
-    };
-}
-
-async function getThreads(categorySlug: string, page: number) {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!url || !key || url === 'your_supabase_url') {
-        return { threads: [], total: 0 };
-    }
-
-    const sb = createClient(url, key);
-
-    // Get category id
-    const { data: catData } = await sb
-        .from('forum_categories')
-        .select('id')
-        .eq('slug', categorySlug)
-        .single();
-
-    if (!catData) return { threads: [], total: 0 };
-
-    const from = (page - 1) * THREADS_PER_PAGE;
-    const to = from + THREADS_PER_PAGE - 1;
-
-    const { data: threads, count } = await sb
-        .from('forum_threads')
-        .select(
-            'id, title, slug, vehicle_year, vehicle_make, vehicle_model, reply_count, view_count, is_pinned, created_at, author_id',
-            { count: 'exact' }
-        )
-        .eq('category_id', catData.id)
-        .order('is_pinned', { ascending: false })
-        .order('created_at', { ascending: false })
-        .range(from, to);
-
-    if (!threads) return { threads: [], total: 0 };
-
-    // Get author profiles
-    const authorIds = [...new Set(threads.map((t) => t.author_id))];
-    const { data: profiles } = await sb
-        .from('forum_profiles')
-        .select('id, display_name')
-        .in('id', authorIds);
-
-    const profileMap = new Map(profiles?.map((p) => [p.id, p.display_name]) ?? []);
-
-    return {
-        threads: threads.map((t) => ({
-            ...t,
-            authorName: profileMap.get(t.author_id) ?? 'DIY Mechanic',
-        })),
-        total: count ?? 0,
-    };
+  return {
+    title: `${cat.name} — Community Forum | SpotOn Auto`,
+    description: `Community discussions for ${cat.name.toLowerCase()}.`,
+    alternates: { canonical: `https://spotonauto.com/community/${slug}` },
+  };
 }
 
 export default async function CategoryPage({ params, searchParams }: PageProps) {
-    const { category: slug } = await params;
-    const { page: pageStr } = await searchParams;
-    const cat = getCategoryBySlug(slug);
-    if (!cat) notFound();
+  const { category: slug } = await params;
+  const { page: pageStr } = await searchParams;
+  const cat = getCategoryBySlug(slug);
+  if (!cat) notFound();
+  const page = Math.max(1, parseInt(pageStr ?? '1', 10) || 1);
+  const threads = getThreadsByCategory(slug);
+  const totalPages = Math.max(1, Math.ceil(threads.length / THREADS_PER_PAGE));
+  const offset = (page - 1) * THREADS_PER_PAGE;
+  const pageThreads = threads.slice(offset, offset + THREADS_PER_PAGE);
 
-    const page = Math.max(1, parseInt(pageStr ?? '1', 10) || 1);
-    const { threads, total } = await getThreads(slug, page);
-    const totalPages = Math.ceil(total / THREADS_PER_PAGE);
-
-    return (
-        <CategoryThreadList
-            category={cat}
-            threads={threads}
-            currentPage={page}
-            totalPages={totalPages}
-        />
-    );
+  return (
+    <main className="min-h-screen pt-24 pb-16">
+      <div className="max-w-4xl mx-auto px-4">
+        <h1 className="text-3xl font-bold text-white mb-4">{cat.name}</h1>
+        <p className="text-gray-400 mb-3">
+          Reading is open. Posting requires an account and moderator approval during migration hardening.
+        </p>
+        <p className="text-xs text-gray-500 mb-6">
+          Moderation rules: include year/make/model, avoid unsafe advice without warnings, and keep replies respectful.
+        </p>
+        <div className="glass rounded-xl p-4">
+          {pageThreads.length === 0 ? (
+            <p className="p-4 text-gray-400">No threads found in this category yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {pageThreads.map((thread) => (
+                <ThreadListItem
+                  key={thread.id}
+                  categorySlug={thread.categorySlug}
+                  slug={thread.slug}
+                  title={thread.title}
+                  authorName={thread.author.display_name}
+                  vehicleYear={thread.vehicle_year}
+                  vehicleMake={thread.vehicle_make}
+                  vehicleModel={thread.vehicle_model}
+                  replyCount={thread.reply_count}
+                  viewCount={thread.view_count}
+                  isPinned={thread.isPinned}
+                  createdAt={thread.created_at}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        <Pagination currentPage={page} totalPages={totalPages} basePath={`/community/${slug}`} />
+      </div>
+    </main>
+  );
 }

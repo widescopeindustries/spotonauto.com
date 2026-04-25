@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Activity, Camera, Cpu, HardDrive, ImageIcon, RotateCcw, Send } from 'lucide-react';
+import { Activity, Camera, Cpu, HardDrive, ImageIcon, RotateCcw, Send, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/apiClient';
+import { COMPANY_INFO } from '@/lib/companyInfo';
 import {
     findLatestDiagnosticSessionForVehicle,
     getDiagnosticSession,
@@ -47,6 +48,9 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const [userInput, setUserInput] = useState('');
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const [sessionCreatedAt, setSessionCreatedAt] = useState<string | null>(null);
+    const [messageRatings, setMessageRatings] = useState<Record<string, 'up' | 'down'>>({});
+    const [feedbackDrafts, setFeedbackDrafts] = useState<Record<string, string>>({});
+    const [feedbackOpenFor, setFeedbackOpenFor] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const vehicle = vehicleProp || (searchParams.get('year') && searchParams.get('make') && searchParams.get('model')
@@ -167,6 +171,9 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
             setTyping(false);
             setUserInput('');
             setStatusMessage(null);
+            setMessageRatings({});
+            setFeedbackDrafts({});
+            setFeedbackOpenFor(null);
 
             const storedSession = !forceFresh
                 ? (threadId ? getDiagnosticSession(threadId) : findLatestDiagnosticSessionForVehicle(vehicle))
@@ -250,6 +257,25 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         void handleUserResponse(userInput);
     };
 
+    const handleRate = (messageId: string, value: 'up' | 'down') => {
+        setMessageRatings((prev) => ({ ...prev, [messageId]: value }));
+        if (value === 'down') setFeedbackOpenFor(messageId);
+    };
+
+    const sendFeedback = (messageId: string) => {
+        const rating = messageRatings[messageId] || 'down';
+        const feedback = feedbackDrafts[messageId] || '';
+        const aiMessage = messages.find((message) => message.id === messageId);
+        const excerpt = aiMessage?.text?.slice(0, 700) || '';
+        const vehicleLabel = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Unknown vehicle';
+        const subject = encodeURIComponent(`SpotOnAuto diagnostic feedback (${rating})`);
+        const body = encodeURIComponent(
+            `Thread ID: ${chatSession?.id || 'unknown'}\nVehicle: ${vehicleLabel}\nRating: ${rating}\n\nAI response:\n${excerpt}\n\nUser feedback:\n${feedback || '(no extra notes)'}`
+        );
+        window.location.href = `mailto:${COMPANY_INFO.supportEmail}?subject=${subject}&body=${body}`;
+        setFeedbackOpenFor(null);
+    };
+
     return (
         <div className="relative mx-auto flex h-[600px] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-neon-cyan/20 bg-black/80 shadow-2xl backdrop-blur-xl">
             <div className="absolute inset-0 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
@@ -305,6 +331,66 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                                             <ImageIcon className="h-3 w-3" /> AI GENERATED
                                         </div>
                                         <img src={msg.imageUrl} alt="Diagnostic Illustration" className="h-auto w-full object-cover" />
+                                    </div>
+                                )}
+
+                                {msg.type === 'system' && (
+                                    <div className="mt-4 space-y-3">
+                                        <div className="rounded-lg border border-orange-400/35 bg-orange-500/10 p-3 text-xs leading-5 text-orange-100">
+                                            This is AI-generated guidance based on Gemini 2.0. Accuracy is not guaranteed. Cross-reference with your vehicle&apos;s official manual.
+                                        </div>
+                                        <div className="rounded-lg border border-white/10 bg-black/30 p-3">
+                                            <p className="text-[10px] uppercase tracking-[0.16em] text-gray-400">Rate this diagnosis</p>
+                                            <div className="mt-2 flex items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRate(msg.id, 'up')}
+                                                    className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs ${messageRatings[msg.id] === 'up'
+                                                        ? 'border-emerald-400/50 bg-emerald-500/20 text-emerald-100'
+                                                        : 'border-white/15 bg-white/[0.03] text-gray-200 hover:border-emerald-400/40'
+                                                        }`}
+                                                >
+                                                    <ThumbsUp className="h-3.5 w-3.5" />
+                                                    Helpful
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRate(msg.id, 'down')}
+                                                    className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs ${messageRatings[msg.id] === 'down'
+                                                        ? 'border-red-400/50 bg-red-500/20 text-red-100'
+                                                        : 'border-white/15 bg-white/[0.03] text-gray-200 hover:border-red-400/40'
+                                                        }`}
+                                                >
+                                                    <ThumbsDown className="h-3.5 w-3.5" />
+                                                    Not accurate
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFeedbackOpenFor(feedbackOpenFor === msg.id ? null : msg.id)}
+                                                    className="ml-auto text-[11px] text-cyan-200 underline decoration-cyan-400/40 underline-offset-2 hover:text-cyan-100"
+                                                >
+                                                    Optional feedback
+                                                </button>
+                                            </div>
+                                            {feedbackOpenFor === msg.id && (
+                                                <div className="mt-3 space-y-2">
+                                                    <textarea
+                                                        value={feedbackDrafts[msg.id] || ''}
+                                                        onChange={(e) => setFeedbackDrafts((prev) => ({ ...prev, [msg.id]: e.target.value }))}
+                                                        rows={3}
+                                                        placeholder="Tell us what looked wrong or missing..."
+                                                        className="w-full rounded-lg border border-white/15 bg-black/40 p-2 text-xs text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => sendFeedback(msg.id)}
+                                                        className="inline-flex items-center rounded-md bg-cyan-400 px-3 py-1.5 text-xs font-semibold text-black hover:bg-cyan-300"
+                                                    >
+                                                        Send feedback
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                             </div>

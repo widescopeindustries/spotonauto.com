@@ -4,6 +4,8 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import { buildSymptomHref, getSymptomClusterBySlug, getSymptomClusterFromText, SYMPTOM_CLUSTERS } from '@/data/symptomGraph';
+import SafetyWarningBox from '@/components/SafetyWarningBox';
+import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 
 export const revalidate = 86400; // 1 day ISR
 import { getPriorityCodePagesForSymptomCluster, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
@@ -151,6 +153,8 @@ export default async function SymptomHubPage({ params }: PageProps) {
           {matchedCluster.summary}
         </p>
 
+        <SafetyWarningBox className="mt-8 max-w-4xl" />
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8">
           <StatCard label="Repair categories" value={String(symptomHub.repairCount)} />
           <StatCard label="Related codes" value={String(symptomHub.codeCount)} />
@@ -295,6 +299,7 @@ export default async function SymptomHubPage({ params }: PageProps) {
             ))}
           </div>
         </div>
+        <WhenToSeeMechanic className="mt-8" />
       </section>
     </main>
   );

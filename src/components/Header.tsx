@@ -48,7 +48,19 @@ export default function Header() {
             ))}
           </nav>
 
+          <Link
+            href="/about"
+            className="hidden lg:block rounded-full border border-[#D4A017]/40 bg-[#D4A017]/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#E6C36A] hover:bg-[#D4A017]/20"
+          >
+            SDVOSB Certified • Veteran-Owned • Streetman, TX
+          </Link>
+
           <HeaderChrome />
+        </div>
+        <div className="hidden md:flex items-center justify-center border-t border-cyan-500/10 py-1.5">
+          <p className="text-[10px] uppercase tracking-[0.16em] text-cyan-200/80">
+            100% Free • No Login Required for Most Features
+          </p>
         </div>
       </div>
     </header>

@@ -42,6 +42,17 @@ export default function HeaderChrome() {
         }`}
       >
         <div className="px-4 py-6 space-y-4">
+          <Link
+            href="/about"
+            className="block rounded-lg border border-[#D4A017]/40 bg-[#D4A017]/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#E6C36A]"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            SDVOSB Certified • Veteran-Owned • Streetman, TX
+          </Link>
+          <p className="text-[10px] uppercase tracking-[0.16em] text-cyan-200/80">
+            100% Free • No Login Required for Most Features
+          </p>
+
           {mobileNavItems.map((item) => (
             <Link
               key={item.href}

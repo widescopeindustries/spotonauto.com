@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import AnalyticsScripts from "@/components/AnalyticsScripts";
 import TrackingScript from "@/components/TrackingScript";
+import { COMPANY_INFO } from "@/lib/companyInfo";
 // SpotOnGuide moved into Providers (client component) for lazy loading
 
 export const metadata: Metadata = {
@@ -67,6 +68,17 @@ export default function RootLayout({
                   "@type": "ContactPoint",
                   url: "https://spotonauto.com/contact",
                   contactType: "Customer Service",
+                  telephone: COMPANY_INFO.phoneE164,
+                  email: COMPANY_INFO.supportEmail,
+                  availableLanguage: ["English"],
+                },
+                address: {
+                  "@type": "PostalAddress",
+                  streetAddress: COMPANY_INFO.streetAddress,
+                  addressLocality: COMPANY_INFO.city,
+                  addressRegion: COMPANY_INFO.state,
+                  postalCode: COMPANY_INFO.zip,
+                  addressCountry: "US",
                 },
               },
               {

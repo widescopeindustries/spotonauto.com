@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, MapPin } from 'lucide-react';
+import { Mail, MapPin, Phone, Clock3 } from 'lucide-react';
+import { COMPANY_INFO } from '@/lib/companyInfo';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -20,7 +21,7 @@ export default function Contact() {
       );
       
       // Open email client as primary action
-      window.location.href = `mailto:support@spotonauto.com?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:${COMPANY_INFO.supportEmail}?subject=${subject}&body=${body}`;
       
       setSubmitted(true);
     } catch (error) {
@@ -38,17 +39,44 @@ export default function Contact() {
         {/* Contact Info */}
         <div className="space-y-8">
           <p className="text-gray-300">
-            Have questions about your scanner connection or need help with a repair guide? Our team is here to help you get back on the road.
+            Reach a real person for support, safety questions, or guide feedback. Phone support is the fastest path; email is available for follow-up.
           </p>
+
+          <div className="rounded-xl border border-cyan-500/25 bg-cyan-500/[0.08] p-5">
+            <h2 className="text-sm font-bold uppercase tracking-[0.16em] text-cyan-200">Primary Contact</h2>
+            <a
+              href={COMPANY_INFO.phoneTel}
+              className="mt-3 inline-flex items-center gap-2 text-xl font-extrabold text-cyan-100 hover:text-cyan-50"
+            >
+              <Phone className="h-5 w-5" />
+              {COMPANY_INFO.phoneDisplay}
+            </a>
+            <p className="mt-2 flex items-center gap-2 text-sm text-cyan-100/90">
+              <Clock3 className="h-4 w-4" />
+              Business hours: {COMPANY_INFO.businessHours}
+            </p>
+          </div>
           
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-cyan-500/10 rounded-lg">
+              <Phone className="w-6 h-6 text-cyan-400" />
+            </div>
+            <div>
+              <h3 className="text-white font-bold mb-1">Call</h3>
+              <a href={COMPANY_INFO.phoneTel} className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                {COMPANY_INFO.phoneDisplay}
+              </a>
+            </div>
+          </div>
+
           <div className="flex items-start gap-4">
             <div className="p-3 bg-cyan-500/10 rounded-lg">
               <Mail className="w-6 h-6 text-cyan-400" />
             </div>
             <div>
-              <h3 className="text-white font-bold mb-1">Email</h3>
-              <a href="mailto:support@spotonauto.com" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-                support@spotonauto.com
+              <h3 className="text-white font-bold mb-1">Email (Secondary)</h3>
+              <a href={`mailto:${COMPANY_INFO.supportEmail}`} className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                {COMPANY_INFO.supportEmail}
               </a>
             </div>
           </div>
@@ -58,8 +86,14 @@ export default function Contact() {
               <MapPin className="w-6 h-6 text-cyan-400" />
             </div>
             <div>
-              <h3 className="text-white font-bold mb-1">Location</h3>
-              <p className="text-gray-400">Austin, Texas</p>
+              <h3 className="text-white font-bold mb-1">Business Address</h3>
+              <p className="text-gray-400">
+                {COMPANY_INFO.legalName}
+                <br />
+                {COMPANY_INFO.streetAddress}
+                <br />
+                {COMPANY_INFO.city}, {COMPANY_INFO.state} {COMPANY_INFO.zip}
+              </p>
             </div>
           </div>
         </div>
@@ -75,7 +109,7 @@ export default function Contact() {
               <p className="text-gray-400">
                 Your email client should open with the message pre-filled. 
                 If it didn&apos;t, please email us directly at{' '}
-                <a href="mailto:support@spotonauto.com" className="text-cyan-400">support@spotonauto.com</a>
+                <a href={`mailto:${COMPANY_INFO.supportEmail}`} className="text-cyan-400">{COMPANY_INFO.supportEmail}</a>
               </p>
             </div>
           ) : (

@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { fetchCharmPage } from '@/lib/charmParser';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
+import SafetyWarningBox from '@/components/SafetyWarningBox';
+import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
+import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 
 // The CHARM index is fetched from the live manual backend and can time out during
 // static prerender on Vercel. Keep the route dynamic so production builds do not
@@ -46,6 +49,8 @@ export default async function ManualLandingPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
+      <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
+      <SafetyWarningBox className="mb-8" />
       {/* Hero */}
       <section className="text-center mb-12 pt-12">
         <h1 className="text-4xl sm:text-5xl font-display font-bold text-white mb-4">
@@ -137,6 +142,8 @@ export default async function ManualLandingPage() {
           </Link>
         </div>
       </section>
+
+      <WhenToSeeMechanic className="mt-10" />
 
       {/* Schema.org structured data */}
       <script

@@ -1,179 +1,42 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
 import { getCategoryBySlug } from '@/data/forumCategories';
-import ThreadPageClient from './ThreadPageClient';
-
-export const revalidate = 300;
+import { getThreadByCategoryAndSlug } from '@/data/forumThreads';
+import ThreadDetail from '@/components/forum/ThreadDetail';
 
 interface PageProps {
-    params: Promise<{ category: string; slug: string }>;
-}
-
-function getSupabase() {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!url || !key || url === 'your_supabase_url') return null;
-    return createClient(url, key);
-}
-
-async function getThread(categorySlug: string, threadSlug: string) {
-    const sb = getSupabase();
-    if (!sb) {
-        console.error('[COMMUNITY] getSupabase() returned null. SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'MISSING', 'ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'MISSING');
-        return null;
-    }
-
-    const { data: catData, error: catError } = await sb
-        .from('forum_categories')
-        .select('id')
-        .eq('slug', categorySlug)
-        .single();
-
-    if (!catData) {
-        console.error('[COMMUNITY] Category not found:', categorySlug, 'error:', catError);
-        return null;
-    }
-
-    const { data: thread } = await sb
-        .from('forum_threads')
-        .select('id, title, slug, body, created_at, view_count, reply_count, vehicle_year, vehicle_make, vehicle_model, author_id, is_pinned, is_locked')
-        .eq('category_id', catData.id)
-        .eq('slug', threadSlug)
-        .single();
-
-    if (!thread) return null;
-
-    // Get author profile
-    const { data: authorProfile } = await sb
-        .from('forum_profiles')
-        .select('display_name, avatar_url')
-        .eq('id', thread.author_id)
-        .single();
-
-    // Get replies
-    const { data: posts } = await sb
-        .from('forum_posts')
-        .select('id, body, created_at, author_id')
-        .eq('thread_id', thread.id)
-        .order('created_at', { ascending: true });
-
-    // Get reply author profiles
-    const postAuthorIds = [...new Set(posts?.map((p) => p.author_id) ?? [])];
-    let postProfileMap = new Map<string, { display_name: string; avatar_url: string | null }>();
-    if (postAuthorIds.length > 0) {
-        const { data: postProfiles } = await sb
-            .from('forum_profiles')
-            .select('id, display_name, avatar_url')
-            .in('id', postAuthorIds);
-        postProfileMap = new Map(postProfiles?.map((p) => [p.id, { display_name: p.display_name, avatar_url: p.avatar_url }]) ?? []);
-    }
-
-    return {
-        thread: {
-            ...thread,
-            author: {
-                display_name: authorProfile?.display_name ?? 'DIY Mechanic',
-                avatar_url: authorProfile?.avatar_url ?? null,
-            },
-        },
-        posts: (posts ?? []).map((p) => ({
-            id: p.id,
-            body: p.body,
-            created_at: p.created_at,
-            author: postProfileMap.get(p.author_id) ?? { display_name: 'DIY Mechanic', avatar_url: null },
-        })),
-    };
+  params: Promise<{ category: string; slug: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { category: catSlug, slug } = await params;
-    const cat = getCategoryBySlug(catSlug);
-    if (!cat) return {};
+  const { category: catSlug, slug } = await params;
+  const cat = getCategoryBySlug(catSlug);
+  if (!cat) return {};
 
-    const result = await getThread(catSlug, slug);
-    if (!result) return {};
-
-    const { thread } = result;
-    const vehicleStr = thread.vehicle_year && thread.vehicle_make && thread.vehicle_model
-        ? `${thread.vehicle_year} ${thread.vehicle_make} ${thread.vehicle_model} — `
-        : '';
-    const title = `${vehicleStr}${thread.title} | ${cat.name} — SpotOn Auto Community`;
-    const description = thread.body.slice(0, 155).replace(/\n/g, ' ');
-
-    return {
-        title,
-        description,
-        openGraph: {
-            title,
-            description,
-            url: `https://spotonauto.com/community/${catSlug}/${slug}`,
-            type: 'article',
-        },
-        alternates: { canonical: `https://spotonauto.com/community/${catSlug}/${slug}` },
-    };
+  return {
+    title: `${cat.name} Thread — SpotOn Auto Community`,
+    description: 'Community discussion thread for DIY auto repair troubleshooting, tools, and vehicle-specific fixes.',
+    alternates: { canonical: `https://spotonauto.com/community/${catSlug}/${slug}` },
+  };
 }
 
 export default async function ThreadPage({ params }: PageProps) {
-    const { category: catSlug, slug } = await params;
-    const cat = getCategoryBySlug(catSlug);
-    if (!cat) notFound();
+  const { category: catSlug, slug } = await params;
+  const cat = getCategoryBySlug(catSlug);
+  if (!cat) notFound();
+  const thread = getThreadByCategoryAndSlug(catSlug, slug);
+  if (!thread) notFound();
 
-    const result = await getThread(catSlug, slug);
-    if (!result) notFound();
-
-    const { thread, posts } = result;
-    const threadUrl = `https://spotonauto.com/community/${catSlug}/${slug}`;
-
-    // QAPage structured data
-    const qaSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'QAPage',
-        mainEntity: {
-            '@type': 'Question',
-            name: thread.title,
-            text: thread.body,
-            datePublished: new Date(thread.created_at).toISOString(),
-            author: { '@type': 'Person', name: thread.author.display_name },
-            answerCount: posts.length,
-            ...(posts.length > 0
-                ? {
-                      acceptedAnswer: {
-                          '@type': 'Answer',
-                          text: posts[0].body,
-                          datePublished: new Date(posts[0].created_at).toISOString(),
-                          author: { '@type': 'Person', name: posts[0].author.display_name },
-                          upvoteCount: 0,
-                          url: threadUrl,
-                      },
-                  }
-                : {}),
-        },
-    };
-
-    return (
-        <main className="min-h-screen pt-24 pb-16">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(qaSchema) }}
-            />
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify({
-                    "@context": "https://schema.org",
-                    "@type": "BreadcrumbList",
-                    itemListElement: [
-                        { "@type": "ListItem", position: 1, name: "Community", item: "https://spotonauto.com/community" },
-                        { "@type": "ListItem", position: 2, name: cat.name, item: `https://spotonauto.com/community/${catSlug}` },
-                        { "@type": "ListItem", position: 3, name: thread.title, item: `https://spotonauto.com/community/${catSlug}/${slug}` },
-                    ],
-                }) }}
-            />
-            <ThreadPageClient
-                thread={thread}
-                posts={posts}
-                category={cat}
-            />
-        </main>
-    );
+  return (
+    <main className="min-h-screen pt-24 pb-16">
+      <div className="max-w-4xl mx-auto px-4">
+        <h1 className="text-2xl font-bold text-white mb-4">{cat.name}</h1>
+        <ThreadDetail
+          categorySlug={catSlug}
+          thread={thread}
+          posts={thread.posts}
+        />
+      </div>
+    </main>
+  );
 }
