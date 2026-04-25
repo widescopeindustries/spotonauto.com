@@ -25,7 +25,6 @@ import {
 
 import { fetchModels, getMakesForYear, getYears } from '@/services/vehicleData';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
-import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import { getRecentThreads } from '@/data/forumThreads';
 
 const VEHICLE_SYSTEMS = [
@@ -418,17 +417,6 @@ export default function ClientHome() {
                     </div>
                 </section>
 
-                <section className="px-4 pb-24 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-7xl">
-                        <SearchLandingMonetizationRail
-                            surface="home_index"
-                            intent="repair"
-                            contextLabel="DIY repair"
-                            className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
-                            compact
-                        />
-                    </div>
-                </section>
             </div>
         </div>
     );
