@@ -162,13 +162,6 @@ export default async function SymptomHubPage({ params }: PageProps) {
           <StatCard label="Systems" value={String(matchedCluster.systems.length)} />
         </div>
 
-        <SearchLandingMonetizationRail
-          surface="symptom_hub"
-          intent="diagnostic"
-          contextLabel={matchedCluster.label}
-          className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
-        />
-
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link
             href={toDiagnosisHref(matchedCluster.label)}
@@ -299,6 +292,13 @@ export default async function SymptomHubPage({ params }: PageProps) {
             ))}
           </div>
         </div>
+        <SearchLandingMonetizationRail
+          surface="symptom_hub"
+          intent="diagnostic"
+          contextLabel={matchedCluster.label}
+          className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
+          compact
+        />
         <WhenToSeeMechanic className="mt-8" />
       </section>
     </main>

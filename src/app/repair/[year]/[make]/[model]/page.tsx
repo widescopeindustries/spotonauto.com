@@ -664,13 +664,6 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           <StatCard label="Trouble codes" value={String(vehicleHub.codeCount)} />
         </div>
 
-        <SearchLandingMonetizationRail
-          surface="repair_hub"
-          intent="repair"
-          contextLabel={vehicleLabel}
-          className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
-        />
-
         <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6 md:p-8 mt-8">
           <div className="max-w-3xl">
             <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-300/85">Start Here</p>
@@ -1053,6 +1046,16 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
           </div>
         </section>
       )}
+
+      <section className="max-w-6xl mx-auto px-4 pb-12">
+        <SearchLandingMonetizationRail
+          surface="repair_hub"
+          intent="repair"
+          contextLabel={vehicleLabel}
+          className="rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
+          compact
+        />
+      </section>
 
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <h2 className="text-xl font-bold text-white mb-4">Frequently Asked Questions</h2>

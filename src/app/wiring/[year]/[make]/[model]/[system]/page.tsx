@@ -498,15 +498,6 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 pb-12">
-        <SearchLandingMonetizationRail
-          surface="wiring_page"
-          intent="manual"
-          contextLabel={`${vehicleLabel} ${systemMeta.shortLabel}`}
-          className="rounded-3xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
-        />
-      </section>
-
-      <section className="max-w-6xl mx-auto px-4 pb-12">
         <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/[0.05] p-6 md:p-8">
           <div className="max-w-3xl">
             <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-300/85">From Diagram To Fix</p>
@@ -622,6 +613,16 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 pb-14">
+        <SearchLandingMonetizationRail
+          surface="wiring_page"
+          intent="manual"
+          contextLabel={`${vehicleLabel} ${systemMeta.shortLabel}`}
+          className="rounded-3xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
+          compact
+        />
       </section>
     </main>
   );

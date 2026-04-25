@@ -102,14 +102,6 @@ export default function ManualNavigator() {
           </p>
         </header>
 
-        <div className="mb-10">
-          <SearchLandingMonetizationRail
-            surface="manual_navigator"
-            intent="manual"
-            contextLabel="factory service manual"
-          />
-        </div>
-
         <CharmLiVehicleSelector
           onSelect={setSelectedVehicle}
           selectedTask={selectedTask}
@@ -207,6 +199,15 @@ export default function ManualNavigator() {
             </section>
           </div>
         )}
+
+        <div className="mt-10">
+          <SearchLandingMonetizationRail
+            surface="manual_navigator"
+            intent="manual"
+            contextLabel="factory service manual"
+            compact
+          />
+        </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-3 text-center">
           <div className="p-6 bg-white/5 rounded-xl border border-white/10">

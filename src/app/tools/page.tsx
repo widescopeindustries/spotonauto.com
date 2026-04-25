@@ -170,14 +170,6 @@ export default function ToolsPage() {
                     </Link>
                 </div>
 
-                <div className="mb-12">
-                    <SearchLandingMonetizationRail
-                        surface="tools_index"
-                        intent="maintenance"
-                        contextLabel="maintenance tools"
-                    />
-                </div>
-
                 {/* Tools Grid */}
                 {TOOLS.map((category, i) => (
                     <div key={i} className="mb-12">
@@ -323,6 +315,15 @@ export default function ToolsPage() {
                             <p className="text-gray-400 text-sm">+ parts links</p>
                         </div>
                     </div>
+                </div>
+
+                <div className="mt-12">
+                    <SearchLandingMonetizationRail
+                        surface="tools_index"
+                        intent="maintenance"
+                        contextLabel="maintenance tools"
+                        compact
+                    />
                 </div>
             </section>
         </div>
