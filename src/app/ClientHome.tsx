@@ -193,7 +193,7 @@ export default function ClientHome() {
               />
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-black hover:bg-cyan-300"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-black hover:bg-cyan-300 sm:w-auto"
               >
                 Diagnose My Car
                 <ArrowRight className="h-4 w-4" />
@@ -330,7 +330,7 @@ export default function ClientHome() {
 
             <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
               <h3 className="text-lg font-semibold text-white">Try with your car</h3>
-              <form onSubmit={handleCodeSubmit} className="mt-4 flex gap-2">
+              <form onSubmit={handleCodeSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
                 <input
                   type="text"
                   placeholder="Enter code (e.g. P0300)"
@@ -338,7 +338,7 @@ export default function ClientHome() {
                   onChange={(e) => setDtcCode(e.target.value)}
                   className="w-full rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-3 font-mono text-sm text-gray-100 placeholder:text-gray-500 focus:border-cyan-400 focus:outline-none"
                 />
-                <button type="submit" className="rounded-lg bg-cyan-400 px-4 py-3 text-sm font-bold text-black hover:bg-cyan-300">
+                <button type="submit" className="w-full rounded-lg bg-cyan-400 px-4 py-3 text-sm font-bold text-black hover:bg-cyan-300 sm:w-auto">
                   Go
                 </button>
               </form>
@@ -444,12 +444,12 @@ export default function ClientHome() {
               type="button"
               onClick={openVehicleHub}
               disabled={!hasVehicle}
-              className="inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-black hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-black hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               Open Vehicle Hub
               <ArrowRight className="h-4 w-4" />
             </button>
-            <Link href="/codes" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-gray-100 hover:border-cyan-400/35">
+            <Link href="/codes" className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-gray-100 hover:border-cyan-400/35 sm:w-auto">
               Browse OBD2 Codes
             </Link>
           </div>

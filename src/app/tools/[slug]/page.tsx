@@ -223,24 +223,26 @@ export default async function ToolPage({ params }: PageProps) {
                 <div className="answer-box">
                     <h2>Quick Answer</h2>
                     <p className="primary-answer">{page.quickAnswer}</p>
-                    <table className="spec-table">
-                        <thead>
-                            <tr>
-                                <th>Generation</th>
-                                <th>Years</th>
-                                <th>Top spec</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {page.generations.slice(0, 3).map((gen) => (
-                                <tr key={gen.name}>
-                                    <td>{gen.name}</td>
-                                    <td>{gen.years}</td>
-                                    <td>{Object.entries(gen.specs)[0]?.[1] ?? 'See full chart below'}</td>
+                    <div className="spec-table-wrap">
+                        <table className="spec-table">
+                            <thead>
+                                <tr>
+                                    <th>Generation</th>
+                                    <th>Years</th>
+                                    <th>Top spec</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {page.generations.slice(0, 3).map((gen) => (
+                                    <tr key={gen.name}>
+                                        <td>{gen.name}</td>
+                                        <td>{gen.years}</td>
+                                        <td>{Object.entries(gen.specs)[0]?.[1] ?? 'See full chart below'}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <nav className="mb-8 flex flex-wrap gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm">
@@ -273,7 +275,7 @@ export default async function ToolPage({ params }: PageProps) {
                                 {/* Specs Table */}
                                 <div className="grid gap-3 mb-4">
                                     {Object.entries(gen.specs).map(([key, value]) => (
-                                        <div key={key} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                                        <div key={key} className="flex flex-col gap-1 py-2 border-b border-white/5 last:border-0 sm:flex-row sm:items-center sm:justify-between">
                                             <span className="text-gray-400 text-sm">{key}</span>
                                             <span className="text-white font-semibold text-sm font-mono">{value}</span>
                                         </div>

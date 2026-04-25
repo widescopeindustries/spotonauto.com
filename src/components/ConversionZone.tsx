@@ -28,8 +28,9 @@ export default function ConversionZone({
           placeholder="you@example.com"
           required
           aria-label="Email address"
+          className="w-full sm:w-auto"
         />
-        <button type="submit">Get My Free Schedule</button>
+        <button type="submit" className="w-full sm:w-auto">Get My Free Schedule</button>
       </form>
 
       <p className="text-sm">Not sure you want to DIY? Compare local shop pricing first.</p>

@@ -28,6 +28,7 @@
     "analytics:graph-coverage": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/graph-coverage-audit.ts",
     "analytics:lost-pages": "node scripts/lost-pages-report.js",
     "analytics:indexing-trust": "node scripts/indexing-trust-monitor.js",
+    "report:weekly-launch": "node scripts/weekly-launch-report.js",
     "health:manual-backbone": "node --experimental-strip-types scripts/manual-backbone-health.ts",
     "index:manual-backbone": "node --experimental-strip-types scripts/index-lmdb-vectors.ts",
     "audit:internal-links": "node scripts/internal-link-audit.js",
