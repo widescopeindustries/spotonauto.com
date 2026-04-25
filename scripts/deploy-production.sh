@@ -3,7 +3,6 @@ set -Eeuo pipefail
 
 APP_DIR="${DEPLOY_APP_DIR:-/root/spotonauto.com}"
 SERVICE_NAME="${DEPLOY_SERVICE_NAME:-spotonauto-web}"
-BRANCH="${DEPLOY_BRANCH:-main}"
 HEALTHCHECK_URL="${DEPLOY_HEALTHCHECK_URL:-http://127.0.0.1:3000}"
 
 log() {
@@ -20,8 +19,6 @@ run_systemctl() {
 
 log "Starting deploy"
 log "App dir: ${APP_DIR}"
-log "Branch: ${BRANCH}"
-
 if [ ! -d "${APP_DIR}" ]; then
   echo "Deploy path not found: ${APP_DIR}" >&2
   exit 1
@@ -29,25 +26,9 @@ fi
 
 cd "${APP_DIR}"
 
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "${APP_DIR} is not a git repository" >&2
+if [ ! -f package.json ] || [ ! -f package-lock.json ]; then
+  echo "Expected package.json and package-lock.json in ${APP_DIR}" >&2
   exit 1
-fi
-
-CURRENT_HEAD="$(git rev-parse HEAD)"
-log "Current HEAD: ${CURRENT_HEAD}"
-
-log "Fetching origin/${BRANCH}"
-git fetch origin "${BRANCH}" --prune
-TARGET_HEAD="$(git rev-parse "origin/${BRANCH}")"
-log "Target HEAD: ${TARGET_HEAD}"
-
-if [ "${CURRENT_HEAD}" = "${TARGET_HEAD}" ]; then
-  log "Already at target commit"
-else
-  log "Fast-forwarding ${BRANCH}"
-  git checkout "${BRANCH}"
-  git merge --ff-only "origin/${BRANCH}"
 fi
 
 log "Installing dependencies"

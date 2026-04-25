@@ -6,7 +6,7 @@ On every push to `main`, it:
 1. Runs `npm ci`, `npm run typecheck`, and `npm run build` in CI.
 2. SSHes into your VPS.
 3. Runs `scripts/deploy-production.sh` remotely.
-4. Fast-forwards the server repo to `origin/main`.
+4. Syncs repository files from CI to the server app directory via `rsync`.
 5. Runs `npm ci && npm run build`.
 6. Restarts `spotonauto-web` service.
 7. Runs health checks.
@@ -26,7 +26,7 @@ Set these in GitHub -> Settings -> Secrets and variables -> Actions:
 
 ## Server requirements
 
-- Repo cloned at `DEPLOY_APP_DIR` and tracking `origin/main`
+- Writable app directory at `DEPLOY_APP_DIR` (does not need to be a git repo)
 - Node.js 22 + npm 10 installed
 - systemd service exists: `spotonauto-web`
 - Deploy user can restart service:

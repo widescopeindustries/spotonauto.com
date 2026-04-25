@@ -67,6 +67,14 @@ jobs:
         run: |
           set -euo pipefail
           DEPLOY_PORT="${DEPLOY_PORT:-22}"
+          rsync -az --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.next' \
+            --exclude='node_modules' \
+            --exclude='.env.local' \
+            -e "ssh -p ${DEPLOY_PORT}" \
+            ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_APP_DIR}/"
           ssh -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" \
             "DEPLOY_APP_DIR='$DEPLOY_APP_DIR' DEPLOY_SERVICE_NAME='$DEPLOY_SERVICE_NAME' DEPLOY_HEALTHCHECK_URL='${DEPLOY_HEALTHCHECK_URL:-http://127.0.0.1:3000}' bash -s" \
             < ./scripts/deploy-production.sh
