@@ -7,7 +7,7 @@ export const COMPANY_INFO = {
   phoneDisplay: '682.999.0953',
   phoneE164: '+16829990953',
   phoneTel: 'tel:+16829990953',
-  supportEmail: 'info@widescopeindustries.com',
+  supportEmail: 'support@spotonauto.com',
   businessHours: 'Monday–Friday 9 AM – 5 PM CDT',
   sbaVerificationUrl: 'https://veterans.certify.sba.gov/#search',
 } as const;

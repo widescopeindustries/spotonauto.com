@@ -40,12 +40,6 @@ export default function RepairsIndexPage() {
         batteries, filters, fluids, or lighting into the right year-make-model walkthrough without extra searching.
       </p>
 
-      <SearchLandingMonetizationRail
-        surface="repair_hub"
-        intent="repair"
-        contextLabel="DIY repair"
-      />
-
       <section className="mb-12 rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.06] p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-5">
           <div>
@@ -214,6 +208,13 @@ export default function RepairsIndexPage() {
           </div>
         </section>
       )}
+
+      <SearchLandingMonetizationRail
+        surface="repair_hub"
+        intent="repair"
+        contextLabel="DIY repair"
+        compact
+      />
     </div>
   );
 }

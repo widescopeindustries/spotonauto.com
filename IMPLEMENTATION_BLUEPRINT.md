@@ -60,13 +60,13 @@ Stop leaking crawl equity, index signals, and analytics integrity.
 
 ### Objective
 
-Make the VPS corpus the actual backbone rather than a fragile upstream dependency.
+Make the KG server the actual backbone rather than a fragile upstream dependency.
 
 ### Architecture Target
 
-- LMDB/CHARM mirror on VPS remains the raw corpus store
-- VPS PostgreSQL with pgvector becomes the canonical retrieval store
-- SpotOnAuto app reads retrieval through a single service boundary
+- LMDB/CHARM mirror on the KG server remains the raw corpus store
+- local PostgreSQL on the KG server becomes the canonical retrieval store
+- SpotOnAuto app reads retrieval through a single local service boundary
 - Live HTML fetch becomes fallback and refresh path, not primary runtime dependency
 
 ### Work Items
@@ -80,7 +80,7 @@ Make the VPS corpus the actual backbone rather than a fragile upstream dependenc
    - extracted text
    - diagram/image references
    - source freshness
-3. Rebuild the indexing pipeline against VPS Postgres
+3. Rebuild the indexing pipeline against local Postgres
 4. Add model and variant disambiguation to retrieval filters
 5. Add retrieval quality scoring and fallback order
 6. Add health reporting:

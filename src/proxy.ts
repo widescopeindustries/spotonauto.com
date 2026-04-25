@@ -33,19 +33,6 @@ export function proxy(request: NextRequest) {
     const isRobots = pathname === '/robots.txt';
     const isCrawlerEndpoint = isRootOrNestedSitemap || isNestedSitemapChunk || isRobots;
 
-    if (pathname === '/wiring/sitemap.xml') {
-        const url = request.nextUrl.clone();
-        url.pathname = '/api/wiring-xml-index';
-        return applyCrawlerHeaders(NextResponse.rewrite(url), shouldNoindexHost, false);
-    }
-
-    const wiringChunkMatch = pathname.match(/^\/wiring\/sitemap\/(\d+)\.xml$/);
-    if (wiringChunkMatch) {
-        const url = request.nextUrl.clone();
-        url.pathname = `/api/wiring-xml/${wiringChunkMatch[1]}`;
-        return applyCrawlerHeaders(NextResponse.rewrite(url), shouldNoindexHost, false);
-    }
-
     if (isLegacyRedirectHost(host)) {
         const url = request.nextUrl.clone();
         url.protocol = 'https:';

@@ -38,7 +38,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/wiring`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.8 },
         { url: `${baseUrl}/community`, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 0.7 },
         { url: `${baseUrl}/about`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
+        { url: `${baseUrl}/author/spotonauto-editorial-team`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },
+        { url: `${baseUrl}/author/lyndon-bedford`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },
+        { url: `${baseUrl}/blog/amazon-auto-parts-by-vehicle-year-and-type`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.6 },
         { url: `${baseUrl}/contact`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.4 },
+        { url: `${baseUrl}/privacy-policy`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
+        { url: `${baseUrl}/terms-of-service`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
+        { url: `${baseUrl}/disclaimer`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
         { url: `${baseUrl}/privacy`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
         { url: `${baseUrl}/terms`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
     );

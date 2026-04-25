@@ -3,7 +3,6 @@ export const maxDuration = 45;
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rateLimit';
 import {
   decodeVin,
@@ -56,27 +55,6 @@ function toSafeApiErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Internal Server Error';
 }
 
-// Admin client used solely to verify JWT tokens server-side (no user-context queries)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder',
-  { auth: { persistSession: false } }
-);
-
-/**
- * Verify the request is from a logged-in Supabase user.
- * Returns the user object if valid, null otherwise.
- */
-async function getAuthenticatedUser(req: NextRequest) {
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) return null;
-
-  const token = authHeader.slice(7); // remove "Bearer "
-  const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
-  if (error || !user) return null;
-  return user;
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -95,8 +73,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Server configuration error: Missing AI API key' }, { status: 500 });
     }
 
-    const user = await getAuthenticatedUser(req);
-    console.log(`API Request [user:${user?.id ?? 'anonymous'}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);
+    const localUserId = req.headers.get('x-spoton-user-id') || 'anonymous';
+    console.log(`API Request [user:${localUserId}]: ${action}, vehicle: ${payload.vehicle?.year} ${payload.vehicle?.make} ${payload.vehicle?.model}`);
 
     // Validate vehicle for actions that require it
     if (['vehicle-info', 'generate-guide', 'diagnostic-chat'].includes(action)) {

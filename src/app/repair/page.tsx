@@ -45,12 +45,6 @@ export default function RepairHubPage() {
 
       <SafetyWarningBox className="mb-8 max-w-4xl" />
 
-      <SearchLandingMonetizationRail
-        surface="repair_hub"
-        intent="repair"
-        contextLabel="DIY repair"
-      />
-
       <section className="mb-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Link
           href="/diagnose"
@@ -250,6 +244,13 @@ export default function RepairHubPage() {
           ))}
         </div>
       </section>
+
+      <SearchLandingMonetizationRail
+        surface="repair_hub"
+        intent="repair"
+        contextLabel="DIY repair"
+        compact
+      />
 
       <WhenToSeeMechanic className="mt-10" />
     </div>

@@ -33,12 +33,6 @@ export default function SymptomsIndexPage() {
         Describe what your car is doing — we&apos;ll help you figure out what&apos;s wrong and which repair you need.
       </p>
 
-      <SearchLandingMonetizationRail
-        surface="symptoms_index"
-        intent="diagnostic"
-        contextLabel="car symptom diagnosis"
-      />
-
       {prioritySymptomHubs.length > 0 && (
         <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-6">
           <h2 className="text-xl font-bold text-white mb-2">Common Symptoms</h2>
@@ -125,6 +119,13 @@ export default function SymptomsIndexPage() {
           </div>
         </section>
       )}
+
+      <SearchLandingMonetizationRail
+        surface="symptoms_index"
+        intent="diagnostic"
+        contextLabel="car symptom diagnosis"
+        compact
+      />
     </main>
   );
 }

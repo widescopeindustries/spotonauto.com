@@ -5,7 +5,7 @@ import { COMPANY_INFO } from '@/lib/companyInfo';
 export const metadata: Metadata = {
   title: 'Terms of Service | SpotOnAuto',
   description: 'Terms and conditions for using SpotOnAuto, including AI-generated content disclaimers, affiliate disclosures, liability limitations, and data usage policies.',
-  alternates: { canonical: 'https://spotonauto.com/terms' },
+  alternates: { canonical: 'https://spotonauto.com/terms-of-service' },
 };
 
 export default function TermsOfService() {
@@ -101,7 +101,7 @@ export default function TermsOfService() {
           <h2 className="text-xl font-bold text-cyan-400">6. User Accounts</h2>
           <p className="text-sm">
             If you create an account, you are responsible for maintaining the security of your login credentials.
-            You may delete your account and all associated data at any time by emailing info@widescopeindustries.com.
+            You may delete your account and all associated data at any time by emailing support@spotonauto.com.
           </p>
         </section>
 

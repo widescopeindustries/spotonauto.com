@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: PageProps) {
   const displayModel = originalModel || model.charAt(0).toUpperCase() + model.slice(1).replace(/-/g, ' ');
   return {
     title: `${displayMake} ${displayModel} DIY Repair Guides | SpotOnAuto`,
-    description: `Open step-by-step DIY repair guides for the ${displayMake} ${displayModel}, including maintenance intervals, common fault diagnosis, parts planning, and exact year-by-year repair paths.`,
+    description: `Open step-by-step DIY repair guides for the ${displayMake} ${displayModel}, including maintenance intervals, common fault diagnosis, parts planning, exact year-by-year repair paths, and matching OEM manual sections.`,
     alternates: {
       canonical: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}`,
     },
@@ -191,13 +191,6 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           </div>
         </section>
 
-        <SearchLandingMonetizationRail
-          surface="guides_model"
-          intent="repair"
-          contextLabel={`${originalMake} ${originalModel}`}
-          className="mb-12 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
-        />
-
         {(familyOpportunities.length > 0 || queryOnlySignals.length > 0) && (
           <section className="mb-12 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -291,6 +284,14 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             </div>
           </section>
         )}
+
+        <SearchLandingMonetizationRail
+          surface="guides_model"
+          intent="repair"
+          contextLabel={`${originalMake} ${originalModel}`}
+          className="mb-12 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
+          compact
+        />
 
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {representativeRepairNodes.map((node) => (

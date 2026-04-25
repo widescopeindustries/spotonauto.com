@@ -1,5 +1,10 @@
-const DEFAULT_CHARM_ARCHIVE_BASE = 'https://spotonauto-charm-proxy.wandering-frog-3cea.workers.dev';
-const DEFAULT_CHARM_RAW_CONTENT_BASE = 'https://data.spotonauto.com';
+const DEFAULT_CHARM_ARCHIVE_BASE =
+  process.env.CHARM_ARCHIVE_BASE
+  ?? process.env.GRAPH_BACKEND_BASE_URL
+  ?? 'http://127.0.0.1:8080';
+const DEFAULT_CHARM_RAW_CONTENT_BASE =
+  process.env.GRAPH_BACKEND_BASE_URL
+  ?? 'http://127.0.0.1:8080';
 
 function normalizeBase(value: string): string {
   return value.replace(/\/+$/, '');

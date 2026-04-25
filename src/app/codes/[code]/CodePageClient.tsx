@@ -21,6 +21,8 @@ import TopdonProductCard from '@/components/TopdonProductCard';
 import { buildVehicleHubLinksForCodeViaGateway } from '@/lib/vehicleHubGateway';
 import { PricingTrackedLink } from '@/components/PricingTracking';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
+import ConversionZone from '@/components/ConversionZone';
+import AuthorBioCard from '@/components/AuthorBioCard';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -163,6 +165,16 @@ export default async function CodePageClient({
             })),
         })),
     });
+    const flashingRisk = code.severity === 'critical' || code.severity === 'high';
+    const safeToDrive = flashingRisk
+        ? 'NO if CEL is flashing. YES with caution if solid, but repair this week.'
+        : 'Usually yes with caution, but confirm root cause before long trips.';
+    const topCauseStats = code.commonCauses.slice(0, 5).map((cause, idx) => {
+        if (cause.likelihood === 'likely') return `${idx + 1}. ${cause.cause} (35-45% of cases)`;
+        if (cause.likelihood === 'possible') return `${idx + 1}. ${cause.cause} (10-25% of cases)`;
+        return `${idx + 1}. ${cause.cause} (5-10% of cases)`;
+    });
+    const schemaDate = new Date().toISOString().slice(0, 10);
 
     return (
         <section className="py-16 px-4 max-w-4xl mx-auto">
@@ -194,24 +206,31 @@ export default async function CodePageClient({
                 <p className="text-sm text-gray-400">{code.affectedSystem} System</p>
             </div>
 
+            <div className="mb-4 flex flex-wrap gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs">
+                <a href="#answer" className="text-cyan-300 hover:text-cyan-100">Answer Box</a>
+                <a href="#diagnose-steps" className="text-cyan-300 hover:text-cyan-100">Diagnosis Flow</a>
+                <a href="#faq" className="text-cyan-300 hover:text-cyan-100">FAQ</a>
+                <a href="#related-repairs" className="text-cyan-300 hover:text-cyan-100">Related Repairs</a>
+            </div>
+
             {/* Quick Answer Box — featured snippet target */}
-            <div className="mb-8 bg-cyan-950/30 border border-cyan-500/30 rounded-xl p-6">
-                <h3 className="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2">What Does {code.code} Mean?</h3>
-                <p className="text-white text-lg leading-relaxed">{code.description}</p>
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div className="bg-white/5 rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">Common Fix</p>
-                        <p className="text-white font-semibold text-sm">{code.commonFix}</p>
-                    </div>
-                    <div className="bg-white/5 rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">Estimated Cost (DIY)</p>
-                        <p className="text-white font-semibold text-sm">{code.estimatedCostRange}</p>
-                    </div>
-                </div>
+            <div id="answer" className="answer-box mb-8">
+                <h2>{code.code} — Instant Answer</h2>
+                <p className="primary-answer">{code.title}</p>
+                <p><strong>Severity:</strong> {sev.label.toUpperCase()}</p>
+                <p><strong>Meaning:</strong> {code.description}</p>
+                <p><strong>Safe to drive?</strong> {safeToDrive}</p>
+                <p><strong>Estimated repair cost:</strong> {code.estimatedCostRange}</p>
+                <p className="mt-3"><strong>Most common causes:</strong></p>
+                <ul className="mt-2 list-disc pl-6">
+                    {topCauseStats.map((cause) => (
+                        <li key={cause}>{cause}</li>
+                    ))}
+                </ul>
             </div>
 
             {/* Symptoms */}
-            <div className="mb-8 bg-white/[0.03] border border-white/10 rounded-xl p-6">
+            <div id="diagnose-steps" className="mb-8 bg-white/[0.03] border border-white/10 rounded-xl p-6">
                 <h3 className="text-lg font-bold text-white mb-4">Symptoms</h3>
                 <ul className="space-y-2">
                     {code.symptoms.map((s, i) => (
@@ -437,7 +456,7 @@ export default async function CodePageClient({
             )}
 
             {/* FAQ */}
-            <section className="mb-12">
+            <section id="faq" className="mb-12">
                 <h3 className="text-xl font-bold text-white mb-6">Frequently Asked Questions</h3>
                 <dl className="space-y-4">
                     {code.faq.map((f, i) => (
@@ -454,7 +473,7 @@ export default async function CodePageClient({
 
             {/* Related Repair Guides — cross-links to repair pages */}
             {repairLinks.length > 0 && (
-                <section className="mb-12">
+                <section id="related-repairs" className="mb-12">
                     <h3 className="text-xl font-bold text-white mb-4">Related Repair Guides</h3>
                     <p className="text-gray-400 text-sm mb-4">
                         If your vehicle has triggered {code.code}, these DIY repair guides may help:
@@ -478,6 +497,13 @@ export default async function CodePageClient({
                     </Link>
                 </section>
             )}
+
+            <ConversionZone
+                vehicleLabel={`${code.code} drivers`}
+                intentLabel={`${code.code} ${code.title}`}
+            />
+
+            <AuthorBioCard updatedDate={schemaDate} />
 
             {/* Bottom CTA */}
             <div className="text-center py-8 border-t border-white/10 mt-8">

@@ -106,16 +106,17 @@ export default async function ManualBrowserPage({ params }: PageProps) {
         {/* Cross-sell CTA for 3+ levels deep */}
         {depth >= 3 && <CrossSellCta pathSegments={path} />}
 
+        <nav aria-label="Manual sections">
+          <LinkTree links={page.links} depth={depth} />
+        </nav>
+
         <SearchLandingMonetizationRail
           surface="manual_page"
           intent="manual"
           contextLabel={page.title}
-          className="mb-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
+          className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
+          compact
         />
-
-        <nav aria-label="Manual sections">
-          <LinkTree links={page.links} depth={depth} />
-        </nav>
 
         {/* Bottom CTA on deeper pages */}
         {depth >= 2 && (
@@ -151,17 +152,18 @@ export default async function ManualBrowserPage({ params }: PageProps) {
       {/* Cross-sell CTA */}
       {depth >= 3 && <CrossSellCta pathSegments={path} />}
 
-      <SearchLandingMonetizationRail
-        surface="manual_page"
-        intent="manual"
-        contextLabel={page.title}
-        className="mb-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
-      />
-
       {/* Rendered content */}
       <article
         className="manual-content glass rounded-2xl p-6 sm:p-8"
         dangerouslySetInnerHTML={{ __html: page.contentHtml }}
+      />
+
+      <SearchLandingMonetizationRail
+        surface="manual_page"
+        intent="manual"
+        contextLabel={page.title}
+        className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6"
+        compact
       />
 
       {/* Bottom navigation */}

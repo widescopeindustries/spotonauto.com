@@ -68,12 +68,6 @@ export default async function ManualLandingPage() {
         </p>
       </section>
 
-      <SearchLandingMonetizationRail
-        surface="manual_index"
-        intent="manual"
-        contextLabel="factory service manual"
-      />
-
       {/* Cars section */}
       {cars.length > 0 && (
         <section className="mb-12">
@@ -142,6 +136,13 @@ export default async function ManualLandingPage() {
           </Link>
         </div>
       </section>
+
+      <SearchLandingMonetizationRail
+        surface="manual_index"
+        intent="manual"
+        contextLabel="factory service manual"
+        compact
+      />
 
       <WhenToSeeMechanic className="mt-10" />
 

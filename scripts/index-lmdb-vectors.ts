@@ -73,7 +73,7 @@ loadEnv();
 
 // ─── Configuration ───────────────────────────────────────────────────────────
 
-const CHARM_BASE = process.env.GRAPH_BACKEND_BASE_URL || 'http://116.202.210.109/graph-backbone';
+const CHARM_BASE = process.env.GRAPH_BACKEND_BASE_URL || 'http://127.0.0.1:8080';
 const EMBEDDING_MODEL = 'gemini-embedding-001';
 const MAX_CONTENT_LENGTH = 8000;     // Max chars of content to store per section
 const CONTENT_PREVIEW_LENGTH = 500;  // Chars for content_preview column

@@ -2,10 +2,13 @@ import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-    },
+    rules: [
+      {
+        userAgent: '*',
+        disallow: ['/admin/', '/api/internal/', '/community/*?page='],
+        allow: '/',
+      },
+    ],
     // List all sitemap entry points explicitly so Googlebot discovers everything.
     // /repair/sitemap.xml is a static sitemap index generated at build time.
     sitemap: [

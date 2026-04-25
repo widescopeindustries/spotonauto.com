@@ -14,6 +14,8 @@ import ToolManualConfirmation from '@/components/ToolManualConfirmation';
 import MaintenanceSupplies from '@/components/MaintenanceSupplies';
 import ToolIntentCommerce from '@/components/ToolIntentCommerce';
 import AffiliateLink from '@/components/AffiliateLink';
+import ConversionZone from '@/components/ConversionZone';
+import AuthorBioCard from '@/components/AuthorBioCard';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { getToolManualCitationGroups, getToolVerificationNote } from '@/lib/toolManualCitations';
 
@@ -42,9 +44,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!page) return { title: 'Tool Not Found' };
 
     // Lead description with the quick answer so actual specs appear in SERP snippet
-    const description = page.quickAnswer
-        ? `${page.quickAnswer} All years covered with part numbers — free lookup.`
-        : page.description;
+    const baseDescription = page.description.replace(/\s+/g, ' ').trim();
+    const answerText = page.quickAnswer ? page.quickAnswer.replace(/\s+/g, ' ').trim() : '';
+    const supportText = 'Use the exact vehicle page to confirm fitment, compare related repair paths, and build the one-trip parts list before you start.';
+    const description = [baseDescription, answerText, supportText].filter(Boolean).join(' ');
 
     return {
         title: page.title,
@@ -103,6 +106,9 @@ export default async function ToolPage({ params }: PageProps) {
     };
     const colorClasses = colorMap[meta.color] || colorMap.cyan;
 
+    const schemaDate = new Date().toISOString().slice(0, 10);
+    const pageUrl = `https://spotonauto.com/tools/${page.slug}`;
+
     // Schema.org FAQPage structured data
     const faqSchema = {
         '@context': 'https://schema.org',
@@ -114,6 +120,58 @@ export default async function ToolPage({ params }: PageProps) {
         })),
     };
 
+    const articleSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: page.title,
+        description: page.description,
+        datePublished: schemaDate,
+        dateModified: schemaDate,
+        author: {
+            '@type': 'Person',
+            name: 'SpotOnAuto Editorial Team',
+            jobTitle: 'ASE-Certified Technical Review Team',
+        },
+        publisher: {
+            '@type': 'Organization',
+            name: 'SpotOnAuto',
+            logo: {
+                '@type': 'ImageObject',
+                url: 'https://spotonauto.com/logo.png',
+            },
+        },
+    };
+
+    const howToSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'HowTo',
+        name: `${page.make} ${page.model} ${toolLabel}: verify and service`,
+        description: page.description,
+        image: 'https://spotonauto.com/og-default.svg',
+        totalTime: 'PT45M',
+        estimatedCost: {
+            '@type': 'MonetaryAmount',
+            currency: 'USD',
+            value: '30-180',
+        },
+        supply: [
+            { '@type': 'HowToSupply', name: `${page.make} ${page.model} replacement fluid or part` },
+            { '@type': 'HowToSupply', name: 'Shop towels and gloves' },
+        ],
+        tool: [
+            { '@type': 'HowToTool', name: 'Torque wrench' },
+            { '@type': 'HowToTool', name: 'OBD2 scanner (optional verification)' },
+        ],
+        step: page.generations.slice(0, 6).map((gen, idx) => ({
+            '@type': 'HowToStep',
+            name: `Check specs for ${gen.name}`,
+            text: `Confirm ${gen.name} (${gen.years}) values before buying parts. Key specs: ${Object.entries(gen.specs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ')}.`,
+            url: `${pageUrl}#specs`,
+            image: 'https://spotonauto.com/og-default.svg',
+            position: idx + 1,
+        })),
+    };
+
     // Amazon search links
     const amazonSearch = (query: string) => buildAmazonSearchUrl(query, 'automotive', 'tool-dynamic');
 
@@ -122,6 +180,14 @@ export default async function ToolPage({ params }: PageProps) {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
             />
             <script
                 type="application/ld+json"
@@ -149,7 +215,40 @@ export default async function ToolPage({ params }: PageProps) {
                     <p className="text-xl text-gray-400 max-w-2xl mx-auto">
                         {page.description}
                     </p>
+                    <p className="mt-3 text-xs uppercase tracking-[0.18em] text-gray-500">
+                        Last updated: {schemaDate} • Reading time: 8 min • By SpotOnAuto Editorial Team
+                    </p>
                 </div>
+
+                <div className="answer-box">
+                    <h2>Quick Answer</h2>
+                    <p className="primary-answer">{page.quickAnswer}</p>
+                    <table className="spec-table">
+                        <thead>
+                            <tr>
+                                <th>Generation</th>
+                                <th>Years</th>
+                                <th>Top spec</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {page.generations.slice(0, 3).map((gen) => (
+                                <tr key={gen.name}>
+                                    <td>{gen.name}</td>
+                                    <td>{gen.years}</td>
+                                    <td>{Object.entries(gen.specs)[0]?.[1] ?? 'See full chart below'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav className="mb-8 flex flex-wrap gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm">
+                    <a href="#specs" className="text-cyan-300 hover:text-cyan-200">Step-by-Step Specs</a>
+                    <a href="#faq" className="text-cyan-300 hover:text-cyan-200">Common Questions</a>
+                    <a href="#related-repairs" className="text-cyan-300 hover:text-cyan-200">Related Repairs</a>
+                    <a href="#related-tools" className="text-cyan-300 hover:text-cyan-200">Related Guides</a>
+                </nav>
 
                 <ToolManualConfirmation
                     vehicleName={vehicleName}
@@ -163,7 +262,7 @@ export default async function ToolPage({ params }: PageProps) {
                 />
 
                 {/* Generation Breakdown */}
-                <div className="space-y-8 mb-12">
+                <div id="specs" className="space-y-8 mb-12">
                     {page.generations.map((gen, i) => (
                         <div key={i} className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden">
                             <div className="bg-white/[0.05] px-6 py-4 border-b border-white/10 flex items-center justify-between">
@@ -233,7 +332,7 @@ export default async function ToolPage({ params }: PageProps) {
                 <AdUnit slot="tool-after-specs" />
 
                 {/* FAQ Section */}
-                <section className="mb-12 max-w-3xl mx-auto">
+                <section id="faq" className="mb-12 max-w-3xl mx-auto">
                     <h2 className="text-2xl font-bold text-white mb-6">Frequently Asked Questions</h2>
                     <dl className="space-y-4">
                         {page.faq.map((f, i) => (
@@ -249,7 +348,7 @@ export default async function ToolPage({ params }: PageProps) {
                 <AdUnit slot="tool-after-faq" format="horizontal" />
 
                 {/* Repair Task Cluster — strengthens internal links to high-intent repair pages */}
-                <section className="mb-12">
+                <section id="related-repairs" className="mb-12">
                     <h2 className="text-xl font-bold text-white mb-6">
                         {page.make} {page.model} Repair Guides
                     </h2>
@@ -278,7 +377,7 @@ export default async function ToolPage({ params }: PageProps) {
                 </section>
 
                 {/* Related Tools */}
-                <section className="mb-12">
+                <section id="related-tools" className="mb-12">
                     <div className="flex items-center justify-between gap-4 mb-6">
                         <h2 className="text-xl font-bold text-white">
                             More {page.make} {page.model} Guides
@@ -312,6 +411,13 @@ export default async function ToolPage({ params }: PageProps) {
                         }
                     </div>
                 </section>
+
+                <ConversionZone
+                    vehicleLabel={`${page.make} ${page.model}`}
+                    intentLabel={`${page.make} ${page.model} ${toolLabel}`}
+                />
+
+                <AuthorBioCard updatedDate={schemaDate} />
 
                 {/* Bottom CTA */}
                 <div className="text-center py-8 border-t border-white/10">

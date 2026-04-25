@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     return {
         title: `${meta.label} Guides | SpotOnAuto`,
-        description: `Browse every ${meta.label.toLowerCase()} page by make and model. Find vehicle-specific specs and DIY repair links fast.`,
+        description: `Open every ${meta.label.toLowerCase()} page by make and model. Find vehicle-specific specs, exact-fit repair links, and a faster one-trip shopping path for the job you are researching.`,
         alternates: {
             canonical: `https://spotonauto.com/tools/type/${toolType}`,
         },

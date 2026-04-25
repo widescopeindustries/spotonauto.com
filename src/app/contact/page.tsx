@@ -41,6 +41,9 @@ export default function Contact() {
           <p className="text-gray-300">
             Reach a real person for support, safety questions, or guide feedback. Phone support is the fastest path; email is available for follow-up.
           </p>
+          <p className="text-sm text-gray-400">
+            Response time target: within 24 hours on business days.
+          </p>
 
           <div className="rounded-xl border border-cyan-500/25 bg-cyan-500/[0.08] p-5">
             <h2 className="text-sm font-bold uppercase tracking-[0.16em] text-cyan-200">Primary Contact</h2>

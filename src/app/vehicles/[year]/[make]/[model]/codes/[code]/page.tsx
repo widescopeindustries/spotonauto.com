@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getVehicleDtcFlow } from '@/lib/vehicleLane';
-import { fetchContentByHash } from '@/lib/charmContent';
+import { fetchCharmPage } from '@/lib/charmParser';
 import { slugifyRoutePart } from '@/data/vehicles';
 
 export const revalidate = 21600; // 6 hour ISR
@@ -42,7 +42,15 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
 
   // Fetch the primary diagnostic flow content
   const flowPages = await Promise.all(
-    flow.flowHashes.slice(0, 3).map((hash) => fetchContentByHash(hash)),
+    flow.flowHashes.slice(0, 3).map(async (path) => {
+      const segments = path.replace(/^\/+/, '').replace(/^manual\//, '').split('/').filter(Boolean);
+      const page = await fetchCharmPage(segments);
+      return {
+        title: page.title,
+        html: page.contentHtml,
+        status: page.status,
+      };
+    }),
   );
   const availablePages = flowPages.filter((p) => p.status === 200 && p.html);
 
@@ -132,7 +140,7 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
             <div className="grid sm:grid-cols-2 gap-3">
               {diagrams.slice(0, 6).map((d) => (
                 <div
-                  key={d.hash}
+                  key={d.path}
                   className="rounded-xl border border-violet-500/20 bg-violet-500/[0.04] p-4"
                 >
                   <div className="flex items-center gap-2 mb-1">
@@ -143,7 +151,7 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
               ))}
               {locations.slice(0, 4).map((l) => (
                 <div
-                  key={l.hash}
+                  key={l.path}
                   className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-4"
                 >
                   <div className="flex items-center gap-2 mb-1">
@@ -154,7 +162,7 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
               ))}
               {fuseRelays.slice(0, 4).map((f) => (
                 <div
-                  key={f.hash}
+                  key={f.path}
                   className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-4"
                 >
                   <div className="flex items-center gap-2 mb-1">
@@ -174,7 +182,7 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
             <div className="grid sm:grid-cols-2 gap-3">
               {procedures.slice(0, 6).map((p) => (
                 <div
-                  key={p.hash}
+                  key={p.path}
                   className="rounded-xl border border-cyan-500/20 bg-cyan-500/[0.04] p-4"
                 >
                   <div className="flex items-center gap-2 mb-1">

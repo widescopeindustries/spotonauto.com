@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Cpu, Zap, Car, BookOpen, Shield, Mail, MessageSquare, Phone, Clock3, MapPin } from 'lucide-react';
+import { Cpu, Zap, Car, BookOpen, Shield, Mail, Phone, Clock3, MapPin } from 'lucide-react';
 import { COMPANY_INFO, formatBusinessAddress } from '@/lib/companyInfo';
 
 const Footer = () => {
@@ -41,12 +41,11 @@ const Footer = () => {
                                 {[
                                     { href: '/diagnose', label: 'AI Diagnostic Chat', icon: Zap, accent: true },
                                     { href: '/manual', label: 'Factory Manuals', icon: BookOpen },
-                                    { href: '/repair', label: 'Repair Guides', icon: BookOpen },
-                                    { href: '/parts', label: 'Parts Finder', icon: Car },
+                                { href: '/repair', label: 'Repair Guides', icon: BookOpen },
+                                { href: '/parts', label: 'Parts Finder', icon: Car },
                                 { href: '/codes', label: 'Check Engine Light', icon: Shield },
                                 { href: '/codes', label: 'DTC Code Lookup', icon: BookOpen },
                                 { href: '/wiring', label: 'Wiring Diagrams', icon: Cpu },
-                                { href: '/community', label: 'Community Forum', icon: MessageSquare },
                             ].map((item) => (
                                 <li key={item.href}>
                                     <Link
@@ -96,8 +95,9 @@ const Footer = () => {
                             {[
                                 { href: '/about', label: 'About Us' },
                                 { href: '/auth', label: 'Sign In / Sign Up' },
-                                { href: '/privacy', label: 'Privacy Policy' },
-                                { href: '/terms', label: 'Terms of Service' },
+                                { href: '/privacy-policy', label: 'Privacy Policy' },
+                                { href: '/terms-of-service', label: 'Terms of Service' },
+                                { href: '/disclaimer', label: 'Disclaimer' },
                                 { href: '/disclosure', label: 'Affiliate Disclosure' },
                                 { href: '/contact', label: 'Contact Us' },
                             ].map((item) => (
@@ -169,10 +169,10 @@ const Footer = () => {
                 <div className="mt-4 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.08] p-4 text-center">
                     <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/80">Trust Signals</p>
                     <p className="mt-2 text-sm text-cyan-50">
-                        SDVOSB Certified • Veteran-Owned &amp; Operated • Streetman, Texas
+                        12,400+ monthly citations from Microsoft Copilot &amp; AI systems
                     </p>
                     <p className="mt-1 text-xs text-cyan-100/80">
-                        100% Free • No Login Required for Most Features
+                        Data covering 82 makes, model years 1982-2025
                     </p>
                 </div>
 
@@ -182,6 +182,9 @@ const Footer = () => {
                         As an Amazon Associate, SpotOnAuto earns from qualifying purchases.
                         We also earn commissions from TOPDON purchases via our referral links.{' '}
                         <Link href="/disclosure" className="text-gray-500 hover:text-cyan-400 underline transition-colors">Full disclosure</Link>.
+                    </p>
+                    <p className="mt-2 text-xs text-gray-500">
+                        Full sitemap: <Link href="/sitemap.xml" className="underline hover:text-cyan-300">sitemap.xml</Link>
                     </p>
                 </div>
 

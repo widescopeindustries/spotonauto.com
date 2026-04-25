@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
   const displayName = originalMake || make.charAt(0).toUpperCase() + make.slice(1).replace(/-/g, ' ');
   return {
     title: `${displayName} Repair Guides | SpotOnAuto`,
-    description: `Open ${displayName} DIY repair guides with step-by-step instructions for maintenance, diagnostics, and common fixes. Compare model-specific procedures, tools, and parts before you start.`,
+    description: `Open ${displayName} DIY repair guides with step-by-step instructions for maintenance, diagnostics, and common fixes. Compare model-specific procedures, tools, parts, and exact manual references before you start.`,
     alternates: {
       canonical: `https://spotonauto.com/guides/${canonicalMake}`,
     },
@@ -69,12 +69,6 @@ export default async function MakeGuidesPage({ params }: PageProps) {
         </p>
       </FadeInUp>
 
-      <SearchLandingMonetizationRail
-        surface="guides_make"
-        intent="maintenance"
-        contextLabel={`${originalMake} maintenance`}
-      />
-
       <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {models.map((model) => (
           <StaggerItem key={model}>
@@ -92,6 +86,13 @@ export default async function MakeGuidesPage({ params }: PageProps) {
           </StaggerItem>
         ))}
       </StaggerContainer>
+
+      <SearchLandingMonetizationRail
+        surface="guides_make"
+        intent="maintenance"
+        contextLabel={`${originalMake} maintenance`}
+        compact
+      />
     </div>
   );
 }

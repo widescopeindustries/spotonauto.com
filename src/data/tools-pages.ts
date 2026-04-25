@@ -261,6 +261,38 @@ const oilPages: ToolPage[] = [
             { q: 'Is there a Kia engine recall for the Sportage?', a: 'Yes, certain 2011-2019 Kia engines with the Theta II 2.4L are covered by an extended warranty for engine seizure. Check with your dealer using your VIN.' },
         ],
     },
+    {
+        slug: 'ford-focus-oil-type',
+        make: 'Ford', model: 'Focus', toolType: 'oil-type',
+        title: 'Ford Focus Oil Type: 5W-20 Synthetic (2012-2024) | SpotOnAuto',
+        description: 'Ford Focus recommended oil type chart by generation with capacity, interval, and OEM specification notes.',
+        keywords: ['ford focus recommended oil type', 'ford focus oil type', 'focus oil capacity', 'ford focus oil chart'],
+        quickAnswer: 'Most 2012-2018 Ford Focus trims use SAE 5W-20 synthetic blend or full synthetic. Capacity is typically 4.5 quarts with filter.',
+        generations: [
+            { name: '3rd Gen (2012-2018)', years: '2012-2018', specs: { 'Oil Type': 'SAE 5W-20 Synthetic (blend or full)', 'Capacity': '4.5 quarts with filter', 'Interval': '7,500 miles / 12 months', 'OEM Spec': 'Ford WSS-M2C945-A' } },
+            { name: '4th Gen (2019-2024, global)', years: '2019-2024', specs: { 'Oil Type': 'SAE 0W-20 or 5W-20 (engine dependent)', 'Capacity': '4.2 to 5.4 quarts with filter', 'Interval': '7,500 miles / 12 months', 'OEM Spec': 'Ford WSS-M2C962-A1 / WSS-M2C945-B1' } },
+        ],
+        faq: [
+            { q: 'Can I use 5W-30 in a Ford Focus?', a: 'Only if your exact engine manual allows it. Most U.S. Focus models in this range call for 5W-20, and using thicker oil can reduce fuel economy.' },
+            { q: 'How much oil does a 2014 Ford Focus take?', a: 'Most 2.0L engines take about 4.5 quarts with filter. Always verify by dipstick after filling.' },
+        ],
+    },
+    {
+        slug: 'ford-edge-oil-type',
+        make: 'Ford', model: 'Edge', toolType: 'oil-type',
+        title: 'Ford Edge Oil Type Chart | 2011-2024 Specs | SpotOnAuto',
+        description: 'Ford Edge oil type chart with engine-specific capacities, service intervals, and OEM oil specification notes.',
+        keywords: ['ford edge oil type chart', 'ford edge oil type', 'ford edge oil capacity', 'ford edge 2.0 ecoboost oil'],
+        quickAnswer: 'Most 2015-2024 Ford Edge trims use full synthetic SAE 5W-30 (2.0L EcoBoost) or SAE 5W-20 (3.5L V6). Capacity ranges from 5.4 to 6.0 quarts.',
+        generations: [
+            { name: '2nd Gen (2015-2024)', years: '2015-2024', specs: { '2.0L EcoBoost': '5W-30, 5.7 quarts', '2.7L EcoBoost': '5W-30, 6.0 quarts', '3.5L V6': '5W-20, 5.5 quarts', 'Interval': '7,500 miles / 12 months' } },
+            { name: '1st Gen (2011-2014)', years: '2011-2014', specs: { '2.0L EcoBoost': '5W-30, 5.7 quarts', '3.5L V6': '5W-20, 5.5 quarts', '3.7L Sport': '5W-20, 5.5 quarts', 'Interval': '5,000 to 7,500 miles' } },
+        ],
+        faq: [
+            { q: 'What oil does the Ford Edge 2.0 EcoBoost use?', a: 'The 2.0L EcoBoost commonly calls for full synthetic 5W-30. Confirm the oil cap and owner manual for your exact model year.' },
+            { q: 'How often should I change oil in a Ford Edge?', a: 'Under normal driving, 7,500 miles is common. If you do short trips, towing, or heavy heat, a 5,000-mile interval is safer.' },
+        ],
+    },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -528,6 +560,40 @@ const tirePages: ToolPage[] = [
             { q: 'What\'s the biggest tire I can fit on a stock Wrangler?', a: 'Sport: 33" max without rubbing. Sahara: 33" with minor trimming. Rubicon: 35" with the factory lift (Xtreme Recon package comes with 35" from factory). For 37" tires, you need a 2.5-3.5" lift and fender trimming.' },
         ],
     },
+    {
+        slug: 'chevrolet-silverado-tire-size',
+        make: 'Chevrolet', model: 'Silverado', toolType: 'tire-size',
+        title: 'Chevy Silverado Tire Size Guide & Chart by Year | SpotOnAuto',
+        description: 'Chevrolet Silverado tire size chart by year and trim with OEM wheel size, pressure, and plus-size notes.',
+        keywords: ['chevy silverado tire size guide', 'chevy silverado tire size chart', 'silverado tire size', 'silverado wheel size'],
+        quickAnswer: 'Common Silverado 1500 sizes are 255/70R17, 265/65R18, and 275/60R20 depending on trim and package.',
+        generations: [
+            { name: 'T1XX (2019-2024)', years: '2019-2024', specs: { 'Work Truck / Custom': '255/70R17', 'LT / RST': '265/65R18', 'LTZ / High Country': '275/60R20', 'Trail Boss': '275/65R18 or 275/60R20', 'Pressure': '35 PSI (door sticker rules)' } },
+            { name: 'K2XX (2014-2018)', years: '2014-2018', specs: { 'Base': '255/70R17', 'Mid trims': '265/65R18', 'Premium trims': '275/55R20', 'Pressure': '35 PSI' } },
+            { name: 'GMT900 (2007-2013)', years: '2007-2013', specs: { 'Base': '245/70R17', 'Common upgrade': '265/65R18', '20-inch option': '275/55R20', 'Pressure': '32-35 PSI by trim' } },
+        ],
+        faq: [
+            { q: 'Can I run 33-inch tires on a stock Silverado?', a: 'Many 4WD Silverado trims can fit 33-inch tires with correct wheel offset. Always check inner fender and liner clearance at full lock and compression.' },
+            { q: 'Where do I verify exact factory tire size?', a: 'Use the driver door jamb placard first. That label is the authoritative factory tire size and pressure source for your truck.' },
+        ],
+    },
+    {
+        slug: 'toyota-sienna-tire-size',
+        make: 'Toyota', model: 'Sienna', toolType: 'tire-size',
+        title: 'Toyota Sienna Tire Size Chart by Year | SpotOnAuto',
+        description: 'Toyota Sienna tire size guide by year and trim, including pressure targets and all-season replacement notes.',
+        keywords: ['toyota sienna tire size', 'sienna tire size chart', 'toyota sienna wheel size', 'sienna tire pressure'],
+        quickAnswer: 'Most 2021-2024 Toyota Sienna trims use 235/65R17 or 235/60R18, with 36 PSI recommended on most configurations.',
+        generations: [
+            { name: '4th Gen (2021-2024)', years: '2021-2024', specs: { 'LE / XLE': '235/65R17', 'XSE / Limited / Platinum': '235/60R18', 'Pressure': '36 PSI (verify door sticker)', 'Bolt Pattern': '5x120' } },
+            { name: '3rd Gen (2011-2020)', years: '2011-2020', specs: { 'Base/LE': '235/60R17', 'SE/XLE/Limited': '235/55R18', 'Pressure': '35 PSI', 'Bolt Pattern': '5x114.3' } },
+            { name: '2nd Gen (2004-2010)', years: '2004-2010', specs: { 'Base': '215/65R16', 'Higher trims': '225/60R17', 'Pressure': '35 PSI', 'Bolt Pattern': '5x114.3' } },
+        ],
+        faq: [
+            { q: 'Can I switch from 17-inch to 18-inch wheels on a Sienna?', a: 'Yes, if you keep overall tire diameter close to stock and use the correct offset. A common move is from 235/65R17 to 235/60R18.' },
+            { q: 'What tire pressure should a Toyota Sienna run?', a: 'Most late-model Siennas run around 35-36 PSI cold. Use your door-jamb placard as the final source.' },
+        ],
+    },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -535,6 +601,157 @@ const tirePages: ToolPage[] = [
 // ═══════════════════════════════════════════════════════════════════
 
 const highIntentPages: ToolPage[] = [
+    {
+        slug: 'jeep-compass-oil-capacity',
+        make: 'Jeep',
+        model: 'Compass',
+        toolType: 'oil-type',
+        title: 'Jeep Compass Oil Capacity & Type Chart | SpotOnAuto',
+        description: 'Jeep Compass oil capacity and recommended oil type by year and engine, including interval and filter notes.',
+        keywords: ['jeep compass oil capacity', 'jeep compass oil type', 'how much oil in jeep compass'],
+        quickAnswer: 'Most 2017-2024 Jeep Compass 2.4L models take 5.5 quarts of 0W-20 full synthetic oil with filter.',
+        generations: [
+            { name: 'MP (2017-2024)', years: '2017-2024', specs: { 'Oil Type': '0W-20 Full Synthetic', 'Capacity': '5.5 quarts with filter', 'Interval': '6,000-7,500 miles', 'Filter': 'MO-349 / equivalent' } },
+            { name: 'MK (2007-2016)', years: '2007-2016', specs: { '2.0L': '5W-20, 4.5 quarts', '2.4L': '5W-20, 4.5 quarts', 'Interval': '5,000-7,000 miles', 'Filter': 'MO-090 / equivalent' } },
+        ],
+        faq: [
+            { q: 'How much oil goes in a Jeep Compass?', a: 'Most recent 2.4L Compass engines use about 5.5 quarts with filter, but always verify by dipstick after initial fill.' },
+        ],
+    },
+    {
+        slug: '2019-buick-encore-power-steering-fluid',
+        make: 'Buick',
+        model: 'Encore',
+        toolType: 'fluid-capacity',
+        title: '2019 Buick Encore Power Steering Fluid: What to Use | SpotOnAuto',
+        description: '2019 Buick Encore steering fluid guidance, reservoir checks, and service notes for electric steering systems.',
+        keywords: ['2019 buick encore power steering fluid', 'buick encore steering fluid', 'encore power steering'],
+        quickAnswer: 'The 2019 Buick Encore uses electric power steering and has no traditional hydraulic power steering fluid reservoir to top off.',
+        generations: [
+            { name: 'Encore (2013-2022)', years: '2013-2022', specs: { 'Steering System': 'Electric Power Steering (EPS)', 'Hydraulic Fluid': 'Not used', 'Service Note': 'Diagnose EPS faults via scan data', 'If noise/stiffness': 'Check battery voltage and steering rack electronics' } },
+        ],
+        faq: [
+            { q: 'Where is the power steering fluid reservoir on a 2019 Encore?', a: 'There is no conventional hydraulic reservoir on EPS-equipped Encore models.' },
+        ],
+    },
+    {
+        slug: 'subaru-crosstrek-oil-type-chart',
+        make: 'Subaru',
+        model: 'Crosstrek',
+        toolType: 'oil-type',
+        title: 'Subaru Crosstrek Oil Type Chart by Year | SpotOnAuto',
+        description: 'Subaru Crosstrek oil type chart with capacity and interval details by generation and engine.',
+        keywords: ['subaru crosstrek oil type chart', 'crosstrek oil type', 'subaru crosstrek oil capacity'],
+        quickAnswer: 'Most 2018-2024 Subaru Crosstrek engines use 0W-20 full synthetic oil. Capacity is typically around 4.4 quarts with filter.',
+        generations: [
+            { name: '2nd Gen (2018-2024)', years: '2018-2024', specs: { '2.0L FB20': '0W-20, 4.4 quarts', '2.5L FB25': '0W-20, 4.4 quarts', 'Interval': '6,000 miles / 6 months', 'Filter': '15208AA12A / equivalent' } },
+            { name: '1st Gen (2013-2017)', years: '2013-2017', specs: { '2.0L FB20': '0W-20, 5.1 quarts', 'Interval': '6,000 miles / 6 months', 'Filter': '15208AA160 / equivalent' } },
+        ],
+        faq: [
+            { q: 'Can I use 5W-30 in a Subaru Crosstrek?', a: 'Subaru generally calls for 0W-20 for fuel economy and cold-start performance. Use other weights only if your manual explicitly permits it.' },
+        ],
+    },
+    {
+        slug: '2020-hyundai-venue-oil-capacity',
+        make: 'Hyundai',
+        model: 'Venue',
+        toolType: 'oil-type',
+        title: 'How Much Oil Goes Into a 2020 Hyundai Venue? | SpotOnAuto',
+        description: 'Exact 2020 Hyundai Venue oil capacity, oil type, and service interval guidance.',
+        keywords: ['how much oil goes into a 2020 hyundai venue', '2020 hyundai venue oil capacity', 'hyundai venue oil type'],
+        quickAnswer: 'A 2020 Hyundai Venue 1.6L typically takes about 3.7 quarts of 5W-20 or 5W-30 (market dependent) with filter.',
+        generations: [
+            { name: 'QX (2020-2024)', years: '2020-2024', specs: { 'Engine': '1.6L Smartstream', 'Oil Capacity': '3.7 quarts with filter', 'Oil Type': '5W-20 or 5W-30 (region/spec dependent)', 'Interval': '5,000-7,500 miles' } },
+        ],
+        faq: [
+            { q: 'What oil should I use in a 2020 Venue?', a: 'Use the viscosity listed in your owner manual and oil cap. Capacity is about 3.7 quarts with a filter change.' },
+        ],
+    },
+    {
+        slug: '2021-porsche-cayenne-battery-location',
+        make: 'Porsche',
+        model: 'Cayenne',
+        toolType: 'battery-location',
+        title: '2021 Porsche Cayenne Battery Location | SpotOnAuto',
+        description: '2021 Porsche Cayenne battery location, battery type, and replacement registration notes.',
+        keywords: ['2021 porsche cayenne battery location', 'porsche cayenne battery location', 'cayenne battery replacement'],
+        quickAnswer: 'On most 2021 Porsche Cayenne models, the 12V battery is in the cargo area under the rear floor/trunk panel.',
+        generations: [
+            { name: '9Y0 (2019-2024)', years: '2019-2024', specs: { 'Location': 'Rear cargo floor compartment', 'Battery Type': 'AGM', 'Registration': 'Recommended after replacement', 'Access': 'Lift cargo floor and remove cover panel' } },
+            { name: '92A (2011-2018)', years: '2011-2018', specs: { 'Location': 'Front seat/cabin floor area (trim dependent)', 'Battery Type': 'AGM', 'Registration': 'Recommended' } },
+        ],
+        faq: [
+            { q: 'Does a Cayenne battery need coding?', a: 'Most late-model Cayenne vehicles benefit from battery registration/coding so the charging strategy matches the new battery.' },
+        ],
+    },
+    {
+        slug: 'range-rover-sport-battery-location',
+        make: 'Land Rover',
+        model: 'Range Rover Sport',
+        toolType: 'battery-location',
+        title: 'Range Rover Sport Battery Location by Year | SpotOnAuto',
+        description: 'Range Rover Sport battery location, battery type, and replacement access notes by generation.',
+        keywords: ['range rover sport battery location', 'where is battery in range rover sport', 'range rover sport battery'],
+        quickAnswer: 'Most Range Rover Sport models place the 12V battery in the rear cargo/trunk area under the floor panel.',
+        generations: [
+            { name: 'L494 (2014-2024)', years: '2014-2024', specs: { 'Location': 'Rear cargo floor compartment', 'Battery Type': 'AGM', 'Registration': 'Recommended', 'Common Size': 'H8 / Group 49 class' } },
+            { name: 'L320 (2005-2013)', years: '2005-2013', specs: { 'Location': 'Engine bay or rear compartment (trim dependent)', 'Battery Type': 'Standard/AGM', 'Common Size': 'H8 class' } },
+        ],
+        faq: [
+            { q: 'Why is the Range Rover Sport battery hard to reach?', a: 'Packaging for weight distribution and cargo layout often places it under rear panels rather than open engine bay space.' },
+        ],
+    },
+    {
+        slug: '2024-land-rover-range-rover-battery-location',
+        make: 'Land Rover',
+        model: 'Range Rover',
+        toolType: 'battery-location',
+        title: '2024 Land Rover Range Rover Battery Location | SpotOnAuto',
+        description: '2024 Range Rover battery location and replacement guidance including panel access and battery registration notes.',
+        keywords: ['2024 land rover range rover battery location', '2024 range rover battery location', 'range rover battery'],
+        quickAnswer: 'On most 2024 Range Rover trims, the 12V battery is in the rear cargo area beneath the floor panel and trim cover.',
+        generations: [
+            { name: 'L460 (2022-2024)', years: '2022-2024', specs: { 'Location': 'Rear cargo floor compartment', 'Battery Type': 'AGM', 'Registration': 'Required/recommended after replacement', 'Service Tip': 'Use memory saver for module retention' } },
+            { name: 'L405 (2013-2021)', years: '2013-2021', specs: { 'Location': 'Rear cargo area', 'Battery Type': 'AGM', 'Registration': 'Recommended' } },
+        ],
+        faq: [
+            { q: 'Can I replace a 2024 Range Rover battery myself?', a: 'Physical replacement is possible, but battery registration and system checks with a capable scan tool are strongly recommended.' },
+        ],
+    },
+    {
+        slug: 'vw-tiguan-coolant-type',
+        make: 'Volkswagen',
+        model: 'Tiguan',
+        toolType: 'coolant-type',
+        title: 'VW Tiguan Coolant Type & Mix Ratio | SpotOnAuto',
+        description: 'Volkswagen Tiguan coolant type guidance by generation with G12/G13 compatibility and mix ratio notes.',
+        keywords: ['vw tiguan coolant type', 'tiguan coolant', 'what coolant for volkswagen tiguan'],
+        quickAnswer: 'Most VW Tiguan models require VW-approved pink/purple coolant (G12 evo / G13 spec) mixed 50/50 with distilled water unless pre-mixed.',
+        generations: [
+            { name: '2nd Gen (2018-2024)', years: '2018-2024', specs: { 'Coolant Spec': 'VW TL-774 L / G12 evo (region dependent)', 'Color': 'Pink/Purple', 'Mix Ratio': '50/50 distilled water', 'Do Not Mix': 'Universal green coolant' } },
+            { name: '1st Gen (2008-2017)', years: '2008-2017', specs: { 'Coolant Spec': 'VW G12++ / G13', 'Color': 'Pink/Purple', 'Mix Ratio': '50/50 distilled water', 'Service Interval': 'Inspect annually' } },
+        ],
+        faq: [
+            { q: 'Can I mix green coolant in a Tiguan?', a: 'No. Use VW-approved coolant only. Mixing incompatible chemistry can cause sludge, corrosion, and cooling system damage.' },
+        ],
+    },
+    {
+        slug: 'dodge-durango-coolant-type',
+        make: 'Dodge',
+        model: 'Durango',
+        toolType: 'coolant-type',
+        title: 'Dodge Durango Coolant Type Chart | SpotOnAuto',
+        description: 'Dodge Durango coolant type and specification chart by year and engine family.',
+        keywords: ['dodge durango coolant type', 'durango coolant', 'what coolant for dodge durango'],
+        quickAnswer: 'Most modern Dodge Durango models use OAT coolant meeting Mopar MS.90032 (typically purple), pre-mixed 50/50.',
+        generations: [
+            { name: 'WD (2011-2024)', years: '2011-2024', specs: { 'Coolant Spec': 'Mopar OAT MS.90032', 'Color': 'Purple', 'Mix Ratio': '50/50 pre-mix preferred', 'Do Not Mix': 'HOAT (orange) unless system fully flushed' } },
+            { name: 'HB (1998-2009)', years: '1998-2009', specs: { 'Coolant Spec': 'HOAT (MS-9769) on many trims', 'Color': 'Orange', 'Mix Ratio': '50/50', 'Service Tip': 'Verify by cap/manual because transitions occurred' } },
+        ],
+        faq: [
+            { q: 'Is Durango coolant purple or orange?', a: 'Newer models are commonly purple OAT. Older generations may use orange HOAT. Always confirm exact spec for your model year.' },
+        ],
+    },
     {
         slug: 'bmw-x3-oil-type',
         make: 'BMW',

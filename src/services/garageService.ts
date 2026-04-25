@@ -1,8 +1,8 @@
 /**
- * Garage Service - Manages user's saved vehicles
+ * Garage Service - local-only storage for the self-hosted stack
  */
 
-import { supabase } from '@/lib/supabaseClient';
+import { hasLocalStorage, loadLocalUser, readLocalJson, writeLocalJson } from '@/lib/localBrowserStore';
 
 export interface GarageVehicle {
   id: string;
@@ -39,190 +39,138 @@ export interface DiagnosisRecord {
   created_at: string;
 }
 
+type GarageStore = {
+  vehicles: GarageVehicle[];
+  diagnoses: DiagnosisRecord[];
+};
+
+const GARAGE_KEY = 'spotonauto-garage-v1';
+
+function loadStore(): GarageStore {
+  return readLocalJson<GarageStore>(GARAGE_KEY, { vehicles: [], diagnoses: [] });
+}
+
+function saveStore(store: GarageStore): void {
+  writeLocalJson(GARAGE_KEY, store);
+}
+
+function requireUserId(): string | null {
+  const user = loadLocalUser();
+  return user?.id ?? null;
+}
+
+function createId(prefix: string): string {
+  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
 class GarageService {
-  /**
-   * Get all vehicles in user's garage
-   */
   async getGarage(userId: string): Promise<GarageVehicle[]> {
-    const { data, error } = await supabase
-      .from('garage_vehicles')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching garage:', error);
-      throw error;
-    }
-
-    return data || [];
+    if (!hasLocalStorage()) return [];
+    return loadStore().vehicles.filter((vehicle) => vehicle.user_id === userId);
   }
 
-  /**
-   * Add a vehicle to garage
-   */
   async addVehicle(
     userId: string,
     vehicle: Omit<GarageVehicle, 'id' | 'user_id' | 'created_at'>
   ): Promise<GarageVehicle> {
-    const { data, error } = await supabase
-      .from('garage_vehicles')
-      .insert({
-        user_id: userId,
-        ...vehicle
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error adding vehicle:', error);
-      throw error;
-    }
-
-    return data;
+    const store = loadStore();
+    const record: GarageVehicle = {
+      id: createId('veh'),
+      user_id: userId,
+      created_at: new Date().toISOString(),
+      ...vehicle,
+    };
+    store.vehicles = [record, ...store.vehicles.filter((item) => !(item.user_id === userId && item.id === record.id))];
+    saveStore(store);
+    return record;
   }
 
-  /**
-   * Update a vehicle
-   */
   async updateVehicle(
     vehicleId: string,
     updates: Partial<Omit<GarageVehicle, 'id' | 'user_id'>>
   ): Promise<GarageVehicle> {
-    const { data, error } = await supabase
-      .from('garage_vehicles')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', vehicleId)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error updating vehicle:', error);
-      throw error;
+    const store = loadStore();
+    const index = store.vehicles.findIndex((item) => item.id === vehicleId);
+    if (index === -1) {
+      throw new Error('Vehicle not found');
     }
-
-    return data;
+    const next: GarageVehicle = {
+      ...store.vehicles[index],
+      ...updates,
+    };
+    store.vehicles[index] = next;
+    saveStore(store);
+    return next;
   }
 
-  /**
-   * Remove a vehicle from garage
-   */
   async removeVehicle(vehicleId: string): Promise<void> {
-    const { error } = await supabase
-      .from('garage_vehicles')
-      .delete()
-      .eq('id', vehicleId);
-
-    if (error) {
-      console.error('Error removing vehicle:', error);
-      throw error;
-    }
+    const store = loadStore();
+    store.vehicles = store.vehicles.filter((item) => item.id !== vehicleId);
+    saveStore(store);
   }
 
-  /**
-   * Save a diagnosis to history
-   */
   async saveDiagnosis(
     userId: string,
     diagnosis: Omit<DiagnosisRecord, 'id' | 'user_id' | 'created_at'>
   ): Promise<DiagnosisRecord> {
-    const { data, error } = await supabase
-      .from('diagnosis_history')
-      .insert({
-        user_id: userId,
-        ...diagnosis
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error saving diagnosis:', error);
-      throw error;
-    }
-
-    return data;
+    const store = loadStore();
+    const record: DiagnosisRecord = {
+      id: createId('diag'),
+      user_id: userId,
+      created_at: new Date().toISOString(),
+      ...diagnosis,
+    };
+    store.diagnoses = [record, ...store.diagnoses.filter((item) => item.id !== record.id)];
+    saveStore(store);
+    return record;
   }
 
-  /**
-   * Get user's diagnosis history
-   */
   async getDiagnosisHistory(userId: string): Promise<DiagnosisRecord[]> {
-    const { data, error } = await supabase
-      .from('diagnosis_history')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching diagnosis history:', error);
-      throw error;
-    }
-
-    return data || [];
+    if (!hasLocalStorage()) return [];
+    return loadStore().diagnoses
+      .filter((item) => item.user_id === userId)
+      .sort((left, right) => Date.parse(right.created_at) - Date.parse(left.created_at));
   }
 
-  /**
-   * Get a single diagnosis
-   */
   async getDiagnosis(diagnosisId: string): Promise<DiagnosisRecord | null> {
-    const { data, error } = await supabase
-      .from('diagnosis_history')
-      .select('*')
-      .eq('id', diagnosisId)
-      .single();
-
-    if (error) {
-      console.error('Error fetching diagnosis:', error);
-      return null;
-    }
-
-    return data;
+    if (!hasLocalStorage()) return null;
+    return loadStore().diagnoses.find((item) => item.id === diagnosisId) ?? null;
   }
 
-  /**
-   * Update diagnosis status
-   */
   async updateDiagnosisStatus(
     diagnosisId: string,
     status: 'active' | 'resolved' | 'archived'
   ): Promise<void> {
-    const { error } = await supabase
-      .from('diagnosis_history')
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', diagnosisId);
-
-    if (error) {
-      console.error('Error updating diagnosis:', error);
-      throw error;
-    }
+    const store = loadStore();
+    const index = store.diagnoses.findIndex((item) => item.id === diagnosisId);
+    if (index === -1) throw new Error('Diagnosis not found');
+    store.diagnoses[index] = {
+      ...store.diagnoses[index],
+      status,
+    };
+    saveStore(store);
   }
 
-  /**
-   * Get garage stats for a user
-   */
   async getGarageStats(userId: string): Promise<{
     vehicleCount: number;
     totalDiagnoses: number;
     activeIssues: number;
     resolvedIssues: number;
   }> {
-    const [{ count: vehicleCount }, { count: totalDiagnoses }, { count: activeIssues }, { count: resolvedIssues }] = await Promise.all([
-      supabase.from('garage_vehicles').select('*', { count: 'exact', head: true }).eq('user_id', userId),
-      supabase.from('diagnosis_history').select('*', { count: 'exact', head: true }).eq('user_id', userId),
-      supabase.from('diagnosis_history').select('*', { count: 'exact', head: true }).eq('user_id', userId).eq('status', 'active'),
-      supabase.from('diagnosis_history').select('*', { count: 'exact', head: true }).eq('user_id', userId).eq('status', 'resolved')
-    ]);
-
+    const store = loadStore();
+    const vehicles = store.vehicles.filter((item) => item.user_id === userId);
+    const diagnoses = store.diagnoses.filter((item) => item.user_id === userId);
     return {
-      vehicleCount: vehicleCount || 0,
-      totalDiagnoses: totalDiagnoses || 0,
-      activeIssues: activeIssues || 0,
-      resolvedIssues: resolvedIssues || 0
+      vehicleCount: vehicles.length,
+      totalDiagnoses: diagnoses.length,
+      activeIssues: diagnoses.filter((item) => item.status === 'active').length,
+      resolvedIssues: diagnoses.filter((item) => item.status === 'resolved').length,
     };
   }
 }
 
 export const garageService = new GarageService();
+
+export function getCurrentUserGarageId(): string | null {
+  return requireUserId();
+}

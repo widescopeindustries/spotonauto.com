@@ -36,13 +36,13 @@ export default function ToolManualConfirmation({
       <div className="mt-4 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
           <h2 className="text-2xl font-bold text-white">
-            {vehicleName} {toolLabel}
+            Know the exact {toolLabel.toLowerCase()} job for your {vehicleName}
           </h2>
           <p className="mt-3 text-lg leading-relaxed text-white">
             {quickAnswer}
           </p>
           <p className="mt-4 text-sm leading-6 text-cyan-100/80">
-            {verificationNote}
+            {verificationNote} Once the spec is confirmed, use the supplies and purchase links below to build the full one-trip shopping list before you start the repair.
           </p>
         </div>
 
@@ -51,7 +51,7 @@ export default function ToolManualConfirmation({
             Exact Vehicle Check
           </h3>
           <p className="mt-3 text-sm leading-6 text-gray-300">
-            Use the archive navigator when you need the exact engine, trim, or production-branch manual instead of a broad year-range summary.
+            Use the archive navigator when you need the exact engine, trim, or production-branch manual instead of a broad year-range summary. That keeps the buying list and repair steps aligned with the real vehicle.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
@@ -64,7 +64,7 @@ export default function ToolManualConfirmation({
               href={makeManualHref}
               className="inline-flex items-center justify-center rounded-lg border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/15"
             >
-              Browse {vehicleName} Manuals
+              Open {vehicleName} Manuals
             </Link>
           </div>
         </div>

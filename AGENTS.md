@@ -137,9 +137,9 @@ Update it when product decisions, traps, or standing preferences change.
     - no dangling edges
     - no node conflicts
     - no edge conflicts
-  - Cloudflare KV remains a helper index, not the canonical corpus store
-  - VPS-backed manual embeddings remain the real retrieval backbone
-  - current next step is to push the same report-backed prioritization deeper into homepage and diagnostic entry surfaces, then keep burning down the remaining underlinked nodes from the daily graph-priority report
+  - Cloudflare KV is no longer part of the runtime stack
+  - manual embeddings now live on the local KG-server Postgres instance
+  - the current next step is to finish the local-only cutover, then keep burning down the remaining underlinked nodes from the daily graph-priority report
   - auth and personal history utility routes should remain non-indexable
   - sitemap freshness should come from `src/lib/sitemap.ts` or `SITEMAP_LAST_MOD`, not hard-coded stale dates
   - `scripts/internal-link-audit.js` should fail loudly if seed fetches fail instead of silently reporting zero discovered links

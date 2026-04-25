@@ -12,6 +12,7 @@
     "build": "next build --webpack",
     "prestart": "node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs",
     "start": "(sleep 30 && node scripts/submit-indexnow.js >/tmp/spotonauto-indexnow.log 2>&1) & next start",
+    "start:web": "next start -p ${PORT:-3000} -H ${HOSTNAME:-127.0.0.1}",
     "lint": "eslint src next.config.js",
     "typecheck": "tsc --noEmit",
     "analytics:recovery": "node scripts/recovery-scoreboard.js",
@@ -34,7 +35,9 @@
     "eval:graph-retrieval": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/eval-graph-retrieval.ts",
     "seo:graph-link-suggestions": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/generate-graph-link-suggestions.ts",
     "smoke:prod": "node scripts/smoke-prod.mjs",
-    "smoke:local": "BASE_URL=http://localhost:3000 node scripts/smoke-prod.mjs"
+    "smoke:local": "BASE_URL=http://localhost:3000 node scripts/smoke-prod.mjs",
+    "postbuild": "if [ \"${RUN_INDEXNOW:-0}\" = \"1\" ]; then node scripts/submit-indexnow.js; else echo 'Skipping IndexNow postbuild'; fi",
+    "indexnow:dead": "node scripts/submit-indexnow.js --dead"
   },
   "dependencies": {
     "@google/genai": "^1.20.0",

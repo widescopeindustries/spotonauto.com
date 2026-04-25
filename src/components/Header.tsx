@@ -1,21 +1,30 @@
 'use client';
 
+import { FormEvent, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Cpu } from 'lucide-react';
 import HeaderChrome from '@/components/HeaderChrome';
 import { useT } from '@/lib/translations';
 
 const desktopNavItems = [
-  { key: 'nav.factoryManuals', href: '/manual' },
-  { key: 'nav.repairGuides', href: '/repair' },
-  { key: 'nav.wiringDiagrams', href: '/wiring' },
-  { key: 'nav.codes', href: '/codes' },
-  { key: 'nav.diagnose', href: '/diagnose' },
-  { key: 'nav.community', href: '/community' },
+  { key: 'VIN Decoder', href: '/diagnose?mode=vin' },
+  { key: 'Diagnose', href: '/diagnose' },
+  { key: 'Guides', href: '/repair' },
+  { key: 'Codes', href: '/codes' },
 ];
 
 export default function Header() {
+  const router = useRouter();
+  const [search, setSearch] = useState('');
   const t = useT();
+
+  function handleSearchSubmit(e: FormEvent) {
+    e.preventDefault();
+    const query = search.trim();
+    if (!query) return;
+    router.push(`/diagnose?q=${encodeURIComponent(query)}`);
+  }
 
   return (
     <header className="header-slide-in fixed top-0 left-0 right-0 z-50 glass-strong">
@@ -35,6 +44,23 @@ export default function Header() {
             </span>
           </Link>
 
+          <form onSubmit={handleSearchSubmit} className="hidden lg:flex min-w-[260px] items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 px-3 py-1.5">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search symptom, code, or repair"
+              aria-label="Search SpotOnAuto"
+              className="w-full bg-transparent text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="rounded-full bg-cyan-400 px-3 py-1 text-xs font-bold text-black hover:bg-cyan-300"
+              data-track-click='{"event_name":"search_submit","event_category":"search","surface":"header"}'
+            >
+              Search
+            </button>
+          </form>
+
           <nav aria-label="Main navigation" className="hidden md:flex items-center gap-5">
             {desktopNavItems.map((item) => (
               <Link
@@ -42,7 +68,7 @@ export default function Header() {
                 href={item.href}
                 className="font-body text-sm text-gray-300 hover:text-cyan-400 transition-colors relative group"
               >
-                {t(item.key)}
+                {item.key.startsWith('nav.') ? t(item.key) : item.key}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}

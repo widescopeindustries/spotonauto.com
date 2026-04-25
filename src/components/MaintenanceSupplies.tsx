@@ -106,8 +106,8 @@ export default function MaintenanceSupplies({ toolType, make, model }: Props) {
         <section className="mb-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
-                    <h2 className="text-2xl font-bold text-white">Maintenance Kit</h2>
-                    <p className="text-gray-400 text-sm mt-1">Recommended supplies and tools for this job.</p>
+                    <h2 className="text-2xl font-bold text-white">One-Trip Shopping List</h2>
+                    <p className="text-gray-400 text-sm mt-1">Recommended supplies and tools for this job, grouped so you can buy everything before the repair starts.</p>
                 </div>
             </div>
 
@@ -145,7 +145,7 @@ export default function MaintenanceSupplies({ toolType, make, model }: Props) {
                         <span className="text-xs font-bold uppercase tracking-widest text-cyan-500/60 group-hover:text-cyan-500 transition-colors">View All →</span>
                     </div>
                     <h3 className="text-white font-bold mb-1">Project Essentials</h3>
-                    <p className="text-gray-400 text-xs leading-relaxed">Basic tool sets, gloves, and cleaning supplies for your {make} {model}.</p>
+                    <p className="text-gray-400 text-xs leading-relaxed">Basic tool sets, gloves, and cleaning supplies for your {make} {model} so the job is ready when the parts arrive.</p>
                 </AffiliateLink>
             </div>
         </section>

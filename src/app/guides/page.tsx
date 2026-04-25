@@ -27,12 +27,6 @@ export default function GuidesPage() {
         </p>
       </FadeInUp>
 
-      <SearchLandingMonetizationRail
-        surface="guides_index"
-        intent="maintenance"
-        contextLabel="DIY maintenance"
-      />
-
       <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {makes.map((make) => (
           <StaggerItem key={make}>
@@ -47,6 +41,13 @@ export default function GuidesPage() {
           </StaggerItem>
         ))}
       </StaggerContainer>
+
+      <SearchLandingMonetizationRail
+        surface="guides_index"
+        intent="maintenance"
+        contextLabel="DIY maintenance"
+        compact
+      />
     </div>
   );
 }

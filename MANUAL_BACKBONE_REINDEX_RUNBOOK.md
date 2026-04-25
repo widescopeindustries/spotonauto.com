@@ -2,7 +2,7 @@
 
 ## Objective
 
-Refresh the manual embeddings corpus on the VPS-backed store so SpotOnAuto guides use the newest extracted text, source snippets, and image markers.
+Refresh the manual embeddings corpus on the local KG-server Postgres store so SpotOnAuto guides use the newest extracted text, source snippets, and image markers.
 
 ## When to Run
 
@@ -17,10 +17,10 @@ Run a reindex when any of these happen:
 ## Preconditions
 
 1. `GEMINI_API_KEY` is present in `.env.local`
-2. `VPS_DATABASE_URL` is present in `.env.local`
-3. `MANUAL_EMBEDDINGS_BACKEND=vps` is set explicitly if you want to avoid fallback ambiguity
-4. `data.spotonauto.com` is reachable
-5. The VPS `manual_embeddings` table exists and is healthy
+2. `LOCAL_DATABASE_URL` or `DATABASE_URL` is present in `.env.local`
+3. `MANUAL_EMBEDDINGS_BACKEND=local` is set explicitly if you want to avoid fallback ambiguity
+4. The KG server archive endpoint is reachable
+5. The local `manual_embeddings` table exists and is healthy
 
 ## Baseline Checks
 
@@ -33,7 +33,7 @@ npm run analytics:backbone
 
 Confirm:
 
-- backend is `vps`
+- backend is `local`
 - health is `yes`
 - indexed section count is non-zero
 - newest entry timestamp looks sane
@@ -123,13 +123,13 @@ After a successful refresh:
 
 If `health:manual-backbone` fails:
 
-- verify `VPS_DATABASE_URL`
-- verify network access to the VPS database
+- verify `LOCAL_DATABASE_URL` or `DATABASE_URL`
+- verify network access to the local PostgreSQL instance
 - verify the `manual_embeddings` table still exists
 
 If indexing fails on writes:
 
-- confirm `MANUAL_EMBEDDINGS_BACKEND=vps`
+- confirm `MANUAL_EMBEDDINGS_BACKEND=local`
 - confirm the table accepts `vector(768)` values
 - inspect the exact failing path in indexer logs
 

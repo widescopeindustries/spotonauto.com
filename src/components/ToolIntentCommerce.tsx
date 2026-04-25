@@ -29,13 +29,13 @@ export default function ToolIntentCommerce({ page }: ToolIntentCommerceProps) {
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
         <div>
-          <h2 className="text-2xl font-bold text-white">Buy Parts and Tools for This Job</h2>
+          <h2 className="text-2xl font-bold text-white">Buy the Exact Parts and Tools for This Job</h2>
           <p className="mt-3 text-sm leading-6 text-gray-300">
             These links are built from the same specs shown on this page so users can move from lookup to purchase faster.
-            Confirm exact engine and trim if your vehicle has multiple variants.
+            Confirm exact engine and trim if your vehicle has multiple variants, then build the full cart before you step away from the computer.
           </p>
           <p className="mt-3 text-xs uppercase tracking-[0.16em] text-emerald-200/80">
-            Affiliate disclosure: We may earn a commission at no extra cost to you.
+            Affiliate disclosure: We may earn a commission at no extra cost to you. The goal is to get you to the right parts in one pass.
           </p>
         </div>
 
@@ -76,9 +76,9 @@ export default function ToolIntentCommerce({ page }: ToolIntentCommerceProps) {
       </div>
 
       <div className="mt-6 rounded-xl border border-cyan-400/25 bg-cyan-500/[0.08] p-4">
-        <h3 className="text-base font-semibold text-cyan-100">Before you buy, sanity-check the repair quote</h3>
+        <h3 className="text-base font-semibold text-cyan-100">Before you buy, sanity-check the repair quote and the cart</h3>
         <p className="mt-2 text-sm text-cyan-50/85">
-          If your shop quote looks high, run it through Quote Shield to catch overpricing before checkout.
+          If your shop quote looks high, run it through Quote Shield to catch overpricing before checkout. Then use the parts links above to lock in the one-trip plan.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <PricingTrackedLink

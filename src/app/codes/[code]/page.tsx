@@ -95,6 +95,34 @@ export default async function CodePage({ params }: PageProps) {
         })),
     };
 
+    const howToSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'HowTo',
+        name: `How to diagnose ${dtc.code}`,
+        description: `Step-by-step process to diagnose ${dtc.code} (${dtc.title}) before replacing parts.`,
+        image: 'https://spotonauto.com/og-default.svg',
+        totalTime: 'PT1H',
+        estimatedCost: {
+            '@type': 'MonetaryAmount',
+            currency: 'USD',
+            value: '20-500',
+        },
+        supply: [
+            { '@type': 'HowToSupply', name: 'Replacement parts as confirmed by test results' },
+        ],
+        tool: [
+            { '@type': 'HowToTool', name: 'OBD2 scan tool' },
+            { '@type': 'HowToTool', name: 'Digital multimeter' },
+        ],
+        step: dtc.diagnosticSteps.map((step, index) => ({
+            '@type': 'HowToStep',
+            name: `Step ${index + 1}`,
+            text: step,
+            url: `${pageUrl}#diagnose-steps`,
+            image: 'https://spotonauto.com/og-default.svg',
+        })),
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
             <script
@@ -104,6 +132,10 @@ export default async function CodePage({ params }: PageProps) {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
             />
             <script
                 type="application/ld+json"

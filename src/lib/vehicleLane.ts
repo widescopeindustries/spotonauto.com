@@ -1,18 +1,22 @@
 import 'server-only';
 
-import { getVehicleFromKV, findRelevantKVContent, type KVVehicleData, type KVContentEntry } from '@/lib/cloudflareKV';
+import { findDiagnosticTroubleCodeSections, findVehicleManualSections, type ManualSectionMatchRow } from '@/lib/manualEmbeddingsStore';
 import { slugifyRoutePart } from '@/data/vehicles';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+export interface VehicleLaneContentEntry {
+  path: string;
+  title: string;
+  type: 'dtc' | 'diagnostic' | 'procedure' | 'testing' | 'diagram' | 'location' | 'specification' | 'other';
+}
 
 export interface VehicleLaneDtcCode {
   code: string;
   title: string;
   system: string;
-  /** Content hashes for the diagnostic flow pages */
+  /** Manual path strings used by the code page to fetch content. */
   flowHashes: string[];
   /** Related content: tests, procedures, diagrams in the same system */
-  related: KVContentEntry[];
+  related: VehicleLaneContentEntry[];
 }
 
 export interface VehicleLaneSystem {
@@ -22,11 +26,16 @@ export interface VehicleLaneSystem {
   procedureCount: number;
   diagramCount: number;
   totalCount: number;
-  entries: KVContentEntry[];
+  entries: VehicleLaneContentEntry[];
 }
 
 export interface VehicleLaneData {
-  vehicle: KVVehicleData['v'];
+  vehicle: {
+    year: string;
+    make: string;
+    model: string;
+    variant: string;
+  };
   systems: VehicleLaneSystem[];
   dtcCodes: VehicleLaneDtcCode[];
   totalSystems: number;
@@ -34,146 +43,198 @@ export interface VehicleLaneData {
   totalDtcCodes: number;
 }
 
-// ─── DTC Code Extraction ─────────────────────────────────────────────────────
-
 const DTC_RE = /^([BPCU]\d{4})$/;
 const DTC_TITLE_RE = /\b([BPCU]\d{4})\b/;
 
-/**
- * Extract a DTC code from an entry title.
- * Many entries in the "Testing and Inspection" system have titles like
- * "P0420" or "DTC P0420 Catalyst System Efficiency".
- */
 function extractCodeFromTitle(title: string): string | null {
-  // Exact match: title IS the code
   const exact = title.trim().match(DTC_RE);
   if (exact) return exact[1];
 
-  // Code embedded in title
   const embedded = title.match(DTC_TITLE_RE);
   if (embedded) return embedded[1];
 
   return null;
 }
 
-// ─── Vehicle Lane Builder ────────────────────────────────────────────────────
+function normalizeManualPath(path: string): string[] {
+  const trimmed = path.replace(/^\/+/, '').replace(/^manual\//, '');
+  return trimmed.split('/').filter(Boolean);
+}
 
-/**
- * Build the vehicle lane data from Cloudflare KV.
- * Returns null if the vehicle isn't found in KV.
- */
+function getSystemNameFromRow(row: ManualSectionMatchRow): string {
+  const segments = normalizeManualPath(row.path);
+  if (segments.length >= 5) return decodeURIComponent(segments[4]);
+  if (row.sectionTitle.includes(':')) {
+    return row.sectionTitle.split(':')[0].trim();
+  }
+  return 'General';
+}
+
+function classifyEntryType(row: ManualSectionMatchRow): VehicleLaneContentEntry['type'] {
+  const text = `${row.sectionTitle} ${row.contentPreview} ${row.contentFull || ''}`.toLowerCase();
+  if (/\b(b|c|p|u)\d{4}\b/.test(text)) return 'dtc';
+  if (text.includes('diagnostic trouble code') || text.includes('trouble code')) return 'diagnostic';
+  if (text.includes('diagram')) return 'diagram';
+  if (text.includes('location')) return 'location';
+  if (text.includes('specification') || text.includes('specs')) return 'specification';
+  if (text.includes('test') || text.includes('inspection')) return 'testing';
+  if (text.includes('procedure') || text.includes('remove') || text.includes('replace') || text.includes('install')) return 'procedure';
+  return 'other';
+}
+
+function toEntry(row: ManualSectionMatchRow): VehicleLaneContentEntry {
+  return {
+    path: row.path,
+    title: row.sectionTitle,
+    type: classifyEntryType(row),
+  };
+}
+
+function uniqueSorted(values: string[]): string[] {
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+}
+
+function collectDtcCodes(rows: ManualSectionMatchRow[]): VehicleLaneDtcCode[] {
+  const codeMap = new Map<string, VehicleLaneDtcCode>();
+
+  for (const row of rows) {
+    const text = `${row.sectionTitle} ${row.contentPreview} ${row.contentFull || ''}`;
+    const matches = text.matchAll(/\b([BPCU]\d{4})\b/g);
+    const system = getSystemNameFromRow(row);
+    const entry = toEntry(row);
+
+    for (const match of matches) {
+      const code = match[1];
+      const existing = codeMap.get(code);
+      if (existing) {
+        if (!existing.flowHashes.includes(row.path)) existing.flowHashes.push(row.path);
+        if (!existing.related.some((item) => item.path === row.path)) existing.related.push(entry);
+      } else {
+        codeMap.set(code, {
+          code,
+          title: row.sectionTitle.replace(/\b([BPCU]\d{4})\b\s*/g, '').trim() || code,
+          system,
+          flowHashes: [row.path],
+          related: [entry],
+        });
+      }
+    }
+  }
+
+  return [...codeMap.values()].map((item) => ({
+    ...item,
+    flowHashes: uniqueSorted(item.flowHashes),
+    related: [...item.related].sort((a, b) => a.title.localeCompare(b.title)),
+  })).sort((a, b) => a.code.localeCompare(b.code));
+}
+
+function buildSystems(rows: ManualSectionMatchRow[]): VehicleLaneSystem[] {
+  const systemMap = new Map<string, VehicleLaneSystem>();
+
+  for (const row of rows) {
+    const systemName = getSystemNameFromRow(row);
+    const current = systemMap.get(systemName) ?? {
+      name: systemName,
+      slug: slugifyRoutePart(systemName),
+      dtcCount: 0,
+      procedureCount: 0,
+      diagramCount: 0,
+      totalCount: 0,
+      entries: [],
+    };
+
+    const entry = toEntry(row);
+    current.entries.push(entry);
+    current.totalCount += 1;
+    if (entry.type === 'dtc' || entry.type === 'diagnostic') current.dtcCount += 1;
+    if (entry.type === 'procedure' || entry.type === 'testing') current.procedureCount += 1;
+    if (entry.type === 'diagram') current.diagramCount += 1;
+
+    systemMap.set(systemName, current);
+  }
+
+  return [...systemMap.values()]
+    .map((system) => ({
+      ...system,
+      entries: system.entries.sort((a, b) => a.title.localeCompare(b.title)),
+    }))
+    .sort((a, b) => b.totalCount - a.totalCount || a.name.localeCompare(b.name));
+}
+
+function filterRelatedEntries(rows: ManualSectionMatchRow[], systemName: string): VehicleLaneContentEntry[] {
+  const relevant = rows.filter((row) => getSystemNameFromRow(row) === systemName);
+  return relevant
+    .map(toEntry)
+    .filter((entry) => entry.type === 'diagram' || entry.type === 'testing' || entry.type === 'procedure' || entry.type === 'location')
+    .slice(0, 20);
+}
+
 export async function buildVehicleLaneData(
   make: string,
   year: number,
   model: string,
 ): Promise<VehicleLaneData | null> {
-  const kvData = await getVehicleFromKV(make, year, model);
-  if (!kvData) return null;
+  const rows = await findVehicleManualSections({
+    make,
+    year,
+    model,
+    limit: 500,
+  });
 
-  const systems: VehicleLaneSystem[] = [];
-  const dtcCodeMap = new Map<string, VehicleLaneDtcCode>();
+  if (!rows.length) return null;
 
-  for (const [systemName, entries] of Object.entries(kvData.sys)) {
-    const slug = slugifyRoutePart(systemName);
+  const systems = buildSystems(rows);
+  const dtcCodes = collectDtcCodes(rows);
 
-    let dtcCount = 0;
-    let procedureCount = 0;
-    let diagramCount = 0;
-
-    for (const entry of entries) {
-      if (entry.type === 'dtc' || entry.type === 'diagnostic') {
-        dtcCount++;
-
-        // Try to extract a specific DTC code from the title
-        const code = extractCodeFromTitle(entry.title);
-        if (code) {
-          const existing = dtcCodeMap.get(code);
-          if (existing) {
-            existing.flowHashes.push(entry.hash);
-          } else {
-            dtcCodeMap.set(code, {
-              code,
-              title: entry.title.replace(/^[BPCU]\d{4}\s*/, '').trim() || code,
-              system: systemName,
-              flowHashes: [entry.hash],
-              related: [],
-            });
-          }
-        }
-      } else if (entry.type === 'procedure' || entry.type === 'testing') {
-        procedureCount++;
-      } else if (entry.type === 'diagram') {
-        diagramCount++;
-      }
-    }
-
-    systems.push({
-      name: systemName,
-      slug,
-      dtcCount,
-      procedureCount,
-      diagramCount,
-      totalCount: entries.length,
-      entries,
+  for (const dtc of dtcCodes) {
+    const systemName = dtc.system;
+    const related = filterRelatedEntries(rows, systemName);
+    dtc.related = uniqueSorted([
+      ...dtc.related.map((item) => item.path),
+      ...related.map((item) => item.path),
+    ]).map((path) => {
+      const match = rows.find((row) => row.path === path);
+      return match ? toEntry(match) : { path, title: path, type: 'other' as const };
     });
   }
 
-  // For each DTC code, find related content in the same system
-  // (diagrams, test procedures, locations that might be relevant)
-  for (const dtc of dtcCodeMap.values()) {
-    const system = systems.find((s) => s.name === dtc.system);
-    if (!system) continue;
-
-    dtc.related = system.entries
-      .filter(
-        (e) =>
-          e.type === 'diagram' ||
-          e.type === 'testing' ||
-          e.type === 'procedure' ||
-          e.type === 'location',
-      )
-      .slice(0, 20);
-  }
-
-  // Sort systems by total content (biggest first)
-  systems.sort((a, b) => b.totalCount - a.totalCount);
-
-  // Sort DTC codes alphabetically
-  const dtcCodes = [...dtcCodeMap.values()].sort((a, b) =>
-    a.code.localeCompare(b.code),
-  );
-
   return {
-    vehicle: kvData.v,
+    vehicle: {
+      year: String(year),
+      make,
+      model,
+      variant: model,
+    },
     systems,
     dtcCodes,
     totalSystems: systems.length,
-    totalContent: kvData.cc,
+    totalContent: rows.length,
     totalDtcCodes: dtcCodes.length,
   };
 }
 
-/**
- * Find the diagnostic flow entries for a specific DTC code on a specific vehicle.
- * Returns the content hashes and related supporting material.
- */
 export async function getVehicleDtcFlow(
   make: string,
   year: number,
   model: string,
   code: string,
 ): Promise<{
-  vehicle: KVVehicleData['v'];
+  vehicle: VehicleLaneData['vehicle'];
   code: string;
   flowHashes: string[];
-  relatedByType: Record<string, KVContentEntry[]>;
+  relatedByType: Record<string, VehicleLaneContentEntry[]>;
 } | null> {
-  const kvData = await getVehicleFromKV(make, year, model);
-  if (!kvData) return null;
+  const codeRows = await findDiagnosticTroubleCodeSections(code, 40);
+  const filtered = codeRows.filter((row) => {
+    const rowMake = row.make.trim().toLowerCase();
+    const rowModel = row.model.trim().toLowerCase();
+    return row.year === year && rowMake === make.trim().toLowerCase() && rowModel === model.trim().toLowerCase();
+  });
 
-  const upperCode = code.toUpperCase();
-  const flowHashes: string[] = [];
-  const relatedByType: Record<string, KVContentEntry[]> = {
+  if (!filtered.length) return null;
+
+  const flowHashes = uniqueSorted(filtered.map((row) => row.path));
+  const relatedByType: Record<string, VehicleLaneContentEntry[]> = {
     diagram: [],
     procedure: [],
     testing: [],
@@ -183,34 +244,41 @@ export async function getVehicleDtcFlow(
     specification: [],
   };
 
-  // Find all entries for this code across all systems
-  for (const [, entries] of Object.entries(kvData.sys)) {
-    for (const entry of entries) {
-      // Check if this entry is the diagnostic flow for our code
-      if (
-        (entry.type === 'dtc' || entry.type === 'diagnostic') &&
-        extractCodeFromTitle(entry.title) === upperCode
-      ) {
-        flowHashes.push(entry.hash);
-      }
-    }
+  const allRelated = await findVehicleManualSections({
+    make,
+    year,
+    model,
+    limit: 500,
+  });
+
+  for (const row of allRelated) {
+    const entry = toEntry(row);
+    const text = `${row.sectionTitle} ${row.contentPreview} ${row.contentFull || ''}`.toLowerCase();
+    if (entry.type === 'diagram') relatedByType.diagram.push(entry);
+    if (entry.type === 'procedure') relatedByType.procedure.push(entry);
+    if (entry.type === 'testing') relatedByType.testing.push(entry);
+    if (entry.type === 'location') relatedByType.location.push(entry);
+    if (text.includes('fuse') || text.includes('relay')) relatedByType['fuse-relay'].push(entry);
+    if (entry.type === 'specification') relatedByType.specification.push(entry);
+    if (text.includes('description') || text.includes('symptom')) relatedByType.description.push(entry);
   }
 
-  if (flowHashes.length === 0) return null;
-
-  // Gather supporting content from all systems
-  // The graph will use this to power contextual links at each step
-  for (const [, entries] of Object.entries(kvData.sys)) {
-    for (const entry of entries) {
-      if (entry.type in relatedByType) {
-        relatedByType[entry.type].push(entry);
-      }
-    }
+  for (const key of Object.keys(relatedByType)) {
+    relatedByType[key] = uniqueSorted(relatedByType[key].map((entry) => entry.path))
+      .map((path) => {
+        const match = allRelated.find((row) => row.path === path);
+        return match ? toEntry(match) : { path, title: path, type: 'other' as const };
+      });
   }
 
   return {
-    vehicle: kvData.v,
-    code: upperCode,
+    vehicle: {
+      year: String(year),
+      make,
+      model,
+      variant: model,
+    },
+    code: code.toUpperCase(),
     flowHashes,
     relatedByType,
   };

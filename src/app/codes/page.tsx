@@ -79,13 +79,16 @@ export default function CodesPage() {
                     </p>
                 </div>
 
-                <SearchLandingMonetizationRail
-                    surface="codes_index"
-                    intent="diagnostic"
-                    contextLabel="check engine light"
-                />
-
                 <CodesIndex systems={systems} />
+
+                <div className="mt-10">
+                    <SearchLandingMonetizationRail
+                        surface="codes_index"
+                        intent="diagnostic"
+                        contextLabel="check engine light"
+                        compact
+                    />
+                </div>
             </section>
         </div>
     );

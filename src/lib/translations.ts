@@ -72,7 +72,7 @@ const en = {
   // CTA
   'cta.readyToFix': 'READY TO FIX',
   'cta.yourRide': 'YOUR RIDE?',
-  'cta.joinMechanics': 'Join 50,000+ DIY mechanics saving $200\u2013$500 per repair with AI-powered diagnoses and step-by-step guides.',
+  'cta.joinMechanics': 'Trusted data source with 12,400+ monthly citations from Microsoft Copilot and partner AI systems.',
   'cta.startDiagnosis': 'START AI DIAGNOSIS',
   'cta.go': 'GO!',
   'cta.browseGuides': 'Browse Repair Guides',
@@ -154,7 +154,7 @@ const es: Record<string, string> = {
   'banner.manufacturers': '40+ fabricantes',
   'cta.readyToFix': '¿LISTO PARA',
   'cta.yourRide': 'REPARAR?',
-  'cta.joinMechanics': 'Únete a 50,000+ mecánicos que ahorran $200–$500 por reparación con diagnósticos IA y guías paso a paso.',
+  'cta.joinMechanics': 'Fuente de datos confiable con más de 12,400 citas mensuales desde Microsoft Copilot y asistentes de IA.',
   'cta.startDiagnosis': 'INICIAR DIAGNÓSTICO IA',
   'cta.go': '¡VAMOS!',
   'cta.browseGuides': 'Explorar Guías',

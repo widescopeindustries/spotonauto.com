@@ -27,6 +27,30 @@ const OIL_CAPACITY_RE = /\b\d(?:\.\d)?\s*quarts?\b/i;
 const GAP_RE = /0\.\d{3}"?\s*-\s*0\.\d{3}"?/i;
 
 const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
+  'ford-edge-oil-type': {
+    primaryTitle: 'Edge oil-change one-trip bundle',
+    primaryDescription: 'Pick the correct oil, filter, and small service parts in one order.',
+    primaryReason: 'Oil-type queries usually mean the user is about to buy the whole service kit.',
+    primaryQuery: 'Ford Edge oil change kit',
+    secondaryQuery: 'Ford Edge oil filter',
+    tertiaryQuery: 'Ford Edge drain plug gasket',
+  },
+  'ford-focus-oil-type': {
+    primaryTitle: 'Focus oil-change starter kit',
+    primaryDescription: 'Bundle the correct oil, filter, and cleanup gear for a single service pass.',
+    primaryReason: 'Focus oil queries often convert when the full kit is visible at once.',
+    primaryQuery: 'Ford Focus oil change kit',
+    secondaryQuery: 'Ford Focus oil filter',
+    tertiaryQuery: 'Ford Focus funnel and drain pan',
+  },
+  'kia-telluride-oil-type': {
+    primaryTitle: 'Telluride oil service bundle',
+    primaryDescription: 'Order the oil, filter, and drain hardware for the Telluride in one shot.',
+    primaryReason: 'Three-row SUV owners tend to prefer a complete shopping list before they start.',
+    primaryQuery: 'Kia Telluride oil change kit',
+    secondaryQuery: 'Kia Telluride oil filter',
+    tertiaryQuery: 'Kia Telluride drain plug washer',
+  },
   'ford-transit-serpentine-belt': {
     primaryTitle: 'Transit serpentine belt + tensioner bundle',
     primaryDescription: 'Focus on belt kits that include tensioner hardware for van-duty cycles.',
@@ -144,6 +168,21 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
     primaryDescription: 'Find compact-engine belt options and install tools.',
     primaryReason: 'Yaris buyers want low-cost exact-fit parts, so query precision helps conversion.',
     primaryQuery: 'Toyota Yaris serpentine belt',
+  },
+  'toyota-sienna-tire-size': {
+    primaryTitle: 'Sienna tire size and replacement set',
+    primaryDescription: 'Use the exact tire size, pressure, and pressure tools for the Sienna.',
+    primaryReason: 'Minivan shoppers often want a fast cart-building path after they confirm fitment.',
+    primaryQuery: 'Toyota Sienna tire size',
+    secondaryQuery: 'Toyota Sienna tire pressure gauge',
+  },
+  'mercedes-glc-battery-location': {
+    primaryTitle: 'GLC battery access and replacement kit',
+    primaryDescription: 'Buy the battery, terminal cleaner, and registration support tools together.',
+    primaryReason: 'Luxury battery jobs are easier to complete when the replacement path is fully mapped out.',
+    primaryQuery: 'Mercedes GLC battery location',
+    secondaryQuery: 'Mercedes GLC battery replacement',
+    tertiaryQuery: 'Mercedes GLC battery registration tool',
   },
 };
 

@@ -119,6 +119,27 @@ export default function AboutPage() {
           </p>
         </section>
 
+        <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+          <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Our AI</h2>
+          <p className="mt-3 text-gray-300 leading-7">
+            SpotOnAuto uses AI-assisted workflows to speed drafting and indexing, then applies human technical review before publication updates.
+            We focus on practical diagnosis flow, fitment context, and safety-first stop conditions.
+          </p>
+          <p className="mt-3 text-gray-300 leading-7">
+            Data privacy commitment: we do not sell your VIN or vehicle data.
+          </p>
+        </section>
+
+        <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-8">
+          <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Recognition</h2>
+          <p className="mt-3 text-gray-300 leading-7">
+            Trusted data source for Microsoft Copilot and AI assistants, with 12,400+ monthly citations across cited repair and specification pages.
+          </p>
+          <p className="mt-2 text-gray-300 leading-7">
+            SDVOSB veteran-owned business operated in Streetman, Texas.
+          </p>
+        </section>
+
         {/* Why Choose Us */}
         <section className="space-y-8">
           <h2 className="font-display font-bold text-2xl sm:text-3xl text-white text-center">Why Choose Us</h2>
@@ -155,6 +176,16 @@ export default function AboutPage() {
               {COMPANY_INFO.streetAddress}, {COMPANY_INFO.city}, {COMPANY_INFO.state} {COMPANY_INFO.zip}
             </p>
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+          <h2 className="font-display font-bold text-2xl text-white">Contact & Partnerships</h2>
+          <p className="mt-3 text-gray-300">
+            For partnerships, sponsorships, or data integrations, contact us at{' '}
+            <a className="text-cyan-300 hover:text-cyan-200" href={`mailto:${COMPANY_INFO.supportEmail}`}>
+              {COMPANY_INFO.supportEmail}
+            </a>.
+          </p>
         </section>
 
         {/* CTA */}

@@ -25,6 +25,7 @@ interface SearchLandingMonetizationRailProps {
   intent: MonetizationIntent;
   contextLabel?: string;
   className?: string;
+  compact?: boolean;
 }
 
 type SupportingOffer = {
@@ -162,6 +163,7 @@ export default function SearchLandingMonetizationRail({
   intent,
   contextLabel,
   className,
+  compact = false,
 }: SearchLandingMonetizationRailProps) {
   const copy = INTENT_COPY[intent];
   const query = buildOfferQuery(intent, contextLabel);
@@ -169,16 +171,13 @@ export default function SearchLandingMonetizationRail({
   const subtag = `landing-${surface}-${intent}`;
   const vehicleName = contextLabel || 'SpotOnAuto';
   const wrapperClassName =
-    className || 'my-10 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8';
+    className || 'my-12 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8';
 
   return (
     <section className={wrapperClassName}>
       <div className="flex flex-wrap items-center gap-2">
         <span className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
-          Revenue Rail
-        </span>
-        <span className="text-xs uppercase tracking-[0.16em] text-gray-400">
-          Intent: {intent}
+          Recommended Tools & Savings
         </span>
       </div>
 
@@ -217,33 +216,35 @@ export default function SearchLandingMonetizationRail({
         </PricingTrackedLink>
       </div>
 
-      <div className="mt-6">
-        <p className="text-xs uppercase tracking-[0.16em] text-emerald-100/80">
-          More supporting gear
-        </p>
-        <div className="mt-3 grid gap-3 md:grid-cols-3">
-          {supportingOffers.map((offer) => (
-            <AffiliateLink
-              key={offer.title}
-              href={buildAmazonSearchUrl(offer.query, 'automotive', `${subtag}-support`)}
-              partName={offer.title}
-              vehicle={vehicleName}
-              pageType="parts_page"
-              subtag={`${subtag}-support`}
-              className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-emerald-400/35 hover:bg-white/[0.07]"
-            >
-              <div className="flex h-full flex-col">
-                <h3 className="text-sm font-semibold text-white">{offer.title}</h3>
-                <p className="mt-2 text-xs leading-5 text-gray-300">{offer.description}</p>
-                <p className="mt-3 text-xs leading-5 text-emerald-100/80">{offer.reason}</p>
-                <span className="mt-4 inline-flex text-xs font-semibold text-amber-300">
-                  Shop on Amazon →
-                </span>
-              </div>
-            </AffiliateLink>
-          ))}
-        </div>
-      </div>
+      {!compact && (
+        <details className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100/80">
+            View supporting tool options
+          </summary>
+          <div className="mt-3 grid gap-3 md:grid-cols-3">
+            {supportingOffers.map((offer) => (
+              <AffiliateLink
+                key={offer.title}
+                href={buildAmazonSearchUrl(offer.query, 'automotive', `${subtag}-support`)}
+                partName={offer.title}
+                vehicle={vehicleName}
+                pageType="parts_page"
+                subtag={`${subtag}-support`}
+                className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-emerald-400/35 hover:bg-white/[0.07]"
+              >
+                <div className="flex h-full flex-col">
+                  <h3 className="text-sm font-semibold text-white">{offer.title}</h3>
+                  <p className="mt-2 text-xs leading-5 text-gray-300">{offer.description}</p>
+                  <p className="mt-3 text-xs leading-5 text-emerald-100/80">{offer.reason}</p>
+                  <span className="mt-4 inline-flex text-xs font-semibold text-amber-300">
+                    Shop on Amazon →
+                  </span>
+                </div>
+              </AffiliateLink>
+            ))}
+          </div>
+        </details>
+      )}
     </section>
   );
 }
