@@ -25,9 +25,13 @@ Update it when product decisions, traps, or standing preferences change.
   - Forbidden: `/cel`, `/privacy`, `/terms` (they return 308 redirects).
   - Allowed: `/codes`, `/privacy-policy`, `/terms-of-service`.
   - Redirects in sitemaps trigger Bing/Google duplicate-content penalties.
+- **NEVER submit more than 500 URLs/day via IndexNow. NEVER run `submit-indexnow.js --full`.**
+  - On 2026-03-28, 720,800 URLs were submitted in one day. Total: 740,100. Bing treats this as crawl spam.
+  - `--full` mode submits every URL from every sitemap. This is a nuclear option that destroyed domain trust.
+  - Only submit small batches (<100) of verified changed URLs.
+- **NO IndexNow submissions allowed for 30 days from 2026-04-26.** Let Bing forget the spam.
 - **NEVER auto-submit IndexNow on server boot.**
   - Removed from `package.json` start script on 2026-04-26.
-  - Only run `scripts/submit-indexnow.js` manually after verifying URLs are healthy.
 - **NEVER submit `/vehicles/...` URLs via IndexNow until `npm run health:manual-backbone` reports >1 make and >1 year.**
   - Empty `manual_embeddings` causes vehicle pages to 404, which destroys domain trust.
 - **`/vehicles/sitemap.xml` is DISABLED in `robots.ts` until backbone recovery.**
