@@ -336,8 +336,8 @@ async function main() {
     const changedFiles = getChangedFiles();
 
     if (!changedFiles) {
-      console.log('  Could not detect changes (no git). Falling back to full mode.\n');
-      sitemapsToFetch = SITEMAP_TRIGGERS.map(e => e.sitemap);
+      console.log('  Could not detect changes (no git). Aborting — use --full explicitly if you want to submit all URLs.\n');
+      process.exit(0);
     } else if (changedFiles.length === 0) {
       console.log('  No files changed. Nothing to submit.\n');
       return;
