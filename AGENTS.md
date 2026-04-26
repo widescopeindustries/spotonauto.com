@@ -25,9 +25,14 @@ Update it when product decisions, traps, or standing preferences change.
   - Forbidden: `/cel`, `/privacy`, `/terms` (they return 308 redirects).
   - Allowed: `/codes`, `/privacy-policy`, `/terms-of-service`.
   - Redirects in sitemaps trigger Bing/Google duplicate-content penalties.
+- **CRITICAL BUG (fixed 2026-04-26): `scripts/submit-indexnow.js` fell back to full mode when git was unavailable.**
+  - Production server has no `.git` directory (excluded from rsync deploy).
+  - Old `package.json` start script auto-ran the submitter on every boot.
+  - Every boot → git fails → "fallback to full mode" → **300K+ URLs submitted**.
+  - This is the root cause of the 740K March 28 spam blast.
+  - **Fix:** Script now aborts when git is unavailable. `--full` must be explicitly requested.
 - **NEVER submit more than 500 URLs/day via IndexNow. NEVER run `submit-indexnow.js --full`.**
-  - On 2026-03-28, 720,800 URLs were submitted in one day. Total: 740,100. Bing treats this as crawl spam.
-  - `--full` mode submits every URL from every sitemap. This is a nuclear option that destroyed domain trust.
+  - `--full` mode submits every URL from every sitemap. This is a nuclear option.
   - Only submit small batches (<100) of verified changed URLs.
 - **NO IndexNow submissions allowed for 30 days from 2026-04-26.** Let Bing forget the spam.
 - **NEVER auto-submit IndexNow on server boot.**
