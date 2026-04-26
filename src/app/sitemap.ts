@@ -30,7 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: baseUrl, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 1 },
         { url: `${baseUrl}/tools`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.85 },
         { url: `${baseUrl}/guides`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.8 },
-        { url: `${baseUrl}/cel`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
+        { url: `${baseUrl}/codes`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
         { url: `${baseUrl}/second-opinion`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
         { url: `${baseUrl}/parts`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.65 },
         { url: `${baseUrl}/repair`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.82 },
@@ -45,8 +45,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/privacy-policy`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
         { url: `${baseUrl}/terms-of-service`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
         { url: `${baseUrl}/disclaimer`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
-        { url: `${baseUrl}/privacy`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
-        { url: `${baseUrl}/terms`, lastModified: LAST_MOD, changeFrequency: 'yearly', priority: 0.3 },
     );
 
     // ── Tool pages (~1,850) ───────────────────────────────────────────

@@ -16,9 +16,52 @@ interface CategoryWithCounts {
 
 interface CommunityHomeProps {
     categories: CategoryWithCounts[];
+    isLive: boolean;
+    totalThreads: number;
 }
 
-export default function CommunityHome({ categories }: CommunityHomeProps) {
+export default function CommunityHome({ categories, isLive, totalThreads }: CommunityHomeProps) {
+    if (!isLive) {
+        return (
+            <main className="min-h-screen pt-24 pb-16">
+                <div className="max-w-3xl mx-auto px-4 sm:px-6">
+                    <FadeInUp>
+                        <div className="rounded-2xl border border-cyan-500/25 bg-cyan-950/20 p-8 text-center">
+                            <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 mb-4">
+                                <MessageCircle className="w-4 h-4 text-cyan-400" />
+                                <span className="font-mono text-xs text-cyan-400">COMMUNITY BETA</span>
+                            </div>
+                            <h1 className="font-display font-bold text-3xl text-white tracking-wide">
+                                Community Opens Soon
+                            </h1>
+                            <p className="font-body text-gray-300 mt-4">
+                                We are seeding real threads and verified answers before opening public posting.
+                                This prevents empty forum categories and keeps launch quality high.
+                            </p>
+                            <p className="font-body text-sm text-gray-400 mt-3">
+                                Current seeded threads: {totalThreads}
+                            </p>
+                            <div className="mt-6 flex flex-wrap justify-center gap-3">
+                                <Link
+                                    href="/contact"
+                                    className="inline-flex items-center rounded-lg bg-cyan-400 px-4 py-2 text-sm font-bold text-black hover:bg-cyan-300"
+                                >
+                                    Get launch updates
+                                </Link>
+                                <Link
+                                    href="/repair"
+                                    className="inline-flex items-center rounded-lg border border-white/15 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-gray-100 hover:border-cyan-400/40"
+                                >
+                                    Browse repair guides
+                                </Link>
+                            </div>
+                        </div>
+                    </FadeInUp>
+                </div>
+            </main>
+        );
+    }
+
     return (
         <main className="min-h-screen pt-24 pb-16">
             <div className="max-w-4xl mx-auto px-4 sm:px-6">

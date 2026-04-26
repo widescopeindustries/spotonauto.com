@@ -19,6 +19,22 @@ Update it when product decisions, traps, or standing preferences change.
 - Favor calmer, more flowing section transitions over noisy sci-fi effects.
 - Keep the tone intentional and restrained, not gimmicky.
 
+## Critical SEO / Crawl Safety Rules (2026-04-26)
+
+- **NEVER add redirect URLs to `src/app/sitemap.ts`.**
+  - Forbidden: `/cel`, `/privacy`, `/terms` (they return 308 redirects).
+  - Allowed: `/codes`, `/privacy-policy`, `/terms-of-service`.
+  - Redirects in sitemaps trigger Bing/Google duplicate-content penalties.
+- **NEVER auto-submit IndexNow on server boot.**
+  - Removed from `package.json` start script on 2026-04-26.
+  - Only run `scripts/submit-indexnow.js` manually after verifying URLs are healthy.
+- **NEVER submit `/vehicles/...` URLs via IndexNow until `npm run health:manual-backbone` reports >1 make and >1 year.**
+  - Empty `manual_embeddings` causes vehicle pages to 404, which destroys domain trust.
+- **`/vehicles/sitemap.xml` is DISABLED in `robots.ts` until backbone recovery.**
+  - Re-enable only after `health:manual-backbone` shows meaningful coverage.
+- **The `index-lmdb-vectors.ts` indexer MUST run on the VPS.**
+  - Port 8080 is firewalled; running from your local machine will fail.
+
 ## Known Technical Traps
 
 - Do not reintroduce delayed provider remounting in `src/components/Providers.tsx`.

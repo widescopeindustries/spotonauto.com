@@ -13,7 +13,6 @@ const mobileNavItems = [
   { key: 'nav.wiringDiagrams', href: '/wiring' },
   { key: 'nav.codes', href: '/codes' },
   { key: 'nav.diagnose', href: '/diagnose' },
-  { key: 'nav.community', href: '/community' },
 ];
 
 export default function HeaderChrome() {

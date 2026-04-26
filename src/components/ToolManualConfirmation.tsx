@@ -121,7 +121,7 @@ export default function ToolManualConfirmation({
         </div>
       ) : (
         <div className="mt-8 rounded-xl border border-dashed border-white/15 bg-black/20 p-5 text-sm leading-6 text-gray-300">
-          Live manual section citations are unavailable on this render. The exact-manual links above still route into the archive so the user can confirm the branch directly.
+          Open the manual links above to confirm the exact engine and trim branch before ordering parts.
         </div>
       )}
     </section>
