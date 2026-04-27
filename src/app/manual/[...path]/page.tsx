@@ -39,10 +39,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = buildManualDescription(decodedPath);
   const canonical = 'https://spotonauto.com/manual/' + decodedPath.map(s => encodeURIComponent(s)).join('/');
 
+  // hyperlink/ paths are internal KG cross-reference nodes — not search landing pages
+  const isHyperlink = decodedPath.some((s) => s.toLowerCase() === 'hyperlink');
+
   return {
     title,
     description,
     alternates: { canonical },
+    robots: isHyperlink ? { index: false, follow: false } : undefined,
     openGraph: {
       title,
       description,
