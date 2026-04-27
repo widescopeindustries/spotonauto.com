@@ -311,7 +311,7 @@ export async function getIndexedPaths(make: string, year?: number): Promise<Set<
 export async function upsertManualEmbedding(record: ManualEmbeddingRecord): Promise<void> {
   const pool = getLocalPool();
   if (!pool) throw new Error('Local database not configured');
-  if (!record.embedding) throw new Error('Embedding is required for local upsert');
+  // Embeddings are optional — allows metadata-only population when API rate limits block generation
 
   await ensureLocalSchema();
 
@@ -337,7 +337,7 @@ export async function upsertManualEmbedding(record: ManualEmbeddingRecord): Prom
       record.sectionTitle,
       record.contentPreview,
       record.contentFull,
-      JSON.stringify(record.embedding),
+      record.embedding ? JSON.stringify(record.embedding) : null,
     ],
   );
 }

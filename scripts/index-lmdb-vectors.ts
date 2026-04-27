@@ -332,8 +332,9 @@ async function crawlSections(
     }
 
     // Generate embedding
-    await sleep(EMBEDDING_DELAY_MS);
-    const embedding = await generateEmbedding(text);
+    // Skipping Gemini embeddings — metadata-only population for speed
+    // Vehicle pages only need make/year/model/path/title/content, not vector search
+    const embedding = null;
     if (!embedding) {
       stats.totalErrors++;
       return 0;
