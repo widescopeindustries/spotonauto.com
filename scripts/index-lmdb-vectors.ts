@@ -335,10 +335,6 @@ async function crawlSections(
     // Skipping Gemini embeddings — metadata-only population for speed
     // Vehicle pages only need make/year/model/path/title/content, not vector search
     const embedding = null;
-    if (!embedding) {
-      stats.totalErrors++;
-      return 0;
-    }
 
     // Upsert into database
     const success = await upsertSection({
