@@ -86,8 +86,7 @@ export default function ClientHome() {
 
   const [symptom, setSymptom] = useState('');
   const [dtcCode, setDtcCode] = useState('');
-  const [zip, setZip] = useState('');
-  const [repairNeed, setRepairNeed] = useState('');
+
 
   const availableYears = getYears();
   const availableMakes = vehicle.year ? getMakesForYear(vehicle.year) : [];
@@ -137,23 +136,6 @@ export default function ClientHome() {
     router.push(`/codes/${code}`);
   }
 
-  function handleQuoteSubmit(e: FormEvent) {
-    e.preventDefault();
-    track('quote_request_submission', {
-      surface: 'home_hero',
-      has_vehicle: hasVehicle ? 1 : 0,
-      has_zip: zip ? 1 : 0,
-      has_repair_text: repairNeed ? 1 : 0,
-    });
-
-    const params = new URLSearchParams();
-    if (zip.trim()) params.set('zip', zip.trim());
-    if (vehicle.year) params.set('year', vehicle.year);
-    if (vehicle.make) params.set('make', vehicle.make);
-    if (vehicle.model) params.set('model', vehicle.model);
-    if (repairNeed.trim()) params.set('repair', repairNeed.trim());
-    router.push(`/second-opinion?${params.toString()}`);
-  }
 
   function openVehicleHub() {
     if (!vehicleHubUrl) return;
@@ -174,36 +156,40 @@ export default function ClientHome() {
       </div>
 
       <section className="px-4 pb-14 pt-28 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2">
-          <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-7 sm:p-9">
-            <h1 className="font-display text-4xl font-black leading-tight sm:text-5xl">
-              Fix Your Car with <span className="text-cyan-300">Confidence</span>
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-7 sm:p-9 lg:p-12">
+            <h1 className="font-display text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
+              Factory Service Data for <span className="text-cyan-300">Every Vehicle</span>
             </h1>
-            <p className="mt-4 text-base text-gray-300 sm:text-lg">
-              AI-powered diagnosis + step-by-step guides for every make and model.
+            <p className="mt-4 max-w-3xl text-base text-gray-300 sm:text-lg">
+              1.4 million OEM repair procedures, 8,800+ DTC codes with component links, and AI-powered diagnostics grounded in real factory manuals.
             </p>
 
-            <form onSubmit={handleDiagnoseSubmit} className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <form onSubmit={handleDiagnoseSubmit} className="mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row">
               <input
                 value={symptom}
                 onChange={(e) => setSymptom(e.target.value)}
                 className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-4 py-3 text-sm text-gray-100 placeholder:text-gray-500 focus:border-cyan-400 focus:outline-none"
-                placeholder="Describe symptom (e.g. rough idle + check engine light)"
-                aria-label="Describe your symptom"
+                placeholder="Describe symptom, DTC code, or repair need..."
+                aria-label="Describe your symptom or code"
               />
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-black hover:bg-cyan-300 sm:w-auto"
+                className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-cyan-400 px-6 py-3 text-sm font-bold text-black hover:bg-cyan-300 sm:w-auto"
               >
-                Diagnose My Car
+                Search
                 <ArrowRight className="h-4 w-4" />
               </button>
             </form>
 
-            <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <div className="mt-5 flex flex-wrap gap-3 text-sm">
+              <Link href="/codes" className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.03] px-4 py-2 text-gray-100 hover:border-cyan-400/40">
+                <Zap className="h-4 w-4 text-cyan-300" />
+                Browse DTC Codes
+              </Link>
               <Link href="/repair" className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.03] px-4 py-2 text-gray-100 hover:border-cyan-400/40">
                 <BookOpen className="h-4 w-4 text-cyan-300" />
-                Browse Repair Guides
+                Repair Guides
               </Link>
               <Link href="/diagnose?mode=vin" className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.03] px-4 py-2 text-gray-100 hover:border-cyan-400/40">
                 <Search className="h-4 w-4 text-cyan-300" />
@@ -211,96 +197,12 @@ export default function ClientHome() {
               </Link>
             </div>
 
-            <div className="mt-6 grid gap-2 text-xs text-cyan-100/90 sm:grid-cols-3">
-              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2">Trusted by Microsoft Copilot & AI systems</span>
-              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2">SDVOSB Certified Veteran-Owned Business</span>
-              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2">148K+ Wiring Diagrams | 170+ OBD2 Codes | 57+ Guides</span>
+            <div className="mt-8 grid gap-2 text-xs text-cyan-100/90 sm:grid-cols-4">
+              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2">1.4M+ OEM Procedures</span>
+              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2">8,881 DTC Codes Linked</span>
+              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2">304K Vehicle Variants</span>
+              <span className="rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2">AI Grounded in Factory Data</span>
             </div>
-          </div>
-
-          <div className="rounded-3xl border border-amber-400/25 bg-amber-400/[0.06] p-7 sm:p-9">
-            <h2 className="font-display text-2xl font-bold text-white">Not Sure You Want to DIY? Get a Fair Price Estimate First.</h2>
-            <p className="mt-3 text-sm text-gray-300">Compare prices from certified shops in your area. No obligation.</p>
-
-            <form onSubmit={handleQuoteSubmit} className="mt-5 space-y-3">
-              <input
-                value={zip}
-                onChange={(e) => setZip(e.target.value)}
-                maxLength={10}
-                placeholder="ZIP code"
-                className={SELECT_CLASS}
-                aria-label="ZIP code"
-                data-track-submit='{"event_name":"quote_request_submission","event_category":"quote_request","surface":"home_quote"}'
-              />
-
-              <div className="grid gap-3 sm:grid-cols-3">
-                <select
-                  className={SELECT_CLASS}
-                  value={vehicle.year}
-                  onChange={(e) => {
-                    startTransition(() => {
-                      setVehicle({ year: e.target.value, make: '', model: '' });
-                      setAvailableModels([]);
-                    });
-                  }}
-                >
-                  <option value="">Year</option>
-                  {availableYears.map((y) => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-
-                <select
-                  className={SELECT_CLASS}
-                  value={vehicle.make}
-                  onChange={(e) => {
-                    startTransition(() => {
-                      setVehicle((prev) => ({ ...prev, make: e.target.value, model: '' }));
-                      setAvailableModels([]);
-                    });
-                  }}
-                  disabled={!vehicle.year}
-                >
-                  <option value="">Make</option>
-                  {availableMakes.map((m) => (
-                    <option key={m} value={m}>{m.toUpperCase()}</option>
-                  ))}
-                </select>
-
-                <select
-                  className={SELECT_CLASS}
-                  value={vehicle.model}
-                  onChange={(e) => {
-                    startTransition(() => {
-                      setVehicle((prev) => ({ ...prev, model: e.target.value }));
-                    });
-                  }}
-                  disabled={!vehicle.make || loadingModels}
-                >
-                  <option value="">{loadingModels ? 'Loading...' : 'Model'}</option>
-                  {availableModels.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-
-              <textarea
-                value={repairNeed}
-                onChange={(e) => setRepairNeed(e.target.value)}
-                rows={3}
-                className={SELECT_CLASS}
-                placeholder="Describe the repair needed"
-                aria-label="Repair needed"
-              />
-
-              <button
-                type="submit"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-3 text-sm font-bold text-black hover:bg-amber-300"
-              >
-                Get 3 Free Quotes
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
           </div>
         </div>
       </section>
