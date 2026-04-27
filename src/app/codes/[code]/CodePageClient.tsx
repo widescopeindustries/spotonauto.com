@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { isTier1RescueHref } from '@/data/rescuePriority';
 import { buildSymptomHref, getSymptomClustersForTexts } from '@/data/symptomGraph';
 import type { DTCCode } from '@/data/dtc-codes-data';
+import type { GraphDTCResult } from '@/lib/graphQueries';
+import GraphProcedurePanel from '@/components/GraphProcedurePanel';
 import AdUnit from '@/components/AdUnit';
 import LiveDtcFlowchart from '@/components/LiveDtcFlowchart';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
@@ -40,9 +42,11 @@ const LIKELIHOOD_BADGE: Record<string, string> = {
 export default async function CodePageClient({
     code,
     manualLinks = [],
+    graphData,
 }: {
     code: DTCCode;
     manualLinks?: DiagnosticCrossLink[];
+    graphData?: GraphDTCResult | null;
 }) {
     const sev = SEVERITY_CONFIG[code.severity] || SEVERITY_CONFIG.medium;
     const repairLinks = getRepairLinksForCode(code, 6);
@@ -287,6 +291,16 @@ export default async function CodePageClient({
                     ))}
                 </ol>
             </div>
+
+            {graphData && (
+                <GraphProcedurePanel
+                    code={graphData.code}
+                    component={graphData.component}
+                    description={graphData.description}
+                    totalProcedures={graphData.totalProcedures}
+                    procedures={graphData.componentProcedures}
+                />
+            )}
 
             <LiveDtcFlowchart code={code.code} />
 

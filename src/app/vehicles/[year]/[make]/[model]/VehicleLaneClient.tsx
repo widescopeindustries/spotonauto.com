@@ -18,12 +18,36 @@ interface SystemEntry {
   totalCount: number;
 }
 
+interface GraphProcedure {
+  id: string;
+  title: string;
+  url: string | null;
+  system: string;
+  component: string | null;
+}
+
+interface GraphDtc {
+  code: string;
+  description: string | null;
+  component: string;
+}
+
+interface GraphSystem {
+  name: string;
+  procedureCount: number;
+}
+
 interface VehicleLaneClientProps {
   displayName: string;
   basePath: string;
   diagnosePath: string;
   dtcCodes: DtcCodeEntry[];
   systems: SystemEntry[];
+  graph?: {
+    procedures: GraphProcedure[];
+    dtcs: GraphDtc[];
+    systems: GraphSystem[];
+  };
 }
 
 export default function VehicleLaneClient({
@@ -32,6 +56,7 @@ export default function VehicleLaneClient({
   diagnosePath,
   dtcCodes,
   systems,
+  graph,
 }: VehicleLaneClientProps) {
   const [codeSearch, setCodeSearch] = useState('');
   const [selectedSystem, setSelectedSystem] = useState('all');
@@ -62,6 +87,67 @@ export default function VehicleLaneClient({
 
   return (
     <>
+      {/* Neo4j graph data panel */}
+      {graph && graph.procedures.length > 0 && (
+        <section className="mb-10 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-white">Exact-Fit Procedures from Service Manual</h2>
+            <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-300 border border-emerald-500/25">
+              {graph.procedures.length} found
+            </span>
+          </div>
+          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+            {graph.procedures.map((proc) => (
+              <div
+                key={proc.id}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 hover:border-emerald-500/30 transition"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-white truncate">{proc.title}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[10px] uppercase tracking-wider text-emerald-300/70 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                      {proc.system}
+                    </span>
+                    {proc.component && (
+                      <span className="text-[10px] text-gray-500">{proc.component}</span>
+                    )}
+                  </div>
+                </div>
+                {proc.url ? (
+                  <Link
+                    href={proc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-4 shrink-0 text-xs text-emerald-400 hover:text-emerald-200 transition"
+                  >
+                    View →
+                  </Link>
+                ) : (
+                  <span className="ml-4 shrink-0 text-xs text-gray-600">No link</span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {graph.dtcs.length > 0 && (
+            <div className="mt-5 border-t border-white/10 pt-4">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-300 mb-3">Related DTC Codes</p>
+              <div className="flex flex-wrap gap-2">
+                {graph.dtcs.map((dtc) => (
+                  <Link
+                    key={dtc.code}
+                    href={`${basePath}/codes/${dtc.code.toLowerCase()}`}
+                    className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-xs uppercase tracking-[0.16em] text-amber-100 hover:border-amber-400/35 hover:bg-amber-500/15 transition-all"
+                  >
+                    {dtc.code}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
       {/* Two-path entry */}
       <div className="grid md:grid-cols-2 gap-4 mb-10">
         {/* Path A: I have a code */}

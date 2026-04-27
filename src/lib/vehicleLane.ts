@@ -2,6 +2,7 @@ import 'server-only';
 
 import { findDiagnosticTroubleCodeSections, findVehicleManualSections, type ManualSectionMatchRow } from '@/lib/manualEmbeddingsStore';
 import { slugifyRoutePart } from '@/data/vehicles';
+import { getVehicleGraphData } from '@/lib/graphQueries';
 
 export interface VehicleLaneContentEntry {
   path: string;
@@ -41,6 +42,17 @@ export interface VehicleLaneData {
   totalSystems: number;
   totalContent: number;
   totalDtcCodes: number;
+  graph?: {
+    procedures: Array<{
+      id: string;
+      title: string;
+      url: string | null;
+      system: string;
+      component: string | null;
+    }>;
+    dtcs: Array<{ code: string; description: string | null; component: string }>;
+    systems: Array<{ name: string; procedureCount: number }>;
+  };
 }
 
 const DTC_RE = /^([BPCU]\d{4})$/;
@@ -198,6 +210,14 @@ export async function buildVehicleLaneData(
     });
   }
 
+  // Augment with Neo4j graph data
+  let graphData: Awaited<ReturnType<typeof getVehicleGraphData>> = null;
+  try {
+    graphData = await getVehicleGraphData(year, make, model, 20);
+  } catch (err) {
+    console.warn(`[vehicleLane] Neo4j data unavailable for ${year} ${make} ${model}`, err);
+  }
+
   return {
     vehicle: {
       year: String(year),
@@ -210,6 +230,11 @@ export async function buildVehicleLaneData(
     totalSystems: systems.length,
     totalContent: rows.length,
     totalDtcCodes: dtcCodes.length,
+    graph: graphData ? {
+      procedures: graphData.procedures,
+      dtcs: graphData.dtcs,
+      systems: graphData.systems,
+    } : undefined,
   };
 }
 

@@ -4,6 +4,7 @@ import { DTC_CODES, DTC_CODES_MAP } from '@/data/dtc-codes-data';
 import CodePageClient from './CodePageClient';
 import { getManualSectionLinksForCode } from '@/lib/manualSectionLinks';
 import { getDtcCrossVehicleSummary } from '@/lib/dtcCrossVehicle';
+import { getDTCGraphData } from '@/lib/graphQueries';
 
 interface PageProps {
     params: Promise<{ code: string }>;
@@ -63,6 +64,13 @@ export default async function CodePage({ params }: PageProps) {
         manualLinks = await getManualSectionLinksForCode(dtc, 4);
     } catch (error) {
         console.warn(`[codes] manual links unavailable for ${dtc.code}`, error);
+    }
+
+    let graphData: Awaited<ReturnType<typeof getDTCGraphData>> = null;
+    try {
+        graphData = await getDTCGraphData(dtc.code, 8);
+    } catch (error) {
+        console.warn(`[codes] graph data unavailable for ${dtc.code}`, error);
     }
     const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
     const schemaDate = '2026-03-05';
@@ -148,7 +156,7 @@ export default async function CodePage({ params }: PageProps) {
                     ],
                 }) }}
             />
-            <CodePageClient code={dtc} manualLinks={manualLinks} />
+            <CodePageClient code={dtc} manualLinks={manualLinks} graphData={graphData} />
         </div>
     );
 }

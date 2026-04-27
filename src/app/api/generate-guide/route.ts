@@ -68,8 +68,8 @@ export async function POST(req: NextRequest) {
     }
 
     const requiresAiProvider = action !== 'decode-vin';
-    if (requiresAiProvider && !process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
-      console.error("SERVER ERROR: No AI provider key is set. Configure GEMINI_API_KEY or OPENAI_API_KEY.");
+    if (requiresAiProvider && !process.env.KIMI_API_KEY && !process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
+      console.error("SERVER ERROR: No AI provider key is set. Configure KIMI_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY.");
       return NextResponse.json({ error: 'Server configuration error: Missing AI API key' }, { status: 500 });
     }
 

@@ -337,7 +337,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                                 {msg.type === 'system' && (
                                     <div className="mt-4 space-y-3">
                                         <div className="rounded-lg border border-orange-400/35 bg-orange-500/10 p-3 text-xs leading-5 text-orange-100">
-                                            This is AI-generated guidance based on Gemini 2.0. Accuracy is not guaranteed. Cross-reference with your vehicle&apos;s official manual.
+                                            This is AI-generated guidance powered by Kimi. Accuracy is not guaranteed. Cross-reference with your vehicle&apos;s official manual.
                                         </div>
                                         <div className="rounded-lg border border-white/10 bg-black/30 p-3">
                                             <p className="text-[10px] uppercase tracking-[0.16em] text-gray-400">Rate this diagnosis</p>

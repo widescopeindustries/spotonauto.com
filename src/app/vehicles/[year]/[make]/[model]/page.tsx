@@ -73,6 +73,7 @@ export default async function VehicleLanePage({ params }: PageProps) {
             diagramCount: s.diagramCount,
             totalCount: s.totalCount,
           }))}
+          graph={data.graph}
         />
 
         {/* Cross-links */}
