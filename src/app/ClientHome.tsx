@@ -16,7 +16,7 @@ import {
   Zap,
 } from 'lucide-react';
 
-import { fetchModels, getMakesForYear, getYears } from '@/services/vehicleData';
+import { getKnownModelsForYearMake, getMakesForYear, getYears } from '@/services/vehicleData';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 import ConversionZone from '@/components/ConversionZone';
 
@@ -84,7 +84,6 @@ export default function ClientHome() {
 
   const [vehicle, setVehicle] = useState({ year: '', make: '', model: '' });
   const [availableModels, setAvailableModels] = useState<string[]>([]);
-  const [loadingModels, setLoadingModels] = useState(false);
 
   const [symptom, setSymptom] = useState('');
   const [dtcCode, setDtcCode] = useState('');
@@ -106,24 +105,8 @@ export default function ClientHome() {
       setAvailableModels([]);
       return;
     }
-
-    let cancelled = false;
-    setLoadingModels(true);
-
-    void fetchModels(vehicle.make, vehicle.year)
-      .then((models) => {
-        if (!cancelled) setAvailableModels(models);
-      })
-      .catch(() => {
-        if (!cancelled) setAvailableModels([]);
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingModels(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    const models = getKnownModelsForYearMake(vehicle.make, vehicle.year);
+    setAvailableModels(models);
   }, [vehicle.make, vehicle.year]);
 
   function handleVinSubmit(e: FormEvent) {
@@ -189,12 +172,12 @@ export default function ClientHome() {
         <div className="mx-auto max-w-7xl">
           <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-7 sm:p-9 lg:p-12">
             <h1 className="font-display text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
-              Factory Service Data for{' '}
-              <span className="text-cyan-300">Every Vehicle</span>
+              Factory-Backed Repair Guidance for{' '}
+              <span className="text-cyan-300">Most Vehicles</span>
             </h1>
             <p className="mt-4 max-w-3xl text-base text-gray-300 sm:text-lg">
-              1.4 million OEM repair procedures, 8,800+ DTC codes with component
-              links, and AI-powered diagnostics grounded in real factory manuals.
+              OEM repair procedures, DTC codes linked to components, and
+              AI-powered diagnostics grounded in real factory manuals.
             </p>
 
             {/* Step 1 — Identify Vehicle */}
@@ -290,11 +273,9 @@ export default function ClientHome() {
                         }));
                       });
                     }}
-                    disabled={!vehicle.make || loadingModels}
+                    disabled={!vehicle.make}
                   >
-                    <option value="">
-                      {loadingModels ? 'Loading…' : 'Model'}
-                    </option>
+                    <option value="">Model</option>
                     {availableModels.map((m) => (
                       <option key={m} value={m}>
                         {m}
