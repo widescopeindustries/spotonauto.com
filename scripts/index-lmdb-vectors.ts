@@ -276,7 +276,7 @@ async function upsertSection(section: {
   sectionTitle: string;
   contentPreview: string;
   contentFull: string;
-  embedding: number[];
+  embedding: number[] | null;
 }): Promise<boolean> {
   if (dryRun) {
     console.log(`  [DRY RUN] Would upsert: ${section.path}`);

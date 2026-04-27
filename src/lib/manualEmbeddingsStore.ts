@@ -10,7 +10,7 @@ export interface ManualEmbeddingRecord {
   sectionTitle: string;
   contentPreview: string;
   contentFull: string;
-  embedding?: number[];
+  embedding?: number[] | null;
 }
 
 export interface ManualEmbeddingSearchParams {
