@@ -172,12 +172,12 @@ export default function ClientHome() {
         <div className="mx-auto max-w-7xl">
           <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-7 sm:p-9 lg:p-12">
             <h1 className="font-display text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
-              Factory-Backed Repair Guidance for{' '}
-              <span className="text-cyan-300">Most Vehicles</span>
+              Time To Silence Your{' '}
+              <span className="text-cyan-300">Check Engine Light</span>
             </h1>
             <p className="mt-4 max-w-3xl text-base text-gray-300 sm:text-lg">
-              OEM repair procedures, DTC codes linked to components, and
-              AI-powered diagnostics grounded in real factory manuals.
+              Factory repair procedures, DTC codes linked to components, and
+              AI-powered diagnostics grounded in real OEM manuals.
             </p>
 
             {/* Step 1 — Identify Vehicle */}
