@@ -213,7 +213,7 @@ const HolographicDashboard: React.FC<HolographicDashboardProps> = ({ onVehicleCh
                 <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.06] p-4">
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-300/85">Primary route</p>
+                            <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-300/85">Start here</p>
                             <p className="mt-2 text-xs leading-5 text-gray-300">
                                 Pick year, make, and model, then enter the exact vehicle hub. Add a symptom only if you want to skip straight into diagnosis or a task-specific guide.
                             </p>

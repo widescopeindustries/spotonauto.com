@@ -44,6 +44,8 @@ export default async function DiagnosticPage({
     const make = firstParam(params.make);
     const model = firstParam(params.model);
     const initialTask = firstParam(params.task);
+    const initialVin = firstParam(params.vin);
+    const initialMode = firstParam(params.mode) as 'ymm' | 'vin' | '';
     const hasVehicle = Boolean(year && make && model);
 
     return (
@@ -113,7 +115,7 @@ export default async function DiagnosticPage({
                 </div>
             ) : (
                 <div className="flex min-h-screen w-full flex-col items-center bg-[#050505] px-4 pt-28 pb-16">
-                    <DiagnosticVehicleSelector initialTask={initialTask} />
+                    <DiagnosticVehicleSelector initialTask={initialTask} initialVin={initialVin} initialMode={initialMode} />
                     <div className="mt-8 w-full max-w-3xl rounded-2xl border border-white/10 bg-white/[0.03] p-5">
                         <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/80">Example Symptom Flows</p>
                         <div className="mt-4 space-y-3">

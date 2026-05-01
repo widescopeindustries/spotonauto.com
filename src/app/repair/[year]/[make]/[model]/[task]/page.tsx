@@ -252,6 +252,14 @@ const REPAIR_DATA: Record<string, {
         parts: ['Fuel filter', 'Seals or line clips if required'],
         warnings: ['Relieve fuel pressure before opening the system', 'Confirm flow direction before installation', 'Keep sparks and open flame away from the work area'],
         steps: ['Relieve fuel pressure', 'Locate the external filter or service access', 'Mark flow direction and disconnect lines', 'Replace the filter and seals', 'Reconnect the lines and secure clips', 'Prime and check for leaks']
+    },
+    'fuel-injector-replacement': {
+        difficulty: 'Intermediate to Advanced',
+        time: '1.5-3 hours',
+        tools: ['Socket wrench set', 'Torque wrench', 'Fuel line disconnect tool', 'Screwdriver set', 'Digital multimeter', 'Shop rags', 'Safety glasses'],
+        parts: ['Fuel injector(s) — match flow rate and impedance', 'Fuel injector O-rings', 'Fuel rail gasket', 'Intake manifold gasket (if disturbed)'],
+        warnings: ['Relieve fuel pressure before opening any fuel line', 'Fuel is highly flammable — no sparks or open flame', 'Allow engine to cool completely before starting', 'Do not overtighten injector retaining bolts'],
+        steps: ['Relieve fuel system pressure', 'Disconnect battery negative terminal', 'Remove engine cover and intake components if needed', 'Disconnect fuel lines from the rail', 'Remove fuel rail and extract injectors', 'Lubricate new O-rings with clean engine oil', 'Install new injectors and reassemble fuel rail', 'Reconnect battery, prime system, and check for leaks']
     }
 };
 
@@ -302,6 +310,13 @@ const RELATED_TASK_PRIORITIES: Record<string, string[]> = {
     ],
     'fuel-filter-replacement': [
         'fuel-pump-replacement',
+        'fuel-injector-replacement',
+        'spark-plug-replacement',
+        'engine-air-filter-replacement',
+    ],
+    'fuel-injector-replacement': [
+        'fuel-pump-replacement',
+        'fuel-filter-replacement',
         'spark-plug-replacement',
         'engine-air-filter-replacement',
     ],
@@ -444,6 +459,11 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
         title: 'Fuel Pump — Symptoms & Replacement',
         description: 'Fuel pump failure signs and step-by-step replacement for your {v}. Covers in-tank vs. external types, pressure specs, and priming procedures. Free guide with professional OEM data.',
         extraKeywords: ['fuel pump symptoms', 'fuel pump location', 'fuel pump replacement cost', 'no fuel pressure fix'],
+    },
+    'fuel-injector-replacement': {
+        title: 'Fuel Injector Replacement — OEM Steps',
+        description: 'Step-by-step fuel injector replacement for your {v} with OEM torque specs, injector flow rate checks, and O-ring install tips. Save $200–$500 vs. shop labor with this free factory-manual guide.',
+        extraKeywords: ['fuel injector symptoms', 'fuel injector replacement cost', 'how to replace fuel injectors', 'injector O-ring replacement'],
     },
     'fuel-filter-replacement': {
         title: 'Fuel Filter Location & Replacement',
@@ -627,6 +647,22 @@ const COMMERCIAL_TASK_CONFIG: Partial<Record<string, CommercialTaskConfig>> = {
             'Let the engine cool completely before opening the system.',
         ],
     },
+    'fuel-injector-replacement': {
+        primaryActionLabel: 'Check injector fitment & specs',
+        primaryActionHint: 'Fuel injector jobs require matching flow rate, impedance, and connector style. Verify those before ordering.',
+        guideActionLabel: 'Open injector guide with torque specs',
+        guideActionHint: 'Use the full guide when you want O-ring install tips, rail torque specs, and leak-check procedures.',
+        partsTitle: 'Fuel injector fitment and rail seals',
+        partsIntro: 'Injector jobs need the correct flow-rated injectors, new O-rings, and sometimes rail or intake gaskets. Match specs before checkout.',
+        spotlightTitle: 'Highest-risk injector ordering checks',
+        spotlightIntro: 'Start with the injector flow rate and impedance match, then add O-rings and gaskets so the reassembly is sealed.',
+        bundleActionLabel: 'Search fuel injector replacement parts',
+        fitmentChecks: [
+            'Match injector flow rate, impedance, and connector style.',
+            'Confirm whether rail gasket or intake gasket is needed.',
+            'Plan for a fuel pressure leak-down test after reassembly.',
+        ],
+    },
     'fuel-filter-replacement': {
         primaryActionLabel: 'Check fuel filter fitment',
         primaryActionHint: 'Fuel filter jobs can be external or in-tank, so verify the design and line orientation before ordering the part.',
@@ -743,6 +779,17 @@ const TASK_SUPPORT_NOTES: Partial<Record<string, TaskSupportNote>> = {
             'Bleed air and recheck level after the first heat cycle.',
         ],
         tone: 'emerald',
+    },
+    'fuel-injector-replacement': {
+        eyebrow: 'Quick check',
+        title: 'Fuel injector jobs require exact spec matching',
+        intro: 'The wrong injector flow rate or impedance can cause rich/lean conditions, misfires, or ECU damage. Verify specs first.',
+        bullets: [
+            'Match injector flow rate, impedance, and connector style.',
+            'Always replace O-rings and check rail seal condition.',
+            'Relieve fuel pressure and disconnect battery before starting.',
+        ],
+        tone: 'amber',
     },
     'fuel-filter-replacement': {
         eyebrow: 'Quick check',
@@ -1819,6 +1866,14 @@ function buildSupplementalRepairCommerceParts(task: string, vehicleName: string)
             { name: 'Fuel Line Clips', aftermarket: 'fuel line clips automotive' },
             { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
         ],
+        'fuel-injector-replacement': [
+            { name: 'Fuel Injectors', aftermarket: `${vehicleName} fuel injectors` },
+            { name: 'Fuel Injector O-Rings', aftermarket: 'fuel injector o-rings kit' },
+            { name: 'Fuel Rail Gasket', aftermarket: `${vehicleName} fuel rail gasket` },
+            { name: 'Intake Manifold Gasket', aftermarket: `${vehicleName} intake manifold gasket` },
+            { name: 'Fuel Line Disconnect Tool', aftermarket: 'fuel line disconnect tool automotive' },
+            { name: 'Shop Towels', aftermarket: 'shop towels automotive' },
+        ],
         'crankshaft-sensor-replacement': [
             { name: 'Crankshaft Position Sensor', aftermarket: `${vehicleName} crankshaft position sensor` },
             { name: 'Sensor Socket Set', aftermarket: 'sensor socket set automotive' },
@@ -2035,6 +2090,22 @@ export default async function Page({ params }: PageProps) {
         warnings: vehicleSpec?.warnings || genericData.warnings,
         steps: vehicleSpec?.steps || genericData.steps,
     };
+    // Build a fallback RepairGuide from static data for instant client-side rendering
+    const fallbackGuide = {
+        id: `${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}`,
+        title: `${displayMake} ${displayModel} ${cleanTask}`,
+        vehicle: `${resolvedYear} ${displayMake} ${displayModel}`,
+        safetyWarnings: repairData.warnings,
+        tools: repairData.tools,
+        parts: repairData.parts,
+        steps: repairData.steps.map((instruction: string, idx: number) => ({
+            step: idx + 1,
+            instruction,
+            imagePrompt: '',
+            imageUrl: '',
+        })),
+    };
+
     const knowledgeGraph = await buildRepairKnowledgeGraph({
         year: resolvedYear,
         make: canonicalMake,
@@ -2219,6 +2290,7 @@ export default async function Page({ params }: PageProps) {
         'transmission-fluid-change': '40-220',
         'coolant-flush': '20-120',
         'fuel-filter-replacement': '15-80',
+        'fuel-injector-replacement': '80-400',
     };
 
     // ── FAQ data for GEO (Generative Engine Optimization) ────────────────
@@ -2250,6 +2322,7 @@ export default async function Page({ params }: PageProps) {
         'transmission-fluid-change': `Old or wrong transmission fluid in your ${vehicleName} can cause harsh shifting, slipping, shuddering, and long-term transmission wear. Neglect can turn a fluid service into a costly rebuild.`,
         'coolant-flush': `Old or contaminated coolant in your ${vehicleName} can corrode the cooling system, clog passages, and let overheating damage the head gasket or engine. Air left in the system can also create false overheating symptoms.`,
         'fuel-filter-replacement': `A clogged fuel filter on your ${vehicleName} can cause lean running, hesitation, hard starts, and fuel pump strain. Ignoring it can make the pump work harder and fail sooner.`,
+        'fuel-injector-replacement': `A failing fuel injector on your ${vehicleName} can cause misfires, rough idle, poor fuel economy, and catalytic converter damage. Ignoring it risks engine damage from running lean or rich, and can leave you stranded.`,
     };
 
     const faqItems = [
@@ -3148,7 +3221,7 @@ export default async function Page({ params }: PageProps) {
             </article>
 
             {/* Client-side AI Guide */}
-            <DeferredGuideContent params={resolvedParams} />
+            <DeferredGuideContent params={resolvedParams} fallbackGuide={fallbackGuide} />
 
             {/* More SEO Content */}
             <section className="max-w-6xl mx-auto px-4 py-8 border-t border-white/10">

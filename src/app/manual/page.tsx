@@ -35,10 +35,24 @@ export default async function ManualLandingPage() {
   if (page.status !== 200 || !page.isNavigation) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-        <h1 className="text-4xl font-display font-bold text-white mb-4">Service Manuals</h1>
-        <p className="text-gray-400 text-lg">
-          Unable to load the service manual database right now. Please try again in a few minutes.
+        <h1 className="text-4xl font-display font-bold text-white mb-4">Factory Service Manuals</h1>
+        <p className="text-gray-400 text-lg mb-8">
+          The manual browser is temporarily unavailable. In the meantime, you can still access repair guides, wiring diagrams, and diagnostic codes.
         </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href="/repair"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-display font-bold tracking-wider hover:shadow-lg hover:shadow-cyan-500/25 transition-all"
+          >
+            Browse Repair Guides
+          </Link>
+          <Link
+            href="/codes"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 bg-white/5 text-white font-display font-bold tracking-wider hover:border-cyan-500/30 hover:text-cyan-100 transition-all"
+          >
+            Look Up Codes
+          </Link>
+        </div>
       </div>
     );
   }

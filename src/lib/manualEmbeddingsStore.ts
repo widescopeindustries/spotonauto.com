@@ -293,7 +293,7 @@ export async function getIndexedPaths(make: string, year?: number): Promise<Set<
   await ensureLocalSchema();
 
   const params: Array<string | number> = [make];
-  const filters = ['make = $1'];
+  const filters = ['LOWER(make) = LOWER($1)'];
 
   if (year) {
     params.push(year);
@@ -358,7 +358,7 @@ export async function searchManualEmbeddings(params: ManualEmbeddingSearchParams
        content_full,
        embedding
      FROM manual_embeddings
-     WHERE make = $1
+     WHERE LOWER(make) = LOWER($1)
        AND year = $2`,
     [params.make, params.year],
   );
@@ -411,7 +411,7 @@ export async function findManualSectionsByTerms(args: {
        content_preview,
        content_full
      FROM manual_embeddings
-     WHERE make = $1
+     WHERE LOWER(make) = LOWER($1)
        AND year = $2`,
     [args.make, args.year],
   );
@@ -475,7 +475,7 @@ export async function findVehicleManualSections(args: {
        content_preview,
        content_full
      FROM manual_embeddings
-     WHERE make = $1
+     WHERE LOWER(make) = LOWER($1)
        AND year = $2
      ORDER BY section_title ASC
      LIMIT $3`,

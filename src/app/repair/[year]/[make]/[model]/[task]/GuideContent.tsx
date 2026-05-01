@@ -2,13 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import ServiceManualGuide from '@/components/ServiceManualGuide';
+import InteractiveRepairGuide from '@/components/InteractiveRepairGuide';
 import { generateFullRepairGuide } from '@/services/apiClient';
 import { saveGuide, getGuideById } from '@/services/storageService';
 import { RepairGuide } from '@/types';
 import { trackGuideGenerated, trackRepairGuideOpen, trackRepairPageView, trackRetrievalBackbone } from '@/lib/analytics';
-import VehicleHealthSnapshot from '@/components/VehicleHealthSnapshot';
-import { useT } from '@/lib/translations';
 import { deriveIntentCluster } from '@/lib/analyticsContext';
 
 interface GuideContentProps {
@@ -18,29 +16,12 @@ interface GuideContentProps {
         model: string;
         task: string;
     };
+    fallbackGuide: RepairGuide;
 }
 
 const guideCache = new Map<string, RepairGuide>();
 
-function formatGuideError(error: unknown): string {
-    const message = error instanceof Error ? error.message : String(error || '');
-    const normalized = message.toLowerCase();
-
-    if (
-        normalized.includes('signal is aborted') ||
-        normalized.includes('aborted without reason') ||
-        normalized.includes('this operation was aborted') ||
-        normalized.includes('the operation was aborted') ||
-        normalized.includes('timeout') ||
-        normalized.includes('timed out')
-    ) {
-        return 'Guide generation timed out while contacting an upstream service. Please try again.';
-    }
-
-    return message || 'Failed to generate guide.';
-}
-
-export default function GuideContent({ params }: GuideContentProps) {
+export default function GuideContent({ params, fallbackGuide }: GuideContentProps) {
     const router = useRouter();
     const { year, make, model, task } = params;
     const cleanTask = task.replace(/-/g, ' ');
@@ -49,10 +30,10 @@ export default function GuideContent({ params }: GuideContentProps) {
         task,
     });
 
-    const [guide, setGuide] = useState<RepairGuide | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const t = useT();
+    // Show fallback guide immediately; try to enhance with AI in background
+    const [guide, setGuide] = useState<RepairGuide>(fallbackGuide);
+    const [enhancing, setEnhancing] = useState(true);
+    const [enhanceError, setEnhanceError] = useState<string | null>(null);
 
     useEffect(() => {
         trackRepairPageView(`${year} ${make} ${model}`, cleanTask, {
@@ -75,8 +56,8 @@ export default function GuideContent({ params }: GuideContentProps) {
 
     useEffect(() => {
         const fetchGuide = async () => {
-            setError(null);
-            setLoading(true);
+            setEnhanceError(null);
+            setEnhancing(true);
 
             try {
                 const vehicle = { year, make, model };
@@ -85,13 +66,13 @@ export default function GuideContent({ params }: GuideContentProps) {
                 const cached = await getGuideById(guideId);
                 if (cached) {
                     setGuide(cached);
-                    setLoading(false);
+                    setEnhancing(false);
                     return;
                 }
 
                 if (guideCache.has(guideId)) {
                     setGuide(guideCache.get(guideId)!);
-                    setLoading(false);
+                    setEnhancing(false);
                     return;
                 }
 
@@ -128,114 +109,43 @@ export default function GuideContent({ params }: GuideContentProps) {
                 );
                 setGuide(generatedGuide);
             } catch (err: any) {
-                setError(formatGuideError(err));
+                console.warn('AI guide enhancement failed, using fallback:', err);
+                setEnhanceError('AI enhancement unavailable — showing static guide data.');
             } finally {
-                setLoading(false);
+                setEnhancing(false);
             }
         };
 
         fetchGuide();
-    }, [cleanTask, guideIntentCluster, make, model, task, year]);
-
-    if (loading) return (
-        <div className="min-h-[60vh] flex flex-col items-center justify-center p-4 bg-[#f8f6f1]">
-            <div className="text-center">
-                <div className="inline-block w-12 h-12 border-4 border-[#1e3a5f] border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="text-[#1e3a5f] font-serif text-lg">
-                    {t('guide.consulting')}
-                </p>
-                <p className="text-[#666] text-sm mt-2">
-                    {t('guide.generating')}
-                </p>
-            </div>
-        </div>
-    );
-
-    if (error) return (
-        <div className="max-w-xl mx-auto my-16 p-8 bg-black/80 border border-red-500/30 rounded-xl shadow-lg text-center">
-            <div className="text-red-500 text-4xl mb-4">⚠️</div>
-            <h2 className="text-xl font-bold text-red-400 mb-2">{t('guide.errorTitle')}</h2>
-            <p className="text-gray-400 mb-6">{error}</p>
-            <div className="flex gap-3 justify-center">
-                <button
-                    onClick={async () => {
-                        setError(null);
-                        setLoading(true);
-                        const vehicle = { year, make, model };
-                        try {
-                            const generatedGuide = await generateFullRepairGuide(vehicle, cleanTask);
-                            await saveGuide(generatedGuide);
-                            trackGuideGenerated({
-                                vehicle: `${year} ${make} ${model}`,
-                                task: cleanTask,
-                                partsCount: generatedGuide.parts?.length || 0,
-                                toolsCount: generatedGuide.tools?.length || 0,
-                                manualMode: generatedGuide.retrieval?.manualMode,
-                                manualSourceCount: generatedGuide.retrieval?.manualSourceCount,
-                                pageSurface: 'repair_guide',
-                                taskSlug: task,
-                                vehicleYear: year,
-                                vehicleMake: make,
-                                vehicleModel: model,
-                                intentCluster: guideIntentCluster,
-                            });
-                            trackRetrievalBackbone(
-                                `${year} ${make} ${model}`,
-                                cleanTask,
-                                generatedGuide.retrieval?.manualMode || 'none',
-                                generatedGuide.retrieval?.manualSourceCount || 0,
-                                {
-                                    pageSurface: 'repair_guide',
-                                    taskSlug: task,
-                                    vehicleYear: year,
-                                    vehicleMake: make,
-                                    vehicleModel: model,
-                                    intentCluster: guideIntentCluster,
-                                },
-                            );
-                            setGuide(generatedGuide);
-                        } catch (e: any) {
-                            setError(formatGuideError(e));
-                        } finally {
-                            setLoading(false);
-                        }
-                    }}
-                    className="px-6 py-2 bg-brand-cyan text-black rounded-lg font-semibold hover:bg-brand-cyan-light transition-colors"
-                >
-                    {t('guide.tryAgain')}
-                </button>
-                <button
-                    onClick={() => router.push('/')}
-                    className="px-6 py-2 bg-white/10 text-white border border-white/20 rounded-lg font-semibold hover:bg-white/20 transition-colors"
-                >
-                    {t('guide.returnHome')}
-                </button>
-            </div>
-        </div>
-    );
+    }, [cleanTask, fallbackGuide, guideIntentCluster, make, model, task, year]);
 
     return (
-        <div className="py-8">
-            {guide && (
-                <>
-                    <div className="max-w-4xl mx-auto px-4">
-                        <VehicleHealthSnapshot year={year} make={make} model={model} />
-                    </div>
-                    <ServiceManualGuide
-                        guide={guide}
-                        onReset={() => router.push('/')}
-                        analyticsContext={{
-                            pageSurface: 'repair_guide',
-                            intentCluster: guideIntentCluster,
-                            task: cleanTask,
-                            taskSlug: task,
-                            vehicleYear: year,
-                            vehicleMake: make,
-                            vehicleModel: model,
-                        }}
-                    />
-                </>
+        <div className="relative">
+            {enhancing && (
+                <div className="absolute right-4 top-4 z-20 flex items-center gap-2 rounded-full border border-neon-cyan/20 bg-black/70 px-3 py-1.5 text-[10px] text-neon-cyan">
+                    <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
+                    Enhancing with AI...
+                </div>
             )}
+            {enhanceError && !enhancing && (
+                <div className="absolute right-4 top-4 z-20 flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-[10px] text-amber-300">
+                    {enhanceError}
+                </div>
+            )}
+            <InteractiveRepairGuide
+                guide={guide}
+                vehicle={{ year, make, model }}
+                onReset={() => router.push('/')}
+                analyticsContext={{
+                    pageSurface: 'repair_guide',
+                    intentCluster: guideIntentCluster,
+                    task: cleanTask,
+                    taskSlug: task,
+                    vehicleYear: year,
+                    vehicleMake: make,
+                    vehicleModel: model,
+                }}
+            />
         </div>
     );
 }

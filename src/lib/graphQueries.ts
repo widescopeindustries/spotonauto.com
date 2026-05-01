@@ -256,107 +256,100 @@ export async function getVehicleGraphData(
   model: string,
   limit = 20
 ): Promise<GraphVehicleResult | null> {
-  const normMake = make.trim();
-  const normModel = model.trim();
+  const normMake = make.trim().toLowerCase().replace(/\s+/g, '-');
+  const normModel = model.trim().toLowerCase().replace(/\s+/g, '-');
 
-  // Find or create variant
+  // Find variant with uriPath for URL generation
   const variantRows = await runQuery<{
-    name: string;
+    label: string;
     year: unknown;
     make: string;
     model: string;
+    uriPath: string | null;
   }>(
-    `MATCH (y:Year {year: $year})<-[:HAS_YEAR]-(m:Make {name: $make})<-[:MAKES]-(v:Vehicle)-[:HAS_VARIANT]->(va:Variant)
-     WHERE va.name CONTAINS $model
-     RETURN va.name AS name, y.year AS year, m.name AS make, va.model AS model
+    `MATCH (v:Variant {year: $year, make: $make, model: $model})
+     RETURN v.label AS label, v.year AS year, v.make AS make, v.model AS model, v.uriPath AS uriPath
      LIMIT 1`,
     { year: neo4j.int(year), make: normMake, model: normModel }
   );
 
   if (variantRows.length === 0) {
-    // Fallback: try to match via procedure IDs which contain year/make/model
-    const fallbackRows = await runQuery<{
-      name: string;
-      year: unknown;
-      make: string;
-      model: string;
-    }>(
-      `MATCH (p:Procedure)
-       WHERE p.id STARTS WITH 'vehicle:' + $year + ':' + $make + ':' + $model
-       RETURN $year + ' ' + $make + ' ' + $model AS name,
-              $year AS year, $make AS make, $model AS model
-       LIMIT 1`,
-      { year: String(year), make: normMake, model: normModel }
-    );
-    if (fallbackRows.length === 0) return null;
+    return null;
   }
 
-  const variant = variantRows[0] || { name: `${year} ${make} ${model}`, year, make, model };
+  const variant = variantRows[0];
 
-  // Get procedures for this vehicle
+  // Get real lemon procedures for this vehicle
   const procRows = await runQuery<{
     id: string;
     title: string;
-    url: string | null;
+    encodedPath: string | null;
     system: string;
     component: string | null;
   }>(
-    `MATCH (p:Procedure)
-     WHERE p.id STARTS WITH 'vehicle:' + $year + ':' + $make + ':' + $model
+    `MATCH (v:Variant {year: $year, make: $make, model: $model})<-[r:APPLIES_TO]-(p:Procedure {source: 'lemon'})
      OPTIONAL MATCH (p)<-[:HAS_PROCEDURE]-(c:Component)
      OPTIONAL MATCH (c)<-[:CONTAINS_COMPONENT]-(s:System)
-     RETURN p.id AS id, p.title AS title, p.url AS url,
+     RETURN p.title AS id, p.title AS title, r.encodedPath AS encodedPath,
             COALESCE(s.name, c.name, 'General') AS system,
             c.name AS component
-     ORDER BY p.title
+     ORDER BY p.score DESC
      LIMIT $limit`,
-    { year: String(year), make: normMake, model: normModel, limit: neo4j.int(limit) }
+    { year: neo4j.int(year), make: normMake, model: normModel, limit: neo4j.int(limit) }
   );
 
-  // Get DTCs that affect this vehicle
+  // Build URLs using variant uriPath + encodedPath
+  const proxyBase = 'http://127.0.0.1:8080';
+  const procedures = procRows.map((r) => {
+    let url: string | null = null;
+    if (variant.uriPath && r.encodedPath) {
+      url = `${proxyBase}${variant.uriPath}Repair%20and%20Diagnosis/${r.encodedPath}`;
+    }
+    return {
+      id: r.id,
+      title: r.title,
+      url,
+      system: r.system,
+      vehicleName: variant.label,
+      vehicleYear: year,
+      component: r.component,
+    };
+  });
+
+  // Get DTCs that affect this vehicle (via component -> procedure -> variant)
   const dtcRows = await runQuery<{
     code: string;
     description: string | null;
     component: string;
   }>(
-    `MATCH (d:DTC)-[:TRIGGERED_BY]->(c:Component)-[:HAS_PROCEDURE]->(p:Procedure)
-     WHERE p.id STARTS WITH 'vehicle:' + $year + ':' + $make + ':' + $model
+    `MATCH (d:DTC)-[:TRIGGERED_BY]->(c:Component)-[:HAS_PROCEDURE]->(p:Procedure {source: 'lemon'})-[:APPLIES_TO]->(v:Variant {year: $year, make: $make, model: $model})
      RETURN DISTINCT d.code AS code, d.description AS description, c.name AS component
      ORDER BY d.code
      LIMIT 20`,
-    { year: String(year), make: normMake, model: normModel }
+    { year: neo4j.int(year), make: normMake, model: normModel }
   );
 
-  // Get systems breakdown
+  // Get systems breakdown from real procedures
   const systemRows = await runQuery<{
     name: string;
     procedureCount: unknown;
   }>(
-    `MATCH (p:Procedure)
-     WHERE p.id STARTS WITH 'vehicle:' + $year + ':' + $make + ':' + $model
+    `MATCH (v:Variant {year: $year, make: $make, model: $model})<-[:APPLIES_TO]-(p:Procedure {source: 'lemon'})
      OPTIONAL MATCH (p)<-[:HAS_PROCEDURE]-(c:Component)
      OPTIONAL MATCH (c)<-[:CONTAINS_COMPONENT]-(s:System)
      WITH COALESCE(s.name, c.name, 'General') AS name
      RETURN name, count(*) AS procedureCount
      ORDER BY procedureCount DESC
      LIMIT 10`,
-    { year: String(year), make: normMake, model: normModel }
+    { year: neo4j.int(year), make: normMake, model: normModel }
   );
 
   return {
     year: toInt(variant.year) || year,
     make: variant.make || make,
     model: variant.model || model,
-    variant: variant.name,
-    procedures: procRows.map((r) => ({
-      id: r.id,
-      title: r.title,
-      url: r.url,
-      system: r.system,
-      vehicleName: variant.name,
-      vehicleYear: year,
-      component: r.component,
-    })),
+    variant: variant.label,
+    procedures,
     dtcs: dtcRows.map((r) => ({
       code: r.code,
       description: r.description,

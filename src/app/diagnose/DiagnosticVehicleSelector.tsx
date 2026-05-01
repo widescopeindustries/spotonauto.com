@@ -2,7 +2,7 @@
 
 import { startTransition, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, HardDrive, Zap } from 'lucide-react';
+import { ArrowRight, ChevronDown, HardDrive, Zap, ScanLine } from 'lucide-react';
 
 import {
     getDiagnosticDraft,
@@ -11,13 +11,18 @@ import {
     type DiagnosticSessionSnapshot,
 } from '@/services/diagnosticMemory';
 import { fetchModels, getMakesForYear, getYears } from '@/services/vehicleData';
+import { decodeVin } from '@/services/apiClient';
 
 interface DiagnosticVehicleSelectorProps {
     initialTask?: string;
+    initialVin?: string;
+    initialMode?: 'ymm' | 'vin' | '';
 }
 
 export default function DiagnosticVehicleSelector({
     initialTask = '',
+    initialVin = '',
+    initialMode = '',
 }: DiagnosticVehicleSelectorProps) {
     const router = useRouter();
     const [vehicle, setVehicle] = useState({ year: '', make: '', model: '' });
@@ -27,9 +32,22 @@ export default function DiagnosticVehicleSelector({
     const [resumeSession, setResumeSession] = useState<DiagnosticSessionSnapshot | null>(null);
     const [draftReady, setDraftReady] = useState(false);
 
+    // VIN mode state
+    const [idMode, setIdMode] = useState<'ymm' | 'vin'>(initialMode === 'vin' ? 'vin' : 'ymm');
+    const [vinInput, setVinInput] = useState(initialVin);
+    const [vinError, setVinError] = useState<string | null>(null);
+    const [isDecoding, setIsDecoding] = useState(false);
+
     const availableYears = getYears();
     const availableMakes = vehicle.year ? getMakesForYear(vehicle.year) : [];
     const canSubmit = Boolean(vehicle.year && vehicle.make && vehicle.model);
+
+    // Auto-decode VIN from URL on mount
+    useEffect(() => {
+        if (initialVin && initialVin.length >= 11) {
+            void handleVinDecode(initialVin);
+        }
+    }, []);
 
     useEffect(() => {
         const draft = getDiagnosticDraft();
@@ -100,6 +118,38 @@ export default function DiagnosticVehicleSelector({
 
         return () => clearTimeout(timer);
     }, [draftReady, symptom, vehicle]);
+
+    const handleVinDecode = async (vin: string) => {
+        setVinError(null);
+        setIsDecoding(true);
+        try {
+            const decoded = await decodeVin(vin);
+            if (decoded.year && decoded.make) {
+                setVehicle({
+                    year: String(decoded.year),
+                    make: decoded.make,
+                    model: decoded.model || '',
+                });
+                setIdMode('ymm');
+            } else {
+                setVinError('Could not decode VIN. Please enter vehicle details manually.');
+            }
+        } catch (err) {
+            setVinError(err instanceof Error ? err.message : 'VIN decode failed');
+        } finally {
+            setIsDecoding(false);
+        }
+    };
+
+    const handleVinSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const vin = vinInput.trim().toUpperCase();
+        if (vin.length < 11) {
+            setVinError('VIN must be at least 11 characters');
+            return;
+        }
+        void handleVinDecode(vin);
+    };
 
     const handleStart = () => {
         if (!canSubmit) return;
@@ -193,62 +243,145 @@ export default function DiagnosticVehicleSelector({
             )}
 
             <div className="space-y-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
-                <div className="grid grid-cols-3 gap-3">
-                    <div className="relative">
-                        <label className="mb-1.5 block text-xs font-mono uppercase tracking-wider text-gray-500">Year</label>
-                        <select
-                            value={vehicle.year}
-                            onChange={(event) => {
-                                const year = event.target.value;
-                                startTransition(() => {
-                                    setVehicle({ year, make: '', model: '' });
-                                    setAvailableModels([]);
-                                });
-                            }}
-                            className="w-full appearance-none rounded-lg border border-gray-700 bg-gray-900/80 px-3 py-2.5 text-sm text-gray-200 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
-                        >
-                            <option value="">Year</option>
-                            {availableYears.map((year) => <option key={year} value={year}>{year}</option>)}
-                        </select>
-                    </div>
-
-                    <div className="relative">
-                        <label className="mb-1.5 block text-xs font-mono uppercase tracking-wider text-gray-500">Make</label>
-                        <select
-                            value={vehicle.make}
-                            onChange={(event) => {
-                                const make = event.target.value;
-                                startTransition(() => {
-                                    setVehicle((current) => ({ ...current, make, model: '' }));
-                                    setAvailableModels([]);
-                                });
-                            }}
-                            disabled={!vehicle.year}
-                            className="w-full appearance-none rounded-lg border border-gray-700 bg-gray-900/80 px-3 py-2.5 text-sm text-gray-200 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
-                        >
-                            <option value="">Make</option>
-                            {availableMakes.map((make) => <option key={make} value={make}>{make}</option>)}
-                        </select>
-                    </div>
-
-                    <div className="relative">
-                        <label className="mb-1.5 block text-xs font-mono uppercase tracking-wider text-gray-500">Model</label>
-                        <select
-                            value={vehicle.model}
-                            onChange={(event) => {
-                                const model = event.target.value;
-                                startTransition(() => {
-                                    setVehicle((current) => ({ ...current, model }));
-                                });
-                            }}
-                            disabled={!vehicle.make || loadingModels}
-                            className="w-full appearance-none rounded-lg border border-gray-700 bg-gray-900/80 px-3 py-2.5 text-sm text-gray-200 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
-                        >
-                            <option value="">{loadingModels ? 'Loading...' : 'Model'}</option>
-                            {availableModels.map((model) => <option key={model} value={model}>{model}</option>)}
-                        </select>
-                    </div>
+                {/* Mode toggle */}
+                <div className="flex rounded-lg border border-white/10 bg-black/30 p-1">
+                    <button
+                        type="button"
+                        onClick={() => setIdMode('ymm')}
+                        className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
+                            idMode === 'ymm'
+                                ? 'bg-cyan-500/20 text-cyan-200'
+                                : 'text-gray-500 hover:text-gray-300'
+                        }`}
+                    >
+                        Year / Make / Model
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setIdMode('vin')}
+                        className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
+                            idMode === 'vin'
+                                ? 'bg-cyan-500/20 text-cyan-200'
+                                : 'text-gray-500 hover:text-gray-300'
+                        }`}
+                    >
+                        <span className="inline-flex items-center gap-1.5">
+                            <ScanLine className="h-3.5 w-3.5" />
+                            VIN Decoder
+                        </span>
+                    </button>
                 </div>
+
+                {idMode === 'vin' ? (
+                    <form onSubmit={handleVinSubmit} className="space-y-3">
+                        <label className="block text-xs font-mono uppercase tracking-wider text-gray-500">
+                            Enter 17-digit VIN
+                        </label>
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                value={vinInput}
+                                onChange={(e) => setVinInput(e.target.value.toUpperCase())}
+                                placeholder="e.g. 1G1JC5444R7252367"
+                                maxLength={17}
+                                className="flex-1 rounded-lg border border-gray-700 bg-gray-900/80 px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-cyan-500 focus:outline-none uppercase"
+                            />
+                            <button
+                                type="submit"
+                                disabled={isDecoding || vinInput.trim().length < 11}
+                                className="inline-flex items-center gap-2 rounded-lg bg-cyan-500 px-4 py-3 text-sm font-semibold text-black transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-gray-800 disabled:text-gray-600"
+                            >
+                                {isDecoding ? (
+                                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
+                                ) : (
+                                    <ScanLine className="h-4 w-4" />
+                                )}
+                                Decode
+                            </button>
+                        </div>
+                        {vinError && (
+                            <p className="text-sm text-red-400">{vinError}</p>
+                        )}
+                        <p className="text-xs text-gray-600">
+                            VIN is decoded via the free NHTSA database. No data is stored.
+                        </p>
+                    </form>
+                ) : (
+                    <div className="grid grid-cols-3 gap-3">
+                        <div className="relative">
+                            <label className="mb-1.5 block text-xs font-mono uppercase tracking-wider text-gray-500">Year</label>
+                            <div className="relative">
+                                <select
+                                    value={vehicle.year}
+                                    onChange={(event) => {
+                                        const year = event.target.value;
+                                        startTransition(() => {
+                                            setVehicle({ year, make: '', model: '' });
+                                            setAvailableModels([]);
+                                        });
+                                    }}
+                                    className="w-full appearance-none rounded-lg border border-gray-700 bg-gray-900/80 px-3 py-2.5 pr-8 text-sm text-gray-200 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
+                                >
+                                    <option value="">Year</option>
+                                    {availableYears.map((year) => <option key={year} value={year}>{year}</option>)}
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            </div>
+                        </div>
+
+                        <div className="relative">
+                            <label className="mb-1.5 block text-xs font-mono uppercase tracking-wider text-gray-500">Make</label>
+                            <div className="relative">
+                                <select
+                                    value={vehicle.make}
+                                    onChange={(event) => {
+                                        const make = event.target.value;
+                                        startTransition(() => {
+                                            setVehicle((current) => ({ ...current, make, model: '' }));
+                                            setAvailableModels([]);
+                                        });
+                                    }}
+                                    disabled={!vehicle.year}
+                                    className="w-full appearance-none rounded-lg border border-gray-700 bg-gray-900/80 px-3 py-2.5 pr-8 text-sm text-gray-200 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
+                                >
+                                    <option value="">Make</option>
+                                    {availableMakes.map((make) => <option key={make} value={make}>{make}</option>)}
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            </div>
+                        </div>
+
+                        <div className="relative">
+                            <label className="mb-1.5 block text-xs font-mono uppercase tracking-wider text-gray-500">Model</label>
+                            <div className="relative">
+                                <select
+                                    value={vehicle.model}
+                                    onChange={(event) => {
+                                        const model = event.target.value;
+                                        startTransition(() => {
+                                            setVehicle((current) => ({ ...current, model }));
+                                        });
+                                    }}
+                                    disabled={!vehicle.make || loadingModels}
+                                    className="w-full appearance-none rounded-lg border border-gray-700 bg-gray-900/80 px-3 py-2.5 pr-8 text-sm text-gray-200 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
+                                >
+                                    <option value="">{loadingModels ? 'Loading...' : 'Model'}</option>
+                                    {availableModels.map((model) => <option key={model} value={model}>{model}</option>)}
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Vehicle summary when known */}
+                {canSubmit && (
+                    <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/10 px-4 py-3">
+                        <p className="text-sm text-cyan-200">
+                            <span className="font-semibold">Selected:</span> {vehicle.year} {vehicle.make} {vehicle.model}
+                        </p>
+                    </div>
+                )}
 
                 <div>
                     <label className="mb-1.5 block text-xs font-mono uppercase tracking-wider text-gray-500">

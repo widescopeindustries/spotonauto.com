@@ -36,7 +36,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/repair`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.82 },
         { url: `${baseUrl}/symptoms`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.78 },
         { url: `${baseUrl}/wiring`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.8 },
-        { url: `${baseUrl}/community`, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 0.7 },
         { url: `${baseUrl}/about`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
         { url: `${baseUrl}/author/spotonauto-editorial-team`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },
         { url: `${baseUrl}/author/lyndon-bedford`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },

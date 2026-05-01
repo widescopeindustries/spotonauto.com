@@ -855,6 +855,7 @@ export const VALID_TASKS = [
     'headlight-bulb-replacement',
     'tail-light-replacement',
     'fuel-filter-replacement',
+    'fuel-injector-replacement',
     'fuel-pump-replacement',
     'clutch-replacement',
     'transmission-fluid-change',

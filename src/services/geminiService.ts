@@ -27,6 +27,7 @@ const kimi = kimiApiKey
   : null;
 const KIMI_MODEL = process.env.KIMI_MODEL || 'kimi-latest';
 const preferKimi = canReadKimiFirst();
+const preferOpenAI = canReadOpenAIFirst();
 
 // Models
 const TEXT_MODEL = "gemini-2.0-flash";
@@ -761,7 +762,12 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
   let responseSources: GroundingSource[] = [];
 
   try {
-    if (preferKimi && canUseKimi()) {
+    if (preferOpenAI && canUseOpenAI()) {
+      data = await generateJsonWithOpenAI(
+        'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
+        prompt,
+      );
+    } else if (preferKimi && canUseKimi()) {
       data = await generateJsonWithKimi(
         'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
         prompt,
@@ -784,7 +790,13 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
       throw new Error('No AI provider available.');
     }
   } catch (error) {
-    if (canUseKimi() && !preferKimi && isQuotaLikeError(error)) {
+    if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(error)) {
+      console.warn(`[AI] Falling back to OpenAI for vehicle info on ${year} ${make} ${model} ${task}:`, error);
+      data = await generateJsonWithOpenAI(
+        'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
+        prompt,
+      );
+    } else if (canUseKimi() && !preferKimi && isQuotaLikeError(error)) {
       console.warn(`[AI] Falling back to Kimi for vehicle info on ${year} ${make} ${model} ${task}:`, error);
       data = await generateJsonWithKimi(
         'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
@@ -891,7 +903,14 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
     });
 
     try {
-      if (preferKimi && canUseKimi()) {
+      if (preferOpenAI && canUseOpenAI()) {
+        data = await generateJsonWithOpenAI(
+          'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
+          promptResult.prompt,
+        );
+        usedManualContext = promptResult.usedManualContext;
+        break;
+      } else if (preferKimi && canUseKimi()) {
         data = await generateJsonWithKimi(
           'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
           promptResult.prompt,
@@ -937,7 +956,14 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
       maxManualChars: manualContext.content ? 9000 : 0,
     });
 
-    if (canUseKimi() && !preferKimi && isQuotaLikeError(finalError)) {
+    if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(finalError)) {
+      console.warn(`[AI] Falling back to OpenAI for repair guide on ${year} ${make} ${model} ${task}:`, finalError);
+      data = await generateJsonWithOpenAI(
+        'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
+        fallbackPrompt.prompt,
+      );
+      usedManualContext = fallbackPrompt.usedManualContext;
+    } else if (canUseKimi() && !preferKimi && isQuotaLikeError(finalError)) {
       console.warn(`[AI] Falling back to Kimi for repair guide on ${year} ${make} ${model} ${task}:`, finalError);
       data = await generateJsonWithKimi(
         'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
@@ -1068,7 +1094,10 @@ Keep your response concise and practical. Do NOT return JSON - respond in natura
 
   try {
     try {
-      if (preferKimi && canUseKimi()) {
+      if (preferOpenAI && canUseOpenAI()) {
+        const responseText = await generateTextWithOpenAI(diagnosticSystemInstruction, history, message);
+        return { text: responseText, imageUrl: null };
+      } else if (preferKimi && canUseKimi()) {
         const responseText = await generateTextWithKimi(diagnosticSystemInstruction, history, message);
         return { text: responseText, imageUrl: null };
       } else if (canUseGemini()) {
@@ -1095,7 +1124,11 @@ Keep your response concise and practical. Do NOT return JSON - respond in natura
         throw new Error('No AI provider available.');
       }
     } catch (error) {
-      if (canUseKimi() && !preferKimi && isQuotaLikeError(error)) {
+      if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(error)) {
+        console.warn(`[AI] Falling back to OpenAI for diagnostic chat on ${year} ${make} ${model}:`, error);
+        const responseText = await generateTextWithOpenAI(diagnosticSystemInstruction, history, message);
+        return { text: responseText, imageUrl: null };
+      } else if (canUseKimi() && !preferKimi && isQuotaLikeError(error)) {
         console.warn(`[AI] Falling back to Kimi for diagnostic chat on ${year} ${make} ${model}:`, error);
         const responseText = await generateTextWithKimi(diagnosticSystemInstruction, history, message);
         return { text: responseText, imageUrl: null };

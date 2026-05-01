@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Activity, Camera, Cpu, HardDrive, ImageIcon, RotateCcw, Send, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Activity, Camera, Cpu, HardDrive, ImageIcon, Mic, MicOff, RotateCcw, Send, ThumbsDown, ThumbsUp, Volume2, VolumeX } from 'lucide-react';
 import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/apiClient';
 import { COMPANY_INFO } from '@/lib/companyInfo';
@@ -18,6 +18,7 @@ import TopdonDiagnosticInjected from './TopdonDiagnosticInjected';
 interface DiagnosticChatProps {
     vehicle?: Vehicle;
     initialProblem?: string;
+    className?: string;
 }
 
 type Message = StoredDiagnosticMessage;
@@ -32,13 +33,42 @@ function vehiclesMatch(left: Vehicle, right: Vehicle): boolean {
 
 function buildGreeting(vehicle: Vehicle, initialProblem: string): string {
     if (initialProblem) {
-        return `Diagnostic Core Online. Analyzing provided symptom: "${initialProblem}"...`;
+        return `SpotOnAuto AI is ready. Analyzing your symptom: "${initialProblem}"...`;
     }
 
-    return `Diagnostic Core Online. Connected to ${vehicle.year} ${vehicle.make} ${vehicle.model} database. Accessing factory-level technical service bulletins and professional diagnostic manuals. Please describe the primary symptom.`;
+    return `SpotOnAuto AI is connected to the ${vehicle.year} ${vehicle.make} ${vehicle.model} database. Please describe the symptom you're experiencing.`;
 }
 
-const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, initialProblem: initialProblemProp }) => {
+// ─── Web Speech API helpers ──────────────────────────────────────────────────
+
+function getSpeechRecognition(): any | null {
+    if (typeof window === 'undefined') return null;
+    return (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition || null;
+}
+
+function speakText(text: string, onEnd?: () => void) {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    // Strip markdown-like formatting for cleaner speech
+    const clean = text
+        .replace(/\*\*/g, '')
+        .replace(/#{1,6}\s/g, '')
+        .replace(/\n{2,}/g, '\n')
+        .slice(0, 400); // Limit length
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.rate = 1.05;
+    utterance.pitch = 1;
+    if (onEnd) utterance.onend = onEnd;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+}
+
+const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, initialProblem: initialProblemProp, className }) => {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -51,7 +81,12 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const [messageRatings, setMessageRatings] = useState<Record<string, 'up' | 'down'>>({});
     const [feedbackDrafts, setFeedbackDrafts] = useState<Record<string, string>>({});
     const [feedbackOpenFor, setFeedbackOpenFor] = useState<string | null>(null);
+    const [voiceEnabled, setVoiceEnabled] = useState(false);
+    const [isListening, setIsListening] = useState(false);
+    const [speechSupported, setSpeechSupported] = useState(false);
+    const recognitionRef = useRef<any | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const lastSpokenRef = useRef<string>('');
 
     const vehicle = vehicleProp || (searchParams.get('year') && searchParams.get('make') && searchParams.get('model')
         ? { year: searchParams.get('year')!, make: searchParams.get('make')!, model: searchParams.get('model')! }
@@ -76,6 +111,21 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
 
         return null;
     })();
+
+    useEffect(() => {
+        const supported = !!getSpeechRecognition() && typeof window !== 'undefined' && !!window.speechSynthesis;
+        setSpeechSupported(supported);
+    }, []);
+
+    // Auto-speak new system messages when voice is enabled
+    useEffect(() => {
+        if (!voiceEnabled || messages.length === 0) return;
+        const lastMsg = messages[messages.length - 1];
+        if (lastMsg.type === 'system' && lastMsg.id !== lastSpokenRef.current) {
+            lastSpokenRef.current = lastMsg.id;
+            speakText(lastMsg.text);
+        }
+    }, [messages, voiceEnabled]);
 
     const syncThreadInUrl = useCallback((nextThreadId: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -248,6 +298,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         setMessages([]);
         setTyping(false);
         setStatusMessage(null);
+        stopSpeaking();
 
         router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     };
@@ -276,8 +327,57 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         setFeedbackOpenFor(null);
     };
 
+    const toggleVoice = () => {
+        setVoiceEnabled((prev) => {
+            const next = !prev;
+            if (!next) stopSpeaking();
+            return next;
+        });
+    };
+
+    const startListening = () => {
+        const SpeechRecognitionCtor = getSpeechRecognition();
+        if (!SpeechRecognitionCtor) return;
+
+        if (recognitionRef.current) {
+            recognitionRef.current.stop();
+        }
+
+        const recognition = new SpeechRecognitionCtor();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => setIsListening(true);
+        recognition.onend = () => setIsListening(false);
+        recognition.onerror = () => setIsListening(false);
+
+        recognition.onresult = (event: any) => {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            setUserInput(transcript);
+            // Auto-submit on final result
+            if (event.results[event.results.length - 1].isFinal && transcript.trim()) {
+                setTimeout(() => {
+                    handleUserResponse(transcript);
+                    setUserInput('');
+                }, 400);
+            }
+        };
+
+        recognitionRef.current = recognition;
+        recognition.start();
+    };
+
+    const stopListening = () => {
+        recognitionRef.current?.stop();
+        setIsListening(false);
+    };
+
     return (
-        <div className="relative mx-auto flex h-[600px] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-neon-cyan/20 bg-black/80 shadow-2xl backdrop-blur-xl">
+        <div className={`relative mx-auto flex h-[600px] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-neon-cyan/20 bg-black/80 shadow-2xl backdrop-blur-xl ${className || ''}`}>
             <div className="absolute inset-0 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
 
             <div className="z-10 flex items-center justify-between border-b border-neon-cyan/20 bg-black/50 p-4">
@@ -295,6 +395,21 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                 </div>
 
                 <div className="flex items-center gap-3">
+                    {speechSupported && (
+                        <button
+                            type="button"
+                            onClick={toggleVoice}
+                            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors ${
+                                voiceEnabled
+                                    ? 'border-cyan-400/50 bg-cyan-500/15 text-cyan-200'
+                                    : 'border-white/10 bg-white/[0.04] text-gray-400 hover:border-cyan-500/30 hover:text-cyan-100'
+                            }`}
+                            title={voiceEnabled ? 'Voice output on — AI will speak responses' : 'Voice output off'}
+                        >
+                            {voiceEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+                            {voiceEnabled ? 'Voice On' : 'Voice Off'}
+                        </button>
+                    )}
                     <button
                         type="button"
                         onClick={handleFreshThread}
@@ -399,7 +514,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
 
                     {/* Inject scanner recommendations if the last message pairs imply it's useful */}
                     {messages.length >= 2 && !typing && (
-                        <TopdonDiagnosticInjected 
+                        <TopdonDiagnosticInjected
                             lastUserMessage={messages.filter(m => m.type === 'user').slice(-1)[0]?.text || ''}
                             lastAiMessage={messages.filter(m => m.type === 'system').slice(-1)[0]?.text || ''}
                         />
@@ -461,9 +576,9 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                         type="text"
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
-                        placeholder={typing ? 'Awaiting System Response...' : 'Enter symptoms, codes, or observations...'}
+                        placeholder={typing ? 'Awaiting System Response...' : isListening ? 'Listening... speak now' : 'Enter symptoms, codes, or observations...'}
                         className="flex-1 rounded-lg border border-neon-cyan/30 bg-black/50 px-4 py-3 font-mono text-sm text-white placeholder-gray-500 transition-all focus:border-neon-cyan focus:outline-none focus:shadow-glow-cyan"
-                        disabled={typing}
+                        disabled={typing || isListening}
                         autoFocus
                     />
                     <button
@@ -473,6 +588,21 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                     >
                         <Send className="h-5 w-5" />
                     </button>
+                    {speechSupported && (
+                        <button
+                            type="button"
+                            onClick={isListening ? stopListening : startListening}
+                            disabled={typing}
+                            className={`flex items-center justify-center rounded-lg border px-4 transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                                isListening
+                                    ? 'border-red-400 bg-red-500/15 text-red-400 animate-pulse'
+                                    : 'border-gray-600 bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+                            }`}
+                            title={isListening ? 'Stop listening' : 'Speak to AI'}
+                        >
+                            {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                        </button>
+                    )}
                     <button
                         type="button"
                         className="rounded-lg border border-gray-600 bg-gray-800/50 px-3 text-gray-400 transition-colors hover:bg-gray-700/50"
