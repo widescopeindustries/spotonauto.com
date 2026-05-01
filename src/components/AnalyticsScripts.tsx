@@ -6,7 +6,7 @@ import { CANONICAL_HOST } from '@/lib/host';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-WNFX6CY9RN';
 const AHREFS_KEY = 'Id9DIK0mrHJtsEHStxIWNA';
-const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || '';
+const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || 'wk5l41apgb';
 const VWO_ACCOUNT_ID = process.env.NEXT_PUBLIC_VWO_ACCOUNT_ID || '';
 
 export default function AnalyticsScripts() {
