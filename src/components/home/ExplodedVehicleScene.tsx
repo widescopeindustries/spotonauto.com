@@ -6,13 +6,14 @@ import * as THREE from 'three'
 import { useAppStore } from '@/store/useAppStore'
 import SceneErrorBoundary from './SceneErrorBoundary'
 
-function EngineBlock({ isExploded }: { isExploded: boolean }) {
+function EngineBlock() {
   const ref = useRef<THREE.Group>(null)
   const currentPos = useRef(new THREE.Vector3(0, 0.3, 1.2))
 
   useFrame((_, delta) => {
     if (!ref.current) return
-    const target = isExploded ? new THREE.Vector3(0, 1.5, 1.2) : new THREE.Vector3(0, 0.3, 1.2)
+    const isExploded = useAppStore.getState().isExploded
+    const target = isExploded ? new THREE.Vector3(0, 1.8, 1.2) : new THREE.Vector3(0, 0.3, 1.2)
     currentPos.current.lerp(target, delta * 2)
     ref.current.position.copy(currentPos.current)
     if (isExploded) {
@@ -50,9 +51,8 @@ function EngineBlock({ isExploded }: { isExploded: boolean }) {
   )
 }
 
-function Wheel({ position, isExploded, side }: {
+function Wheel({ position, side }: {
   position: [number, number, number]
-  isExploded: boolean
   side: 'left' | 'right'
 }) {
   const ref = useRef<THREE.Group>(null)
@@ -62,9 +62,10 @@ function Wheel({ position, isExploded, side }: {
 
   useFrame((_, delta) => {
     if (!ref.current) return
+    const isExploded = useAppStore.getState().isExploded
     const target = new THREE.Vector3(
-      position[0] + explodeDir * (isExploded ? 1.2 : 0),
-      position[1] + (isExploded ? 0.3 : 0),
+      position[0] + explodeDir * (isExploded ? 1.8 : 0),
+      position[1] + (isExploded ? 0.5 : 0),
       position[2]
     )
     currentPos.current.lerp(target, delta * 2)
@@ -95,19 +96,19 @@ function Wheel({ position, isExploded, side }: {
   )
 }
 
-function SuspensionStrut({ position, isExploded }: {
+function SuspensionStrut({ position }: {
   position: [number, number, number]
-  isExploded: boolean
 }) {
   const ref = useRef<THREE.Group>(null)
   const currentPos = useRef(new THREE.Vector3(...position))
 
   useFrame((_, delta) => {
     if (!ref.current) return
+    const isExploded = useAppStore.getState().isExploded
     const target = new THREE.Vector3(
-      position[0] * (isExploded ? 1.5 : 1),
-      position[1] + (isExploded ? 0.8 : 0),
-      position[2] * (isExploded ? 1.3 : 1)
+      position[0] * (isExploded ? 1.6 : 1),
+      position[1] + (isExploded ? 1.2 : 0),
+      position[2] * (isExploded ? 1.4 : 1)
     )
     currentPos.current.lerp(target, delta * 2)
     ref.current.position.copy(currentPos.current)
@@ -127,13 +128,14 @@ function SuspensionStrut({ position, isExploded }: {
   )
 }
 
-function ChassisBody({ isExploded }: { isExploded: boolean }) {
+function ChassisBody() {
   const ref = useRef<THREE.Group>(null)
   const currentScale = useRef(1)
 
   useFrame((_, delta) => {
     if (!ref.current) return
-    const targetScale = isExploded ? 0.85 : 1
+    const isExploded = useAppStore.getState().isExploded
+    const targetScale = isExploded ? 0.75 : 1
     currentScale.current += (targetScale - currentScale.current) * delta * 2
     ref.current.scale.setScalar(currentScale.current)
   })
@@ -164,13 +166,14 @@ function ChassisBody({ isExploded }: { isExploded: boolean }) {
   )
 }
 
-function Transmission({ isExploded }: { isExploded: boolean }) {
+function Transmission() {
   const ref = useRef<THREE.Group>(null)
   const currentPos = useRef(new THREE.Vector3(0, 0.25, -1))
 
   useFrame((_, delta) => {
     if (!ref.current) return
-    const target = isExploded ? new THREE.Vector3(0, -0.8, -1) : new THREE.Vector3(0, 0.25, -1)
+    const isExploded = useAppStore.getState().isExploded
+    const target = isExploded ? new THREE.Vector3(0, -1.0, -1) : new THREE.Vector3(0, 0.25, -1)
     currentPos.current.lerp(target, delta * 2)
     ref.current.position.copy(currentPos.current)
   })
@@ -229,8 +232,6 @@ function FloatingParticles() {
 }
 
 function SceneContent() {
-  const isExploded = useAppStore((s) => s.isExploded)
-
   return (
     <>
       <ambientLight intensity={0.15} />
@@ -253,17 +254,17 @@ function SceneContent() {
       <pointLight position={[5, -2, -5]} intensity={0.5} color="#5B8DB8" />
 
       <group position={[0, -0.5, 0]}>
-        <ChassisBody isExploded={isExploded} />
-        <EngineBlock isExploded={isExploded} />
-        <Transmission isExploded={isExploded} />
-        <Wheel position={[-1, 0, 1.2]} isExploded={isExploded} side="left" />
-        <Wheel position={[1, 0, 1.2]} isExploded={isExploded} side="right" />
-        <Wheel position={[-1, 0, -1.2]} isExploded={isExploded} side="left" />
-        <Wheel position={[1, 0, -1.2]} isExploded={isExploded} side="right" />
-        <SuspensionStrut position={[-0.8, 0.5, 1.2]} isExploded={isExploded} />
-        <SuspensionStrut position={[0.8, 0.5, 1.2]} isExploded={isExploded} />
-        <SuspensionStrut position={[-0.8, 0.5, -1.2]} isExploded={isExploded} />
-        <SuspensionStrut position={[0.8, 0.5, -1.2]} isExploded={isExploded} />
+        <ChassisBody />
+        <EngineBlock />
+        <Transmission />
+        <Wheel position={[-1, 0, 1.2]} side="left" />
+        <Wheel position={[1, 0, 1.2]} side="right" />
+        <Wheel position={[-1, 0, -1.2]} side="left" />
+        <Wheel position={[1, 0, -1.2]} side="right" />
+        <SuspensionStrut position={[-0.8, 0.5, 1.2]} />
+        <SuspensionStrut position={[0.8, 0.5, 1.2]} />
+        <SuspensionStrut position={[-0.8, 0.5, -1.2]} />
+        <SuspensionStrut position={[0.8, 0.5, -1.2]} />
       </group>
 
       <FloatingParticles />

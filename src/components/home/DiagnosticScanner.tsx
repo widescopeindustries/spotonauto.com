@@ -35,7 +35,7 @@ function RotatingRings() {
   )
 }
 
-function BrainCore({ isScanning }: { isScanning: boolean }) {
+function BrainCore() {
   const meshRef = useRef<THREE.Mesh>(null)
   const intensityRef = useRef(0.5)
 
@@ -44,6 +44,7 @@ function BrainCore({ isScanning }: { isScanning: boolean }) {
     meshRef.current.rotation.y += 0.01
     meshRef.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.5) * 0.1
 
+    const isScanning = useAppStore.getState().isScanning
     const targetIntensity = isScanning ? 2 : 0.5
     intensityRef.current += (targetIntensity - intensityRef.current) * 0.05
     const mat = meshRef.current.material as THREE.MeshStandardMaterial
@@ -65,8 +66,9 @@ function BrainCore({ isScanning }: { isScanning: boolean }) {
   )
 }
 
-function ScanParticles({ isScanning }: { isScanning: boolean }) {
+function ScanParticles() {
   const pointsRef = useRef<THREE.Points>(null)
+  const materialRef = useRef<THREE.PointsMaterial>(null)
   const count = 80
 
   const positions = useMemo(() => {
@@ -96,6 +98,13 @@ function ScanParticles({ isScanning }: { isScanning: boolean }) {
   }, [])
 
   useFrame(() => {
+    const isScanning = useAppStore.getState().isScanning
+
+    if (materialRef.current) {
+      const targetOpacity = isScanning ? 0.9 : 0.2
+      materialRef.current.opacity += (targetOpacity - materialRef.current.opacity) * 0.05
+    }
+
     if (!pointsRef.current || !isScanning) return
     const posArray = pointsRef.current.geometry.attributes.position.array as Float32Array
     for (let i = 0; i < count; i++) {
@@ -129,10 +138,11 @@ function ScanParticles({ isScanning }: { isScanning: boolean }) {
         />
       </bufferGeometry>
       <pointsMaterial
+        ref={materialRef}
         size={0.05}
         color="#FF6B00"
         transparent
-        opacity={isScanning ? 0.9 : 0.2}
+        opacity={0.2}
         sizeAttenuation
       />
     </points>
@@ -140,17 +150,15 @@ function ScanParticles({ isScanning }: { isScanning: boolean }) {
 }
 
 function SceneContent() {
-  const isScanning = useAppStore((s) => s.isScanning)
-
   return (
     <>
       <ambientLight intensity={0.2} />
       <pointLight position={[2, 2, 2]} intensity={1} color="#5B8DB8" />
       <pointLight position={[-2, -2, 2]} intensity={0.5} color="#FF6B00" />
 
-      <BrainCore isScanning={isScanning} />
+      <BrainCore />
       <RotatingRings />
-      <ScanParticles isScanning={isScanning} />
+      <ScanParticles />
     </>
   )
 }
