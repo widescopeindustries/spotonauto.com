@@ -1,3 +1,4 @@
+"use client";
 import { motion } from 'framer-motion'
 import { ChevronRight, Sparkles } from 'lucide-react'
 import ExplodedVehicleScene from '@/components/home/ExplodedVehicleScene'
@@ -91,7 +92,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2" aria-hidden="true">
         <span className="text-xs text-[#6E6E80]">Scroll to explore</span>
         <motion.div
           className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center"

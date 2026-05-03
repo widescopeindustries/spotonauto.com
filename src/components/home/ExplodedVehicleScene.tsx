@@ -1,8 +1,10 @@
+"use client";
 import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useAppStore } from '@/store/useAppStore'
+import SceneErrorBoundary from './SceneErrorBoundary'
 
 function EngineBlock({ isExploded }: { isExploded: boolean }) {
   const ref = useRef<THREE.Group>(null)
@@ -292,13 +294,15 @@ function SceneContent() {
 export default function ExplodedVehicleScene() {
   return (
     <div className="absolute inset-0 z-0">
-      <Canvas
-        camera={{ position: [0, 2, 8], fov: 45 }}
-        gl={{ antialias: true, alpha: true }}
-        dpr={[1, 1.5]}
-      >
-        <SceneContent />
-      </Canvas>
+      <SceneErrorBoundary>
+        <Canvas
+          camera={{ position: [0, 2, 8], fov: 45 }}
+          gl={{ antialias: true, alpha: true }}
+          dpr={[1, 1.5]}
+        >
+          <SceneContent />
+        </Canvas>
+      </SceneErrorBoundary>
     </div>
   )
 }

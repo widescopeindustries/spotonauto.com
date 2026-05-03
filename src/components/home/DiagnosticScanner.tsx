@@ -1,7 +1,9 @@
+"use client";
 import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useAppStore } from '@/store/useAppStore'
+import SceneErrorBoundary from './SceneErrorBoundary'
 
 function RotatingRings() {
   const groupRef = useRef<THREE.Group>(null)
@@ -156,13 +158,15 @@ function SceneContent() {
 export default function DiagnosticScanner() {
   return (
     <div className="w-full h-[400px] md:h-[500px]">
-      <Canvas
-        camera={{ position: [0, 0, 4], fov: 50 }}
-        gl={{ antialias: true, alpha: true }}
-        dpr={[1, 1.5]}
-      >
-        <SceneContent />
-      </Canvas>
+      <SceneErrorBoundary>
+        <Canvas
+          camera={{ position: [0, 0, 4], fov: 50 }}
+          gl={{ antialias: true, alpha: true }}
+          dpr={[1, 1.5]}
+        >
+          <SceneContent />
+        </Canvas>
+      </SceneErrorBoundary>
     </div>
   )
 }

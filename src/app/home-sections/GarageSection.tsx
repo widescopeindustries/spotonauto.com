@@ -1,3 +1,4 @@
+"use client";
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Wrench, Plus, Car, Calendar, ChevronRight, X, CheckCircle2, AlertCircle } from 'lucide-react'
@@ -88,6 +89,7 @@ export default function GarageSection() {
                 </h3>
                 <button
                   onClick={() => setShowAddModal(true)}
+                  aria-label="Add vehicle"
                   className="w-8 h-8 rounded-full bg-[#FF6B00]/20 border border-[#FF6B00]/30 flex items-center justify-center hover:bg-[#FF6B00]/40 transition-colors"
                 >
                   <Plus className="w-4 h-4 text-[#FF6B00]" />
@@ -205,10 +207,10 @@ export default function GarageSection() {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-[#6E6E80]">Est. cost: {event.cost}</span>
-                          <button className="text-xs text-[#FF6B00] hover:text-[#FF9500] transition-colors flex items-center gap-1">
+                          <a href="/repair" className="text-xs text-[#FF6B00] hover:text-[#FF9500] transition-colors flex items-center gap-1">
                             View Guide
                             <ChevronRight className="w-3 h-3" />
-                          </button>
+                          </a>
                         </div>
                       </div>
                     </motion.div>

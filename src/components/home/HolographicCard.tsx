@@ -1,3 +1,4 @@
+"use client";
 import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
@@ -44,6 +45,7 @@ export default function HolographicCard({ children, className = '' }: Holographi
         onMouseLeave={handleMouseLeave}
         whileHover={{ scale: 1.02 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        role="article"
       >
         <div
           className="absolute inset-0 pointer-events-none z-10"

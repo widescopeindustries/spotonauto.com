@@ -1,4 +1,6 @@
+"use client";
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { BookOpen, Clock, ArrowRight, ShieldAlert, Gauge, Droplets, Battery, Wrench } from 'lucide-react'
 import HolographicCard from '@/components/home/HolographicCard'
 
@@ -10,6 +12,7 @@ const repairs = [
     difficulty: 'High',
     time: '9 min',
     color: '#FF3333',
+    href: '/codes/p0300',
   },
   {
     icon: Gauge,
@@ -18,6 +21,7 @@ const repairs = [
     difficulty: 'Medium',
     time: '12 min',
     color: '#FF6B00',
+    href: '/repairs/brake-pad-replacement',
   },
   {
     icon: Droplets,
@@ -26,6 +30,7 @@ const repairs = [
     difficulty: 'Easy',
     time: '8 min',
     color: '#5B8DB8',
+    href: '/repairs/oil-change',
   },
   {
     icon: Battery,
@@ -34,6 +39,7 @@ const repairs = [
     difficulty: 'Medium',
     time: '10 min',
     color: '#FF6B00',
+    href: '/tools/bmw-x3-battery-location',
   },
   {
     icon: Wrench,
@@ -42,6 +48,7 @@ const repairs = [
     difficulty: 'Easy',
     time: '7 min',
     color: '#5B8DB8',
+    href: '/repairs/spark-plug-replacement',
   },
   {
     icon: ShieldAlert,
@@ -50,6 +57,7 @@ const repairs = [
     difficulty: 'Critical',
     time: '6 min',
     color: '#FF3333',
+    href: '/codes',
   },
 ]
 
@@ -113,10 +121,13 @@ export default function RepairsSection() {
                       <Clock className="w-3.5 h-3.5" />
                       {repair.time} read
                     </div>
-                    <button className="flex items-center gap-1 text-sm text-[#FF6B00] hover:text-[#FF9500] transition-colors group">
+                    <Link
+                      href={repair.href}
+                      className="flex items-center gap-1 text-sm text-[#FF6B00] hover:text-[#FF9500] transition-colors group"
+                    >
                       View Guide
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </HolographicCard>

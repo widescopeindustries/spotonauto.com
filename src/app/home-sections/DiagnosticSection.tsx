@@ -1,4 +1,6 @@
+"use client";
 import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Search, Zap, AlertTriangle } from 'lucide-react'
 import DiagnosticScanner from '@/components/home/DiagnosticScanner'
@@ -22,6 +24,7 @@ const exampleSymptoms = [
 ]
 
 export default function DiagnosticSection() {
+  const router = useRouter()
   const [symptom, setSymptom] = useState('')
   const setIsScanning = useAppStore((s) => s.setIsScanning)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -31,17 +34,22 @@ export default function DiagnosticSection() {
     return () => clearTimeout(timer)
   }, [setIsScanning])
 
+  const navigateToDiagnose = (query: string) => {
+    if (!query.trim()) return
+    setIsScanning(true)
+    setTimeout(() => {
+      setIsScanning(false)
+      router.push(`/diagnose?q=${encodeURIComponent(query.trim())}`)
+    }, 1500)
+  }
+
   const handleSymptomClick = (text: string) => {
     setSymptom(text)
-    setIsScanning(true)
-    setTimeout(() => setIsScanning(false), 3000)
+    navigateToDiagnose(text)
   }
 
   const handleSubmit = () => {
-    if (symptom.trim()) {
-      setIsScanning(true)
-      setTimeout(() => setIsScanning(false), 4000)
-    }
+    navigateToDiagnose(symptom)
   }
 
   return (
@@ -87,6 +95,7 @@ export default function DiagnosticSection() {
                   onChange={(e) => setSymptom(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                   placeholder="e.g. Check engine light on, rough idle..."
+                  aria-label="Describe your vehicle symptom"
                   className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl pl-12 pr-4 py-4 text-white placeholder-[#6E6E80] focus:outline-none focus:border-[#5B8DB8]/50 focus:shadow-[0_0_15px_rgba(0,240,255,0.1)] transition-all"
                 />
               </div>

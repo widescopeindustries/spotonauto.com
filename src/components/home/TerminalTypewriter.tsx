@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, useRef } from 'react'
 
 interface TerminalTypewriterProps {
@@ -43,6 +44,8 @@ export default function TerminalTypewriter({ lines, typingSpeed = 40, className 
     <div
       ref={containerRef}
       className={`font-mono text-sm bg-[#0a0a0f] border border-white/10 rounded-xl p-4 overflow-hidden ${className}`}
+      aria-live="polite"
+      aria-atomic="false"
     >
       <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
         <div className="w-3 h-3 rounded-full bg-red-500/80" />

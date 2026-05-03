@@ -1,6 +1,8 @@
+"use client";
 import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import SceneErrorBoundary from './SceneErrorBoundary'
 
 function DustParticles() {
   const pointsRef = useRef<THREE.Points>(null)
@@ -175,13 +177,15 @@ function SceneContent() {
 export default function GarageWorkshopScene() {
   return (
     <div className="absolute inset-0 z-0">
-      <Canvas
-        camera={{ position: [0, 3, 10], fov: 50 }}
-        gl={{ antialias: true, alpha: true }}
-        dpr={[1, 1.5]}
-      >
-        <SceneContent />
-      </Canvas>
+      <SceneErrorBoundary>
+        <Canvas
+          camera={{ position: [0, 3, 10], fov: 50 }}
+          gl={{ antialias: true, alpha: true }}
+          dpr={[1, 1.5]}
+        >
+          <SceneContent />
+        </Canvas>
+      </SceneErrorBoundary>
     </div>
   )
 }

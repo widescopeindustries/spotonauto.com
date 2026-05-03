@@ -275,12 +275,8 @@ html {
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .glass-panel {
-    @apply bg-glass-dark backdrop-blur-xl border border-white/10 shadow-glass rounded-3xl;
-  }
-
   .glass-panel-hover {
-    @apply hover:bg-glass-white hover:border-cyan-500/40 transition-all duration-300 hover:shadow-glow-cyan;
+    @apply hover:bg-glass-white hover:border-[#FF6B00]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,107,0,0.15)];
   }
 
   /* Gradient Border */

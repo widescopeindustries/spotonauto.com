@@ -1,4 +1,6 @@
+"use client";
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Search, AlertTriangle, Code2, ChevronRight } from 'lucide-react'
 import HolographicCard from '@/components/home/HolographicCard'
@@ -98,6 +100,7 @@ export default function DTCCodeSection() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search codes (e.g. P0420, misfire, catalytic)..."
+              aria-label="Search DTC codes"
               className="w-full bg-[#12121A] border border-white/10 rounded-xl pl-12 pr-4 py-4 text-white placeholder-[#6E6E80] focus:outline-none focus:border-[#5B8DB8]/50 focus:shadow-[0_0_15px_rgba(0,240,255,0.1)] transition-all"
             />
           </div>
@@ -137,7 +140,7 @@ export default function DTCCodeSection() {
                 transition={{ duration: 0.4, delay: i * 0.05 }}
               >
                 <HolographicCard className="h-full">
-                  <div className="p-5 h-full flex flex-col">
+                  <Link href={`/codes/${code.code.toLowerCase()}`} className="block p-5 h-full flex flex-col">
                     <div className="flex items-start justify-between mb-3">
                       <span className="text-lg font-bold text-[#5B8DB8] font-mono">{code.code}</span>
                       <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${sev.bg} ${sev.text} ${sev.border}`}>
@@ -153,12 +156,12 @@ export default function DTCCodeSection() {
                         <span className="text-xs text-[#6E6E80]">·</span>
                         <span className="text-xs text-[#6E6E80]">{code.cost}</span>
                       </div>
-                      <button className="flex items-center gap-1 text-xs text-[#FF6B00] hover:text-[#FF9500] transition-colors group">
+                      <span className="flex items-center gap-1 text-xs text-[#FF6B00] group">
                         View
                         <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                      </button>
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 </HolographicCard>
               </motion.div>
             )
