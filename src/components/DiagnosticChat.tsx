@@ -544,7 +544,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                     <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4">
                         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                             <div>
-                                <p className="text-[10px] uppercase tracking-[0.24em] text-amber-300/85">Canonical symptom cluster</p>
+                                <p className="text-[10px] uppercase tracking-[0.24em] text-amber-300/85">Related symptoms</p>
                                 <h4 className="mt-2 text-sm font-semibold text-white">{canonicalSymptomCluster.label}</h4>
                                 <p className="mt-1 text-xs leading-5 text-gray-300">{canonicalSymptomCluster.summary}</p>
                             </div>

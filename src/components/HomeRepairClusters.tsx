@@ -88,7 +88,7 @@ const ACTIONS = [
   {
     href: '/symptoms',
     label: 'Browse symptom hubs',
-    description: 'Start from the canonical symptom cluster when you know the complaint but not the exact repair yet.',
+    description: 'Start from related symptoms when you know the complaint but not the exact repair yet.',
     icon: Sparkles,
   },
   {
