@@ -195,17 +195,14 @@ function getChildLinks(html: string, currentPath: string): string[] {
   const links = extractLinks(html);
   // Only keep links that are children of the current path
   return links.filter(link => {
-    // Absolute path that starts with current path and goes one level deeper
+    // Absolute path that starts with current path and goes deeper
     if (link.startsWith(currentPath) && link !== currentPath) {
-      const remainder = link.slice(currentPath.length);
-      // Should be a single segment (possibly with trailing /)
-      const segments = remainder.split('/').filter(Boolean);
-      return segments.length === 1;
+      return true;
     }
-    // Relative link (just a segment name with trailing /)
+    // Relative path (may be multi-segment like "System/Subsection/")
+    // Reject paths that escape upward (../)
     if (!link.startsWith('/') && !link.startsWith('http') && link.endsWith('/')) {
-      const segments = link.split('/').filter(Boolean);
-      return segments.length === 1;
+      return !link.startsWith('..');
     }
     return false;
   }).map(link => {
