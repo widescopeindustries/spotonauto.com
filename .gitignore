@@ -55,5 +55,3 @@ scripts/indexing-progress.json
 
 # generated SEO exports/reports
 scripts/seo-reports/
-services/manual-api/
-services/manual-api/

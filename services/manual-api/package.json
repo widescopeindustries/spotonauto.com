@@ -1,0 +1,32 @@
+{
+  "name": "@spotonauto/manual-api",
+  "version": "1.0.0",
+  "description": "Manual API service for LEMON + CHARM — powers SpotOnAuto web + MCP clients",
+  "type": "module",
+  "main": "dist/server.js",
+  "bin": {
+    "lemon-manuals-mcp": "./dist/mcp-server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/server.js",
+    "mcp": "node dist/mcp-server.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "pg": "^8.20.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.3",
+    "@types/pg": "^8.18.0",
+    "typescript": "^5.8.3"
+  }
+}
