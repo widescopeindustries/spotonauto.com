@@ -541,3 +541,38 @@ export async function findDiagnosticTroubleCodeSections(code: string, limit: num
 
   return mapSectionRows(rows);
 }
+
+export async function getSectionByPath(path: string): Promise<ManualSectionMatchRow | null> {
+  const pool = getLocalPool();
+  if (!pool) return null;
+  await ensureLocalSchema();
+
+  const { rows } = await pool.query(
+    `SELECT path, make, year, model, section_title, content_preview, content_full
+     FROM manual_embeddings WHERE path = $1 LIMIT 1`,
+    [path],
+  );
+  return rows.length ? mapSectionRows(rows)[0] : null;
+}
+
+export async function getChildSections(prefixPath: string): Promise<ManualSectionMatchRow[]> {
+  const pool = getLocalPool();
+  if (!pool) return [];
+  await ensureLocalSchema();
+
+  const normalized = prefixPath.replace(/\/+$/, '');
+  const { rows } = await pool.query(
+    `SELECT path, make, year, model, section_title, content_preview, content_full
+     FROM manual_embeddings
+     WHERE path LIKE $1 || '%'
+       AND path != $1
+     ORDER BY section_title ASC
+     LIMIT 200`,
+    [`${normalized}/`],
+  );
+
+  const prefixDepth = normalized.split('/').filter(Boolean).length;
+  return mapSectionRows(rows).filter(
+    (r) => r.path.split('/').filter(Boolean).length === prefixDepth + 1,
+  );
+}

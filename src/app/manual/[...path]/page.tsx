@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  fetchCharmPage,
   buildBreadcrumbs,
   buildManualTitle,
   buildManualDescription,
   type CharmLink,
 } from '@/lib/charmParser';
+import { fetchManualPage } from '@/lib/manualService';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import SafetyWarningBox from '@/components/SafetyWarningBox';
 import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ManualBrowserPage({ params }: PageProps) {
   const { path } = await params;
   const normalizedPath = path.map((s) => safeDecodeSegment(s));
-  const page = await fetchCharmPage(normalizedPath);
+  const page = await fetchManualPage(normalizedPath);
   const breadcrumbs = buildBreadcrumbs(normalizedPath);
   const depth = path.length;
 

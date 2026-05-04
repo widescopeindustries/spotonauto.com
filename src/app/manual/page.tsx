@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { fetchCharmPage } from '@/lib/charmParser';
+import { fetchManualPage } from '@/lib/manualService';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import SafetyWarningBox from '@/components/SafetyWarningBox';
 import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ManualLandingPage() {
-  const page = await fetchCharmPage([]);
+  const page = await fetchManualPage([]);
   const coverageStats = getCharmCoverageStats();
   const coverageYears = getCharmCoverageAvailableYears();
   const coverageMakes = getCharmCoverageMakes();

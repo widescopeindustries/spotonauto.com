@@ -8,7 +8,8 @@
  * into the configured manual_embeddings backend.
  *
  * Usage:
- *   node --experimental-strip-types scripts/index-lmdb-vectors.ts                      # Index all makes
+ *   node --experimental-strip-types scripts/index-lmdb-vectors.ts                      # Index all makes (standard depth)
+ *   node --experimental-strip-types scripts/index-lmdb-vectors.ts --deep                # Deep crawl: leaf procedures, diagrams, specs
  *   node --experimental-strip-types scripts/index-lmdb-vectors.ts --make Toyota         # Index one make
  *   node --experimental-strip-types scripts/index-lmdb-vectors.ts --make Toyota --year 2010  # One make+year
  *   node --experimental-strip-types scripts/index-lmdb-vectors.ts --dry-run             # Preview without writing
@@ -75,24 +76,30 @@ loadEnv();
 
 const CHARM_BASE = process.env.GRAPH_BACKEND_BASE_URL || 'http://127.0.0.1:8080';
 const EMBEDDING_MODEL = 'gemini-embedding-001';
-const MAX_CONTENT_LENGTH = 8000;     // Max chars of content to store per section
-const CONTENT_PREVIEW_LENGTH = 500;  // Chars for content_preview column
-const MAX_SECTION_DEPTH = 2;         // How deep to crawl into sub-sections
+const MAX_CONTENT_LENGTH = 24000;    // Max chars of content to store per section (increased for deep procedures)
+const CONTENT_PREVIEW_LENGTH = 800;  // Chars for content_preview column
+const MAX_SECTION_DEPTH = 4;         // How deep to crawl into sub-sections (was 2, now 4 for leaf procedures)
 const EMBEDDING_DELAY_MS = 45;       // ~1300 req/min, well under 1500 limit
 const FETCH_DELAY_MS = 100;          // Politeness delay between HTTP fetches
 const FETCH_TIMEOUT_MS = 15000;      // Timeout for HTTP requests
-const MAX_SECTIONS_PER_VARIANT = 50; // Cap sections per vehicle variant
+const MAX_SECTIONS_PER_VARIANT = 200; // Cap sections per vehicle variant (was 50)
 
 // CLI args
 const args = process.argv.slice(2);
 const filterMake = getArg('--make');
 const filterYear = getArg('--year');
 const dryRun = args.includes('--dry-run');
+const deepMode = args.includes('--deep');
 
 function getArg(flag: string): string | null {
   const idx = args.indexOf(flag);
   return idx !== -1 && args[idx + 1] ? args[idx + 1] : null;
 }
+
+// Deep mode overrides
+const effectiveMaxDepth = deepMode ? 6 : MAX_SECTION_DEPTH;
+const effectiveMaxSections = deepMode ? 500 : MAX_SECTIONS_PER_VARIANT;
+const effectiveMaxContent = deepMode ? 48000 : MAX_CONTENT_LENGTH;
 
 // ─── Initialize clients ─────────────────────────────────────────────────────
 
@@ -308,7 +315,7 @@ async function crawlSections(
   indexedPaths: Set<string>,
   depth: number = 0
 ): Promise<number> {
-  if (depth > MAX_SECTION_DEPTH) return 0;
+  if (depth > effectiveMaxDepth) return 0;
 
   let indexed = 0;
 
@@ -319,7 +326,7 @@ async function crawlSections(
   const childLinks = getChildLinks(html, basePath);
 
   // If this is a leaf page (no child directories) or at max depth, index it
-  if (childLinks.length === 0 || depth === MAX_SECTION_DEPTH) {
+  if (childLinks.length === 0 || depth === effectiveMaxDepth) {
     // This page has content worth indexing
     const text = extractText(html, `${CHARM_BASE}${basePath}`);
     if (text.length < 50) return 0; // Skip near-empty pages
@@ -344,7 +351,7 @@ async function crawlSections(
       model,
       sectionTitle: extractSectionTitle(basePath),
       contentPreview: text.slice(0, CONTENT_PREVIEW_LENGTH),
-      contentFull: text.slice(0, MAX_CONTENT_LENGTH),
+      contentFull: text.slice(0, effectiveMaxContent),
       embedding,
     });
 
@@ -359,9 +366,9 @@ async function crawlSections(
   }
 
   // Recurse into child sections (cap total per variant)
-  const cappedLinks = childLinks.slice(0, MAX_SECTIONS_PER_VARIANT);
+  const cappedLinks = childLinks.slice(0, effectiveMaxSections);
   for (const link of cappedLinks) {
-    if (stats.totalIndexed + indexed >= MAX_SECTIONS_PER_VARIANT * stats.totalVariants + MAX_SECTIONS_PER_VARIANT) {
+    if (stats.totalIndexed + indexed >= effectiveMaxSections * stats.totalVariants + effectiveMaxSections) {
       break; // Safety cap
     }
     const subCount = await crawlSections(link, make, year, model, indexedPaths, depth + 1);

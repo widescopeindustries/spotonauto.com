@@ -179,6 +179,28 @@ export async function getSectionByPath(path: string): Promise<ManualSection | nu
   return rows.length ? mapRow(rows[0]) : null;
 }
 
+/** Find child sections one level deeper than the given prefix path. */
+export async function getChildSections(prefixPath: string): Promise<ManualSection[]> {
+  const db = getPool();
+  const normalized = prefixPath.replace(/\/+$/, '');
+  // Find paths that start with prefix/ and have exactly one more path segment
+  const { rows } = await db.query(
+    `SELECT path, make, year, model, section_title, content_preview, content_full
+     FROM manual_embeddings
+     WHERE path LIKE $1 || '%'
+       AND path != $1
+     ORDER BY section_title ASC
+     LIMIT 200`,
+    [`${normalized}/`],
+  );
+
+  // Filter to direct children only (one more segment)
+  const prefixDepth = normalized.split('/').filter(Boolean).length;
+  return rows
+    .map(mapRow)
+    .filter((r) => r.path.split('/').filter(Boolean).length === prefixDepth + 1);
+}
+
 // ─── Vehicle Discovery ───────────────────────────────────────────────────────
 
 export async function listMakes(): Promise<Array<{ name: string; slug: string; years: number[] }>> {
