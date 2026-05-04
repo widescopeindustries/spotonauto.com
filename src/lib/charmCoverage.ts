@@ -36,6 +36,10 @@ export function getCharmCoverageAvailableYears(): number[] {
   return availableYears;
 }
 
+export function getCharmCoverageMakes(): string[] {
+  return makeNames;
+}
+
 export function getCharmCoverageMakesForYear(year: number): string[] {
   return makeNames.filter((make) =>
     Object.values(coverage[make]).some((years) => years.includes(year)),

@@ -7,7 +7,7 @@
 
 ## 2) Smoke Gate
 - [ ] `npm run smoke:prod` exits 0 against production.
-- [ ] `/blog` and `/pricing` return 404.
+- [ ] `/blog` returns 404 and `/pricing` returns 200.
 - [ ] `/sitemap.xml` and `/repair/sitemap.xml` return XML.
 - [ ] CSP includes `fundingchoicesmessages.google.com`.
 
@@ -43,4 +43,3 @@
 - [ ] Save build log artifact.
 - [ ] Save smoke output artifact.
 - [ ] Screenshot critical route checks and console for release record.
-

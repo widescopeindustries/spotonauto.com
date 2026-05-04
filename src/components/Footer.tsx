@@ -177,10 +177,10 @@ const Footer = () => {
                         © {year} SpotOn Auto. All rights reserved. AI-generated content is for informational purposes only.
                     </p>
                     <div className="flex items-center gap-4">
-                        <span className="text-xs text-[#6E6E80]">Powered by Gemini 2.0</span>
+                        <span className="text-xs text-[#6E6E80]">AI-assisted repair guidance</span>
                         <div className="flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-xs text-[#6E6E80]">All systems operational</span>
+                            <span className="text-xs text-[#6E6E80]">Verified coverage index active</span>
                         </div>
                     </div>
                 </div>

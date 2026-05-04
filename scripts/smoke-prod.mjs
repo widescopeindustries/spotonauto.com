@@ -13,7 +13,7 @@ const checks = [
   { path: '/', expectedStatus: [200], titleIncludes: 'SpotOnAuto' },
   { path: '/auth', expectedStatus: [200] },
   { path: '/diagnose', expectedStatus: [200], bodyIncludes: 'Diagnostic' },
-  { path: '/cel', expectedStatus: [200], bodyIncludes: 'LOOK UP', followRedirects: true },
+  { path: '/cel', expectedStatus: [200], bodyIncludes: 'DTC', followRedirects: true },
   { path: '/second-opinion', expectedStatus: [200], bodyIncludes: 'Diagnose', followRedirects: true },
   { path: '/community', expectedStatus: [200], bodyIncludes: 'Community' },
   { path: '/community/new', expectedStatus: [200, 302, 307, 308] },

@@ -1016,8 +1016,8 @@ const highIntentPages: ToolPage[] = [
 //  THE MACHINE — merge hand-crafted (rich) + auto-generated (scale)
 // ═══════════════════════════════════════════════════════════════════
 
-import { generateAllToolPages } from './tool-machine';
-import { VALID_TASKS, VEHICLE_PRODUCTION_YEARS } from './vehicles';
+import { generateAllToolPages } from './tool-machine.ts';
+import { VALID_TASKS, VEHICLE_PRODUCTION_YEARS } from './vehicles.ts';
 
 export type ToolType = ToolPage['toolType'];
 

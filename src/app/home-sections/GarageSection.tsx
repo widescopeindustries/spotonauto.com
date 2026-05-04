@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Wrench, Plus, Car, Calendar, ChevronRight, X, CheckCircle2, AlertCircle } from 'lucide-react'
 import GarageWorkshopScene from '@/components/home/GarageWorkshopScene'
@@ -207,10 +208,10 @@ export default function GarageSection() {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-[#6E6E80]">Est. cost: {event.cost}</span>
-                          <a href="/repair" className="text-xs text-[#FF6B00] hover:text-[#FF9500] transition-colors flex items-center gap-1">
+                          <Link href="/repair" className="text-xs text-[#FF6B00] hover:text-[#FF9500] transition-colors flex items-center gap-1">
                             View Guide
                             <ChevronRight className="w-3 h-3" />
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </motion.div>

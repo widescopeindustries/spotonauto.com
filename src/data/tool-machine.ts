@@ -9,8 +9,8 @@
  * (they have richer, manually researched specs).
  */
 
-import { NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, isEvModel } from './vehicles';
-import type { ToolPage, ToolGeneration, ToolFAQ } from './tools-pages';
+import { NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, isEvModel } from './vehicles.ts';
+import type { ToolPage, ToolGeneration, ToolFAQ } from './tools-pages.ts';
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
