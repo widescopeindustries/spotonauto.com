@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { buildVehicleLaneData } from '@/lib/vehicleLane';
 import { slugifyRoutePart } from '@/data/vehicles';
+import { canonicalizeVehicleIdentity } from '@/lib/vehicleIdentity';
 import VehicleLaneClient from './VehicleLaneClient';
 
 export const revalidate = 21600; // 6 hour ISR
@@ -13,10 +14,14 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { year, make, model } = await params;
-  const dm = decodeURIComponent(make);
-  const dmo = decodeURIComponent(model);
-  const title = `${year} ${dm} ${dmo} — Factory Service Data & Diagnostics | SpotOnAuto`;
-  const description = `Free access to OEM diagnostic flowcharts, trouble codes, wiring diagrams, and repair procedures for the ${year} ${dm} ${dmo}. Straight from the factory service manual.`;
+  const identity = canonicalizeVehicleIdentity({
+    year,
+    make: decodeURIComponent(make),
+    model: decodeURIComponent(model),
+  });
+  const vehicleLabel = `${identity.year} ${identity.displayMake} ${identity.displayModel}`;
+  const title = `${vehicleLabel} — Factory Service Data & Diagnostics | SpotOnAuto`;
+  const description = `Free access to OEM diagnostic flowcharts, trouble codes, wiring diagrams, and repair procedures for the ${vehicleLabel}. Straight from the factory service manual.`;
   const pageUrl = `https://spotonauto.com/vehicles/${year}/${make}/${model}`;
 
   return {
@@ -36,7 +41,8 @@ export default async function VehicleLanePage({ params }: PageProps) {
   if (!data) notFound();
 
   const v = data.vehicle;
-  const displayName = `${v.year} ${v.make} ${v.model}`;
+  const identity = canonicalizeVehicleIdentity({ year: v.year, make: v.make, model: v.model });
+  const displayName = `${identity.year} ${identity.displayMake} ${identity.displayModel}`;
   const basePath = `/vehicles/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}`;
 
   return (

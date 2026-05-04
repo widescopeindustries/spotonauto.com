@@ -25,7 +25,7 @@ function NewThreadFormInner() {
 
       <div className="glass p-6 rounded-xl space-y-5">
         <p className="text-gray-300">
-          Reading is open for everyone. Posting requires a signed-in account and moderator review while we finish migration hardening.
+          Reading is open for everyone. Posting requires a signed-in account and moderator review while the forum is in beta.
         </p>
 
         <div>

@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getGuideById } from '@/services/storageService';
 import { RepairGuide } from '@/types';
-import { ArrowLeft, Wrench, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Wrench, AlertTriangle, BookOpen } from 'lucide-react';
 import AuthProviders from '@/components/AuthProviders';
 
 function HistoryDetailPageInner() {
@@ -131,6 +131,29 @@ function HistoryDetailPageInner() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {guide.sources && guide.sources.length > 0 && (
+          <div className="mt-8 glass rounded-xl border border-cyan-500/10 p-6">
+            <div className="mb-4 flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-cyan-400" />
+              <h2 className="text-lg font-bold text-white">Manuals & Sources Referenced</h2>
+            </div>
+            <div className="space-y-3">
+              {guide.sources.map((source, index) => (
+                <a
+                  key={`${source.uri}-${index}`}
+                  href={source.uri}
+                  className="block rounded-lg border border-white/10 bg-white/[0.03] p-3 transition-all hover:border-cyan-500/30"
+                >
+                  <div className="text-sm font-medium text-white">{source.title || 'Factory manual reference'}</div>
+                  {source.snippet && (
+                    <p className="mt-1 text-xs leading-5 text-gray-400">{source.snippet}</p>
+                  )}
+                </a>
+              ))}
+            </div>
           </div>
         )}
       </div>

@@ -1,11 +1,12 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getCategoryBySlug, FORUM_CATEGORIES } from '@/data/forumCategories';
-import { getThreadsByCategory } from '@/data/forumThreads';
+import { getForumCategoryCounts, getThreadsByCategory } from '@/data/forumThreads';
 import ThreadListItem from '@/components/forum/ThreadListItem';
 import Pagination from '@/components/forum/Pagination';
 
 const THREADS_PER_PAGE = 20;
+const COMMUNITY_LIVE_THREAD_THRESHOLD = 20;
 
 interface PageProps {
   params: Promise<{ category: string }>;
@@ -20,11 +21,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { category: slug } = await params;
   const cat = getCategoryBySlug(slug);
   if (!cat) return {};
+  const totalThreads = FORUM_CATEGORIES.reduce((sum, category) => {
+    return sum + getForumCategoryCounts(category.slug).threadCount;
+  }, 0);
+  const isLive = totalThreads >= COMMUNITY_LIVE_THREAD_THRESHOLD;
 
   return {
     title: `${cat.name} — Community Forum | SpotOn Auto`,
     description: `Community discussions for ${cat.name.toLowerCase()}.`,
     alternates: { canonical: `https://spotonauto.com/community/${slug}` },
+    robots: isLive ? { index: true, follow: true } : { index: false, follow: true },
   };
 }
 
@@ -44,7 +50,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       <div className="max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-white mb-4">{cat.name}</h1>
         <p className="text-gray-400 mb-3">
-          Reading is open. Posting requires an account and moderator approval during migration hardening.
+          Reading is open. Posting requires an account and moderator approval while the forum is in beta.
         </p>
         <p className="text-xs text-gray-500 mb-6">
           Moderation rules: include year/make/model, avoid unsafe advice without warnings, and keep replies respectful.

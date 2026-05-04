@@ -95,6 +95,7 @@ export interface HistoryItem {
   title: string;
   vehicle: string;
   timestamp: number;
+  manualReferenceCount?: number;
 }
 
 export type AffiliateProvider = 'Amazon' | 'Topdon';
