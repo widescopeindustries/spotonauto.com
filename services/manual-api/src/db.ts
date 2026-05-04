@@ -20,8 +20,11 @@ function getPool(): Pool {
 }
 
 function inferSource(path: string): 'lemon' | 'charm' | 'unknown' {
-  if (path.includes('/lemon/') || path.includes('lemon-manuals')) return 'lemon';
-  if (path.includes('/charm/') || path.includes('charm.')) return 'charm';
+  const lower = path.toLowerCase();
+  if (lower.includes('/lemon/') || lower.includes('lemon-manuals') || lower.includes('lemon2025')) return 'lemon';
+  if (lower.includes('/charm/') || lower.includes('charm.')) return 'charm';
+  // Heuristic: paths starting with /Make/Year/Model/ are typically from the lemon archive
+  if (/^\/[A-Za-z]+\/\d{4}\//.test(path)) return 'lemon';
   return 'unknown';
 }
 
@@ -44,16 +47,19 @@ function mapRow(row: Record<string, unknown>): ManualSection {
     model: String(row.model || ''),
     sectionTitle: String(row.section_title || ''),
     contentPreview: String(row.content_preview || ''),
-    contentFull: typeof row.content_full === 'string' ? row.content_full : undefined,
+    contentFull: typeof row.content_full === 'string' ? String(row.content_full || '') : undefined,
     source: inferSource(String(row.path || '')),
   };
 }
+
+// ─── Core Search ─────────────────────────────────────────────────────────────
 
 export async function searchManuals(args: {
   make?: string;
   year?: number;
   model?: string;
   query?: string;
+  system?: string;
   limit?: number;
 }): Promise<ManualSection[]> {
   const db = getPool();
@@ -69,28 +75,99 @@ export async function searchManuals(args: {
     conditions.push(`year = $${params.length}`);
   }
   if (args.model) {
-    params.push(args.model);
-    conditions.push(`LOWER(model) = LOWER($${params.length})`);
+    params.push(`%${args.model}%`);
+    conditions.push(`LOWER(model) LIKE LOWER($${params.length})`);
   }
   if (args.query) {
     params.push(`%${args.query}%`);
-    conditions.push(`(section_title ILIKE $${params.length} OR content_preview ILIKE $${params.length} OR content_full ILIKE $${params.length})`);
+    conditions.push(
+      `(section_title ILIKE $${params.length} OR content_preview ILIKE $${params.length} OR content_full ILIKE $${params.length})`
+    );
+  }
+  if (args.system) {
+    params.push(`%${args.system}%`);
+    conditions.push(`path ILIKE $${params.length}`);
   }
 
   const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-  const limit = Math.min(Math.max(args.limit || 50, 1), 500);
+  const limit = Math.min(Math.max(args.limit || 20, 1), 100);
 
   const { rows } = await db.query(
     `SELECT path, make, year, model, section_title, content_preview, content_full
      FROM manual_embeddings
      ${whereClause}
-     ORDER BY section_title ASC
+     ORDER BY year DESC, make ASC, model ASC, section_title ASC
      LIMIT $${params.length + 1}`,
     [...params, limit],
   );
 
   return rows.map(mapRow);
 }
+
+// ─── Fuzzy / Ranked Search ───────────────────────────────────────────────────
+
+export interface RankedSearchResult extends ManualSection {
+  relevance: number;
+}
+
+export async function searchManualsRanked(args: {
+  make?: string;
+  year?: number;
+  model?: string;
+  query: string;
+  limit?: number;
+}): Promise<RankedSearchResult[]> {
+  const db = getPool();
+  const conditions: string[] = [];
+  const params: (string | number)[] = [];
+
+  if (args.make) {
+    params.push(args.make);
+    conditions.push(`LOWER(make) = LOWER($${params.length})`);
+  }
+  if (args.year) {
+    params.push(args.year);
+    conditions.push(`year = $${params.length}`);
+  }
+  if (args.model) {
+    params.push(`%${args.model}%`);
+    conditions.push(`LOWER(model) LIKE LOWER($${params.length})`);
+  }
+
+  const queryTerm = args.query.trim();
+  params.push(`%${queryTerm}%`);
+  const queryParamIndex = params.length;
+
+  // The query term must match at least one field
+  conditions.push(
+    `(section_title ILIKE $${queryParamIndex} OR content_preview ILIKE $${queryParamIndex} OR content_full ILIKE $${queryParamIndex})`
+  );
+
+  const whereClause = `WHERE ${conditions.join(' AND ')}`;
+  const limit = Math.min(Math.max(args.limit || 20, 1), 100);
+
+  const { rows } = await db.query(
+    `SELECT path, make, year, model, section_title, content_preview, content_full,
+      CASE
+        WHEN section_title ILIKE $${queryParamIndex} THEN 3
+        WHEN content_preview ILIKE $${queryParamIndex} THEN 2
+        WHEN content_full ILIKE $${queryParamIndex} THEN 1
+        ELSE 0
+      END AS relevance
+     FROM manual_embeddings
+     ${whereClause}
+     ORDER BY relevance DESC, year DESC, make ASC, model ASC
+     LIMIT $${params.length + 1}`,
+    [...params, limit],
+  );
+
+  return rows.map((row) => ({
+    ...mapRow(row),
+    relevance: Number(row.relevance || 0),
+  }));
+}
+
+// ─── Section by Path ─────────────────────────────────────────────────────────
 
 export async function getSectionByPath(path: string): Promise<ManualSection | null> {
   const db = getPool();
@@ -101,6 +178,8 @@ export async function getSectionByPath(path: string): Promise<ManualSection | nu
   );
   return rows.length ? mapRow(rows[0]) : null;
 }
+
+// ─── Vehicle Discovery ───────────────────────────────────────────────────────
 
 export async function listMakes(): Promise<Array<{ name: string; slug: string; years: number[] }>> {
   const db = getPool();
@@ -136,7 +215,76 @@ export async function listModels(args: { make: string; year: number }): Promise<
   }));
 }
 
-export async function getDtcSections(code: string, make?: string, year?: number): Promise<ManualSection[]> {
+/** List all distinct model variants for a make/year, grouped by base model name. */
+export async function listVariants(args: { make: string; year: number }): Promise<
+  Array<{
+    baseModel: string;
+    variants: Array<{ name: string; slug: string }>;
+  }>
+> {
+  const models = await listModels(args);
+  const grouped = new Map<string, Array<{ name: string; slug: string }>>();
+
+  for (const m of models) {
+    // Extract base model: e.g. "Civic EX-L" -> "Civic", "Grand Cherokee 4WD" -> "Grand Cherokee"
+    const baseMatch = m.name.match(/^([A-Za-z]+(?:\s+[A-Za-z]+)?)\b/);
+    const base = baseMatch ? baseMatch[1] : m.name;
+    if (!grouped.has(base)) grouped.set(base, []);
+    grouped.get(base)!.push(m);
+  }
+
+  return Array.from(grouped.entries())
+    .map(([baseModel, variants]) => ({ baseModel, variants }))
+    .sort((a, b) => a.baseModel.localeCompare(b.baseModel));
+}
+
+// ─── System / Category Discovery ─────────────────────────────────────────────
+
+export async function listSystems(args: { make?: string; year?: number; model?: string }): Promise<string[]> {
+  const db = getPool();
+  const conditions: string[] = [];
+  const params: (string | number)[] = [];
+
+  if (args.make) {
+    params.push(args.make);
+    conditions.push(`LOWER(make) = LOWER($${params.length})`);
+  }
+  if (args.year) {
+    params.push(args.year);
+    conditions.push(`year = $${params.length}`);
+  }
+  if (args.model) {
+    params.push(`%${args.model}%`);
+    conditions.push(`LOWER(model) LIKE LOWER($${params.length})`);
+  }
+
+  const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  const { rows } = await db.query(
+    `SELECT DISTINCT path FROM manual_embeddings ${whereClause} LIMIT 5000`,
+    params,
+  );
+
+  const systems = new Set<string>();
+  for (const row of rows) {
+    const path = String(row.path || '');
+    // Paths are like /Make/Year/Model/System/Section
+    const segments = path.split('/').filter(Boolean);
+    if (segments.length >= 4) {
+      systems.add(decodeURIComponent(segments[3]));
+    }
+  }
+
+  return Array.from(systems).sort((a, b) => a.localeCompare(b));
+}
+
+// ─── DTC Search ──────────────────────────────────────────────────────────────
+
+export async function getDtcSections(
+  code: string,
+  make?: string,
+  year?: number,
+): Promise<ManualSection[]> {
   const db = getPool();
   const conditions = [`content_full ILIKE $1`];
   const params: (string | number)[] = [`%${code.toUpperCase()}%`];
@@ -161,6 +309,52 @@ export async function getDtcSections(code: string, make?: string, year?: number)
 
   return rows.map(mapRow);
 }
+
+// ─── Wiring Diagram Search ───────────────────────────────────────────────────
+
+export async function getWiringDiagramSections(args: {
+  make?: string;
+  year?: number;
+  model?: string;
+  system?: string;
+  limit?: number;
+}): Promise<ManualSection[]> {
+  const db = getPool();
+  const conditions: string[] = [`(section_title ILIKE '%wiring%' OR section_title ILIKE '%diagram%' OR path ILIKE '%/wiring/%')`];
+  const params: (string | number)[] = [];
+
+  if (args.make) {
+    params.push(args.make);
+    conditions.push(`LOWER(make) = LOWER($${params.length})`);
+  }
+  if (args.year) {
+    params.push(args.year);
+    conditions.push(`year = $${params.length}`);
+  }
+  if (args.model) {
+    params.push(`%${args.model}%`);
+    conditions.push(`LOWER(model) LIKE LOWER($${params.length})`);
+  }
+  if (args.system) {
+    params.push(`%${args.system}%`);
+    conditions.push(`(path ILIKE $${params.length} OR section_title ILIKE $${params.length})`);
+  }
+
+  const limit = Math.min(Math.max(args.limit || 20, 1), 100);
+
+  const { rows } = await db.query(
+    `SELECT path, make, year, model, section_title, content_preview, content_full
+     FROM manual_embeddings
+     WHERE ${conditions.join(' AND ')}
+     ORDER BY year DESC, make ASC, model ASC, section_title ASC
+     LIMIT $${params.length + 1}`,
+    [...params, limit],
+  );
+
+  return rows.map(mapRow);
+}
+
+// ─── Health ──────────────────────────────────────────────────────────────────
 
 export async function getHealth(): Promise<{
   sections: number;
