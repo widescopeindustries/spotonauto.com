@@ -32,6 +32,7 @@ import { GoogleGenAI } from '@google/genai';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import pLimit from 'p-limit';
 import {
   getIndexedPaths,
   getManualEmbeddingsBackend,
@@ -80,7 +81,6 @@ const MAX_CONTENT_LENGTH = 24000;    // Max chars of content to store per sectio
 const CONTENT_PREVIEW_LENGTH = 800;  // Chars for content_preview column
 const MAX_SECTION_DEPTH = 4;         // How deep to crawl into sub-sections (was 2, now 4 for leaf procedures)
 const EMBEDDING_DELAY_MS = 45;       // ~1300 req/min, well under 1500 limit
-const FETCH_DELAY_MS = 100;          // Politeness delay between HTTP fetches
 const FETCH_TIMEOUT_MS = 15000;      // Timeout for HTTP requests
 const MAX_SECTIONS_PER_VARIANT = 200; // Cap sections per vehicle variant (was 50)
 
@@ -90,6 +90,9 @@ const filterMake = getArg('--make');
 const filterYear = getArg('--year');
 const dryRun = args.includes('--dry-run');
 const deepMode = args.includes('--deep');
+const concurrency = Math.max(1, parseInt(getArg('--concurrency') || '1', 10));
+const fetchDelayArg = getArg('--delay');
+const FETCH_DELAY_MS = fetchDelayArg ? parseInt(fetchDelayArg, 10) : (concurrency > 1 ? 10 : 100);
 
 function getArg(flag: string): string | null {
   const idx = args.indexOf(flag);
@@ -100,6 +103,9 @@ function getArg(flag: string): string | null {
 const effectiveMaxDepth = deepMode ? 6 : MAX_SECTION_DEPTH;
 const effectiveMaxSections = deepMode ? 500 : MAX_SECTIONS_PER_VARIANT;
 const effectiveMaxContent = deepMode ? 48000 : MAX_CONTENT_LENGTH;
+
+// Concurrency limiter for parallel I/O within a worker
+const limit = pLimit(concurrency);
 
 // ─── Initialize clients ─────────────────────────────────────────────────────
 
@@ -362,15 +368,19 @@ async function crawlSections(
     return indexed;
   }
 
-  // Recurse into child sections (cap total per variant)
+  // Recurse into child sections concurrently (cap total per variant)
   const cappedLinks = childLinks.slice(0, effectiveMaxSections);
-  for (const link of cappedLinks) {
-    if (stats.totalIndexed + indexed >= effectiveMaxSections * stats.totalVariants + effectiveMaxSections) {
-      break; // Safety cap
-    }
-    const subCount = await crawlSections(link, make, year, model, indexedPaths, depth + 1);
-    indexed += subCount;
-  }
+  const results = await Promise.all(
+    cappedLinks.map((link) =>
+      limit(async () => {
+        if (stats.totalIndexed + indexed >= effectiveMaxSections * stats.totalVariants + effectiveMaxSections) {
+          return 0; // Safety cap
+        }
+        return crawlSections(link, make, year, model, indexedPaths, depth + 1);
+      })
+    )
+  );
+  indexed += results.reduce((a, b) => a + b, 0);
 
   return indexed;
 }
@@ -461,10 +471,12 @@ async function processYear(make: string, year: number): Promise<void> {
     return;
   }
 
-  console.log(`  Found ${variantLinks.length} variant(s)`);
-  for (const variantLink of variantLinks) {
-    await processVariant(make, year, variantLink, indexedPaths);
-  }
+  console.log(`  Found ${variantLinks.length} variant(s), concurrency=${concurrency}`);
+  await Promise.all(
+    variantLinks.map((variantLink) =>
+      limit(() => processVariant(make, year, variantLink, indexedPaths))
+    )
+  );
 }
 
 /**
@@ -522,6 +534,8 @@ async function main(): Promise<void> {
   if (dryRun) console.log('[DRY RUN MODE] No data will be written to the embeddings store.\n');
   if (filterMake) console.log(`Filtering to make: ${filterMake}`);
   if (filterYear) console.log(`Filtering to year: ${filterYear}`);
+  if (concurrency > 1) console.log(`Concurrency: ${concurrency} (parallel fetches)`);
+  console.log(`Fetch delay: ${FETCH_DELAY_MS}ms`);
   console.log(`Embeddings backend: ${embeddingsBackend}\n`);
 
   const health = await testManualEmbeddingsConnection();

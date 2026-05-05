@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { ChevronRight, ChevronLeft, BookOpen, Zap, Wrench, AlertTriangle, Activity } from 'lucide-react';
 import SatellitePanel, { type PanelType } from './SatellitePanel';
+import JarvisWiringOverlay from './JarvisWiringOverlay';
+import JarvisTorqueTable from './JarvisTorqueTable';
 
 interface RelatedSection {
   id: string;
@@ -26,6 +28,11 @@ interface JarvisManualViewerProps {
   wiringDiagrams?: RelatedSection[];
   isNavigation?: boolean;
   navLinks?: Array<{ label: string; href: string }>;
+  vehicleInfo?: {
+    make?: string;
+    year?: string;
+    model?: string;
+  };
 }
 
 export default function JarvisManualViewer({
@@ -40,10 +47,13 @@ export default function JarvisManualViewer({
   wiringDiagrams = [],
   isNavigation,
   navLinks = [],
+  vehicleInfo = {},
 }: JarvisManualViewerProps) {
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [wiringOpen, setWiringOpen] = useState(false);
+  const [torqueOpen, setTorqueOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -317,12 +327,22 @@ export default function JarvisManualViewer({
                 {dtcCodes.length} DTC
               </button>
             )}
-            {wiringDiagrams.length > 0 && (
-              <button className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-violet-500/20 bg-violet-500/5 text-violet-300 text-xs hover:bg-violet-500/10 transition-all font-mono">
+            {(wiringDiagrams.length > 0 || (vehicleInfo.make && vehicleInfo.year && vehicleInfo.model)) && (
+              <button
+                onClick={() => setWiringOpen(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-violet-500/20 bg-violet-500/5 text-violet-300 text-xs hover:bg-violet-500/10 transition-all font-mono"
+              >
                 <Zap className="w-3 h-3" />
-                {wiringDiagrams.length} WIRING
+                {wiringDiagrams.length > 0 ? `${wiringDiagrams.length} WIRING` : 'WIRING'}
               </button>
             )}
+            <button
+              onClick={() => setTorqueOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-orange-500/20 bg-orange-500/5 text-orange-300 text-xs hover:bg-orange-500/10 transition-all font-mono"
+            >
+              <Wrench className="w-3 h-3" />
+              TORQUE
+            </button>
             <div className="flex-1" />
             <span className="text-[10px] text-white/20 font-mono">
               RENDER: {(typeof window !== 'undefined' ? window.devicePixelRatio : 1).toFixed(1)}x
@@ -378,6 +398,19 @@ export default function JarvisManualViewer({
           )}
         </div>
       </div>
+
+      {/* Overlays */}
+      <JarvisWiringOverlay
+        isOpen={wiringOpen}
+        onClose={() => setWiringOpen(false)}
+        vehicleInfo={vehicleInfo}
+      />
+      <JarvisTorqueTable
+        isOpen={torqueOpen}
+        onClose={() => setTorqueOpen(false)}
+        vehicle={vehicle}
+        contentHtml={contentHtml}
+      />
 
       {/* Global scanline animation style */}
       <style jsx global>{`

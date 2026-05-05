@@ -73,7 +73,7 @@ function getTimeoutMs(value: string | undefined, fallback: number): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-function getLocalPool(): Pool | null {
+export function getLocalPool(): Pool | null {
   if (localPool !== undefined) return localPool;
 
   const connectionString = getLocalDatabaseUrl();
@@ -575,4 +575,154 @@ export async function getChildSections(prefixPath: string): Promise<ManualSectio
   return mapSectionRows(rows).filter(
     (r) => r.path.split('/').filter(Boolean).length === prefixDepth + 1,
   );
+}
+
+// ─── DB-first coverage queries (for manual-navigator) ───────────────────────
+
+export async function getDbCoverageYears(): Promise<number[]> {
+  const pool = getLocalPool();
+  if (!pool) return [];
+  await ensureLocalSchema();
+
+  const { rows } = await pool.query(
+    `SELECT DISTINCT year FROM manual_embeddings ORDER BY year DESC`,
+  );
+  return rows.map((r) => Number(r.year)).filter((y) => Number.isFinite(y));
+}
+
+export async function getDbCoverageMakesForYear(year: number): Promise<string[]> {
+  const pool = getLocalPool();
+  if (!pool) return [];
+  await ensureLocalSchema();
+
+  const { rows } = await pool.query(
+    `SELECT DISTINCT make FROM manual_embeddings WHERE year = $1 ORDER BY make ASC`,
+    [year],
+  );
+  return rows.map((r) => String(r.make || '')).filter(Boolean);
+}
+
+export async function getDbCoverageModelsForYearMake(
+  year: number,
+  make: string,
+): Promise<string[]> {
+  const pool = getLocalPool();
+  if (!pool) return [];
+  await ensureLocalSchema();
+
+  const { rows } = await pool.query(
+    `SELECT DISTINCT model FROM manual_embeddings
+     WHERE year = $1 AND LOWER(make) = LOWER($2)
+     ORDER BY model ASC`,
+    [year, make],
+  );
+  return rows.map((r) => String(r.model || '')).filter(Boolean);
+}
+
+export async function getDbCoverageStats(): Promise<{
+  makeCount: number;
+  modelCount: number;
+  comboCount: number;
+}> {
+  const pool = getLocalPool();
+  if (!pool) return { makeCount: 0, modelCount: 0, comboCount: 0 };
+  await ensureLocalSchema();
+
+  const { rows } = await pool.query(
+    `SELECT
+       count(DISTINCT make)::int AS make_count,
+       count(DISTINCT model)::int AS model_count,
+       count(DISTINCT make || '-' || model)::int AS make_model_count
+     FROM manual_embeddings`,
+  );
+  const row = rows[0] || {};
+  return {
+    makeCount: Number(row.make_count || 0),
+    modelCount: Number(row.model_count || 0),
+    comboCount: Number(row.make_model_count || 0),
+  };
+}
+
+export async function isInDbCoverage(
+  year: number,
+  make: string,
+  model: string,
+): Promise<boolean> {
+  const pool = getLocalPool();
+  if (!pool) return false;
+  await ensureLocalSchema();
+
+  const { rows } = await pool.query(
+    `SELECT 1 FROM manual_embeddings
+     WHERE year = $1 AND LOWER(make) = LOWER($2) AND LOWER(model) = LOWER($3)
+     LIMIT 1`,
+    [year, make, model],
+  );
+  return rows.length > 0;
+}
+
+export interface DbResolvedManualPath {
+  path: string;
+  exact: boolean;
+  candidates: Array<{ label: string; path: string }>;
+}
+
+export async function resolveDbManualPath(
+  year: number,
+  make: string,
+  model: string,
+): Promise<DbResolvedManualPath | null> {
+  const pool = getLocalPool();
+  if (!pool) return null;
+  await ensureLocalSchema();
+
+  // 1. Exact model match: look for paths like /make/year/model/...
+  const exactPrefix = `/${make}/${year}/${model}`;
+  const { rows: exactRows } = await pool.query(
+    `SELECT path FROM manual_embeddings
+     WHERE LOWER(path) LIKE LOWER($1 || '/%')
+     LIMIT 1`,
+    [exactPrefix],
+  );
+
+  if (exactRows.length > 0) {
+    const firstPath = String(exactRows[0].path || '');
+    // Build the browse path: encode each segment
+    const browsePath = firstPath
+      .split('/')
+      .filter(Boolean)
+      .map((s) => encodeURIComponent(s))
+      .join('/');
+    return {
+      path: `/manual/${browsePath}`,
+      exact: true,
+      candidates: [],
+    };
+  }
+
+  // 2. Prefix match: any path for this make+year
+  const yearPrefix = `/${make}/${year}`;
+  const { rows: yearRows } = await pool.query(
+    `SELECT DISTINCT model FROM manual_embeddings
+     WHERE LOWER(path) LIKE LOWER($1 || '/%')
+     LIMIT 20`,
+    [yearPrefix],
+  );
+
+  if (yearRows.length === 0) return null;
+
+  // 3. Ambiguous: multiple models for this make+year — offer candidates
+  const candidates = yearRows
+    .map((r) => String(r.model || ''))
+    .filter(Boolean)
+    .map((m) => ({
+      label: m,
+      path: `/manual/${encodeURIComponent(make)}/${encodeURIComponent(String(year))}/${encodeURIComponent(m)}`,
+    }));
+
+  return {
+    path: `/manual/${encodeURIComponent(make)}/${encodeURIComponent(String(year))}`,
+    exact: false,
+    candidates,
+  };
 }

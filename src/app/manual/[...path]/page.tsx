@@ -155,6 +155,15 @@ export default async function ManualBrowserPage({ params }: PageProps) {
         childSections={children}
         isNavigation={page.isNavigation}
         navLinks={navLinks}
+        vehicleInfo={
+          normalizedPath.length >= 3
+            ? {
+                make: normalizedPath[0],
+                year: normalizedPath[1],
+                model: normalizedPath[2],
+              }
+            : {}
+        }
       />
       <div className="max-w-7xl mx-auto px-4 pb-12">
         <SearchLandingMonetizationRail

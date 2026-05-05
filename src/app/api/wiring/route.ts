@@ -6,6 +6,11 @@ import {
   fetchWiringVariants,
   fetchWiringYears,
 } from '@/lib/wiringData';
+import {
+  fetchDbWiringVariants,
+  fetchDbWiringDiagramIndex,
+  fetchDbWiringDiagramImages,
+} from '@/lib/wiringDbData';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -28,7 +33,9 @@ export async function GET(req: NextRequest) {
       const make = searchParams.get('make');
       const year = searchParams.get('year');
       if (!make || !year) return NextResponse.json({ error: 'make and year required' }, { status: 400 });
-      const variants = await fetchWiringVariants(make, year);
+      // DB-first
+      const dbVariants = await fetchDbWiringVariants(make, year);
+      const variants = dbVariants ?? await fetchWiringVariants(make, year);
       return NextResponse.json({ variants }, { headers: { 'Cache-Control': 'public, max-age=86400' } });
     }
 
@@ -37,14 +44,18 @@ export async function GET(req: NextRequest) {
       const year = searchParams.get('year');
       const variant = searchParams.get('variant');
       if (!make || !year || !variant) return NextResponse.json({ error: 'make, year, variant required' }, { status: 400 });
-      const data = await fetchWiringDiagramIndex(make, year, variant);
+      // DB-first
+      const dbData = await fetchDbWiringDiagramIndex(make, year, variant);
+      const data = dbData ?? await fetchWiringDiagramIndex(make, year, variant);
       return NextResponse.json(data, { headers: { 'Cache-Control': 'public, max-age=3600' } });
     }
 
     if (action === 'image') {
       const url = searchParams.get('url');
       if (!url) return NextResponse.json({ error: 'url required' }, { status: 400 });
-      const data = await fetchWiringDiagramImages(url);
+      // DB-first (url may be a DB path like /Make/Year/Variant/...)
+      const dbData = await fetchDbWiringDiagramImages(url);
+      const data = dbData ?? await fetchWiringDiagramImages(url);
       return NextResponse.json(data, { headers: { 'Cache-Control': 'public, max-age=86400' } });
     }
 
