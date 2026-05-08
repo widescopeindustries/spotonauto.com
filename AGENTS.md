@@ -183,3 +183,234 @@ Update it when product decisions, traps, or standing preferences change.
 - For TypeScript changes, verify with `npx tsc --noEmit`.
 - The root app `tsconfig.json` should exclude `workers/`; the Cloudflare worker is its own TypeScript project and should be checked separately.
 - Prefer direct, user-visible fixes over speculative refactors.
+
+
+## Corpus Deep-Dive Knowledge (2026-05-08)
+
+### The Two Corpuses
+
+**CHARM (charm.li)** — Operation CHARM, "Collection of High-quality Auto Repair Manuals"
+- Coverage: 1982–2013 (some makes to 2014)
+- ~24,935 vehicle manifests, 52 makes
+- Data: 548GB images.mtbl + 34GB pages.mtbl + 5MB index.json
+- Hosted in Ukraine (Kyiv), nginx, .li TLD (Liechtenstein)
+- Now shows LEMON redirect banner but all manual pages still serve
+- Torrent download available (~700GB)
+- Contact: operation-charm@tuta.io
+
+**LEMON (lemon-manuals.la / lemon-manuals.org.ua)** — "Spiritual successor to CHARM"
+- Coverage: 1960–2025
+- ~279,988 vehicle manifests, 65 makes
+- Data: 481GB images.mtbl + 31GB pages.mtbl + 142MB index.json
+- Contains ALL CHARM manuals plus 2014+ content
+- Finer granularity: trim levels, transmission types, VIN codes
+- Launched April 5, 2026
+
+**Format:** Both use mtbl (sorted string table) — compressed key-value.
+- CHARM keys = paths; values = `SPECIAL_/` or `fileID,timestamp`
+- LEMON keys include `bulletin_hash_TYPE` pattern
+- Backend binary: `lemon-website-linux-x86_64-musl` serves both on localhost:8080
+
+### Site Tree Structure (both CHARM and LEMON)
+
+```
+/{make}/{year}/{model engine}/
+  ├── Repair and Diagnosis/
+  │   ├── A L L Diagnostic Trouble Codes (DTC)/
+  │   ├── Relays and Modules/
+  │   ├── Sensors and Switches/
+  │   ├── Maintenance/
+  │   ├── Engine, Cooling and Exhaust/
+  │   ├── Powertrain Management/
+  │   ├── Transmission and Drivetrain/
+  │   ├── Brakes and Traction Control/
+  │   ├── Starting and Charging/
+  │   ├── Power and Ground Distribution/
+  │   ├── Steering and Suspension/
+  │   ├── Heating and Air Conditioning/
+  │   ├── Restraints and Safety Systems/
+  │   ├── Accessories and Optional Equipment/
+  │   ├── Body and Frame/
+  │   ├── Cruise Control/
+  │   ├── Instrument Panel, Gauges and Warning Indicators/
+  │   ├── Lighting and Horns/
+  │   ├── Windows and Glass/
+  │   ├── Wiper and Washer Systems/
+  │   ├── Service Precautions/
+  │   ├── Application and ID/
+  │   ├── Locations/
+  │   ├── Diagrams/
+  │   ├── Specifications/
+  │   ├── Technical Service Bulletins/
+  │   ├── Diagnostic Trouble Codes/
+  │   └── Tools and Equipment/
+  ├── Parts and Labor/
+  │   └── (parallel tree with Labor Times + Parts Information)
+  ├── (Download .zip for offline use)
+  └── (Download .zip with better file names)
+```
+
+### Content Types That Actually Render
+
+| Type | Location | Example | Status |
+|---|---|---|---|
+| **Service and Repair** | Component leaf pages | Oil Filter Replacement | ✅ Rich step-by-step with images, torque specs |
+| **Description and Operation** | Component leaf pages | MAF sensor theory, DTC references | ✅ Text + images |
+| **DTC Code Charts** | `/A L L Diagnostic Trouble Codes/Testing and Inspection/{P|B|C|U} Code Charts/{code}/` | P0101, P0300, B2191 | ✅ **Diagnostic flow chart images** + circuit description + wiring diagrams. This is where electrical diagnosis lives. |
+| **Locations** | Component leaf pages | "LF of engine compartment, on air intake duct" | ✅ Short text |
+| **Diagrams** | Various tree paths | Wiring diagrams, electrical schematics, connector views | ✅ Image-based. Some have clickable `oxe-region` hotspots linking to related pages. |
+| **Specifications** | Various tree paths | Torque specs, capacities, mechanical standards | ✅ Tables when present |
+| **Testing and Inspection** | System-level paths (e.g. Powertrain Mgmt) | Symptom diagnostics, component tests | ⚠️ Often 404 at component level. Exists at broader system level. |
+| **Maintenance/Fluids** | Maintenance tree | Oil capacity, coolant type, service intervals | ❌ Mostly 404 on CHARM. **LEMON has real Fluids pages with capacity tables.** |
+| **TSBs** | Technical Service Bulletins tree | Bulletin text, supersession notices | ⚠️ Some have content, many are folder shells |
+
+### Critical Discovery: Diagnostic Flow Charts Are CODE-DRIVEN
+
+The factory diagnostic logic does NOT live under component pages. It lives under **DTC pages**.
+
+**Example path:**
+```
+/Chevrolet/1998/S10/T10 Blazer 4WD V6-4.3L VIN W/
+  Repair and Diagnosis/
+    A L L Diagnostic Trouble Codes ( DTC )/
+      Testing and Inspection/
+        P Code Charts/
+          P0101/
+```
+
+The P0101 page contains:
+1. Multiple diagnostic chart images (flow charts with if-then branches)
+2. Wiring diagram images
+3. Circuit description text
+4. Clickable `oxe-region` hotspots on images linking to next steps
+
+A human technician starts with the code, not the component. So must our pages.
+
+### Parts and Labor — The Service Writer's Layer
+
+**This is NOT a mirror of Repair and Diagnosis.** It is a separate data layer for estimating and invoicing.
+
+**Labor Times table format:**
+| Operation | Standard Hours | Warranty Hours | Skill Level | Notes |
+|---|---|---|---|---|
+| Replace | 2.0 | 0.9 | B | |
+| Diagnose/Test | 1.0 | 0.5 | B | |
+| With AC, Add | 0.5 | 0.2 | B | |
+| Long Block | 18.3 | 0.0 | B | Includes R&I engine and transfer all components |
+
+- **Standard Hours** = what a shop charges (retail/flag rate)
+- **Manufacturer Warranty Hours** = what the dealer gets paid under warranty
+- **Skill Level** = A/B/C/D (A=master, B=experienced, C=general, D=apprentice)
+- **Notes** = inclusions, exclusions, add-on logic
+
+**Parts Information table format:**
+| Part | Mfg | OEM # | Price | Notes |
+|---|---|---|---|---|
+| Water Pump | GMO | 12532550 | $0.00 | Contact dealer for current price |
+| Oil Filter | GMO | 25171377 | $0.00 | |
+
+**Real examples from 1998 Blazer 4WD V6-4.3L:**
+- Oil Filter Replace: 0.3 hrs std / 0.3 warranty, Skill C, "Filter Only" + 0.2 hrs to change oil
+- Water Pump Replace: 2.0 hrs std / 0.9 warranty, Skill B
+- Engine Complete Assembly (auto trans): 11.8 hrs std / 10.3 warranty, Skill B
+
+### Image System
+
+- Images served from `/{make}/{year}/{model}/images/{dataset}/{collection}/{id}/`
+- CHARM example: `/images/DM12Q313/gm10/38019402/`
+- Image stores: 500GB+ each corpus
+- CHARM images in PostgreSQL currently reference dead localhost URLs
+- LEMON uses `/images25/{ID}/` pattern
+- Images have clickable regions (`<a class='oxe-region'>`) for interactive diagnostics
+
+### Tree Navigation Quirks
+
+- **Folder nodes** (`li-folder` class) have `name=` but NO `href=` — they expand to show children
+- **Leaf nodes** have both `href=` and `name=` — these are the actual content pages
+- Some nodes have `href=` but still 404 (data structure includes paths without extracted content)
+- **Multiple paths can point to the same content** — the tree has redundancy by design
+- Make aliases exist: `Dodge` → `Dodge and Ram`, `Nissan` → `Nissan-Datsun`
+- URL encoding uses `%28`/`%29` for parentheses
+
+### Vehicle Granularity Variance
+
+| Make | Example Path |
+|---|---|
+| Toyota | `Camry L4-2.4L (2AZ-FE)` — model + engine code |
+| Honda | `Accord L4-2.4L` — model + engine displacement |
+| BMW | `325i Sedan (E46) L6-2.5L (M54)` — body code + variant + engine |
+| Chevrolet | `Blazer 4WD V6-4.3L VIN W` — VIN code included |
+| Audi | `A4 Quattro Sedan (8E2) L4-2.0L Turbo (BPG)` — platform + body + engine |
+
+### LEMON Advantages Over CHARM (2014+)
+
+- **Quick Lookups** — Common Specs & Procedures
+- **Fluids** — Actual capacity tables with OEM spec numbers
+- **Labor Times** — Embedded in Parts and Labor
+- **Specifications Index** — Torque values organized by system
+- **Full Removal/Installation procedures** — Real step-by-step with images
+- **Hybrid/Electric drive systems** — New categories for modern vehicles
+
+### Content Gap Reality Check
+
+- **CHARM (1982-2013):** Strong on DTCs, wiring, TSBs, component R&I. Weak on consumer maintenance guides (oil change steps, fluid capacities). Maintenance tree has many 404s.
+- **LEMON (2014+):** Has real consumer-facing content — Fluids pages with exact capacities, Quick Lookups, full R&I procedures.
+- **For 1982-2013 maintenance tasks:** Need to extract from component-level Service and Repair pages (e.g., Oil Filter R&I under Engine Lubrication) rather than Maintenance tree.
+
+### Translation Layer Vision
+
+The product is NOT a manual browser. It is a **translation layer**:
+
+**Input:** Factory manual technical prose + diagrams + specs + labor times + parts
+**Output:** Consumer-friendly repair guide that reads like a knowledgeable friend walking you through it
+
+**Every page must include:**
+- Estimated time (from Parts and Labor)
+- Skill level (from Parts and Labor)
+- Parts needed with OEM numbers (from Parts and Labor)
+- Tools needed (extracted from "Special Tools Required" sections)
+- Torque specs (from Specifications or inline in Service and Repair)
+- Fluid capacities (from LEMON Fluids pages or Maintenance specs)
+- Step-by-step procedure (from Service and Repair, translated)
+- Factory images (from manual image store)
+- Affiliate links to buy parts/tools
+
+**SEO pages to generate:**
+- `/2015/toyota/camry-le/oil-change` — exact vehicle + task
+- `/codes/p0101` — DTC code pages
+- `/2015/toyota/camry-le/torque-specs` — spec reference pages
+- `/2015/toyota/camry-le/fluids` — fluid capacity pages
+- `/symptoms/rough-idle` — symptom hub pages
+
+### Deployment Architecture
+
+| Component | Location | Notes |
+|---|---|---|
+| **VPS** | `116.202.210.109` | Ubuntu, 62GB RAM, `/data` = 3.5TB disk |
+| **LMDB Backend** | `127.0.0.1:8080` on VPS | Serves BOTH corpuses. This is the source of truth. |
+| **Production Next.js** | `/root/alloemmanuals.com/` on VPS | Port 3002. Live site. |
+| **Dev Next.js** | `/home/lyndon/projects/spotonauto.com/` | Local development copy. |
+| **PostgreSQL** | VPS `spotonauto` DB | `manual_embeddings` = 1.8M rows (CHARM 1982-2013) |
+
+**Critical distinction:** The public charm.li website is a **mirror/redirect**. The real complete data lives on the VPS LMDB backend (`localhost:8080`). Paths that 404 on charm.li may resolve perfectly on the VPS backend. Always test against `localhost:8080` on the VPS, not charm.li.
+
+### Local Development Assets
+
+| Asset | Location |
+|---|---|
+| CHARM index | `/data/lemon-manuals/charm/index.json` |
+| LEMON index | `/data/lemon-manuals/lemon/index.json` |
+| CHARM pages mtbl | `/data/lemon-manuals/charm/pages.mtbl` (34GB) |
+| LEMON pages mtbl | `/data/lemon-manuals/lemon/pages.mtbl` (31GB) |
+| CHARM images mtbl | `/data/lemon-manuals/charm/images.mtbl` (548GB) |
+| LEMON images mtbl | `/data/lemon-manuals/lemon/images.mtbl` (481GB) |
+| Backend binary | `lemon-website-linux-x86_64-musl` on VPS port 8080 |
+| Existing miners | `scripts/mine-lemon-fluids.mjs`, `mine-lemon-specs.mjs` |
+
+### Key Scripts and Tools
+
+- `mine-lemon-fluids.mjs` — Crawls LEMON `:8080` for `/Fluids/` pages, parses `clsArticleTable` HTML tables
+- `mine-lemon-specs.mjs` — Crawls LEMON HTML tree, extracts torque specs from Specifications Index
+- `charmParser.ts` — Fetches HTML from LMDB backend, handles make aliases, 404 parent recovery
+- `manualEmbeddingsStore.ts` — PostgreSQL access, `findManualSectionsByTerms()` (queries entire make+year then filters client-side — known performance issue)
+- mtbl Rust tools compiled from `lemon-website-source.tar.gz` — can dump keys/values directly
