@@ -2,7 +2,7 @@
 
 import { startTransition, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Route, Search } from 'lucide-react';
+import { Route, Search } from 'lucide-react';
 
 import { trackEntryRouteClick } from '@/lib/analytics';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
@@ -65,9 +65,9 @@ export default function HomeVehiclePicker() {
     return (
         <div className="rounded-[28px] matte-panel p-6 sm:p-8 glow-border">
             <div className="mb-6">
-                <h2 className="font-display text-xl font-bold text-white">Pick the vehicle first</h2>
+                <h2 className="font-display text-xl font-bold text-white">What are you working on?</h2>
                 <p className="mt-1 font-body text-sm text-gray-400">
-                    This keeps the first interaction path focused on year, make, and model, then sends you into the exact vehicle hub.
+                    Select your year, make, and model to find repair guides, specs, and wiring diagrams for your exact car.
                 </p>
             </div>
 
@@ -143,11 +143,11 @@ export default function HomeVehiclePicker() {
             <div className="mt-6 rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.06] p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
-                        <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-300/85">Start here</p>
+                        <p className="text-[10px] uppercase tracking-[0.24em] text-cyan-300/85">Ready when you are</p>
                         <p className="mt-2 text-xs leading-5 text-gray-300">
                             {vehicleLabel
-                                ? `${vehicleLabel} is ready. Open the exact vehicle hub first, then branch into repair, codes, symptoms, tools, and wiring from there.`
-                                : 'Choose year, make, and model to unlock the exact vehicle hub and related routes.'}
+                                ? `${vehicleLabel} — open your car's page to see repair guides, DTC codes, wiring diagrams, and specs all in one place.`
+                                : 'Select your year, make, and model to find everything for your car.'}
                         </p>
                     </div>
                     <Link
@@ -157,7 +157,7 @@ export default function HomeVehiclePicker() {
                         }}
                         className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold uppercase tracking-[0.18em] text-black transition-all hover:bg-cyan-300"
                     >
-                        {hasVehicleLock ? `Open ${vehicleLabel}` : 'Open vehicle hub'}
+                        {hasVehicleLock ? `Go` : 'Browse all repairs'}
                     </Link>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -179,16 +179,9 @@ export default function HomeVehiclePicker() {
                         className="rounded-full border border-white/10 bg-slate-900/50 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 transition-all hover:border-cyan-400/35 hover:text-cyan-200"
                     >
                         <Search className="mr-1 inline h-3.5 w-3.5" />
-                        Need VIN or symptom-first?
+                        Not sure? Search by symptom
                     </Link>
                 </div>
-            </div>
-
-            <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/35 p-4">
-                <p className="text-[10px] uppercase tracking-[0.22em] text-cyan-300/85">Why this is lighter</p>
-                <p className="mt-2 text-xs leading-5 text-gray-400">
-                    The hero now ships a smaller vehicle picker instead of the full VIN and diagnosis dashboard. The heavier flows still exist, but they only load when you actually need them.
-                </p>
             </div>
         </div>
     );
