@@ -30,7 +30,7 @@ const LMDB_MAKES = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://spotonauto.com';
+    const baseUrl = 'https://alloemmanuals.com';
     const entries: MetadataRoute.Sitemap = [];
 
     // Landing page

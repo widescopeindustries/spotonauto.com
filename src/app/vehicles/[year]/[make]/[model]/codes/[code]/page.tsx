@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const displayModel = decodeURIComponent(model);
   const title = `${upperCode} on ${year} ${displayMake} ${displayModel} — OEM Diagnostic Flow | SpotOn Auto`;
   const description = `Factory diagnostic procedure for code ${upperCode} on the ${year} ${displayMake} ${displayModel}. Step-by-step flowchart from the OEM service manual with diagrams and test procedures.`;
-  const pageUrl = `https://spotonauto.com/vehicles/${year}/${make}/${model}/codes/${code}`;
+  const pageUrl = `https://alloemmanuals.com/vehicles/${year}/${make}/${model}/codes/${code}`;
 
   return {
     title,

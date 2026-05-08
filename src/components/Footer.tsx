@@ -162,7 +162,7 @@ const Footer = () => {
                 {/* Affiliate Disclosure */}
                 <div className="mt-4 pt-4 border-t border-white/5 text-center">
                     <p className="text-xs text-[#6E6E80]">
-                        As an Amazon Associate, SpotOnAuto earns from qualifying purchases.
+                        As an Amazon Associate, AllOEMManuals earns from qualifying purchases.
                         We also earn commissions from TOPDON purchases via our referral links.{' '}
                         <Link href="/disclosure" className="text-[#6E6E80] hover:text-[#FF6B00] underline transition-colors">Full disclosure</Link>.
                     </p>

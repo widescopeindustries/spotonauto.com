@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * IndexNow recent-publish audit for SpotOnAuto.
+ * IndexNow recent-publish audit for AllOEMManuals.
  *
  * What it does:
  * 1) Finds URLs added to sitemap XML files since a given date.
@@ -21,7 +21,7 @@ const { execSync } = require('child_process');
 const ROOT = path.join(__dirname, '..');
 const REPORT_DIR = path.join(ROOT, 'scripts', 'seo-reports');
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/IndexNow';
-const HOST = 'spotonauto.com';
+const HOST = 'alloemmanuals.com';
 
 function getArg(name, fallback = null) {
   const idx = process.argv.indexOf(`--${name}`);
@@ -260,7 +260,7 @@ async function main() {
   fs.writeFileSync(outCsv, buildCsv(rows), 'utf8');
 
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
-  console.log('║      SpotOnAuto - IndexNow Recent Publish Audit             ║');
+  console.log('║      AllOEMManuals - IndexNow Recent Publish Audit             ║');
   console.log('╚══════════════════════════════════════════════════════════════╝');
   console.log(`\nSince: ${since}`);
   console.log(`Base commit: ${baseCommit}`);

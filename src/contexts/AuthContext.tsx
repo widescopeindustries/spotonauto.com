@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const loginWithGoogle = async () => {
-    const fallbackEmail = readStoredEmail() || 'local-user@spotonauto.com';
+    const fallbackEmail = readStoredEmail() || 'local-user@alloemmanuals.com';
     await createOrUpdateLocalUser(fallbackEmail);
   };
 

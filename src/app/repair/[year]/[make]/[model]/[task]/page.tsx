@@ -332,7 +332,7 @@ const DEFAULT_REPAIR = {
 };
 
 // Task-specific title and description overrides — tuned for SERP click-through.
-// Titles kept short (~30 chars) so full "<Year Make Model> <Title> | SpotOnAuto" fits in ~60 chars.
+// Titles kept short (~30 chars) so full "<Year Make Model> <Title> | AllOEMManuals" fits in ~60 chars.
 // Descriptions front-load the answer, include time/savings, end with differentiator.
 const TASK_META: Record<string, { title: string; description: string; extraKeywords: string[] }> = {
     'serpentine-belt-replacement': {
@@ -1986,7 +1986,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     // Return generic metadata for invalid combos — page will 404/redirect anyway
     if (!isValidVehicleCombination(canonicalYear, canonicalMake, canonicalModel, canonicalTask)) {
-        return { title: 'Page Not Found | SpotOnAuto' };
+        return { title: 'Page Not Found | AllOEMManuals' };
     }
 
     const cleanTask = canonicalTask.replace(/-/g, ' ');
@@ -1997,8 +1997,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const taskMeta = TASK_META[canonicalTask];
     const title = taskMeta
-        ? `${vehicleName} ${taskMeta.title}${exactGuideProfile?.titleSuffix ? ` | ${exactGuideProfile.titleSuffix}` : ''} | SpotOnAuto`
-        : `${vehicleName} ${cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Guide | SpotOnAuto`;
+        ? `${vehicleName} ${taskMeta.title}${exactGuideProfile?.titleSuffix ? ` | ${exactGuideProfile.titleSuffix}` : ''} | AllOEMManuals`
+        : `${vehicleName} ${cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Guide | AllOEMManuals`;
     const description = taskMeta
         ? `${taskMeta.description.replace('{v}', vehicleName)}${exactGuideProfile?.descriptionSuffix ? ` ${exactGuideProfile.descriptionSuffix}` : ''}`
         : `DIY ${cleanTask} for your ${vehicleName}. Step-by-step guide with tools, parts list, and safety tips. Save $100–$400 vs. the shop.`;
@@ -2023,7 +2023,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title,
             description,
             type: 'article',
-            url: `https://spotonauto.com${buildRepairPath(canonicalYear, canonicalMake, canonicalModel, canonicalTask)}`,
+            url: `https://alloemmanuals.com${buildRepairPath(canonicalYear, canonicalMake, canonicalModel, canonicalTask)}`,
         },
         twitter: {
             card: 'summary',
@@ -2031,7 +2031,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description,
         },
         alternates: {
-            canonical: `https://spotonauto.com${buildRepairPath(canonicalYear, canonicalMake, canonicalModel, canonicalTask)}`,
+            canonical: `https://alloemmanuals.com${buildRepairPath(canonicalYear, canonicalMake, canonicalModel, canonicalTask)}`,
         },
     };
 }
@@ -2374,12 +2374,12 @@ export default async function Page({ params }: PageProps) {
         "description": `DIY ${cleanTask} for the ${vehicleName}. Takes ${repairData.time}. Difficulty: ${repairData.difficulty}. Save $100–$400 vs. a shop with this step-by-step guide.`,
         "author": {
             "@type": "Organization",
-            "name": "SpotOnAuto"
+            "name": "AllOEMManuals"
         },
         "publisher": {
             "@type": "Organization",
-            "name": "SpotOnAuto",
-            "url": "https://spotonauto.com"
+            "name": "AllOEMManuals",
+            "url": "https://alloemmanuals.com"
         },
         "inLanguage": "en",
         "totalTime": toIso8601Duration(repairData.time),
@@ -2406,7 +2406,7 @@ export default async function Page({ params }: PageProps) {
             "position": i + 1,
             "name": `Step ${i + 1}`,
             "text": step,
-            "url": `https://spotonauto.com${canonicalPath}#step-${i + 1}`
+            "url": `https://alloemmanuals.com${canonicalPath}#step-${i + 1}`
         }))
     };
 
@@ -2432,10 +2432,10 @@ export default async function Page({ params }: PageProps) {
                     "@context": "https://schema.org",
                     "@type": "BreadcrumbList",
                     "itemListElement": [
-                        { "@type": "ListItem", position: 1, name: "Repair Hub", item: "https://spotonauto.com/repair" },
-                        { "@type": "ListItem", position: 2, name: cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1), item: "https://spotonauto.com/repair" },
-                        { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com${vehicleHubHref}` },
-                        { "@type": "ListItem", position: 4, name: `${resolvedYear}`, item: `https://spotonauto.com${canonicalPath}` },
+                        { "@type": "ListItem", position: 1, name: "Repair Hub", item: "https://alloemmanuals.com/repair" },
+                        { "@type": "ListItem", position: 2, name: cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1), item: "https://alloemmanuals.com/repair" },
+                        { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://alloemmanuals.com${vehicleHubHref}` },
+                        { "@type": "ListItem", position: 4, name: `${resolvedYear}`, item: `https://alloemmanuals.com${canonicalPath}` },
                     ],
                 }) }}
             />

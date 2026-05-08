@@ -1,11 +1,11 @@
-# SpotOnAuto Memory
+# AllOEMManuals Memory
 
 This file is the durable project memory for future Codex runs in this repo.
 Update it when product decisions, traps, or standing preferences change.
 
 ## Product Direction
 
-- Brand is `SpotOn Auto`.
+- Brand is `AllOEMManuals`.
 - Do not attribute authorship to `Operation CHARM` or `charm.li`. They were distributors/hosts, not the author.
 - When referring to that corpus or live retrieval source, use `factory manual archive`, `manual archive`, or `factory service manual archive`.
 
@@ -53,9 +53,9 @@ Update it when product decisions, traps, or standing preferences change.
 - Diagnostic chat now has browser-local persistent thread memory.
   Preserve resume behavior and the explicit `New thread` reset unless intentionally replacing that system.
 - Railway targeting is easy to misread for this repo.
-  - as of `2026-03-21`, live `spotonauto.com` is attached to Railway project `reliable-bravery` / service `reliable-bravery`
+  - as of `2026-03-21`, live `alloemmanuals.com` is attached to Railway project `reliable-bravery` / service `reliable-bravery`
   - the separate Railway project `sweet-endurance` also deploys this repo but is not the live custom-domain target
-  - before assuming a Railway deploy is live, check `railway status --json` and confirm `domains.customDomains` contains `spotonauto.com`
+  - before assuming a Railway deploy is live, check `railway status --json` and confirm `domains.customDomains` contains `alloemmanuals.com`
 - GA4 realtime snapshots with heavy `direct / (none)` concentration and large Singapore-style city clusters are not reliable SEO recovery proof.
   Use GSC daily visibility plus GA4 organic sessions / landing pages for recovery reads.
 
@@ -153,7 +153,7 @@ Update it when product decisions, traps, or standing preferences change.
   - SpotOn Auto Search Console submissions should use:
     - credential file `~/Desktop/_credentials/gen-lang-client-0236137325-629b7b811bc1.json`
     - service account `spotonauto@gen-lang-client-0236137325.iam.gserviceaccount.com`
-    - the unrelated `~/Desktop/_credentials/static-dock-486114-g9-f8a997de0021.json` credential does not have permission on `sc-domain:spotonauto.com`
+    - the unrelated `~/Desktop/_credentials/static-dock-486114-g9-f8a997de0021.json` credential does not have permission on `sc-domain:alloemmanuals.com`
   - `scripts/generate-graph-link-suggestions.ts` writes graph-derived internal-link suggestions to `scripts/seo-reports/`
   - `npm run seo:graph-link-suggestions` currently emits JSON + CSV suggestions grouped by `guide-model`, `code`, and `wiring` source surfaces
   - node metadata is canonical; relation copy belongs on edges in the export model
@@ -170,7 +170,7 @@ Update it when product decisions, traps, or standing preferences change.
   - `scripts/internal-link-audit.js` should fail loudly if seed fetches fail instead of silently reporting zero discovered links
   - wiring selector coverage should not import the full `src/data/wiring-coverage.json` into a client component
   - `src/lib/wiringCoverage.ts` is the server-only helper that derives the lightweight selector payload for `/wiring`
-  - the interactive diagram viewer in `src/app/wiring/WiringDiagramLibrary.tsx` now overlays a slim vertical `SpotOnAuto.com` edge watermark on diagram images so printed/screenshot schematics retain the brand without obscuring the drawing
+  - the interactive diagram viewer in `src/app/wiring/WiringDiagramLibrary.tsx` now overlays a slim vertical `AllOEMManuals.com` edge watermark on diagram images so printed/screenshot schematics retain the brand without obscuring the drawing
   - `src/lib/wiringData.ts` now needs to tolerate model-bucket paths that are not the final engine variant.
     - if a direct `/Repair and Diagnosis/` path fails, or resolves to an empty diagram bucket, the server should re-resolve the best matching variant from the year page and retry before giving up
     - this specifically matters for `Dodge or Ram Truck`-style entries where `RAM 3500 Truck 2WD` is a model bucket and the real diagrams live under engine-specific children
@@ -389,7 +389,7 @@ The product is NOT a manual browser. It is a **translation layer**:
 | **VPS** | `116.202.210.109` | Ubuntu, 62GB RAM, `/data` = 3.5TB disk |
 | **LMDB Backend** | `127.0.0.1:8080` on VPS | Serves BOTH corpuses. This is the source of truth. |
 | **Production Next.js** | `/root/alloemmanuals.com/` on VPS | Port 3002. Live site. |
-| **Dev Next.js** | `/home/lyndon/projects/spotonauto.com/` | Local development copy. |
+| **Dev Next.js** | `/home/lyndon/projects/alloemmanuals.com/` | Local development copy. |
 | **PostgreSQL** | VPS `spotonauto` DB | `manual_embeddings` = 1.8M rows (CHARM 1982-2013) |
 
 **Critical distinction:** The public charm.li website is a **mirror/redirect**. The real complete data lives on the VPS LMDB backend (`localhost:8080`). Paths that 404 on charm.li may resolve perfectly on the VPS backend. Always test against `localhost:8080` on the VPS, not charm.li.

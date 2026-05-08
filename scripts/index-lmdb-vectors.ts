@@ -132,7 +132,7 @@ const stats = {
 // ─── Utility Functions ──────────────────────────────────────────────────────
 
 const fetchOpts = {
-  headers: { 'User-Agent': 'SpotOnAuto-Indexer/1.0 (+https://spotonauto.com)' },
+  headers: { 'User-Agent': 'AllOEMManuals-Indexer/1.0 (+https://alloemmanuals.com)' },
 };
 
 async function fetchPage(urlPath: string): Promise<string | null> {
@@ -526,7 +526,7 @@ async function processMake(make: string): Promise<void> {
 
 async function main(): Promise<void> {
   console.log('╔══════════════════════════════════════════════════════╗');
-  console.log('║  SpotOnAuto LMDB Vector Indexer                    ║');
+  console.log('║  AllOEMManuals LMDB Vector Indexer                    ║');
   console.log('║  Embedding model: text-embedding-004 (768 dims)    ║');
   console.log('╚══════════════════════════════════════════════════════╝');
   console.log('');

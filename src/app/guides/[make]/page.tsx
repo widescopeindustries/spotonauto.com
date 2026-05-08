@@ -25,10 +25,10 @@ export async function generateMetadata({ params }: PageProps) {
   const canonicalMake = originalMake ? slugifyPart(originalMake) : make.toLowerCase();
   const displayName = originalMake || make.charAt(0).toUpperCase() + make.slice(1).replace(/-/g, ' ');
   return {
-    title: `${displayName} Repair Guides | SpotOnAuto`,
+    title: `${displayName} Repair Guides | AllOEMManuals`,
     description: `Open ${displayName} DIY repair guides with step-by-step instructions for maintenance, diagnostics, and common fixes. Compare model-specific procedures, tools, parts, and exact manual references before you start.`,
     alternates: {
-      canonical: `https://spotonauto.com/guides/${canonicalMake}`,
+      canonical: `https://alloemmanuals.com/guides/${canonicalMake}`,
     },
     ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
   };

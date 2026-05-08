@@ -105,7 +105,7 @@ function ensureReportsDir() {
 
 function absoluteUrl(href: string | null): string | null {
   if (!href) return null;
-  return href.startsWith('http') ? href : `https://spotonauto.com${href}`;
+  return href.startsWith('http') ? href : `https://alloemmanuals.com${href}`;
 }
 
 function inferHref(node: KnowledgeGraphExportNode): string | null {
@@ -438,7 +438,7 @@ async function main(): Promise<void> {
   ).slice(0, 15);
 
   const tier1RepairSupportGaps = sortByOpportunity(
-    hrefNodes.filter((node) => node.href && RESCUE_URLS.has(node.href.replace('https://spotonauto.com', ''))),
+    hrefNodes.filter((node) => node.href && RESCUE_URLS.has(node.href.replace('https://alloemmanuals.com', ''))),
   ).slice(0, 20);
 
   const sitemapRecrawlCandidates = sortByOpportunity(

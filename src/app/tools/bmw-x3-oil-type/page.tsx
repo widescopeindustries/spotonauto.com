@@ -28,7 +28,7 @@ export const metadata: Metadata = {
         type: 'article',
     },
     alternates: {
-        canonical: 'https://spotonauto.com/tools/bmw-x3-oil-type',
+        canonical: 'https://alloemmanuals.com/tools/bmw-x3-oil-type',
     },
 };
 

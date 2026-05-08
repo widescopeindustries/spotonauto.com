@@ -22,7 +22,7 @@ const LAST_MOD = getSitemapLastMod();
  * and including it in the sitemap confuses crawlers.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://spotonauto.com';
+    const baseUrl = 'https://alloemmanuals.com';
     const entries: MetadataRoute.Sitemap = [];
 
     // ── Static pages ──────────────────────────────────────────────────
@@ -37,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/symptoms`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.78 },
         { url: `${baseUrl}/wiring`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.8 },
         { url: `${baseUrl}/about`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
-        { url: `${baseUrl}/author/spotonauto-editorial-team`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },
+        { url: `${baseUrl}/author/alloemmanuals-editorial-team`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },
         { url: `${baseUrl}/author/lyndon-bedford`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },
         { url: `${baseUrl}/blog/amazon-auto-parts-by-vehicle-year-and-type`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.6 },
         { url: `${baseUrl}/contact`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.4 },

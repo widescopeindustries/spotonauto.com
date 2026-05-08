@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 /*
-  Production smoke test for SpotOnAuto.
+  Production smoke test for AllOEMManuals.
   Usage:
     node scripts/smoke-prod.mjs
-    BASE_URL=https://spotonauto.com node scripts/smoke-prod.mjs
+    BASE_URL=https://alloemmanuals.com node scripts/smoke-prod.mjs
 */
 
-const BASE_URL = process.env.BASE_URL || 'https://spotonauto.com';
+const BASE_URL = process.env.BASE_URL || 'https://alloemmanuals.com';
 
 const checks = [
-  { path: '/', expectedStatus: [200], titleIncludes: 'SpotOnAuto' },
+  { path: '/', expectedStatus: [200], titleIncludes: 'AllOEMManuals' },
   { path: '/auth', expectedStatus: [200] },
   { path: '/diagnose', expectedStatus: [200], bodyIncludes: 'Diagnostic' },
   { path: '/cel', expectedStatus: [200], bodyIncludes: 'DTC', followRedirects: true },

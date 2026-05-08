@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }, 0);
     if (totalThreads < COMMUNITY_LIVE_THREAD_THRESHOLD) return [];
 
-    const baseUrl = 'https://spotonauto.com';
+    const baseUrl = 'https://alloemmanuals.com';
     return FORUM_CATEGORIES.map((cat) => ({
         url: `${baseUrl}/community/${cat.slug}`,
         lastModified: new Date().toISOString(),

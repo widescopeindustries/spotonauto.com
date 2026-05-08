@@ -341,10 +341,10 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
                                                     loading="lazy"
                                                 />
                                                 <span className="step-image-watermark step-image-watermark-left" aria-hidden="true">
-                                                    SpotOnAuto.com
+                                                    AllOEMManuals.com
                                                 </span>
                                                 <span className="step-image-watermark step-image-watermark-right" aria-hidden="true">
-                                                    SpotOnAuto.com
+                                                    AllOEMManuals.com
                                                 </span>
                                             </div>
                                             <p className="image-caption">Fig. {step.step} — Reference diagram</p>

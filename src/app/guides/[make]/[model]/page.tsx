@@ -45,10 +45,10 @@ export async function generateMetadata({ params }: PageProps) {
   const displayMake = originalMake || make.charAt(0).toUpperCase() + make.slice(1).replace(/-/g, ' ');
   const displayModel = originalModel || model.charAt(0).toUpperCase() + model.slice(1).replace(/-/g, ' ');
   return {
-    title: `${displayMake} ${displayModel} DIY Repair Guides | SpotOnAuto`,
+    title: `${displayMake} ${displayModel} DIY Repair Guides | AllOEMManuals`,
     description: `Open step-by-step DIY repair guides for the ${displayMake} ${displayModel}, including maintenance intervals, common fault diagnosis, parts planning, exact year-by-year repair paths, and matching OEM manual sections.`,
     alternates: {
-      canonical: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}`,
+      canonical: `https://alloemmanuals.com/guides/${canonicalMake}/${canonicalModel}`,
     },
     ...(NOINDEX_MAKES.has(make.toLowerCase()) || isNonUsModel(make.toLowerCase(), model.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
   };
@@ -155,9 +155,9 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           "@context": "https://schema.org",
             "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Guides", item: "https://spotonauto.com/guides" },
-            { "@type": "ListItem", position: 2, name: originalMake, item: `https://spotonauto.com/guides/${canonicalMake}` },
-            { "@type": "ListItem", position: 3, name: `${originalMake} ${originalModel}`, item: `https://spotonauto.com/guides/${canonicalMake}/${canonicalModel}` },
+            { "@type": "ListItem", position: 1, name: "Guides", item: "https://alloemmanuals.com/guides" },
+            { "@type": "ListItem", position: 2, name: originalMake, item: `https://alloemmanuals.com/guides/${canonicalMake}` },
+            { "@type": "ListItem", position: 3, name: `${originalMake} ${originalModel}`, item: `https://alloemmanuals.com/guides/${canonicalMake}/${canonicalModel}` },
           ],
         }) }}
       />

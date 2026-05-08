@@ -174,7 +174,7 @@ async function warmUrl(urlPath) {
   await sem.acquire();
   try {
     const res = await fetch(`${WORKER_URL}${urlPath}`, {
-      headers: { 'User-Agent': 'SpotOnAuto-CacheWarmer/1.0' },
+      headers: { 'User-Agent': 'AllOEMManuals-CacheWarmer/1.0' },
     });
 
     const cacheStatus = res.headers.get('x-cache') || 'UNKNOWN';
@@ -210,7 +210,7 @@ async function fetchPage(urlPath) {
   await sem.acquire();
   try {
     const res = await fetch(`${WORKER_URL}${urlPath}`, {
-      headers: { 'User-Agent': 'SpotOnAuto-CacheWarmer/1.0' },
+      headers: { 'User-Agent': 'AllOEMManuals-CacheWarmer/1.0' },
     });
     if (!res.ok) {
       await res.text().catch(() => {});

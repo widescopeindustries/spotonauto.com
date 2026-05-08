@@ -3,8 +3,8 @@ import type { NextRequest } from 'next/server';
 import { CANONICAL_HOST, isCanonicalHost, isIndexableHost, isLegacyRedirectHost, isPreviewHost, normalizeHost } from '@/lib/host';
 
 const ALLOWED_ORIGINS = [
-    'https://spotonauto.com',
-    'https://www.spotonauto.com',
+    'https://alloemmanuals.com',
+    'https://www.alloemmanuals.com',
     ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
 ];
 

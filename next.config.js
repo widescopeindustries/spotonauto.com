@@ -81,8 +81,8 @@ const nextConfig = {
     return [
       {
         source: '/:path*',
-        has: [{ type: 'host', value: 'www.spotonauto.com' }],
-        destination: 'https://spotonauto.com/:path*',
+        has: [{ type: 'host', value: 'www.alloemmanuals.com' }],
+        destination: 'https://alloemmanuals.com/:path*',
         permanent: true,
       },
       { source: '/tools/ford-f150-oil-type', destination: '/tools/ford-f-150-oil-type', permanent: true },

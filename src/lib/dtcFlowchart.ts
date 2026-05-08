@@ -177,7 +177,7 @@ async function fetchHtml(path: string): Promise<string | null> {
   const url = `${CHARM_BASE}${normalizePath(path)}`;
   try {
     const resp = await fetch(url, {
-      headers: { 'User-Agent': 'SpotOnAuto/1.0 (dtc-flowchart-loader)' },
+      headers: { 'User-Agent': 'AllOEMManuals/1.0 (dtc-flowchart-loader)' },
       signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout
         ? AbortSignal.timeout(REQUEST_TIMEOUT_MS)
         : undefined,

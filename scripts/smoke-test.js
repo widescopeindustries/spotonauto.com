@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * SpotOnAuto Smoke Test — run before every deploy
+ * AllOEMManuals Smoke Test — run before every deploy
  * Usage: node scripts/smoke-test.js [base_url]
- * Default: https://spotonauto.com
+ * Default: https://alloemmanuals.com
  */
 
-const BASE = process.argv[2] || 'https://spotonauto.com';
+const BASE = process.argv[2] || 'https://alloemmanuals.com';
 let passed = 0;
 let failed = 0;
 const results = [];
@@ -28,7 +28,7 @@ async function fetchOk(url, opts = {}) {
 }
 
 async function run() {
-  console.log(`\n🔧 SpotOnAuto Smoke Test — ${BASE}\n`);
+  console.log(`\n🔧 AllOEMManuals Smoke Test — ${BASE}\n`);
 
   // 1. Core pages load
   await test('Homepage loads (200)', async () => {

@@ -69,8 +69,8 @@ async function collectGuideModelSuggestions(): Promise<Suggestion[]> {
 
       suggestions.push({
         priority: vehicleGraph.totalNodes + vehicleGraph.wiringCount * 4 + vehicleGraph.codeCount * 2,
-        sourceUrl: `https://spotonauto.com/guides/${makeSlug}/${modelSlug}`,
-        targetUrl: `https://spotonauto.com/repair/${year}/${makeSlug}/${modelSlug}`,
+        sourceUrl: `https://alloemmanuals.com/guides/${makeSlug}/${modelSlug}`,
+        targetUrl: `https://alloemmanuals.com/repair/${year}/${makeSlug}/${modelSlug}`,
         sourceSurface: 'guide-model',
         targetSurface: 'vehicle',
         anchorText: `Open ${year} ${make} ${model} repair hub`,
@@ -99,8 +99,8 @@ function collectCodeSuggestions(): Suggestion[] {
     for (const [index, link] of hubLinks.entries()) {
       suggestions.push({
         priority: 90 - index * 5,
-        sourceUrl: `https://spotonauto.com/codes/${code.code.toLowerCase()}`,
-        targetUrl: `https://spotonauto.com${link.href}`,
+        sourceUrl: `https://alloemmanuals.com/codes/${code.code.toLowerCase()}`,
+        targetUrl: `https://alloemmanuals.com${link.href}`,
         sourceSurface: 'code',
         targetSurface: 'vehicle',
         anchorText: link.label,
@@ -126,8 +126,8 @@ function collectWiringSuggestions(): Suggestion[] {
 
       suggestions.push({
         priority: 80,
-        sourceUrl: `https://spotonauto.com/wiring/${vehicle.year}/${slugifyRoutePart(vehicle.make)}/${slugifyRoutePart(vehicle.model)}/${system}`,
-        targetUrl: `https://spotonauto.com${link.href}`,
+        sourceUrl: `https://alloemmanuals.com/wiring/${vehicle.year}/${slugifyRoutePart(vehicle.make)}/${slugifyRoutePart(vehicle.model)}/${system}`,
+        targetUrl: `https://alloemmanuals.com${link.href}`,
         sourceSurface: 'wiring',
         targetSurface: 'vehicle',
         anchorText: link.label,

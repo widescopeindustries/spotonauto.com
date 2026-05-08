@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { code: slug } = await params;
     const dtc = DTC_CODES_MAP.get(slug.toUpperCase());
     if (!dtc) return { title: 'Code Not Found' };
-    const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
+    const pageUrl = `https://alloemmanuals.com/codes/${dtc.code.toLowerCase()}`;
 
     let oemMeta: Awaited<ReturnType<typeof getDtcCrossVehicleSummary>> = null;
     try {
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const oemSuffix = oemMeta && oemMeta.n > 0
         ? ` Covers ${oemMeta.n}+ vehicles.`
         : '';
-    const title = `${dtc.code}: ${dtc.title} — Causes & Fix | SpotOnAuto`;
+    const title = `${dtc.code}: ${dtc.title} — Causes & Fix | AllOEMManuals`;
     const description = `What is ${dtc.code}? ${dtc.title} — ${dtc.severity} severity, likely causes, symptom clues, and typical fix cost: ${dtc.estimatedCostRange}.${oemSuffix} Free step-by-step diagnosis and repair guide.`;
 
     return {
@@ -72,12 +72,12 @@ export default async function CodePage({ params }: PageProps) {
     } catch (error) {
         console.warn(`[codes] graph data unavailable for ${dtc.code}`, error);
     }
-    const pageUrl = `https://spotonauto.com/codes/${dtc.code.toLowerCase()}`;
+    const pageUrl = `https://alloemmanuals.com/codes/${dtc.code.toLowerCase()}`;
     const schemaDate = '2026-03-05';
     const schemaAuthor = {
         '@type': 'Organization',
-        name: 'SpotOnAuto Editorial Team',
-        url: 'https://spotonauto.com',
+        name: 'AllOEMManuals Editorial Team',
+        url: 'https://alloemmanuals.com',
     };
 
     const articleSchema = {
@@ -108,7 +108,7 @@ export default async function CodePage({ params }: PageProps) {
         '@type': 'HowTo',
         name: `How to diagnose ${dtc.code}`,
         description: `Step-by-step process to diagnose ${dtc.code} (${dtc.title}) before replacing parts.`,
-        image: 'https://spotonauto.com/og-default.svg',
+        image: 'https://alloemmanuals.com/og-default.svg',
         totalTime: 'PT1H',
         estimatedCost: {
             '@type': 'MonetaryAmount',
@@ -127,7 +127,7 @@ export default async function CodePage({ params }: PageProps) {
             name: `Step ${index + 1}`,
             text: step,
             url: `${pageUrl}#diagnose-steps`,
-            image: 'https://spotonauto.com/og-default.svg',
+            image: 'https://alloemmanuals.com/og-default.svg',
         })),
     };
 
@@ -151,8 +151,8 @@ export default async function CodePage({ params }: PageProps) {
                     "@context": "https://schema.org",
                     "@type": "BreadcrumbList",
                     itemListElement: [
-                        { "@type": "ListItem", position: 1, name: "DTC Codes", item: "https://spotonauto.com/codes" },
-                        { "@type": "ListItem", position: 2, name: `${dtc.code}: ${dtc.title}`, item: `https://spotonauto.com/codes/${dtc.code.toLowerCase()}` },
+                        { "@type": "ListItem", position: 1, name: "DTC Codes", item: "https://alloemmanuals.com/codes" },
+                        { "@type": "ListItem", position: 2, name: `${dtc.code}: ${dtc.title}`, item: `https://alloemmanuals.com/codes/${dtc.code.toLowerCase()}` },
                     ],
                 }) }}
             />

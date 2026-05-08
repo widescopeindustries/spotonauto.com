@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
-const SITE_URL = 'sc-domain:spotonauto.com';
+const SITE_URL = 'sc-domain:alloemmanuals.com';
 const GA_PROPERTY_ID = '520432705';
 
 function getArg(name, fallback = null) {

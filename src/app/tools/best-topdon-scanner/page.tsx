@@ -13,7 +13,7 @@ import {
 } from '@/lib/topdonAffiliate';
 
 export const metadata: Metadata = {
-  title: 'Best TOPDON Scanner for Your Car (2026 Guide) | SpotOnAuto',
+  title: 'Best TOPDON Scanner for Your Car (2026 Guide) | AllOEMManuals',
   description:
     'Find the best TOPDON OBD2 scanner for your needs. Side-by-side comparison of every model from $34 to $699 — ArtiLink, ArtiDiag, TopScan & more. Interactive quiz included.',
   keywords: [
@@ -32,10 +32,10 @@ export const metadata: Metadata = {
     description:
       'Interactive guide to find the right TOPDON scanner. Compare every model side-by-side with real prices and features.',
     type: 'article',
-    url: 'https://spotonauto.com/tools/best-topdon-scanner',
+    url: 'https://alloemmanuals.com/tools/best-topdon-scanner',
   },
   alternates: {
-    canonical: 'https://spotonauto.com/tools/best-topdon-scanner',
+    canonical: 'https://alloemmanuals.com/tools/best-topdon-scanner',
   },
 };
 

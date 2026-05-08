@@ -311,7 +311,7 @@ const STARTER_THREADS: ForumThreadSeed[] = [
     slug: 'forum-rules-read-before-posting',
     categorySlug: 'general-discussion',
     title: 'Forum rules: read before posting',
-    body: 'Welcome to the SpotOnAuto community. Keep posts respectful, include vehicle details, and avoid dangerous advice without warnings.',
+    body: 'Welcome to the AllOEMManuals community. Keep posts respectful, include vehicle details, and avoid dangerous advice without warnings.',
     created_at: '2026-04-12T08:00:00.000Z',
     view_count: 512,
     reply_count: 1,

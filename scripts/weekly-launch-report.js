@@ -12,11 +12,11 @@ const weekStart = new Date(today);
 weekStart.setDate(weekStart.getDate() - 6);
 
 const TOP_QUERY_PAGES = [
-  { slug: 'chevrolet-silverado-tire-size', url: 'https://spotonauto.com/tools/chevrolet-silverado-tire-size' },
-  { slug: 'ford-focus-oil-type', url: 'https://spotonauto.com/tools/ford-focus-oil-type' },
-  { slug: 'toyota-sienna-tire-size', url: 'https://spotonauto.com/tools/toyota-sienna-tire-size' },
-  { slug: 'ford-edge-oil-type', url: 'https://spotonauto.com/tools/ford-edge-oil-type' },
-  { slug: 'jeep-compass-oil-capacity', url: 'https://spotonauto.com/tools/jeep-compass-oil-capacity' },
+  { slug: 'chevrolet-silverado-tire-size', url: 'https://alloemmanuals.com/tools/chevrolet-silverado-tire-size' },
+  { slug: 'ford-focus-oil-type', url: 'https://alloemmanuals.com/tools/ford-focus-oil-type' },
+  { slug: 'toyota-sienna-tire-size', url: 'https://alloemmanuals.com/tools/toyota-sienna-tire-size' },
+  { slug: 'ford-edge-oil-type', url: 'https://alloemmanuals.com/tools/ford-edge-oil-type' },
+  { slug: 'jeep-compass-oil-capacity', url: 'https://alloemmanuals.com/tools/jeep-compass-oil-capacity' },
 ];
 
 function run(cmd) {

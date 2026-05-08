@@ -29,7 +29,7 @@ export default {
     let upstreamRes: Response;
     try {
       upstreamRes = await fetch(upstream, {
-        headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) charm-proxy' },
+        headers: { 'User-Agent': 'AllOEMManuals/1.0 (+https://alloemmanuals.com) charm-proxy' },
         signal: AbortSignal.timeout(10000), // 10s timeout for upstream
       });
     } catch (e) {

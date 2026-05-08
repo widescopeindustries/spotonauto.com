@@ -11,7 +11,7 @@ import {
 } from '@/lib/topdonAffiliate';
 
 export const metadata: Metadata = {
-  title: 'TOPDON Battery Tester Guide: BT50 vs BT100 vs BT200 vs BT600 (2026) | SpotOnAuto',
+  title: 'TOPDON Battery Tester Guide: BT50 vs BT100 vs BT200 vs BT600 (2026) | AllOEMManuals',
   description:
     'Compare every TOPDON battery tester side-by-side. BT50 vs BT100 vs BT200 vs BT600 — find the right battery and charging system tester for your needs. From $33 to $145.',
   keywords: [
@@ -30,10 +30,10 @@ export const metadata: Metadata = {
     description:
       'Which TOPDON battery tester do you need? Full comparison with prices, features, and recommendations.',
     type: 'article',
-    url: 'https://spotonauto.com/tools/topdon-battery-tester',
+    url: 'https://alloemmanuals.com/tools/topdon-battery-tester',
   },
   alternates: {
-    canonical: 'https://spotonauto.com/tools/topdon-battery-tester',
+    canonical: 'https://alloemmanuals.com/tools/topdon-battery-tester',
   },
 };
 

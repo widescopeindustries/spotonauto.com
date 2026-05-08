@@ -5,7 +5,7 @@ import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizatio
 import TopdonScannerQuiz from '@/components/TopdonScannerQuiz';
 
 export const metadata: Metadata = {
-    title: 'Free Auto Repair Tools | SpotOnAuto',
+    title: 'Free Auto Repair Tools | AllOEMManuals',
     description: 'Free DIY auto repair tools: oil type lookup, spark plug gap finder, serpentine belt diagrams, battery location guides, and more. No signup required, instant results.',
     keywords: [
         'free auto repair tools',
@@ -16,13 +16,13 @@ export const metadata: Metadata = {
         'repair cost estimator',
     ],
     openGraph: {
-        title: 'Free Auto Repair Tools | SpotOnAuto',
+        title: 'Free Auto Repair Tools | AllOEMManuals',
         description: 'Save money with our free DIY auto repair tools. No signup required.',
         type: 'website',
-        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
+        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'AllOEMManuals - Free DIY Auto Repair Guides' }],
     },
     alternates: {
-        canonical: 'https://spotonauto.com/tools',
+        canonical: 'https://alloemmanuals.com/tools',
     },
 };
 

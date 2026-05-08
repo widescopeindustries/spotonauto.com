@@ -7,7 +7,7 @@ const FETCH_RETRIES = 2;
 function buildFetchOpts(): RequestInit {
   return {
     headers: {
-      "User-Agent": "SpotOnAuto/1.0 (+https://spotonauto.com) maintenance-guide-builder",
+      "User-Agent": "AllOEMManuals/1.0 (+https://alloemmanuals.com) maintenance-guide-builder",
     },
     signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout
       ? AbortSignal.timeout(FETCH_TIMEOUT)

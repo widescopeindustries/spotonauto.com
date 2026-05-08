@@ -63,7 +63,7 @@ function parseArgs() {
 async function fetchMakes(): Promise<string[]> {
   const url = GRAPH_BACKEND_BASE_URL + '/';
   const resp = await fetch(url, {
-    headers: { 'User-Agent': 'SpotOnAuto-Coordinator/1.0' },
+    headers: { 'User-Agent': 'AllOEMManuals-Coordinator/1.0' },
     signal: AbortSignal.timeout(30_000),
   });
   if (!resp.ok) throw new Error(`Root fetch failed: ${resp.status}`);

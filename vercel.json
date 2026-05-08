@@ -7,10 +7,10 @@
       "has": [
         {
           "type": "host",
-          "value": "www.spotonauto.com"
+          "value": "www.alloemmanuals.com"
         }
       ],
-      "destination": "https://spotonauto.com/$1",
+      "destination": "https://alloemmanuals.com/$1",
       "permanent": true
     }
   ]

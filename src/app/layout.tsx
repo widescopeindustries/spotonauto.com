@@ -9,8 +9,8 @@ import { COMPANY_INFO } from "@/lib/companyInfo";
 // SpotOnGuide moved into Providers (client component) for lazy loading
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://spotonauto.com'),
-  title: "SpotOnAuto | Free DIY Auto Repair Guides for Your Car",
+  metadataBase: new URL('https://alloemmanuals.com'),
+  title: "AllOEMManuals | Free DIY Auto Repair Guides for Your Car",
   description: "Save hundreds on auto repairs. Get instant AI-generated repair guides for your exact vehicle — step-by-step instructions, parts lists, and pro tips. Skip the shop, fix it yourself.",
   keywords: [
     "DIY auto repair",
@@ -25,15 +25,15 @@ export const metadata: Metadata = {
     "auto repair near me alternative"
   ],
   openGraph: {
-    title: "SpotOnAuto | Skip the Shop. Fix It Yourself.",
+    title: "AllOEMManuals | Skip the Shop. Fix It Yourself.",
     description: "Free AI-powered repair guides for any car. Save $200-500 per repair with step-by-step instructions and parts lists.",
     type: "website",
-    url: "https://spotonauto.com",
-    siteName: "SpotOnAuto",
+    url: "https://alloemmanuals.com",
+    siteName: "AllOEMManuals",
   },
   twitter: {
     card: "summary_large_image",
-    title: "SpotOnAuto | Free DIY Auto Repair Guides",
+    title: "AllOEMManuals | Free DIY Auto Repair Guides",
     description: "Save hundreds on auto repairs. Instant AI guides for your exact vehicle.",
   },
   other: {
@@ -64,14 +64,14 @@ export default function RootLayout({
               {
                 "@context": "https://schema.org",
                 "@type": "Organization",
-                "@id": "https://spotonauto.com/#organization",
-                name: "SpotOnAuto",
-                url: "https://spotonauto.com",
+                "@id": "https://alloemmanuals.com/#organization",
+                name: "AllOEMManuals",
+                url: "https://alloemmanuals.com",
                 description: "Free AI-powered DIY auto repair guides. OEM-level service data for every vehicle.",
                 foundingDate: "2026",
                 contactPoint: {
                   "@type": "ContactPoint",
-                  url: "https://spotonauto.com/contact",
+                  url: "https://alloemmanuals.com/contact",
                   contactType: "Customer Service",
                   telephone: COMPANY_INFO.phoneE164,
                   email: COMPANY_INFO.supportEmail,
@@ -89,11 +89,11 @@ export default function RootLayout({
               {
                 "@context": "https://schema.org",
                 "@type": "LocalBusiness",
-                "@id": "https://spotonauto.com/#localbusiness",
-                name: "SpotOnAuto",
+                "@id": "https://alloemmanuals.com/#localbusiness",
+                name: "AllOEMManuals",
                 description: "AI-powered automotive repair diagnosis and DIY guides",
-                url: "https://spotonauto.com",
-                logo: "https://spotonauto.com/logo.png",
+                url: "https://alloemmanuals.com",
+                logo: "https://alloemmanuals.com/logo.png",
                 sameAs: [
                   "https://www.facebook.com/spotonauto",
                   "https://www.youtube.com/spotonauto",
@@ -112,15 +112,15 @@ export default function RootLayout({
               {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
-                "@id": "https://spotonauto.com/#website",
-                name: "SpotOnAuto",
-                url: "https://spotonauto.com",
-                publisher: { "@id": "https://spotonauto.com/#organization" },
+                "@id": "https://alloemmanuals.com/#website",
+                name: "AllOEMManuals",
+                url: "https://alloemmanuals.com",
+                publisher: { "@id": "https://alloemmanuals.com/#organization" },
                 potentialAction: {
                   "@type": "SearchAction",
                   target: {
                     "@type": "EntryPoint",
-                    urlTemplate: "https://spotonauto.com/diagnose?q={search_term_string}",
+                    urlTemplate: "https://alloemmanuals.com/diagnose?q={search_term_string}",
                   },
                   "query-input": "required name=search_term_string",
                 },

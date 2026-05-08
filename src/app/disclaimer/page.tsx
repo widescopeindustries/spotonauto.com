@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Disclaimer | SpotOnAuto',
+  title: 'Disclaimer | AllOEMManuals',
   description:
-    'Critical DIY safety disclaimer for SpotOnAuto repair guides, AI diagnosis tools, and educational automotive content.',
+    'Critical DIY safety disclaimer for AllOEMManuals repair guides, AI diagnosis tools, and educational automotive content.',
   alternates: {
-    canonical: 'https://spotonauto.com/disclaimer',
+    canonical: 'https://alloemmanuals.com/disclaimer',
   },
 };
 
@@ -16,10 +16,10 @@ export default function DisclaimerPage() {
         <h1 className="text-3xl font-display font-bold text-white">Disclaimer</h1>
         <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-6">
           <p className="text-base leading-7 text-red-100">
-            SpotOnAuto provides automotive information for educational purposes only. AI-generated
+            AllOEMManuals provides automotive information for educational purposes only. AI-generated
             diagnoses and repair guides are not a substitute for professional mechanical inspection.
             Always consult a certified mechanic before performing repairs that could affect vehicle
-            safety. SpotOnAuto and its parent company, Widescope Industries LLC, are not liable for
+            safety. AllOEMManuals and its parent company, Widescope Industries LLC, are not liable for
             damages, injuries, or costs resulting from the use of this information.
           </p>
         </div>

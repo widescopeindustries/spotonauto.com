@@ -3,7 +3,7 @@ import { CHARM_ARCHIVE_BASE } from '@/lib/charmBase';
 
 const CHARM_BASE = CHARM_ARCHIVE_BASE;
 const CHARM_HEADERS = {
-  'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) wiring-diagrams',
+  'User-Agent': 'AllOEMManuals/1.0 (+https://alloemmanuals.com) wiring-diagrams',
 };
 
 const DEFAULT_FETCH_RETRIES = 2;

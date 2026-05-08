@@ -22,11 +22,11 @@ export const metadata: Metadata = {
         title: 'Auto Parts - Shop Online | SpotOn Auto',
         description: 'Find auto parts prices from Amazon. Find the best deals on OEM and aftermarket parts.',
         type: 'website',
-        url: 'https://spotonauto.com/parts',
-        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
+        url: 'https://alloemmanuals.com/parts',
+        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'AllOEMManuals - Free DIY Auto Repair Guides' }],
     },
     alternates: {
-        canonical: 'https://spotonauto.com/parts'
+        canonical: 'https://alloemmanuals.com/parts'
     }
 };
 
@@ -166,7 +166,7 @@ export default function PartsPage() {
 
             {/* Subtle affiliate disclosure */}
             <p className="text-xs text-gray-600 text-center">
-                As an Amazon Associate, SpotOnAuto earns from qualifying purchases at no additional cost to you.
+                As an Amazon Associate, AllOEMManuals earns from qualifying purchases at no additional cost to you.
             </p>
         </div>
     );

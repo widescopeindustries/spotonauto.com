@@ -7,7 +7,7 @@ export const COMPANY_INFO = {
   phoneDisplay: '682.999.0953',
   phoneE164: '+16829990953',
   phoneTel: 'tel:+16829990953',
-  supportEmail: 'support@spotonauto.com',
+  supportEmail: 'support@alloemmanuals.com',
   businessHours: 'Monday–Friday 9 AM – 5 PM CDT',
   sbaVerificationUrl: 'https://search.certifications.sba.gov/profile/ZFMKUREKJF88/9Q5T8?page=1#performance-history',
 } as const;

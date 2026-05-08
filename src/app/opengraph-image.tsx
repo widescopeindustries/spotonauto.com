@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'SpotOnAuto - Free DIY Auto Repair Guides'
+export const alt = 'AllOEMManuals - Free DIY Auto Repair Guides'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -98,7 +98,7 @@ export default function OGImage() {
             display: 'flex',
           }}
         >
-          Veteran-Owned SDVOSB | spotonauto.com
+          Veteran-Owned SDVOSB | alloemmanuals.com
         </div>
       </div>
     ),

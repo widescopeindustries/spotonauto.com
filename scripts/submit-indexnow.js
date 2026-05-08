@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * IndexNow URL Submission for spotonauto.com
+ * IndexNow URL Submission for alloemmanuals.com
  *
  * DEFAULT (streaming mode): Detects which files changed in the latest deploy
  * via git diff, maps them to affected sitemaps, and submits only those URLs.
@@ -19,7 +19,7 @@ const https = require('https');
 const http = require('http');
 
 const INDEXNOW_KEY = 'b2e1ed9a4693444c8bf73f80fe75f1e0';
-const HOST = 'spotonauto.com';
+const HOST = 'alloemmanuals.com';
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/IndexNow';
 const BATCH_SIZE = 100; // Small batches for streaming
 const DELAY_BETWEEN_BATCHES_MS = 3000; // 3s between batches
@@ -29,40 +29,40 @@ const DELAY_BETWEEN_BATCHES_MS = 3000; // 3s between batches
 // mean that sitemap's URLs need resubmission.
 const SITEMAP_TRIGGERS = [
   {
-    sitemap: 'https://spotonauto.com/sitemap.xml',
+    sitemap: 'https://alloemmanuals.com/sitemap.xml',
     triggers: ['src/app/page.tsx', 'src/app/tools/', 'src/app/guides/', 'src/app/symptoms/',
                'src/app/cel/', 'src/app/about/', 'src/app/contact/', 'src/app/parts/',
                'src/app/second-opinion/', 'src/data/tools-pages', 'src/data/symptomGraph',
                'src/data/vehicles', 'src/app/sitemap.ts', 'src/app/wiring/page'],
   },
   {
-    sitemap: 'https://spotonauto.com/vehicles/sitemap.xml',
+    sitemap: 'https://alloemmanuals.com/vehicles/sitemap.xml',
     triggers: ['src/app/vehicles/', 'src/data/vehicles', 'src/data/knowledge-graph',
                'src/lib/knowledge-graph'],
   },
   {
-    sitemap: 'https://spotonauto.com/codes/sitemap.xml',
+    sitemap: 'https://alloemmanuals.com/codes/sitemap.xml',
     triggers: ['src/app/codes/', 'src/data/dtc', 'src/data/codes'],
   },
   {
-    sitemap: 'https://spotonauto.com/community/sitemap.xml',
+    sitemap: 'https://alloemmanuals.com/community/sitemap.xml',
     triggers: ['src/app/community/'],
   },
   {
-    sitemap: 'https://spotonauto.com/repair/sitemap.xml',
+    sitemap: 'https://alloemmanuals.com/repair/sitemap.xml',
     triggers: ['src/app/repair/', 'scripts/generate-repair-sitemaps', 'src/data/repair',
                'src/app/charm-repair/'],
   },
   {
-    sitemap: 'https://spotonauto.com/repair/winners/sitemap.xml',
+    sitemap: 'https://alloemmanuals.com/repair/winners/sitemap.xml',
     triggers: ['src/app/repair/winners/'],
   },
   {
-    sitemap: 'https://spotonauto.com/manual/sitemap.xml',
+    sitemap: 'https://alloemmanuals.com/manual/sitemap.xml',
     triggers: ['src/app/manual/', 'src/data/manual'],
   },
   {
-    sitemap: 'https://spotonauto.com/wiring/sitemap.xml',
+    sitemap: 'https://alloemmanuals.com/wiring/sitemap.xml',
     triggers: ['src/app/wiring/', 'scripts/generate-wiring-sitemaps', 'src/data/wiring'],
   },
 ];
@@ -78,7 +78,7 @@ const GLOBAL_TRIGGERS = [
 function fetchUrl(url) {
   return new Promise((resolve, reject) => {
     const client = url.startsWith('https') ? https : http;
-    client.get(url, { headers: { 'User-Agent': 'SpotOnAuto-IndexNow/2.0' } }, (res) => {
+    client.get(url, { headers: { 'User-Agent': 'AllOEMManuals-IndexNow/2.0' } }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         return fetchUrl(res.headers.location).then(resolve).catch(reject);
       }
@@ -118,10 +118,10 @@ async function fetchSitemapUrls(sitemapUrl, depth = 0) {
     const urls = extractUrls(xml);
     if (isSitemapIndex(xml)) {
       console.log(`  [index] ${sitemapUrl} → ${urls.length} child sitemaps`);
-      const allUrls = [];
+      let allUrls = [];
       for (const childUrl of urls) {
         const childUrls = await fetchSitemapUrls(childUrl, depth + 1);
-        allUrls.push(...childUrls);
+        allUrls = allUrls.concat(childUrls);
       }
       return allUrls;
     } else {
@@ -308,7 +308,7 @@ async function main() {
     }
     const deadUrls = paths.map(p => `https://${HOST}${p.startsWith('/') ? p : '/' + p}`);
     console.log('\n╔══════════════════════════════════════════════════════════════╗');
-    console.log('║       SpotOnAuto - IndexNow Dead Link Notification          ║');
+    console.log('║       AllOEMManuals - IndexNow Dead Link Notification          ║');
     console.log('╚══════════════════════════════════════════════════════════════╝\n');
     console.log(`Notifying IndexNow about ${deadUrls.length} dead/removed URL(s):`);
     for (const u of deadUrls) console.log(`  • ${u}`);
@@ -318,7 +318,7 @@ async function main() {
   }
 
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
-  console.log('║       SpotOnAuto - IndexNow Streaming Submission            ║');
+  console.log('║       AllOEMManuals - IndexNow Streaming Submission            ║');
   console.log('╚══════════════════════════════════════════════════════════════╝\n');
 
   if (dryRun) console.log('[DRY RUN MODE]\n');

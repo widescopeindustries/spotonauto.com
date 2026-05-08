@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${cat.name} — Community Forum | SpotOn Auto`,
     description: `Community discussions for ${cat.name.toLowerCase()}.`,
-    alternates: { canonical: `https://spotonauto.com/community/${slug}` },
+    alternates: { canonical: `https://alloemmanuals.com/community/${slug}` },
     robots: isLive ? { index: true, follow: true } : { index: false, follow: true },
   };
 }

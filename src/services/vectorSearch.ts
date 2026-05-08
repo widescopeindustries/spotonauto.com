@@ -1,5 +1,5 @@
 /**
- * vectorSearch.ts — RAG vector search service for spotonauto.com
+ * vectorSearch.ts — RAG vector search service for alloemmanuals.com
  *
  * Uses Gemini text-embedding-004 to generate query embeddings and
  * Supabase pgvector to find the most relevant factory manual sections
@@ -41,7 +41,7 @@
  *
  * 4. Performance notes:
  *    - Vector search is a single Supabase RPC call (typically <200ms)
- *    - Replaces 4-5 sequential HTTP fetches to data.spotonauto.com
+ *    - Replaces 4-5 sequential HTTP fetches to data.alloemmanuals.com
  *    - Returns more relevant content (semantic match vs keyword match)
  *    - Content is already extracted text (no HTML parsing needed)
  *

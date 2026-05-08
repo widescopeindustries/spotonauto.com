@@ -18,7 +18,7 @@ const https = require('https');
 
 const ROOT = path.join(__dirname, '..');
 const REPORT_DIR = path.join(__dirname, 'seo-reports');
-const HOST = 'spotonauto.com';
+const HOST = 'alloemmanuals.com';
 const ENDPOINT = 'https://api.indexnow.org/IndexNow';
 
 function getArg(name, fallback = null) {

@@ -18,7 +18,7 @@ const COVERAGE_PATH = join(ROOT, 'src', 'data', 'wiring-coverage.json');
 
 const LAST_MOD = process.env.SITEMAP_LAST_MOD || new Date().toISOString().slice(0, 10);
 const URLS_PER_SITEMAP = 10000;
-const BASE_URL = 'https://spotonauto.com';
+const BASE_URL = 'https://alloemmanuals.com';
 
 const NON_ROAD_VEHICLE_PATTERN =
   /\b(trailer|scooter|motorcycle|motocross|enduro|atv|utv|quad|snowmobile|roadking|softail|sportster|electra\s+glide|heritage\s+classic|fat\s+boy|shadow\s+ace|gold\s+wing|vulcan|hayabusa|ninja|gsx-r|rm-z|xr\d|crf\d|dr\d|yz[f]?\d|vt\d|cbr\d|klr\d|intruder|boulevard|virago|v-star|roadstar|nighthawk|speedfight|manufacturing)\b/i;

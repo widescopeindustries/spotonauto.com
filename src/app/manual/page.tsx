@@ -18,19 +18,19 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: 'Factory Service Manuals | Verified Archive Coverage | SpotOnAuto',
+  title: 'Factory Service Manuals | Verified Archive Coverage | AllOEMManuals',
   description:
     'Open free factory service manual coverage for cars and trucks. Repair procedures, torque specs, wiring diagrams, and TSBs from verified archive paths.',
   alternates: {
-    canonical: 'https://spotonauto.com/manual',
+    canonical: 'https://alloemmanuals.com/manual',
   },
   openGraph: {
-    title: 'Free Factory Service Manuals | SpotOnAuto',
+    title: 'Free Factory Service Manuals | AllOEMManuals',
     description:
       'Open OEM repair manuals for 82 makes of vehicles. Torque specs, wiring diagrams, step-by-step procedures, and more.',
     type: 'website',
-    url: 'https://spotonauto.com/manual',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
+    url: 'https://alloemmanuals.com/manual',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'AllOEMManuals - Free DIY Auto Repair Guides' }],
   },
 };
 
@@ -219,9 +219,9 @@ export default async function ManualLandingPage() {
             name: 'Factory Service Manuals',
             description:
               'Open free factory service manuals for 82 makes of cars and trucks (1982-2025).',
-            url: 'https://spotonauto.com/manual',
-            publisher: { '@id': 'https://spotonauto.com/#organization' },
-            isPartOf: { '@id': 'https://spotonauto.com/#website' },
+            url: 'https://alloemmanuals.com/manual',
+            publisher: { '@id': 'https://alloemmanuals.com/#organization' },
+            isPartOf: { '@id': 'https://alloemmanuals.com/#website' },
           }),
         }}
       />

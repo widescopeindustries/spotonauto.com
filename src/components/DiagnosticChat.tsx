@@ -33,10 +33,10 @@ function vehiclesMatch(left: Vehicle, right: Vehicle): boolean {
 
 function buildGreeting(vehicle: Vehicle, initialProblem: string): string {
     if (initialProblem) {
-        return `SpotOnAuto AI is ready. Analyzing your symptom: "${initialProblem}"...`;
+        return `AllOEMManuals AI is ready. Analyzing your symptom: "${initialProblem}"...`;
     }
 
-    return `SpotOnAuto AI is connected to the ${vehicle.year} ${vehicle.make} ${vehicle.model} database. Please describe the symptom you're experiencing.`;
+    return `AllOEMManuals AI is connected to the ${vehicle.year} ${vehicle.make} ${vehicle.model} database. Please describe the symptom you're experiencing.`;
 }
 
 // ─── Web Speech API helpers ──────────────────────────────────────────────────
@@ -319,7 +319,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         const aiMessage = messages.find((message) => message.id === messageId);
         const excerpt = aiMessage?.text?.slice(0, 700) || '';
         const vehicleLabel = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Unknown vehicle';
-        const subject = encodeURIComponent(`SpotOnAuto diagnostic feedback (${rating})`);
+        const subject = encodeURIComponent(`AllOEMManuals diagnostic feedback (${rating})`);
         const body = encodeURIComponent(
             `Thread ID: ${chatSession?.id || 'unknown'}\nVehicle: ${vehicleLabel}\nRating: ${rating}\n\nAI response:\n${excerpt}\n\nUser feedback:\n${feedback || '(no extra notes)'}`
         );

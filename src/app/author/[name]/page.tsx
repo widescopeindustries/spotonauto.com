@@ -13,12 +13,12 @@ interface AuthorProfile {
 
 const AUTHORS: AuthorProfile[] = [
   {
-    slug: 'spotonauto-editorial-team',
-    name: 'SpotOnAuto Editorial Team',
+    slug: 'alloemmanuals-editorial-team',
+    name: 'AllOEMManuals Editorial Team',
     credentials: 'ASE-aligned technical review process',
     years: '15+ years combined field experience',
     specialization: 'OBD2 diagnostics and maintenance planning',
-    bio: 'The SpotOnAuto editorial team combines AI-assisted drafting with human technical review for safety-critical automotive guidance. Every published guide is checked for fitment context, tool requirements, and practical risk points before updates go live.',
+    bio: 'The AllOEMManuals editorial team combines AI-assisted drafting with human technical review for safety-critical automotive guidance. Every published guide is checked for fitment context, tool requirements, and practical risk points before updates go live.',
   },
   {
     slug: 'lyndon-bedford',
@@ -26,7 +26,7 @@ const AUTHORS: AuthorProfile[] = [
     credentials: 'Founder, veteran-owned operator',
     years: 'Military + hands-on automotive operations background',
     specialization: 'DIY workflow clarity and repair risk communication',
-    bio: 'Lyndon founded SpotOnAuto to make trustworthy repair information easier to use for everyday drivers. He focuses on practical, safe, and monetizable information architecture that helps users decide between DIY and professional service.',
+    bio: 'Lyndon founded AllOEMManuals to make trustworthy repair information easier to use for everyday drivers. He focuses on practical, safe, and monetizable information architecture that helps users decide between DIY and professional service.',
   },
 ];
 
@@ -37,13 +37,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { name } = await params;
   const author = AUTHORS.find((entry) => entry.slug === name);
-  if (!author) return { title: 'Author Not Found | SpotOnAuto' };
+  if (!author) return { title: 'Author Not Found | AllOEMManuals' };
 
   return {
-    title: `${author.name} | Author Profile | SpotOnAuto`,
+    title: `${author.name} | Author Profile | AllOEMManuals`,
     description: `${author.name} — ${author.credentials}. ${author.years}. ${author.specialization}.`,
     alternates: {
-      canonical: `https://spotonauto.com/author/${author.slug}`,
+      canonical: `https://alloemmanuals.com/author/${author.slug}`,
     },
   };
 }
@@ -70,7 +70,7 @@ export default async function AuthorProfilePage({
           <p className="text-sm text-gray-300">{author.bio}</p>
           <p className="mt-3 text-sm text-gray-300"><strong>Experience:</strong> {author.years}</p>
           <p className="mt-1 text-sm text-gray-300"><strong>Specialization:</strong> {author.specialization}</p>
-          <p className="mt-3 text-xs text-gray-500">Verified by SpotOnAuto editorial team</p>
+          <p className="mt-3 text-xs text-gray-500">Verified by AllOEMManuals editorial team</p>
         </div>
         <Link href="/about" className="mt-6 inline-block text-sm text-cyan-300 hover:text-cyan-200">
           Back to About →

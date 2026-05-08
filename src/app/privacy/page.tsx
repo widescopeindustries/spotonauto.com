@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { COMPANY_INFO } from '@/lib/companyInfo';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | SpotOnAuto',
-  description: 'How SpotOnAuto collects, uses, and protects your personal information. Covers vehicle data, analytics, affiliate links, cookies, and your privacy rights.',
-  alternates: { canonical: 'https://spotonauto.com/privacy-policy' },
+  title: 'Privacy Policy | AllOEMManuals',
+  description: 'How AllOEMManuals collects, uses, and protects your personal information. Covers vehicle data, analytics, affiliate links, cookies, and your privacy rights.',
+  alternates: { canonical: 'https://alloemmanuals.com/privacy-policy' },
 };
 
 export default function PrivacyPolicy() {
@@ -18,9 +18,9 @@ export default function PrivacyPolicy() {
         </div>
 
         <p>
-          SpotOnAuto (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is operated by Widescope Industries LLC, a Service-Disabled
+          AllOEMManuals (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is operated by Widescope Industries LLC, a Service-Disabled
           Veteran-Owned Small Business (SDVOSB). This Privacy Policy describes how we collect, use, and protect your
-          information when you visit spotonauto.com (the &quot;Site&quot;).
+          information when you visit alloemmanuals.com (the &quot;Site&quot;).
         </p>
 
         <section className="space-y-4">
@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
           <ul className="list-disc pl-6 space-y-1 text-sm">
             <li><strong>Vehicle information</strong> — year, make, model, VIN, and diagnostic trouble codes (DTCs) you enter to use our repair guides and diagnostic tools.</li>
             <li><strong>Account data</strong> — if you create a &quot;My Garage&quot; account, we store your email address, saved vehicles, and scan history.</li>
-            <li><strong>Contact information</strong> — if you email us at support@spotonauto.com or submit feedback.</li>
+            <li><strong>Contact information</strong> — if you email us at support@alloemmanuals.com or submit feedback.</li>
           </ul>
 
           <h3 className="text-lg font-semibold text-white">Information Collected Automatically</h3>
@@ -55,7 +55,7 @@ export default function PrivacyPolicy() {
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-cyan-400">3. Affiliate Links &amp; Third-Party Services</h2>
           <p className="text-sm">
-            SpotOnAuto participates in affiliate programs with <strong>Amazon Associates</strong> and <strong>TOPDON</strong> (via GoAffPro).
+            AllOEMManuals participates in affiliate programs with <strong>Amazon Associates</strong> and <strong>TOPDON</strong> (via GoAffPro).
             When you click a product link on our Site and make a purchase, we may earn a commission at no additional cost to you.
             For full details, see our <Link href="/disclosure" className="text-cyan-400 hover:underline">Affiliate Disclosure</Link>.
           </p>
@@ -72,7 +72,7 @@ export default function PrivacyPolicy() {
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-cyan-400">4. AI-Generated Content</h2>
           <p className="text-sm">
-            Some content on SpotOnAuto is generated using artificial intelligence (Google Gemini). When we have factory service manual
+            Some content on AllOEMManuals is generated using artificial intelligence (Google Gemini). When we have factory service manual
             (OEM) data for your vehicle (model years 1982–2025), our AI uses that data as its source and the page displays an
             &quot;OEM Verified&quot; badge. For vehicles outside our corpus coverage (2026 and newer), content is AI-generated and clearly
             labeled as such. We never represent AI-generated content as OEM data.
@@ -92,7 +92,7 @@ export default function PrivacyPolicy() {
           <h2 className="text-xl font-bold text-cyan-400">6. Your Rights</h2>
           <p className="text-sm">You may:</p>
           <ul className="list-disc pl-6 space-y-1 text-sm">
-            <li><strong>Delete your account</strong> and all associated data by emailing support@spotonauto.com.</li>
+            <li><strong>Delete your account</strong> and all associated data by emailing support@alloemmanuals.com.</li>
             <li><strong>Opt out of analytics</strong> by using a browser extension like Google Analytics Opt-out or enabling Do Not Track.</li>
             <li><strong>Request your data</strong> — email us and we will provide a copy of any personal data we hold about you within 30 days.</li>
           </ul>
@@ -101,7 +101,7 @@ export default function PrivacyPolicy() {
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-cyan-400">7. Children&apos;s Privacy</h2>
           <p className="text-sm">
-            SpotOnAuto is not directed at children under 13. We do not knowingly collect personal information from children.
+            AllOEMManuals is not directed at children under 13. We do not knowingly collect personal information from children.
             If you believe a child has provided us with personal data, please contact us and we will delete it.
           </p>
         </section>

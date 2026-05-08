@@ -20,7 +20,7 @@ export const metadata: Metadata = {
         type: 'article',
     },
     alternates: {
-        canonical: 'https://spotonauto.com/tools/nissan-sentra-thermostat-location',
+        canonical: 'https://alloemmanuals.com/tools/nissan-sentra-thermostat-location',
     },
 };
 

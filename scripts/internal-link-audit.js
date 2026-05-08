@@ -6,7 +6,7 @@
  *
  * Usage:
  *   node scripts/internal-link-audit.js
- *   node scripts/internal-link-audit.js --base https://spotonauto.com --max-links 600 --export
+ *   node scripts/internal-link-audit.js --base https://alloemmanuals.com --max-links 600 --export
  */
 
 const fs = require('fs');
@@ -52,7 +52,7 @@ function extractLinks(html, baseUrl) {
 
     try {
       const u = new URL(raw, baseUrl);
-      if (u.hostname === 'spotonauto.com' || u.hostname === 'www.spotonauto.com') {
+      if (u.hostname === 'alloemmanuals.com' || u.hostname === 'www.alloemmanuals.com') {
         u.hash = '';
         out.push(u.toString());
       }
@@ -67,7 +67,7 @@ async function fetchHtml(url) {
   const res = await fetch(url, {
     redirect: 'follow',
     signal: AbortSignal.timeout(10000),
-    headers: { 'user-agent': 'SpotOnAuto-InternalLinkAudit/1.0' },
+    headers: { 'user-agent': 'AllOEMManuals-InternalLinkAudit/1.0' },
   });
   return res.text();
 }
@@ -78,7 +78,7 @@ async function checkUrl(url) {
       method: 'HEAD',
       redirect: 'manual',
       signal: AbortSignal.timeout(10000),
-      headers: { 'user-agent': 'SpotOnAuto-InternalLinkAudit/1.0' },
+      headers: { 'user-agent': 'AllOEMManuals-InternalLinkAudit/1.0' },
     });
 
     if (res.status === 405) {
@@ -86,7 +86,7 @@ async function checkUrl(url) {
         method: 'GET',
         redirect: 'manual',
         signal: AbortSignal.timeout(10000),
-        headers: { 'user-agent': 'SpotOnAuto-InternalLinkAudit/1.0' },
+        headers: { 'user-agent': 'AllOEMManuals-InternalLinkAudit/1.0' },
       });
     }
 
@@ -105,7 +105,7 @@ async function checkUrl(url) {
 }
 
 async function main() {
-  const base = getArg('base', 'https://spotonauto.com');
+  const base = getArg('base', 'https://alloemmanuals.com');
   const maxLinks = Number(getArg('max-links', '600'));
   const shouldExport = hasFlag('export');
 

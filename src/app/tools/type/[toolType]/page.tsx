@@ -23,14 +23,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { toolType } = await params;
     const meta = TOOL_TYPE_META[toolType];
     if (!meta) {
-        return { title: 'Tool Type Not Found | SpotOnAuto' };
+        return { title: 'Tool Type Not Found | AllOEMManuals' };
     }
 
     return {
-        title: `${meta.label} Guides | SpotOnAuto`,
+        title: `${meta.label} Guides | AllOEMManuals`,
         description: `Open every ${meta.label.toLowerCase()} page by make and model. Find vehicle-specific specs, exact-fit repair links, and a faster one-trip shopping path for the job you are researching.`,
         alternates: {
-            canonical: `https://spotonauto.com/tools/type/${toolType}`,
+            canonical: `https://alloemmanuals.com/tools/type/${toolType}`,
         },
     };
 }

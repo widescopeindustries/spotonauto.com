@@ -97,7 +97,7 @@ function toRelativeHref(href: string | null): string | null {
 
   try {
     const url = new URL(href);
-    if (url.hostname === 'spotonauto.com' || url.hostname === 'www.spotonauto.com') {
+    if (url.hostname === 'alloemmanuals.com' || url.hostname === 'www.alloemmanuals.com') {
       return `${url.pathname}${url.search}${url.hash}`;
     }
   } catch {

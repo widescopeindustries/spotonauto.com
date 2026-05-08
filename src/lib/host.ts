@@ -1,5 +1,5 @@
-export const CANONICAL_HOST = 'spotonauto.com';
-export const LEGACY_HOSTS = new Set(['www.spotonauto.com']);
+export const CANONICAL_HOST = 'alloemmanuals.com';
+export const LEGACY_HOSTS = new Set(['www.alloemmanuals.com']);
 
 export function normalizeHost(host: string | null | undefined): string {
   return (host ?? '').trim().toLowerCase().split(':')[0];

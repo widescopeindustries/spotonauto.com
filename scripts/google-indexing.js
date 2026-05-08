@@ -111,7 +111,7 @@ const TASKS = [
 ];
 
 const SITEMAP_YEARS = Array.from({ length: 2013 - 1982 + 1 }, (_, i) => 1982 + i);
-const BASE_URL = 'https://spotonauto.com';
+const BASE_URL = 'https://alloemmanuals.com';
 
 // Progress tracking
 function loadProgress() {

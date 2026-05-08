@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import { PricingTrackedLink, PricingViewTracker } from '@/components/PricingTracking';
 
 export const metadata: Metadata = {
-  title: 'Pricing | SpotOnAuto',
+  title: 'Pricing | AllOEMManuals',
   description:
-    'SpotOnAuto pricing for Quote Shield Pro and guided repair support. Start free, then unlock unlimited quote checks and premium workflows.',
+    'AllOEMManuals pricing for Quote Shield Pro and guided repair support. Start free, then unlock unlimited quote checks and premium workflows.',
   alternates: {
-    canonical: 'https://spotonauto.com/pricing',
+    canonical: 'https://alloemmanuals.com/pricing',
   },
 };
 

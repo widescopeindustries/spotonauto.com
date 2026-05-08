@@ -1,7 +1,7 @@
 {
   "name": "@spotonauto/manual-api",
   "version": "1.0.0",
-  "description": "Manual API service for LEMON + CHARM — powers SpotOnAuto web + MCP clients",
+  "description": "Manual API service for LEMON + CHARM — powers AllOEMManuals web + MCP clients",
   "type": "module",
   "main": "dist/server.js",
   "bin": {

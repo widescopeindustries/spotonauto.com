@@ -8,7 +8,7 @@ const LAST_MOD = getSitemapLastMod();
  * Codes sub-sitemap — index page + 300 individual code pages.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://spotonauto.com';
+    const baseUrl = 'https://alloemmanuals.com';
     const entries: MetadataRoute.Sitemap = [];
 
     // Index page

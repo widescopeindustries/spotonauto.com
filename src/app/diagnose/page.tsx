@@ -60,7 +60,7 @@ export default async function DiagnosticPage({
                     __html: JSON.stringify({
                         '@context': 'https://schema.org',
                         '@type': 'SoftwareApplication',
-                        name: 'SpotOnAuto AI Diagnostic Tool',
+                        name: 'AllOEMManuals AI Diagnostic Tool',
                         applicationCategory: 'AutomotiveApplication',
                         operatingSystem: 'Web',
                         offers: {

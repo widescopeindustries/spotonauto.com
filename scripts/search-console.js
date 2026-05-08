@@ -17,7 +17,7 @@ const fs = require('fs');
 
 // Config
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
-const SITE_URL = 'sc-domain:spotonauto.com'; // Domain property format
+const SITE_URL = 'sc-domain:alloemmanuals.com'; // Domain property format
 const OUTPUT_DIR = path.join(__dirname, 'seo-reports');
 
 class SearchConsoleService {

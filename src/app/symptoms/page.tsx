@@ -5,10 +5,10 @@ import { getHighValueSymptomHubs, getTier1RepairSupportGaps, getTopOrphanSymptom
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const metadata: Metadata = {
-  title: 'Symptom Hubs | SpotOnAuto',
+  title: 'Symptom Hubs | AllOEMManuals',
   description: 'Describe what your car is doing in plain English and find the right repair path. Symptom hubs map noises, leaks, and warning lights to causes, codes, and fixes.',
   alternates: {
-    canonical: 'https://spotonauto.com/symptoms',
+    canonical: 'https://alloemmanuals.com/symptoms',
   },
 };
 
@@ -27,7 +27,7 @@ export default function SymptomsIndexPage() {
 
       <p className="text-amber-300 text-xs uppercase tracking-[0.2em] font-bold mb-3">Knowledge Graph Entry Points</p>
       <h1 className="text-4xl font-display font-bold text-white mb-4">
-        SpotOnAuto <span className="text-amber-400">Symptom Hubs</span>
+        AllOEMManuals <span className="text-amber-400">Symptom Hubs</span>
       </h1>
       <p className="text-gray-300 max-w-3xl mb-8">
         Describe what your car is doing — we&apos;ll help you figure out what&apos;s wrong and which repair you need.

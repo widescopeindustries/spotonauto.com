@@ -155,19 +155,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!vehicle || !systemMeta) {
     return {
-      title: 'Wiring Diagram Not Found | SpotOnAuto',
-      description: 'Browse wiring diagrams by make, year, and model on SpotOnAuto. Search OEM schematics, connector views, and system-specific electrical paths for the exact vehicle you are working on.',
+      title: 'Wiring Diagram Not Found | AllOEMManuals',
+      description: 'Browse wiring diagrams by make, year, and model on AllOEMManuals. Search OEM schematics, connector views, and system-specific electrical paths for the exact vehicle you are working on.',
     };
   }
   if (!supportsWiringSystem(vehicle, systemSlug)) {
     return {
-      title: 'Wiring Diagram Not Found | SpotOnAuto',
-      description: 'Browse wiring diagrams by make, year, and model on SpotOnAuto. Search OEM schematics, connector views, and system-specific electrical paths for the exact vehicle you are working on.',
+      title: 'Wiring Diagram Not Found | AllOEMManuals',
+      description: 'Browse wiring diagrams by make, year, and model on AllOEMManuals. Search OEM schematics, connector views, and system-specific electrical paths for the exact vehicle you are working on.',
     };
   }
 
   const vehicleLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
-  const canonical = `https://spotonauto.com${buildWiringSeoHref(vehicle, systemSlug)}`;
+  const canonical = `https://alloemmanuals.com${buildWiringSeoHref(vehicle, systemSlug)}`;
   const title = `${vehicleLabel} ${systemMeta.title} | Free OEM Schematics`;
   const description = `${vehicleLabel} ${systemMeta.title}: ${systemMeta.intro} Free access to searchable OEM electrical schematics, connector views, and diagram jump points for the exact variant and system.`;
 
@@ -421,7 +421,7 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         name: `Where can I find the ${systemMeta.shortLabel.toLowerCase()} wiring diagram for ${vehicleLabel}?`,
         acceptedAnswer: {
           '@type': 'Answer',
-          text: `Use the interactive SpotOnAuto wiring browser for ${vehicleLabel}. Select ${vehicle.year}, ${vehicle.make}, ${data.resolvedVariant}, then search ${systemMeta.shortLabel}.`,
+          text: `Use the interactive AllOEMManuals wiring browser for ${vehicleLabel}. Select ${vehicle.year}, ${vehicle.make}, ${data.resolvedVariant}, then search ${systemMeta.shortLabel}.`,
         },
       },
       {

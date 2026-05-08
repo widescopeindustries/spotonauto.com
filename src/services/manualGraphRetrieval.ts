@@ -164,7 +164,7 @@ function toManualSource(candidate: GraphManualCandidate): GroundingSource {
     .map((segment) => encodeURIComponent(decodeURIComponent(segment)));
 
   return {
-    uri: `https://spotonauto.com/manual/${segments.join('/')}`,
+    uri: `https://alloemmanuals.com/manual/${segments.join('/')}`,
     title: candidate.sectionTitle,
     path: candidate.path,
     snippet: clip(candidate.contentPreview, 220),

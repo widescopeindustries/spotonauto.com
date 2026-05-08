@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title: page.title,
             description,
             type: 'article',
-            url: `https://spotonauto.com/tools/${page.slug}`,
+            url: `https://alloemmanuals.com/tools/${page.slug}`,
         },
         twitter: {
             card: 'summary',
@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description,
         },
         alternates: {
-            canonical: `https://spotonauto.com/tools/${page.slug}`,
+            canonical: `https://alloemmanuals.com/tools/${page.slug}`,
         },
     };
 }
@@ -107,7 +107,7 @@ export default async function ToolPage({ params }: PageProps) {
     const colorClasses = colorMap[meta.color] || colorMap.cyan;
 
     const schemaDate = new Date().toISOString().slice(0, 10);
-    const pageUrl = `https://spotonauto.com/tools/${page.slug}`;
+    const pageUrl = `https://alloemmanuals.com/tools/${page.slug}`;
 
     // Schema.org FAQPage structured data
     const faqSchema = {
@@ -129,15 +129,15 @@ export default async function ToolPage({ params }: PageProps) {
         dateModified: schemaDate,
         author: {
             '@type': 'Person',
-            name: 'SpotOnAuto Editorial Team',
+            name: 'AllOEMManuals Editorial Team',
             jobTitle: 'ASE-Certified Technical Review Team',
         },
         publisher: {
             '@type': 'Organization',
-            name: 'SpotOnAuto',
+            name: 'AllOEMManuals',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://spotonauto.com/logo.png',
+                url: 'https://alloemmanuals.com/logo.png',
             },
         },
     };
@@ -147,7 +147,7 @@ export default async function ToolPage({ params }: PageProps) {
         '@type': 'HowTo',
         name: `${page.make} ${page.model} ${toolLabel}: verify and service`,
         description: page.description,
-        image: 'https://spotonauto.com/og-default.svg',
+        image: 'https://alloemmanuals.com/og-default.svg',
         totalTime: 'PT45M',
         estimatedCost: {
             '@type': 'MonetaryAmount',
@@ -167,7 +167,7 @@ export default async function ToolPage({ params }: PageProps) {
             name: `Check specs for ${gen.name}`,
             text: `Confirm ${gen.name} (${gen.years}) values before buying parts. Key specs: ${Object.entries(gen.specs).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(', ')}.`,
             url: `${pageUrl}#specs`,
-            image: 'https://spotonauto.com/og-default.svg',
+            image: 'https://alloemmanuals.com/og-default.svg',
             position: idx + 1,
         })),
     };
@@ -195,9 +195,9 @@ export default async function ToolPage({ params }: PageProps) {
                     "@context": "https://schema.org",
                     "@type": "BreadcrumbList",
                     itemListElement: [
-                        { "@type": "ListItem", position: 1, name: "Guides", item: "https://spotonauto.com/guides" },
-                        { "@type": "ListItem", position: 2, name: page.make, item: `https://spotonauto.com/guides/${page.make.toLowerCase()}` },
-                        { "@type": "ListItem", position: 3, name: `${page.make} ${page.model} ${meta.label}`, item: `https://spotonauto.com/tools/${page.slug}` },
+                        { "@type": "ListItem", position: 1, name: "Guides", item: "https://alloemmanuals.com/guides" },
+                        { "@type": "ListItem", position: 2, name: page.make, item: `https://alloemmanuals.com/guides/${page.make.toLowerCase()}` },
+                        { "@type": "ListItem", position: 3, name: `${page.make} ${page.model} ${meta.label}`, item: `https://alloemmanuals.com/tools/${page.slug}` },
                     ],
                 }) }}
             />
@@ -216,7 +216,7 @@ export default async function ToolPage({ params }: PageProps) {
                         {page.description}
                     </p>
                     <p className="mt-3 text-xs uppercase tracking-[0.18em] text-gray-500">
-                        Last updated: {schemaDate} • Reading time: 8 min • By SpotOnAuto Editorial Team
+                        Last updated: {schemaDate} • Reading time: 8 min • By AllOEMManuals Editorial Team
                     </p>
                 </div>
 

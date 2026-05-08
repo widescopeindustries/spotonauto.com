@@ -26,7 +26,7 @@ const preferGemini = (() => {
 })();
 
 function buildSystemPrompt(graphContext?: string): string {
-  return `You are SpotOn Guide — a friendly AI assistant for SpotOnAuto.com, an AI-powered vehicle repair platform.
+  return `You are SpotOn Guide — a friendly AI assistant for AllOEMManuals.com, an AI-powered vehicle repair platform.
 
 Your job is to help users find the right tool for their situation and naturally guide free users to upgrade to Pro when relevant.
 
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
 
     if (!messages || messages.length > 20) {
       return NextResponse.json({
-        reply: "Head to SpotOnAuto.com to get started — try the AI Diagnostics for your vehicle!",
+        reply: "Head to AllOEMManuals.com to get started — try the AI Diagnostics for your vehicle!",
       });
     }
 

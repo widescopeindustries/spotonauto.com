@@ -20,19 +20,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { year, make, model } = await params;
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
-  const title = `${year} ${displayMake} ${displayModel} Oil Type & Capacity | SpotOnAuto`;
+  const title = `${year} ${displayMake} ${displayModel} Oil Type & Capacity | AllOEMManuals`;
   const description = `Exact engine oil type, capacity, and OEM spec for the ${year} ${displayMake} ${displayModel}. Factory service manual data with recommended products.`;
   return {
     title,
     description,
     alternates: {
-      canonical: `https://spotonauto.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/oil-type`,
+      canonical: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/oil-type`,
     },
     openGraph: {
       title,
       description,
       type: "article",
-      url: `https://spotonauto.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/oil-type`,
+      url: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/oil-type`,
     },
   };
 }
@@ -92,10 +92,10 @@ export default async function OilTypePage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Maintenance", item: "https://spotonauto.com/maintenance" },
-      { "@type": "ListItem", position: 2, name: displayMake, item: `https://spotonauto.com/maintenance/${canonicalMake}` },
-      { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com/maintenance/${canonicalMake}/${canonicalModel}` },
-      { "@type": "ListItem", position: 4, name: `${year} ${displayMake} ${displayModel} Oil Type`, item: `https://spotonauto.com/maintenance/${year}/${canonicalMake}/${canonicalModel}/oil-type` },
+      { "@type": "ListItem", position: 1, name: "Maintenance", item: "https://alloemmanuals.com/maintenance" },
+      { "@type": "ListItem", position: 2, name: displayMake, item: `https://alloemmanuals.com/maintenance/${canonicalMake}` },
+      { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://alloemmanuals.com/maintenance/${canonicalMake}/${canonicalModel}` },
+      { "@type": "ListItem", position: 4, name: `${year} ${displayMake} ${displayModel} Oil Type`, item: `https://alloemmanuals.com/maintenance/${year}/${canonicalMake}/${canonicalModel}/oil-type` },
     ],
   };
 

@@ -9,7 +9,7 @@ import {
 } from '@/lib/analyticsContext';
 
 /**
- * analytics.ts — Consolidated GA4 event tracking for SpotOnAuto
+ * analytics.ts — Consolidated GA4 event tracking for AllOEMManuals
  *
  * Single source of truth for all analytics events.
  * Uses window.gtag() with automatic UTM attribution via sessionStorage.

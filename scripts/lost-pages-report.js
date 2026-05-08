@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
-const SITE_URL = 'sc-domain:spotonauto.com';
+const SITE_URL = 'sc-domain:alloemmanuals.com';
 
 function getArg(name, fallback = null) {
   const idx = process.argv.indexOf(`--${name}`);
@@ -128,7 +128,7 @@ async function checkStatuses(items) {
     try {
       const res = await fetch(page, {
         redirect: 'manual',
-        headers: { 'user-agent': 'SpotOnAuto-LostPagesAudit/1.0' },
+        headers: { 'user-agent': 'AllOEMManuals-LostPagesAudit/1.0' },
       });
       return {
         status: res.status,

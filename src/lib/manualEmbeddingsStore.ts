@@ -85,9 +85,9 @@ export function getLocalPool(): Pool | null {
   localPool = new Pool({
     connectionString,
     max: 3,
-    connectionTimeoutMillis: getTimeoutMs(process.env.LOCAL_DATABASE_CONNECT_TIMEOUT_MS, 1500),
-    query_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 4000),
-    statement_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 4000),
+    connectionTimeoutMillis: getTimeoutMs(process.env.LOCAL_DATABASE_CONNECT_TIMEOUT_MS, 5000),
+    query_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 15000),
+    statement_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 15000),
     idleTimeoutMillis: 8000,
   });
 
@@ -628,18 +628,18 @@ export async function getDbCoverageStats(): Promise<{
   if (!pool) return { makeCount: 0, modelCount: 0, comboCount: 0 };
   await ensureLocalSchema();
 
-  const { rows } = await pool.query(
-    `SELECT
-       count(DISTINCT make)::int AS make_count,
-       count(DISTINCT model)::int AS model_count,
-       count(DISTINCT make || '-' || model)::int AS make_model_count
-     FROM manual_embeddings`,
-  );
-  const row = rows[0] || {};
+  // Run counts in parallel — each can use its own index, avoiding the
+  // single massive sort that PostgreSQL does for multi-column DISTINCT.
+  const [makeRes, modelRes, comboRes] = await Promise.all([
+    pool.query(`SELECT count(DISTINCT make)::int AS c FROM manual_embeddings`),
+    pool.query(`SELECT count(DISTINCT model)::int AS c FROM manual_embeddings`),
+    pool.query(`SELECT count(*)::int AS c FROM (SELECT DISTINCT make, model FROM manual_embeddings) t`),
+  ]);
+
   return {
-    makeCount: Number(row.make_count || 0),
-    modelCount: Number(row.model_count || 0),
-    comboCount: Number(row.make_model_count || 0),
+    makeCount: Number(makeRes.rows[0]?.c || 0),
+    modelCount: Number(modelRes.rows[0]?.c || 0),
+    comboCount: Number(comboRes.rows[0]?.c || 0),
   };
 }
 
@@ -678,11 +678,13 @@ export async function resolveDbManualPath(
 
   // 1. Exact model match: look for paths like /make/year/model/...
   const exactPrefix = `/${make}/${year}/${model}`;
+  const exactStart = `${exactPrefix}/`;
+  const exactEnd = `${exactPrefix}0`; // lexicographic upper bound for prefix
   const { rows: exactRows } = await pool.query(
     `SELECT path FROM manual_embeddings
-     WHERE LOWER(path) LIKE LOWER($1 || '/%')
+     WHERE path >= $1 AND path < $2
      LIMIT 1`,
-    [exactPrefix],
+    [exactStart, exactEnd],
   );
 
   if (exactRows.length > 0) {
@@ -702,11 +704,13 @@ export async function resolveDbManualPath(
 
   // 2. Prefix match: any path for this make+year
   const yearPrefix = `/${make}/${year}`;
+  const yearStart = `${yearPrefix}/`;
+  const yearEnd = `${yearPrefix}0`;
   const { rows: yearRows } = await pool.query(
     `SELECT DISTINCT model FROM manual_embeddings
-     WHERE LOWER(path) LIKE LOWER($1 || '/%')
+     WHERE path >= $1 AND path < $2
      LIMIT 20`,
-    [yearPrefix],
+    [yearStart, yearEnd],
   );
 
   if (yearRows.length === 0) return null;

@@ -45,7 +45,7 @@ const tasks = [
 ];
 
 async function generate() {
-    const smStream = new SitemapStream({ hostname: 'https://spotonauto.com' });
+    const smStream = new SitemapStream({ hostname: 'https://alloemmanuals.com' });
     const writeStream = createWriteStream(sitemapPath);
 
     smStream.pipe(writeStream);

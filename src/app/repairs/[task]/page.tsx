@@ -37,10 +37,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!VALID_TASKS.includes(canonicalTask)) return {};
   const taskName = toTitleCase(canonicalTask);
   return {
-    title: `Choose Your Exact ${taskName} Guide | SpotOnAuto`,
-    description: `Select your exact year, make, model, and engine to open the correct ${taskName.toLowerCase()} guide. SpotOnAuto routes you to the exact-fit OEM path.`,
+    title: `Choose Your Exact ${taskName} Guide | AllOEMManuals`,
+    description: `Select your exact year, make, model, and engine to open the correct ${taskName.toLowerCase()} guide. AllOEMManuals routes you to the exact-fit OEM path.`,
     alternates: {
-      canonical: `https://spotonauto.com/repairs/${canonicalTask}`,
+      canonical: `https://alloemmanuals.com/repairs/${canonicalTask}`,
     },
     robots: {
       index: false,
@@ -107,9 +107,9 @@ export default async function TaskCategoryPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://spotonauto.com" },
-      { "@type": "ListItem", position: 2, name: "Repairs", item: "https://spotonauto.com/repairs" },
-      { "@type": "ListItem", position: 3, name: taskName, item: `https://spotonauto.com/repairs/${canonicalTask}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://alloemmanuals.com" },
+      { "@type": "ListItem", position: 2, name: "Repairs", item: "https://alloemmanuals.com/repairs" },
+      { "@type": "ListItem", position: 3, name: taskName, item: `https://alloemmanuals.com/repairs/${canonicalTask}` },
     ],
   };
 

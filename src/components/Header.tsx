@@ -45,7 +45,7 @@ export default function Header() {
             <Link
               href="/"
               className="flex items-center gap-2 group"
-              aria-label="SpotOnAuto Home"
+              aria-label="AllOEMManuals Home"
             >
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-[#FF6B00] to-[#FF9500] flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(255,107,0,0.4)] transition-shadow">
                 <Cpu className="w-4 h-4 md:w-5 md:h-5 text-white" />
@@ -60,7 +60,7 @@ export default function Header() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search symptom, code, or repair"
-                aria-label="Search SpotOnAuto"
+                aria-label="Search AllOEMManuals"
                 className="w-full bg-transparent text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none"
               />
               <button

@@ -12,7 +12,7 @@ import {
 } from '@/lib/topdonAffiliate';
 
 export const metadata: Metadata = {
-  title: 'TOPDON Scanner Comparison: Every Model Side by Side (2026) | SpotOnAuto',
+  title: 'TOPDON Scanner Comparison: Every Model Side by Side (2026) | AllOEMManuals',
   description:
     'Compare every TOPDON OBD2 scanner side-by-side. Full feature comparison chart — ArtiLink300 vs TopScan vs ArtiDiag500 vs ArtiDiag900 Lite vs ArtiDiag Pro and more.',
   keywords: [
@@ -30,10 +30,10 @@ export const metadata: Metadata = {
     description:
       'Full feature comparison chart for every TOPDON OBD2 scanner. Find the right one for your car.',
     type: 'article',
-    url: 'https://spotonauto.com/tools/topdon-scanner-comparison',
+    url: 'https://alloemmanuals.com/tools/topdon-scanner-comparison',
   },
   alternates: {
-    canonical: 'https://spotonauto.com/tools/topdon-scanner-comparison',
+    canonical: 'https://alloemmanuals.com/tools/topdon-scanner-comparison',
   },
 };
 

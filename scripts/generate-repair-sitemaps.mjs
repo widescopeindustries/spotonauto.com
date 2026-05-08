@@ -20,7 +20,7 @@ const LAST_MOD = process.env.SITEMAP_LAST_MOD || new Date().toISOString().slice(
 const YEAR_STEP = 5;
 // Keep chunks small and stable for crawler fetch reliability.
 const URLS_PER_SITEMAP = 10000;
-const BASE_URL = 'https://spotonauto.com';
+const BASE_URL = 'https://alloemmanuals.com';
 const MAIN_SITEMAP_MIN_YEAR = 1995;
 const TASK_MIN_YEAR = {
     'catalytic-converter-replacement': 1975,

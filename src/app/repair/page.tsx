@@ -8,11 +8,11 @@ import SafetyWarningBox from '@/components/SafetyWarningBox';
 import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 
 export const metadata: Metadata = {
-  title: 'Exact Repair Hub | SpotOnAuto',
+  title: 'Exact Repair Hub | AllOEMManuals',
   description:
     'Start here to find trusted DIY repair guides by vehicle, symptom, and exact repair family. Explore brakes, batteries, lighting, filters, fluids, and exact repair walkthroughs.',
   alternates: {
-    canonical: 'https://spotonauto.com/repair',
+    canonical: 'https://alloemmanuals.com/repair',
   },
 };
 
@@ -36,7 +36,7 @@ export default function RepairHubPage() {
       </nav>
 
       <h1 className="text-4xl font-display font-bold text-white mb-4">
-        SpotOnAuto <span className="text-cyan-400">Repair Hub</span>
+        AllOEMManuals <span className="text-cyan-400">Repair Hub</span>
       </h1>
       <p className="text-gray-400 mb-8 max-w-3xl">
         Start with the kind of help you need: an exact vehicle hub, a common DIY job, a symptom page, or a vehicle-specific

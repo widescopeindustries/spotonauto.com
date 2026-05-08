@@ -4,18 +4,18 @@ import CodesIndex from './CodesIndex';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const metadata: Metadata = {
-    title: 'OBD2 Code Lookup | SpotOnAuto',
+    title: 'OBD2 Code Lookup | AllOEMManuals',
     description: 'Free OBD2 trouble code lookup. Find what your check engine light means with 8,500+ DTC codes explained in plain English — symptoms, likely causes, and DIY fixes.',
     keywords: ['OBD2 codes', 'DTC codes', 'check engine light codes', 'trouble codes', 'P0420', 'engine codes', 'car diagnostic codes'],
     openGraph: {
         title: 'OBD2 DTC Trouble Code Lookup — SpotOn Auto',
         description: 'Free OBD2 trouble code lookup. 300+ codes explained in plain English with symptoms, causes, and fixes.',
         type: 'website',
-        url: 'https://spotonauto.com/codes',
-        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'SpotOnAuto - Free DIY Auto Repair Guides' }],
+        url: 'https://alloemmanuals.com/codes',
+        images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'AllOEMManuals - Free DIY Auto Repair Guides' }],
     },
     alternates: {
-        canonical: 'https://spotonauto.com/codes',
+        canonical: 'https://alloemmanuals.com/codes',
     },
 };
 
@@ -24,8 +24,8 @@ export default function CodesPage() {
     const schemaDate = '2026-03-05';
     const schemaAuthor = {
         '@type': 'Organization',
-        name: 'SpotOnAuto Editorial Team',
-        url: 'https://spotonauto.com',
+        name: 'AllOEMManuals Editorial Team',
+        url: 'https://alloemmanuals.com',
     };
 
     const faqSchema = {
@@ -44,9 +44,9 @@ export default function CodesPage() {
     const webPageSchema = {
         '@context': 'https://schema.org',
         '@type': 'WebPage',
-        name: 'OBD2 Code Lookup | SpotOnAuto',
+        name: 'OBD2 Code Lookup | AllOEMManuals',
         description: metadata.description,
-        url: 'https://spotonauto.com/codes',
+        url: 'https://alloemmanuals.com/codes',
         datePublished: schemaDate,
         dateModified: schemaDate,
         author: schemaAuthor,

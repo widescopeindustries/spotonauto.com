@@ -6,10 +6,10 @@ import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/MotionWrap
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 
 export const metadata: Metadata = {
-  title: 'Repair Guide Directory | Browse by Make | SpotOnAuto',
+  title: 'Repair Guide Directory | Browse by Make | AllOEMManuals',
   description: 'Select your vehicle manufacturer to browse free DIY repair guides. Step-by-step instructions, parts lists, and torque specs for 1982–2024 cars and trucks.',
   alternates: {
-    canonical: 'https://spotonauto.com/guides',
+    canonical: 'https://alloemmanuals.com/guides',
   },
 };
 

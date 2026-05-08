@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { COMPANY_INFO } from '@/lib/companyInfo';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | SpotOnAuto',
-  description: 'Terms and conditions for using SpotOnAuto, including AI-generated content disclaimers, affiliate disclosures, liability limitations, and data usage policies.',
-  alternates: { canonical: 'https://spotonauto.com/terms-of-service' },
+  title: 'Terms of Service | AllOEMManuals',
+  description: 'Terms and conditions for using AllOEMManuals, including AI-generated content disclaimers, affiliate disclosures, liability limitations, and data usage policies.',
+  alternates: { canonical: 'https://alloemmanuals.com/terms-of-service' },
 };
 
 export default function TermsOfService() {
@@ -18,15 +18,15 @@ export default function TermsOfService() {
         </div>
 
         <p>
-          Welcome to SpotOnAuto, operated by Widescope Industries LLC (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), a Service-Disabled
-          Veteran-Owned Small Business (SDVOSB). By accessing or using spotonauto.com (the &quot;Site&quot;), you agree to these
+          Welcome to AllOEMManuals, operated by Widescope Industries LLC (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), a Service-Disabled
+          Veteran-Owned Small Business (SDVOSB). By accessing or using alloemmanuals.com (the &quot;Site&quot;), you agree to these
           Terms of Service. If you do not agree, please do not use the Site.
         </p>
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-cyan-400">1. Description of Service</h2>
           <p className="text-sm">
-            SpotOnAuto provides free AI-powered automotive repair guides, diagnostic trouble code (DTC) lookups, wiring
+            AllOEMManuals provides free AI-powered automotive repair guides, diagnostic trouble code (DTC) lookups, wiring
             diagrams, vehicle specifications, parts recommendations, and related tools. Our content is generated through
             a combination of:
           </p>
@@ -41,10 +41,10 @@ export default function TermsOfService() {
           <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-sm">
             <p className="text-red-300 font-semibold mb-2">Automotive repair involves inherent risks.</p>
             <ul className="list-disc pl-6 space-y-1 text-red-200/80">
-              <li>All content on SpotOnAuto is for <strong>informational purposes only</strong> and does not replace professional mechanical advice.</li>
+              <li>All content on AllOEMManuals is for <strong>informational purposes only</strong> and does not replace professional mechanical advice.</li>
               <li>Always consult your vehicle&apos;s official service manual before performing any repair.</li>
               <li>You are solely responsible for your safety and the safety of others when performing vehicle repairs.</li>
-              <li>SpotOnAuto, Widescope Industries LLC, and its operators are <strong>not liable</strong> for any damage, injury, or loss resulting from the use of information on this Site.</li>
+              <li>AllOEMManuals, Widescope Industries LLC, and its operators are <strong>not liable</strong> for any damage, injury, or loss resulting from the use of information on this Site.</li>
               <li>If you are not confident in performing a repair, take your vehicle to a qualified mechanic.</li>
               <li><strong>We strongly recommend professional assistance for complex or safety-critical repairs.</strong></li>
             </ul>
@@ -69,7 +69,7 @@ export default function TermsOfService() {
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-cyan-400">4. Affiliate Relationships &amp; Advertising</h2>
           <p className="text-sm">
-            SpotOnAuto earns revenue through affiliate commissions and advertising. When you click on certain product
+            AllOEMManuals earns revenue through affiliate commissions and advertising. When you click on certain product
             links and make a purchase, we may earn a commission at no additional cost to you. Our affiliate partnerships include:
           </p>
           <ul className="list-disc pl-6 space-y-1 text-sm">
@@ -93,7 +93,7 @@ export default function TermsOfService() {
             The Site&apos;s design, code, AI-generated text, tools, and original content are the property of Widescope
             Industries LLC. Factory service manual data is used under applicable research and reference provisions.
             Vehicle manufacturer names, model names, and trademarks are the property of their respective owners and
-            are used for identification purposes only. SpotOnAuto is not affiliated with or endorsed by any vehicle manufacturer.
+            are used for identification purposes only. AllOEMManuals is not affiliated with or endorsed by any vehicle manufacturer.
           </p>
         </section>
 
@@ -101,7 +101,7 @@ export default function TermsOfService() {
           <h2 className="text-xl font-bold text-cyan-400">6. User Accounts</h2>
           <p className="text-sm">
             If you create an account, you are responsible for maintaining the security of your login credentials.
-            You may delete your account and all associated data at any time by emailing support@spotonauto.com.
+            You may delete your account and all associated data at any time by emailing support@alloemmanuals.com.
           </p>
         </section>
 

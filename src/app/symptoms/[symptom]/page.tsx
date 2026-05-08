@@ -32,16 +32,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!cluster) {
     return {
-      title: 'Symptom Hub Not Found | SpotOnAuto',
-      description: 'Browse graph-driven vehicle symptom hubs on SpotOnAuto. Map noises, leaks, warning lights, and drivability complaints to likely repairs, related codes, and exact vehicle workflows.',
+      title: 'Symptom Hub Not Found | AllOEMManuals',
+      description: 'Browse graph-driven vehicle symptom hubs on AllOEMManuals. Map noises, leaks, warning lights, and drivability complaints to likely repairs, related codes, and exact vehicle workflows.',
     };
   }
 
   return {
     title: `${cluster.label} | Symptom Hub, Repairs, Codes & Vehicle Paths`,
-    description: `${cluster.label} symptom hub with likely repair categories, related code pages, and exact vehicle workflows tied together by the SpotOnAuto knowledge graph.`,
+    description: `${cluster.label} symptom hub with likely repair categories, related code pages, and exact vehicle workflows tied together by the AllOEMManuals knowledge graph.`,
     alternates: {
-      canonical: `https://spotonauto.com${buildSymptomHref(cluster.slug)}`,
+      canonical: `https://alloemmanuals.com${buildSymptomHref(cluster.slug)}`,
     },
   };
 }
@@ -96,9 +96,9 @@ export default async function SymptomHubPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://spotonauto.com' },
-      { '@type': 'ListItem', position: 2, name: 'Symptoms', item: 'https://spotonauto.com/symptoms' },
-      { '@type': 'ListItem', position: 3, name: matchedCluster.label, item: `https://spotonauto.com${buildSymptomHref(matchedCluster.slug)}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://alloemmanuals.com' },
+      { '@type': 'ListItem', position: 2, name: 'Symptoms', item: 'https://alloemmanuals.com/symptoms' },
+      { '@type': 'ListItem', position: 3, name: matchedCluster.label, item: `https://alloemmanuals.com${buildSymptomHref(matchedCluster.slug)}` },
     ],
   };
 

@@ -7,9 +7,9 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const REPORTS_DIR = path.join(__dirname, 'seo-reports');
 const KEY_PATH = path.join(ROOT, 'credentials', 'google-service-account.json');
-const SITE_URL = 'sc-domain:spotonauto.com';
+const SITE_URL = 'sc-domain:alloemmanuals.com';
 const GA_PROPERTY_ID = '520432705';
-const DOMAIN_PREFIX = 'https://spotonauto.com';
+const DOMAIN_PREFIX = 'https://alloemmanuals.com';
 const MULTI_WORD_MAKES = [
   'alfa romeo',
   'aston martin',

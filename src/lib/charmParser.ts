@@ -17,7 +17,7 @@ const RETRY_DELAY_MS = 250;
 
 function buildFetchOpts(): RequestInit {
   return {
-    headers: { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' },
+    headers: { 'User-Agent': 'AllOEMManuals/1.0 (+https://alloemmanuals.com) repair-guide-builder' },
     signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout
       ? AbortSignal.timeout(FETCH_TIMEOUT_MS)
       : undefined,
@@ -592,23 +592,23 @@ export function buildBreadcrumbs(pathSegments: string[]): Breadcrumb[] {
 
 export function buildManualTitle(pathSegments: string[]): string {
   if (pathSegments.length === 0) {
-    return 'Factory Service Manuals | 1982-2025 | SpotOnAuto';
+    return 'Factory Service Manuals | 1982-2025 | AllOEMManuals';
   }
 
   const decoded = pathSegments.map(s => sanitizeCharmBrandingText(safeDecodeUriComponent(s)));
   const last = decoded[decoded.length - 1];
 
   if (pathSegments.length === 1) {
-    return `${last} Service Manuals | SpotOnAuto`;
+    return `${last} Service Manuals | AllOEMManuals`;
   }
 
   if (pathSegments.length === 2) {
-    return `${decoded[1]} ${decoded[0]} Service Manuals | SpotOnAuto`;
+    return `${decoded[1]} ${decoded[0]} Service Manuals | AllOEMManuals`;
   }
 
   // Deeper paths: show last segment + vehicle context
   const vehicle = decoded.slice(0, 3).join(' ');
-  return `${last} - ${vehicle} Service Manual | SpotOnAuto`;
+  return `${last} - ${vehicle} Service Manual | AllOEMManuals`;
 }
 
 export function buildManualDescription(pathSegments: string[]): string {

@@ -3,17 +3,17 @@ import Link from 'next/link';
 import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
 
-const PAGE_URL = 'https://spotonauto.com/blog/amazon-auto-parts-by-vehicle-year-and-type';
+const PAGE_URL = 'https://alloemmanuals.com/blog/amazon-auto-parts-by-vehicle-year-and-type';
 
 export const metadata: Metadata = {
-  title: 'Amazon Auto Parts by Vehicle Year and Type | SpotOnAuto',
+  title: 'Amazon Auto Parts by Vehicle Year and Type | AllOEMManuals',
   description:
     'How to find Amazon auto parts by vehicle year, make, model, and repair type without ordering the wrong fitment.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
-    title: 'Amazon Auto Parts by Vehicle Year and Type | SpotOnAuto',
+    title: 'Amazon Auto Parts by Vehicle Year and Type | AllOEMManuals',
     description:
       'Use Amazon Garage correctly: year/make/model fitment, part number checks, and ordering workflow.',
     type: 'article',
@@ -30,11 +30,11 @@ export default function AmazonAutoPartsPage() {
     headline: 'Amazon Auto Parts by Vehicle Year and Type',
     datePublished: schemaDate,
     dateModified: schemaDate,
-    author: { '@type': 'Person', name: 'SpotOnAuto Editorial Team' },
+    author: { '@type': 'Person', name: 'AllOEMManuals Editorial Team' },
     publisher: {
       '@type': 'Organization',
-      name: 'SpotOnAuto',
-      logo: { '@type': 'ImageObject', url: 'https://spotonauto.com/logo.png' },
+      name: 'AllOEMManuals',
+      logo: { '@type': 'ImageObject', url: 'https://alloemmanuals.com/logo.png' },
     },
     mainEntityOfPage: PAGE_URL,
   };

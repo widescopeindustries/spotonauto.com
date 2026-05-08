@@ -20,19 +20,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { year, make, model } = await params;
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
-  const title = `${year} ${displayMake} ${displayModel} Tire Size & Pressure | SpotOnAuto`;
+  const title = `${year} ${displayMake} ${displayModel} Tire Size & Pressure | AllOEMManuals`;
   const description = `Exact OEM tire size, pressure, and load rating for the ${year} ${displayMake} ${displayModel}. Factory spec from the service manual.`;
   return {
     title,
     description,
     alternates: {
-      canonical: `https://spotonauto.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/tire-size`,
+      canonical: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/tire-size`,
     },
     openGraph: {
       title,
       description,
       type: "article",
-      url: `https://spotonauto.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/tire-size`,
+      url: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/tire-size`,
     },
   };
 }
@@ -88,10 +88,10 @@ export default async function TireSizePage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Maintenance", item: "https://spotonauto.com/maintenance" },
-      { "@type": "ListItem", position: 2, name: displayMake, item: `https://spotonauto.com/maintenance/${canonicalMake}` },
-      { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://spotonauto.com/maintenance/${canonicalMake}/${canonicalModel}` },
-      { "@type": "ListItem", position: 4, name: `${year} Tire Size`, item: `https://spotonauto.com/maintenance/${year}/${canonicalMake}/${canonicalModel}/tire-size` },
+      { "@type": "ListItem", position: 1, name: "Maintenance", item: "https://alloemmanuals.com/maintenance" },
+      { "@type": "ListItem", position: 2, name: displayMake, item: `https://alloemmanuals.com/maintenance/${canonicalMake}` },
+      { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://alloemmanuals.com/maintenance/${canonicalMake}/${canonicalModel}` },
+      { "@type": "ListItem", position: 4, name: `${year} Tire Size`, item: `https://alloemmanuals.com/maintenance/${year}/${canonicalMake}/${canonicalModel}/tire-size` },
     ],
   };
 

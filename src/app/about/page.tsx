@@ -5,10 +5,10 @@ import { Shield, Star, Cpu, BookOpen, Phone, Mail, MapPin, Clock3, BadgeCheck } 
 import { COMPANY_INFO, formatBusinessAddress } from '@/lib/companyInfo';
 
 export const metadata: Metadata = {
-  title: 'About SpotOnAuto | Veteran-Owned & SDVOSB-Certified',
-  description: 'SpotOnAuto is operated by Widescope Industries LLC, an SDVOSB-certified, veteran-owned company in Streetman, Texas focused on safety-first free DIY repair guidance.',
+  title: 'About AllOEMManuals | Veteran-Owned & SDVOSB-Certified',
+  description: 'AllOEMManuals is operated by Widescope Industries LLC, an SDVOSB-certified, veteran-owned company in Streetman, Texas focused on safety-first free DIY repair guidance.',
   alternates: {
-    canonical: 'https://spotonauto.com/about',
+    canonical: 'https://alloemmanuals.com/about',
   },
 };
 
@@ -26,10 +26,10 @@ export default function AboutPage() {
         {/* Hero */}
         <section className="text-center space-y-4">
           <h1 className="font-display font-black text-4xl sm:text-5xl text-white">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">SpotOnAuto</span>
+            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">AllOEMManuals</span>
           </h1>
           <p className="font-body text-lg text-gray-300 max-w-3xl mx-auto">
-            SpotOnAuto is a safety-first, free DIY repair platform built by a veteran-owned company. We help drivers avoid costly mistakes and unsafe repairs with clearer, vehicle-specific guidance.
+            AllOEMManuals is a safety-first, free DIY repair platform built by a veteran-owned company. We help drivers avoid costly mistakes and unsafe repairs with clearer, vehicle-specific guidance.
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
             <span className="rounded-full border border-[#D4A017]/40 bg-[#D4A017]/10 px-3 py-1 text-xs font-semibold text-[#E6C36A]">
@@ -61,7 +61,7 @@ export default function AboutPage() {
             </div>
             <div className="flex-1">
               <p className="font-body text-gray-300 leading-relaxed">
-                SpotOnAuto is operated by <strong>{COMPANY_INFO.legalName}</strong>, a Service-Disabled Veteran-Owned Small Business (SDVOSB).
+                AllOEMManuals is operated by <strong>{COMPANY_INFO.legalName}</strong>, a Service-Disabled Veteran-Owned Small Business (SDVOSB).
                 You can verify our certification directly through the U.S. Small Business Administration.
               </p>
               <a
@@ -82,7 +82,7 @@ export default function AboutPage() {
           <div className="glass rounded-2xl border border-white/10 p-4">
             <Image
               src="/about/founder-portrait.jpg"
-              alt="Founder of SpotOnAuto and Widescope Industries LLC"
+              alt="Founder of AllOEMManuals and Widescope Industries LLC"
               width={360}
               height={360}
               className="w-full rounded-xl object-cover"
@@ -93,11 +93,11 @@ export default function AboutPage() {
           <div className="glass rounded-2xl border border-white/10 p-8">
             <h2 className="font-display font-bold text-2xl text-white">Founder &amp; Review Team</h2>
             <p className="mt-3 text-gray-300 leading-7">
-              <strong>Lyndon Bedford</strong>, founder of SpotOnAuto and Widescope Industries LLC, is an Iraq War veteran
+              <strong>Lyndon Bedford</strong>, founder of AllOEMManuals and Widescope Industries LLC, is an Iraq War veteran
               (32nd Signal Battalion, 2003–2004) and former Army 31F (Network Switching Systems Operator Maintainer).
             </p>
             <p className="mt-3 text-gray-300 leading-7">
-              After military service, he spent years doing hands-on automotive repair work and built SpotOnAuto to give
+              After military service, he spent years doing hands-on automotive repair work and built AllOEMManuals to give
               DIYers better guidance before they commit to risky or expensive decisions.
             </p>
             <p className="mt-3 text-gray-300 leading-7">
@@ -111,7 +111,7 @@ export default function AboutPage() {
         <section className="rounded-2xl border border-cyan-500/25 bg-cyan-500/[0.08] p-8">
           <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Why We Built This</h2>
           <p className="mt-3 text-gray-200 leading-7">
-            Too many drivers get trapped between expensive shop bills and unsafe guesswork. SpotOnAuto exists to reduce that risk:
+            Too many drivers get trapped between expensive shop bills and unsafe guesswork. AllOEMManuals exists to reduce that risk:
             clear steps, safety checkpoints, OEM references, and honest “stop and call a mechanic” triggers when DIY is no longer safe.
           </p>
           <p className="mt-3 text-gray-300 leading-7">
@@ -122,7 +122,7 @@ export default function AboutPage() {
         <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8">
           <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Our AI</h2>
           <p className="mt-3 text-gray-300 leading-7">
-            SpotOnAuto uses AI-assisted workflows to speed drafting and indexing, then applies human technical review before publication updates.
+            AllOEMManuals uses AI-assisted workflows to speed drafting and indexing, then applies human technical review before publication updates.
             We focus on practical diagnosis flow, fitment context, and safety-first stop conditions.
           </p>
           <p className="mt-3 text-gray-300 leading-7">

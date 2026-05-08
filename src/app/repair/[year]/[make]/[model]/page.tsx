@@ -348,25 +348,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!resolvedVehicle || !Number.isInteger(resolvedYear)) {
     return {
-      title: 'Vehicle Repair Hub Not Found | SpotOnAuto',
-      description: 'Browse DIY repair hubs by exact year, make, and model on SpotOnAuto, with links to repair guides, wiring, codes, and factory specs.',
+      title: 'Vehicle Repair Hub Not Found | AllOEMManuals',
+      description: 'Browse DIY repair hubs by exact year, make, and model on AllOEMManuals, with links to repair guides, wiring, codes, and factory specs.',
     };
   }
 
   const { originalMake, originalModel, production, canonicalMake, canonicalModel } = resolvedVehicle;
   if (resolvedYear < production.start || resolvedYear > production.end) {
     return {
-      title: 'Vehicle Repair Hub Not Found | SpotOnAuto',
-      description: 'Browse DIY repair hubs by exact year, make, and model on SpotOnAuto, with links to repair guides, wiring, codes, and factory specs.',
+      title: 'Vehicle Repair Hub Not Found | AllOEMManuals',
+      description: 'Browse DIY repair hubs by exact year, make, and model on AllOEMManuals, with links to repair guides, wiring, codes, and factory specs.',
     };
   }
 
   const vehicleLabel = `${resolvedYear} ${originalMake} ${originalModel}`;
   return {
-    title: `${vehicleLabel} Repair Hub — Free DIY Guides & Specs | SpotOnAuto`,
+    title: `${vehicleLabel} Repair Hub — Free DIY Guides & Specs | AllOEMManuals`,
     description: `Fix your ${vehicleLabel} yourself. Free step-by-step repair guides, wiring diagrams, trouble codes, and factory specs. Save hundreds vs. the shop.`,
     alternates: {
-      canonical: `https://spotonauto.com/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`,
+      canonical: `https://alloemmanuals.com/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`,
     },
     ...(NOINDEX_MAKES.has(canonicalMake) || isNonUsModel(canonicalMake, canonicalModel) ? { robots: { index: false, follow: true } } : {}),
   };
@@ -609,10 +609,10 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Repair Hub', item: 'https://spotonauto.com/repair' },
-      { '@type': 'ListItem', position: 2, name: originalMake, item: 'https://spotonauto.com/repair' },
-      { '@type': 'ListItem', position: 3, name: `${originalMake} ${originalModel}`, item: `https://spotonauto.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}` },
-      { '@type': 'ListItem', position: 4, name: vehicleLabel, item: `https://spotonauto.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}` },
+      { '@type': 'ListItem', position: 1, name: 'Repair Hub', item: 'https://alloemmanuals.com/repair' },
+      { '@type': 'ListItem', position: 2, name: originalMake, item: 'https://alloemmanuals.com/repair' },
+      { '@type': 'ListItem', position: 3, name: `${originalMake} ${originalModel}`, item: `https://alloemmanuals.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}` },
+      { '@type': 'ListItem', position: 4, name: vehicleLabel, item: `https://alloemmanuals.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}` },
     ],
   };
 
@@ -621,7 +621,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
     '@type': 'CollectionPage',
     name: `${vehicleLabel} Repair Hub`,
     description: `Repair guides, wiring diagrams, trouble codes, and factory manual references for the ${vehicleLabel}.`,
-    url: `https://spotonauto.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}`,
+    url: `https://alloemmanuals.com/repair/${canonicalYear}/${canonicalMake}/${canonicalModel}`,
   };
 
   return (

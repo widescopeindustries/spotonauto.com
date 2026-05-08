@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { COMPANY_INFO } from '@/lib/companyInfo';
 
 export const metadata: Metadata = {
-  title: 'Affiliate Disclosure | SpotOnAuto',
-  description: 'FTC-compliant affiliate disclosure for SpotOnAuto. How we earn revenue through Amazon Associates, TOPDON affiliate program, and Google AdSense while keeping all repair content free.',
-  alternates: { canonical: 'https://spotonauto.com/disclosure' },
+  title: 'Affiliate Disclosure | AllOEMManuals',
+  description: 'FTC-compliant affiliate disclosure for AllOEMManuals. How we earn revenue through Amazon Associates, TOPDON affiliate program, and Google AdSense while keeping all repair content free.',
+  alternates: { canonical: 'https://alloemmanuals.com/disclosure' },
 };
 
 export default function AffiliateDisclosure() {
@@ -20,7 +20,7 @@ export default function AffiliateDisclosure() {
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 text-sm">
           <p className="text-amber-200 font-semibold mb-2">In the interest of full transparency:</p>
           <p className="text-amber-100/80">
-            SpotOnAuto (operated by Widescope Industries LLC) earns money through affiliate commissions and advertising.
+            AllOEMManuals (operated by Widescope Industries LLC) earns money through affiliate commissions and advertising.
             Some links on this website are affiliate links, meaning we may earn a commission if you click through and make
             a purchase — <strong>at no additional cost to you</strong>. This is how we keep the site free and continue
             building tools for the DIY auto repair community.
@@ -32,13 +32,13 @@ export default function AffiliateDisclosure() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-cyan-400">How We Make Money</h2>
-          <p className="text-sm">SpotOnAuto is a free website. We do not charge users for repair guides, diagnostic tools, wiring diagrams, or any other content. We earn revenue through the following channels:</p>
+          <p className="text-sm">AllOEMManuals is a free website. We do not charge users for repair guides, diagnostic tools, wiring diagrams, or any other content. We earn revenue through the following channels:</p>
         </section>
 
         <section className="space-y-4">
           <h3 className="text-lg font-bold text-white">1. Amazon Associates Program</h3>
           <p className="text-sm">
-            SpotOnAuto is a participant in the <strong>Amazon Services LLC Associates Program</strong>, an affiliate
+            AllOEMManuals is a participant in the <strong>Amazon Services LLC Associates Program</strong>, an affiliate
             advertising program designed to provide a means for sites to earn advertising fees by advertising and linking
             to Amazon.com.
           </p>
@@ -53,7 +53,7 @@ export default function AffiliateDisclosure() {
         <section className="space-y-4">
           <h3 className="text-lg font-bold text-white">2. TOPDON Affiliate Program</h3>
           <p className="text-sm">
-            SpotOnAuto is an affiliate partner with <strong>TOPDON</strong> (topdon.us), a manufacturer of OBD2 diagnostic
+            AllOEMManuals is an affiliate partner with <strong>TOPDON</strong> (topdon.us), a manufacturer of OBD2 diagnostic
             scanners and battery testers, through the GoAffPro affiliate platform.
           </p>
           <ul className="list-disc pl-6 space-y-1 text-sm">
@@ -113,7 +113,7 @@ export default function AffiliateDisclosure() {
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-cyan-400">About Us</h2>
           <p className="text-sm">
-            SpotOnAuto is a DBA of <strong>Widescope Industries LLC</strong>, a Service-Disabled Veteran-Owned Small Business
+            AllOEMManuals is a DBA of <strong>Widescope Industries LLC</strong>, a Service-Disabled Veteran-Owned Small Business
             (SDVOSB) certified through the U.S. Small Business Administration. We are a real, registered U.S. business
             committed to providing honest, useful automotive repair information to the DIY community.
           </p>

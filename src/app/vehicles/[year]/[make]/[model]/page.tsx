@@ -20,9 +20,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     model: decodeURIComponent(model),
   });
   const vehicleLabel = `${identity.year} ${identity.displayMake} ${identity.displayModel}`;
-  const title = `${vehicleLabel} — Factory Service Data & Diagnostics | SpotOnAuto`;
+  const title = `${vehicleLabel} — Factory Service Data & Diagnostics | AllOEMManuals`;
   const description = `Free access to OEM diagnostic flowcharts, trouble codes, wiring diagrams, and repair procedures for the ${vehicleLabel}. Straight from the factory service manual.`;
-  const pageUrl = `https://spotonauto.com/vehicles/${year}/${make}/${model}`;
+  const pageUrl = `https://alloemmanuals.com/vehicles/${year}/${make}/${model}`;
 
   return {
     title,

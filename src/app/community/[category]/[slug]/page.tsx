@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${cat.name} Thread — SpotOn Auto Community`,
     description: 'Community discussion thread for DIY auto repair troubleshooting, tools, and vehicle-specific fixes.',
-    alternates: { canonical: `https://spotonauto.com/community/${catSlug}/${slug}` },
+    alternates: { canonical: `https://alloemmanuals.com/community/${catSlug}/${slug}` },
   };
 }
 

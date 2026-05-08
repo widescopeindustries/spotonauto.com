@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
-const BASE_URL = 'https://spotonauto.com';
+const BASE_URL = 'https://alloemmanuals.com';
 const LAST_MOD = process.env.SITEMAP_LAST_MOD || new Date().toISOString().slice(0, 10);
 const URLS_PER_SITEMAP = 10000;
 const GENERATE_FULL_DTC_SITEMAPS = String(process.env.GENERATE_FULL_DTC_SITEMAPS || '').toLowerCase() === 'true';

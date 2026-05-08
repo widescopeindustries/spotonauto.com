@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * SpotOnAuto Indexing Trust Monitor
+ * AllOEMManuals Indexing Trust Monitor
  *
  * Purpose:
  * - Inspect a URL set with GSC URL Inspection API.
@@ -20,7 +20,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const KEY_PATH = path.join(ROOT, 'credentials', 'google-service-account.json');
-const SITE_URL = 'sc-domain:spotonauto.com';
+const SITE_URL = 'sc-domain:alloemmanuals.com';
 const DEFAULT_INPUT = path.join(ROOT, 'public', 'repair', 'winners', 'urls.txt');
 const OUTPUT_DIR = path.join(__dirname, 'seo-reports');
 const LATEST_PATH = path.join(OUTPUT_DIR, 'indexing-trust-latest.json');
@@ -280,7 +280,7 @@ function printSummary({
   startedAt,
   finishedAt,
 }) {
-  console.log('\nSpotOnAuto Indexing Trust Monitor');
+  console.log('\nAllOEMManuals Indexing Trust Monitor');
   console.log(`Site:                ${SITE_URL}`);
   console.log(`Input list:          ${inputPath}`);
   console.log(`URLs inspected:      ${summary.total}`);

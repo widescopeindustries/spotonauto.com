@@ -3,7 +3,7 @@ import path from 'node:path';
 import validatedVehicles from '../src/data/validated-vehicles.json' with { type: 'json' };
 
 // Use localhost when running on VPS for ~10x speed
-const CHARM_BASE = process.env.CHARM_BASE || 'https://data.spotonauto.com';
+const CHARM_BASE = process.env.CHARM_BASE || 'https://data.alloemmanuals.com';
 const OUTPUT_PATH = path.resolve(process.cwd(), 'src/data/wiring-coverage.json');
 const YEAR_MIN = 1982;
 const YEAR_MAX = 2013;
@@ -149,7 +149,7 @@ function buildCandidates() {
 async function fetchText(url) {
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) wiring-coverage-verifier',
+      'User-Agent': 'AllOEMManuals/1.0 (+https://alloemmanuals.com) wiring-coverage-verifier',
     },
     signal: AbortSignal.timeout(15000),
   });

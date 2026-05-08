@@ -15,7 +15,7 @@ export default function Contact() {
 
     try {
       // Send via mailto fallback (works without backend email service)
-      const subject = encodeURIComponent(`SpotOnAuto Contact: ${formData.name}`);
+      const subject = encodeURIComponent(`AllOEMManuals Contact: ${formData.name}`);
       const body = encodeURIComponent(
         `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
       );

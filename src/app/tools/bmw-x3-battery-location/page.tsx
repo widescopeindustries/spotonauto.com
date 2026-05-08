@@ -21,7 +21,7 @@ export const metadata: Metadata = {
         type: 'article',
     },
     alternates: {
-        canonical: 'https://spotonauto.com/tools/bmw-x3-battery-location',
+        canonical: 'https://alloemmanuals.com/tools/bmw-x3-battery-location',
     },
 };
 

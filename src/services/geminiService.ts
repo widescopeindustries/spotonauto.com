@@ -169,7 +169,7 @@ export const decodeVin = async (vin: string): Promise<Vehicle> => {
 // For 2026+ vehicles we fall back silently to AI-only.
 
 const CHARM_BASE = CHARM_ARCHIVE_BASE;
-const CHARM_HEADERS = { 'User-Agent': 'SpotOnAuto/1.0 (+https://spotonauto.com) repair-guide-builder' };
+const CHARM_HEADERS = { 'User-Agent': 'AllOEMManuals/1.0 (+https://alloemmanuals.com) repair-guide-builder' };
 
 /** encodeURIComponent leaves parens unencoded; CHARM requires them percent-encoded. */
 function encodeCharmSegment(value: string): string {
@@ -237,7 +237,7 @@ function extractLinks(html: string): string[] {
 
 function buildManualUrl(path: string): string {
   const segments = path.split('/').filter(Boolean).map(segment => encodeURIComponent(decodeURIComponent(segment)));
-  return `https://spotonauto.com/manual/${segments.join('/')}`;
+  return `https://alloemmanuals.com/manual/${segments.join('/')}`;
 }
 
 function clipSnippet(text: string, maxLength: number = 220): string {

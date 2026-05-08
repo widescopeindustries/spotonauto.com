@@ -67,7 +67,7 @@ function buildOfferQuery(intent: MonetizationIntent, contextLabel?: string): str
 }
 
 function buildSupportingOffers(intent: MonetizationIntent, contextLabel?: string): SupportingOffer[] {
-  const context = contextLabel?.trim() || 'SpotOnAuto';
+  const context = contextLabel?.trim() || 'AllOEMManuals';
 
   switch (intent) {
     case 'diagnostic':
@@ -169,7 +169,7 @@ export default function SearchLandingMonetizationRail({
   const query = buildOfferQuery(intent, contextLabel);
   const supportingOffers = buildSupportingOffers(intent, contextLabel);
   const subtag = `landing-${surface}-${intent}`;
-  const vehicleName = contextLabel || 'SpotOnAuto';
+  const vehicleName = contextLabel || 'AllOEMManuals';
   const wrapperClassName =
     className || 'my-12 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8';
 

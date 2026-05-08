@@ -20,7 +20,7 @@ export const metadata: Metadata = {
         type: 'article',
     },
     alternates: {
-        canonical: 'https://spotonauto.com/tools/honda-odyssey-serpentine-belt',
+        canonical: 'https://alloemmanuals.com/tools/honda-odyssey-serpentine-belt',
     },
 };
 
