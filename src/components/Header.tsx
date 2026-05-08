@@ -51,7 +51,7 @@ export default function Header() {
                 <Cpu className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
               <span className="font-bold text-lg md:text-xl text-white tracking-tight">
-                SpotOn<span className="text-[#FF6B00]">Auto</span>
+                AllOEM<span className="text-[#FF6B00]">Manuals</span>
               </span>
             </Link>
 

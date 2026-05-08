@@ -17,7 +17,7 @@ const Footer = () => {
                                 <Cpu className="w-4 h-4 text-white" />
                             </div>
                             <span className="font-bold text-lg text-white">
-                                SpotOn<span className="text-[#FF6B00]">Auto</span>
+                                AllOEM<span className="text-[#FF6B00]">Manuals</span>
                             </span>
                         </div>
                         <p className="text-sm text-[#6E6E80] leading-relaxed mb-4">
@@ -174,7 +174,7 @@ const Footer = () => {
                 {/* Bottom bar */}
                 <div className="mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-xs text-[#6E6E80]">
-                        © {year} SpotOn Auto. All rights reserved. AI-generated content is for informational purposes only.
+                        © {year} AllOEMManuals. All rights reserved. AI-generated content is for informational purposes only.
                     </p>
                     <div className="flex items-center gap-4">
                         <span className="text-xs text-[#6E6E80]">AI-assisted repair guidance</span>
