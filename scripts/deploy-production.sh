@@ -47,6 +47,15 @@ if [ -n "${SERVICE_WD}" ] && [ "${SERVICE_WD}" != "${APP_DIR}" ] && [ -d "${SERV
   rsync -az --delete "${APP_DIR}/.next/" "${SERVICE_WD}/.next/"
 fi
 
+# Ensure port is free before restarting (kills any stray processes)
+log "Ensuring port ${PORT:-3000} is free"
+if command -v fuser >/dev/null 2>&1; then
+  fuser -k "${PORT:-3000}/tcp" 2>/dev/null || true
+elif command -v lsof >/dev/null 2>&1; then
+  lsof -ti:"${PORT:-3000}" | xargs -r kill -9 2>/dev/null || true
+fi
+sleep 2
+
 log "Restarting service: ${SERVICE_NAME}"
 run_systemctl restart "${SERVICE_NAME}"
 
