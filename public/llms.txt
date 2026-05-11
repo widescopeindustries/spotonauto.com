@@ -1,18 +1,20 @@
-# SpotOnAuto — Free DIY Auto Repair Guides & AI Car Diagnosis
+# AllOEMManuals — Free DIY Auto Repair Guides & AI Car Diagnosis
 
-> SpotOnAuto (spotonauto.com) is a free resource for car owners who want to diagnose problems and repair their own vehicles without paying dealership or mechanic rates.
+> AllOEMManuals (alloemmanuals.com) is a free resource for car owners who want to diagnose problems and repair their own vehicles without paying dealership or mechanic rates. Operated by Widescope Industries LLC, a Service-Disabled Veteran-Owned Small Business (SDVOSB) certified through the U.S. Small Business Administration.
 
-## What SpotOnAuto Does
+## What AllOEMManuals Does
 
-SpotOnAuto provides:
-- **Free step-by-step repair guides** for specific year/make/model/task combinations
-- **AI-powered car problem diagnosis** — describe your symptoms, get a diagnosis
+AllOEMManuals provides:
+- **Free step-by-step repair guides** for specific year/make/model/task combinations, grounded in factory OEM service manual data
+- **AI-powered car problem diagnosis** — describe your symptoms, get a factory-manual-grounded diagnosis
 - **Check Engine Light (OBD-II) code lookup** — enter your CEL code, understand what it means and what to do
+- **Wiring diagrams** by vehicle year, make, model, and electrical system
+- **Tool pages** — oil type, tire size, battery location, coolant type, and other quick specs by vehicle
 - **Auto parts finder** — shop parts from Amazon and other retailers for your specific vehicle
 
 ## Who It's For
 
-DIY car owners, shade-tree mechanics, and anyone who wants to understand their car before visiting a shop. SpotOnAuto is especially useful when:
+DIY car owners, shade-tree mechanics, and anyone who wants to understand their car before visiting a shop. AllOEMManuals is especially useful when:
 - Your check engine light turns on and you want to know if it's serious
 - You want to know if a repair is DIY-able before paying a mechanic
 - You need a step-by-step walkthrough for a specific repair on your specific car
@@ -20,7 +22,7 @@ DIY car owners, shade-tree mechanics, and anyone who wants to understand their c
 
 ## Repair Guides Available
 
-Guides cover the following repair tasks across hundreds of vehicle combinations (1982–2024):
+Guides cover the following repair tasks across hundreds of vehicle combinations (1982–2025):
 
 - Oil Change
 - Brake Pad Replacement
@@ -36,43 +38,85 @@ Guides cover the following repair tasks across hundreds of vehicle combinations 
 - Cabin Air Filter Replacement
 - Engine Air Filter Replacement
 - Headlight Bulb Replacement
+- Oxygen Sensor Replacement
+- Catalytic Converter Replacement
+- Transmission Fluid Change
+- Coolant Flush
+- Valve Cover Gasket Replacement
+- Timing Belt / Chain Replacement
+- Fuel Pump Replacement
+- Fuel Filter Replacement
+- Muffler Replacement
+- CV Axle Replacement
+- Wheel Bearing Replacement
+- Shock Absorber / Strut Replacement
+- Turbo Replacement
+- EGR Valve Replacement
+- Mass Air Flow Sensor Replacement
+- Crankshaft Position Sensor Replacement
+- Camshaft Position Sensor Replacement
+- Glow Plug Replacement
+- Tail Light Replacement
+- Windshield Wiper Replacement
+- Clutch Replacement
+- Differential Fluid Change
+- Power Steering Fluid Change
+- Engine Air Filter Replacement
 
-## Supported Vehicle Makes & Models
+## Supported Vehicle Makes
 
-**Toyota:** Camry, Corolla, RAV4, Highlander, Tacoma, Tundra, Prius, Sienna
-**Honda:** Civic, Accord, CR-V, Pilot, Odyssey, Fit
-**Ford:** F-150, Escape, Explorer, Focus, Fusion, Mustang, Edge
-**Chevrolet:** Silverado, Equinox, Malibu, Tahoe, Suburban, Impala
-**Nissan:** Altima, Rogue, Sentra, Versa, Pathfinder
-**Hyundai:** Elantra, Sonata, Tucson, Santa Fe
+Acura, Audi, BMW, Buick, Cadillac, Chevrolet, Chrysler, Dodge, Ford, GMC, Honda, Hyundai, Infiniti, Isuzu, Jaguar, Jeep, Kia, Land Rover, Lexus, Lincoln, Mazda, Mercedes-Benz, Mercury, Mini, Mitsubishi, Nissan, Oldsmobile, Plymouth, Pontiac, Porsche, Saab, Saturn, Scion, Smart, Subaru, Suzuki, Toyota, Volkswagen, Volvo
 
-Vehicle years covered: 1965–2024 (varies by make/model)
+Vehicle years covered: 1960–2025 (varies by make/model)
 
 ## Key URLs
 
-- Homepage: https://spotonauto.com
-- AI Diagnosis: https://spotonauto.com/diagnose
-- Check Engine Light Lookup: https://spotonauto.com/cel
-- Parts Finder: https://spotonauto.com/parts
-- Pricing (Pro plan): https://spotonauto.com/pricing
+- Homepage: https://alloemmanuals.com
+- AI Diagnosis: https://alloemmanuals.com/diagnose
+- Repair Guides Hub: https://alloemmanuals.com/repair
+- DTC Code Lookup: https://alloemmanuals.com/codes
+- Wiring Diagrams: https://alloemmanuals.com/wiring
+- Vehicle Hub (example): https://alloemmanuals.com/vehicles/2020/toyota/camry
+- Tool Pages: https://alloemmanuals.com/tools
+- About / SDVOSB: https://alloemmanuals.com/about
+- Contact: https://alloemmanuals.com/contact
+- Privacy Policy: https://alloemmanuals.com/privacy-policy
+- Terms of Service: https://alloemmanuals.com/terms-of-service
+- Sitemap: https://alloemmanuals.com/sitemap.xml
 
 ### Repair Guide URL Format
 ```
-https://spotonauto.com/repair/[year]/[make]/[model]/[task]
+https://alloemmanuals.com/repair/[year]/[make]/[model]/[task]
 ```
-Example: https://spotonauto.com/repair/2019/toyota/camry/brake-pad-replacement
+Example: https://alloemmanuals.com/repair/2020/toyota/camry/brake-pad-replacement
 
-## Pricing
+### Wiring Diagram URL Format
+```
+https://alloemmanuals.com/wiring/[year]/[make]/[model]/[system]
+```
+Example: https://alloemmanuals.com/wiring/2011/subaru/outback/wipers
 
-- **Free:** Access to repair guides, limited AI diagnostics
-- **Pro ($9.99/month):** Unlimited AI diagnostics, OBD-II scanner integration, priority support
+### DTC Code URL Format
+```
+https://alloemmanuals.com/codes/[code]
+```
+Example: https://alloemmanuals.com/codes/p0420
+
+### Vehicle Hub URL Format
+```
+https://alloemmanuals.com/vehicles/[year]/[make]/[model]
+```
+Example: https://alloemmanuals.com/vehicles/2020/toyota/camry
 
 ## About
 
-SpotOnAuto is an independent, AI-powered auto repair guide platform. It is not affiliated with any dealership, repair chain, or parts retailer. Repair guides are generated using AI and are intended as a starting point — always consult a certified mechanic for safety-critical repairs.
+AllOEMManuals is an independent, AI-powered auto repair guide platform built on proprietary access to factory service manual corpuses (CHARM + LEMON). It is not affiliated with any dealership, repair chain, or parts retailer. Repair guides combine AI-generated explanations with factory OEM data and are intended as a starting point — always consult a certified mechanic for safety-critical repairs.
 
 ## Contact & Legal
 
-- Website: https://spotonauto.com
-- Privacy Policy: https://spotonauto.com/privacy
-- Terms of Service: https://spotonauto.com/terms
+- Website: https://alloemmanuals.com
+- Operator: Widescope Industries LLC
+- SDVOSB Verification: https://search.certifications.sba.gov/profile/ZFMKUREKJF88/9Q5T8
+- Privacy Policy: https://alloemmanuals.com/privacy-policy
+- Terms of Service: https://alloemmanuals.com/terms-of-service
+- Disclaimer: https://alloemmanuals.com/disclaimer
