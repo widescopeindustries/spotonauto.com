@@ -3,7 +3,7 @@
 import { FormEvent, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Cpu, Menu, X } from 'lucide-react';
+import { Cpu, Menu, X, Car } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useT } from '@/lib/translations';
 
@@ -90,10 +90,11 @@ export default function Header() {
             <div className="hidden lg:flex items-center gap-3">
               <LanguageSelector />
               <Link
-                href="/auth"
-                className="glass-button text-white text-xs"
+                href="/history"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#FF6B00] px-4 py-2 text-xs font-bold text-white hover:bg-[#FF9500] transition-colors"
               >
-                {t('nav.signIn') || 'Sign In'}
+                <Car className="w-3.5 h-3.5" />
+                Garage
               </Link>
             </div>
 
@@ -124,6 +125,14 @@ export default function Header() {
               <span className="text-sm text-gray-400">{t('nav.guideLanguage') || 'Language'}</span>
               <LanguageSelector />
             </div>
+            <Link
+              href="/history"
+              onClick={() => setMobileOpen(false)}
+              className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-bold text-white hover:bg-[#FF9500] transition-colors mt-4"
+            >
+              <Car className="w-4 h-4" />
+              Garage
+            </Link>
             <form onSubmit={handleSearchSubmit} className="flex w-72 items-center gap-2 rounded-full border border-white/10 bg-[#0a0a0f]/60 px-3 py-2 mt-4">
               <input
                 value={search}
