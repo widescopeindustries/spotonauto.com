@@ -40,9 +40,7 @@ export const revalidate = 86400;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-    const pages = getHighPriorityToolPages(TOOL_PREBUILD_LIMIT);
-    console.log('[generateStaticParams] tools/[slug] returning', pages.length, 'pages');
-    return pages.map((tp) => ({ slug: tp.slug }));
+    return getHighPriorityToolPages(TOOL_PREBUILD_LIMIT).map((tp) => ({ slug: tp.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

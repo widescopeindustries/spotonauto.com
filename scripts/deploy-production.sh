@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 APP_DIR="${DEPLOY_APP_DIR:-/root/spotonauto.com}"
-SERVICE_NAME="${DEPLOY_SERVICE_NAME:-spotonauto-web}"
+SERVICE_NAME="${DEPLOY_SERVICE_NAME:-alloemmanuals-web}"
 HEALTHCHECK_URL="${DEPLOY_HEALTHCHECK_URL:-http://127.0.0.1:3000}"
 
 log() {

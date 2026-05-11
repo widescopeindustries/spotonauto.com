@@ -23,7 +23,6 @@ let corpusPages: ToolPage[] | null = null;
 function loadCorpusPages(): ToolPage[] {
   if (corpusPages) return corpusPages;
   try {
-    console.log('[tool-machine] Loading corpus from', CORPUS_PATH, 'cwd=', process.cwd(), 'exists=', fs.existsSync(CORPUS_PATH));
     if (!fs.existsSync(CORPUS_PATH)) {
       console.warn('[tool-machine] Corpus not found at', CORPUS_PATH, '— falling back to legacy templates');
       corpusPages = [];
