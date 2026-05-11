@@ -4,16 +4,18 @@ import { FormEvent, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Cpu, Menu, X } from 'lucide-react';
+import LanguageSelector from '@/components/LanguageSelector';
+import { useT } from '@/lib/translations';
 
 const desktopNavItems = [
-  { key: 'Diagnose', href: '/diagnose' },
-  { key: 'Guides', href: '/repair' },
-  { key: 'Codes', href: '/codes' },
-  { key: 'Garage', href: '/history' },
+  { key: 'nav.diagnose', label: 'Diagnose', href: '/diagnose' },
+  { key: 'nav.repairGuides', label: 'Guides', href: '/repair' },
+  { key: 'nav.codes', label: 'Codes', href: '/codes' },
 ];
 
 export default function Header() {
   const router = useRouter();
+  const t = useT();
   const [search, setSearch] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -79,21 +81,19 @@ export default function Header() {
                   href={item.href}
                   className="relative px-4 py-2 text-sm text-[#EAEAEA]/70 hover:text-white transition-colors group"
                 >
-                  {item.key}
+                  {t(item.key) || item.label}
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#FF6B00] group-hover:w-3/4 transition-all duration-300" />
                 </Link>
               ))}
             </nav>
 
             <div className="hidden lg:flex items-center gap-3">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#FF6B00]/30 bg-[#FF6B00]/10">
-                <span className="text-xs text-[#FF6B00]">SDVOSB Certified</span>
-              </div>
+              <LanguageSelector />
               <Link
                 href="/auth"
                 className="glass-button text-white text-xs"
               >
-                Sign In
+                {t('nav.signIn') || 'Sign In'}
               </Link>
             </div>
 
@@ -117,11 +117,12 @@ export default function Header() {
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 text-2xl text-white"
               >
-                {item.key}
+                {t(item.key) || item.label}
               </Link>
             ))}
-            <div className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#FF6B00]/30 bg-[#FF6B00]/10 mt-4">
-              <span className="text-sm text-[#FF6B00]">SDVOSB Certified</span>
+            <div className="flex items-center gap-3 mt-4">
+              <span className="text-sm text-gray-400">{t('nav.guideLanguage') || 'Language'}</span>
+              <LanguageSelector />
             </div>
             <form onSubmit={handleSearchSubmit} className="flex w-72 items-center gap-2 rounded-full border border-white/10 bg-[#0a0a0f]/60 px-3 py-2 mt-4">
               <input
