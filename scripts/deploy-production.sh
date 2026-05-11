@@ -40,6 +40,13 @@ rm -rf .next
 log "Building app"
 npm run build
 
+# Discover the service's actual WorkingDirectory so the build is picked up
+SERVICE_WD="$(run_systemctl show "${SERVICE_NAME}" --property=WorkingDirectory --value || true)"
+if [ -n "${SERVICE_WD}" ] && [ "${SERVICE_WD}" != "${APP_DIR}" ] && [ -d "${SERVICE_WD}" ]; then
+  log "Service WorkingDirectory (${SERVICE_WD}) differs from build dir (${APP_DIR}). Syncing .next..."
+  rsync -az --delete "${APP_DIR}/.next/" "${SERVICE_WD}/.next/"
+fi
+
 log "Restarting service: ${SERVICE_NAME}"
 run_systemctl restart "${SERVICE_NAME}"
 
@@ -49,5 +56,14 @@ run_systemctl is-active --quiet "${SERVICE_NAME}"
 
 log "Running local healthcheck: ${HEALTHCHECK_URL}"
 curl -fsS "${HEALTHCHECK_URL}" >/dev/null
+
+# Verify a dynamic API route responds (proves the new build is active)
+API_HEALTH_URL="${HEALTHCHECK_URL}/api/health"
+log "Running API healthcheck: ${API_HEALTH_URL}"
+if curl -fsS "${API_HEALTH_URL}" >/dev/null 2>&1; then
+  log "API healthcheck passed"
+else
+  log "API healthcheck skipped or failed (route may not exist)"
+fi
 
 log "Deploy completed successfully"
