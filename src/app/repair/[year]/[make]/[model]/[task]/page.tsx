@@ -24,6 +24,7 @@ import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
 import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
+import { getGeneratedRepairProfile } from '@/lib/vehicleRepairProfiles';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
 import { buildEdgeReference, buildRepairNodeId, buildSymptomNodeId } from '@/lib/knowledgeGraph';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
@@ -810,6 +811,12 @@ function getExactGuideProfile(year: string, make: string, model: string, task: s
     const modelKey = slugifyRoutePart(model);
     const taskKey = slugifyRoutePart(task);
 
+    // Check machine-generated profiles first
+    const generated = getGeneratedRepairProfile(year, make, model, task);
+    if (generated) {
+        return generated as ExactGuideProfile;
+    }
+
     if (taskKey === 'headlight-bulb-replacement' && makeKey === 'jeep' && modelKey === 'grand-cherokee' && [2017, 2018, 2019].includes(yearNum)) {
         return {
             titleSuffix: 'Headlight Replacement Quick Check',
@@ -975,7 +982,7 @@ function getExactGuideProfile(year: string, make: string, model: string, task: s
     return null;
 }
 
-const TASK_SUPPORT_TONE_CLASSES: Record<TaskSupportNote['tone'], {
+const TASK_SUPPORT_TONE_CLASSES: Record<string, {
     shell: string;
     eyebrow: string;
     title: string;
@@ -1005,7 +1012,23 @@ const TASK_SUPPORT_TONE_CLASSES: Record<TaskSupportNote['tone'], {
         title: 'text-white',
         bullet: 'text-violet-50/90',
     },
+    rose: {
+        shell: 'border-rose-500/20 bg-rose-500/[0.06]',
+        eyebrow: 'text-rose-200/80',
+        title: 'text-white',
+        bullet: 'text-rose-50/90',
+    },
+    indigo: {
+        shell: 'border-indigo-500/20 bg-indigo-500/[0.06]',
+        eyebrow: 'text-indigo-200/80',
+        title: 'text-white',
+        bullet: 'text-indigo-50/90',
+    },
 };
+
+function getToneClasses(tone: string | undefined) {
+    return TASK_SUPPORT_TONE_CLASSES[tone || ''] || TASK_SUPPORT_TONE_CLASSES.cyan;
+}
 
 const HIGH_TICKET_PART_PATTERN = /alternator|starter|strut|shock|compressor|catalytic|manifold|radiator|transmission|turbo|differential|axle/i;
 
@@ -1994,6 +2017,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const displayModel = getDisplayName(canonicalModel, 'model') || toTitleCase(canonicalModel);
     const vehicleName = `${canonicalYear} ${displayMake} ${displayModel}`;
     const exactGuideProfile = getExactGuideProfile(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
+    const vehicleSpec = getVehicleRepairSpec(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
+    const hasRealContent = vehicleSpec !== null || exactGuideProfile !== null;
 
     const taskMeta = TASK_META[canonicalTask];
     const title = taskMeta
@@ -2018,7 +2043,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title,
         description,
         keywords,
-        ...(NOINDEX_MAKES.has(canonicalMake) || isNonUsModel(canonicalMake, canonicalModel) ? { robots: { index: false, follow: true } } : {}),
+        ...(NOINDEX_MAKES.has(canonicalMake) || isNonUsModel(canonicalMake, canonicalModel) || !hasRealContent ? { robots: { index: false, follow: true } } : {}),
         openGraph: {
             title,
             description,
@@ -2535,7 +2560,7 @@ export default async function Page({ params }: PageProps) {
 
                 <section
                     id="quick-answer"
-                    className={`mb-8 rounded-2xl border p-6 md:p-7 ${TASK_SUPPORT_TONE_CLASSES[quickAnswerModule.tone].shell}`}
+                    className={`mb-8 rounded-2xl border p-6 md:p-7 ${getToneClasses(quickAnswerModule.tone).shell}`}
                 >
                     <RepairSectionTracker
                         vehicle={vehicleName}
@@ -2545,10 +2570,10 @@ export default async function Page({ params }: PageProps) {
                         itemCount={quickAnswerModule.cards.length}
                     />
                     <div className="max-w-3xl">
-                        <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${TASK_SUPPORT_TONE_CLASSES[quickAnswerModule.tone].eyebrow}`}>
+                        <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${getToneClasses(quickAnswerModule.tone).eyebrow}`}>
                             {quickAnswerModule.eyebrow}
                         </p>
-                        <h2 className={`mt-3 text-2xl md:text-3xl font-semibold tracking-tight ${TASK_SUPPORT_TONE_CLASSES[quickAnswerModule.tone].title}`}>
+                        <h2 className={`mt-3 text-2xl md:text-3xl font-semibold tracking-tight ${getToneClasses(quickAnswerModule.tone).title}`}>
                             {quickAnswerModule.title}
                         </h2>
                         <p className="mt-3 text-sm leading-7 text-gray-200/90">
@@ -2557,7 +2582,7 @@ export default async function Page({ params }: PageProps) {
                     </div>
                     <div className="mt-6 grid gap-4 lg:grid-cols-3">
                         {quickAnswerModule.cards.map((card) => {
-                            const toneClasses = TASK_SUPPORT_TONE_CLASSES[card.tone === 'cyan' ? quickAnswerModule.tone : card.tone];
+                            const toneClasses = getToneClasses(card.tone === 'cyan' ? quickAnswerModule.tone : card.tone);
 
                             return (
                                 <div key={`${card.eyebrow}-${card.title}`} className="rounded-xl border border-white/10 bg-black/20 p-4">
@@ -2612,11 +2637,11 @@ export default async function Page({ params }: PageProps) {
                 </section>
 
                 {taskSupportNote && (
-                    <section className={`mb-8 rounded-2xl border p-6 md:p-7 ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].shell}`}>
-                        <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].eyebrow}`}>
+                    <section className={`mb-8 rounded-2xl border p-6 md:p-7 ${getToneClasses(taskSupportNote.tone).shell}`}>
+                        <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${getToneClasses(taskSupportNote.tone).eyebrow}`}>
                             {taskSupportNote.eyebrow}
                         </p>
-                        <h2 className={`mt-3 text-2xl font-semibold tracking-tight ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].title}`}>
+                        <h2 className={`mt-3 text-2xl font-semibold tracking-tight ${getToneClasses(taskSupportNote.tone).title}`}>
                             {taskSupportNote.title}
                         </h2>
                         <p className="mt-3 text-sm leading-7 text-gray-200/90">
@@ -2625,7 +2650,7 @@ export default async function Page({ params }: PageProps) {
                         <div className="mt-5 grid gap-3 md:grid-cols-3">
                             {taskSupportNote.bullets.map((bullet) => (
                                 <div key={bullet} className="rounded-xl border border-white/10 bg-black/20 p-4">
-                                    <p className={`text-sm leading-6 ${TASK_SUPPORT_TONE_CLASSES[taskSupportNote.tone].bullet}`}>
+                                    <p className={`text-sm leading-6 ${getToneClasses(taskSupportNote.tone).bullet}`}>
                                         {bullet}
                                     </p>
                                 </div>
@@ -2636,7 +2661,7 @@ export default async function Page({ params }: PageProps) {
 
                 {exactGuideProfile?.supportNote && (() => {
                     const supportNote = exactGuideProfile.supportNote;
-                    const toneClasses = TASK_SUPPORT_TONE_CLASSES[supportNote.tone];
+                    const toneClasses = getToneClasses(supportNote.tone);
 
                     return (
                     <section className={`mb-8 rounded-2xl border p-6 md:p-7 ${toneClasses.shell}`}>
