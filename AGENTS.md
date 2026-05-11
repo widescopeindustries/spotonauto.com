@@ -44,6 +44,27 @@ Update it when product decisions, traps, or standing preferences change.
 - **The `index-lmdb-vectors.ts` indexer MUST run on the VPS.**
   - Port 8080 is firewalled; running from your local machine will fail.
 
+## Corpus-First Content Framework (Built 2026-05-08)
+
+- **Rule:** Every spec, capacity, torque value, and fluid type must be traceable to the CHARM/LEMON corpus or `manual_embeddings` PG table.
+- **Miners live on VPS** (`116.202.210.109`) at `/root/alloemmanuals.com/scripts/miners/`:
+  - `mine-fluids.mjs` — extracts Fluids tables from LEMON `Quick Lookups/Fluids/`
+  - `mine-torque.mjs` — extracts torque specs from `Specifications Index/`
+  - `mine-labor.mjs` — extracts labor times from `Parts and Labor/`
+  - `mine-dtcs.mjs` — extracts DTC codes from `A L L Diagnostic Trouble Codes/`
+  - `lib/lmdb-client.mjs` — shared fetch + parse utilities
+- **Mined data lives on VPS** at `/data/mined/{fluids,labor,torque,dtcs}/` as one JSON per vehicle.
+- **Assembler lives on VPS** at `/root/alloemmanuals.com/scripts/assemblers/build-tool-pages.mjs`:
+  - Reads `/data/mined/fluids/*.json` + LEMON index for clean model names
+  - Groups by make/model, merges consecutive years with identical specs
+  - Outputs `/data/assembled/corpus-tool-pages.json`
+- **Integration:** `src/data/tool-machine.ts` loads corpus JSON at build time and returns corpus-backed `ToolPage[]`. Falls back to legacy templates only if corpus is missing.
+- **Precedence:** `HAND_CRAFTED` in `tools-pages.ts` > corpus pages > legacy templates.
+- **Current coverage (2015-2024):**
+  - Toyota: 1,867 vehicles, Honda: 835, Ford: 5,726, Chevrolet: 4,846, Hyundai: 802, Subaru: 515, Nissan-Datsun: 1,472, Volkswagen: 961, BMW: 1,019, Mercedes-Benz: 1,045
+  - Total: ~19,088 vehicle fluid records → 3,714 corpus-backed tool pages
+- **Sync workflow:** `rsync -avz root@116.202.210.109:/data/assembled/corpus-tool-pages.json src/data/corpus/`
+
 ## Known Technical Traps
 
 - Do not reintroduce delayed provider remounting in `src/components/Providers.tsx`.
@@ -414,3 +435,30 @@ The product is NOT a manual browser. It is a **translation layer**:
 - `charmParser.ts` — Fetches HTML from LMDB backend, handles make aliases, 404 parent recovery
 - `manualEmbeddingsStore.ts` — PostgreSQL access, `findManualSectionsByTerms()` (queries entire make+year then filters client-side — known performance issue)
 - mtbl Rust tools compiled from `lemon-website-source.tar.gz` — can dump keys/values directly
+
+## Recent Changes (2026-05-08)
+
+### SERP CTR & Crawl Budget Improvements
+
+- **Tool page titles now include the quick answer** (e.g. "VW Tiguan Coolant: G12evo/G13 Pink (50/50 Mix) | AllOEMManuals") to stand out in positions 6–12 where 95 of 122 impressions currently get 0% CTR.
+- **Tool pages now link to `/maintenance/{year}/{make}/{model}/`** via a "View Factory Specs" CTA above the nav, driving internal link equity to maintenance hubs.
+- **Vehicle variant URL redirects added** in `src/app/vehicles/[year]/[make]/[model]/page.tsx`:
+  - Detects corpus variant paths like `/vehicles/2011/ford/ranger-2d-pickup-extra-cab` using `VEHICLE_PRODUCTION_YEARS` prefix matching.
+  - Redirects to clean hub `/vehicles/{year}/{make}/{model}/` with 307 (Next.js `redirect()` default).
+- **Old `spotonauto.com` variant sitemaps deleted** from `public/vehicles/sitemap/`. These contained 112K+ wrong-domain variant URLs that were leaking crawl budget.
+- **Domain redirect added**: `spotonauto.com` and `www.spotonauto.com` → `alloemmanuals.com` in `next.config.js`.
+- **Google Indexing API script created**: `scripts/push-maintenance-indexing.mjs` pushes maintenance hub + spec pages via `URL_UPDATED`. Supports `--from-tools`, `--from-db`, and `--urls` modes.
+
+### Content Factory Provider Update
+
+- **OpenAI removed from content factory** (`scripts/content-machine/generate-profiles.mjs`). OpenAI is now reserved for live user chat ONLY.
+- **Kimi is primary**, with **Gemini fallback** for batch repair profile generation.
+- **All three providers currently quota-blocked** (2026-05-08):
+  - OpenAI: $10.59 spent, 10,000 RPD limit hit.
+  - Kimi: account suspended — insufficient balance.
+  - Gemini: free tier exhausted (`RESOURCE_EXHAUSTED` on `gemini-2.0-flash`).
+- **1,778 query-targets remain unprocessed** (298 profiles exist in `vehicle-repair-profiles.json`). Resume generation after recharging any provider.
+- **Moonshot API base URL corrected** from `https://api.moonshot.cn/v1` → `https://api.moonshot.ai/v1` across:
+  - `scripts/content-machine/generate-profiles.mjs`
+  - `src/services/geminiService.ts`
+  - `src/app/api/chat/route.ts`
