@@ -34,6 +34,9 @@ fi
 log "Installing dependencies"
 npm ci
 
+log "Clearing build artifacts"
+rm -rf .next
+
 log "Building app"
 npm run build
 

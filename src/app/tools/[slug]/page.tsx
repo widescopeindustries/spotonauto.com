@@ -34,6 +34,11 @@ const TOOL_PREBUILD_LIMIT = 320;
 // on every crawl request and ensures non-prebuilt pages serve fast.
 export const revalidate = 86400;
 
+// Explicitly allow on-demand generation for slugs not in generateStaticParams.
+// Next.js default is true, but we set it explicitly to guard against stale
+// build artifacts or edge-case caching that can block corpus-backed pages.
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
     return getHighPriorityToolPages(TOOL_PREBUILD_LIMIT).map((tp) => ({ slug: tp.slug }));
 }
@@ -43,25 +48,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const page = getToolPage(slug);
     if (!page) return { title: 'Tool Not Found' };
 
+    // CTR-optimized title: put the answer in the title so it stands out in SERP
+    // e.g. "VW Tiguan Coolant: G12evo/G13 Pink (50/50 Mix) | AllOEMManuals"
+    const quickSnippet = page.quickAnswer
+        ? page.quickAnswer.replace(/\s+/g, ' ').trim().replace(/\.$/, '')
+        : '';
+    const baseTitle = page.title.replace(/\s*\|\s*AllOEMManuals$/, '').replace(/\s*\|\s*All Years Guide$/, '');
+    const title = quickSnippet
+        ? `${baseTitle}: ${quickSnippet.split('.')[0]} | AllOEMManuals`
+        : page.title;
+
     // Lead description with the quick answer so actual specs appear in SERP snippet
     const baseDescription = page.description.replace(/\s+/g, ' ').trim();
-    const answerText = page.quickAnswer ? page.quickAnswer.replace(/\s+/g, ' ').trim() : '';
+    const answerText = quickSnippet;
     const supportText = 'Use the exact vehicle page to confirm fitment, compare related repair paths, and build the one-trip parts list before you start.';
     const description = [baseDescription, answerText, supportText].filter(Boolean).join(' ');
 
     return {
-        title: page.title,
+        title,
         description,
         keywords: page.keywords,
         openGraph: {
-            title: page.title,
+            title,
             description,
             type: 'article',
             url: `https://alloemmanuals.com/tools/${page.slug}`,
         },
         twitter: {
             card: 'summary',
-            title: page.title,
+            title,
             description,
         },
         alternates: {
@@ -90,6 +105,11 @@ export default async function ToolPage({ params }: PageProps) {
         .slice(0, 9);
     const repairLinks = getRelatedRepairLinks(page, 4);
     const primaryRepairTask = repairLinks[0]?.task ?? 'oil-change';
+
+    // Maintenance hub link — pick a representative year from the newest generation
+    const newestGen = page.generations[0];
+    const maintYear = newestGen ? parseInt(newestGen.years.split('-')[0], 10) : 2020;
+    const maintenanceHubHref = `/maintenance/${maintYear}/${makeSlug}/${modelSlug}`;
 
     const meta = TOOL_TYPE_META[page.toolType] || { label: 'Guide', icon: '🔧', color: 'cyan' };
     const colorMap: Record<string, string> = {
@@ -243,6 +263,22 @@ export default async function ToolPage({ params }: PageProps) {
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                {/* Factory Specs CTA — drives internal link equity to maintenance hubs */}
+                <div className="mb-8 rounded-xl border border-teal-500/20 bg-teal-500/5 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 className="text-teal-300 font-semibold text-sm uppercase tracking-wider mb-1">Factory Manual Verification</h3>
+                        <p className="text-gray-400 text-sm">
+                            Cross-check these specs against the official {page.make} {page.model} maintenance schedule.
+                        </p>
+                    </div>
+                    <Link
+                        href={maintenanceHubHref}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-500 text-black text-sm font-bold rounded-lg hover:bg-teal-400 transition shrink-0"
+                    >
+                        View Factory Specs →
+                    </Link>
                 </div>
 
                 <nav className="mb-8 flex flex-wrap gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm">
