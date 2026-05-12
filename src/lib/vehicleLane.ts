@@ -198,8 +198,7 @@ export async function buildVehicleLaneData(
   const systems = buildSystems(rows);
   const dtcCodes = collectDtcCodes(rows);
 
-  // Pre-compute lookups for O(1) access
-  const pathToRow = new Map(rows.map((row) => [row.path, row]));
+  // Pre-compute system → related entries map for O(1) DTC lookups
   const systemToRelated = new Map<string, VehicleLaneContentEntry[]>();
   for (const row of rows) {
     const systemName = getSystemNameFromRow(row);
