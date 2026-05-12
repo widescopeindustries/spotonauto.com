@@ -198,16 +198,29 @@ export async function buildVehicleLaneData(
   const systems = buildSystems(rows);
   const dtcCodes = collectDtcCodes(rows);
 
+  // Pre-compute lookups for O(1) access
+  const pathToRow = new Map(rows.map((row) => [row.path, row]));
+  const systemToRelated = new Map<string, VehicleLaneContentEntry[]>();
+  for (const row of rows) {
+    const systemName = getSystemNameFromRow(row);
+    const entry = toEntry(row);
+    if (entry.type === 'diagram' || entry.type === 'testing' || entry.type === 'procedure' || entry.type === 'location') {
+      const existing = systemToRelated.get(systemName);
+      if (existing) existing.push(entry);
+      else systemToRelated.set(systemName, [entry]);
+    }
+  }
+
   for (const dtc of dtcCodes) {
-    const systemName = dtc.system;
-    const related = filterRelatedEntries(rows, systemName);
-    dtc.related = uniqueSorted([
-      ...dtc.related.map((item) => item.path),
-      ...related.map((item) => item.path),
-    ]).map((path) => {
-      const match = rows.find((row) => row.path === path);
-      return match ? toEntry(match) : { path, title: path, type: 'other' as const };
-    });
+    const related = systemToRelated.get(dtc.system) || [];
+    const seen = new Set<string>(dtc.related.map((item) => item.path));
+    for (const entry of related) {
+      if (!seen.has(entry.path)) {
+        seen.add(entry.path);
+        dtc.related.push(entry);
+      }
+    }
+    dtc.related.sort((a, b) => a.title.localeCompare(b.title));
   }
 
   // Augment with Neo4j graph data
