@@ -1,4 +1,4 @@
-# SpotOnAuto 30/60/90-Day Execution Plan
+# AllOEMManuals 30/60/90-Day Execution Plan
 
 ## Current Position
 

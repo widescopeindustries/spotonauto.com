@@ -33,9 +33,15 @@ export async function GET(req: NextRequest) {
       const make = searchParams.get('make');
       const year = searchParams.get('year');
       if (!make || !year) return NextResponse.json({ error: 'make and year required' }, { status: 400 });
-      // DB-first
-      const dbVariants = await fetchDbWiringVariants(make, year);
-      const variants = dbVariants ?? await fetchWiringVariants(make, year);
+      // DB-first with graceful fallback
+      let variants: string[] = [];
+      try {
+        const dbVariants = await fetchDbWiringVariants(make, year);
+        if (dbVariants) variants = dbVariants;
+      } catch { /* DB unavailable — fall through to CHARM */ }
+      if (variants.length === 0) {
+        variants = await fetchWiringVariants(make, year);
+      }
       return NextResponse.json({ variants }, { headers: { 'Cache-Control': 'public, max-age=86400' } });
     }
 
@@ -44,18 +50,28 @@ export async function GET(req: NextRequest) {
       const year = searchParams.get('year');
       const variant = searchParams.get('variant');
       if (!make || !year || !variant) return NextResponse.json({ error: 'make, year, variant required' }, { status: 400 });
-      // DB-first
-      const dbData = await fetchDbWiringDiagramIndex(make, year, variant);
-      const data = dbData ?? await fetchWiringDiagramIndex(make, year, variant);
+      // DB-first with graceful fallback
+      let data = null;
+      try {
+        data = await fetchDbWiringDiagramIndex(make, year, variant);
+      } catch { /* DB unavailable — fall through to CHARM */ }
+      if (!data) {
+        data = await fetchWiringDiagramIndex(make, year, variant);
+      }
       return NextResponse.json(data, { headers: { 'Cache-Control': 'public, max-age=3600' } });
     }
 
     if (action === 'image') {
       const url = searchParams.get('url');
       if (!url) return NextResponse.json({ error: 'url required' }, { status: 400 });
-      // DB-first (url may be a DB path like /Make/Year/Variant/...)
-      const dbData = await fetchDbWiringDiagramImages(url);
-      const data = dbData ?? await fetchWiringDiagramImages(url);
+      // DB-first with graceful fallback
+      let data = null;
+      try {
+        data = await fetchDbWiringDiagramImages(url);
+      } catch { /* DB unavailable — fall through to CHARM */ }
+      if (!data) {
+        data = await fetchWiringDiagramImages(url);
+      }
       return NextResponse.json(data, { headers: { 'Cache-Control': 'public, max-age=86400' } });
     }
 

@@ -16,9 +16,6 @@ function charmFetchOpts(revalidateSeconds = 3600, timeoutMs = 15000): RequestIni
   };
 }
 
-// Bump to invalidate stale Next.js fetch cache after infra changes (e.g. nginx redirect fixes)
-const CHARM_CACHE_BUST = '_v=3';
-
 async function fetchCharmText(
   url: string,
   revalidateSeconds = 3600,
@@ -27,12 +24,9 @@ async function fetchCharmText(
   retries = DEFAULT_FETCH_RETRIES,
 ): Promise<string> {
   let lastError: unknown = null;
-  // Append cache-bust param so Next.js doesn't serve stale cached responses
-  const bustUrl = url + (url.includes('?') ? '&' : '?') + CHARM_CACHE_BUST;
-
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     try {
-      const resp = await fetch(bustUrl, charmFetchOpts(revalidateSeconds, timeoutMs));
+      const resp = await fetch(url, charmFetchOpts(revalidateSeconds, timeoutMs));
       if (!resp.ok) {
         throw new Error(`${errorMessage} (${resp.status})`);
       }
@@ -61,9 +55,10 @@ function extractLinks(html: string, pageUrl?: string): string[] {
   const matches = html.matchAll(/href=['"]([^'"]+)['"]/g);
   return [...matches].map(m => {
     let link = m[1];
-    // charm.li serves absolute paths (/Make/Year/Variant/) while the old VPS
-    // served relative ones (Variant/).  Normalise absolute hrefs to relative
-    // by stripping the parent directory prefix so downstream filters work.
+    // The manual archive serves absolute paths (/Make/Year/Variant/) while
+    // older local setups served relative ones (Variant/). Normalise absolute
+    // hrefs to relative by stripping the parent directory prefix so downstream
+    // filters work.
     if (pageUrl && link.startsWith('/')) {
       const base = new URL(pageUrl).pathname.replace(/\/$/, '') + '/';
       if (link.startsWith(base)) {

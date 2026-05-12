@@ -1834,6 +1834,7 @@ function toolSpecificHighlights(page: ToolPage): ToolSpecHighlight[] {
     'wiper-blade-size': ['Driver Side', 'Passenger Side', 'Rear', 'Wiper Arm Type'],
     'coolant-type': ['Coolant Type', 'Coolant Color', 'Total Capacity', 'Change Interval'],
     'transmission-fluid-type': ['Automatic Fluid Type', 'Manual Fluid Type', 'Drain & Fill', 'Capacity', 'Change Interval'],
+    'brake-fluid-type': ['Brake Fluid', 'DOT', 'Change Interval'],
   };
 
   const selectedKeys = keyPriority[page.toolType];

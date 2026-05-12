@@ -279,24 +279,50 @@ export async function getVehicleGraphData(
 
   const variant = variantRows[0];
 
-  // Get real lemon procedures for this vehicle
-  const procRows = await runQuery<{
-    id: string;
-    title: string;
-    encodedPath: string | null;
-    system: string;
-    component: string | null;
-  }>(
-    `MATCH (v:Variant {year: $year, make: $make, model: $model})<-[r:APPLIES_TO]-(p:Procedure {source: 'lemon'})
-     OPTIONAL MATCH (p)<-[:HAS_PROCEDURE]-(c:Component)
-     OPTIONAL MATCH (c)<-[:CONTAINS_COMPONENT]-(s:System)
-     RETURN p.title AS id, p.title AS title, r.encodedPath AS encodedPath,
-            COALESCE(s.name, c.name, 'General') AS system,
-            c.name AS component
-     ORDER BY p.score DESC
-     LIMIT $limit`,
-    { year: neo4j.int(year), make: normMake, model: normModel, limit: neo4j.int(limit) }
-  );
+  // Run all heavy queries in parallel
+  const [procRows, dtcRows, systemRows] = await Promise.all([
+    runQuery<{
+      id: string;
+      title: string;
+      encodedPath: string | null;
+      system: string;
+      component: string | null;
+    }>(
+      `MATCH (v:Variant {year: $year, make: $make, model: $model})<-[r:APPLIES_TO]-(p:Procedure {source: 'lemon'})
+       OPTIONAL MATCH (p)<-[:HAS_PROCEDURE]-(c:Component)
+       OPTIONAL MATCH (c)<-[:CONTAINS_COMPONENT]-(s:System)
+       RETURN p.title AS id, p.title AS title, r.encodedPath AS encodedPath,
+              COALESCE(s.name, c.name, 'General') AS system,
+              c.name AS component
+       ORDER BY p.score DESC
+       LIMIT $limit`,
+      { year: neo4j.int(year), make: normMake, model: normModel, limit: neo4j.int(limit) }
+    ),
+    runQuery<{
+      code: string;
+      description: string | null;
+      component: string;
+    }>(
+      `MATCH (d:DTC)-[:TRIGGERED_BY]->(c:Component)-[:HAS_PROCEDURE]->(p:Procedure {source: 'lemon'})-[:APPLIES_TO]->(v:Variant {year: $year, make: $make, model: $model})
+       RETURN DISTINCT d.code AS code, d.description AS description, c.name AS component
+       ORDER BY d.code
+       LIMIT 20`,
+      { year: neo4j.int(year), make: normMake, model: normModel }
+    ),
+    runQuery<{
+      name: string;
+      procedureCount: unknown;
+    }>(
+      `MATCH (v:Variant {year: $year, make: $make, model: $model})<-[:APPLIES_TO]-(p:Procedure {source: 'lemon'})
+       OPTIONAL MATCH (p)<-[:HAS_PROCEDURE]-(c:Component)
+       OPTIONAL MATCH (c)<-[:CONTAINS_COMPONENT]-(s:System)
+       WITH COALESCE(s.name, c.name, 'General') AS name
+       RETURN name, count(*) AS procedureCount
+       ORDER BY procedureCount DESC
+       LIMIT 10`,
+      { year: neo4j.int(year), make: normMake, model: normModel }
+    ),
+  ]);
 
   // Build URLs using variant uriPath + encodedPath
   const proxyBase = 'http://127.0.0.1:8080';
@@ -315,34 +341,6 @@ export async function getVehicleGraphData(
       component: r.component,
     };
   });
-
-  // Get DTCs that affect this vehicle (via component -> procedure -> variant)
-  const dtcRows = await runQuery<{
-    code: string;
-    description: string | null;
-    component: string;
-  }>(
-    `MATCH (d:DTC)-[:TRIGGERED_BY]->(c:Component)-[:HAS_PROCEDURE]->(p:Procedure {source: 'lemon'})-[:APPLIES_TO]->(v:Variant {year: $year, make: $make, model: $model})
-     RETURN DISTINCT d.code AS code, d.description AS description, c.name AS component
-     ORDER BY d.code
-     LIMIT 20`,
-    { year: neo4j.int(year), make: normMake, model: normModel }
-  );
-
-  // Get systems breakdown from real procedures
-  const systemRows = await runQuery<{
-    name: string;
-    procedureCount: unknown;
-  }>(
-    `MATCH (v:Variant {year: $year, make: $make, model: $model})<-[:APPLIES_TO]-(p:Procedure {source: 'lemon'})
-     OPTIONAL MATCH (p)<-[:HAS_PROCEDURE]-(c:Component)
-     OPTIONAL MATCH (c)<-[:CONTAINS_COMPONENT]-(s:System)
-     WITH COALESCE(s.name, c.name, 'General') AS name
-     RETURN name, count(*) AS procedureCount
-     ORDER BY procedureCount DESC
-     LIMIT 10`,
-    { year: neo4j.int(year), make: normMake, model: normModel }
-  );
 
   return {
     year: toInt(variant.year) || year,

@@ -1,6 +1,6 @@
 # Wiring Indexing Plan
 
-This is the execution brief for turning SpotOnAuto wiring diagrams into an offline indexed asset that can power stable UX and static SEO pages.
+This is the execution brief for turning AllOEMManuals wiring diagrams into an offline indexed asset that can power stable UX and static SEO pages.
 
 ## Goal
 
@@ -74,7 +74,7 @@ Each diagram row should look like:
   "diagramName": "Fuse Panel Layout",
   "diagramSlug": "fuse-panel-layout",
   "sourcePath": "/Lincoln/2002/Continental%20V8-4.6L%20DOHC%20VIN%209/Repair%20and%20Diagnosis/Power%20Distribution/Diagrams/Fuse%20Panel%20Layout/",
-  "diagramUrl": "https://data.spotonauto.com/...",
+  "diagramUrl": "https://data.alloemmanuals.com/...",
   "imageCount": 2,
   "keywords": ["fuse panel", "power distribution", "battery feed"],
   "searchText": "2002 Lincoln Continental fuse panel layout power distribution battery feed",

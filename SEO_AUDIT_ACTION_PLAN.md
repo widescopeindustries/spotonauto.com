@@ -1,4 +1,4 @@
-# SpotOnAuto SEO Issues - Summary & Action Plan
+# AllOEMManuals SEO Issues - Summary & Action Plan
 
 **Generated:** 2026-02-08  
 **Source:** Screaming Frog Audit
@@ -30,8 +30,8 @@
 ---
 
 ### 2. **Non-Canonical Page in Sitemap** (Error)
-**URL:** `https://spotonauto.com/diagnose`  
-**Issue:** Page canonicalizes to `https://spotonauto.com/` but is listed in sitemap
+**URL:** `https://alloemmanuals.com/diagnose`  
+**Issue:** Page canonicalizes to `https://alloemmanuals.com/` but is listed in sitemap
 
 **Impact:** Confuses search engines about which page to index
 

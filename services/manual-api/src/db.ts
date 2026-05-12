@@ -21,8 +21,8 @@ function getPool(): Pool {
 
 function inferSource(path: string): 'lemon' | 'charm' | 'unknown' {
   const lower = path.toLowerCase();
-  if (lower.includes('/lemon/') || lower.includes('lemon-manuals') || lower.includes('lemon2025')) return 'lemon';
-  if (lower.includes('/charm/') || lower.includes('charm.')) return 'charm';
+  if (lower.includes('/lemon/') || lower.includes('lemon2025')) return 'lemon';
+  if (lower.includes('/charm/')) return 'charm';
   // Heuristic: paths starting with /Make/Year/Model/ are typically from the lemon archive
   if (/^\/[A-Za-z]+\/\d{4}\//.test(path)) return 'lemon';
   return 'unknown';

@@ -1,6 +1,0 @@
-name = "spotonauto-charm-proxy"
-main = "src/index.ts"
-compatibility_date = "2024-09-25"
-
-[vars]
-UPSTREAM = "https://charm.li"

@@ -1,4 +1,4 @@
-# SpotOnAuto - Product Hunt Launch Guide
+# AllOEMManuals - Product Hunt Launch Guide
 
 ## 🎯 HEADLINE OPTIONS (Pick One)
 
@@ -31,7 +31,7 @@ replacing a headlight bulb, or swapping a thermostat can cost $200-500 in labor
 alone - even though they take 30 minutes and require basic tools.
 
 ### The Solution
-SpotOnAuto is an AI-powered repair guide generator. Tell it your vehicle 
+AllOEMManuals is an AI-powered repair guide generator. Tell it your vehicle 
 (year, make, model) and what you need to fix. In seconds, you get:
 
 ✅ Step-by-step instructions written for your exact car
@@ -54,7 +54,7 @@ SpotOnAuto is an AI-powered repair guide generator. Tell it your vehicle
 
 ### Why It's Different
 Unlike YouTube videos that may not match your exact car, or forums with 
-conflicting advice, SpotOnAuto generates guides specifically for YOUR vehicle. 
+conflicting advice, AllOEMManuals generates guides specifically for YOUR vehicle. 
 The AI knows the differences between model years and engine variants.
 
 ---
@@ -84,7 +84,7 @@ The AI knows the differences between model years and engine variants.
 ```
 Hey Product Hunt! 👋
 
-I built SpotOnAuto because I was tired of:
+I built AllOEMManuals because I was tired of:
 1. Paying $400 for a 20-minute brake job
 2. Watching 10 YouTube videos that weren't for my exact car
 3. Getting conflicting advice on forums
@@ -114,8 +114,8 @@ Thanks for checking it out! 🚗🔧
 ### Step 2: Submit Your Product
 1. Click your profile → "Submit" or go to producthunt.com/posts/new
 2. Fill out:
-   - **URL**: https://spotonauto.com
-   - **Name**: SpotOnAuto
+   - **URL**: https://alloemmanuals.com
+   - **Name**: AllOEMManuals
    - **Tagline**: (use the one above)
    - **Description**: (use the description above)
    - **Topics**: Select relevant categories

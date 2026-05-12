@@ -337,7 +337,7 @@ The FAQ answer must cite corpus data directly.
 ## 10. Directory Structure (Proposed)
 
 ```
-/home/lyndon/projects/spotonauto.com/
+/home/lyndon/projects/alloemmanuals.com/
 ├── scripts/
 │   ├── miners/                    # NEW — VPS-side corpus miners
 │   │   ├── mine-fluids.mjs

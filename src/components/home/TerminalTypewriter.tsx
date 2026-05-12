@@ -51,7 +51,7 @@ export default function TerminalTypewriter({ lines, typingSpeed = 40, className 
         <div className="w-3 h-3 rounded-full bg-red-500/80" />
         <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
         <div className="w-3 h-3 rounded-full bg-green-500/80" />
-        <span className="text-[#6E6E80] text-xs ml-2">spotonauto-diagnostic.exe</span>
+        <span className="text-[#6E6E80] text-xs ml-2">alloemmanuals-diagnostic.exe</span>
       </div>
       <div className="space-y-1">
         {lines.map((_, index) => (

@@ -1,11 +1,11 @@
-# SpotOnAuto — Navigation & UX Research
+# AllOEMManuals — Navigation & UX Research
 *Bubba Research | March 24, 2026*
 
 ---
 
 ## Overview
 
-This document analyzes the navigation and information architecture of the best auto repair / DIY mechanic websites. Each site was fetched directly. The goal: find what works so SpotOnAuto can build the cleanest, most effective nav for its specific content mix (148K wiring diagrams, 60K repair guides, 3K vehicle pages, DTC codes, AI chat, forum, parts finder).
+This document analyzes the navigation and information architecture of the best auto repair / DIY mechanic websites. Each site was fetched directly. The goal: find what works so AllOEMManuals can build the cleanest, most effective nav for its specific content mix (148K wiring diagrams, 60K repair guides, 3K vehicle pages, DTC codes, AI chat, forum, parts finder).
 
 ---
 
@@ -191,7 +191,7 @@ These read exactly like real user language — no sanitization.
 - Massive SEO from thousands of indexed answered questions
 - Expert credibility (certifications, satisfied customer counts displayed prominently)
 
-**Gap for SpotOnAuto:** This model requires live experts. SpotOnAuto can replicate the "just describe it" entry with AI chat, and the "browse answered questions" pattern with a community forum.
+**Gap for AllOEMManuals:** This model requires live experts. AllOEMManuals can replicate the "just describe it" entry with AI chat, and the "browse answered questions" pattern with a community forum.
 
 ---
 
@@ -244,7 +244,7 @@ These read exactly like real user language — no sanitization.
 - No login required for browsing
 - Extremely fast, sparse design — zero marketing noise
 
-**Lesson for SpotOnAuto:** For wiring diagrams specifically, diagram-as-navigation (visual-first browsing) is the ideal UX. Let users click on components within a diagram rather than navigating menus.
+**Lesson for AllOEMManuals:** For wiring diagrams specifically, diagram-as-navigation (visual-first browsing) is the ideal UX. Let users click on components within a diagram rather than navigating menus.
 
 ---
 
@@ -317,7 +317,7 @@ All top-performing sites use **plain English** as a competitive advantage:
 
 ---
 
-## Synthesis: Best Practices for SpotOnAuto
+## Synthesis: Best Practices for AllOEMManuals
 
 ### Best Practice #1: DUAL ENTRY — Vehicle-First AND Problem-First, Always
 
@@ -330,7 +330,7 @@ Every top site either offers dual entry or suffers for not having it. The two fu
 - **"I got a P0420 code"** → Code-first
 - **"I don't know what's wrong, help me figure it out"** → AI chat / natural language
 
-SpotOnAuto should surface **all four paths** on the homepage, not just one. The homepage hero should be a **vehicle selector + search bar side by side**, with secondary entry points below for DTC lookup and AI chat.
+AllOEMManuals should surface **all four paths** on the homepage, not just one. The homepage hero should be a **vehicle selector + search bar side by side**, with secondary entry points below for DTC lookup and AI chat.
 
 **Recommended Homepage Hero:**
 ```
@@ -353,7 +353,7 @@ SpotOnAuto should surface **all four paths** on the homepage, not just one. The 
 
 This is what 1A Auto does well. This is what Haynes does. This is what AutoZone's store does with "add vehicle."
 
-**For SpotOnAuto:** Implement a persistent vehicle selector/banner. When selected:
+**For AllOEMManuals:** Implement a persistent vehicle selector/banner. When selected:
 - It should appear on every page (sticky header element)
 - All 148K wiring diagrams should filter to that vehicle
 - All 60K repair guides should filter to that vehicle
@@ -375,7 +375,7 @@ Toyota Camry (2003)
 
 **Every barrier to entry should speak the user's language, not the mechanic's.**
 
-SpotOnAuto's biggest challenge with 148K wiring diagrams and 60K repair guides is that this content is inherently technical. The navigation must translate.
+AllOEMManuals's biggest challenge with 148K wiring diagrams and 60K repair guides is that this content is inherently technical. The navigation must translate.
 
 **Wrong way:**
 - "EWD Index" (Electrical Wiring Diagram Index)
@@ -394,7 +394,7 @@ SpotOnAuto's biggest challenge with 148K wiring diagrams and 60K repair guides i
 - Difficulty ratings: Beginner / Weekend Warrior / Professional (not "Level 1/2/3")
 - Time estimates: "About 2 hours" on every repair guide
 
-**FIXD is the model here.** Their entire brand is "we translate car problems into plain English." SpotOnAuto should adopt this framing: *SpotOnAuto explains your car in plain English.*
+**FIXD is the model here.** Their entire brand is "we translate car problems into plain English." AllOEMManuals should adopt this framing: *AllOEMManuals explains your car in plain English.*
 
 ---
 
@@ -402,7 +402,7 @@ SpotOnAuto's biggest challenge with 148K wiring diagrams and 60K repair guides i
 
 **RepairPal, 1A Auto, and CarComplaints all converge on this pattern:** a vehicle-specific page that aggregates all available content for that make/model/year.
 
-SpotOnAuto has 3K vehicle pages. These should be the most powerful pages on the site — pulling together:
+AllOEMManuals has 3K vehicle pages. These should be the most powerful pages on the site — pulling together:
 
 ```
 /vehicles/toyota/camry/2003/
@@ -435,20 +435,20 @@ SpotOnAuto has 3K vehicle pages. These should be the most powerful pages on the 
 4. **Most likely causes** — ranked, with links to repair guides
 5. **Estimated repair cost** — even if approximate
 6. **DIY vs Shop recommendation** — based on difficulty
-7. **Wiring diagrams that may be relevant** (SpotOnAuto's unique asset)
+7. **Wiring diagrams that may be relevant** (AllOEMManuals's unique asset)
 8. **Community forum threads about this code** — "What others found"
-9. **Ask AI** — "Ask SpotOnAuto AI about this code on my specific car"
+9. **Ask AI** — "Ask AllOEMManuals AI about this code on my specific car"
 
-**FIXD's "top makes/models" sub-articles are SEO gold** — SpotOnAuto should replicate: `/codes/p0420/toyota-camry/` as vehicle-specific code pages, cross-linked from both the code page and the vehicle page.
+**FIXD's "top makes/models" sub-articles are SEO gold** — AllOEMManuals should replicate: `/codes/p0420/toyota-camry/` as vehicle-specific code pages, cross-linked from both the code page and the vehicle page.
 
 ---
 
-## Recommended Nav Structure for SpotOnAuto
+## Recommended Nav Structure for AllOEMManuals
 
 ### Top-Level Navigation (desktop, ≤6 items)
 
 ```
-[SpotOnAuto Logo]   My Car ▼   Wiring Diagrams   Repair Guides   Look Up a Code   AI Diagnosis   [Search 🔍]   [Forum]
+[AllOEMManuals Logo]   My Car ▼   Wiring Diagrams   Repair Guides   Look Up a Code   AI Diagnosis   [Search 🔍]   [Forum]
 ```
 
 Breaking it down:
@@ -535,7 +535,7 @@ BELOW FOLD (after vehicle selected OR for non-logged visitors):
 
 ---
 
-## What SpotOnAuto Should NOT Do
+## What AllOEMManuals Should NOT Do
 
 Based on this research, avoid these anti-patterns:
 
@@ -549,15 +549,15 @@ Based on this research, avoid these anti-patterns:
 
 ---
 
-## SpotOnAuto's Unique Moat — Lean Into It
+## AllOEMManuals's Unique Moat — Lean Into It
 
-Most sites have repair guides OR parts OR DTC codes. SpotOnAuto's specific combination is genuinely rare:
+Most sites have repair guides OR parts OR DTC codes. AllOEMManuals's specific combination is genuinely rare:
 
 **148K wiring diagrams (1982-2013)** — Almost nobody else has this at scale for older vehicles. For pre-1996 vehicles especially, wiring diagrams are very hard to find online. This is a major SEO and utility moat.
 
 **The integrated play:**
 - User searches "1989 Toyota Pickup wiring diagram"
-- Lands on SpotOnAuto wiring page
+- Lands on AllOEMManuals wiring page
 - Sees relevant repair guide for that system
 - Sees community discussion about common wiring issues on that truck
 - AI chat available to help interpret the diagram
@@ -575,9 +575,9 @@ No other site connects these dots for vintage/older vehicles. The navigation sho
 
 3. **Plain English at Every Door** — Navigation labels, page titles, code explanations — all written for someone who knows nothing about cars but owns one.
 
-4. **Vehicle Hub Pages as the Content Center of Gravity** — Each of the 3K vehicle pages should be the best page on the internet for that specific vehicle. Pull in diagrams, guides, codes, forum threads, parts. This is SpotOnAuto's version of RepairPal's vehicle page.
+4. **Vehicle Hub Pages as the Content Center of Gravity** — Each of the 3K vehicle pages should be the best page on the internet for that specific vehicle. Pull in diagrams, guides, codes, forum threads, parts. This is AllOEMManuals's version of RepairPal's vehicle page.
 
-5. **4-6 Top Nav Items Max, with AI as a Primary CTA** — The AI diagnostic chat is a genuine differentiator. Most competitors don't have it. It handles the "I don't know what's wrong" path that JustAnswer monetizes with human experts. SpotOnAuto can offer it for free (or freemium) at scale.
+5. **4-6 Top Nav Items Max, with AI as a Primary CTA** — The AI diagnostic chat is a genuine differentiator. Most competitors don't have it. It handles the "I don't know what's wrong" path that JustAnswer monetizes with human experts. AllOEMManuals can offer it for free (or freemium) at scale.
 
 ---
 

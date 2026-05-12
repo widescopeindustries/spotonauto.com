@@ -1,4 +1,4 @@
-# SpotOnAuto Deployment Checklist (Hard Gate)
+# AllOEMManuals Deployment Checklist (Hard Gate)
 
 ## 1) Build Gate
 - [ ] `npm run build` exits 0.

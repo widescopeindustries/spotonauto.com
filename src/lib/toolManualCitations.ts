@@ -14,6 +14,7 @@ const TOOL_TERM_MAP: Record<ToolType, string[]> = {
   'wiper-blade-size': ['wiper', 'windshield washer', 'wiper blade', 'visibility'],
   'coolant-type': ['coolant', 'cooling system', 'coolant capacity', 'specifications'],
   'transmission-fluid-type': ['transmission fluid', 'automatic transmission', 'manual transmission', 'capacities'],
+  'brake-fluid-type': ['brake fluid', 'hydraulic brake', 'master cylinder', 'brake system'],
 };
 
 export interface ToolManualCitation {

@@ -1,15 +1,15 @@
-# SpotOnAuto Full Audit — May 1, 2026
+# AllOEMManuals Full Audit — May 1, 2026
 
 **Auditor:** Kimi Code CLI  
 **Date:** 2026-05-01  
-**Property:** spotonauto.com (apex canonical)  
+**Property:** alloemmanuals.com (apex canonical)  
 **Status:** Deep Recovery Mode
 
 ---
 
 ## 1. Executive Summary
 
-SpotOnAuto is a Next.js 16 auto-repair guide platform with a dark cyber-aesthetic, heavy analytics instrumentation, and a massive content backend (177K manual sections, 232K graph nodes). The site is technically sophisticated but **trapped in SEO recovery hell** after two disasters:
+AllOEMManuals is a Next.js 16 auto-repair guide platform with a dark cyber-aesthetic, heavy analytics instrumentation, and a massive content backend (177K manual sections, 232K graph nodes). The site is technically sophisticated but **trapped in SEO recovery hell** after two disasters:
 
 1. **Google migration collapse** (Feb 28–Mar 1): Canonical flip destroyed trust. Impressions went 6,800/day → 0.
 2. **Bing IndexNow spam** (Mar 28): 740K URLs bulk-submitted. Bing throttled authority. Copilot citations dropped from 10.7K → near zero.
@@ -257,7 +257,7 @@ Event tracking is **exceptionally deep** (1,218 lines in `analytics.ts`):
 
 ## 7. Conversion & Business Effectiveness
 
-### What Is SpotOnAuto Supposed To Do?
+### What Is AllOEMManuals Supposed To Do?
 
 1. **Primary:** Get organic traffic from people searching car repair info
 2. **Secondary:** Convert them to AI diagnosis, email capture, or affiliate clicks (Amazon/TOPDON)
@@ -368,4 +368,4 @@ Current monetization:
 
 ---
 
-*End of audit. This document should be reviewed alongside `SITE-AUDIT.md` (March 24) and the SpotOnAuto skill memory for full disaster history.*
+*End of audit. This document should be reviewed alongside `SITE-AUDIT.md` (March 24) and the AllOEMManuals skill memory for full disaster history.*

@@ -6,10 +6,9 @@ import { CHARM_ARCHIVE_BASE } from '@/lib/charmBase';
 
 const CHARM_BASE = CHARM_ARCHIVE_BASE;
 const CHARM_IMAGE_BASE = CHARM_BASE;
-const DIRECT_CHARM_FALLBACK_BASE = process.env.ALLOW_DIRECT_CHARM_FALLBACK === '1'
-  ? 'https://charm.li'
-  : '';
-const CHARM_ORIGINS = Array.from(new Set([CHARM_BASE, DIRECT_CHARM_FALLBACK_BASE].filter(Boolean)));
+// NEVER fall back to external domains. The VPS LMDB backend (localhost:8080)
+// is the sole source of truth for all manual data.
+const CHARM_ORIGINS = [CHARM_BASE];
 
 const FETCH_TIMEOUT_MS = 8000;
 const FETCH_RETRIES = 1;
@@ -462,7 +461,7 @@ function parseListItem(itemHtml: string, parentSegments: string[]): CharmLink | 
 }
 
 /**
- * Convert a charm.li relative href to a /manual/... absolute path.
+ * Convert a manual archive relative href to a /manual/... absolute path.
  * Handles both relative (e.g., 'Toyota/') and absolute (e.g., '/Toyota/2010/...') hrefs.
  */
 function normalizeCharmHref(href: string, parentSegments: string[]): string {

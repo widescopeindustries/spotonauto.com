@@ -2,7 +2,7 @@
 
 ## Objective
 
-Refresh the manual embeddings corpus on the local KG-server Postgres store so SpotOnAuto guides use the newest extracted text, source snippets, and image markers.
+Refresh the manual embeddings corpus on the local KG-server Postgres store so AllOEMManuals guides use the newest extracted text, source snippets, and image markers.
 
 ## When to Run
 

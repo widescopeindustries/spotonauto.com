@@ -3,7 +3,7 @@
 
 ## The Core Insight
 
-The SpotOnAuto corpus (factory service manuals, wiring diagrams, DTC codes, repair procedures) was written by engineers for technicians. Regular people can't navigate it. AI is the translation layer that turns this technical corpus into intuitive, step-by-step paths a car owner can follow.
+The AllOEMManuals corpus (factory service manuals, wiring diagrams, DTC codes, repair procedures) was written by engineers for technicians. Regular people can't navigate it. AI is the translation layer that turns this technical corpus into intuitive, step-by-step paths a car owner can follow.
 
 The knowledge graph already has the edges. What's missing is the **traversal engine** that walks those edges and generates human-readable diagnostic flows.
 
@@ -194,7 +194,7 @@ Nobody else has:
 - AI that can traverse a real knowledge graph (not just hallucinate generic advice)
 - Pre-computed flows for every vehicle × problem combination
 
-ChatGPT can give you generic "P0420 usually means bad cat" advice. SpotOnAuto gives you "P0420 on YOUR 2007 Camry → here's the exact O2 sensor wiring diagram → here's the pin numbers to check → here's the $47 sensor you need → here's the 25-minute replacement procedure."
+ChatGPT can give you generic "P0420 usually means bad cat" advice. AllOEMManuals gives you "P0420 on YOUR 2007 Camry → here's the exact O2 sensor wiring diagram → here's the pin numbers to check → here's the $47 sensor you need → here's the 25-minute replacement procedure."
 
 That's the difference between a search engine and a tool.
 

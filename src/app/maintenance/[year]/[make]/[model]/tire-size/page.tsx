@@ -153,6 +153,29 @@ export default async function TireSizePage({ params }: PageProps) {
           </Link>
         </div>
 
+        {/* Maintenance specs nav */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          <span className="text-xs text-gray-500 uppercase tracking-wider py-2">Other specs:</span>
+          <Link
+            href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}`}
+            className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition"
+          >
+            All specs
+          </Link>
+          <Link
+            href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/oil-type`}
+            className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition"
+          >
+            Oil Type
+          </Link>
+          <Link
+            href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/coolant-type`}
+            className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition"
+          >
+            Coolant
+          </Link>
+        </div>
+
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">Shop Tires</h2>
           <div className="grid sm:grid-cols-2 gap-4">

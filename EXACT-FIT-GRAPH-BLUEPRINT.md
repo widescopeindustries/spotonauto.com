@@ -1,7 +1,7 @@
 # Exact-Fit Graph Blueprint
 
 ## Core Rule
-SpotOnAuto should behave like an exact-fit lookup engine, not a broad repair encyclopedia.
+AllOEMManuals should behave like an exact-fit lookup engine, not a broad repair encyclopedia.
 
 A page is successful when it can answer a specific automotive question for a specific vehicle configuration, then route the user cleanly to the next exact step.
 

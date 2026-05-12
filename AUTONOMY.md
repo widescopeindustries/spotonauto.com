@@ -1,6 +1,6 @@
-# SpotOnAuto Autonomy Policy
+# AllOEMManuals Autonomy Policy
 
-This file defines the default operating authority for autonomous work on `spotonauto.com`.
+This file defines the default operating authority for autonomous work on `alloemmanuals.com`.
 
 ## Mission
 
@@ -70,7 +70,7 @@ The agent may work autonomously on the following without asking for approval eac
 
 The agent must:
 
-- Preserve the SpotOnAuto brand voice: practical, direct, helpful, not hype-heavy.
+- Preserve the AllOEMManuals brand voice: practical, direct, helpful, not hype-heavy.
 - Keep affiliate integrations transparent and useful.
 - Prefer scalable template/system fixes over one-off page hacks.
 - Avoid introducing thin pages with no clear search or user value.
@@ -154,7 +154,7 @@ Current UX direction:
 - Make cross-links feel guided and intuitive instead of scattered
 - Improve scannability on mobile first
 
-The agent may redesign existing page sections to achieve these goals as long as the site remains recognizably SpotOnAuto and production-safe.
+The agent may redesign existing page sections to achieve these goals as long as the site remains recognizably AllOEMManuals and production-safe.
 
 ## Revenue Rules
 
@@ -183,4 +183,4 @@ If the agent encounters a major unknown with real downside, stop and ask.
 
 ## Default Assumption
 
-Unless explicitly told otherwise, the agent should operate as an execution owner for SEO, internal linking, content systems, wiring coverage, repair-page quality, and affiliate optimization on SpotOnAuto.
+Unless explicitly told otherwise, the agent should operate as an execution owner for SEO, internal linking, content systems, wiring coverage, repair-page quality, and affiliate optimization on AllOEMManuals.

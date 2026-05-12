@@ -67,21 +67,9 @@ const { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, isEv
 function buildAllEntries() {
     const entries = [];
 
-    // Repair category hub pages (high priority — these link to all repair pages)
-    entries.push({
-        url: `${BASE_URL}/repairs`,
-        lastmod: LAST_MOD,
-        changefreq: 'weekly',
-        priority: 0.9,
-    });
-    for (const task of VALID_TASKS) {
-        entries.push({
-            url: `${BASE_URL}/repairs/${task}`,
-            lastmod: LAST_MOD,
-            changefreq: 'weekly',
-            priority: 0.9,
-        });
-    }
+    // NOTE: Generic /repairs/* category hub pages are intentionally excluded
+    // from the sitemap. They are marked noindex and would waste crawl budget.
+    // Only vehicle-specific /repair/{year}/{make}/{model}/{task} pages are included.
 
     // Individual repair guide pages
     for (const [make, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {

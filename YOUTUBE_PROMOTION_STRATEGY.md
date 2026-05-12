@@ -1,14 +1,14 @@
-# SpotOnAuto - YouTube Promotion Strategy
+# AllOEMManuals - YouTube Promotion Strategy
 
 ## 🎯 Objective
-Drive targeted traffic from DIY mechanics and car owners to SpotOnAuto using video ads.
+Drive targeted traffic from DIY mechanics and car owners to AllOEMManuals using video ads.
 
 ## 🎬 The Video Ad (Under Construction)
 We are creating a 30-45 second high-energy video ad that showcases:
 1. **The Pain:** Expensive mechanic bills ($400+ for simple jobs).
-2. **The Solution:** SpotOnAuto's AI repair guides.
+2. **The Solution:** AllOEMManuals's AI repair guides.
 3. **The Demo:** Fast cuts showing vehicle selection, guide generation, and parts lists.
-4. **The CTA:** "Get your free repair guide at spotonauto.com".
+4. **The CTA:** "Get your free repair guide at alloemmanuals.com".
 
 ---
 

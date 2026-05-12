@@ -23,7 +23,7 @@ const openAI = openAiApiKey ? new OpenAI({ apiKey: openAiApiKey }) : null;
 
 const kimiApiKey = process.env.KIMI_API_KEY;
 const kimi = kimiApiKey
-  ? new OpenAI({ apiKey: kimiApiKey, baseURL: "https://api.moonshot.cn/v1" })
+  ? new OpenAI({ apiKey: kimiApiKey, baseURL: "https://api.moonshot.ai/v1" })
   : null;
 const KIMI_MODEL = process.env.KIMI_MODEL || 'kimi-latest';
 const preferKimi = canReadKimiFirst();

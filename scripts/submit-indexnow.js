@@ -162,6 +162,15 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Chunked append to avoid "Maximum call stack size exceeded" from spread operator
+function appendInChunks(target, source) {
+  const CHUNK = 50000;
+  for (let i = 0; i < source.length; i += CHUNK) {
+    target.push(...source.slice(i, i + CHUNK));
+  }
+  return target;
+}
+
 // ── Change detection ────────────────────────────────────────────────
 
 function getChangedFiles() {
@@ -378,14 +387,26 @@ async function main() {
         sampled.push(urls[i]);
       }
       console.log(`    ↳ Sampled ${sampled.length} of ${urls.length} URLs`);
-      allUrls.push(...sampled);
+      appendInChunks(allUrls, sampled);
     } else {
-      allUrls.push(...urls);
+      appendInChunks(allUrls, urls);
     }
   }
 
+  // Filter to only URLs on our verified domain (stale CDN caches may serve old domain URLs)
+  const domainFiltered = allUrls.filter(url => {
+    try {
+      return new URL(url).hostname === HOST;
+    } catch {
+      return false;
+    }
+  });
+  if (domainFiltered.length < allUrls.length) {
+    console.log(`  Filtered out ${allUrls.length - domainFiltered.length} URL(s) on wrong domain`);
+  }
+
   // Deduplicate
-  const uniqueUrls = [...new Set(allUrls)];
+  const uniqueUrls = [...new Set(domainFiltered)];
   console.log(`\nTotal unique URLs: ${uniqueUrls.length}`);
 
   // Apply limit

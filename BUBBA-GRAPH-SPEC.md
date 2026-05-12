@@ -3,7 +3,7 @@
 
 ## What Is Bubba Graph
 
-Bubba Graph is a dedicated agent/pipeline whose sole job is to know the entire SpotOnAuto corpus inside and out — every diagnostic flow, every wiring diagram, every procedure, every DTC — and arrange it into a graph that is:
+Bubba Graph is a dedicated agent/pipeline whose sole job is to know the entire AllOEMManuals corpus inside and out — every diagnostic flow, every wiring diagram, every procedure, every DTC — and arrange it into a graph that is:
 
 - **Intuitive** — organized by what a car owner experiences, not by how engineers categorized it
 - **Traversable** — every node connects to related nodes via typed edges
@@ -202,7 +202,7 @@ Bubba Graph is an agent (can be a cron job, a dedicated session, or an on-demand
 ### Phase 4: Human Translation + Deploy (Days 11-14)
 - AI narration pass on flows
 - Upload to Cloudflare R2/KV
-- Wire into SpotOnAuto Next.js app as new page routes
+- Wire into AllOEMManuals Next.js app as new page routes
 - Output: live pages at /flow/[code]/[year]/[make]/[model]
 
 ### Phase 5: Scale + Iterate (Ongoing)
@@ -214,7 +214,7 @@ Bubba Graph is an agent (can be a cron job, a dedicated session, or an on-demand
 
 ## The Moat
 
-When Bubba Graph is complete, SpotOnAuto will have:
+When Bubba Graph is complete, AllOEMManuals will have:
 - **Millions of unique, deeply useful pages** that no other site can replicate
 - **Every page connected to related pages** via the graph (infinite internal linking)
 - **Every page monetizable** via contextual affiliate links (parts, tools)

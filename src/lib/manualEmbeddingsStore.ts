@@ -84,11 +84,11 @@ export function getLocalPool(): Pool | null {
 
   localPool = new Pool({
     connectionString,
-    max: 3,
-    connectionTimeoutMillis: getTimeoutMs(process.env.LOCAL_DATABASE_CONNECT_TIMEOUT_MS, 5000),
-    query_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 15000),
-    statement_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 15000),
-    idleTimeoutMillis: 8000,
+    max: 25,
+    connectionTimeoutMillis: getTimeoutMs(process.env.LOCAL_DATABASE_CONNECT_TIMEOUT_MS, 8000),
+    query_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 20000),
+    statement_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 20000),
+    idleTimeoutMillis: 10000,
   });
 
   return localPool;

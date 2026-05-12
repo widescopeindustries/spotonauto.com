@@ -1,4 +1,4 @@
-# SpotOnAuto Revenue Seq ($1K/Day Track)
+# AllOEMManuals Revenue Seq ($1K/Day Track)
 
 ## Week 1 (Now)
 

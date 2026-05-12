@@ -1,8 +1,8 @@
-# SpotOnAuto Implementation Blueprint
+# AllOEMManuals Implementation Blueprint
 
 ## Objective
 
-Turn SpotOnAuto into the category-defining OEM-grounded repair intelligence platform for long-tail vehicle, wiring, and diagnostic workflows.
+Turn AllOEMManuals into the category-defining OEM-grounded repair intelligence platform for long-tail vehicle, wiring, and diagnostic workflows.
 
 The goal is not just traffic recovery. The goal is to build one system where:
 
@@ -13,7 +13,7 @@ The goal is not just traffic recovery. The goal is to build one system where:
 
 ## North Star
 
-SpotOnAuto should become the best answer on the internet for:
+AllOEMManuals should become the best answer on the internet for:
 
 - exact year-make-model-task repair questions,
 - OEM-grounded wiring and manual lookups,
@@ -36,8 +36,8 @@ Stop leaking crawl equity, index signals, and analytics integrity.
 
 ### Decisions
 
-- Canonical host: `https://spotonauto.com`
-- Legacy host: `https://www.spotonauto.com` redirects permanently to apex
+- Canonical host: `https://alloemmanuals.com`
+- Legacy host: `https://www.alloemmanuals.com` redirects permanently to apex
 - Preview hosts: non-indexable, no analytics
 - All canonical, sitemap, and internal URLs point directly to apex
 
@@ -66,7 +66,7 @@ Make the KG server the actual backbone rather than a fragile upstream dependency
 
 - LMDB/CHARM mirror on the KG server remains the raw corpus store
 - local PostgreSQL on the KG server becomes the canonical retrieval store
-- SpotOnAuto app reads retrieval through a single local service boundary
+- AllOEMManuals app reads retrieval through a single local service boundary
 - Live HTML fetch becomes fallback and refresh path, not primary runtime dependency
 
 ### Work Items
@@ -171,7 +171,7 @@ Publish the moat in forms that search engines and answer engines can rank.
 
 ### Objective
 
-Make SpotOnAuto feel verifiable, specific, and safe to act on.
+Make AllOEMManuals feel verifiable, specific, and safe to act on.
 
 ### Work Items
 

@@ -140,7 +140,8 @@ export type WiringDiagramAction =
   | 'copy_link'
   | 'share'
   | 'image_prev'
-  | 'image_next';
+  | 'image_next'
+  | 'pan_start';
 export type WiringDiagramSearchScope = 'diagram_library' | 'system_list' | 'modal' | 'deep_link' | 'other';
 export type WiringSystemToggleAction = 'expand' | 'collapse';
 export type WiringDiagramExitKind = 'close_button' | 'backdrop' | 'escape' | 'reset' | 'other';
@@ -831,6 +832,7 @@ interface WiringDiagramExitEvent {
   system: string;
   kind?: WiringDiagramExitKind;
   openDiagrams?: number;
+  durationMs?: number;
   pageSurface?: AnalyticsPageSurface;
   systemSlug?: string;
   intentCluster?: AnalyticsIntentCluster;
@@ -932,6 +934,18 @@ export function trackWiringDiagramExit(event: WiringDiagramExitEvent): void {
     system: event.system,
     wiring_exit_kind: event.kind || 'other',
     wiring_open_diagrams: event.openDiagrams,
+    wiring_duration_ms: event.durationMs,
+    wiring_duration_bucket: event.durationMs
+      ? event.durationMs < 5000
+        ? '<5s'
+        : event.durationMs < 15000
+          ? '5-15s'
+          : event.durationMs < 30000
+            ? '15-30s'
+            : event.durationMs < 60000
+              ? '30-60s'
+              : '60s+'
+      : undefined,
     ...structuredContext,
   });
 }

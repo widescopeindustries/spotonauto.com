@@ -16,11 +16,261 @@ export interface ToolFAQ {
     a: string;
 }
 
+// ─── Year-specific generation lookup ───────────────────────────────
+
+function parseYearRange(years: string): { start: number; end: number } | null {
+  const parts = years.split('-').map(s => parseInt(s.trim(), 10));
+  if (parts.length === 1 && !isNaN(parts[0])) {
+    return { start: parts[0], end: parts[0] };
+  }
+  if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+    return { start: parts[0], end: parts[1] };
+  }
+  return null;
+}
+
+export function findGenerationForYear(year: number, generations: ToolGeneration[]): ToolGeneration | null {
+  for (const g of generations) {
+    const range = parseYearRange(g.years);
+    if (range && year >= range.start && year <= range.end) {
+      return g;
+    }
+  }
+  return null;
+}
+
+function extractViscosity(text: string): string | null {
+  const match = text.match(/\b(SAE\s+)?(\dW-\d{1,2})\b/i);
+  return match ? match[2] : null;
+}
+
+function extractCapacity(text: string): string | null {
+  const match = text.match(/(\d+\.?\d*)\s*(QTS?\.?|quarts?|qt\.?|L|liters?)/i);
+  if (!match) return null;
+  const unit = match[2].toLowerCase().startsWith('q') || match[2].toLowerCase().startsWith('qt')
+    ? 'qt'
+    : match[2].toLowerCase().startsWith('l')
+      ? 'L'
+      : match[2];
+  return `${match[1]} ${unit}`;
+}
+
+function extractCoolantType(text: string): string | null {
+  // Avoid matching "non-silicate", "non-amine", etc.
+  const match = text.match(/\b(OAT|HOAT|IAT|pink|blue|orange|green|red|yellow|purple|long-life)\b/i);
+  if (match) return match[1];
+  // "Super Long Life Coolant" is Toyota's branding → map to OAT
+  if (/super long life coolant/i.test(text)) return 'SLLC';
+  // "Ethylene glycol" is the base chemistry → generic
+  if (/ethylene glycol/i.test(text)) return 'Ethylene Glycol';
+  return null;
+}
+
+function extractTireSize(text: string): string | null {
+  const match = text.match(/\b(\d{3}\/\d{2,3}[RZ]\d{2})\b/);
+  return match ? match[1] : null;
+}
+
+function extractSparkPlug(text: string): string | null {
+  const match = text.match(/\b(Iridium|Platinum|Copper|Double\s+Iridium|Laser\s+Iridium)\b/i);
+  return match ? match[1] : null;
+}
+
+function findSpecValue(gen: ToolGeneration, keywords: string[]): string {
+  const entries = Object.entries(gen.specs);
+  for (const kw of keywords) {
+    const match = entries.find(([k]) => k.toLowerCase().includes(kw.toLowerCase()));
+    if (match) return match[1];
+  }
+  return entries[0]?.[1] || '';
+}
+
+function truncate(text: string, maxLen: number): string {
+  const t = text.replace(/\s+/g, ' ').trim();
+  return t.length > maxLen ? t.slice(0, maxLen - 1) + '…' : t;
+}
+
+function extractAfterDelimiter(text: string): string | null {
+  // Corpus specs often use "1.90 QTS. — TOYOTA Super Long Life Coolant..."
+  const match = text.match(/[:—\-]\s*(.+)/);
+  return match ? match[1].trim() : null;
+}
+
+export function getYearSpecificQuickAnswer(year: number, toolPage: ToolPage): string | null {
+  const gen = findGenerationForYear(year, toolPage.generations);
+  if (!gen) return null;
+
+  const firstSpecValue = Object.values(gen.specs)[0] || '';
+  if (!firstSpecValue) return null;
+
+  switch (toolPage.toolType) {
+    case 'oil-type': {
+      const val = findSpecValue(gen, ['Engine Oil', 'Oil Type', 'Oil']);
+      const visc = extractViscosity(val);
+      const cap = extractCapacity(val);
+      if (visc && cap) return `${visc} Oil (${cap})`;
+      if (visc) return `${visc} Oil`;
+      if (cap) return `Oil: ${cap}`;
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'coolant-type': {
+      const val = findSpecValue(gen, ['Coolant', 'Antifreeze']);
+      const type = extractCoolantType(val);
+      if (type) return `${type} Coolant`;
+      const after = extractAfterDelimiter(val);
+      if (after) return truncate(after, 40);
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'fluid-capacity': {
+      const val = findSpecValue(gen, ['Engine Oil', 'Coolant', 'Transmission']);
+      const cap = extractCapacity(val);
+      if (cap) return `${cap} ${val.toLowerCase().includes('coolant') ? 'Coolant' : val.toLowerCase().includes('trans') ? 'Trans' : 'Oil'}`;
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'tire-size': {
+      const val = findSpecValue(gen, ['Tire', 'Wheel']);
+      const size = extractTireSize(val);
+      if (size) return size;
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'transmission-fluid-type': {
+      const val = findSpecValue(gen, ['Transmission', 'Trans']);
+      const visc = extractViscosity(val);
+      if (visc) return `Trans Fluid: ${visc}`;
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'spark-plug-type': {
+      const val = findSpecValue(gen, ['Spark Plug', 'Plug']);
+      const plug = extractSparkPlug(val);
+      if (plug) return `${plug} Plugs`;
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'battery-location': {
+      const val = findSpecValue(gen, ['Battery', 'Location']);
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'wiper-blade-size': {
+      const val = findSpecValue(gen, ['Wiper', 'Blade']);
+      const size = extractTireSize(val);
+      if (size) return size;
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'headlight-bulb': {
+      const val = findSpecValue(gen, ['Headlight', 'Bulb', 'Low Beam', 'High Beam']);
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    case 'brake-fluid-type': {
+      const val = findSpecValue(gen, ['Brake', 'DOT']);
+      const dot = val.match(/\b(DOT\s*\d)\b/i);
+      if (dot) return dot[1].toUpperCase();
+      return truncate(val, 40) || truncate(firstSpecValue, 40);
+    }
+    default:
+      return truncate(firstSpecValue, 40);
+  }
+}
+
+/**
+ * Fallback concise answer when no exact generation matches the year.
+ * Extracts just the spec from corpus quickAnswer text (which can be verbose).
+ */
+export function getConciseQuickAnswer(year: number, toolPage: ToolPage): string | null {
+  // 1. Exact year/generation match
+  const exact = getYearSpecificQuickAnswer(year, toolPage);
+  if (exact) return exact;
+
+  // 2. No matching generation — parse from quickAnswer
+  const qa = (toolPage.quickAnswer || '').replace(/\s+/g, ' ').trim();
+  if (!qa) return null;
+
+  switch (toolPage.toolType) {
+    case 'oil-type': {
+      const visc = extractViscosity(qa);
+      if (visc) return `${visc} Oil`;
+      const after = extractAfterDelimiter(qa);
+      if (after) {
+        const visc2 = extractViscosity(after);
+        if (visc2) return `${visc2} Oil`;
+        return truncate(after, 35);
+      }
+      break;
+    }
+    case 'coolant-type': {
+      const type = extractCoolantType(qa);
+      if (type) return `${type} Coolant`;
+      const after = extractAfterDelimiter(qa);
+      if (after) {
+        const type2 = extractCoolantType(after);
+        if (type2) return `${type2} Coolant`;
+        return truncate(after, 35);
+      }
+      break;
+    }
+    case 'fluid-capacity': {
+      const cap = extractCapacity(qa);
+      // Reject suspiciously small values (compressor oil, washer fluid, etc.)
+      const num = cap ? parseFloat(cap) : 0;
+      if (cap && num >= 1) return cap;
+      const after = extractAfterDelimiter(qa);
+      if (after) {
+        const cap2 = extractCapacity(after);
+        const num2 = cap2 ? parseFloat(cap2) : 0;
+        if (cap2 && num2 >= 1) return cap2;
+      }
+      // No meaningful capacity found → return null so caller skips
+      return null;
+    }
+    case 'tire-size': {
+      const size = extractTireSize(qa);
+      if (size) return size;
+      break;
+    }
+    case 'transmission-fluid-type': {
+      const visc = extractViscosity(qa);
+      if (visc) return `Trans Fluid: ${visc}`;
+      break;
+    }
+    case 'spark-plug-type': {
+      const plug = extractSparkPlug(qa);
+      if (plug) return `${plug} Plugs`;
+      break;
+    }
+    case 'battery-location': {
+      const after = extractAfterDelimiter(qa);
+      if (after) return truncate(after, 35);
+      break;
+    }
+    case 'wiper-blade-size': {
+      const size = extractTireSize(qa);
+      if (size) return `Wipers: ${size}`;
+      break;
+    }
+    case 'headlight-bulb': {
+      const after = extractAfterDelimiter(qa);
+      if (after) return truncate(after, 35);
+      break;
+    }
+    case 'brake-fluid-type': {
+      const dot = qa.match(/\b(DOT\s*\d)\b/i);
+      if (dot) return dot[1].toUpperCase();
+      const after = extractAfterDelimiter(qa);
+      if (after) return truncate(after, 35);
+      break;
+    }
+  }
+
+  // 3. Generic fallback: text after first colon/em-dash, or first sentence
+  const after = extractAfterDelimiter(qa);
+  if (after) return truncate(after, 35);
+  const sentence = qa.split(/[.!?](?:\s|$)/)[0];
+  return truncate(sentence, 35) || null;
+}
+
 export interface ToolPage {
     slug: string;
     make: string;
     model: string;
-    toolType: 'oil-type' | 'battery-location' | 'tire-size' | 'serpentine-belt' | 'headlight-bulb' | 'fluid-capacity' | 'spark-plug-type' | 'wiper-blade-size' | 'coolant-type' | 'transmission-fluid-type';
+    toolType: 'oil-type' | 'battery-location' | 'tire-size' | 'serpentine-belt' | 'headlight-bulb' | 'fluid-capacity' | 'spark-plug-type' | 'wiper-blade-size' | 'coolant-type' | 'transmission-fluid-type' | 'brake-fluid-type';
     title: string;
     description: string;
     keywords: string[];
@@ -41,6 +291,7 @@ export const TOOL_TYPE_META: Record<string, { label: string; icon: string; color
     'wiper-blade-size': { label: 'Wiper Blade Size', icon: '🌧️', color: 'sky' },
     'coolant-type': { label: 'Coolant Type', icon: '❄️', color: 'teal' },
     'transmission-fluid-type': { label: 'Transmission Fluid', icon: '⚙️', color: 'rose' },
+    'brake-fluid-type': { label: 'Brake Fluid', icon: '🚨', color: 'red' },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -490,6 +741,24 @@ const batteryPages: ToolPage[] = [
             { q: 'What size battery does a Subaru Forester take?', a: 'Most Foresters use a Group 25 battery. The Optima RedTop 25 and Interstate MT-25 are popular upgrades over OEM.' },
         ],
     },
+    {
+        slug: 'toyota-sienna-battery-location',
+        make: 'Toyota', model: 'Sienna', toolType: 'battery-location',
+        title: 'Toyota Sienna Battery Location | Where Is It? All Years',
+        description: 'Find exactly where the battery is in your Toyota Sienna. Includes battery size, type, and replacement tips for all generations.',
+        keywords: ['toyota sienna battery location', 'where is sienna battery', 'sienna battery size', 'sienna battery replacement'],
+        quickAnswer: 'The Toyota Sienna battery is under the hood on the driver\'s side (left) for all generations.',
+        generations: [
+            { name: '4th Gen (2021-2024)', years: '2021-2024', specs: { 'Location': 'Under hood, driver\'s side', 'Battery Size': 'Group 35', 'CCA': '550 CCA minimum', 'Type': 'AGM (stop-start equipped)', 'Difficulty': 'Easy — 15 min' }, notes: ['Sienna Hybrid has a 12V auxiliary battery under the hood and high-voltage battery under the rear seat'] },
+            { name: '3rd Gen (2011-2020)', years: '2011-2020', specs: { 'Location': 'Under hood, driver\'s side', 'Battery Size': 'Group 35', 'CCA': '550 CCA', 'Type': 'Standard lead-acid or AGM', 'Difficulty': 'Easy — 15 min' } },
+            { name: '2nd Gen (2004-2010)', years: '2004-2010', specs: { 'Location': 'Under hood, driver\'s side', 'Battery Size': 'Group 35', 'CCA': '550 CCA', 'Difficulty': 'Easy — 15 min' } },
+            { name: '1st Gen (1998-2003)', years: '1998-2003', specs: { 'Location': 'Under hood, driver\'s side', 'Battery Size': 'Group 24F or 35', 'CCA': '500 CCA', 'Difficulty': 'Easy — 15 min' } },
+        ],
+        faq: [
+            { q: 'Where is the battery in a Toyota Sienna?', a: 'All Toyota Sienna generations place the 12V battery under the hood on the driver\'s side (left). It sits in a tray near the firewall, held by a clamp bar.' },
+            { q: 'What size battery does a Toyota Sienna need?', a: 'Most 2004+ Siennas use a Group 35 battery. Early 1998-2003 models may use Group 24F. Verify by checking the old battery label or owner manual.' },
+        ],
+    },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -733,6 +1002,27 @@ const highIntentPages: ToolPage[] = [
         ],
         faq: [
             { q: 'Can I mix green coolant in a Tiguan?', a: 'No. Use VW-approved coolant only. Mixing incompatible chemistry can cause sludge, corrosion, and cooling system damage.' },
+        ],
+    },
+    {
+        slug: 'subaru-outback-coolant-type',
+        make: 'Subaru',
+        model: 'Outback',
+        toolType: 'coolant-type',
+        title: 'Subaru Outback Coolant Type & Capacity | AllOEMManuals',
+        description: 'Subaru Outback coolant type by generation. Verified from factory manual fluids tables for 2015+ models.',
+        keywords: ['subaru outback coolant type', 'outback coolant', 'subaru outback coolant capacity', 'subaru super coolant'],
+        quickAnswer: '2015+ Subaru Outback models use SUBARU Super Coolant (blue). 2020 2.5L capacity is 9.5 quarts; 2015 2.5L is 8.2 quarts. Mix 50/50 unless pre-mixed.',
+        generations: [
+            { name: '6th Gen (2020-2024)', years: '2020-2024', specs: { 'Coolant Spec': 'SUBARU Super Coolant', 'Color': 'Blue', 'Capacity (2.5L)': '9.50 quarts (8.99 L)', 'Mix Ratio': '50/50 distilled water', 'Do Not Mix': 'Green or universal coolant' }, notes: ['Factory manual verified spec'] },
+            { name: '5th Gen (2015-2019)', years: '2015-2019', specs: { 'Coolant Spec': 'SUBARU Super Coolant', 'Color': 'Blue', 'Capacity (2.5L)': '8.20 quarts (7.76 L)', 'Mix Ratio': '50/50 distilled water', 'Do Not Mix': 'Green or universal coolant' }, notes: ['Factory manual verified spec'] },
+            { name: '4th Gen (2010-2014)', years: '2010-2014', specs: { 'Coolant Spec': 'SUBARU Super Coolant or green (year dependent)', 'Color': 'Blue (2011+) / Green (2010)', 'Mix Ratio': '50/50', 'Service Tip': 'Verify by reservoir cap color' } },
+            { name: '3rd Gen (2005-2009)', years: '2005-2009', specs: { 'Coolant Spec': 'Green ethylene glycol', 'Color': 'Green', 'Mix Ratio': '50/50', 'Service Interval': '30,000 miles / 2 years' } },
+            { name: '2nd Gen (2000-2004)', years: '2000-2004', specs: { 'Coolant Spec': 'Green ethylene glycol', 'Color': 'Green', 'Mix Ratio': '50/50', 'Service Interval': '30,000 miles / 2 years' } },
+        ],
+        faq: [
+            { q: 'Can I use green coolant in a 2020 Subaru Outback?', a: 'No. 2015+ Outback models require SUBARU Super Coolant (blue). Green coolant has different chemistry and can damage the cooling system. Always use the blue Subaru-spec coolant.' },
+            { q: 'How much coolant does a Subaru Outback hold?', a: 'Total system capacity varies by generation: 2020 2.5L holds 9.5 quarts; 2015 2.5L holds 8.2 quarts. A drain-and-fill typically removes about half the total capacity.' },
         ],
     },
     {
@@ -1010,6 +1300,24 @@ const highIntentPages: ToolPage[] = [
             { q: 'Should I replace the tensioner too?', a: 'If the tensioner bearing is noisy or spring tension is weak, replace it with the belt for longer service life.' },
         ],
     },
+    {
+        slug: 'volkswagen-tiguan-wiper-blade-size',
+        make: 'Volkswagen',
+        model: 'Tiguan',
+        toolType: 'wiper-blade-size',
+        title: 'VW Tiguan Wiper Blade Size | All Years Guide',
+        description: 'Volkswagen Tiguan wiper blade sizes by generation, including front driver, front passenger, and rear wiper dimensions.',
+        keywords: ['vw tiguan wiper blade size', 'tiguan wiper size', 'volkswagen tiguan windshield wipers', 'tiguan rear wiper blade'],
+        quickAnswer: 'Most 2018-2024 VW Tiguan models use a 26-inch driver side and 17-18 inch passenger side wiper. 2008-2017 models typically use 24-inch driver and 19-inch passenger. Rear wiper is commonly 11 inches.',
+        generations: [
+            { name: '2nd Gen (2018-2024)', years: '2018-2024', specs: { 'Driver Side': '26" (650 mm)', 'Passenger Side': '17" or 18" (430-450 mm)', 'Rear Wiper': '11" (280 mm)', 'Type': 'Hook or pin arm (trim dependent)', 'Difficulty': 'Easy — 5 min' }, notes: ['Verify arm type before buying — most use standard J-hook', 'Bosch ICON 26A + 17A are common fits'] },
+            { name: '1st Gen (2008-2017)', years: '2008-2017', specs: { 'Driver Side': '24" (600 mm)', 'Passenger Side': '19" (475 mm)', 'Rear Wiper': '11" (280 mm)', 'Type': 'Standard J-hook', 'Difficulty': 'Easy — 5 min' } },
+        ],
+        faq: [
+            { q: 'What size wiper blades fit a VW Tiguan?', a: '2018+ Tiguan: 26" driver, 17-18" passenger, 11" rear. 2008-2017 Tiguan: 24" driver, 19" passenger, 11" rear. Always verify your exact arm type and blade connector before ordering.' },
+            { q: 'Can I use different brand wiper blades on a Tiguan?', a: 'Yes. As long as the length and connector match, brands like Bosch, Rain-X, Michelin, and Trico all work. OEM VW blades are Valeo-sourced but aftermarket equivalents perform similarly.' },
+        ],
+    },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1045,6 +1353,7 @@ const TOOL_TO_REPAIR_TASKS: Record<ToolType, string[]> = {
     'wiper-blade-size': ['windshield-wiper-replacement', 'headlight-bulb-replacement', 'battery-replacement'],
     'coolant-type': ['coolant-flush', 'thermostat-replacement', 'radiator-replacement'],
     'transmission-fluid-type': ['transmission-fluid-change', 'differential-fluid-change', 'clutch-replacement'],
+    'brake-fluid-type': ['brake-fluid-flush', 'brake-pad-replacement', 'brake-rotor-replacement'],
 };
 
 const TASK_TO_TOOL_TYPES: Partial<Record<string, ToolType[]>> = {
@@ -1087,6 +1396,7 @@ const TOOL_TYPE_PRIORITY_SCORES: Record<ToolType, number> = {
     'fluid-capacity': 20,
     'tire-size': 18,
     'wiper-blade-size': 14,
+    'brake-fluid-type': 12,
 };
 const PRIORITY_MAKE_RANK = new Map(PRIORITY_MAKES.map((m, i) => [m, i]));
 const VALID_TASK_SET = new Set(VALID_TASKS);

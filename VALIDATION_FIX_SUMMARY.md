@@ -10,7 +10,7 @@ Your site was generating repair guides for impossible vehicle combinations like:
 This happened because:
 1. The `isValidVehicleCombination()` function only checked for non-empty strings and basic year ranges
 2. It did NOT validate if the vehicle actually existed in the specified year
-3. The AI (Gemini) was instructed to search charm.li, but when data wasn't found, it hallucinated content
+3. The AI was instructed to search the factory manual archive, but when data wasn't found, it hallucinated content
 
 ## Solution Implemented
 

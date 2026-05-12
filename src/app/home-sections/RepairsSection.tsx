@@ -1,140 +1,240 @@
 "use client";
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import { BookOpen, Clock, ArrowRight, ShieldAlert, Gauge, Droplets, Battery, Wrench } from 'lucide-react'
-import HolographicCard from '@/components/home/HolographicCard'
 
-const repairs = [
-  {
-    icon: ShieldAlert,
-    title: 'P0300 Code: Complete Diagnosis',
-    description: 'Random/Multiple Cylinder Misfire - full diagnostic tree with component tests.',
-    difficulty: 'High',
-    time: '9 min',
-    color: '#FF3333',
-    href: '/codes/p0300',
-  },
-  {
-    icon: Gauge,
-    title: 'Ford F-150 Brake Pad Replacement',
-    description: 'Step-by-step guide for 2015-2020 models with torque specs.',
-    difficulty: 'Medium',
-    time: '12 min',
-    color: '#FF6B00',
-    href: '/repairs/brake-pad-replacement',
-  },
-  {
-    icon: Droplets,
-    title: 'Honda Accord Oil Change',
-    description: 'Complete procedure with drain plug location and filter torque.',
-    difficulty: 'Easy',
-    time: '8 min',
-    color: '#5B8DB8',
-    href: '/repairs/oil-change',
-  },
-  {
-    icon: Battery,
-    title: 'BMW X5 Battery Location & Replacement',
-    description: 'Hidden battery access and registration procedure guide.',
-    difficulty: 'Medium',
-    time: '10 min',
-    color: '#FF6B00',
-    href: '/tools/bmw-x3-battery-location',
-  },
-  {
-    icon: Wrench,
-    title: 'Spark Plug Replacement Guide',
-    description: 'Gap settings, torque specs, and anti-seize application.',
-    difficulty: 'Easy',
-    time: '7 min',
-    color: '#5B8DB8',
-    href: '/repairs/spark-plug-replacement',
-  },
-  {
-    icon: ShieldAlert,
-    title: 'Check Engine Light Flashing?',
-    description: 'Critical warning - stop driving immediately and diagnose.',
-    difficulty: 'Critical',
-    time: '6 min',
-    color: '#FF3333',
-    href: '/codes',
-  },
-]
+import { motion } from "framer-motion";
+import Link from "next/link";
+import {
+  BookOpen,
+  ArrowRight,
+  Gauge,
+  Droplets,
+  Zap,
+  Battery,
+  Thermometer,
+  Sun,
+  Filter,
+  Cpu,
+  MoveVertical,
+  Cog,
+  Wrench,
+} from "lucide-react";
+import HolographicCard from "@/components/home/HolographicCard";
+import { TIER_1_RESCUE_PAGES } from "@/data/rescuePriority";
 
-export default function RepairsSection() {
+interface RepairLink {
+  href: string;
+  label: string;
+}
+
+interface RepairsSectionProps {
+  repairs: RepairLink[];
+}
+
+function toTitleCase(slug: string): string {
+  return slug
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+interface TaskCategory {
+  label: string;
+  color: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+function getTaskCategory(taskSlug: string): TaskCategory {
+  const map: Record<string, TaskCategory> = {
+    "brake-pad-replacement": { label: "Brakes", color: "#FF6B00", icon: Gauge },
+    "brake-rotor-replacement": { label: "Brakes", color: "#FF6B00", icon: Gauge },
+    "brake-fluid-flush": { label: "Brakes", color: "#FF6B00", icon: Gauge },
+    "oil-change": { label: "Fluids", color: "#5B8DB8", icon: Droplets },
+    "transmission-fluid-change": { label: "Fluids", color: "#5B8DB8", icon: Droplets },
+    "coolant-flush": { label: "Fluids", color: "#5B8DB8", icon: Droplets },
+    "power-steering-fluid-change": { label: "Fluids", color: "#5B8DB8", icon: Droplets },
+    "differential-fluid-change": { label: "Fluids", color: "#5B8DB8", icon: Droplets },
+    "spark-plug-replacement": { label: "Tune-up", color: "#10B981", icon: Zap },
+    "ignition-coil-replacement": { label: "Tune-up", color: "#10B981", icon: Zap },
+    "battery-replacement": { label: "Battery", color: "#FBBF24", icon: Battery },
+    "alternator-replacement": { label: "Starting", color: "#F59E0B", icon: Zap },
+    "starter-replacement": { label: "Starting", color: "#F59E0B", icon: Zap },
+    "thermostat-replacement": { label: "Cooling", color: "#06B6D4", icon: Thermometer },
+    "water-pump-replacement": { label: "Cooling", color: "#06B6D4", icon: Thermometer },
+    "radiator-replacement": { label: "Cooling", color: "#06B6D4", icon: Thermometer },
+    "serpentine-belt-replacement": { label: "Belts", color: "#06B6D4", icon: Cog },
+    "timing-belt-replacement": { label: "Belts", color: "#06B6D4", icon: Cog },
+    "timing-chain-replacement": { label: "Belts", color: "#06B6D4", icon: Cog },
+    "headlight-bulb-replacement": { label: "Lighting", color: "#EAB308", icon: Sun },
+    "tail-light-replacement": { label: "Lighting", color: "#EAB308", icon: Sun },
+    "cabin-air-filter-replacement": { label: "Filters", color: "#8B5CF6", icon: Filter },
+    "engine-air-filter-replacement": { label: "Filters", color: "#8B5CF6", icon: Filter },
+    "fuel-filter-replacement": { label: "Filters", color: "#8B5CF6", icon: Filter },
+    "oxygen-sensor-replacement": { label: "Engine", color: "#EF4444", icon: Cpu },
+    "mass-air-flow-sensor-replacement": { label: "Engine", color: "#EF4444", icon: Cpu },
+    "catalytic-converter-replacement": { label: "Engine", color: "#EF4444", icon: Cpu },
+    "egr-valve-replacement": { label: "Engine", color: "#EF4444", icon: Cpu },
+    "fuel-injector-replacement": { label: "Engine", color: "#EF4444", icon: Cpu },
+    "fuel-pump-replacement": { label: "Engine", color: "#EF4444", icon: Cpu },
+    "muffler-replacement": { label: "Engine", color: "#EF4444", icon: Cpu },
+    "turbo-replacement": { label: "Engine", color: "#EF4444", icon: Cpu },
+    "wheel-bearing-replacement": { label: "Suspension", color: "#EC4899", icon: MoveVertical },
+    "tie-rod-replacement": { label: "Suspension", color: "#EC4899", icon: MoveVertical },
+    "ball-joint-replacement": { label: "Suspension", color: "#EC4899", icon: MoveVertical },
+    "shock-absorber-replacement": { label: "Suspension", color: "#EC4899", icon: MoveVertical },
+    "strut-replacement": { label: "Suspension", color: "#EC4899", icon: MoveVertical },
+    "clutch-replacement": { label: "Drivetrain", color: "#6366F1", icon: Cog },
+    "cv-axle-replacement": { label: "Drivetrain", color: "#6366F1", icon: Cog },
+    "windshield-wiper-replacement": { label: "Other", color: "#6B7280", icon: Wrench },
+  };
   return (
-    <section id="manual" className="relative py-24 md:py-32 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    map[taskSlug] ?? { label: "Repair", color: "#6B7280", icon: Wrench }
+  );
+}
+
+interface RepairCard {
+  year: string;
+  vehicleLabel: string;
+  taskLabel: string;
+  href: string;
+  category: TaskCategory;
+}
+
+function parseRepairLink(link: RepairLink): RepairCard | null {
+  const match = link.href.match(
+    /\/repair\/(\d{4})\/([^/]+)\/([^/]+)\/([^/]+)/
+  );
+  if (!match) return null;
+
+  const [, year, makeSlug, modelSlug, taskSlug] = match;
+  const taskLabel = toTitleCase(taskSlug);
+  const category = getTaskCategory(taskSlug);
+
+  // Extract vehicle label from the full label string.
+  // Label format: "2013 Honda CR-V Spark Plug Replacement"
+  const escapedTask = taskLabel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const vehicleLabel = link.label
+    .replace(new RegExp(`\\s+${escapedTask}$`, "i"), "")
+    .trim();
+
+  return {
+    year,
+    vehicleLabel:
+      vehicleLabel || `${toTitleCase(makeSlug)} ${toTitleCase(modelSlug)}`,
+    taskLabel,
+    href: link.href,
+    category,
+  };
+}
+
+function buildFallbackCards(): RepairCard[] {
+  return TIER_1_RESCUE_PAGES.slice(0, 6).map((entry) => {
+    const taskLabel = toTitleCase(entry.task);
+    const category = getTaskCategory(entry.task);
+    return {
+      year: String(entry.year),
+      vehicleLabel: `${entry.year} ${entry.make} ${entry.model}`,
+      taskLabel,
+      href: entry.href,
+      category,
+    };
+  });
+}
+
+export default function RepairsSection({ repairs }: RepairsSectionProps) {
+  const parsed = repairs
+    .map(parseRepairLink)
+    .filter((c): c is RepairCard => c !== null);
+
+  const cards = parsed.length >= 6 ? parsed.slice(0, 6) : [...parsed, ...buildFallbackCards()].slice(0, 6);
+
+  return (
+    <section id="manual" className="relative overflow-hidden py-24 md:py-32">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="text-center mb-16"
+          className="mb-16 text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
         >
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <BookOpen className="w-4 h-4 text-[#FF6B00]" />
-            <span className="text-xs font-medium text-[#FF6B00] uppercase tracking-wider">Most Searched Guides</span>
+          <div className="mb-4 flex items-center justify-center gap-2">
+            <BookOpen className="h-4 w-4 text-[#FF6B00]" />
+            <span className="text-xs font-medium uppercase tracking-wider text-[#FF6B00]">
+              Most Searched Guides
+            </span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+          <h2 className="mb-4 text-3xl font-bold sm:text-4xl lg:text-5xl">
             Popular <span className="text-gradient-orange">Repairs</span>
           </h2>
-          <p className="text-[#6E6E80] max-w-xl mx-auto">
-            Factory-grounded repair guides with step-by-step instructions, torque specs, and component locations.
+          <p className="mx-auto max-w-xl text-[#6E6E80]">
+            Factory-grounded repair guides tied to exact vehicles — because a
+            2013 Civic oil change and a 2013 F-150 oil change are completely
+            different jobs.
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {repairs.map((repair, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-            >
-              <HolographicCard className="h-full">
-                <div className="p-6 h-full flex flex-col">
-                  <div className="flex items-start justify-between mb-4">
-                    <div
-                      className="w-10 h-10 rounded-lg flex items-center justify-center"
-                      style={{ backgroundColor: `${repair.color}15` }}
-                    >
-                      <repair.icon className="w-5 h-5" style={{ color: repair.color }} />
-                    </div>
-                    <span
-                      className="text-xs font-medium px-2.5 py-1 rounded-full"
-                      style={{
-                        backgroundColor: `${repair.color}15`,
-                        color: repair.color,
-                      }}
-                    >
-                      {repair.difficulty}
-                    </span>
-                  </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {cards.map((card, i) => {
+            const Icon = card.category.icon;
+            return (
+              <motion.div
+                key={card.href}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+              >
+                <HolographicCard className="h-full">
+                  <Link href={card.href} className="group block h-full">
+                    <div className="flex h-full flex-col p-6">
+                      {/* Top row: year badge + category */}
+                      <div className="mb-4 flex items-center justify-between">
+                        <span
+                          className="rounded-md px-2 py-0.5 text-xs font-semibold"
+                          style={{
+                            backgroundColor: `${card.category.color}15`,
+                            color: card.category.color,
+                          }}
+                        >
+                          {card.year}
+                        </span>
+                        <span
+                          className="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium"
+                          style={{
+                            backgroundColor: `${card.category.color}10`,
+                            color: card.category.color,
+                          }}
+                        >
+                          <Icon className="h-3 w-3" />
+                          {card.category.label}
+                        </span>
+                      </div>
 
-                  <h3 className="text-lg font-semibold text-white mb-2">{repair.title}</h3>
-                  <p className="text-sm text-[#6E6E80] mb-4 flex-grow">{repair.description}</p>
+                      {/* Vehicle — the hero */}
+                      <p className="text-sm font-medium text-gray-400">
+                        {card.vehicleLabel}
+                      </p>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                    <div className="flex items-center gap-1.5 text-xs text-[#6E6E80]">
-                      <Clock className="w-3.5 h-3.5" />
-                      {repair.time} read
+                      {/* Task */}
+                      <h3 className="mt-1 text-lg font-bold text-white group-hover:text-[#FF6B00] transition-colors">
+                        {card.taskLabel}
+                      </h3>
+
+                      <div className="mt-auto flex items-center justify-between pt-5">
+                        <span className="text-xs text-gray-500">
+                          Exact-fit guide
+                        </span>
+                        <span className="flex items-center gap-1 text-sm font-medium text-[#FF6B00] group-hover:text-[#FF9500] transition-colors">
+                          View Guide
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </span>
+                      </div>
                     </div>
-                    <Link
-                      href={repair.href}
-                      className="flex items-center gap-1 text-sm text-[#FF6B00] hover:text-[#FF9500] transition-colors group"
-                    >
-                      View Guide
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </div>
-                </div>
-              </HolographicCard>
-            </motion.div>
-          ))}
+                  </Link>
+                </HolographicCard>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
-  )
+  );
 }

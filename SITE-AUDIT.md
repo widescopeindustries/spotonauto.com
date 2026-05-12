@@ -1,4 +1,4 @@
-# SpotOnAuto Site Audit
+# AllOEMManuals Site Audit
 **Date:** March 24, 2026  
 **Auditor:** Bubba Research  
 **Context:** Site owner reported "the site is confusing as hell." This audit is brutally honest.
@@ -133,7 +133,7 @@ There is also a hidden "quick access" section visible in the nav markup that rea
 
 ### 7. `/parts`
 **Status:** 200 OK  
-**What it shows:** A thin placeholder. Just says "Find the best deals on OEM and aftermarket parts for your vehicle on Amazon." Then three generic benefit bullets (Great Prices, Huge Selection, Fast Shipping — all Amazon attributes, nothing SpotOnAuto-specific). A "Start AI Diagnosis" button that links back to the homepage.
+**What it shows:** A thin placeholder. Just says "Find the best deals on OEM and aftermarket parts for your vehicle on Amazon." Then three generic benefit bullets (Great Prices, Huge Selection, Fast Shipping — all Amazon attributes, nothing AllOEMManuals-specific). A "Start AI Diagnosis" button that links back to the homepage.
 
 **What's broken:** There are no actual parts listed. No part categories. No fitment lookup. The page is an empty stub with an Amazon Associate disclosure and nothing else. The "Browse by Category" section header appears but the content beneath it is absent (rendered as just the header with nothing under it).
 

@@ -75,4 +75,13 @@ else
   log "API healthcheck skipped or failed (route may not exist)"
 fi
 
+# Optional: sync nginx site config and reload
+NGINX_SITE_SRC="${DEPLOY_NGINX_SITE_SRC:-}"
+if [ -n "${NGINX_SITE_SRC}" ] && [ -f "${NGINX_SITE_SRC}" ]; then
+  log "Syncing nginx site config"
+  cp "${NGINX_SITE_SRC}" /etc/nginx/sites-enabled/alloemmanuals.com
+  nginx -t && nginx -s reload
+  log "Nginx reloaded"
+fi
+
 log "Deploy completed successfully"

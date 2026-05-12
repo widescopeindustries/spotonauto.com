@@ -6,8 +6,16 @@ Update it when product decisions, traps, or standing preferences change.
 ## Product Direction
 
 - Brand is `AllOEMManuals`.
-- Do not attribute authorship to `Operation CHARM` or `charm.li`. They were distributors/hosts, not the author.
-- When referring to that corpus or live retrieval source, use `factory manual archive`, `manual archive`, or `factory service manual archive`.
+- `charm.li`, `Operation CHARM`, `lemon-manuals.la`, and `lemon-manuals.org.ua` are **irrelevant third-party properties**. We have zero relationship with them and zero reason to ever contact, reference, or fetch from them.
+- The data we host is our own factory manual archive. Refer to it as `factory manual archive`, `manual archive`, or `factory service manual archive`.
+
+## External Sources Ban (2026-05-11)
+
+- **NEVER fetch data from `charm.li`, `lemon-manuals.la`, `lemon-manuals.org.ua`, or any external domain.**
+- These public websites are **not** sources of truth. They are mirrors, redirects, or irrelevant third-party hosts.
+- The **ONLY** source of truth for all manual data is the self-hosted VPS LMDB backend (`localhost:8080`, or `CHARM_ARCHIVE_BASE` / `GRAPH_BACKEND_BASE_URL` when configured).
+- Code must not contain fallback URLs to external manual sites. The `ALLOW_DIRECT_CHARM_FALLBACK` env var and the `workers/charm-proxy/` worker have been removed.
+- If the VPS backend returns 404, the data is simply not available. Do not attempt to "fill in" from external sites.
 
 ## UI Direction
 
@@ -210,27 +218,23 @@ Update it when product decisions, traps, or standing preferences change.
 
 ### The Two Corpuses
 
-**CHARM (charm.li)** — Operation CHARM, "Collection of High-quality Auto Repair Manuals"
+**CHARM corpus** — The older factory manual archive (1982–2013)
 - Coverage: 1982–2013 (some makes to 2014)
 - ~24,935 vehicle manifests, 52 makes
 - Data: 548GB images.mtbl + 34GB pages.mtbl + 5MB index.json
-- Hosted in Ukraine (Kyiv), nginx, .li TLD (Liechtenstein)
-- Now shows LEMON redirect banner but all manual pages still serve
-- Torrent download available (~700GB)
-- Contact: operation-charm@tuta.io
 
-**LEMON (lemon-manuals.la / lemon-manuals.org.ua)** — "Spiritual successor to CHARM"
+**LEMON corpus** — The expanded factory manual archive (1960–2025)
 - Coverage: 1960–2025
 - ~279,988 vehicle manifests, 65 makes
 - Data: 481GB images.mtbl + 31GB pages.mtbl + 142MB index.json
 - Contains ALL CHARM manuals plus 2014+ content
 - Finer granularity: trim levels, transmission types, VIN codes
-- Launched April 5, 2026
 
 **Format:** Both use mtbl (sorted string table) — compressed key-value.
 - CHARM keys = paths; values = `SPECIAL_/` or `fileID,timestamp`
 - LEMON keys include `bulletin_hash_TYPE` pattern
 - Backend binary: `lemon-website-linux-x86_64-musl` serves both on localhost:8080
+- Both corpuses are hosted **exclusively** on the VPS. No external fetching.
 
 ### Site Tree Structure (both CHARM and LEMON)
 
@@ -413,7 +417,7 @@ The product is NOT a manual browser. It is a **translation layer**:
 | **Dev Next.js** | `/home/lyndon/projects/alloemmanuals.com/` | Local development copy. |
 | **PostgreSQL** | VPS `spotonauto` DB | `manual_embeddings` = 1.8M rows (CHARM 1982-2013) |
 
-**Critical distinction:** The public charm.li website is a **mirror/redirect**. The real complete data lives on the VPS LMDB backend (`localhost:8080`). Paths that 404 on charm.li may resolve perfectly on the VPS backend. Always test against `localhost:8080` on the VPS, not charm.li.
+**Source of truth:** The VPS LMDB backend (`localhost:8080`) is the only runtime data source. Do not test against, reference, or fetch from any public manual website.
 
 ### Local Development Assets
 
@@ -445,8 +449,8 @@ The product is NOT a manual browser. It is a **translation layer**:
 - **Vehicle variant URL redirects added** in `src/app/vehicles/[year]/[make]/[model]/page.tsx`:
   - Detects corpus variant paths like `/vehicles/2011/ford/ranger-2d-pickup-extra-cab` using `VEHICLE_PRODUCTION_YEARS` prefix matching.
   - Redirects to clean hub `/vehicles/{year}/{make}/{model}/` with 307 (Next.js `redirect()` default).
-- **Old `spotonauto.com` variant sitemaps deleted** from `public/vehicles/sitemap/`. These contained 112K+ wrong-domain variant URLs that were leaking crawl budget.
-- **Domain redirect added**: `spotonauto.com` and `www.spotonauto.com` → `alloemmanuals.com` in `next.config.js`.
+- **Old `alloemmanuals.com` variant sitemaps deleted** from `public/vehicles/sitemap/`. These contained 112K+ wrong-domain variant URLs that were leaking crawl budget.
+- **Domain redirect added**: `alloemmanuals.com` and `www.alloemmanuals.com` → `alloemmanuals.com` in `next.config.js`.
 - **Google Indexing API script created**: `scripts/push-maintenance-indexing.mjs` pushes maintenance hub + spec pages via `URL_UPDATED`. Supports `--from-tools`, `--from-db`, and `--urls` modes.
 
 ### Content Factory Provider Update

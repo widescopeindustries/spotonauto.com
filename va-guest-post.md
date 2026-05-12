@@ -16,17 +16,17 @@ For years, I've watched the people around me—Veterans, military families, folk
 
 The information to do these repairs yourself has always existed—buried in factory service manuals that cost hundreds of dollars or locked behind expensive subscription services. The average person doesn't know that changing their own brake pads takes 30 minutes and saves $300, because no one ever showed them how in plain language.
 
-## Building SpotOnAuto
+## Building AllOEMManuals
 
 In the Army, I was a 31F—a Network Switching Systems Operator Maintainer. But after I got out in 2004, I spent most of the next two decades turning wrenches just to scrape by. When my background in military communications and my years of experience under the hood collided with the AI boom of 2025, I realized that building a web platform was the way to have the greatest reach and help the most people.
 
-I didn’t know how to code. But in June 2025, as AI tools became more accessible, I started experimenting. Through relentless trial and error, I taught myself how to build websites. On January 8, 2026, I bought the domain for [SpotOnAuto.com](https://spotonauto.com) and got to work. I built a free online tool that gives anyone instant, step-by-step auto repair guides for their specific vehicle. You enter your year, make, and model, describe what's wrong, and the tool generates a complete repair guide: what parts you need, what tools to grab, and exactly how to do the job.
+I didn't know how to code. But in June 2025, as AI tools became more accessible, I started experimenting. Through relentless trial and error, I taught myself how to build websites. On January 8, 2026, I bought the domain for [AllOEMManuals.com](https://alloemmanuals.com) and got to work. I built a free online tool that gives anyone instant, step-by-step auto repair guides for their specific vehicle. You enter your year, make, and model, describe what's wrong, and the tool generates a complete repair guide: what parts you need, what tools to grab, and exactly how to do the job.
 
 The guides are backed by real factory service manual data spanning thousands of vehicles. We don't guess. We don't make things up. For newer vehicles, we use AI to help generate guides, but we clearly label them so users know the difference. Trust matters more than traffic.
 
 ## What It Means for Veterans and Military Families
 
-Since launching SpotOnAuto in early 2026, the tool has helped people:
+Since launching AllOEMManuals in early 2026, the tool has helped people:
 
 - **Save hundreds on routine maintenance** — oil changes, air filters, spark plugs, serpentine belts. These are jobs anyone can learn, and the guides walk you through it step by step.
 - **Diagnose check engine lights for free** — instead of paying a shop just to read a code, Veterans can look up their diagnostic trouble code and understand exactly what it means.
@@ -40,12 +40,12 @@ There are roughly 4.7 million Veterans with a service-connected disability ratin
 
 I can't fix the VA backlog, but I can make sure that when your check engine light comes on at 9 PM on a Tuesday, you have somewhere to go that gives you a straight answer—for free, with no strings attached. 
 
-If you're a Veteran or military family member dealing with car trouble, visit [spotonauto.com](https://spotonauto.com) and try the free diagnostic tool. It takes 30 seconds, and it might save you a trip to the shop.
+If you're a Veteran or military family member dealing with car trouble, visit [alloemmanuals.com](https://alloemmanuals.com) and try the free diagnostic tool. It takes 30 seconds, and it might save you a trip to the shop.
 
 ## About the Author
 
-Lyndon Bedford is an Iraq War Veteran (32nd Signal Battalion, 2003–2004) with a 100% VA disability rating. He is the founder of SpotOnAuto.com and Widescope Industries LLC, a Service-Disabled Veteran-Owned Small Business (SDVOSB) based in Streetman, Texas. He built SpotOnAuto to give Veterans and families free access to factory-backed auto repair guides. He can be reached at info@widescopeindustries.com.
+Lyndon Bedford is an Iraq War Veteran (32nd Signal Battalion, 2003–2004) with a 100% VA disability rating. He is the founder of AllOEMManuals.com and Widescope Industries LLC, a Service-Disabled Veteran-Owned Small Business (SDVOSB) based in Streetman, Texas. He built AllOEMManuals to give Veterans and families free access to factory-backed auto repair guides. He can be reached at info@widescopeindustries.com.
 
 ---
 
-*[PHOTO NEEDED: Horizontal, 16:9 aspect ratio, ideally 1400x787px. Suggestion: photo of Lyndon in his driveway or garage, holding a phone/tablet displaying the SpotOnAuto AI Diagnostic screen]*
+*[PHOTO NEEDED: Horizontal, 16:9 aspect ratio, ideally 1400x787px. Suggestion: photo of Lyndon in his driveway or garage, holding a phone/tablet displaying the AllOEMManuals AI Diagnostic screen]*

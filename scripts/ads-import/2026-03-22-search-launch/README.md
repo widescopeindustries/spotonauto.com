@@ -1,4 +1,4 @@
-# SpotOnAuto Search Launch Import Sheets
+# AllOEMManuals Search Launch Import Sheets
 
 These CSVs are structured to be Google Ads Editor-friendly and easy to map if Editor does not auto-detect every column name.
 
@@ -62,7 +62,7 @@ Secondary conversions:
 The selected URLs are based on a combination of:
 - current GSC impressions
 - existing tool page coverage
-- valid live URLs checked on `spotonauto.com`
+- valid live URLs checked on `alloemmanuals.com`
 - page types that match ad intent directly
 
 The wiring URLs in this sheet were validated against live `200` responses on March 22, 2026.

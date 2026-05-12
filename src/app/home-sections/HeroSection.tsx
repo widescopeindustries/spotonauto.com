@@ -15,15 +15,15 @@ export default function HeroSection() {
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
-            OEM Repair Guides,
+            Silence The
             <br />
-            <span className="text-cyan-400">Without the Jargon</span>
+            <span className="text-cyan-400">Check Engine Light</span>
           </h1>
 
           <p className="mx-auto mt-5 max-w-xl text-base text-gray-400 sm:text-lg">
-            Every torque spec, fluid capacity, and step-by-step procedure —
-            straight from the factory service manual. The same data the pros
-            use, organized so you can find it fast.
+            Factory repair data for your exact year, make, and model — DTC
+            codes, wiring diagrams, torque specs, and step-by-step procedures.
+            The same manuals the pros use, organized so you can fix it yourself.
           </p>
         </div>
 

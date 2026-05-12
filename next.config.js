@@ -39,7 +39,7 @@ const nextConfig = {
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://analytics.ahrefs.com https://widget.intercom.io https://js.intercomcdn.com https://adservice.google.com https://www.google.com https://*.adtrafficquality.google https://fundingchoicesmessages.google.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
-              "font-src 'self' data:",
+              "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https://*.google-analytics.com https://*.googleapis.com https://*.googletagmanager.com https://analytics.ahrefs.com https://*.intercom.io https://*.intercomcdn.com https://*.googlesyndication.com https://*.adtrafficquality.google https://*.doubleclick.net https://*.google.com https://vpic.nhtsa.dot.gov https://fundingchoicesmessages.google.com",
               "frame-src 'self' https://googleads.g.doubleclick.net https://*.doubleclick.net https://www.google.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://fundingchoicesmessages.google.com",
               "media-src 'self'",
@@ -82,6 +82,18 @@ const nextConfig = {
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.alloemmanuals.com' }],
+        destination: 'https://alloemmanuals.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'spotonauto.com' }],
+        destination: 'https://alloemmanuals.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.spotonauto.com' }],
         destination: 'https://alloemmanuals.com/:path*',
         permanent: true,
       },

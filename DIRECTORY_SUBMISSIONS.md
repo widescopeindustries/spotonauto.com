@@ -1,4 +1,4 @@
-# SpotOnAuto - Directory Submissions (No Waiting Period)
+# AllOEMManuals - Directory Submissions (No Waiting Period)
 
 ## 🚀 Submit Today - No Wait Required
 
@@ -7,7 +7,7 @@
 ## 1. There's An AI For That (theresanaiforthat.com)
 **Submit at:** https://theresanaiforthat.com/submit/
 
-**Tool Name:** SpotOnAuto
+**Tool Name:** AllOEMManuals
 
 **Short Description (150 chars):**
 ```
@@ -16,7 +16,7 @@ AI-powered car repair guides. Enter your vehicle + problem, get step-by-step DIY
 
 **Long Description:**
 ```
-SpotOnAuto is an AI mechanic that generates custom repair guides for any vehicle. 
+AllOEMManuals is an AI mechanic that generates custom repair guides for any vehicle. 
 
 Tell it your car (year, make, model) and what you need to fix. In seconds, you get:
 - Step-by-step instructions specific to YOUR car
@@ -33,14 +33,14 @@ Perfect for DIY mechanics who want to save money on labor costs.
 
 **Pricing:** Free
 
-**URL:** https://spotonauto.com
+**URL:** https://alloemmanuals.com
 
 ---
 
 ## 2. Futurepedia (futurepedia.io)
 **Submit at:** https://www.futurepedia.io/submit-tool
 
-**Tool Name:** SpotOnAuto
+**Tool Name:** AllOEMManuals
 
 **Tagline:**
 ```
@@ -49,7 +49,7 @@ AI car repair guides for any vehicle - save hundreds on mechanic labor
 
 **Description:**
 ```
-SpotOnAuto uses AI to generate step-by-step repair guides customized for your exact vehicle. Enter your year, make, model, and what needs fixing - get professional-grade DIY instructions instantly.
+AllOEMManuals uses AI to generate step-by-step repair guides customized for your exact vehicle. Enter your year, make, model, and what needs fixing - get professional-grade DIY instructions instantly.
 
 Features:
 • AI Repair Guide Generator - 40+ common repairs
@@ -69,7 +69,7 @@ Features:
 ## 3. AI Tool Directory (aitoolsdirectory.com)
 **Submit at:** https://aitoolsdirectory.com/submit
 
-**Name:** SpotOnAuto
+**Name:** AllOEMManuals
 
 **Description:**
 ```
@@ -83,7 +83,7 @@ Free AI-powered car repair guide generator. Get step-by-step DIY instructions fo
 ## 4. ToolPilot.ai
 **Submit at:** https://www.toolpilot.ai/submit-tool
 
-**Tool Name:** SpotOnAuto - AI Car Repair Guides
+**Tool Name:** AllOEMManuals - AI Car Repair Guides
 
 **Description:**
 ```
@@ -107,11 +107,11 @@ Free to use, no signup required.
 - AllData
 - Mitchell1
 
-**Name:** SpotOnAuto
+**Name:** AllOEMManuals
 
 **Description:**
 ```
-SpotOnAuto is a free AI-powered alternative to paid repair manual subscriptions. It generates step-by-step DIY car repair guides customized for your specific vehicle. Unlike static manuals, the AI creates instructions for exactly your year/make/model.
+AllOEMManuals is a free AI-powered alternative to paid repair manual subscriptions. It generates step-by-step DIY car repair guides customized for your specific vehicle. Unlike static manuals, the AI creates instructions for exactly your year/make/model.
 ```
 
 ---
@@ -119,7 +119,7 @@ SpotOnAuto is a free AI-powered alternative to paid repair manual subscriptions.
 ## 6. SaaSHub (saashub.com)
 **Submit at:** https://www.saashub.com/submit
 
-**Product Name:** SpotOnAuto
+**Product Name:** AllOEMManuals
 
 **Tagline:** AI-powered DIY car repair guides
 
@@ -137,7 +137,7 @@ Free AI tool that generates step-by-step repair guides for any vehicle. Features
 ## 7. BetaList (betalist.com)  
 **Submit at:** https://betalist.com/submit
 
-**Startup Name:** SpotOnAuto
+**Startup Name:** AllOEMManuals
 
 **Tagline:** 
 ```
@@ -146,7 +146,7 @@ AI mechanic in your pocket - DIY repair guides for any car
 
 **Description:**
 ```
-SpotOnAuto helps car owners save money on repairs by generating AI-powered step-by-step guides customized for their specific vehicle. 
+AllOEMManuals helps car owners save money on repairs by generating AI-powered step-by-step guides customized for their specific vehicle. 
 
 Enter your year, make, model, and what needs fixing. The AI creates professional-grade instructions with tool lists, parts lists, and time estimates. Also includes diagnostic chat for troubleshooting by symptoms or OBD codes.
 
@@ -160,14 +160,14 @@ Enter your year, make, model, and what needs fixing. The AI creates professional
 
 **Title:** 
 ```
-🚗 I built an AI that generates car repair guides - SpotOnAuto
+🚗 I built an AI that generates car repair guides - AllOEMManuals
 ```
 
 **Post Text:**
 ```
 Hey IH!
 
-I built SpotOnAuto - an AI-powered tool that generates step-by-step car repair guides for any vehicle.
+I built AllOEMManuals - an AI-powered tool that generates step-by-step car repair guides for any vehicle.
 
 **The problem:** Mechanic labor is $100-150/hour. Simple jobs that take 30 minutes cost $200+ at shops.
 
@@ -184,7 +184,7 @@ I built SpotOnAuto - an AI-powered tool that generates step-by-step car repair g
 
 Would love feedback! What repairs would you want guides for?
 
-🔗 https://spotonauto.com
+🔗 https://alloemmanuals.com
 ```
 
 ---
@@ -194,14 +194,14 @@ Would love feedback! What repairs would you want guides for?
 
 **Title:**
 ```
-Show HN: SpotOnAuto – AI-generated car repair guides for any vehicle
+Show HN: AllOEMManuals – AI-generated car repair guides for any vehicle
 ```
 
 **Comment:**
 ```
 I built this because I was tired of paying mechanics $400 for brake jobs I could do in 30 minutes.
 
-The AI generates step-by-step repair instructions customized for your exact vehicle (year, make, model). It's like having a mechanic walk you through the job.
+The AI generates repair guides specifically for YOUR vehicle - it knows that a 2012 Camry is different from a 2015 Camry, and gives you the right instructions.
 
 Features:
 - Repair guide generator for 40+ common tasks

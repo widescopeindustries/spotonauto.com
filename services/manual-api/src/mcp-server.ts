@@ -18,13 +18,13 @@ import { cleanManualContent, formatSectionForMcp } from './contentCleaner.js';
 
 const server = new McpServer(
   {
-    name: 'lemon-manuals-mcp',
+    name: 'alloemmanuals-mcp',
     version: '1.0.0',
   },
   {
     capabilities: { tools: {} },
     instructions:
-      'lemon-manuals-mcp connects your AI assistant to the LEMON Manuals database of car service manuals.\n\n' +
+      'alloemmanuals-mcp connects your AI assistant to the AllOEMManuals factory service manual database.\n\n' +
       'Best practices:\n' +
       '1. Use discover_vehicle to find exact model variants before deep searches.\n' +
       '2. Use search_manuals for general lookups; it supports partial model names (e.g. "Civic" matches "Civic EX-L").\n' +
@@ -332,7 +332,7 @@ server.registerTool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('lemon-manuals-mcp server running on stdio');
+  console.error('alloemmanuals-mcp server running on stdio');
 }
 
 main().catch((err) => {

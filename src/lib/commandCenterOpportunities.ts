@@ -408,7 +408,7 @@ export function getHomepageMomentumData(): HomepageMomentumData {
 
   const popularRepairLinks = dedupeLinks(
     clusters.flatMap((cluster) => cluster.links),
-    5,
+    6,
   );
 
   return {

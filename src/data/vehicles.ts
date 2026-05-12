@@ -1,5 +1,5 @@
 // Vehicle production years - shared between sitemap and page validation
-// Covers all charm.li manufacturers + major global models
+// Covers all factory manual archive manufacturers + major global models
 export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: number; end: number }>> = {
     // ── US / JAPAN / KOREA (original) ──────────────────────────────────
     Toyota: {

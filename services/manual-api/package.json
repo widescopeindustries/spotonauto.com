@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/server.js",
   "bin": {
-    "lemon-manuals-mcp": "./dist/mcp-server.js"
+    "alloemmanuals-mcp": "./dist/mcp-server.js"
   },
   "scripts": {
     "build": "tsc",

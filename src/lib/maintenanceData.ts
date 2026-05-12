@@ -74,6 +74,13 @@ export interface TireSpec {
   rimSize: string;
 }
 
+export interface CoolantSpec {
+  capacityQt: string;
+  capacityL: string;
+  coolantType: string;
+  note?: string;
+}
+
 export interface MaintenanceData {
   year: string;
   make: string;
@@ -81,6 +88,7 @@ export interface MaintenanceData {
   variant: string;
   variantHref: string;
   oil: OilSpec | null;
+  coolant: CoolantSpec | null;
   tires: TireSpec | null;
   rawFluidHtml: string;
   rawTireHtml: string;
@@ -157,6 +165,29 @@ function parseFluidTable(html: string): OilSpec | null {
   return null;
 }
 
+function parseCoolantTable(html: string): CoolantSpec | null {
+  const rows = html.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+  for (const row of rows) {
+    const cells = row.match(/<td[^>]*>([\s\S]*?)<\/td>/gi) || [];
+    if (cells.length < 5) continue;
+
+    const cellTexts = cells.map((c) =>
+      c.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim()
+    );
+
+    const fluidName = cellTexts[0]?.toLowerCase() || "";
+    if (fluidName.includes("coolant") || fluidName.includes("antifreeze")) {
+      return {
+        capacityQt: cellTexts[3] || "",
+        capacityL: cellTexts[4] || "",
+        coolantType: cellTexts[5] || "",
+        note: cellTexts[6] || undefined,
+      };
+    }
+  }
+  return null;
+}
+
 // ─── Tire Data Parsing ───────────────────────────────────────────────────────
 
 function parseTireTable(html: string): TireSpec | null {
@@ -207,6 +238,7 @@ export async function fetchMaintenanceData(
   ]);
 
   const oil = fluidHtml ? parseFluidTable(fluidHtml) : null;
+  const coolant = fluidHtml ? parseCoolantTable(fluidHtml) : null;
   const tires = tireHtml ? parseTireTable(tireHtml) : null;
 
   return {
@@ -216,6 +248,7 @@ export async function fetchMaintenanceData(
     variant: variant.label,
     variantHref: variant.href,
     oil,
+    coolant,
     tires,
     rawFluidHtml: fluidHtml,
     rawTireHtml: tireHtml,
