@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 APP_DIR="${DEPLOY_APP_DIR:-/root/spotonauto.com}"
 SERVICE_NAME="${DEPLOY_SERVICE_NAME:-alloemmanuals-web}"
-HEALTHCHECK_URL="${DEPLOY_HEALTHCHECK_URL:-http://127.0.0.1:3000}"
+HEALTHCHECK_URL="${DEPLOY_HEALTHCHECK_URL:-http://127.0.0.1:3002}"
 
 log() {
   printf '\n[%s] %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*"
@@ -48,11 +48,11 @@ if [ -n "${SERVICE_WD}" ] && [ "${SERVICE_WD}" != "${APP_DIR}" ] && [ -d "${SERV
 fi
 
 # Ensure port is free before restarting (kills any stray processes)
-log "Ensuring port ${PORT:-3000} is free"
+log "Ensuring port ${PORT:-3002} is free"
 if command -v fuser >/dev/null 2>&1; then
-  fuser -k "${PORT:-3000}/tcp" 2>/dev/null || true
+  fuser -k "${PORT:-3002}/tcp" 2>/dev/null || true
 elif command -v lsof >/dev/null 2>&1; then
-  lsof -ti:"${PORT:-3000}" | xargs -r kill -9 2>/dev/null || true
+  lsof -ti:"${PORT:-3002}" | xargs -r kill -9 2>/dev/null || true
 fi
 sleep 2
 

@@ -8,7 +8,7 @@ On every push to `main`, it:
 3. Runs `scripts/deploy-production.sh` remotely.
 4. Syncs repository files from CI to the server app directory via `rsync`.
 5. Runs `npm ci && npm run build`.
-6. Restarts `spotonauto-web` service.
+6. Restarts `alloemmanuals-web` service.
 7. Runs health checks.
 
 ## Required GitHub Secrets
@@ -19,16 +19,16 @@ Set these in GitHub -> Settings -> Secrets and variables -> Actions:
 - `DEPLOY_PORT`: SSH port (usually `22`)
 - `DEPLOY_USER`: SSH user with access to app directory
 - `DEPLOY_SSH_PRIVATE_KEY`: private key for that SSH user (ed25519 recommended)
-- `DEPLOY_APP_DIR`: app path on server (example: `/root/spotonauto.com`)
-- `DEPLOY_SERVICE_NAME`: systemd service name (example: `spotonauto-web`)
-- `DEPLOY_HEALTHCHECK_URL` (optional): local health URL on VPS (default `http://127.0.0.1:3000`)
-- `PROD_HEALTHCHECK_URL` (optional): public URL to verify after deploy (example: `https://spotonauto.com/`)
+- `DEPLOY_APP_DIR`: app path on server (example: `/root/alloemmanuals.com`)
+- `DEPLOY_SERVICE_NAME`: systemd service name (example: `alloemmanuals-web`)
+- `DEPLOY_HEALTHCHECK_URL` (optional): local health URL on VPS (default `http://127.0.0.1:3002`)
+- `PROD_HEALTHCHECK_URL` (optional): public URL to verify after deploy (example: `https://alloemmanuals.com/`)
 
 ## Server requirements
 
 - Writable app directory at `DEPLOY_APP_DIR` (does not need to be a git repo)
 - Node.js 22 + npm 10 installed
-- systemd service exists: `spotonauto-web`
+- systemd service exists: `alloemmanuals-web`
 - Deploy user can restart service:
   - either deploy as root
   - or passwordless sudo for restart/is-active on that service
@@ -37,7 +37,7 @@ Example sudoers line (adjust user name):
 
 ```text
 # /etc/sudoers.d/spotonauto-deploy
-<deploy-user> ALL=(ALL) NOPASSWD:/bin/systemctl restart spotonauto-web,/bin/systemctl is-active spotonauto-web
+<deploy-user> ALL=(ALL) NOPASSWD:/bin/systemctl restart alloemmanuals-web,/bin/systemctl is-active alloemmanuals-web
 ```
 
 ## First run
