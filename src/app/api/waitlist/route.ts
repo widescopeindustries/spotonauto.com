@@ -26,7 +26,27 @@ async function writeWaitlist(rows: Array<{ email: string; vehicle: string; year:
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, vehicle, year } = await req.json();
+    let email: string | undefined;
+    let vehicle: string = '';
+    let year: number | null = null;
+    let kitSlug: string = '';
+
+    const contentType = req.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      const body = await req.json();
+      email = body.email;
+      vehicle = body.vehicle || '';
+      year = body.year ?? null;
+      kitSlug = body.kitSlug || '';
+    } else {
+      const form = await req.formData();
+      email = form.get('email') as string;
+      vehicle = (form.get('vehicle') as string) || '';
+      const yearVal = form.get('year');
+      year = yearVal ? parseInt(yearVal as string, 10) : null;
+      kitSlug = (form.get('kitSlug') as string) || '';
+    }
+
     if (!email || typeof email !== 'string') {
       return NextResponse.json({ error: 'Email required' }, { status: 400 });
     }
@@ -36,7 +56,9 @@ export async function POST(req: NextRequest) {
     const nextRow = {
       email: normalizedEmail,
       vehicle: typeof vehicle === 'string' ? vehicle.trim() : '',
-      year: typeof year === 'number' ? year : null,
+      year: typeof year === 'number' && !isNaN(year) ? year : null,
+      kitSlug: typeof kitSlug === 'string' ? kitSlug.trim() : '',
+      source: 'kit_page',
       created_at: new Date().toISOString(),
     };
 

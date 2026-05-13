@@ -12,7 +12,8 @@ import {
 import AdUnit from '@/components/AdUnit';
 import ToolManualConfirmation from '@/components/ToolManualConfirmation';
 import MaintenanceSupplies from '@/components/MaintenanceSupplies';
-import ToolIntentCommerce from '@/components/ToolIntentCommerce';
+import ManualPartsList from '@/components/ManualPartsList';
+import KitCTA from '@/components/KitCTA';
 import AffiliateLink from '@/components/AffiliateLink';
 import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
@@ -357,13 +358,18 @@ export default async function ToolPage({ params }: PageProps) {
                     ))}
                 </div>
 
-                <ToolIntentCommerce page={page} />
+                {page.toolType === 'oil-type' && (
+                    <KitCTA make={page.make} model={page.model} />
+                )}
+
+                <ManualPartsList page={page} />
 
                 {/* Suggested Supplies */}
                 <MaintenanceSupplies
                     toolType={page.toolType}
                     make={page.make}
                     model={page.model}
+                    specHint={page.generations[0] ? Object.values(page.generations[0].specs)[0] : undefined}
                 />
 
                 {/* Ad: After Generation Breakdown */}

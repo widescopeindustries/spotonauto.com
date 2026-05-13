@@ -87,6 +87,7 @@ interface Props {
     toolType: string;
     make: string;
     model: string;
+    specHint?: string;
 }
 
 const FALLBACK_SUPPLIES: SupplyItem[] = [
@@ -97,10 +98,13 @@ const FALLBACK_SUPPLIES: SupplyItem[] = [
     { name: 'Breaker Bar', description: 'Extra leverage for stubborn fasteners.', icon: '🧰', searchQuery: 'breaker bar automotive' },
 ];
 
-export default function MaintenanceSupplies({ toolType, make, model }: Props) {
+export default function MaintenanceSupplies({ toolType, make, model, specHint }: Props) {
     const supplies = SUPPLIES_BY_TYPE[toolType] || FALLBACK_SUPPLIES;
 
-    const amazonSearch = (query: string) => buildAmazonSearchUrl(`${make} ${model} ${query}`, 'automotive', 'tool-supplies');
+    const amazonSearch = (query: string) => {
+        const search = specHint ? `${make} ${model} ${specHint} ${query}` : `${make} ${model} ${query}`;
+        return buildAmazonSearchUrl(search, 'automotive', 'tool-supplies');
+    };
 
     return (
         <section className="mb-12">
