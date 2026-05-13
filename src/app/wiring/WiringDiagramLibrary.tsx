@@ -9,6 +9,8 @@ import {
   trackWiringSystemToggle,
 } from '@/lib/analytics';
 import type { WiringSelectorData } from '@/lib/wiringCoverage';
+import AffiliateLink from '@/components/AffiliateLink';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 
 interface DiagramEntry {
   name: string;
@@ -203,6 +205,48 @@ async function composeWatermarkedDiagram(sourceBlob: Blob): Promise<Blob> {
   } finally {
     URL.revokeObjectURL(diagramUrl);
   }
+}
+
+function WiringDiagramAffiliateStrip({ vehicle }: { vehicle: string }) {
+  const tools = [
+    {
+      name: 'Multimeter',
+      query: `${vehicle} multimeter automotive`,
+      reason: 'Test voltage, continuity & grounds',
+    },
+    {
+      name: 'Test Light',
+      query: `${vehicle} test light circuit tester`,
+      reason: 'Quick power & ground checks',
+    },
+    {
+      name: 'Wire Strippers',
+      query: `${vehicle} wire stripper crimper set`,
+      reason: 'Repair harnesses & connectors',
+    },
+  ];
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-[11px] uppercase tracking-[0.16em] text-cyan-300/70 mr-1">
+        Tracing this circuit?
+      </span>
+      {tools.map((tool) => (
+        <AffiliateLink
+          key={tool.name}
+          href={buildAmazonSearchUrl(tool.query, 'automotive', 'wiring-modal-tool')}
+          partName={tool.name}
+          vehicle={vehicle || 'AllOEMManuals'}
+          pageType="parts_page"
+          subtag="wiring-modal-tool"
+          className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/25 bg-cyan-400/[0.08] px-3 py-1 text-xs font-medium text-cyan-100 hover:border-cyan-400/50 hover:bg-cyan-400/[0.14] transition"
+        >
+          {tool.name}
+          <span className="text-[10px] text-cyan-200/60 hidden sm:inline">{tool.reason}</span>
+        </AffiliateLink>
+      ))}
+    </div>
+  );
 }
 
 interface WiringDiagramLibraryProps {
@@ -1265,6 +1309,9 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                   <div className="wl-empty">No diagram image found for this page.</div>
                 )}
               </div>
+              <div className="wl-modal-affiliate">
+                <WiringDiagramAffiliateStrip vehicle={currentVehicleLabel} />
+              </div>
               <div className="wl-modal-footer">
                 <span className="wl-modal-source">Source: Factory Service Manual</span>
               </div>
@@ -1737,6 +1784,12 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
           font-size: 0.75rem;
           color: rgba(255, 255, 255, 0.35);
           font-style: italic;
+        }
+
+        .wl-modal-affiliate {
+          padding: 0.75rem 1.5rem;
+          border-top: 1px solid rgba(0, 229, 255, 0.1);
+          background: rgba(0, 229, 255, 0.03);
         }
 
         .wl-modal-status {

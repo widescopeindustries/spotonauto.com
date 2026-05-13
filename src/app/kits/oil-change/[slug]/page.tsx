@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getKit, getAllKits } from '@/data/kits';
-import { Check, Gift, Truck, Wrench, Package } from 'lucide-react';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { Check, Gift, Truck, Wrench, Package, ArrowRight, DollarSign } from 'lucide-react';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -26,6 +27,10 @@ export default async function KitPage({ params }: PageProps) {
   const kit = getKit(slug);
   if (!kit) notFound();
 
+  const shopCost = Math.round(kit.pricing.oemExact * 3.5);
+  const savingsBudget = shopCost - kit.pricing.smartBudget;
+  const savingsOem = shopCost - kit.pricing.oemExact;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <section className="py-16 px-4 max-w-4xl mx-auto">
@@ -42,7 +47,7 @@ export default async function KitPage({ params }: PageProps) {
         <div className="mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-semibold uppercase tracking-wider mb-4">
             <Package size={12} />
-            Manual's Curated Kit
+            Manual&apos;s Curated Kit
           </div>
           <h1 className="text-3xl md:text-5xl font-bold mb-3">
             {kit.make} {kit.model} Oil Change Kit
@@ -52,6 +57,23 @@ export default async function KitPage({ params }: PageProps) {
           </p>
         </div>
 
+        {/* Savings banner */}
+        <div className="mb-10 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-500/10">
+            <DollarSign size={22} className="text-emerald-400" />
+          </div>
+          <div className="flex-1 text-center sm:text-left">
+            <p className="text-white font-semibold">
+              Dealer charges ${shopCost}–${shopCost + 40} for this oil change.
+            </p>
+            <p className="text-sm text-gray-400">
+              This kit has everything you need to do it yourself for{' '}
+              <span className="text-emerald-400 font-bold">${kit.pricing.smartBudget}</span>.
+              Save <span className="text-emerald-400 font-bold">${savingsBudget}+</span> every time.
+            </p>
+          </div>
+        </div>
+
         {/* What's in the box */}
         <div className="mb-12 rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
@@ -59,23 +81,44 @@ export default async function KitPage({ params }: PageProps) {
             What Is in the Box
           </h2>
           <ul className="space-y-0 divide-y divide-white/5">
-            {kit.items.map((item, i) => (
-              <li key={i} className="flex items-start gap-4 py-4">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/[0.05] text-xs font-bold text-gray-500">
-                  {i + 1}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                    <span className="font-semibold text-white">{item.name}</span>
-                    <span className="text-xs text-gray-500">{item.description}</span>
+            {kit.items.map((item, i) => {
+              const oemQuery = `${kit.make} ${kit.model} ${item.oemBrand}`;
+              const budgetQuery = `${kit.make} ${kit.model} ${item.budgetBrand}`;
+              const oemUrl = buildAmazonSearchUrl(oemQuery, 'automotive', `kit-${slug}-oem-${i}`);
+              const budgetUrl = buildAmazonSearchUrl(budgetQuery, 'automotive', `kit-${slug}-budget-${i}`);
+
+              return (
+                <li key={i} className="flex items-start gap-4 py-4">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/[0.05] text-xs font-bold text-gray-500">
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                      <span className="font-semibold text-white">{item.name}</span>
+                      <span className="text-xs text-gray-500">{item.description}</span>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                      <a
+                        href={oemUrl}
+                        target="_blank"
+                        rel="sponsored noopener noreferrer"
+                        className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                      >
+                        OEM: {item.oemBrand} →
+                      </a>
+                      <a
+                        href={budgetUrl}
+                        target="_blank"
+                        rel="sponsored noopener noreferrer"
+                        className="text-gray-500 hover:text-gray-400 transition-colors"
+                      >
+                        Budget: {item.budgetBrand} →
+                      </a>
+                    </div>
                   </div>
-                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-                    <span className="text-emerald-400">OEM: {item.oemBrand}</span>
-                    <span className="text-gray-500">Budget: {item.budgetBrand}</span>
-                  </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -85,7 +128,8 @@ export default async function KitPage({ params }: PageProps) {
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
             <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Smart Budget</div>
             <div className="text-4xl font-bold text-white mb-1">${kit.pricing.smartBudget}</div>
-            <div className="text-sm text-gray-400 mb-4">One kit — everything you need, quality aftermarket brands.</div>
+            <div className="text-sm text-emerald-400 mb-4">Save ${savingsBudget} vs the dealer</div>
+            <div className="text-sm text-gray-400 mb-4">Everything you need, quality aftermarket brands. Same protection, lower price.</div>
             <ul className="space-y-2 mb-6">
               {kit.items.slice(0, 4).map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
@@ -109,7 +153,8 @@ export default async function KitPage({ params }: PageProps) {
             </div>
             <div className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">OEM Exact</div>
             <div className="text-4xl font-bold text-white mb-1">${kit.pricing.oemExact}</div>
-            <div className="text-sm text-gray-400 mb-4">Manufacturer-recommended oil and filter. The same parts the dealer uses.</div>
+            <div className="text-sm text-amber-400 mb-4">Save ${savingsOem} vs the dealer</div>
+            <div className="text-sm text-gray-400 mb-4">Manufacturer-recommended oil and filter. The exact same parts the dealer uses.</div>
             <ul className="space-y-2 mb-6">
               {kit.items.map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
@@ -157,7 +202,7 @@ export default async function KitPage({ params }: PageProps) {
                 action="/api/waitlist"
                 method="POST"
                 className="flex flex-col sm:flex-row gap-3"
-                data-track-submit='{"event_name":"kit_waitlist_submit","event_category":"email_capture","kit_slug":"{slug}","vehicle":"{make} {model}"}'
+                data-track-submit={`{"event_name":"kit_waitlist_submit","event_category":"email_capture","kit_slug":"${slug}","vehicle":"${kit.make} ${kit.model}"}`}
               >
                 <input type="hidden" name="kitSlug" value={kit.slug} />
                 <input type="hidden" name="vehicle" value={`${kit.make} ${kit.model}`} />

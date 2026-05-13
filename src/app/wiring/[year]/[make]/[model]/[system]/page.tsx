@@ -615,7 +615,14 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 pb-14">
+      <section className="max-w-6xl mx-auto px-4 pb-14 space-y-6">
+        <SearchLandingMonetizationRail
+          surface="wiring_page"
+          intent="diagnostic"
+          contextLabel={`${vehicleLabel} ${systemMeta.shortLabel}`}
+          className="rounded-3xl border border-amber-500/25 bg-amber-950/20 p-6 md:p-8"
+          compact
+        />
         <SearchLandingMonetizationRail
           surface="wiring_page"
           intent="manual"
