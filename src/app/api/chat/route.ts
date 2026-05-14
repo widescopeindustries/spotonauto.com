@@ -511,14 +511,16 @@ async function fetchCorpusContext(message: string, isOllama: boolean): Promise<s
 
     if (terms.length > 0) {
       try {
+        console.log(`[Manuel] Corpus search: ${make} ${year} ${model || ''} terms=[${terms.join(', ')}]`);
         const sections = await findManualSectionsByTerms({ make, year, model, terms, limit });
+        console.log(`[Manuel] Corpus results: ${sections.length} sections found`);
         if (sections.length > 0) {
           return sections.map((s, i) =>
             `[${i + 1}] ${s.sectionTitle}\n${(s.contentPreview || s.contentFull || '').slice(0, maxChars)}`
           ).join('\n\n');
         }
       } catch (e) {
-        console.warn('[AI Technician] Corpus fetch (strategy 1) failed:', e);
+        console.warn('[Manuel] Corpus fetch (strategy 1) failed:', e);
       }
     }
   }
