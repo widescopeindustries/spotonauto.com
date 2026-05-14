@@ -3,6 +3,44 @@
 This file is the durable project memory for future Codex runs in this repo.
 Update it when product decisions, traps, or standing preferences change.
 
+## Current State Snapshot (2026-05-14)
+
+### Domain & Traffic
+- **Primary domain:** `alloemmanuals.com` (purchased 2026-05-07, ~7 days old)
+- **Legacy domain:** `spotonauto.com` → 301 redirects to `alloemmanuals.com` (nginx + Next.js)
+- **Google index:** 2,460 pages indexed, 112 pages receiving impressions
+- **Homepage SERP:** Position 1.1, 60% CTR, 6 clicks / 10 impressions
+- **Bing Search:** 9 clicks, 176 impressions, 5.11% CTR (May 11)
+- **Bing AI/Copilot citations:** 61 total citations, 15 pages cited. Top page: `/tools/kia-sportage-serpentine-belt` (22 citations)
+- **GA4 property:** `G-KS1JPX0V7P` (alloemmanuals.com) — GSC linked
+- **spotonauto.com GA4:** Archive only. Was receiving misrouted alloemmanuals traffic due to hardcoded fallback ID (`G-WNFX6CY9RN`). Fixed 2026-05-14.
+
+### Recent Deploys (2026-05-14)
+1. **Brand consistency fix** — eliminated all `SpotOn Auto` references from titles/schema (10 files)
+2. **Schema validation** — fixed `MonetaryAmount` range strings → `minValue`/`maxValue`
+3. **Auto-generated FAQs** — 3,713 tool pages now have 2-4 unique, relevant Q&As instead of identical generic "Where is this data from?" FAQ
+4. **Generic text filter** — `isGenericTemplateText()` detects and suppresses template filler (e.g. "typically 0W-20 for newer models...") on vehicle hubs and in schema
+5. **BreadcrumbList schema** — added to vehicle hub pages for cleaner SERP URL display
+6. **GA4 tracking fix** — updated measurement ID to `G-KS1JPX0V7P`, reduced loading delay 3s → 500ms
+
+### Infrastructure
+- **VPS:** `116.202.210.109` (IPv4 SSH works; IPv6 `2a01:4f8:2200:3291::2` currently failing — use IPv4)
+- **Next.js:** Port 3002, `alloemmanuals-web.service`
+- **nginx cache:** `alloemmanuals_cache` (1GB, 1h TTL). Cache already warmed to ~900 files.
+- **Deploy process:** Commit to GitHub → rsync changed files to VPS `/root/spotonauto.com/` → stop service → `rm -rf .next` → `npm run build` → start service
+- **LMDB backend:** `127.0.0.1:8080` on VPS — sole data source
+
+### LLM API Status (2026-05-14)
+- **Gemini:** Quota exhausted (429)
+- **Kimi:** 401 unauthorized
+- **OpenAI:** Quota exhausted
+- **Local fallback (Ollama):** `qwen2.5:7b` at `127.0.0.1:11434` — wired into chat API as primary fallback. Chat is LIVE.
+
+### Content Pipeline
+- **Corpus tool pages:** 3,714 deployed (LEMON fluids data)
+- **Repair profiles:** 298 generated, 1,778 query-targets remain unprocessed
+- **All LLM content generation paused** until API quota restored
+
 ## Product Direction
 
 - Brand is `AllOEMManuals`.
@@ -27,7 +65,7 @@ Update it when product decisions, traps, or standing preferences change.
 - Favor calmer, more flowing section transitions over noisy sci-fi effects.
 - Keep the tone intentional and restrained, not gimmicky.
 
-## Critical SEO / Crawl Safety Rules (2026-04-26)
+## Critical SEO / Crawl Safety Rules (2026-05-14)
 
 - **NEVER add redirect URLs to `src/app/sitemap.ts`.**
   - Forbidden: `/cel`, `/privacy`, `/terms` (they return 308 redirects).
@@ -47,10 +85,16 @@ Update it when product decisions, traps, or standing preferences change.
   - Removed from `package.json` start script on 2026-04-26.
 - **NEVER submit `/vehicles/...` URLs via IndexNow until `npm run health:manual-backbone` reports >1 make and >1 year.**
   - Empty `manual_embeddings` causes vehicle pages to 404, which destroys domain trust.
-- **`/vehicles/sitemap.xml` is DISABLED in `robots.ts` until backbone recovery.**
-  - Re-enable only after `health:manual-backbone` shows meaningful coverage.
+- **`/vehicles/sitemap.xml` is ENABLED** — was re-enabled 2026-05-11 after fixing `PROFILE_MAP` bug and missing tone classes. Contains ~9,854 vehicle hub URLs.
 - **The `index-lmdb-vectors.ts` indexer MUST run on the VPS.**
   - Port 8080 is firewalled; running from your local machine will fail.
+- **NEVER submit IndexNow for 30 days from 2026-04-26.** Let Bing forget the spam. Still valid as of 2026-05-14.
+
+## Vehicle Hub Performance (Fixed 2026-05-12)
+- `buildVehicleLaneData()` DTC loop was O(n²) — pre-computed Maps reduced it 2,500ms → ~50ms
+- `getVehicleGraphData()` Neo4j queries parallelized — 800ms → ~200ms
+- Vehicle hub TTFB: **~1s cold / ~200ms warm** (down from 21–38s)
+- nginx proxy cache deployed for dynamic pages — cached responses serve in **<1ms**
 
 ## Corpus-First Content Framework (Built 2026-05-08)
 
@@ -72,6 +116,13 @@ Update it when product decisions, traps, or standing preferences change.
   - Toyota: 1,867 vehicles, Honda: 835, Ford: 5,726, Chevrolet: 4,846, Hyundai: 802, Subaru: 515, Nissan-Datsun: 1,472, Volkswagen: 961, BMW: 1,019, Mercedes-Benz: 1,045
   - Total: ~19,088 vehicle fluid records → 3,714 corpus-backed tool pages
 - **Sync workflow:** `rsync -avz root@116.202.210.109:/data/assembled/corpus-tool-pages.json src/data/corpus/`
+- **Auto-generated FAQs:** `buildToolFaqs()` in `src/app/tools/[slug]/page.tsx` creates 2-4 unique Q&As per page from tool type + specs. Prevents generic template text from poisoning SERP snippets.
+
+## GA4 / Analytics Traps (2026-05-14)
+- **AnalyticsScripts.tsx uses `CANONICAL_HOST` gate:** `if (window.location.hostname !== CANONICAL_HOST) return;` — blocks tracking on non-canonical hosts. `CANONICAL_HOST = 'alloemmanuals.com'`.
+- **3-second delay was filtering 40-60% of organic traffic.** Reduced to 500ms 2026-05-14. Monitor bounce-rate correlation.
+- **Old fallback GA4 ID `G-WNFX6CY9RN` was spotonauto property.** Always verify `NEXT_PUBLIC_GA_MEASUREMENT_ID` env var is set before builds.
+- **TrackingScript.tsx fires `page_view_custom`** (not standard `page_view`) via `requestIdleCallback`. Enhanced measurement must be ON in GA4 to see standard `page_view` events.
 
 ## Known Technical Traps
 
@@ -87,6 +138,7 @@ Update it when product decisions, traps, or standing preferences change.
   - before assuming a Railway deploy is live, check `railway status --json` and confirm `domains.customDomains` contains `alloemmanuals.com`
 - GA4 realtime snapshots with heavy `direct / (none)` concentration and large Singapore-style city clusters are not reliable SEO recovery proof.
   Use GSC daily visibility plus GA4 organic sessions / landing pages for recovery reads.
+- **IPv6 SSH to VPS is currently failing** (`Permission denied` on `2a01:4f8:2200:3291::2`). Use IPv4 `116.202.210.109` for all deploys.
 
 ## Current Durable Changes
 
@@ -194,6 +246,7 @@ Update it when product decisions, traps, or standing preferences change.
   - Cloudflare KV is no longer part of the runtime stack
   - manual embeddings now live on the local KG-server Postgres instance
   - the current next step is to finish the local-only cutover, then keep burning down the remaining underlinked nodes from the daily graph-priority report
+- **Vehicle hub generic text suppression:** `getConciseQuickAnswer()` now returns `null` for generic template text. Vehicle hub specs cards skip rendering when no real data exists. This prevents Google from using filler sentences as SERP snippets.
   - auth and personal history utility routes should remain non-indexable
   - sitemap freshness should come from `src/lib/sitemap.ts` or `SITEMAP_LAST_MOD`, not hard-coded stale dates
   - `scripts/internal-link-audit.js` should fail loudly if seed fetches fail instead of silently reporting zero discovered links
@@ -440,9 +493,17 @@ The product is NOT a manual browser. It is a **translation layer**:
 - `manualEmbeddingsStore.ts` — PostgreSQL access, `findManualSectionsByTerms()` (queries entire make+year then filters client-side — known performance issue)
 - mtbl Rust tools compiled from `lemon-website-source.tar.gz` — can dump keys/values directly
 
-## Recent Changes (2026-05-08)
+## Recent Changes (2026-05-14)
 
-### SERP CTR & Crawl Budget Improvements
+### SERP CTR & Snippet Quality Improvements
+- **Auto-generated FAQs:** 3,713 tool pages now have unique Q&A (was: identical "Where is this data from?" on every page). FAQPage schema eligibility for rich snippets.
+- **Generic text filter:** `isGenericTemplateText()` detects template filler sentences and suppresses them from page content and schema. Prevents weak snippets like "uses synthetic motor oil — typically 0W-20 for newer models..."
+- **BreadcrumbList schema:** Added to vehicle hubs (`/vehicles/{year}/{make}/{model}`) for proper URL breadcrumb display in SERPs.
+- **Brand consistency:** Eliminated all remaining `SpotOn Auto` references from titles, descriptions, and schema (10 files).
+- **Schema validation:** Fixed `MonetaryAmount` range strings (`value: '30-180'`) → proper `minValue`/`maxValue`.
+- **GA4 fix:** Measurement ID updated to `G-KS1JPX0V7P`, loading delay reduced 3s → 500ms, GSC property linked.
+
+### SERP CTR & Crawl Budget Improvements (2026-05-08)
 
 - **Tool page titles now include the quick answer** (e.g. "VW Tiguan Coolant: G12evo/G13 Pink (50/50 Mix) | AllOEMManuals") to stand out in positions 6–12 where 95 of 122 impressions currently get 0% CTR.
 - **Tool pages now link to `/maintenance/{year}/{make}/{model}/`** via a "View Factory Specs" CTA above the nav, driving internal link equity to maintenance hubs.
@@ -452,6 +513,7 @@ The product is NOT a manual browser. It is a **translation layer**:
 - **Old `alloemmanuals.com` variant sitemaps deleted** from `public/vehicles/sitemap/`. These contained 112K+ wrong-domain variant URLs that were leaking crawl budget.
 - **Domain redirect added**: `alloemmanuals.com` and `www.alloemmanuals.com` → `alloemmanuals.com` in `next.config.js`.
 - **Google Indexing API script created**: `scripts/push-maintenance-indexing.mjs` pushes maintenance hub + spec pages via `URL_UPDATED`. Supports `--from-tools`, `--from-db`, and `--urls` modes.
+- **Do NOT run IndexNow submissions until after 2026-05-26** (30-day cooldown from April spam blast).
 
 ### Content Factory Provider Update
 
