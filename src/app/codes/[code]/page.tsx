@@ -113,7 +113,8 @@ export default async function CodePage({ params }: PageProps) {
         estimatedCost: {
             '@type': 'MonetaryAmount',
             currency: 'USD',
-            value: '20-500',
+            minValue: 20,
+            maxValue: 500,
         },
         supply: [
             { '@type': 'HowToSupply', name: 'Replacement parts as confirmed by test results' },

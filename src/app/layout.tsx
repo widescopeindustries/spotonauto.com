@@ -95,10 +95,7 @@ export default function RootLayout({
                 description: "AI-powered automotive repair diagnosis and DIY guides",
                 url: "https://alloemmanuals.com",
                 logo: "https://alloemmanuals.com/logo.png",
-                sameAs: [
-                  "https://www.facebook.com/spotonauto",
-                  "https://www.youtube.com/spotonauto",
-                ],
+                sameAs: [],
                 telephone: COMPANY_INFO.phoneE164,
                 email: COMPANY_INFO.supportEmail,
                 address: {

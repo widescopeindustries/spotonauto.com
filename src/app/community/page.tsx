@@ -16,12 +16,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const isLive = totalThreads >= COMMUNITY_LIVE_THREAD_THRESHOLD;
 
   return {
-    title: 'Community Forum — SpotOn Auto | DIY Auto Repair Discussions',
+    title: 'Community Forum | AllOEMManuals | DIY Auto Repair Discussions',
     description:
       'Join the AllOEMManuals community forum. Ask questions, share repair tips, and get help from fellow DIY mechanics on oil changes, brakes, engines, and more.',
     keywords: ['auto repair forum', 'DIY mechanic community', 'car repair help', 'vehicle maintenance discussion'],
     openGraph: {
-      title: 'Community Forum — SpotOn Auto',
+      title: 'Community Forum | AllOEMManuals',
       description: 'Join the AllOEMManuals community. Ask questions, share tips, and help fellow DIY mechanics.',
       url: 'https://alloemmanuals.com/community',
       type: 'website',

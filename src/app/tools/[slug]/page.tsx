@@ -19,9 +19,99 @@ import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { getToolManualCitationGroups, getToolVerificationNote } from '@/lib/toolManualCitations';
+import type { ToolPage } from '@/data/tools-pages';
 
 interface PageProps {
     params: Promise<{ slug: string }>;
+}
+
+/** Extract a spec value by fuzzy keyword matching across generations */
+function findSpec(page: ToolPage, keywords: string[]): string | undefined {
+    for (const gen of page.generations) {
+        for (const [key, value] of Object.entries(gen.specs)) {
+            const lowerKey = key.toLowerCase();
+            if (keywords.some(k => lowerKey.includes(k.toLowerCase()))) {
+                return `${value} (${gen.years})`;
+            }
+        }
+    }
+    return undefined;
+}
+
+/** Auto-generate relevant FAQs from page data so every tool page has unique, useful Q&A */
+function buildToolFaqs(page: ToolPage): Array<{ q: string; a: string }> {
+    const { make, model, toolType, quickAnswer, generations } = page;
+    const vehicle = `${make} ${model}`;
+    const typeLabel = (TOOL_TYPE_META[toolType]?.label || 'spec').toLowerCase();
+    const faqs = [...page.faq];
+
+    // Primary question — always add if we have a quick answer
+    if (quickAnswer) {
+        faqs.push({ q: `What ${typeLabel} does a ${vehicle} use?`, a: quickAnswer });
+    }
+
+    // Tool-type-specific secondary questions
+    if (toolType === 'oil-type') {
+        const capacity = findSpec(page, ['capacity', 'quart', 'qts', 'qt.', 'liters', 'l ']);
+        if (capacity) faqs.push({ q: `How much oil does a ${vehicle} take?`, a: capacity });
+        faqs.push({
+            q: `How often should I change the oil in a ${vehicle}?`,
+            a: `Most ${make} service manuals recommend oil changes every 5,000–7,500 miles under normal driving conditions. Severe conditions (towing, extreme temperatures, stop-and-go traffic) may require more frequent changes. Verify with your owner's manual for the exact interval.`,
+        });
+    } else if (toolType === 'coolant-type') {
+        faqs.push({
+            q: `Can I use universal coolant in a ${vehicle}?`,
+            a: `Factory manuals specify exact coolant chemistry for the ${vehicle}. Using the wrong coolant type can cause corrosion, overheating, or gasket damage. Always match the OEM specification exactly — do not mix incompatible coolant types.`,
+        });
+    } else if (toolType === 'transmission-fluid-type') {
+        const capacity = findSpec(page, ['capacity', 'total', 'refill', 'quart', 'qts']);
+        if (capacity) faqs.push({ q: `How much transmission fluid does a ${vehicle} hold?`, a: capacity });
+        faqs.push({
+            q: `When should I change the transmission fluid in a ${vehicle}?`,
+            a: `Factory service manuals typically recommend transmission fluid changes every 30,000–60,000 miles for automatics and 60,000–100,000 miles for manuals under normal use. Severe service intervals are shorter. Check your maintenance schedule for the exact mileage.`,
+        });
+    } else if (toolType === 'tire-size') {
+        const pressure = findSpec(page, ['pressure', 'psi', 'cold', 'front', 'rear']);
+        if (pressure) faqs.push({ q: `What tire pressure for a ${vehicle}?`, a: pressure });
+        faqs.push({
+            q: `Can I use a different tire size on my ${vehicle}?`,
+            a: `Deviating from the factory tire size changes speedometer accuracy, handling, and load capacity. If you change sizes, ensure the overall diameter stays within 3% of OEM and the load/speed ratings meet or exceed factory specs.`,
+        });
+    } else if (toolType === 'spark-plug-type') {
+        const gap = findSpec(page, ['gap', 'mm', 'inch']);
+        if (gap) faqs.push({ q: `What is the spark plug gap for a ${vehicle}?`, a: gap });
+        faqs.push({
+            q: `How often to replace spark plugs on a ${vehicle}?`,
+            a: `Factory service manuals typically recommend spark plug replacement every 30,000–100,000 miles depending on plug material (copper, platinum, or iridium). Check your maintenance schedule for the exact interval.`,
+        });
+    } else if (toolType === 'battery-location') {
+        faqs.push({
+            q: `What battery size for a ${vehicle}?`,
+            a: quickAnswer || `Check the factory manual for exact group size, CCA rating, and terminal orientation for your ${vehicle}. Using the wrong size can cause fitment issues or electrical problems.`,
+        });
+    } else if (toolType === 'wiper-blade-size') {
+        faqs.push({
+            q: `Are wiper blades the same size on both sides of a ${vehicle}?`,
+            a: `No. Most vehicles use different lengths for the driver and passenger sides. Some also have a separate rear wiper. The factory manual lists exact sizes for each position — do not assume symmetry.`,
+        });
+    } else if (toolType === 'headlight-bulb') {
+        faqs.push({
+            q: `Low beam vs high beam bulb for ${vehicle}?`,
+            a: `Many vehicles use separate bulbs for low and high beams, while others use a single dual-filament bulb. Check the generation breakdown above for the exact bulb type assigned to each function.`,
+        });
+    } else if (toolType === 'serpentine-belt') {
+        faqs.push({
+            q: `How do I know if my ${vehicle} serpentine belt is bad?`,
+            a: `Common signs include squealing on startup (especially when cold), visible cracks or fraying on the ribbed side, power steering or A/C failure, and battery warning lights. The factory manual includes inspection criteria and replacement intervals.`,
+        });
+    } else if (toolType === 'fluid-capacity') {
+        faqs.push({
+            q: `Why do fluid capacities vary by generation for the ${vehicle}?`,
+            a: `Different engine options, transmission types, and cooling system designs across model years change total fluid volumes. Always use the capacity listed for your exact year and engine code — do not guess across generations.`,
+        });
+    }
+
+    return faqs.slice(0, 5);
 }
 
 /**
@@ -130,11 +220,12 @@ export default async function ToolPage({ params }: PageProps) {
     const schemaDate = new Date().toISOString().slice(0, 10);
     const pageUrl = `https://alloemmanuals.com/tools/${page.slug}`;
 
-    // Schema.org FAQPage structured data
+    // Schema.org FAQPage structured data — auto-generated per page for unique, relevant Q&A
+    const pageFaqs = buildToolFaqs(page);
     const faqSchema = {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
-        mainEntity: page.faq.map(f => ({
+        mainEntity: pageFaqs.map(f => ({
             '@type': 'Question',
             name: f.q,
             acceptedAnswer: { '@type': 'Answer', text: f.a },
@@ -173,7 +264,8 @@ export default async function ToolPage({ params }: PageProps) {
         estimatedCost: {
             '@type': 'MonetaryAmount',
             currency: 'USD',
-            value: '30-180',
+            minValue: 30,
+            maxValue: 180,
         },
         supply: [
             { '@type': 'HowToSupply', name: `${page.make} ${page.model} replacement fluid or part` },
@@ -379,7 +471,7 @@ export default async function ToolPage({ params }: PageProps) {
                 <section id="faq" className="mb-12 max-w-3xl mx-auto">
                     <h2 className="text-2xl font-bold text-white mb-6">Frequently Asked Questions</h2>
                     <dl className="space-y-4">
-                        {page.faq.map((f, i) => (
+                        {pageFaqs.map((f, i) => (
                             <div key={i} className="bg-white/[0.03] rounded-xl border border-white/10 overflow-hidden">
                                 <dt className="px-5 py-4 font-semibold text-white">{f.q}</dt>
                                 <dd className="px-5 pb-4 text-gray-400 text-sm leading-relaxed">{f.a}</dd>

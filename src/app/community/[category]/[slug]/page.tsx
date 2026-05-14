@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!cat) return {};
 
   return {
-    title: `${cat.name} Thread — SpotOn Auto Community`,
+    title: `${cat.name} Thread — AllOEMManuals Community`,
     description: 'Community discussion thread for DIY auto repair troubleshooting, tools, and vehicle-specific fixes.',
     alternates: { canonical: `https://alloemmanuals.com/community/${catSlug}/${slug}` },
   };

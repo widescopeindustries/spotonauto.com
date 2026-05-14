@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const isLive = totalThreads >= COMMUNITY_LIVE_THREAD_THRESHOLD;
 
   return {
-    title: `${cat.name} — Community Forum | SpotOn Auto`,
+    title: `${cat.name} — Community Forum | AllOEMManuals`,
     description: `Community discussions for ${cat.name.toLowerCase()}.`,
     alternates: { canonical: `https://alloemmanuals.com/community/${slug}` },
     robots: isLive ? { index: true, follow: true } : { index: false, follow: true },

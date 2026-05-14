@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import NewThreadForm from './NewThreadForm';
 
 export const metadata: Metadata = {
-    title: 'New Thread — Community Forum | SpotOn Auto',
+    title: 'New Thread — Community Forum | AllOEMManuals',
     description: 'Start a new discussion in the AllOEMManuals community forum. Ask for help, share a repair tip, or post a symptom question so other DIY mechanics can jump in with a useful answer.',
     robots: { index: false, follow: true },
 };

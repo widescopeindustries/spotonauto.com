@@ -401,7 +401,7 @@ export default function CELLandingPage() {
             {/* Footer */}
             <footer className="py-8 px-4 border-t border-white/5 text-center">
                 <p className="text-gray-600 text-xs font-body">
-                    &copy; {new Date().getFullYear()} SpotOn Auto. All rights reserved.
+                    &copy; {new Date().getFullYear()} AllOEMManuals. All rights reserved.
                     {' '}&middot;{' '}
                     <Link href="/privacy" className="hover:text-cyan-400 transition-colors">Privacy</Link>
                     {' '}&middot;{' '}

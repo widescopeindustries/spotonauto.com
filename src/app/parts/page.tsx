@@ -5,7 +5,7 @@ import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import PartsVehiclePicker from './PartsVehiclePicker';
 
 export const metadata: Metadata = {
-    title: 'Auto Parts | Shop Amazon & More | SpotOn Auto',
+    title: 'Auto Parts | Shop Amazon & More | AllOEMManuals',
     description: 'Compare prices on OEM and aftermarket auto parts from Amazon. Find the right fit for your exact year, make, and model with fast shipping and verified compatibility.',
     keywords: [
         'auto parts',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
         'amazon auto parts'
     ],
     openGraph: {
-        title: 'Auto Parts - Shop Online | SpotOn Auto',
+        title: 'Auto Parts - Shop Online | AllOEMManuals',
         description: 'Find auto parts prices from Amazon. Find the best deals on OEM and aftermarket parts.',
         type: 'website',
         url: 'https://alloemmanuals.com/parts',
