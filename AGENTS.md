@@ -508,6 +508,7 @@ The product is NOT a manual browser. It is a **translation layer**:
 - **Homepage:** Diagnostic section now "Talk to Manuel" with voice-first positioning. Entry paths, testimonials, footer, CEL page, repair CTAs all say "Ask Manuel".
 - **SEO:** `/diagnose` title → "Manuel — AI Factory Mechanic | Diagnose Your Car with OEM Data | AllOEMManuals".
 - **Chat API:** OpenAI GPT-4o-mini is primary provider (~2-3s response). Fixed critical bug where `OLLAMA_PRIMARY=1` caused 60s+ timeouts.
+- **Voice input:** Rebuilt from click-to-toggle to push-to-hold. Hold mic button → speak → release to send. Waveform animation + real-time interim transcription + clear error messages (permission denied, no-speech, network). Uses pointer events for desktop + mobile.
 
 ### SERP CTR & Snippet Quality Improvements
 - **Auto-generated FAQs:** 3,713 tool pages now have unique Q&A (was: identical "Where is this data from?" on every page). FAQPage schema eligibility for rich snippets.
