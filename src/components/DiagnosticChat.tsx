@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Activity, Camera, Cpu, HardDrive, ImageIcon, Mic, MicOff, RotateCcw, Send, ThumbsDown, ThumbsUp, Volume2, VolumeX } from 'lucide-react';
+import { Activity, Camera, Cpu, HardDrive, ImageIcon, Mic, MicOff, RotateCcw, Send, ThumbsDown, ThumbsUp, Volume2, VolumeX, AlertCircle } from 'lucide-react';
 import { buildSymptomHref, getSymptomClusterFromText } from '@/data/symptomGraph';
 import { createDiagnosticChat, sendDiagnosticMessage, type Chat } from '../services/apiClient';
 import { COMPANY_INFO } from '@/lib/companyInfo';
@@ -48,12 +48,11 @@ function getSpeechRecognition(): any | null {
 
 function speakText(text: string, onEnd?: () => void) {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    // Strip markdown-like formatting for cleaner speech
     const clean = text
         .replace(/\*\*/g, '')
         .replace(/#{1,6}\s/g, '')
         .replace(/\n{2,}/g, '\n')
-        .slice(0, 400); // Limit length
+        .slice(0, 400);
     const utterance = new SpeechSynthesisUtterance(clean);
     utterance.rate = 1.05;
     utterance.pitch = 1;
@@ -65,6 +64,23 @@ function speakText(text: string, onEnd?: () => void) {
 function stopSpeaking() {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
+    }
+}
+
+type SpeechError = 'not-allowed' | 'no-speech' | 'network' | 'aborted' | null;
+
+function getSpeechErrorMessage(err: SpeechError): string {
+    switch (err) {
+        case 'not-allowed':
+            return 'Microphone permission denied. Click the lock icon in your browser address bar and allow microphone access.';
+        case 'no-speech':
+            return 'No speech detected. Try speaking louder or closer to the mic.';
+        case 'network':
+            return 'Speech recognition network error. Check your connection and try again.';
+        case 'aborted':
+            return '';
+        default:
+            return 'Speech recognition failed. Try typing instead.';
     }
 }
 
@@ -84,9 +100,13 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const [voiceEnabled, setVoiceEnabled] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [speechSupported, setSpeechSupported] = useState(false);
+    const [speechError, setSpeechError] = useState<SpeechError>(null);
+    const [interimTranscript, setInterimTranscript] = useState('');
     const recognitionRef = useRef<any | null>(null);
+    const micButtonRef = useRef<HTMLButtonElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const lastSpokenRef = useRef<string>('');
+    const pushTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const vehicle = vehicleProp || (searchParams.get('year') && searchParams.get('make') && searchParams.get('model')
         ? { year: searchParams.get('year')!, make: searchParams.get('make')!, model: searchParams.get('model')! }
@@ -116,6 +136,13 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         const supported = !!getSpeechRecognition() && typeof window !== 'undefined' && !!window.speechSynthesis;
         setSpeechSupported(supported);
     }, []);
+
+    // Clear speech error after 5 seconds
+    useEffect(() => {
+        if (!speechError) return;
+        const timer = setTimeout(() => setSpeechError(null), 5000);
+        return () => clearTimeout(timer);
+    }, [speechError]);
 
     // Auto-speak new system messages when voice is enabled
     useEffect(() => {
@@ -337,43 +364,105 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
 
     const startListening = () => {
         const SpeechRecognitionCtor = getSpeechRecognition();
-        if (!SpeechRecognitionCtor) return;
-
-        if (recognitionRef.current) {
-            recognitionRef.current.stop();
+        if (!SpeechRecognitionCtor) {
+            setSpeechError('network');
+            return;
         }
 
+        // Stop any existing recognition
+        if (recognitionRef.current) {
+            try { recognitionRef.current.stop(); } catch { /* ignore */ }
+        }
+
+        setSpeechError(null);
+        setInterimTranscript('');
+
         const recognition = new SpeechRecognitionCtor();
-        recognition.continuous = false;
+        recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = 'en-US';
+        recognition.maxAlternatives = 1;
 
-        recognition.onstart = () => setIsListening(true);
-        recognition.onend = () => setIsListening(false);
-        recognition.onerror = () => setIsListening(false);
+        let finalTranscript = '';
 
-        recognition.onresult = (event: any) => {
-            let transcript = '';
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                transcript += event.results[i][0].transcript;
-            }
-            setUserInput(transcript);
-            // Auto-submit on final result
-            if (event.results[event.results.length - 1].isFinal && transcript.trim()) {
-                setTimeout(() => {
-                    handleUserResponse(transcript);
-                    setUserInput('');
-                }, 400);
+        recognition.onstart = () => {
+            setIsListening(true);
+            setSpeechError(null);
+        };
+
+        recognition.onend = () => {
+            setIsListening(false);
+            setInterimTranscript('');
+            // If we have a final transcript and are not already processing, send it
+            if (finalTranscript.trim() && !typing) {
+                handleUserResponse(finalTranscript.trim());
+                setUserInput('');
+                finalTranscript = '';
             }
         };
 
+        recognition.onerror = (event: any) => {
+            console.warn('[Manuel] Speech recognition error:', event.error);
+            setIsListening(false);
+            if (event.error !== 'aborted') {
+                setSpeechError(event.error as SpeechError);
+            }
+        };
+
+        recognition.onresult = (event: any) => {
+            let interim = '';
+            let final = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    final += event.results[i][0].transcript;
+                } else {
+                    interim += event.results[i][0].transcript;
+                }
+            }
+            if (final) {
+                finalTranscript += final;
+                setUserInput(finalTranscript);
+            }
+            setInterimTranscript(interim);
+        };
+
         recognitionRef.current = recognition;
-        recognition.start();
+
+        try {
+            recognition.start();
+        } catch (err) {
+            console.warn('[Manuel] Failed to start recognition:', err);
+            setSpeechError('network');
+        }
     };
 
     const stopListening = () => {
-        recognitionRef.current?.stop();
+        if (recognitionRef.current) {
+            try { recognitionRef.current.stop(); } catch { /* ignore */ }
+        }
         setIsListening(false);
+        setInterimTranscript('');
+    };
+
+    // Push-to-talk handlers
+    const handleMicPointerDown = (e: React.PointerEvent) => {
+        e.preventDefault();
+        if (typing || !speechSupported) return;
+        startListening();
+        // Capture pointer so release works even if cursor leaves button
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    };
+
+    const handleMicPointerUp = (e: React.PointerEvent) => {
+        e.preventDefault();
+        if (isListening) {
+            stopListening();
+        }
+    };
+
+    const handleMicPointerLeave = (e: React.PointerEvent) => {
+        // Don't stop on leave — user might drag finger while holding
+        // Only stop on explicit pointer up
     };
 
     return (
@@ -570,37 +659,83 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                         )}
                     </div>
                 )}
+                {/* Speech error banner */}
+                {speechError && (
+                    <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2">
+                        <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+                        <span className="text-xs text-red-200">{getSpeechErrorMessage(speechError)}</span>
+                    </div>
+                )}
+
+                {/* Listening overlay / waveform */}
+                {isListening && (
+                    <div className="mb-3 flex items-center gap-3 rounded-lg border border-cyan-400/30 bg-cyan-500/10 px-4 py-3">
+                        <div className="flex items-end gap-0.5 h-5">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <motion.div
+                                    key={i}
+                                    className="w-1 bg-cyan-400 rounded-full"
+                                    animate={{ height: [4, 16, 8, 20, 6] }}
+                                    transition={{
+                                        duration: 0.6,
+                                        repeat: Infinity,
+                                        delay: i * 0.1,
+                                        ease: 'easeInOut',
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        <span className="text-xs font-mono text-cyan-200">
+                            {interimTranscript || 'Listening... hold to speak, release to send'}
+                        </span>
+                    </div>
+                )}
+
                 <form onSubmit={onSubmit} className="relative flex gap-3">
                     <div className="absolute inset-0 -z-10 bg-neon-cyan/5 blur-xl" />
                     <input
                         type="text"
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
-                        placeholder={typing ? 'Manuel is thinking...' : isListening ? '🎤 Listening... speak now' : 'Describe symptoms, read me a code, or ask a repair question...'}
+                        placeholder={typing ? 'Manuel is thinking...' : 'Describe symptoms, read me a code, or ask a repair question...'}
                         className="flex-1 rounded-lg border border-neon-cyan/30 bg-black/50 px-4 py-3 font-mono text-sm text-white placeholder-gray-500 transition-all focus:border-neon-cyan focus:outline-none focus:shadow-glow-cyan"
                         disabled={typing || isListening}
                         autoFocus
                     />
                     <button
                         type="submit"
-                        disabled={typing || !userInput.trim()}
+                        disabled={typing || isListening || !userInput.trim()}
                         className="flex items-center justify-center rounded-lg border border-neon-cyan bg-neon-cyan/10 px-4 text-neon-cyan transition-all hover:bg-neon-cyan/20 hover:shadow-glow-cyan disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <Send className="h-5 w-5" />
                     </button>
                     {speechSupported && (
                         <button
+                            ref={micButtonRef}
                             type="button"
-                            onClick={isListening ? stopListening : startListening}
+                            onPointerDown={handleMicPointerDown}
+                            onPointerUp={handleMicPointerUp}
+                            onPointerCancel={handleMicPointerUp}
                             disabled={typing}
-                            className={`flex items-center justify-center rounded-lg border px-4 transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                            className={`flex items-center justify-center rounded-lg border px-4 transition-all select-none disabled:cursor-not-allowed disabled:opacity-50 ${
                                 isListening
-                                    ? 'border-red-400 bg-red-500/15 text-red-400 animate-pulse'
-                                    : 'border-gray-600 bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+                                    ? 'border-cyan-400 bg-cyan-500/20 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.3)]'
+                                    : 'border-gray-600 bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 active:bg-gray-600/50'
                             }`}
-                            title={isListening ? 'Stop listening' : 'Speak to AI'}
+                            title={isListening ? 'Release to send' : 'Hold to speak'}
+                            style={{ touchAction: 'none' }}
                         >
-                            {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                            {isListening ? <Mic className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                        </button>
+                    )}
+                    {!speechSupported && (
+                        <button
+                            type="button"
+                            disabled
+                            className="flex items-center justify-center rounded-lg border border-gray-700 bg-gray-900/30 px-4 text-gray-600 cursor-not-allowed"
+                            title="Voice input not supported in this browser"
+                        >
+                            <MicOff className="h-5 w-5" />
                         </button>
                     )}
                     <button
@@ -613,7 +748,9 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                 </form>
                 <div className="mt-2 text-center">
                     <span className="font-mono text-[10px] text-gray-500">
-                        MANUEL REMEMBERS THIS CONVERSATION FOR YOUR CAR // SPEAK OR TYPE
+                        {speechSupported
+                            ? 'MANUEL REMEMBERS THIS CONVERSATION // HOLD MIC TO TALK'
+                            : 'MANUEL REMEMBERS THIS CONVERSATION // TYPE YOUR MESSAGE'}
                     </span>
                 </div>
                 {statusMessage && (
