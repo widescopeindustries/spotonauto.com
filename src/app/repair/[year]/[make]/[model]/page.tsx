@@ -546,13 +546,13 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
       countLabel: `${vehicleHub.symptomCount} symptoms`,
       tone: 'amber',
       primaryHref: symptomGroup?.nodes[0]?.href || '/diagnose',
-      primaryLabel: symptomGroup ? 'Open symptom hubs' : 'Start diagnosis',
+      primaryLabel: symptomGroup ? 'Open symptom hubs' : 'Ask Manuel',
       previewLinks: [
         ...(exactOpportunity?.symptomHubs ?? []).slice(0, 3).map((hub) => ({
           href: hub.href,
           label: hub.label,
         })),
-        { href: '/diagnose', label: 'Guided diagnosis' },
+        { href: '/diagnose', label: 'Ask Manuel' }
       ].slice(0, 4),
     },
     {

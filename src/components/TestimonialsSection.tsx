@@ -7,7 +7,7 @@ const TestimonialsSection = () => {
     {
       icon: DollarSign,
       title: 'Save $200-$500 Per Repair',
-      description: 'Mechanics charge $100-$150 just for diagnosis. Our AI gives you the same answer and a full repair guide.',
+      description: 'Mechanics charge $100-$150 just to tell you what is wrong. Manuel gives you the same factory diagnosis — plus the full repair guide — for free.',
     },
     {
       icon: Clock,
@@ -26,8 +26,8 @@ const TestimonialsSection = () => {
     },
     {
       icon: Zap,
-      title: 'AI Diagnostic Chat',
-      description: 'Describe your symptoms in plain English. The AI asks follow-up questions to narrow down the issue.',
+      title: 'Ask Manuel',
+      description: 'Describe symptoms in plain English — or just talk. Manuel asks follow-up questions and walks you through the factory diagnostic flowchart.',
     },
     {
       icon: BookOpen,
@@ -67,7 +67,7 @@ const TestimonialsSection = () => {
             </div>
             <div>
               <div className="font-display font-bold text-2xl text-cyan-400">FREE</div>
-              <div className="font-body text-xs text-gray-400 uppercase tracking-wider mt-1">SpotOn Diagnosis</div>
+              <div className="font-body text-xs text-gray-400 uppercase tracking-wider mt-1">Manuel's Diagnosis</div>
             </div>
           </div>
         </div>

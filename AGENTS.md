@@ -16,25 +16,30 @@ Update it when product decisions, traps, or standing preferences change.
 - **spotonauto.com GA4:** Archive only. Was receiving misrouted alloemmanuals traffic due to hardcoded fallback ID (`G-WNFX6CY9RN`). Fixed 2026-05-14.
 
 ### Recent Deploys (2026-05-14)
-1. **Brand consistency fix** — eliminated all `SpotOn Auto` references from titles/schema (10 files)
-2. **Schema validation** — fixed `MonetaryAmount` range strings → `minValue`/`maxValue`
-3. **Auto-generated FAQs** — 3,713 tool pages now have 2-4 unique, relevant Q&As instead of identical generic "Where is this data from?" FAQ
-4. **Generic text filter** — `isGenericTemplateText()` detects and suppresses template filler (e.g. "typically 0W-20 for newer models...") on vehicle hubs and in schema
-5. **BreadcrumbList schema** — added to vehicle hub pages for cleaner SERP URL display
-6. **GA4 tracking fix** — updated measurement ID to `G-KS1JPX0V7P`, reduced loading delay 3s → 500ms
+1. **Manuel deployed** — Full rebrand of AI chat from generic "AI Technician" to "Manuel — Your Factory-Trained AI Mechanic". System prompt, greetings, UI headers, disclaimers, and CTAs all updated. Voice input enabled.
+2. **Manuel homepage presence** — Hero diagnostic section, entry paths, testimonials, footer, and repair page CTAs all reference Manuel instead of generic AI.
+3. **Chat API fixed** — OpenAI GPT-4o-mini is primary provider. Removed `OLLAMA_PRIMARY=1` which was causing 60s+ timeouts. Ollama (`qwen2.5:3b`) remains as fallback.
+4. **Brand consistency fix** — eliminated all `SpotOn Auto` references from titles/schema (10 files)
+5. **Schema validation** — fixed `MonetaryAmount` range strings → `minValue`/`maxValue`
+6. **Auto-generated FAQs** — 3,713 tool pages now have 2-4 unique, relevant Q&As instead of identical generic "Where is this data from?" FAQ
+7. **Generic text filter** — `isGenericTemplateText()` detects and suppresses template filler on vehicle hubs and in schema
+8. **BreadcrumbList schema** — added to vehicle hub pages for cleaner SERP URL display
+9. **GA4 tracking fix** — updated measurement ID to `G-KS1JPX0V7P`, reduced loading delay 3s → 500ms
 
 ### Infrastructure
 - **VPS:** `116.202.210.109` (IPv4 SSH works; IPv6 `2a01:4f8:2200:3291::2` currently failing — use IPv4)
 - **Next.js:** Port 3002, `alloemmanuals-web.service`
 - **nginx cache:** `alloemmanuals_cache` (1GB, 1h TTL). Cache already warmed to ~900 files.
-- **Deploy process:** Commit to GitHub → rsync changed files to VPS `/root/spotonauto.com/` → stop service → `rm -rf .next` → `npm run build` → start service
+- **Deploy process:** Commit to GitHub → rsync changed files to VPS `/root/spotonauto.com/` → stop service → `rm -rf .next` → `npm run build` → **sync `.next/` to `/root/spotonauto.com/.next/`** (service WorkingDirectory) → start service
+- **Nginx cache clear:** `rm -rf /var/cache/nginx/alloemmanuals/* && nginx -s reload`
+- **Critical:** systemd `WorkingDirectory=/root/spotonauto.com/` but builds run in `/root/alloemmanuals.com/`. Always rsync `.next/` to service dir or service will serve stale build.
 - **LMDB backend:** `127.0.0.1:8080` on VPS — sole data source
 
 ### LLM API Status (2026-05-14)
+- **OpenAI:** ✅ WORKING — GPT-4o-mini primary, API key active. Response time ~2-3s.
 - **Gemini:** Quota exhausted (429)
 - **Kimi:** 401 unauthorized
-- **OpenAI:** Quota exhausted
-- **Local fallback (Ollama):** `qwen2.5:7b` at `127.0.0.1:11434` — wired into chat API as primary fallback. Chat is LIVE.
+- **Local fallback (Ollama):** `qwen2.5:3b` at `127.0.0.1:11434` — fallback only (`OLLAMA_PRIMARY=0`). Very slow on VPS (60s+), do NOT use as primary.
 
 ### Content Pipeline
 - **Corpus tool pages:** 3,714 deployed (LEMON fluids data)
@@ -139,6 +144,7 @@ Update it when product decisions, traps, or standing preferences change.
 - GA4 realtime snapshots with heavy `direct / (none)` concentration and large Singapore-style city clusters are not reliable SEO recovery proof.
   Use GSC daily visibility plus GA4 organic sessions / landing pages for recovery reads.
 - **IPv6 SSH to VPS is currently failing** (`Permission denied` on `2a01:4f8:2200:3291::2`). Use IPv4 `116.202.210.109` for all deploys.
+- **systemd WorkingDirectory trap:** `alloemmanuals-web.service` has `WorkingDirectory=/root/spotonauto.com/` but the build may run in `/root/alloemmanuals.com/`. After any build, sync `.next/` to the service's WorkingDirectory or the old build will keep being served. Also, `systemctl restart` can hang if the old `next-server` process doesn't exit cleanly — use `kill -9` on the stale PID if `status` shows `deactivating (final-sigterm)`.
 
 ## Current Durable Changes
 
@@ -494,6 +500,14 @@ The product is NOT a manual browser. It is a **translation layer**:
 - mtbl Rust tools compiled from `lemon-website-source.tar.gz` — can dump keys/values directly
 
 ## Recent Changes (2026-05-14)
+
+### Manuel — AI Factory Mechanic (Deployed 2026-05-14)
+- **Full rebrand:** Generic "AI Technician" → "Manuel — Your Factory-Trained AI Mechanic" across all touchpoints.
+- **System prompt:** Manuel speaks like a real mechanic ("amigo", "boss", "the book calls for..."). Proactive, step-by-step factory flowcharts. Always asks year/make/model first.
+- **UI updates:** Chat header, greetings, disclaimers, placeholder text all Manuel-branded. Voice input enabled (Web Speech API).
+- **Homepage:** Diagnostic section now "Talk to Manuel" with voice-first positioning. Entry paths, testimonials, footer, CEL page, repair CTAs all say "Ask Manuel".
+- **SEO:** `/diagnose` title → "Manuel — AI Factory Mechanic | Diagnose Your Car with OEM Data | AllOEMManuals".
+- **Chat API:** OpenAI GPT-4o-mini is primary provider (~2-3s response). Fixed critical bug where `OLLAMA_PRIMARY=1` caused 60s+ timeouts.
 
 ### SERP CTR & Snippet Quality Improvements
 - **Auto-generated FAQs:** 3,713 tool pages now have unique Q&A (was: identical "Where is this data from?" on every page). FAQPage schema eligibility for rich snippets.

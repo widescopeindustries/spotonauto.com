@@ -3,8 +3,8 @@ import { Metadata } from 'next';
 const OG_IMAGE = 'https://alloemmanuals.com/og-default.svg';
 
 export const metadata: Metadata = {
-  title: 'AI Car Diagnosis | Describe Your Problem, Get Answers | AllOEMManuals',
-  description: 'Describe your car symptoms or enter OBD2 trouble codes for instant AI-powered diagnosis. Get likely causes, repair steps, and cost estimates for your exact vehicle.',
+  title: 'Manuel — AI Factory Mechanic | Diagnose Your Car with OEM Data | AllOEMManuals',
+  description: 'Talk to Manuel, your factory-trained AI mechanic. Describe symptoms, read codes aloud, or ask repair questions. Grounded in real OEM service manuals for your exact year, make, and model.',
   openGraph: {
     images: [OG_IMAGE],
   },

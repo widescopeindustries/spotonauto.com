@@ -4,12 +4,14 @@ export const COMPANY_INFO = {
   city: 'Streetman',
   state: 'TX',
   zip: '75859',
-  phoneDisplay: '682.999.0953',
-  phoneE164: '+16829990953',
-  phoneTel: 'tel:+16829990953',
-  supportEmail: 'support@alloemmanuals.com',
+  phoneDisplay: '469-986-7883',
+  phoneE164: '+14699867883',
+  phoneTel: 'tel:+14699867883',
+  supportEmail: 'info@widescopeindustries.com',
   businessHours: 'Monday–Friday 9 AM – 5 PM CDT',
   sbaVerificationUrl: 'https://search.certifications.sba.gov/profile/ZFMKUREKJF88/9Q5T8?page=1#performance-history',
+  // TODO: Paste your GBP review link here from Google Business Profile dashboard
+  googleReviewUrl: 'https://search.google.com/local/writereview?placeid=PLACEHOLDER',
 } as const;
 
 export function formatBusinessAddress(): string {

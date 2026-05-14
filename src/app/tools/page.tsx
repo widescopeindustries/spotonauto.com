@@ -77,8 +77,8 @@ const TOOLS = [
                 badgeColor: 'bg-purple-500',
             },
             {
-                name: 'AI Diagnostic Chat',
-                description: 'Describe your car problem and get AI-powered diagnosis',
+                name: 'Ask Manuel',
+                description: 'Talk to your factory-trained AI mechanic. Describe symptoms, read codes, or ask repair questions.',
                 href: '/diagnose',
             },
             {

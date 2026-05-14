@@ -71,17 +71,17 @@ export default function EntryPathsSection() {
               </div>
 
               <h3 className="text-xl font-bold text-white group-hover:text-[#FF9500] transition-colors">
-                Factory AI Technician
+                Talk to Manuel
               </h3>
               <p className="mt-2 text-gray-400">
-                Researching a problem you cannot pinpoint? Our AI technician is
-                100% grounded in factory service manuals. Describe the symptom,
-                noise, or warning light and it guides you through the same
-                diagnostic trees the dealership uses.
+                Hey, I'm Manuel — your factory-trained AI mechanic. Tell me what's
+                wrong: read me a code, describe a noise, or just say "it won't start."
+                I'll walk you through the exact diagnostic flowchart from the OEM
+                manual, step by step. No typing required — just talk.
               </p>
 
               <div className="mt-auto flex items-center gap-2 pt-6 text-sm font-medium text-[#FF6B00] group-hover:text-[#FF9500] transition-colors">
-                Start diagnosis
+                Ask Manuel
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>

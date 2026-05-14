@@ -41,7 +41,7 @@ const Footer = () => {
                         <h3 className="text-sm font-semibold text-white mb-4">Tools</h3>
                         <ul className="space-y-3">
                             {[
-                                { href: '/diagnose', label: 'AI Diagnostic Chat', icon: Zap },
+                                { href: '/diagnose', label: 'Ask Manuel', icon: Zap },
                                 { href: '/manual', label: 'Factory Manuals', icon: BookOpen },
                                 { href: '/repair', label: 'Repair Guides', icon: BookOpen },
                                 { href: '/parts', label: 'Parts Finder', icon: Car },
@@ -129,6 +129,35 @@ const Footer = () => {
                                 {COMPANY_INFO.streetAddress}, {COMPANY_INFO.city}, {COMPANY_INFO.state} {COMPANY_INFO.zip}
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                {/* Review CTA */}
+                <div className="mt-8 pt-6 border-t border-white/5">
+                    <div className="max-w-xl mx-auto text-center">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 mb-4">
+                            <span className="text-green-400 text-sm">★★★★★</span>
+                            <span className="text-green-300 text-xs font-semibold uppercase tracking-wider">Help us grow</span>
+                        </div>
+                        <h3 className="text-lg font-bold text-white mb-2">
+                            Found AllOEMManuals helpful?
+                        </h3>
+                        <p className="text-sm text-[#6E6E80] mb-4">
+                            A 30-second review on Google helps other DIYers find exact repair guides for their cars.
+                        </p>
+                        <a
+                            href={COMPANY_INFO.googleReviewUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-black font-bold rounded-lg hover:bg-green-400 transition"
+                        >
+                            <span>★</span>
+                            Leave a 5-Star Review on Google
+                            <span>★</span>
+                        </a>
+                        <p className="mt-3 text-xs text-[#6E6E80]">
+                            Veteran-owned &amp; SDVOSB-certified — your feedback keeps this resource free.
+                        </p>
                     </div>
                 </div>
 

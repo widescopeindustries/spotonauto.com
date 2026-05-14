@@ -92,7 +92,7 @@ export default function RootLayout({
                 "@type": "LocalBusiness",
                 "@id": "https://alloemmanuals.com/#localbusiness",
                 name: "AllOEMManuals",
-                description: "AI-powered automotive repair diagnosis and DIY guides",
+                description: "Manuel — your factory-trained AI mechanic. Free OEM repair guides, DTC codes, wiring diagrams, and torque specs for your exact year, make, and model.",
                 url: "https://alloemmanuals.com",
                 logo: "https://alloemmanuals.com/logo.png",
                 sameAs: [],

@@ -8,12 +8,12 @@ import TerminalTypewriter from '@/components/home/TerminalTypewriter'
 import { useAppStore } from '@/store/useAppStore'
 
 const diagnosticLines = [
-  'Initializing AI diagnostic engine...',
-  'Loading factory service manual database...',
-  'Analyzing 1.4M+ OEM procedures...',
+  'Initializing Manuel — your factory AI mechanic...',
+  'Loading OEM service manual database...',
+  'Analyzing 1.4M+ factory procedures...',
   'Connecting to DTC code library (8,881 codes)...',
-  'AI diagnostic system ready.',
-  'Describe your vehicle symptom to begin analysis.',
+  'Manuel is ready.',
+  'Describe your symptom or read me a code to begin.',
 ]
 
 const exampleSymptoms = [
@@ -105,7 +105,7 @@ export default function DiagnosticSection() {
                 className="w-full py-3 bg-[#5B8DB8]/10 border border-[#5B8DB8]/30 rounded-xl text-[#5B8DB8] font-medium hover:bg-[#5B8DB8]/20 transition-all flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4" />
-                Start AI Diagnosis
+                Ask Manuel
               </button>
             </div>
 

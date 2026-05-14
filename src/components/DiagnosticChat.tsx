@@ -33,10 +33,10 @@ function vehiclesMatch(left: Vehicle, right: Vehicle): boolean {
 
 function buildGreeting(vehicle: Vehicle, initialProblem: string): string {
     if (initialProblem) {
-        return `AllOEMManuals AI is ready. Analyzing your symptom: "${initialProblem}"...`;
+        return `Hey, I'm Manuel — your factory-trained mechanic for the ${vehicle.year} ${vehicle.make} ${vehicle.model}. You mentioned "${initialProblem}". Let me pull the exact diagnostic flowchart from the OEM manual. What do you see or hear right now?`;
     }
 
-    return `AllOEMManuals AI is connected to the ${vehicle.year} ${vehicle.make} ${vehicle.model} database. Please describe the symptom you're experiencing.`;
+    return `Hey, I'm Manuel — your factory-trained mechanic for the ${vehicle.year} ${vehicle.make} ${vehicle.model}. I have the full service manual, wiring diagrams, torque specs, and diagnostic procedures for your car. What's going on with it?`;
 }
 
 // ─── Web Speech API helpers ──────────────────────────────────────────────────
@@ -452,7 +452,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                                 {msg.type === 'system' && (
                                     <div className="mt-4 space-y-3">
                                         <div className="rounded-lg border border-orange-400/35 bg-orange-500/10 p-3 text-xs leading-5 text-orange-100">
-                                            This is AI-generated guidance powered by Kimi. Accuracy is not guaranteed. Cross-reference with your vehicle&apos;s official manual.
+                                            This is AI-generated guidance from Manuel, grounded in factory service manual data. Always verify critical torque specs and safety procedures with your official manual.
                                         </div>
                                         <div className="rounded-lg border border-white/10 bg-black/30 p-3">
                                             <p className="text-[10px] uppercase tracking-[0.16em] text-gray-400">Rate this diagnosis</p>
@@ -560,7 +560,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                                 {canonicalSymptomCluster.likelyTasks.slice(0, 3).map((task) => (
                                     <Link
                                         key={task}
-                                        href={`/repairs/${task}`}
+                                        href={vehicle ? `/vehicles/${vehicle.year}/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase().replace(/\s+/g, '-')}/repair/${task}` : `/repairs/${task}`}
                                         className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-gray-200 hover:border-cyan-400/35 hover:text-cyan-200 transition-all"
                                     >
                                         {task.replace(/-/g, ' ')}
@@ -576,7 +576,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                         type="text"
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
-                        placeholder={typing ? 'Awaiting System Response...' : isListening ? 'Listening... speak now' : 'Enter symptoms, codes, or observations...'}
+                        placeholder={typing ? 'Manuel is thinking...' : isListening ? '🎤 Listening... speak now' : 'Describe symptoms, read me a code, or ask a repair question...'}
                         className="flex-1 rounded-lg border border-neon-cyan/30 bg-black/50 px-4 py-3 font-mono text-sm text-white placeholder-gray-500 transition-all focus:border-neon-cyan focus:outline-none focus:shadow-glow-cyan"
                         disabled={typing || isListening}
                         autoFocus
@@ -613,7 +613,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                 </form>
                 <div className="mt-2 text-center">
                     <span className="font-mono text-[10px] text-gray-500">
-                        THREAD SAVES LOCALLY ON EVERY REPLY // FACTORY MANUAL PROTOCOL ENABLED
+                        MANUEL REMEMBERS THIS CONVERSATION FOR YOUR CAR // SPEAK OR TYPE
                     </span>
                 </div>
                 {statusMessage && (

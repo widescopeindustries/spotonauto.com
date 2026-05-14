@@ -151,7 +151,7 @@ export default function CELLandingPage() {
                     </h1>
 
                     <p className="font-body text-base sm:text-lg text-gray-400 mb-6 max-w-md mx-auto">
-                        Free AI diagnosis. See what the code means, what it costs, and if you can fix it yourself.
+                        Talk to Manuel. He will tell you what the code means, what it costs, and if you can fix it yourself.
                     </p>
 
                     {/* Two-path entry */}
@@ -196,7 +196,7 @@ export default function CELLandingPage() {
                                     onClick={() => setMode('vehicle')}
                                     className="w-full py-3.5 rounded-lg border border-white/10 bg-white/[0.03] text-gray-300 font-body text-sm hover:border-cyan-500/30 hover:text-white transition-all"
                                 >
-                                    Select my vehicle for a full diagnosis
+                                    Select my vehicle and ask Manuel
                                 </button>
                             </div>
                         ) : (
@@ -320,7 +320,7 @@ export default function CELLandingPage() {
 
                     <div className="text-center mt-6 space-y-2">
                         <p className="text-gray-600 font-body text-xs">
-                            Don&apos;t see your code? Enter it above for an instant AI diagnosis.
+                            Don&apos;t see your code? Enter it above and Manuel will diagnose it instantly.
                         </p>
                         <Link
                             href="/codes"

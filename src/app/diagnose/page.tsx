@@ -50,7 +50,10 @@ export default async function DiagnosticPage({
 
     return (
         <>
-            <h1 className="pt-24 mb-4 text-center text-2xl font-display font-bold text-white">What&apos;s Wrong with Your Car?</h1>
+            <h1 className="pt-24 mb-4 text-center text-2xl font-display font-bold text-white">Talk to Manuel — Your Factory-Trained AI Mechanic</h1>
+            <p className="mb-6 text-center text-sm text-gray-400 max-w-xl mx-auto">
+                Describe symptoms, read codes aloud, or ask repair questions. Manuel knows your car&apos;s exact service manual, wiring diagrams, and torque specs.
+            </p>
             <div className="mx-auto mb-6 w-full max-w-4xl px-4">
                 <SafetyWarningBox />
             </div>
@@ -60,7 +63,7 @@ export default async function DiagnosticPage({
                     __html: JSON.stringify({
                         '@context': 'https://schema.org',
                         '@type': 'SoftwareApplication',
-                        name: 'AllOEMManuals AI Diagnostic Tool',
+                        name: 'Manuel — AI Factory Mechanic by AllOEMManuals',
                         applicationCategory: 'AutomotiveApplication',
                         operatingSystem: 'Web',
                         offers: {
@@ -75,11 +78,11 @@ export default async function DiagnosticPage({
             {hasVehicle ? (
                 <div className="flex min-h-[calc(100vh-80px)] w-full flex-col items-center p-4 md:p-8">
                     <h2 className="mb-8 text-2xl font-mono uppercase tracking-widest text-neon-cyan">
-                        AI DIAGNOSIS
+                        MANUEL
                     </h2>
                     <DiagnosticChatRoute />
                     <div className="mt-8 w-full max-w-3xl rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                        <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/80">Example Symptom Flows</p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/80">How Manuel Thinks</p>
                         <div className="mt-4 space-y-3">
                             {EXAMPLE_FLOWS.slice(0, 3).map((flow) => (
                                 <div key={flow.symptom} className="rounded-xl border border-white/10 bg-black/20 p-4">
@@ -117,7 +120,7 @@ export default async function DiagnosticPage({
                 <div className="flex min-h-screen w-full flex-col items-center bg-[#050505] px-4 pt-28 pb-16">
                     <DiagnosticVehicleSelector initialTask={initialTask} initialVin={initialVin} initialMode={initialMode} />
                     <div className="mt-8 w-full max-w-3xl rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                        <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/80">Example Symptom Flows</p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/80">How Manuel Thinks</p>
                         <div className="mt-4 space-y-3">
                             {EXAMPLE_FLOWS.map((flow) => (
                                 <div key={flow.symptom} className="rounded-xl border border-white/10 bg-black/20 p-4">
