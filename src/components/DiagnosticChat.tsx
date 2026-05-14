@@ -365,44 +365,46 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
     const startListening = () => {
         const SpeechRecognitionCtor = getSpeechRecognition();
         if (!SpeechRecognitionCtor) {
+            console.error('[Manuel] SpeechRecognition not available in this browser');
             setSpeechError('network');
             return;
         }
 
         // Stop any existing recognition
         if (recognitionRef.current) {
-            try { recognitionRef.current.stop(); } catch { /* ignore */ }
+            try { recognitionRef.current.abort(); } catch { /* ignore */ }
         }
 
         setSpeechError(null);
         setInterimTranscript('');
 
         const recognition = new SpeechRecognitionCtor();
-        recognition.continuous = true;
+        recognition.continuous = false;
         recognition.interimResults = true;
         recognition.lang = 'en-US';
         recognition.maxAlternatives = 1;
 
-        let finalTranscript = '';
+        let capturedTranscript = '';
 
         recognition.onstart = () => {
+            console.log('[Manuel] 🎤 Speech recognition STARTED');
             setIsListening(true);
             setSpeechError(null);
         };
 
         recognition.onend = () => {
+            console.log('[Manuel] 🎤 Speech recognition ENDED. Captured:', capturedTranscript);
             setIsListening(false);
             setInterimTranscript('');
-            // If we have a final transcript and are not already processing, send it
-            if (finalTranscript.trim() && !typing) {
-                handleUserResponse(finalTranscript.trim());
+            if (capturedTranscript.trim() && !typing) {
+                handleUserResponse(capturedTranscript.trim());
                 setUserInput('');
-                finalTranscript = '';
+                capturedTranscript = '';
             }
         };
 
         recognition.onerror = (event: any) => {
-            console.warn('[Manuel] Speech recognition error:', event.error);
+            console.warn('[Manuel] Speech recognition error:', event.error, event.message);
             setIsListening(false);
             if (event.error !== 'aborted') {
                 setSpeechError(event.error as SpeechError);
@@ -413,15 +415,17 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
             let interim = '';
             let final = '';
             for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    final += event.results[i][0].transcript;
+                const result = event.results[i];
+                if (result.isFinal) {
+                    final += result[0].transcript;
+                    console.log('[Manuel] Final result:', result[0].transcript);
                 } else {
-                    interim += event.results[i][0].transcript;
+                    interim += result[0].transcript;
                 }
             }
             if (final) {
-                finalTranscript += final;
-                setUserInput(finalTranscript);
+                capturedTranscript += final;
+                setUserInput(capturedTranscript);
             }
             setInterimTranscript(interim);
         };
@@ -429,14 +433,16 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         recognitionRef.current = recognition;
 
         try {
+            console.log('[Manuel] Calling recognition.start()...');
             recognition.start();
         } catch (err) {
-            console.warn('[Manuel] Failed to start recognition:', err);
+            console.error('[Manuel] Failed to start recognition:', err);
             setSpeechError('network');
         }
     };
 
     const stopListening = () => {
+        console.log('[Manuel] Stopping recognition...');
         if (recognitionRef.current) {
             try { recognitionRef.current.stop(); } catch { /* ignore */ }
         }
@@ -444,25 +450,38 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
         setInterimTranscript('');
     };
 
-    // Push-to-talk handlers
-    const handleMicPointerDown = (e: React.PointerEvent) => {
-        e.preventDefault();
+    // Toggle listening on click (primary interaction)
+    const handleMicClick = () => {
         if (typing || !speechSupported) return;
-        startListening();
-        // Capture pointer so release works even if cursor leaves button
-        (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    };
-
-    const handleMicPointerUp = (e: React.PointerEvent) => {
-        e.preventDefault();
         if (isListening) {
             stopListening();
+        } else {
+            startListening();
         }
     };
 
-    const handleMicPointerLeave = (e: React.PointerEvent) => {
-        // Don't stop on leave — user might drag finger while holding
-        // Only stop on explicit pointer up
+    // Also support push-to-hold on pointer down/up for mobile
+    const micPressStartRef = useRef<number>(0);
+    const handleMicPointerDown = (e: React.PointerEvent) => {
+        micPressStartRef.current = Date.now();
+        if (typing || !speechSupported || isListening) return;
+        // Small delay to distinguish click from hold
+        setTimeout(() => {
+            if (micPressStartRef.current > 0 && !isListening) {
+                startListening();
+            }
+        }, 200);
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    };
+
+    const handleMicPointerUp = () => {
+        const pressDuration = Date.now() - micPressStartRef.current;
+        micPressStartRef.current = 0;
+        // If held for > 300ms, treat as push-to-talk release
+        if (pressDuration > 300 && isListening) {
+            stopListening();
+        }
+        // Otherwise it's a click — handleMicClick will handle toggle
     };
 
     return (
@@ -474,11 +493,11 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                     <div className="h-2 w-2 rounded-full bg-neon-cyan animate-pulse" />
                     <div>
                         <h3 className="font-mono text-sm tracking-widest text-neon-cyan">
-                            AI DIAGNOSTIC CORE v3.0 // {vehicle?.model || 'UNLINKED'}
+                            MANUEL // {vehicle?.year} {vehicle?.make} {vehicle?.model || 'NO VEHICLE LINKED'}
                         </h3>
                         <div className="mt-1 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-cyan-200/80">
                             <HardDrive className="h-3.5 w-3.5" />
-                            <span>Persistent memory active</span>
+                            <span>Factory manual memory active</span>
                         </div>
                     </div>
                 </div>
@@ -713,16 +732,17 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                         <button
                             ref={micButtonRef}
                             type="button"
+                            onClick={handleMicClick}
                             onPointerDown={handleMicPointerDown}
                             onPointerUp={handleMicPointerUp}
                             onPointerCancel={handleMicPointerUp}
                             disabled={typing}
                             className={`flex items-center justify-center rounded-lg border px-4 transition-all select-none disabled:cursor-not-allowed disabled:opacity-50 ${
                                 isListening
-                                    ? 'border-cyan-400 bg-cyan-500/20 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.3)]'
+                                    ? 'border-cyan-400 bg-cyan-500/20 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.3)] animate-pulse'
                                     : 'border-gray-600 bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 active:bg-gray-600/50'
                             }`}
-                            title={isListening ? 'Release to send' : 'Hold to speak'}
+                            title={isListening ? 'Tap to send' : 'Tap to speak'}
                             style={{ touchAction: 'none' }}
                         >
                             {isListening ? <Mic className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
