@@ -509,6 +509,7 @@ The product is NOT a manual browser. It is a **translation layer**:
 - **SEO:** `/diagnose` title → "Manuel — AI Factory Mechanic | Diagnose Your Car with OEM Data | AllOEMManuals".
 - **Chat API:** OpenAI GPT-4o-mini is primary provider (~2-3s response). Fixed critical bug where `OLLAMA_PRIMARY=1` caused 60s+ timeouts.
 - **Voice input:** Rebuilt from click-to-toggle to push-to-hold. Hold mic button → speak → release to send. Waveform animation + real-time interim transcription + clear error messages (permission denied, no-speech, network). Uses pointer events for desktop + mobile.
+- **CRITICAL FIX:** `LOCAL_DATABASE_URL` was **commented out** in `.env.local` on the VPS. Manuel had zero access to the 1.8M-row factory manual database. Uncommented and verified — corpus search now returns real OEM sections (e.g. 5 sections for "2010 Toyota Camry P0420").
 
 ### SERP CTR & Snippet Quality Improvements
 - **Auto-generated FAQs:** 3,713 tool pages now have unique Q&A (was: identical "Where is this data from?" on every page). FAQPage schema eligibility for rich snippets.
