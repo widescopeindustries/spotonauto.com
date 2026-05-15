@@ -140,14 +140,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!page) return { title: 'Tool Not Found' };
 
     // CTR-optimized title: put the answer in the title so it stands out in SERP
-    // e.g. "VW Tiguan Coolant: G12evo/G13 Pink (50/50 Mix) | AllOEMManuals"
+    // Keep total ≤60 chars so nothing gets truncated by search engines.
     const quickSnippet = page.quickAnswer
         ? page.quickAnswer.replace(/\s+/g, ' ').trim().replace(/\.$/, '')
         : '';
     const baseTitle = page.title.replace(/\s*\|\s*AllOEMManuals$/, '').replace(/\s*\|\s*All Years Guide$/, '');
-    const title = quickSnippet
-        ? `${baseTitle}: ${quickSnippet.split('.')[0]} | AllOEMManuals`
-        : page.title;
+
+    function trunc(s: string, n: number): string {
+        return s.length > n ? s.slice(0, n - 1) + '…' : s;
+    }
+
+    let title: string;
+    if (quickSnippet) {
+        const snippet = trunc(quickSnippet.split('.')[0], 28);
+        const shortBase = trunc(baseTitle, 26);
+        const candidate = `${shortBase}: ${snippet} | AllOEMManuals`;
+        title = candidate.length <= 62 ? candidate : `${shortBase} | AllOEMManuals`;
+    } else {
+        title = `${trunc(baseTitle, 44)} | AllOEMManuals`;
+    }
 
     // Lead description with the quick answer so actual specs appear in SERP snippet
     const baseDescription = page.description.replace(/\s+/g, ' ').trim();
