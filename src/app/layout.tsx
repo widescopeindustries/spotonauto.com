@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Inter, Space_Grotesk } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
@@ -7,6 +8,9 @@ import AnalyticsScripts from "@/components/AnalyticsScripts";
 import TrackingScript from "@/components/TrackingScript";
 import { COMPANY_INFO } from "@/lib/companyInfo";
 // SpotOnGuide moved into Providers (client component) for lazy loading
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://alloemmanuals.com'),
@@ -49,12 +53,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" media="print" onLoad="this.media='all'" />
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt — AI crawler context for AllOEMManuals" />
       </head>
-      <body className="bg-[#050507] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-[#FF6B00] selection:text-white">
+      <body className={`bg-[#050507] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-[#FF6B00] selection:text-white ${inter.variable} ${spaceGrotesk.variable}`}>
         <AnalyticsScripts />
 
         {/* Organization + WebSite schema — global site identity for Google */}

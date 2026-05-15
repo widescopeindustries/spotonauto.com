@@ -81,10 +81,10 @@ export default {
         charcoal: "#0a0a0a",
       },
       fontFamily: {
-        display: ["var(--font-display)", "sans-serif"],
-        body: ["var(--font-body)", "sans-serif"],
-        ui: ["var(--font-ui)", "sans-serif"],
-        sans: ["var(--font-ui)", "sans-serif"],
+        display: ["var(--font-space-grotesk)", "sans-serif"],
+        body: ["var(--font-inter)", "sans-serif"],
+        ui: ["var(--font-inter)", "sans-serif"],
+        sans: ["var(--font-inter)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
       borderRadius: {
