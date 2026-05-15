@@ -8,6 +8,7 @@ import {
     getToolPagesForType,
     getToolPagesForVehicle,
     getRelatedRepairLinks,
+    getConciseQuickAnswer,
 } from '@/data/tools-pages';
 import AdUnit from '@/components/AdUnit';
 import ToolManualConfirmation from '@/components/ToolManualConfirmation';
@@ -139,22 +140,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const page = getToolPage(slug);
     if (!page) return { title: 'Tool Not Found' };
 
-    // CTR-optimized title: put the answer in the title so it stands out in SERP
-    // Keep total ≤60 chars so nothing gets truncated by search engines.
-    const quickSnippet = page.quickAnswer
-        ? page.quickAnswer.replace(/\s+/g, ' ').trim().replace(/\.$/, '')
-        : '';
+    // CTR-optimized title: use the concise spec (e.g. "0W-20 Oil") from the
+    // newest generation so the title stays under 60 chars and the answer is
+    // visible in the SERP.
     const baseTitle = page.title.replace(/\s*\|\s*AllOEMManuals$/, '').replace(/\s*\|\s*All Years Guide$/, '');
+
+    // Pick the newest generation year for a concise spec extraction
+    const newestGen = page.generations[0];
+    const newestYear = newestGen
+        ? parseInt(newestGen.years.split('-').pop()?.trim() || '2020', 10)
+        : 2020;
+    const conciseSpec = getConciseQuickAnswer(newestYear, page);
 
     function trunc(s: string, n: number): string {
         return s.length > n ? s.slice(0, n - 1) + '…' : s;
     }
 
     let title: string;
-    if (quickSnippet) {
-        const snippet = trunc(quickSnippet.split('.')[0], 28);
-        const shortBase = trunc(baseTitle, 26);
-        const candidate = `${shortBase}: ${snippet} | AllOEMManuals`;
+    if (conciseSpec) {
+        const shortBase = trunc(baseTitle, 28);
+        const shortSpec = trunc(conciseSpec, 24);
+        const candidate = `${shortBase}: ${shortSpec} | AllOEMManuals`;
         title = candidate.length <= 62 ? candidate : `${shortBase} | AllOEMManuals`;
     } else {
         title = `${trunc(baseTitle, 44)} | AllOEMManuals`;
@@ -162,7 +168,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     // Lead description with the quick answer so actual specs appear in SERP snippet
     const baseDescription = page.description.replace(/\s+/g, ' ').trim();
-    const answerText = quickSnippet;
+    const answerText = page.quickAnswer ? page.quickAnswer.replace(/\s+/g, ' ').trim().replace(/\.$/, '') : '';
     const supportText = 'Use the exact vehicle page to confirm fitment, compare related repair paths, and build the one-trip parts list before you start.';
     const description = [baseDescription, answerText, supportText].filter(Boolean).join(' ');
 
