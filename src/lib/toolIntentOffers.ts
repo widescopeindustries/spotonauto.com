@@ -1,4 +1,4 @@
-import type { ToolGeneration, ToolPage } from '@/data/tools-pages';
+import type { ToolGeneration, ToolPage, ToolType } from '@/data/tools-pages';
 
 export interface ToolIntentOffer {
   id: string;
@@ -1823,7 +1823,7 @@ function toolSpecificHighlights(page: ToolPage): ToolSpecHighlight[] {
   const entries = getSpecEntries(page);
   if (!entries.length) return [];
 
-  const keyPriority: Record<ToolPage['toolType'], string[]> = {
+  const keyPriority: Record<ToolType, string[]> = {
     'oil-type': ['Recommended Oil', 'Oil Type', 'Capacity', 'Filter', 'Interval'],
     'battery-location': ['Location', 'Battery Size', 'CCA', 'Type'],
     'tire-size': ['Tire Size', 'Pressure', 'Bolt Pattern'],

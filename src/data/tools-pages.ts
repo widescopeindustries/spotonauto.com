@@ -305,17 +305,20 @@ export function getConciseQuickAnswer(year: number, toolPage: ToolPage): string 
   return t && !isGenericTemplateText(t) ? t : null;
 }
 
+export type ToolType = 'oil-type' | 'battery-location' | 'tire-size' | 'serpentine-belt' | 'headlight-bulb' | 'fluid-capacity' | 'spark-plug-type' | 'wiper-blade-size' | 'coolant-type' | 'transmission-fluid-type' | 'brake-fluid-type';
+
 export interface ToolPage {
     slug: string;
     make: string;
     model: string;
-    toolType: 'oil-type' | 'battery-location' | 'tire-size' | 'serpentine-belt' | 'headlight-bulb' | 'fluid-capacity' | 'spark-plug-type' | 'wiper-blade-size' | 'coolant-type' | 'transmission-fluid-type' | 'brake-fluid-type';
+    toolType: ToolType;
     title: string;
     description: string;
     keywords: string[];
     quickAnswer: string;       // one-line answer for featured snippet
     generations: ToolGeneration[];
     faq: ToolFAQ[];
+    isDynamic?: boolean;       // true if generated on-demand from corpus
 }
 
 // ─── Tool type display config ──────────────────────────────────────
@@ -1826,8 +1829,6 @@ const highIntentPages: ToolPage[] = [
 
 import { generateAllToolPages } from './tool-machine.ts';
 import { VALID_TASKS, VEHICLE_PRODUCTION_YEARS } from './vehicles.ts';
-
-export type ToolType = ToolPage['toolType'];
 
 export interface ToolRepairLink {
     task: string;

@@ -3,13 +3,13 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
     getHighPriorityToolPages,
-    getToolPage,
     TOOL_TYPE_META,
     getToolPagesForType,
     getToolPagesForVehicle,
     getRelatedRepairLinks,
     getConciseQuickAnswer,
 } from '@/data/tools-pages';
+import { getToolPageAsync, type ToolPageResult } from '@/lib/dynamicToolPage';
 import AdUnit from '@/components/AdUnit';
 import ToolManualConfirmation from '@/components/ToolManualConfirmation';
 import MaintenanceSupplies from '@/components/MaintenanceSupplies';
@@ -137,8 +137,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
-    const page = getToolPage(slug);
-    if (!page) return { title: 'Tool Not Found' };
+    const result = await getToolPageAsync(slug);
+    if (!result) return { title: 'Tool Not Found' };
+    const { page, quality } = result;
 
     // CTR-optimized title: use the concise spec (e.g. "0W-20 Oil") from the
     // newest generation so the title stays under ~70 chars and the answer is
@@ -178,10 +179,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const supportText = 'Use the exact vehicle page to confirm fitment, compare related repair paths, and build the one-trip parts list before you start.';
     const description = [baseDescription, answerText, supportText].filter(Boolean).join(' ');
 
+    const robots = quality === 'medium'
+        ? { index: false, follow: true }
+        : undefined;
+
     return {
         title,
         description,
         keywords: page.keywords,
+        robots,
         openGraph: {
             title,
             description,
@@ -201,8 +207,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ToolPage({ params }: PageProps) {
     const { slug } = await params;
-    const page = getToolPage(slug);
-    if (!page) notFound();
+    const result = await getToolPageAsync(slug);
+    if (!result) notFound();
+    const { page, quality } = result;
 
     const makeSlug = page.make.toLowerCase().replace(/\s+/g, '-');
     const modelSlug = page.model.toLowerCase().replace(/\s+/g, '-');
@@ -355,6 +362,19 @@ export default async function ToolPage({ params }: PageProps) {
                         Last updated: {schemaDate} • Reading time: 8 min • By AllOEMManuals Editorial Team
                     </p>
                 </div>
+
+                {page.isDynamic && (
+                    <div className="mb-8 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 flex items-start gap-3">
+                        <span className="text-amber-400 text-lg mt-0.5">⚡</span>
+                        <div>
+                            <p className="text-amber-200 text-sm font-medium">Factory Manual Data — Live Extraction</p>
+                            <p className="text-amber-200/70 text-xs mt-1">
+                                This page was generated on-demand from our 1.1TB service manual archive.
+                                Structured specs are being verified. Always cross-check with your factory manual before ordering parts.
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 <div className="answer-box">
                     <h2>Quick Answer</h2>

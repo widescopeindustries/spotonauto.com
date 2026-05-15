@@ -12,7 +12,7 @@
 import fs from 'fs';
 import path from 'path';
 import { NOINDEX_MAKES, isNonUsModel, VEHICLE_PRODUCTION_YEARS, isEvModel } from './vehicles.ts';
-import type { ToolPage, ToolGeneration, ToolFAQ } from './tools-pages.ts';
+import type { ToolPage, ToolType, ToolGeneration, ToolFAQ } from './tools-pages.ts';
 
 // ── Corpus loading ───────────────────────────────────────────────────
 
@@ -311,7 +311,7 @@ function generateToolPage(make: string, model: string, typeKey: string): ToolPag
     slug,
     make,
     model,
-    toolType: typeKey as ToolPage['toolType'],
+    toolType: typeKey as ToolType,
     title: template.titleTemplate.replace('{make}', make).replace('{model}', model),
     description: template.descTemplate.replace(/{make}/g, make).replace(/{model}/g, model),
     keywords: template.keywordTemplates(make, model),
