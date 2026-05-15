@@ -68,6 +68,12 @@ function buildSpecsSnippet(year: number, toolPages: ReturnType<typeof getToolPag
   return joined.length > 80 ? joined.slice(0, 79) + '…' : joined;
 }
 
+function humanizeTask(slug: string): string {
+  return slug
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { year, make, model } = await params;
   const identity = canonicalizeVehicleIdentity({
@@ -82,15 +88,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const toolPages = getToolPagesForVehicle(identity.make, identity.model);
   const specsSnippet = buildSpecsSnippet(yearNum, toolPages);
 
+  // Load repair profiles for a more specific fallback title
+  const repairProfiles = getProfilesForVehicle(yearNum, identity.make, identity.model);
+  const topRepairTasks = repairProfiles.slice(0, 4).map((p) => humanizeTask(p.task));
+
   let title: string;
   let description: string;
 
   if (specsSnippet) {
     title = `${vehicleLabel} — ${specsSnippet} | AllOEMManuals`;
     description = `OEM specs for the ${vehicleLabel}: ${specsSnippet}. Factory diagnostic trouble codes, wiring diagrams, torque specs, maintenance schedule, and step-by-step repair guides.`;
+  } else if (topRepairTasks.length > 0) {
+    const tasksText = topRepairTasks.length > 2
+      ? `${topRepairTasks.slice(0, 2).join(', ')} & More`
+      : topRepairTasks.join(', ');
+    title = `${vehicleLabel} — ${tasksText} | AllOEMManuals`;
+    description = `DIY repair hub for the ${vehicleLabel}. Step-by-step guides for ${topRepairTasks.join(', ')}, and more. Factory diagnostic trouble codes, wiring diagrams, torque specs, and maintenance schedules.`;
   } else {
-    title = `${vehicleLabel} — Factory Manual, Diagnostics & Repair Hub | AllOEMManuals`;
-    description = `Complete factory service manual hub for the ${vehicleLabel}. Access OEM diagnostic trouble codes, wiring diagrams, step-by-step repair guides, maintenance schedules, and AI-powered diagnostics.`;
+    title = `${vehicleLabel} Repair Guides, DTC Codes & Factory Specs | AllOEMManuals`;
+    description = `DIY repair hub for the ${vehicleLabel}. Factory diagnostic trouble codes, wiring diagrams, torque specs, maintenance schedules, and step-by-step repair guides.`;
   }
 
   return {
@@ -131,6 +147,14 @@ export default async function VehicleLanePage({ params }: PageProps) {
   // Load corpus tool pages for this vehicle (oil-type, tire-size, etc.)
   const toolPages = getToolPagesForVehicle(identity.make, identity.model);
 
+  // Filter out generic template text so SERP snippets stay clean
+  const cleanToolPages = toolPages.map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    toolType: p.toolType,
+    quickAnswer: getConciseQuickAnswer(yearNum, p) || '',
+  })).filter((p) => p.quickAnswer.length > 0);
+
   // Top DTCs for server-rendered snippet
   const topDtcs = (data?.dtcCodes ?? []).slice(0, 6);
 
@@ -139,6 +163,21 @@ export default async function VehicleLanePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://alloemmanuals.com' },
+              { '@type': 'ListItem', position: 2, name: 'Vehicles', item: 'https://alloemmanuals.com/vehicles' },
+              { '@type': 'ListItem', position: 3, name: identity.displayMake, item: `https://alloemmanuals.com/vehicles/${year}/${slugifyRoutePart(make)}` },
+              { '@type': 'ListItem', position: 4, name: displayName, item: `https://alloemmanuals.com/vehicles/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}` },
+            ],
+          }),
+        }}
+      />
       <section className="py-12 px-4 max-w-5xl mx-auto">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
@@ -164,7 +203,9 @@ export default async function VehicleLanePage({ params }: PageProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {toolPages.slice(0, 6).map((tp) => {
                 const meta = TOOL_TYPE_META[tp.toolType];
-                const displayAnswer = getConciseQuickAnswer(yearNum, tp) || tp.quickAnswer;
+                const concise = getConciseQuickAnswer(yearNum, tp);
+                // Skip cards with no real data — generic text poisons SERP snippets
+                if (!concise) return null;
                 return (
                   <Link
                     key={tp.slug}
@@ -174,11 +215,11 @@ export default async function VehicleLanePage({ params }: PageProps) {
                     <span className="text-xl shrink-0">{meta?.icon ?? '🔧'}</span>
                     <div className="min-w-0">
                       <div className="text-xs text-gray-500">{meta?.label ?? tp.toolType}</div>
-                      <div className="text-sm font-medium text-white truncate">{displayAnswer}</div>
+                      <div className="text-sm font-medium text-white truncate">{concise}</div>
                     </div>
                   </Link>
                 );
-              })}
+              }).filter(Boolean)}
             </div>
           </div>
         )}
@@ -248,12 +289,7 @@ export default async function VehicleLanePage({ params }: PageProps) {
             task: p.task,
             title: p.profile.supportNote?.title || p.task.replace(/-/g, ' '),
           }))}
-          toolPages={toolPages.map((p) => ({
-            slug: p.slug,
-            title: p.title,
-            toolType: p.toolType,
-            quickAnswer: getConciseQuickAnswer(yearNum, p) || p.quickAnswer,
-          }))}
+          toolPages={cleanToolPages}
         />
 
         {/* Cross-links */}

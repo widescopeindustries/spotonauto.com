@@ -90,6 +90,26 @@ function truncate(text: string, maxLen: number): string {
   return t.length > maxLen ? t.slice(0, maxLen - 1) + '…' : t;
 }
 
+/** Detect generic/template text that was auto-filled when exact corpus data is missing.
+ *  Such text hurts SERP snippets because Google uses it instead of the meta description. */
+function isGenericTemplateText(text: string): boolean {
+  const t = text.toLowerCase();
+  // Generic year-range qualifiers that indicate template filler
+  if (t.includes('newer models') && t.includes('older ones')) return true;
+  if (t.includes('newer models') && t.includes('older models')) return true;
+  // Generic "uses synthetic motor oil" without specific viscosity
+  if (/uses? synthetic motor oil/.test(t) && !/\dW-\d/.test(t)) return true;
+  // Generic "typically" without a concrete spec
+  if (t.startsWith('the ') && t.includes('typically') && !/\d+(\.\d+)?/.test(t)) return true;
+  // Long descriptive sentences without numbers (real specs always have numbers)
+  if (t.length > 80 && !/\d/.test(t)) return true;
+  // Vague "check your" or "refer to your owner's manual" disclaimers
+  if (/owner's manual|owners manual|check your|refer to your|varies by|depends on|consult your/i.test(t)) return true;
+  // Model-name-only sentences without specs (e.g. "The Ford Fusion uses...")
+  if (t.startsWith('the ') && t.length > 50 && !/\d+(\.\d+)?/.test(t)) return true;
+  return false;
+}
+
 function extractAfterDelimiter(text: string): string | null {
   // Corpus specs often use "1.90 QTS. — TOYOTA Super Long Life Coolant..."
   const match = text.match(/[:—\-]\s*(.+)/);
@@ -101,7 +121,7 @@ export function getYearSpecificQuickAnswer(year: number, toolPage: ToolPage): st
   if (!gen) return null;
 
   const firstSpecValue = Object.values(gen.specs)[0] || '';
-  if (!firstSpecValue) return null;
+  if (!firstSpecValue || isGenericTemplateText(firstSpecValue)) return null;
 
   switch (toolPage.toolType) {
     case 'oil-type': {
@@ -111,15 +131,18 @@ export function getYearSpecificQuickAnswer(year: number, toolPage: ToolPage): st
       if (visc && cap) return `${visc} Oil (${cap})`;
       if (visc) return `${visc} Oil`;
       if (cap) return `Oil: ${cap}`;
-      return truncate(val, 40) || truncate(firstSpecValue, 40);
+      const truncated = truncate(val, 40) || truncate(firstSpecValue, 40);
+      return truncated && !isGenericTemplateText(truncated) ? truncated : null;
     }
     case 'coolant-type': {
       const val = findSpecValue(gen, ['Coolant', 'Antifreeze']);
+      if (val && isGenericTemplateText(val)) return null;
       const type = extractCoolantType(val);
       if (type) return `${type} Coolant`;
       const after = extractAfterDelimiter(val);
       if (after) return truncate(after, 40);
-      return truncate(val, 40) || truncate(firstSpecValue, 40);
+      const truncated = truncate(val, 40) || truncate(firstSpecValue, 40);
+      return truncated && !isGenericTemplateText(truncated) ? truncated : null;
     }
     case 'fluid-capacity': {
       const val = findSpecValue(gen, ['Engine Oil', 'Coolant', 'Transmission']);
@@ -191,7 +214,8 @@ export function getConciseQuickAnswer(year: number, toolPage: ToolPage): string 
       if (after) {
         const visc2 = extractViscosity(after);
         if (visc2) return `${visc2} Oil`;
-        return truncate(after, 35);
+        const t = truncate(after, 35);
+        if (t && !isGenericTemplateText(t)) return t;
       }
       break;
     }
@@ -202,7 +226,8 @@ export function getConciseQuickAnswer(year: number, toolPage: ToolPage): string 
       if (after) {
         const type2 = extractCoolantType(after);
         if (type2) return `${type2} Coolant`;
-        return truncate(after, 35);
+        const t = truncate(after, 35);
+        if (t && !isGenericTemplateText(t)) return t;
       }
       break;
     }
@@ -237,7 +262,10 @@ export function getConciseQuickAnswer(year: number, toolPage: ToolPage): string 
     }
     case 'battery-location': {
       const after = extractAfterDelimiter(qa);
-      if (after) return truncate(after, 35);
+      if (after) {
+        const t = truncate(after, 35);
+        if (t && !isGenericTemplateText(t)) return t;
+      }
       break;
     }
     case 'wiper-blade-size': {
@@ -247,23 +275,34 @@ export function getConciseQuickAnswer(year: number, toolPage: ToolPage): string 
     }
     case 'headlight-bulb': {
       const after = extractAfterDelimiter(qa);
-      if (after) return truncate(after, 35);
+      if (after) {
+        const t = truncate(after, 35);
+        if (t && !isGenericTemplateText(t)) return t;
+      }
       break;
     }
     case 'brake-fluid-type': {
       const dot = qa.match(/\b(DOT\s*\d)\b/i);
       if (dot) return dot[1].toUpperCase();
       const after = extractAfterDelimiter(qa);
-      if (after) return truncate(after, 35);
+      if (after) {
+        const t = truncate(after, 35);
+        if (t && !isGenericTemplateText(t)) return t;
+      }
       break;
     }
   }
 
   // 3. Generic fallback: text after first colon/em-dash, or first sentence
+  // Reject generic template text — it poisons SERP snippets.
   const after = extractAfterDelimiter(qa);
-  if (after) return truncate(after, 35);
+  if (after) {
+    const t = truncate(after, 35);
+    if (t && !isGenericTemplateText(t)) return t;
+  }
   const sentence = qa.split(/[.!?](?:\s|$)/)[0];
-  return truncate(sentence, 35) || null;
+  const t = truncate(sentence, 35);
+  return t && !isGenericTemplateText(t) ? t : null;
 }
 
 export interface ToolPage {
