@@ -9,8 +9,7 @@
  *   malibu-serpentine-belt              → Chevrolet / Malibu / serpentine-belt (inferred make)
  */
 
-import fs from 'fs';
-import path from 'path';
+import validatedVehicles from '@/data/validated-vehicles.json';
 
 // ─── Known tool types (must match ToolPage.toolType union) ──────────
 
@@ -30,7 +29,7 @@ export const KNOWN_TOOL_TYPES = [
 
 export type KnownToolType = (typeof KNOWN_TOOL_TYPES)[number];
 
-// ─── Load validated vehicles for make/model lookup ──────────────────
+// ─── Types ──────────────────────────────────────────────────────────
 
 interface VehicleYearInfo {
   start: number;
@@ -46,67 +45,45 @@ export interface ParsedSlug {
   yearEnd: number;
 }
 
-const VALIDATED_PATH = path.join(process.cwd(), 'src', 'data', 'validated-vehicles.json');
+// ─── Build lookup tables from imported JSON ─────────────────────────
 
-let makeList: Array<{ make: string; slug: string }> | null = null;
-let modelMap: Map<string, Array<{ make: string; model: string; start: number; end: number }>> | null = null;
-let makeToModels: Map<string, Array<{ model: string; slug: string; start: number; end: number }>> | null = null;
+const rawData = validatedVehicles as Record<string, Record<string, VehicleYearInfo>>;
 
-function loadValidated(): void {
-  if (makeList && modelMap && makeToModels) return;
+const makeList: Array<{ make: string; slug: string }> = [];
+const modelMap = new Map<string, Array<{ make: string; model: string; start: number; end: number }>>();
+const makeToModels = new Map<string, Array<{ model: string; slug: string; start: number; end: number }>>();
 
-  try {
-    const raw = JSON.parse(fs.readFileSync(VALIDATED_PATH, 'utf8')) as Record<string, Record<string, VehicleYearInfo>>;
+for (const [make, modelObj] of Object.entries(rawData)) {
+  const makeSlug = make.toLowerCase().replace(/\s+/g, '-');
+  makeList.push({ make, slug: makeSlug });
+  makeToModels.set(make, []);
 
-    const makes: Array<{ make: string; slug: string }> = [];
-    const models = new Map<string, Array<{ make: string; model: string; start: number; end: number }>>();
-    const makeModels = new Map<string, Array<{ model: string; slug: string; start: number; end: number }>>();
-
-    for (const [make, modelObj] of Object.entries(raw)) {
-      const makeSlug = make.toLowerCase().replace(/\s+/g, '-');
-      makes.push({ make, slug: makeSlug });
-      makeModels.set(make, []);
-
-      for (const [model, info] of Object.entries(modelObj)) {
-        const modelSlug = model.toLowerCase().replace(/\s+/g, '-');
-        if (!models.has(modelSlug)) {
-          models.set(modelSlug, []);
-        }
-        models.get(modelSlug)!.push({
-          make,
-          model,
-          start: info.start,
-          end: info.end,
-        });
-        makeModels.get(make)!.push({
-          model,
-          slug: modelSlug,
-          start: info.start,
-          end: info.end,
-        });
-      }
+  for (const [model, info] of Object.entries(modelObj)) {
+    const modelSlug = model.toLowerCase().replace(/\s+/g, '-');
+    if (!modelMap.has(modelSlug)) {
+      modelMap.set(modelSlug, []);
     }
-
-    // Sort makes by slug length descending so "mercedes-benz" matches before "benz"
-    makes.sort((a, b) => b.slug.length - a.slug.length);
-
-    makeList = makes;
-    modelMap = models;
-    makeToModels = makeModels;
-  } catch (err) {
-    console.error('[slugParser] Failed to load validated-vehicles.json:', err);
-    makeList = [];
-    modelMap = new Map();
-    makeToModels = new Map();
+    modelMap.get(modelSlug)!.push({
+      make,
+      model,
+      start: info.start,
+      end: info.end,
+    });
+    makeToModels.get(make)!.push({
+      model,
+      slug: modelSlug,
+      start: info.start,
+      end: info.end,
+    });
   }
 }
+
+// Sort makes by slug length descending so "mercedes-benz" matches before "benz"
+makeList.sort((a, b) => b.slug.length - a.slug.length);
 
 // ─── Find best model match for a make + model slug ──────────────────
 
 function findBestModelForMake(make: string, modelSlug: string): { model: string; start: number; end: number } | null {
-  loadValidated();
-  if (!makeToModels) return null;
-
   const candidates = makeToModels.get(make);
   if (!candidates || candidates.length === 0) return null;
 
@@ -118,7 +95,7 @@ function findBestModelForMake(make: string, modelSlug: string): { model: string;
   const prefix = candidates.find((c) => modelSlug.startsWith(c.slug + '-') || c.slug.startsWith(modelSlug + '-'));
   if (prefix) return { model: prefix.model, start: prefix.start, end: prefix.end };
 
-  // Try substring match (e.g., "3-series" might match "328i" indirectly — but let's be careful)
+  // Try substring match
   const partial = candidates.find((c) => c.slug.includes(modelSlug) || modelSlug.includes(c.slug));
   if (partial) return { model: partial.model, start: partial.start, end: partial.end };
 
@@ -128,12 +105,8 @@ function findBestModelForMake(make: string, modelSlug: string): { model: string;
 // ─── Find make by model slug (when make prefix is missing) ──────────
 
 function findMakeByModel(modelSlug: string): { make: string; model: string; start: number; end: number } | null {
-  loadValidated();
-  if (!modelMap) return null;
-
   const candidates = modelMap.get(modelSlug);
   if (candidates && candidates.length > 0) {
-    // Return the most common one (first in the list, or the one with the widest year range)
     const best = candidates.reduce((a, b) => (b.end - b.start > a.end - a.start ? b : a));
     return { make: best.make, model: best.model, start: best.start, end: best.end };
   }
@@ -152,9 +125,6 @@ function findMakeByModel(modelSlug: string): { make: string; model: string; star
 // ─── Public API ─────────────────────────────────────────────────────
 
 export function parseToolSlug(slug: string): ParsedSlug | null {
-  loadValidated();
-  if (!makeList || !makeToModels) return null;
-
   // 1. Match tool type suffix (longest first to avoid partial matches)
   const sortedToolTypes = [...KNOWN_TOOL_TYPES].sort((a, b) => b.length - a.length);
   let matchedToolType: KnownToolType | null = null;
