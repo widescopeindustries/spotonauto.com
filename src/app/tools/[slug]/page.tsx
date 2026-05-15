@@ -141,9 +141,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!page) return { title: 'Tool Not Found' };
 
     // CTR-optimized title: use the concise spec (e.g. "0W-20 Oil") from the
-    // newest generation so the title stays under 60 chars and the answer is
+    // newest generation so the title stays under ~70 chars and the answer is
     // visible in the SERP.
-    const baseTitle = page.title.replace(/\s*\|\s*AllOEMManuals$/, '').replace(/\s*\|\s*All Years Guide$/, '');
+    let baseTitle = page.title.replace(/\s*\|\s*AllOEMManuals$/, '').replace(/\s*\|\s*All Years Guide$/, '');
+    // Strip verbose suffixes that eat title space without adding click value
+    baseTitle = baseTitle
+        .replace(/\s+Location by Year$/i, '')
+        .replace(/\s+Type & Capacity$/i, '')
+        .replace(/\s+by Year$/i, '')
+        .replace(/\s+Type$/i, '');
 
     // Pick the newest generation year for a concise spec extraction
     const newestGen = page.generations[0];
@@ -159,11 +165,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     let title: string;
     if (conciseSpec) {
         const shortBase = trunc(baseTitle, 28);
-        const shortSpec = trunc(conciseSpec, 24);
+        const shortSpec = trunc(conciseSpec, 26);
         const candidate = `${shortBase}: ${shortSpec} | AllOEMManuals`;
-        title = candidate.length <= 62 ? candidate : `${shortBase} | AllOEMManuals`;
+        title = candidate.length <= 70 ? candidate : `${shortBase} | AllOEMManuals`;
     } else {
-        title = `${trunc(baseTitle, 44)} | AllOEMManuals`;
+        title = `${trunc(baseTitle, 50)} | AllOEMManuals`;
     }
 
     // Lead description with the quick answer so actual specs appear in SERP snippet
