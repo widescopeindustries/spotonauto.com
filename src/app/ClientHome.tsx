@@ -1,11 +1,32 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import HeroSection from "./home-sections/HeroSection";
-import PopularToolsSection from "./home-sections/PopularToolsSection";
-import KitsSection from "./home-sections/KitsSection";
-import EntryPathsSection from "./home-sections/EntryPathsSection";
-import RepairsSection from "./home-sections/RepairsSection";
-import ConversionZone from "@/components/ConversionZone";
+
+const PopularToolsSection = dynamic(() => import("./home-sections/PopularToolsSection"), {
+  ssr: false,
+  loading: () => <div className="h-96 bg-[#0a0a0c]" />,
+});
+
+const KitsSection = dynamic(() => import("./home-sections/KitsSection"), {
+  ssr: false,
+  loading: () => <div className="h-96 bg-[#0a0a0c]" />,
+});
+
+const EntryPathsSection = dynamic(() => import("./home-sections/EntryPathsSection"), {
+  ssr: false,
+  loading: () => <div className="h-96 bg-[#0a0a0c]" />,
+});
+
+const RepairsSection = dynamic(() => import("./home-sections/RepairsSection"), {
+  ssr: false,
+  loading: () => <div className="h-96 bg-[#0a0a0c]" />,
+});
+
+const ConversionZone = dynamic(() => import("@/components/ConversionZone"), {
+  ssr: false,
+});
+
 import { TIER_1_RESCUE_PAGES } from "@/data/rescuePriority";
 
 export default function ClientHome() {
