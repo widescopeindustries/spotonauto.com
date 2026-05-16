@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import DiagnosticChatRoute from './DiagnosticChatRoute';
 import DiagnosticVehicleSelector from './DiagnosticVehicleSelector';
 import { PricingTrackedLink } from '@/components/PricingTracking';
@@ -5,6 +6,14 @@ import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizatio
 import TopdonProductSpotlight from '@/components/TopdonProductSpotlight';
 import SafetyWarningBox from '@/components/SafetyWarningBox';
 import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
+
+export const metadata: Metadata = {
+  title: 'Free AI Car Diagnosis | Check Engine Light, Symptoms & Codes | AllOEMManuals',
+  description: 'Describe your car symptoms or enter OBD2 trouble codes for instant AI-powered diagnosis. Get likely causes, repair steps, and cost estimates for your exact vehicle.',
+  alternates: {
+    canonical: 'https://alloemmanuals.com/diagnose',
+  },
+};
 
 interface SearchParams {
     [key: string]: string | string[] | undefined;

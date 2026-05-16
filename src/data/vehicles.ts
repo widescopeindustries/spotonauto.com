@@ -1124,8 +1124,10 @@ export function slugifyRoutePart(value: string): string {
     return decodeURIComponent(value)
         .trim()
         .toLowerCase()
+        .replace(/,/g, '')
         .replace(/\s+/g, '-')
-        .replace(/-+/g, '-');
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
 }
 
 /**
