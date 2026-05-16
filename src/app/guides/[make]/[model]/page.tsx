@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: PageProps) {
     alternates: {
       canonical: `https://alloemmanuals.com/guides/${canonicalMake}/${canonicalModel}`,
     },
-    ...(NOINDEX_MAKES.has(make.toLowerCase()) || isNonUsModel(make.toLowerCase(), model.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
+    robots: { index: false, follow: true },
   };
 }
 

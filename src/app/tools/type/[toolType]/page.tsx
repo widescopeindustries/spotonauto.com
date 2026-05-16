@@ -32,6 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         alternates: {
             canonical: `https://alloemmanuals.com/tools/type/${toolType}`,
         },
+        robots: { index: false, follow: true },
     };
 }
 

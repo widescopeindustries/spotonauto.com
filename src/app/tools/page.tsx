@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     alternates: {
         canonical: 'https://alloemmanuals.com/tools',
     },
+    robots: { index: false, follow: true },
 };
 
 const TOOLS = [

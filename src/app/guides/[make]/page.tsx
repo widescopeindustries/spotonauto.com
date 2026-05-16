@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps) {
     alternates: {
       canonical: `https://alloemmanuals.com/guides/${canonicalMake}`,
     },
-    ...(NOINDEX_MAKES.has(make.toLowerCase()) ? { robots: { index: false, follow: true } } : {}),
+    robots: { index: false, follow: true },
   };
 }
 

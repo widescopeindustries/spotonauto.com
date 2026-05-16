@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        disallow: ['/admin/', '/api/internal/', '/community/*?page=', '/manual/hyperlink/'],
+        disallow: ['/admin/', '/api/internal/', '/community/*?page=', '/manual/hyperlink/', '/guides/', '/repairs/', '/symptoms/', '/tools/type/', '/parts', '/repair', '/manual', '/manual-navigator'],
         allow: '/',
       },
     ],

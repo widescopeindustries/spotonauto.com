@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://alloemmanuals.com/manual-navigator',
   },
+  robots: { index: false, follow: true },
 };
 
 export default function ManualNavigatorPage() {

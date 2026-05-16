@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://alloemmanuals.com/repairs',
   },
+  robots: { index: false, follow: true },
 };
 
 export default function RepairsIndexPage() {

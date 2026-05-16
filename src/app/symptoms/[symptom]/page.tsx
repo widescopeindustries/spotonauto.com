@@ -43,6 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: `https://alloemmanuals.com${buildSymptomHref(cluster.slug)}`,
     },
+    robots: { index: false, follow: true },
   };
 }
 

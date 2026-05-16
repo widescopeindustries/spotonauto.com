@@ -24,6 +24,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://alloemmanuals.com/manual',
   },
+  robots: { index: false, follow: true },
   openGraph: {
     title: 'Free Factory Service Manuals | AllOEMManuals',
     description:

@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://alloemmanuals.com/guides',
   },
+  robots: { index: false, follow: true },
 };
 
 export default function GuidesPage() {

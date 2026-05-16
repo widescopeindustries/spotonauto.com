@@ -27,7 +27,8 @@ export const metadata: Metadata = {
     },
     alternates: {
         canonical: 'https://alloemmanuals.com/parts'
-    }
+    },
+    robots: { index: false, follow: true }
 };
 
 // Detailed parts categories with search queries

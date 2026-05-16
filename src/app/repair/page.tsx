@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://alloemmanuals.com/repair',
   },
+  robots: { index: false, follow: true },
 };
 
 function formatTaskLabel(task: string): string {
