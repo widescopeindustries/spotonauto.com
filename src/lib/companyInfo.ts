@@ -10,8 +10,7 @@ export const COMPANY_INFO = {
   supportEmail: 'info@widescopeindustries.com',
   businessHours: 'Monday–Friday 9 AM – 5 PM CDT',
   sbaVerificationUrl: 'https://search.certifications.sba.gov/profile/ZFMKUREKJF88/9Q5T8?page=1#performance-history',
-  // TODO: Paste your GBP review link here from Google Business Profile dashboard
-  googleReviewUrl: 'https://search.google.com/local/writereview?placeid=PLACEHOLDER',
+  googleReviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJ3UniED_FSIYRoJFDfmpLC3M',
 } as const;
 
 export function formatBusinessAddress(): string {
