@@ -55,8 +55,49 @@ function toSafeApiErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Internal Server Error';
 }
 
+function isBot(req: NextRequest): boolean {
+  const ua = req.headers.get('user-agent') || '';
+  const botPatterns = [
+    /bot/i,
+    /crawler/i,
+    /spider/i,
+    /scraper/i,
+    /meta-externalagent/i,
+    /ClaudeBot/i,
+    /Amazonbot/i,
+    /Applebot/i,
+    /GPTBot/i,
+    /CCBot/i,
+    /ChatGPT-User/i,
+    /bingbot/i,
+    /googlebot/i,
+    /yandex/i,
+    /baiduspider/i,
+    /facebookexternalhit/i,
+    /slackbot/i,
+    /twitterbot/i,
+    /linkedinbot/i,
+    /embedly/i,
+    /quora link preview/i,
+    /showyoubot/i,
+    /outbrain/i,
+    /pinterest/i,
+    /vkshare/i,
+    /w3c_validator/i,
+  ];
+  return botPatterns.some((p) => p.test(ua));
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // Reject crawlers immediately — they should not trigger AI guide generation
+    if (isBot(req)) {
+      return NextResponse.json(
+        { error: 'Bots are not permitted to use guide generation.' },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { action, payload = {}, stream } = body;
 
@@ -68,8 +109,10 @@ export async function POST(req: NextRequest) {
     }
 
     const requiresAiProvider = action !== 'decode-vin';
-    if (requiresAiProvider && !process.env.KIMI_API_KEY && !process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
-      console.error("SERVER ERROR: No AI provider key is set. Configure KIMI_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY.");
+    const hasCloudProvider = process.env.KIMI_API_KEY || process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY;
+    const hasOllama = process.env.OLLAMA_BASE_URL;
+    if (requiresAiProvider && !hasCloudProvider && !hasOllama) {
+      console.error("SERVER ERROR: No AI provider key is set. Configure KIMI_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY, or OLLAMA_BASE_URL.");
       return NextResponse.json({ error: 'Server configuration error: Missing AI API key' }, { status: 500 });
     }
 
