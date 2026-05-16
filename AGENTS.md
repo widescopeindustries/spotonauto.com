@@ -76,6 +76,7 @@ Update it when product decisions, traps, or standing preferences change.
   - Forbidden: `/cel`, `/privacy`, `/terms` (they return 308 redirects).
   - Allowed: `/codes`, `/privacy-policy`, `/terms-of-service`.
   - Redirects in sitemaps trigger Bing/Google duplicate-content penalties.
+- **IndexNow mode switched to streaming (2026-05-16):** All scripts (`submit-indexnow.js`, `indexnow-backfill.js`, `indexnow-recent-audit.js`) now use individual GET requests per URL instead of batch POST with `urlList`. 150ms delay between URLs. This addresses the Bing Webmaster Tools "batch mode" warning.
 - **CRITICAL BUG (fixed 2026-04-26): `scripts/submit-indexnow.js` fell back to full mode when git was unavailable.**
   - Production server has no `.git` directory (excluded from rsync deploy).
   - Old `package.json` start script auto-ran the submitter on every boot.

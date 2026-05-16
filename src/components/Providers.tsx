@@ -2,11 +2,14 @@
 
 import { ReactNode } from 'react';
 import { LocaleProvider } from '@/lib/localeContext';
+import SmoothScroll from './SmoothScroll';
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <LocaleProvider>
-      {children}
+      <SmoothScroll>
+        {children}
+      </SmoothScroll>
     </LocaleProvider>
   );
 }
