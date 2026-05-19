@@ -21,8 +21,9 @@ const http = require('http');
 const INDEXNOW_KEY = 'b2e1ed9a4693444c8bf73f80fe75f1e0';
 const HOST = 'alloemmanuals.com';
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/IndexNow';
-const BATCH_SIZE = 100; // Small batches for streaming
-const DELAY_BETWEEN_BATCHES_MS = 3000; // 3s between batches
+const BATCH_SIZE = 100; // Process in waves for progress reporting
+const DELAY_BETWEEN_BATCHES_MS = 3000; // 3s between waves
+const DELAY_BETWEEN_URLS_MS = 150; // 150ms between individual GET requests (streaming mode)
 
 // ── Sitemap sections and their git triggers ─────────────────────────
 // Each entry maps a sitemap URL to file patterns that, when changed,
@@ -134,27 +135,15 @@ async function fetchSitemapUrls(sitemapUrl, depth = 0) {
   }
 }
 
-function postJson(url, body) {
+function getJson(url) {
   return new Promise((resolve, reject) => {
-    const parsed = new URL(url);
-    const data = JSON.stringify(body);
-    const req = https.request({
-      hostname: parsed.hostname,
-      path: parsed.pathname,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Content-Length': Buffer.byteLength(data),
-      },
-    }, (res) => {
+    const client = url.startsWith('https') ? https : http;
+    client.get(url, { headers: { 'User-Agent': 'AllOEMManuals-IndexNow/2.0' } }, (res) => {
       let body = '';
       res.on('data', chunk => body += chunk);
       res.on('end', () => resolve({ status: res.statusCode, body }));
       res.on('error', reject);
-    });
-    req.on('error', reject);
-    req.write(data);
-    req.end();
+    }).on('error', reject);
   });
 }
 
@@ -234,14 +223,10 @@ function getAffectedSitemaps(changedFiles) {
 
 // ── Submission ──────────────────────────────────────────────────────
 
-async function submitBatch(urls) {
-  const payload = {
-    host: HOST,
-    key: INDEXNOW_KEY,
-    keyLocation: `https://${HOST}/${INDEXNOW_KEY}.txt`,
-    urlList: urls,
-  };
-  return postJson(INDEXNOW_ENDPOINT, payload);
+async function submitSingleUrl(url) {
+  const encodedUrl = encodeURIComponent(url);
+  const endpoint = `${INDEXNOW_ENDPOINT}?url=${encodedUrl}&key=${INDEXNOW_KEY}`;
+  return getJson(endpoint);
 }
 
 async function submitUrls(urls, dryRun) {
@@ -251,7 +236,7 @@ async function submitUrls(urls, dryRun) {
   }
 
   if (dryRun) {
-    console.log(`\n[DRY RUN] Would submit ${urls.length} URLs`);
+    console.log(`\n[DRY RUN] Would submit ${urls.length} URLs individually (streaming mode)`);
     console.log('Sample URLs:');
     for (const url of urls.slice(0, 15)) console.log('  ' + url);
     if (urls.length > 15) console.log(`  ... and ${urls.length - 15} more`);
@@ -259,33 +244,49 @@ async function submitUrls(urls, dryRun) {
   }
 
   const totalBatches = Math.ceil(urls.length / BATCH_SIZE);
-  console.log(`\nSubmitting ${urls.length} URLs in ${totalBatches} batch(es) of ${BATCH_SIZE}...`);
+  console.log(`\nSubmitting ${urls.length} URLs individually (streaming mode)...`);
 
   let submitted = 0;
   let errors = 0;
 
-  for (let i = 0; i < urls.length; i += BATCH_SIZE) {
-    const batch = urls.slice(i, i + BATCH_SIZE);
+  for (let i = 0; i < urls.length; i++) {
+    const url = urls[i];
     const batchNum = Math.floor(i / BATCH_SIZE) + 1;
 
-    process.stdout.write(`  Batch ${batchNum}/${totalBatches} (${batch.length} URLs)... `);
-
-    try {
-      const res = await submitBatch(batch);
-      if (res.status === 200 || res.status === 202) {
-        console.log(`✓ (HTTP ${res.status})`);
-        submitted += batch.length;
-      } else {
-        console.log(`✗ (HTTP ${res.status}: ${res.body})`);
-        errors += batch.length;
-      }
-    } catch (err) {
-      console.log(`✗ (${err.message})`);
-      errors += batch.length;
+    if (i % BATCH_SIZE === 0) {
+      process.stdout.write(`  Wave ${batchNum}/${totalBatches} (${Math.min(BATCH_SIZE, urls.length - i)} URLs)... `);
     }
 
-    // Rate limit between batches
-    if (i + BATCH_SIZE < urls.length) {
+    try {
+      const res = await submitSingleUrl(url);
+      if (res.status === 200 || res.status === 202) {
+        submitted += 1;
+      } else {
+        errors += 1;
+        if (i % BATCH_SIZE === BATCH_SIZE - 1 || i === urls.length - 1) {
+          console.log(`partial errors (last HTTP ${res.status})`);
+        }
+      }
+    } catch (err) {
+      errors += 1;
+      if (i % BATCH_SIZE === BATCH_SIZE - 1 || i === urls.length - 1) {
+        console.log(`partial errors (${err.message})`);
+      }
+    }
+
+    // Delay between individual URLs
+    if (i < urls.length - 1) {
+      await sleep(DELAY_BETWEEN_URLS_MS);
+    }
+
+    // Progress indicator at end of each wave
+    if (i % BATCH_SIZE === BATCH_SIZE - 1 || i === urls.length - 1) {
+      const waveErrors = errors - (errors - (errors % BATCH_SIZE)); // approximate
+      console.log(`✓ (${submitted} ok${errors > 0 ? `, ${errors} err` : ''})`);
+    }
+
+    // Extra rate limit between waves
+    if ((i + 1) % BATCH_SIZE === 0 && i + 1 < urls.length) {
       await sleep(DELAY_BETWEEN_BATCHES_MS);
     }
   }

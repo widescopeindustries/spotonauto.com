@@ -101,7 +101,7 @@ export default function TermsOfService() {
           <h2 className="text-xl font-bold text-cyan-400">6. User Accounts</h2>
           <p className="text-sm">
             If you create an account, you are responsible for maintaining the security of your login credentials.
-            You may delete your account and all associated data at any time by emailing support@alloemmanuals.com.
+            You may delete your account and all associated data at any time by emailing info@widescopeindustries.com.
           </p>
         </section>
 

@@ -44,8 +44,8 @@ export default function OGImage() {
             display: 'flex',
           }}
         >
-          SPOTON
-          <span style={{ color: '#3b82f6' }}>AUTO</span>
+          AllOEM
+          <span style={{ color: '#3b82f6' }}>Manuals</span>
         </div>
 
         {/* Tagline */}

@@ -25,6 +25,7 @@ export const revalidate = 86400;
  *  coverage. Otherwise we fall back to the static JSON indices so the
  *  navigator never breaks during indexing. */
 export async function GET(req: NextRequest) {
+  try {
   const searchParams = req.nextUrl.searchParams;
   const action = searchParams.get('action') || 'bootstrap';
 
@@ -101,5 +102,9 @@ export async function GET(req: NextRequest) {
 
     default:
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+  }
+  } catch (error) {
+    console.error('[ManualCoverage API]', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

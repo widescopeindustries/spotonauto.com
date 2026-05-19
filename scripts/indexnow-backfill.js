@@ -73,38 +73,26 @@ function getIndexNowKey() {
   return key || null;
 }
 
-function postJson(url, body) {
+function getJson(url) {
   return new Promise((resolve, reject) => {
-    const parsed = new URL(url);
-    const data = JSON.stringify(body);
-    const req = https.request({
-      hostname: parsed.hostname,
-      path: parsed.pathname,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Content-Length': Buffer.byteLength(data),
-      },
-    }, (res) => {
-      let responseBody = '';
-      res.on('data', (chunk) => responseBody += chunk);
-      res.on('end', () => resolve({ status: res.statusCode, body: responseBody }));
+    const client = url.startsWith('https') ? https : require('http');
+    client.get(url, { headers: { 'User-Agent': 'AllOEMManuals-IndexNow/2.0' } }, (res) => {
+      let body = '';
+      res.on('data', (chunk) => body += chunk);
+      res.on('end', () => resolve({ status: res.statusCode, body }));
       res.on('error', reject);
-    });
-    req.on('error', reject);
-    req.write(data);
-    req.end();
+    }).on('error', reject);
   });
 }
 
-async function submitBatch(urls, key) {
-  const payload = {
-    host: HOST,
-    key,
-    keyLocation: `https://${HOST}/${key}.txt`,
-    urlList: urls,
-  };
-  return postJson(ENDPOINT, payload);
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function submitSingleUrl(url, key) {
+  const encodedUrl = encodeURIComponent(url);
+  const endpoint = `${ENDPOINT}?url=${encodedUrl}&key=${key}`;
+  return getJson(endpoint);
 }
 
 async function main() {
@@ -168,14 +156,26 @@ async function main() {
   let okCount = 0;
   let failCount = 0;
 
-  for (let i = 0; i < toSubmit.length; i += chunkSize) {
-    const chunk = toSubmit.slice(i, i + chunkSize);
-    const res = await submitBatch(chunk, key);
+  for (let i = 0; i < toSubmit.length; i++) {
+    const url = toSubmit[i];
+    const res = await submitSingleUrl(url, key);
     if (res.status === 200 || res.status === 202) {
-      okCount += chunk.length;
+      okCount += 1;
     } else {
-      failCount += chunk.length;
-      console.error(`Chunk failed: HTTP ${res.status} body=${res.body || '(empty)'}`);
+      failCount += 1;
+      if (i % chunkSize === 0) {
+        console.error(`URL failed: ${url} — HTTP ${res.status}`);
+      }
+    }
+
+    // 150ms delay between individual URLs (streaming mode)
+    if (i < toSubmit.length - 1) {
+      await sleep(150);
+    }
+
+    // Extra delay between waves
+    if ((i + 1) % chunkSize === 0 && i + 1 < toSubmit.length) {
+      await sleep(3000);
     }
   }
 

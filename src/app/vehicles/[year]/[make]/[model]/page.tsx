@@ -68,6 +68,33 @@ function buildSpecsSnippet(year: number, toolPages: ReturnType<typeof getToolPag
   return joined.length > 80 ? joined.slice(0, 79) + '…' : joined;
 }
 
+/** Build a topic keyword snippet for title tags (e.g. "Oil Type, Coolant & Battery") */
+function buildTopicKeywordSnippet(toolPages: ReturnType<typeof getToolPagesForVehicle>): string {
+  if (toolPages.length === 0) return '';
+  const topicMap: Record<string, string> = {
+    'oil-type': 'Oil Type',
+    'coolant-type': 'Coolant',
+    'fluid-capacity': 'Fluid Capacity',
+    'battery-location': 'Battery',
+    'tire-size': 'Tire Size',
+    'transmission-fluid-type': 'Transmission Fluid',
+    'spark-plug-type': 'Spark Plugs',
+    'wiper-blade-size': 'Wiper Blades',
+    'headlight-bulb': 'Headlight Bulb',
+    'serpentine-belt': 'Serpentine Belt',
+    'brake-fluid-type': 'Brake Fluid',
+  };
+  const priority: string[] = ['oil-type', 'coolant-type', 'battery-location', 'tire-size', 'serpentine-belt', 'wiper-blade-size', 'transmission-fluid-type', 'spark-plug-type', 'brake-fluid-type', 'headlight-bulb', 'fluid-capacity'];
+  const ordered = priority
+    .map((type) => toolPages.find((p) => p.toolType === type))
+    .filter(Boolean) as typeof toolPages;
+  const topics = ordered.slice(0, 3).map((p) => topicMap[p.toolType]).filter(Boolean);
+  if (topics.length === 0) return '';
+  if (topics.length === 1) return topics[0];
+  if (topics.length === 2) return `${topics[0]} & ${topics[1]}`;
+  return `${topics[0]}, ${topics[1]} & ${topics[2]}`;
+}
+
 function humanizeTask(slug: string): string {
   return slug
     .replace(/-/g, ' ')
@@ -92,20 +119,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const repairProfiles = getProfilesForVehicle(yearNum, identity.make, identity.model);
   const topRepairTasks = repairProfiles.slice(0, 4).map((p) => humanizeTask(p.task));
 
+  const topicSnippet = buildTopicKeywordSnippet(toolPages);
+
   let title: string;
   let description: string;
 
-  if (specsSnippet) {
-    title = `${vehicleLabel} — ${specsSnippet} | AllOEMManuals`;
-    description = `OEM specs for the ${vehicleLabel}: ${specsSnippet}. Factory diagnostic trouble codes, wiring diagrams, torque specs, maintenance schedule, and step-by-step repair guides.`;
+  if (topicSnippet) {
+    title = `${vehicleLabel} ${topicSnippet} & Factory Specs | AllOEMManuals`;
   } else if (topRepairTasks.length > 0) {
     const tasksText = topRepairTasks.length > 2
       ? `${topRepairTasks.slice(0, 2).join(', ')} & More`
       : topRepairTasks.join(', ');
-    title = `${vehicleLabel} — ${tasksText} | AllOEMManuals`;
-    description = `DIY repair hub for the ${vehicleLabel}. Step-by-step guides for ${topRepairTasks.join(', ')}, and more. Factory diagnostic trouble codes, wiring diagrams, torque specs, and maintenance schedules.`;
+    title = `${vehicleLabel} ${tasksText} | AllOEMManuals`;
   } else {
     title = `${vehicleLabel} Repair Guides, DTC Codes & Factory Specs | AllOEMManuals`;
+  }
+
+  if (specsSnippet) {
+    description = `${vehicleLabel} specs: ${specsSnippet}. Exact OEM oil type, coolant, battery size, tire pressure, and more from the factory service manual. Plus DTC codes, wiring diagrams, and step-by-step repair guides.`;
+  } else if (topRepairTasks.length > 0) {
+    description = `DIY repair hub for the ${vehicleLabel}. Step-by-step guides for ${topRepairTasks.join(', ')}, and more. Factory diagnostic trouble codes, wiring diagrams, torque specs, and maintenance schedules.`;
+  } else {
     description = `DIY repair hub for the ${vehicleLabel}. Factory diagnostic trouble codes, wiring diagrams, torque specs, maintenance schedules, and step-by-step repair guides.`;
   }
 
@@ -161,6 +195,9 @@ export default async function VehicleLanePage({ params }: PageProps) {
   // Top repair profiles for server-rendered snippet
   const topRepairs = repairProfiles.slice(0, 5);
 
+  // Tool types that have vehicle-specific maintenance pages (link hub cards here instead of generic /tools/)
+  const MAINTENANCE_TOOL_TYPES = new Set(['oil-type', 'coolant-type', 'tire-size', 'battery-location', 'wiper-blade-size', 'serpentine-belt', 'brake-fluid-type', 'transmission-fluid-type', 'spark-plug-type', 'headlight-bulb']);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <script
@@ -206,10 +243,13 @@ export default async function VehicleLanePage({ params }: PageProps) {
                 const concise = getConciseQuickAnswer(yearNum, tp);
                 // Skip cards with no real data — generic text poisons SERP snippets
                 if (!concise) return null;
+                // Link to vehicle-specific maintenance page when available, otherwise fallback to tool page
+                const maintPath = `${basePath}/${tp.toolType}`;
+                const href = MAINTENANCE_TOOL_TYPES.has(tp.toolType) ? maintPath : `/tools/${tp.slug}`;
                 return (
                   <Link
                     key={tp.slug}
-                    href={`/tools/${tp.slug}`}
+                    href={href}
                     className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-3 hover:border-cyan-500/30 hover:bg-cyan-500/[0.04] transition"
                   >
                     <span className="text-xl shrink-0">{meta?.icon ?? '🔧'}</span>

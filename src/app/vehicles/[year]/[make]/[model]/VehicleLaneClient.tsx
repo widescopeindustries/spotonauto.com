@@ -196,7 +196,11 @@ export default function VehicleLaneClient({
     'wiper-blade-size': { icon: '🌧️', label: 'Wipers', tone: 'slate' },
     'coolant-type': { icon: '❄️', label: 'Coolant', tone: 'emerald' },
     'transmission-fluid-type': { icon: '🔄', label: 'Transmission Fluid', tone: 'slate' },
+    'brake-fluid-type': { icon: '🚨', label: 'Brake Fluid', tone: 'red' },
   };
+
+  // Tool types that have vehicle-specific maintenance pages — link directly instead of generic /tools/
+  const MAINTENANCE_TOOL_TYPES = new Set(['oil-type', 'coolant-type', 'tire-size', 'battery-location', 'wiper-blade-size', 'serpentine-belt', 'brake-fluid-type', 'transmission-fluid-type', 'spark-plug-type', 'headlight-bulb']);
 
   return (
     <>
@@ -379,10 +383,14 @@ export default function VehicleLaneClient({
             {toolPages.map((tp) => {
               const meta = toolTypeMeta[tp.toolType] || { icon: '📋', label: tp.toolType, tone: 'slate' };
               const styles = toneStyles[meta.tone] || toneStyles.slate;
+              // Prefer vehicle-specific maintenance page over generic /tools/ page
+              const href = MAINTENANCE_TOOL_TYPES.has(tp.toolType)
+                ? `${basePath}/${tp.toolType}`
+                : `/tools/${tp.slug}`;
               return (
                 <Link
                   key={tp.slug}
-                  href={`/tools/${tp.slug}`}
+                  href={href}
                   className={`rounded-xl border ${styles.border} ${styles.bg} p-4 hover:opacity-90 transition-all group`}
                 >
                   <div className="flex items-center gap-2 mb-2">

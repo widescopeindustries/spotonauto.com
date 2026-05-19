@@ -166,51 +166,46 @@ function getIndexNowKey() {
   return key || null;
 }
 
-function postJson(url, body) {
+function getJson(url) {
   return new Promise((resolve, reject) => {
-    const parsed = new URL(url);
-    const data = JSON.stringify(body);
-    const req = https.request({
-      hostname: parsed.hostname,
-      path: parsed.pathname,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Content-Length': Buffer.byteLength(data),
-      },
-    }, (res) => {
-      let responseBody = '';
-      res.on('data', (chunk) => responseBody += chunk);
-      res.on('end', () => resolve({ status: res.statusCode, body: responseBody }));
+    const client = url.startsWith('https') ? https : require('http');
+    client.get(url, { headers: { 'User-Agent': 'AllOEMManuals-IndexNow/2.0' } }, (res) => {
+      let body = '';
+      res.on('data', (chunk) => body += chunk);
+      res.on('end', () => resolve({ status: res.statusCode, body }));
       res.on('error', reject);
-    });
-    req.on('error', reject);
-    req.write(data);
-    req.end();
+    }).on('error', reject);
   });
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function submitSingleUrl(url, key) {
+  const encodedUrl = encodeURIComponent(url);
+  const endpoint = `${INDEXNOW_ENDPOINT}?url=${encodedUrl}&key=${key}`;
+  return getJson(endpoint);
+}
+
 async function submitIndexNow(urls, key) {
-  const chunkSize = 100;
   let submitted = 0;
   let failed = 0;
-  for (let i = 0; i < urls.length; i += chunkSize) {
-    const chunk = urls.slice(i, i + chunkSize);
-    const payload = {
-      host: HOST,
-      key,
-      keyLocation: `https://${HOST}/${key}.txt`,
-      urlList: chunk,
-    };
+  for (let i = 0; i < urls.length; i++) {
+    const url = urls[i];
     try {
-      const res = await postJson(INDEXNOW_ENDPOINT, payload);
+      const res = await submitSingleUrl(url, key);
       if (res.status === 200 || res.status === 202) {
-        submitted += chunk.length;
+        submitted += 1;
       } else {
-        failed += chunk.length;
+        failed += 1;
       }
     } catch {
-      failed += chunk.length;
+      failed += 1;
+    }
+    // 150ms delay between individual URLs (streaming mode)
+    if (i < urls.length - 1) {
+      await sleep(150);
     }
   }
   return { submitted, failed };

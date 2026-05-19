@@ -29,6 +29,18 @@ const KIMI_MODEL = process.env.KIMI_MODEL || 'kimi-latest';
 const preferKimi = canReadKimiFirst();
 const preferOpenAI = canReadOpenAIFirst();
 
+const ollamaBaseURL = process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434/v1';
+const ollamaModel = process.env.OLLAMA_MODEL || 'qwen2.5:7b';
+const ollama = new OpenAI({ apiKey: 'ollama', baseURL: ollamaBaseURL });
+const preferOllama = (() => {
+  const raw = (process.env.OLLAMA_PRIMARY || '').trim().toLowerCase();
+  return raw === '1' || raw === 'true' || raw === 'yes';
+})();
+
+function canUseOllama(): boolean {
+  return true;
+}
+
 // Models
 const TEXT_MODEL = "gemini-2.0-flash";
 const IMAGE_MODEL = "imagen-3.0-generate-002";
@@ -408,6 +420,44 @@ async function generateTextWithKimi(
   return completion.choices[0]?.message?.content?.trim() || '';
 }
 
+async function generateJsonWithOllama(systemInstruction: string, prompt: string) {
+  const completion = await ollama.chat.completions.create({
+    model: ollamaModel,
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: `${systemInstruction}\nReturn valid JSON only.` },
+      { role: 'user', content: prompt },
+    ],
+    temperature: 0.2,
+    max_tokens: 1200,
+  });
+  const text = completion.choices[0]?.message?.content;
+  if (!text) throw new Error('Ollama returned an empty JSON response.');
+  return JSON.parse(stripJsonFences(text));
+}
+
+async function generateTextWithOllama(
+  systemInstruction: string,
+  history: { role: string; parts: { text: string }[] }[],
+  message: string,
+) {
+  const messages: ChatCompletionMessageParam[] = [
+    { role: 'system', content: systemInstruction },
+    ...history.map((item): ChatCompletionMessageParam => ({
+      role: item.role === 'model' ? 'assistant' : 'user',
+      content: item.parts.map((part) => part.text).join('\n'),
+    })),
+    { role: 'user', content: message },
+  ];
+  const completion = await ollama.chat.completions.create({
+    model: ollamaModel,
+    messages,
+    temperature: 0.4,
+    max_tokens: 800,
+  });
+  return completion.choices[0]?.message?.content?.trim() || '';
+}
+
 function buildRepairGuidePrompt(args: {
   vehicle: Vehicle;
   task: string;
@@ -762,7 +812,12 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
   let responseSources: GroundingSource[] = [];
 
   try {
-    if (preferOpenAI && canUseOpenAI()) {
+    if (preferOllama && canUseOllama()) {
+      data = await generateJsonWithOllama(
+        'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
+        prompt,
+      );
+    } else if (preferOpenAI && canUseOpenAI()) {
       data = await generateJsonWithOpenAI(
         'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
         prompt,
@@ -786,11 +841,22 @@ Format as JSON with keys: "jobSnapshot", "tsbs", "recalls".`;
       responseSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
         ?.map((chunk: any) => chunk.web)
         .filter((web: any): web is GroundingSource => !!(web?.uri && web.title)) || [];
+    } else if (canUseOllama()) {
+      data = await generateJsonWithOllama(
+        'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
+        prompt,
+      );
     } else {
       throw new Error('No AI provider available.');
     }
   } catch (error) {
-    if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(error)) {
+    if (canUseOllama() && !preferOllama) {
+      console.warn(`[AI] Falling back to Ollama for vehicle info on ${year} ${make} ${model} ${task}:`, error);
+      data = await generateJsonWithOllama(
+        'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
+        prompt,
+      );
+    } else if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(error)) {
       console.warn(`[AI] Falling back to OpenAI for vehicle info on ${year} ${make} ${model} ${task}:`, error);
       data = await generateJsonWithOpenAI(
         'You are an expert automotive service database. Provide accurate vehicle-specific repair context using the supplied manual and safety context.',
@@ -903,7 +969,14 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
     });
 
     try {
-      if (preferOpenAI && canUseOpenAI()) {
+      if (preferOllama && canUseOllama()) {
+        data = await generateJsonWithOllama(
+          'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
+          promptResult.prompt,
+        );
+        usedManualContext = promptResult.usedManualContext;
+        break;
+      } else if (preferOpenAI && canUseOpenAI()) {
         data = await generateJsonWithOpenAI(
           'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
           promptResult.prompt,
@@ -926,6 +999,13 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
             responseSchema: repairGuideSchema,
           },
         });
+        usedManualContext = promptResult.usedManualContext;
+        break;
+      } else if (canUseOllama()) {
+        data = await generateJsonWithOllama(
+          'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
+          promptResult.prompt,
+        );
         usedManualContext = promptResult.usedManualContext;
         break;
       } else {
@@ -956,7 +1036,14 @@ export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, lo
       maxManualChars: manualContext.content ? 9000 : 0,
     });
 
-    if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(finalError)) {
+    if (canUseOllama() && !preferOllama) {
+      console.warn(`[AI] Falling back to Ollama for repair guide on ${year} ${make} ${model} ${task}:`, finalError);
+      data = await generateJsonWithOllama(
+        'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
+        fallbackPrompt.prompt,
+      );
+      usedManualContext = fallbackPrompt.usedManualContext;
+    } else if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(finalError)) {
       console.warn(`[AI] Falling back to OpenAI for repair guide on ${year} ${make} ${model} ${task}:`, finalError);
       data = await generateJsonWithOpenAI(
         'You are an expert automotive repair guide writer. Return only valid JSON that matches the requested repair guide structure.',
@@ -1094,7 +1181,10 @@ Keep your response concise and practical. Do NOT return JSON - respond in natura
 
   try {
     try {
-      if (preferOpenAI && canUseOpenAI()) {
+      if (preferOllama && canUseOllama()) {
+        const responseText = await generateTextWithOllama(diagnosticSystemInstruction, history, message);
+        return { text: responseText, imageUrl: null };
+      } else if (preferOpenAI && canUseOpenAI()) {
         const responseText = await generateTextWithOpenAI(diagnosticSystemInstruction, history, message);
         return { text: responseText, imageUrl: null };
       } else if (preferKimi && canUseKimi()) {
@@ -1120,11 +1210,18 @@ Keep your response concise and practical. Do NOT return JSON - respond in natura
         });
         const responseText = (response.text || "").trim();
         return { text: responseText, imageUrl: null };
+      } else if (canUseOllama()) {
+        const responseText = await generateTextWithOllama(diagnosticSystemInstruction, history, message);
+        return { text: responseText, imageUrl: null };
       } else {
         throw new Error('No AI provider available.');
       }
     } catch (error) {
-      if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(error)) {
+      if (canUseOllama() && !preferOllama) {
+        console.warn(`[AI] Falling back to Ollama for diagnostic chat on ${year} ${make} ${model}:`, error);
+        const responseText = await generateTextWithOllama(diagnosticSystemInstruction, history, message);
+        return { text: responseText, imageUrl: null };
+      } else if (canUseOpenAI() && !preferOpenAI && isQuotaLikeError(error)) {
         console.warn(`[AI] Falling back to OpenAI for diagnostic chat on ${year} ${make} ${model}:`, error);
         const responseText = await generateTextWithOpenAI(diagnosticSystemInstruction, history, message);
         return { text: responseText, imageUrl: null };

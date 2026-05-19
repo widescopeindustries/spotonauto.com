@@ -33,7 +33,12 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
   const yearNum = parseInt(year, 10);
   if (isNaN(yearNum)) notFound();
 
-  const flow = await getVehicleDtcFlow(make, yearNum, model, code);
+  let flow: Awaited<ReturnType<typeof getVehicleDtcFlow>> = null;
+  try {
+    flow = await getVehicleDtcFlow(make, yearNum, model, code);
+  } catch (err) {
+    console.warn(`[VehicleDtcFlow] Neo4j timeout for ${yearNum} ${make} ${model} ${code}`, err);
+  }
   if (!flow) notFound();
 
   const v = flow.vehicle;
@@ -41,17 +46,22 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
   const vehiclePath = `/vehicles/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}`;
 
   // Fetch the primary diagnostic flow content
-  const flowPages = await Promise.all(
-    flow.flowHashes.slice(0, 3).map(async (path) => {
-      const segments = path.replace(/^\/+/, '').replace(/^manual\//, '').split('/').filter(Boolean);
-      const page = await fetchCharmPage(segments);
-      return {
-        title: page.title,
-        html: page.contentHtml,
-        status: page.status,
-      };
-    }),
-  );
+  let flowPages: Array<{ title: string; html: string; status: number }> = [];
+  try {
+    flowPages = await Promise.all(
+      flow.flowHashes.slice(0, 3).map(async (path) => {
+        const segments = path.replace(/^\/+/, '').replace(/^manual\//, '').split('/').filter(Boolean);
+        const page = await fetchCharmPage(segments);
+        return {
+          title: page.title,
+          html: page.contentHtml,
+          status: page.status,
+        };
+      }),
+    );
+  } catch (err) {
+    console.warn(`[VehicleDtcFlow] CHARM fetch failed for ${yearNum} ${make} ${model} ${code}`, err);
+  }
   const availablePages = flowPages.filter((p) => p.status === 200 && p.html);
 
   // Categorize related content for contextual graph links
