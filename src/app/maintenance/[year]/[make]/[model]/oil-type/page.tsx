@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { logWarn } from '@/lib/logger';
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
+import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
 
@@ -58,6 +59,10 @@ export default async function OilTypePage({ params }: PageProps) {
     logWarn(`[Maintenance] fetch failed for ${year} ${displayMake} ${displayModel}`, err);
   }
   if (!data || !data.oil) {
+    const fallback = getMaintenanceFallbackUrl(displayMake, displayModel, 'oil-type');
+    if (fallback) {
+      redirect(fallback);
+    }
     notFound();
   }
 
