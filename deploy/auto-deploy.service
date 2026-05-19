@@ -1,0 +1,18 @@
+[Unit]
+Description=AllOEMManuals Git Auto-Deploy Watcher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/root/spotonauto.com
+EnvironmentFile=/root/spotonauto.com/.env.local
+Environment=AUTO_DEPLOY_REMOTE=https://github.com/widescopeindustries/spotonauto.com.git
+Environment=AUTO_DEPLOY_BRANCH=origin/main
+Environment=DEPLOY_APP_DIR=/root/spotonauto.com
+Environment=DEPLOY_SERVICE_NAME=alloemmanuals-web
+Environment=DEPLOY_HEALTHCHECK_URL=http://127.0.0.1:3002
+ExecStart=/usr/local/bin/auto-deploy.sh
+StandardOutput=journal
+StandardError=journal
