@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { logWarn } from '@/lib/logger';
 import { notFound } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
@@ -54,7 +55,7 @@ export default async function TireSizePage({ params }: PageProps) {
   try {
     data = await fetchMaintenanceData(year, displayMake, displayModel);
   } catch (err) {
-    console.warn(`[Maintenance] fetch failed for ${year} ${displayMake} ${displayModel}`, err);
+    logWarn(`[Maintenance] fetch failed for ${year} ${displayMake} ${displayModel}`, err);
   }
   if (!data || !data.tires) {
     notFound();

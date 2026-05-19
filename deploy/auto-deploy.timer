@@ -3,7 +3,7 @@ Description=Run AllOEMManuals auto-deploy watcher every 60 seconds
 
 [Timer]
 OnBootSec=60
-OnUnitActiveSec=60s
+OnUnitActiveSec=300s
 AccuracySec=5s
 
 [Install]

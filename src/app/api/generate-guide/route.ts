@@ -3,6 +3,7 @@ export const maxDuration = 45;
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
+import { logWarn } from "@/lib/logger";
 import { checkRateLimit } from '@/lib/rateLimit';
 import {
   decodeVin,
@@ -129,7 +130,7 @@ export async function POST(req: NextRequest) {
       // For vehicle-info and generate-guide, validate against our database
       if (action === 'vehicle-info' || action === 'generate-guide') {
         if (!isValidVehicleCombination(vehicle.year, vehicle.make, vehicle.model, task || 'unknown')) {
-          console.warn(`[API] Rejected invalid vehicle: ${vehicle.year} ${vehicle.make} ${vehicle.model}`);
+          logWarn(`[API] Rejected invalid vehicle: ${vehicle.year} ${vehicle.make} ${vehicle.model}`);
           return NextResponse.json(
             { error: `Invalid vehicle combination: ${vehicle.year} ${vehicle.make} ${vehicle.model} did not exist or is not supported.` },
             { status: 400 }

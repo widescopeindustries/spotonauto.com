@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logWarn } from "@/lib/logger";
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
@@ -520,7 +521,7 @@ async function fetchCorpusContext(message: string, isOllama: boolean): Promise<s
           ).join('\n\n');
         }
       } catch (e) {
-        console.warn('[Manuel] Corpus fetch (strategy 1) failed:', e);
+        logWarn('[Manuel] Corpus fetch (strategy 1) failed:', e);
       }
     }
   }
@@ -555,7 +556,7 @@ async function fetchCorpusContext(message: string, isOllama: boolean): Promise<s
           ).join('\n\n');
         }
       } catch (e) {
-        console.warn('[AI Technician] Corpus fetch (strategy 2) failed:', e);
+        logWarn('[AI Technician] Corpus fetch (strategy 2) failed:', e);
       }
     }
   }
@@ -571,7 +572,7 @@ async function fetchCorpusContext(message: string, isOllama: boolean): Promise<s
         ).join('\n\n');
       }
     } catch (e) {
-      console.warn('[AI Technician] Corpus fetch (strategy 3) failed:', e);
+      logWarn('[AI Technician] Corpus fetch (strategy 3) failed:', e);
     }
   }
 
@@ -730,7 +731,7 @@ export async function POST(req: NextRequest) {
       }
     } catch (error) {
       primaryError = error instanceof Error ? error : new Error(String(error));
-      console.warn("[AI Technician] Primary failed:", primaryError.message);
+      logWarn("[AI Technician] Primary failed:", primaryError.message);
 
       // ─── Fallback 1: Ollama (if not primary) ────────────────────────────────
       if (!preferOllama) {
@@ -743,7 +744,7 @@ export async function POST(req: NextRequest) {
           });
           reply = completion.choices[0]?.message?.content?.trim() || "";
         } catch (fallbackError) {
-          console.warn("[AI Technician] Ollama fallback failed:", fallbackError);
+          logWarn("[AI Technician] Ollama fallback failed:", fallbackError);
         }
       }
       // ─── Fallback 2: OpenAI (if not primary) ────────────────────────────────
@@ -757,7 +758,7 @@ export async function POST(req: NextRequest) {
           });
           reply = completion.choices[0]?.message?.content?.trim() || "";
         } catch (fallbackError) {
-          console.warn("[AI Technician] OpenAI fallback failed:", fallbackError);
+          logWarn("[AI Technician] OpenAI fallback failed:", fallbackError);
         }
       }
       // ─── Fallback 3: Kimi (if Gemini failed) ────────────────────────────────
@@ -771,7 +772,7 @@ export async function POST(req: NextRequest) {
           });
           reply = completion.choices[0]?.message?.content?.trim() || "";
         } catch (fallbackError) {
-          console.warn("[AI Technician] Kimi fallback failed:", fallbackError);
+          logWarn("[AI Technician] Kimi fallback failed:", fallbackError);
         }
       }
       // ─── Fallback 4: Gemini (if OpenAI/Kimi failed) ─────────────────────────
@@ -789,7 +790,7 @@ export async function POST(req: NextRequest) {
           const result = await chat.sendMessage({ message: lastMessage.content });
           reply = result.text || "";
         } catch (fallbackError) {
-          console.warn("[AI Technician] Gemini fallback failed:", fallbackError);
+          logWarn("[AI Technician] Gemini fallback failed:", fallbackError);
         }
       }
 
