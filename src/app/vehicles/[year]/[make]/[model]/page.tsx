@@ -215,6 +215,23 @@ export default async function VehicleLanePage({ params }: PageProps) {
           }),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Vehicle',
+            name: displayName,
+            manufacturer: { '@type': 'Organization', name: identity.displayMake },
+            model: identity.displayModel,
+            productionDate: year,
+            url: `https://alloemmanuals.com/vehicles/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}`,
+            ...(identity.displayVariant
+              ? { vehicleEngine: { '@type': 'EngineSpecification', name: identity.displayVariant } }
+              : {}),
+          }),
+        }}
+      />
       <section className="py-12 px-4 max-w-5xl mx-auto">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
