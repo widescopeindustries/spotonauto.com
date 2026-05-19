@@ -637,6 +637,76 @@ journalctl -u alloemmanuals-web -f
 
 ---
 
+## Hetzner Infrastructure Recommendations (2026-05-19)
+
+### Current Hardware
+| Component | Spec | Notes |
+|-----------|------|-------|
+| CPU | 16 shared vCPUs | Load avg 1-3, not current bottleneck |
+| RAM | 62 GB | 37GB used (Neo4j 23.7GB + LMDB 10.8GB + PG 16GB + Next.js) |
+| Root disk | 938 GB RAID-1 NVMe (md1) | Fast, only 7% used |
+| Data disk | 3.5 TB SATA SSD (`sda1`) | **Bottleneck** — LMDB 1.3TB lives here |
+
+### Disk I/O Benchmark (dd iflag=direct)
+| Test | SATA (/data) | NVMe (/root) | Ratio |
+|------|-------------|--------------|-------|
+| Sequential read | 399 MB/s | 973 MB/s | 2.4x |
+| 4K read | 134 MB/s | 285 MB/s | 2.1x |
+| **Random 4K IOPS** | ~10-50K | **100-500K** | **10-50x** |
+
+The LMDB backend does heavy random 4K reads. Moving it from SATA to NVMe would be the single biggest performance gain.
+
+### Recommended Upgrades (ranked by impact)
+
+#### 🔴 P0 — Do This Week
+1. **Add 2TB NVMe Volume + Move LMDB**
+   - Order Hetzner NVMe Volume (€20-30/mo for 2TB)
+   - Move `/data` LMDB data to NVMe
+   - Expected result: 5-10x faster manual page lookups, reduced TTFB
+   - **Cost:** ~€25/mo | **Impact:** Massive
+
+2. **Hetzner Object Storage for Backups**
+   - Currently backups live on the same server disk
+   - If server dies, backups die too
+   - Set up `s3cmd` or rclone to sync `/data/backups/` to Hetzner Object Storage
+   - **Cost:** ~€5/mo for 500GB | **Impact:** Critical data safety
+
+#### 🟡 P1 — This Month
+3. **Upgrade to Dedicated vCPU**
+   - Current shared vCPUs may be throttled during bot traffic spikes
+   - 68% of all traffic is bots (OpenAI alone = 58%)
+   - Dedicated vCPU = consistent latency under load
+   - **Cost:** ~€30-50/mo more | **Impact:** High
+
+4. **Cloudflare Pro or Hetzner CDN**
+   - Site is served from Germany. Global users (US, Asia) get 200-400ms+ latency.
+   - CDN would cache static assets (`/_next/static/`, images) at edge locations
+   - **Cost:** Cloudflare Pro $20/mo or Hetzner CDN ~€10/mo | **Impact:** High for global UX
+
+#### 🟢 P2 — Next Quarter
+5. **More RAM (96-128 GB)**
+   - 62GB is adequate now but Neo4j alone uses 23.7GB
+   - As the corpus grows and more embeddings are added, RAM will become tight
+   - **Cost:** ~€40-80/mo more | **Impact:** Medium
+
+6. **Separate Build Server (or GitHub Actions build + artifact push)**
+   - Currently auto-deploy builds ON the production server
+   - Build consumes 2-3 CPU cores for 2-3 minutes = user-facing slowdown
+   - Better: Build in CI or on a separate build instance, then push `.next` artifact
+   - **Cost:** €0 (use GitHub Actions + rsync) or ~€10/mo for small build box | **Impact:** Medium
+
+### Quick Win (Free, Do Now)
+Move the nginx cache and PostgreSQL WAL to NVMe:
+```bash
+# Move nginx cache from /var/cache/nginx (root NVMe) — already there, good
+# Move PostgreSQL data? No, it's small (8.9GB) and already on NVMe root
+# The ONLY thing on SATA is /data (LMDB + backups)
+```
+
+**Action:** Order a 2TB Hetzner NVMe Volume, mount it at `/data-nvme`, migrate LMDB, update `lemon-manuals.service` to point to new path.
+
+---
+
 ## Comprehensive A-Z Audit (2026-05-19)
 
 Audited by: Kimi Code CLI across 6 parallel agents + direct live site testing.
