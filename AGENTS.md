@@ -17,14 +17,19 @@ Update it when product decisions, traps, or standing preferences change.
 - **GA4 property:** `G-KS1JPX0V7P` (alloemmanuals.com) — GSC linked
 - **spotonauto.com GA4:** Archive only. Was receiving misrouted alloemmanuals traffic due to hardcoded fallback ID (`G-WNFX6CY9RN`). Fixed 2026-05-14.
 
+### Deploy System (2026-05-19)
+- **Primary:** VPS auto-deploy watcher (`auto-deploy.timer` polls GitHub every 60s, builds locally, restarts service)
+- **CI:** GitHub Actions runs `Verify Build` only (TypeScript + build check)
+- **Old GitHub Actions VPS deploy:** Removed (was failing due to `rm -rf .next` race conditions)
+
 ### Full Audit Summary (conducted 2026-05-19)
 See comprehensive audit section at bottom of this file for full details.
 **Top critical findings:**
 - **OpenAI crawling 47,813 requests in 7 hours** — 55% of all traffic. Mostly `_rsc` internal URLs (now blocked in robots.txt).
-- **syslogd burning 99.9% CPU** — rsyslog stuck in infinite loop since ~05:25.
-- **Stray Next.js process on port 3000** — old `spotonauto-web` ghost process wasting 175MB RAM.
-- **No `error.tsx` anywhere** — uncaught errors may inject unintended noindex.
-- **robots.txt / sitemap contradictions** — `/guides/` and `/symptoms/` in sitemap but disallowed AND noindex.
+- **syslogd burning 99.9% CPU** — rsyslog stuck in infinite loop since ~05:25. ✅ Fixed (killed PID 1112362).
+- **Stray Next.js process on port 3000** — old `spotonauto-web` ghost process wasting 175MB RAM. ✅ Fixed (killed PID 1139226).
+- **No `error.tsx` anywhere** — uncaught errors may inject unintended noindex. ✅ Fixed (added `src/app/error.tsx`).
+- **robots.txt / sitemap contradictions** — `/guides/` and `/symptoms/` in sitemap but disallowed AND noindex. ✅ Fixed (removed from sitemap).
 - **PostgreSQL shared_buffers = 128MB** on 62GB server — severely under-provisioned.
 - **No automated backups** — zero PostgreSQL, Neo4j, or file backups anywhere.
 - **Maintenance pages 404ing** — `/maintenance/2010/toyota/camry/oil-type` returns 404 (data lookup failure, not build issue).
@@ -568,6 +573,70 @@ The product is NOT a manual browser. It is a **translation layer**:
 
 ---
 
+## Auto-Deploy System (2026-05-19)
+
+**Primary deploy mechanism:** VPS-based git watcher (replaces GitHub Actions SSH deploy).
+
+### Why Auto-Deploy?
+GitHub Actions SSH deploys were failing because:
+1. `rm -rf .next` failed when the running Next.js process held files open
+2. Concurrent builds (GitHub Actions + auto-deploy) caused "Another next build process is already running"
+3. SSH/rsync added complexity and race conditions
+
+### Architecture
+```
+GitHub push → origin/main
+                    │
+                    ▼
+        ┌───────────────────────┐
+        │ auto-deploy.timer     │  (every 60s)
+        │   systemd timer       │
+        └───────────┬───────────┘
+                    │
+                    ▼
+        ┌───────────────────────┐
+        │ auto-deploy.service   │  (oneshot)
+        │   /usr/local/bin/     │
+        │   auto-deploy.sh      │
+        └───────────┬───────────┘
+                    │
+        ┌───────────┴───────────┐
+        │ 1. git fetch origin   │
+        │ 2. Compare HEAD       │
+        │ 3. git reset --hard   │
+        │ 4. npm ci             │
+        │ 5. npm run build      │
+        │ 6. systemctl restart  │
+        │ 7. Healthcheck        │
+        └───────────────────────┘
+```
+
+### Files
+- `deploy/auto-deploy.sh` — watcher script with `flock` lockfile to prevent concurrent runs
+- `deploy/auto-deploy.service` — systemd oneshot service unit
+- `deploy/auto-deploy.timer` — systemd timer (60s interval)
+- `scripts/deploy-production.sh` — build script with backup/rollback on failure
+
+### Rollback Behavior
+The deploy script backs up `.next` to `.next.backup` before building. If `npm run build` fails or the healthcheck fails, it restores the backup and restarts the service.
+
+### GitHub Actions
+CI still runs `Verify Build` on every push to catch TypeScript/build errors. The VPS deploy step was removed — auto-deploy handles production deploys.
+
+### Manual Trigger
+```bash
+ssh root@116.202.210.109
+systemctl start auto-deploy.service
+```
+
+### Logs
+```bash
+journalctl -u auto-deploy.service -f
+journalctl -u alloemmanuals-web -f
+```
+
+---
+
 ## Comprehensive A-Z Audit (2026-05-19)
 
 Audited by: Kimi Code CLI across 6 parallel agents + direct live site testing.
@@ -831,27 +900,35 @@ Disallow: /*?_rsc=*
 ### 8. CRITICAL ACTION ITEMS (Prioritized)
 
 #### 🔴 P0 — Fix Immediately
-1. **Kill rsyslog infinite loop** (`kill 1112362` or `systemctl restart rsyslog`) — burning 1 CPU core.
-2. **Kill stray Next.js on port 3000** — `kill 1139226` or `systemctl stop spotonauto-web`.
-3. **Fix maintenance page 404s** — `/maintenance/2010/toyota/camry/oil-type` returns 404 because `fetchMaintenanceData()` returns null for this vehicle. Debug data pipeline.
-4. **Add `error.tsx`** to `src/app/` — prevents Next.js from injecting noindex on uncaught errors.
-5. **Fix robots.txt / sitemap contradiction** — remove `/guides/` and `/symptoms/` from main sitemap OR remove robots.txt disallow.
+1. **Fix maintenance page 404s** — `/maintenance/2010/toyota/camry/oil-type` returns 404 because `fetchMaintenanceData()` returns null for this vehicle. Debug data pipeline. `fetchMaintenanceData` calls CHARM backend at `127.0.0.1:8080`; backend HAS data for 2010 Toyota Camry but `listVariants` or `fetchText` may be failing silently.
+2. **PostgreSQL shared_buffers → 4GB+** — currently 128MB on 62GB server.
+3. **Set up automated PostgreSQL backups** — daily `pg_dump` to `/data/backups/`.
 
 #### 🟡 P1 — This Week
-6. **PostgreSQL shared_buffers → 4GB+** — currently 128MB on 62GB server.
-7. **Add `pg_stat_statements`** extension for query diagnostics.
-8. **Set up automated PostgreSQL backups** — daily `pg_dump` to `/data/backups/`.
-9. **Document Neo4j password** — currently unknown, cypher-shell blocked.
-10. **Fix wiring 502 errors** — 17 wiring URLs hitting LMDB backend timeouts.
-11. **Add metadata to `contact/page.tsx`** — missing title/description.
-12. **Noindex `repair/test-interactive/page.tsx`** — test page should not be indexed.
-13. **Remove `repair_page_backup.tsx.bak`** — repo clutter.
+4. **Add `pg_stat_statements`** extension for query diagnostics.
+5. **Document Neo4j password** — currently unknown, cypher-shell blocked.
+6. **Fix wiring 502 errors** — 17 wiring URLs hitting LMDB backend timeouts.
+7. **Add metadata to `contact/page.tsx`** — missing title/description.
+8. **Noindex `repair/test-interactive/page.tsx`** — test page should not be indexed.
+9. **Remove `repair_page_backup.tsx.bak`** — repo clutter.
+10. **Add Product schema** to affiliate links (Amazon/Topdon) for rich snippets.
 
 #### 🟢 P2 — Next Sprint
-14. **Add Product schema** to affiliate links (Amazon/Topdon) for rich snippets.
-15. **Add Vehicle schema** (`schema.org/Vehicle`) to vehicle hub pages.
-16. **Bundle analyzer** — check for bloat in `_next/static/chunks`.
-17. **Investigate `lemon_proxy.py` on port 8086** — unknown service.
-18. **SSL renewal automation** — certbot renews Aug 5, verify auto-renewal works.
+11. **Add Vehicle schema** (`schema.org/Vehicle`) to vehicle hub pages.
+12. **Bundle analyzer** — check for bloat in `_next/static/chunks`.
+13. **Investigate `lemon_proxy.py` on port 8086** — unknown service.
+14. **SSL renewal automation** — certbot renews Aug 5, verify auto-renewal works.
+
+#### ✅ Completed During This Audit
+- ~~Kill rsyslog infinite loop~~ — Killed PID 1112362. Load dropped from 2.17 to 0.73.
+- ~~Kill stray Next.js on port 3000~~ — Killed PID 1139226. Freed 175MB RAM.
+- ~~Add `error.tsx`~~ — Added `src/app/error.tsx` to prevent noindex injection.
+- ~~Fix robots.txt / sitemap contradiction~~ — Removed `/guides/`, `/symptoms/`, `/repair`, `/parts`, `/tools`, `/wiring`, `/manual` and sub-pages from sitemap.
+- ~~Add `/api/generate-guide` to robots.txt disallow~~ — Prevents bot hammering.
+- ~~Block .env scanning attacks~~ — Added nginx `deny` for IPs `185.177.72.38`/`185.177.72.56` and `location ~* /\.env { return 444; }`.
+- ~~Add apple-touch-icon.png~~ — Copied to `public/apple-touch-icon.png` for iOS Safari.
+- ~~Fix deploy-production.sh~~ — Stops service BEFORE `rm -rf .next`. Adds backup/rollback.
+- ~~Create auto-deploy watcher~~ — `auto-deploy.timer` + `auto-deploy.service` polls GitHub every 60s.
+- ~~Remove VPS deploy from GitHub Actions~~ — CI now only verifies build; auto-deploy handles production.
 
 ---
