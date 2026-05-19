@@ -24,6 +24,20 @@ const TRACKING_SCRIPT = `
       }
     }catch(e){}
   }
+  function clarityEvent(name){
+    try{
+      if(window.clarity){
+        window.clarity('event', name);
+      }
+    }catch(e){}
+  }
+  function clarityUpgrade(reason){
+    try{
+      if(window.clarity){
+        window.clarity('upgrade', reason);
+      }
+    }catch(e){}
+  }
   function setup(){
     fire('page_view_custom',{
       page_path: window.location.pathname,
@@ -40,7 +54,11 @@ const TRACKING_SCRIPT = `
             var ev=data.event_name||'track_click';
             if(data.event_category==='repair_answer') ev='repair_answer_click';
             else if(data.event_category==='kg_click') ev='knowledge_graph_click';
-            else if(data.event_category==='affiliate_click') ev='affiliate_click';
+            else if(data.event_category==='affiliate_click'){
+              ev='affiliate_click';
+              clarityEvent('affiliate_click');
+              clarityUpgrade('affiliate_click');
+            }
             else if(data.event_category==='vin_decoder') ev='vin_decoder_usage';
             else if(data.event_category==='quote_request') ev='quote_request_submission';
             else if(data.event_category==='email_capture') ev='email_capture_conversion';

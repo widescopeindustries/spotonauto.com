@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Route, Search } from 'lucide-react';
 
 import { trackEntryRouteClick } from '@/lib/analytics';
+import { clarityEvent, clarityUpgrade } from '@/lib/clarity';
 import { buildVehicleHubUrl } from '@/lib/vehicleIdentity';
 import { fetchModels, getMakesForYear, getYears } from '@/services/vehicleData';
 
@@ -128,6 +129,14 @@ export default function HomeVehiclePicker() {
                             startTransition(() => {
                                 setVehicle((current) => ({ ...current, model }));
                             });
+                            if (vehicle.year && vehicle.make && model) {
+                                clarityEvent('vehicle_selected', {
+                                    year: vehicle.year,
+                                    make: vehicle.make,
+                                    model,
+                                });
+                                clarityUpgrade('vehicle_selected');
+                            }
                         }}
                         disabled={!vehicle.make || loadingModels}
                     >

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Cpu, Menu, X, Car } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useT } from '@/lib/translations';
+import { clarityEvent } from '@/lib/clarity';
 
 const desktopNavItems = [
   { key: 'nav.diagnose', label: 'Diagnose', href: '/diagnose' },
@@ -30,6 +31,7 @@ export default function Header() {
     e.preventDefault();
     const query = search.trim();
     if (!query) return;
+    clarityEvent('search_submitted', { query: query.slice(0, 60) });
     router.push(`/diagnose?q=${encodeURIComponent(query)}`);
   }
 

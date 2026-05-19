@@ -2,11 +2,28 @@
 
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { CANONICAL_HOST } from '@/lib/host';
+import Clarity from '@microsoft/clarity';
+import { deriveClarityPageTags, applyClarityPageTags } from '@/lib/clarity';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-KS1JPX0V7P';
 const AHREFS_KEY = 'Id9DIK0mrHJtsEHStxIWNA';
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || 'wk5l41apgb';
+
+function ClarityPageTags() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.location.hostname !== CANONICAL_HOST) return;
+    const tags = deriveClarityPageTags(pathname || '/', searchParams?.toString() || '');
+    applyClarityPageTags(tags);
+  }, [pathname, searchParams]);
+
+  return null;
+}
 
 export default function AnalyticsScripts() {
   const [enabled, setEnabled] = useState(false);
@@ -18,10 +35,16 @@ export default function AnalyticsScripts() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!enabled || !CLARITY_ID) return;
+    Clarity.init(CLARITY_ID);
+  }, [enabled]);
+
   if (!enabled) return null;
 
   return (
     <>
+      <ClarityPageTags />
       {GA_MEASUREMENT_ID && (
         <>
           <Script
@@ -40,18 +63,6 @@ export default function AnalyticsScripts() {
             `}
           </Script>
         </>
-      )}
-
-      {CLARITY_ID && (
-        <Script id="microsoft-clarity" strategy="lazyOnload">
-          {`
-            (function(c,l,a,r,i,t,y){
-                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "${CLARITY_ID}");
-          `}
-        </Script>
       )}
 
       <Script id="ahrefs-deferred" strategy="lazyOnload">

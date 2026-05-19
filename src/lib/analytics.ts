@@ -7,6 +7,7 @@ import {
   type AnalyticsIntentCluster,
   type AnalyticsPageSurface,
 } from '@/lib/analyticsContext';
+import { clarityEvent, clarityUpgrade } from '@/lib/clarity';
 
 /**
  * analytics.ts — Consolidated GA4 event tracking for AllOEMManuals
@@ -209,6 +210,15 @@ export function trackAffiliateClick(event: AffiliateClickEvent, context: Analyti
     value: event.isHighTicket ? 10 : 1,
     ...structuredContext,
   });
+
+  clarityEvent('affiliate_click', {
+    provider: event.provider,
+    part_name: event.partName,
+    vehicle: event.vehicle,
+    is_high_ticket: event.isHighTicket,
+    page_type: event.pageType,
+  });
+  clarityUpgrade('affiliate_click');
 }
 
 export function trackShopAllClick(provider: AffiliateProvider, vehicle: string, context: AnalyticsContextInput = {}): void {
@@ -292,6 +302,12 @@ export function trackGuideGenerated(event: GuideGeneratedEvent): void {
     manual_mode: event.manualMode,
     manual_source_count: event.manualSourceCount,
     ...structuredContext,
+  });
+
+  clarityEvent('guide_generated', {
+    vehicle: event.vehicle,
+    task: event.task,
+    manual_mode: event.manualMode || 'none',
   });
 }
 
@@ -606,6 +622,8 @@ export function trackVehicleSearch(
     search_method: method,
     ...structuredContext,
   });
+
+  clarityEvent('vehicle_search', { vehicle, task, method });
 }
 
 export function trackDiagnosticStart(vehicle: string, context: AnalyticsContextInput = {}): void {
@@ -623,6 +641,9 @@ export function trackDiagnosticStart(vehicle: string, context: AnalyticsContextI
     vehicle,
     ...structuredContext,
   });
+
+  clarityEvent('diagnostic_start', { vehicle });
+  clarityUpgrade('diagnostic_start');
 }
 
 export function trackVinDecode(vin: string, success: boolean, context: AnalyticsContextInput = {}): void {
@@ -795,6 +816,8 @@ export function trackWiringDiagramOpen(
     diagram_name: diagramName.slice(0, 120),
     ...structuredContext,
   });
+
+  clarityEvent('wiring_diagram_open', { vehicle, system, diagram_name: diagramName.slice(0, 60) });
 }
 
 interface WiringDiagramSearchEvent {
@@ -993,6 +1016,8 @@ export function trackVehicleHubEnter(vehicle: string, context: AnalyticsContextI
     vehicle,
     ...structuredContext,
   });
+
+  clarityEvent('vehicle_hub_enter', { vehicle });
 }
 
 // ─── Knowledge Graph Events ────────────────────────────────────────────────
