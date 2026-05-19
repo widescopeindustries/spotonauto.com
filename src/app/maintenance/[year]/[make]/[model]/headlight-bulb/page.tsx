@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchMaintenanceData } from "@/lib/maintenanceData";
-import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
+import { getToolPagesForVehicle, findGenerationForYear } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
+import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
 
@@ -21,59 +21,68 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { year, make, model } = await params;
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
-  const title = `${year} ${displayMake} ${displayModel} Tire Size & Pressure | AllOEMManuals`;
-  const description = `Exact OEM tire size, pressure, and load rating for the ${year} ${displayMake} ${displayModel}. Factory spec from the service manual.`;
+  const toolPages = getToolPagesForVehicle(displayMake, displayModel);
+  const page = toolPages.find((p) => p.toolType === 'headlight-bulb');
+  const gen = page ? findGenerationForYear(parseInt(year, 10), page.generations) : null;
+  const lowBeam = gen?.specs['Low Beam'] || '';
+
+  const title = `${year} ${displayMake} ${displayModel} Headlight Bulb Size${lowBeam ? ` — ${lowBeam.split('(')[0].trim()}` : ''} | AllOEMManuals`;
+  const description = `${year} ${displayMake} ${displayModel} headlight bulb type: low beam, high beam, and fog light specs from the factory service manual. Exact replacement part numbers and installation tips.`;
+
   return {
     title,
     description,
     alternates: {
-      canonical: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/tire-size`,
+      canonical: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/headlight-bulb`,
     },
     openGraph: {
       title,
       description,
       type: "article",
-      url: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/tire-size`,
+      url: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/headlight-bulb`,
     },
   };
 }
 
-export default async function TireSizePage({ params }: PageProps) {
+export default async function HeadlightBulbPage({ params }: PageProps) {
   const { year, make, model } = await params;
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
   const canonicalMake = slugifyRoutePart(displayMake);
   const canonicalModel = slugifyRoutePart(displayModel);
+  const yearNum = parseInt(year, 10);
 
   const clamped = getClampedYear(year, displayMake, displayModel);
   if (clamped !== null) {
     notFound();
   }
 
-  let data: Awaited<ReturnType<typeof fetchMaintenanceData>> = null;
-  try {
-    data = await fetchMaintenanceData(year, displayMake, displayModel);
-  } catch (err) {
-    console.warn(`[Maintenance] fetch failed for ${year} ${displayMake} ${displayModel}`, err);
-  }
-  if (!data || !data.tires) {
+  const toolPages = getToolPagesForVehicle(displayMake, displayModel);
+  const page = toolPages.find((p) => p.toolType === 'headlight-bulb');
+  if (!page) {
     notFound();
   }
 
-  const { tires, variant } = data;
+  const gen = findGenerationForYear(yearNum, page.generations);
+  if (!gen) {
+    notFound();
+  }
+
+  const lowBeam = gen.specs['Low Beam'] || gen.specs['Low'] || '';
+  const highBeam = gen.specs['High Beam'] || gen.specs['High'] || '';
+  const fogLight = gen.specs['Fog Light'] || gen.specs['Fog'] || '';
+  const drl = gen.specs['DRL'] || gen.specs['Daytime Running Light'] || '';
 
   const faqItems = [
     {
-      question: `What size tires fit a ${year} ${displayMake} ${displayModel}?`,
-      answer: `The ${year} ${displayMake} ${displayModel} uses ${tires.size} as the OEM tire size.`,
+      question: `What headlight bulb does a ${year} ${displayMake} ${displayModel} use?`,
+      answer: lowBeam
+        ? `The ${year} ${displayMake} ${displayModel} uses ${lowBeam} for the low beam${highBeam ? ` and ${highBeam} for the high beam` : ''}.${fogLight ? ` The fog light is ${fogLight}.` : ''}`
+        : `Refer to the factory service manual for the exact headlight bulb specification for your ${year} ${displayMake} ${displayModel}.`,
     },
     {
-      question: `What tire pressure should a ${year} ${displayMake} ${displayModel} have?`,
-      answer: `The recommended tire pressure for the ${year} ${displayMake} ${displayModel} is ${tires.pressureFront} PSI front and ${tires.pressureRear} PSI rear (cold).`,
-    },
-    {
-      question: `Can I use a different tire size on my ${year} ${displayMake} ${displayModel}?`,
-      answer: `It is recommended to use the OEM size ${tires.size}. Alternative sizes may affect speedometer accuracy, handling, and clearances.`,
+      question: `Can I use LED bulbs in my ${year} ${displayMake} ${displayModel} headlights?`,
+      answer: `LED retrofit bulbs are available but may not provide proper beam pattern or heat dissipation. Some trims come with factory LED headlights that are integrated assemblies and cannot accept bulb replacements. Always verify DOT compliance and check local regulations.`,
     },
   ];
 
@@ -97,11 +106,11 @@ export default async function TireSizePage({ params }: PageProps) {
       { "@type": "ListItem", position: 1, name: "Maintenance", item: "https://alloemmanuals.com/maintenance" },
       { "@type": "ListItem", position: 2, name: displayMake, item: `https://alloemmanuals.com/maintenance/${canonicalMake}` },
       { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://alloemmanuals.com/maintenance/${canonicalMake}/${canonicalModel}` },
-      { "@type": "ListItem", position: 4, name: `${year} Tire Size`, item: `https://alloemmanuals.com/maintenance/${year}/${canonicalMake}/${canonicalModel}/tire-size` },
+      { "@type": "ListItem", position: 4, name: `${year} ${displayMake} ${displayModel} Headlight Bulb`, item: `https://alloemmanuals.com/maintenance/${year}/${canonicalMake}/${canonicalModel}/headlight-bulb` },
     ],
   };
 
-  const tireSearchQuery = `${displayMake} ${displayModel} ${tires.size} tire ${year}`;
+  const bulbSearchQuery = `${displayMake} ${displayModel} headlight bulbs ${year}`;
 
   return (
     <>
@@ -119,44 +128,63 @@ export default async function TireSizePage({ params }: PageProps) {
             <span className="text-gray-600">/</span>
             <li><Link href={`/maintenance/${canonicalMake}/${canonicalModel}`} className="text-cyan-400 hover:text-cyan-300 transition-colors">{displayModel}</Link></li>
             <span className="text-gray-600">/</span>
-            <li className="text-gray-400">{year} Tire Size</li>
+            <li className="text-gray-400">{year} Headlight Bulb</li>
           </ol>
         </nav>
 
         <h1 className="text-3xl sm:text-4xl font-display font-bold text-white mb-2">
-          {year} {displayMake} {displayModel} Tire Size &amp; Pressure
+          {year} {displayMake} {displayModel} Headlight Bulb Size
         </h1>
         <p className="text-gray-400 text-sm mb-8">
-          OEM spec from the factory service manual for the {variant} variant.
+          OEM headlight bulb spec from the factory service manual for the {gen.name} ({gen.years}).
         </p>
 
-        <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/[0.08] p-6 mb-8" itemScope itemType="https://schema.org/Question">
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300/80 mb-4" itemProp="name">Quick Answer</p>
-          <div className="grid sm:grid-cols-3 gap-6" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-            <div>
-              <p className="text-sm text-gray-400 mb-1">OEM Tire Size</p>
-              <p className="text-2xl font-display font-bold text-white" itemProp="text">{tires.size}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400 mb-1">Pressure (Front / Rear)</p>
-              <p className="text-2xl font-display font-bold text-white" itemProp="text">{tires.pressureFront} / {tires.pressureRear} PSI</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400 mb-1">Load Index</p>
-              <p className="text-2xl font-display font-bold text-white" itemProp="text">{tires.loadIndex}</p>
-            </div>
+        <div className="rounded-2xl border border-yellow-500/30 bg-yellow-500/[0.08] p-6 mb-8" itemScope itemType="https://schema.org/Question">
+          <p className="text-xs uppercase tracking-[0.2em] text-yellow-300/80 mb-4" itemProp="name">Quick Answer</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+            {lowBeam && (
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Low Beam</p>
+                <p className="text-2xl font-display font-bold text-white" itemProp="text">{lowBeam}</p>
+              </div>
+            )}
+            {highBeam && (
+              <div>
+                <p className="text-sm text-gray-400 mb-1">High Beam</p>
+                <p className="text-2xl font-display font-bold text-white" itemProp="text">{highBeam}</p>
+              </div>
+            )}
+            {fogLight && (
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Fog Light</p>
+                <p className="text-2xl font-display font-bold text-white" itemProp="text">{fogLight}</p>
+              </div>
+            )}
+            {drl && (
+              <div>
+                <p className="text-sm text-gray-400 mb-1">DRL</p>
+                <p className="text-xl font-display font-bold text-white" itemProp="text">{drl}</p>
+              </div>
+            )}
           </div>
         </div>
 
+        {gen.notes && gen.notes.length > 0 && (
+          <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 mb-8">
+            <p className="text-xs uppercase tracking-wider text-amber-400 font-bold mb-2">Notes</p>
+            <ul className="space-y-1">
+              {gen.notes.map((note, i) => (
+                <li key={i} className="text-amber-200/80 text-sm flex items-start gap-2">
+                  <span className="text-amber-400 mt-0.5">→</span>
+                  {note}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 mb-8 text-sm text-gray-400">
-          <span className="text-cyan-400 font-medium">Source:</span> Factory service manual — {year} {displayMake} {displayModel} {variant}.
-          {" "}
-          <Link
-            href={`/manual/${encodeURIComponent(displayMake)}/${year}/${encodeURIComponent(variant)}/Repair%20and%20Diagnosis/Quick%20Lookups/Tire%20Fitment`}
-            className="text-cyan-400 hover:text-cyan-300 underline"
-          >
-            View full manual section →
-          </Link>
+          <span className="text-yellow-400 font-medium">Source:</span> Factory service manual — {year} {displayMake} {displayModel} {gen.name}.
         </div>
 
         {/* Maintenance specs nav */}
@@ -165,45 +193,31 @@ export default async function TireSizePage({ params }: PageProps) {
           <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">All specs</Link>
           <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/oil-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Oil Type</Link>
           <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/coolant-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Coolant</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/tire-size`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Tire Size</Link>
           <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/battery-location`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Battery</Link>
           <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/spark-plug-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Spark Plugs</Link>
           <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/transmission-fluid-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Trans Fluid</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/headlight-bulb`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Headlights</Link>
           <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/brake-fluid-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Brake Fluid</Link>
           <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/fluid-capacity`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Capacities</Link>
         </div>
 
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-white mb-4">Shop Tires</h2>
+          <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a
-              href={buildAmazonSearchUrl(tireSearchQuery, "automotive", `tire-${year}-${canonicalMake}-${canonicalModel}`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
-            >
-              <p className="text-sm text-cyan-400 mb-1">Replacement Tires</p>
-              <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                {tires.size} for {displayMake} {displayModel}
-              </h3>
+            <a href={buildAmazonSearchUrl(bulbSearchQuery, "automotive", `bulb-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-yellow-400/40 transition-all group">
+              <p className="text-sm text-yellow-400 mb-1">Headlight Bulbs</p>
+              <h3 className="text-base font-semibold text-white group-hover:text-yellow-300 transition-colors">{displayMake} {displayModel} Replacement Bulbs</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a
-              href={buildAmazonSearchUrl("tire pressure gauge digital", "automotive", `gauge-${year}-${canonicalMake}-${canonicalModel}`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
-            >
-              <p className="text-sm text-cyan-400 mb-1">Tool</p>
-              <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                Digital Tire Pressure Gauge
-              </h3>
+            <a href={buildAmazonSearchUrl("headlight bulb installation tool", "automotive", `tool-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-yellow-400/40 transition-all group">
+              <p className="text-sm text-yellow-400 mb-1">Tool</p>
+              <h3 className="text-base font-semibold text-white group-hover:text-yellow-300 transition-colors">Bulb Installation Gloves / Tool</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
           </div>
         </div>
 
-        <RelatedForVehicle year={year} make={displayMake} model={displayModel} excludeType="tire-size" />
+        <RelatedForVehicle year={year} make={displayMake} model={displayModel} excludeType="headlight-bulb" />
 
         <section className="mt-12">
           <h2 className="text-xl font-bold text-white mb-4">Frequently Asked Questions</h2>

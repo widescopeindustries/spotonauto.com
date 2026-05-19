@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
+import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
 
 export const revalidate = 86400;
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
   const title = `${year} ${displayMake} ${displayModel} Oil Type & Capacity | AllOEMManuals`;
-  const description = `Exact engine oil type, capacity, and OEM spec for the ${year} ${displayMake} ${displayModel}. Factory service manual data with recommended products.`;
+  const description = `Exact engine oil type, capacity, and OEM spec for the ${year} ${displayMake} ${displayModel}. Factory service manual data with filter part number, drain plug torque, and step-by-step DIY guide.`;
   return {
     title,
     description,
@@ -49,7 +50,12 @@ export default async function OilTypePage({ params }: PageProps) {
     notFound();
   }
 
-  const data = await fetchMaintenanceData(year, displayMake, displayModel);
+  let data: Awaited<ReturnType<typeof fetchMaintenanceData>> = null;
+  try {
+    data = await fetchMaintenanceData(year, displayMake, displayModel);
+  } catch (err) {
+    console.warn(`[Maintenance] fetch failed for ${year} ${displayMake} ${displayModel}`, err);
+  }
   if (!data || !data.oil) {
     notFound();
   }
@@ -135,16 +141,16 @@ export default async function OilTypePage({ params }: PageProps) {
           OEM spec from the factory service manual for the {variant} variant.
         </p>
 
-        <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/[0.08] p-6 mb-8">
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300/80 mb-4">Quick Answer</p>
-          <div className="grid sm:grid-cols-3 gap-6">
+        <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/[0.08] p-6 mb-8" itemScope itemType="https://schema.org/Question">
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300/80 mb-4" itemProp="name">Quick Answer</p>
+          <div className="grid sm:grid-cols-3 gap-6" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
             <div>
               <p className="text-sm text-gray-400 mb-1">Oil Type</p>
-              <p className="text-2xl font-display font-bold text-white">{oil.oilType}</p>
+              <p className="text-2xl font-display font-bold text-white" itemProp="text">{oil.oilType}</p>
             </div>
             <div>
               <p className="text-sm text-gray-400 mb-1">Capacity (w/ Filter)</p>
-              <p className="text-2xl font-display font-bold text-white">{oil.capacityQt}</p>
+              <p className="text-2xl font-display font-bold text-white" itemProp="text">{oil.capacityQt}</p>
               <p className="text-sm text-gray-500">{oil.capacityL}</p>
             </div>
             <div>
@@ -173,24 +179,15 @@ export default async function OilTypePage({ params }: PageProps) {
         {/* Maintenance specs nav */}
         <div className="flex flex-wrap gap-2 mb-8">
           <span className="text-xs text-gray-500 uppercase tracking-wider py-2">Other specs:</span>
-          <Link
-            href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}`}
-            className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition"
-          >
-            All specs
-          </Link>
-          <Link
-            href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/tire-size`}
-            className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition"
-          >
-            Tire Size
-          </Link>
-          <Link
-            href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/coolant-type`}
-            className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition"
-          >
-            Coolant
-          </Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">All specs</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/tire-size`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Tire Size</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/coolant-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Coolant</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/battery-location`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Battery</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/spark-plug-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Spark Plugs</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/transmission-fluid-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Trans Fluid</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/headlight-bulb`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Headlights</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/brake-fluid-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Brake Fluid</Link>
+          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/fluid-capacity`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Capacities</Link>
         </div>
 
         <div className="mb-8">
@@ -246,6 +243,8 @@ export default async function OilTypePage({ params }: PageProps) {
             </a>
           </div>
         </div>
+
+        <RelatedForVehicle year={year} make={displayMake} model={displayModel} excludeType="oil-type" />
 
         <section className="mt-12">
           <h2 className="text-xl font-bold text-white mb-4">Frequently Asked Questions</h2>

@@ -3,36 +3,41 @@
 This file is the durable project memory for future Codex runs in this repo.
 Update it when product decisions, traps, or standing preferences change.
 
-## Current State Snapshot (2026-05-14)
+## Current State Snapshot (2026-05-19)
 
 ### Domain & Traffic
-- **Primary domain:** `alloemmanuals.com` (purchased 2026-05-07, ~7 days old)
+- **Primary domain:** `alloemmanuals.com` (purchased 2026-05-07, ~12 days old)
 - **Legacy domain:** `spotonauto.com` → 301 redirects to `alloemmanuals.com` (nginx + Next.js)
-- **Google index:** 2,460 pages indexed, 112 pages receiving impressions
-- **Homepage SERP:** Position 1.1, 60% CTR, 6 clicks / 10 impressions
-- **Bing Search:** 9 clicks, 176 impressions, 5.11% CTR (May 11)
-- **Bing AI/Copilot citations:** 61 total citations, 15 pages cited. Top page: `/tools/kia-sportage-serpentine-belt` (22 citations)
+- **Google index:** 278,787 pages discovered, 447 excluded by noindex, 64 server errors
+- **Homepage SERP:** US position 11.7 (page 2); international positions 4-7
+- **Bing Search:** 160 clicks, 3K impressions, 5.32% CTR
+- **Bing AI/Copilot citations:** 736 citations, 43 unique pages cited daily
+- **ChatGPT referrals:** 17 sessions in GA4
+- **Amazon Associates:** Already generating commissions
 - **GA4 property:** `G-KS1JPX0V7P` (alloemmanuals.com) — GSC linked
 - **spotonauto.com GA4:** Archive only. Was receiving misrouted alloemmanuals traffic due to hardcoded fallback ID (`G-WNFX6CY9RN`). Fixed 2026-05-14.
 
-### Recent Deploys (2026-05-14)
-1. **Manuel deployed** — Full rebrand of AI chat from generic "AI Technician" to "Manuel — Your Factory-Trained AI Mechanic". System prompt, greetings, UI headers, disclaimers, and CTAs all updated. Voice input enabled.
-2. **Manuel homepage presence** — Hero diagnostic section, entry paths, testimonials, footer, and repair page CTAs all reference Manuel instead of generic AI.
-3. **Chat API fixed** — OpenAI GPT-4o-mini is primary provider. Removed `OLLAMA_PRIMARY=1` which was causing 60s+ timeouts. Ollama (`qwen2.5:3b`) remains as fallback.
-4. **Brand consistency fix** — eliminated all `SpotOn Auto` references from titles/schema (10 files)
-5. **Schema validation** — fixed `MonetaryAmount` range strings → `minValue`/`maxValue`
-6. **Auto-generated FAQs** — 3,713 tool pages now have 2-4 unique, relevant Q&As instead of identical generic "Where is this data from?" FAQ
-7. **Generic text filter** — `isGenericTemplateText()` detects and suppresses template filler on vehicle hubs and in schema
-8. **BreadcrumbList schema** — added to vehicle hub pages for cleaner SERP URL display
-9. **GA4 tracking fix** — updated measurement ID to `G-KS1JPX0V7P`, reduced loading delay 3s → 500ms
+### Recent Deploys (2026-05-19)
+1. **Noindex crisis FIXED** — Reverted noindex on generic `/tools/` pages (oil-type, coolant-type, tire-size, battery-location, wiper-blade-size, serpentine-belt). These pages were getting 32-736 AI citations each; noindexing them would have destroyed citation equity. Vehicle-specific `/maintenance/...` pages coexist and compete naturally.
+2. **New maintenance pages deployed** — `spark-plug-type` and `transmission-fluid-type` vehicle-specific maintenance pages (corpus-backed, 404 if no data). Joins existing: oil-type, coolant-type, tire-size, battery-location, wiper-blade-size, serpentine-belt.
+3. **Maintenance hub expanded** — Now shows 8 spec cards (oil, coolant, tire, battery, wipers, belt, spark plugs, trans fluid). Each card only appears when data is available.
+4. **Affiliate monetization** — Added Amazon affiliate blocks to battery-location, wiper-blade-size, and serpentine-belt pages (they were missing affiliate links). All maintenance pages now monetize.
+5. **Cross-linking** — "Other specs" nav on every maintenance page links to all sibling pages for the same vehicle. Reduces bounce rate by keeping users in the vehicle bubble.
+6. **Maintenance landing page** — `/maintenance` now exists with links to popular makes/models. Added to sitemap.
+7. **Vehicle hub links** — `MAINTENANCE_TOOL_TYPES` already routes tool type cards to `/maintenance/{year}/{make}/{model}/{toolType}` instead of generic `/tools/`.
+8. **IndexNow submission** — Submitted new maintenance URLs to Bing/Google via IndexNow.
+9. **SSH key auth** — Set up ed25519 key-based auth for VPS deploy. No more password/fail2ban issues.
+
+### Earlier Deploys (2026-05-14)
+- Manuel AI chat rebrand, brand consistency fix, schema validation, auto-generated FAQs, generic text filter, BreadcrumbList schema, GA4 tracking fix
 
 ### Infrastructure
-- **VPS:** `116.202.210.109` (IPv4 SSH works; IPv6 `2a01:4f8:2200:3291::2` currently failing — use IPv4)
+- **VPS:** `116.202.210.109` / IPv6 `2a01:4f8:2200:3291::2`
+- **SSH:** Key-based auth (`~/.ssh/id_ed25519`) working. IPv6 preferred; IPv4 port 22 sometimes blocked by fail2ban.
 - **Next.js:** Port 3002, `alloemmanuals-web.service`
 - **nginx cache:** `alloemmanuals_cache` (1GB, 1h TTL). Cache already warmed to ~900 files.
-- **Deploy process:** Commit to GitHub → rsync changed files to VPS `/root/spotonauto.com/` → stop service → `rm -rf .next` → `npm run build` → **sync `.next/` to `/root/spotonauto.com/.next/`** (service WorkingDirectory) → start service
+- **Deploy process:** `rsync` local `/home/lyndon/projects/spotonauto.com/` to VPS `/root/spotonauto.com/` → `bash scripts/deploy-production.sh` on VPS (handles npm ci, build, service restart, healthcheck)
 - **Nginx cache clear:** `rm -rf /var/cache/nginx/alloemmanuals/* && nginx -s reload`
-- **Critical:** systemd `WorkingDirectory=/root/spotonauto.com/` but builds run in `/root/alloemmanuals.com/`. Always rsync `.next/` to service dir or service will serve stale build.
 - **LMDB backend:** `127.0.0.1:8080` on VPS — sole data source
 
 ### LLM API Status (2026-05-14)

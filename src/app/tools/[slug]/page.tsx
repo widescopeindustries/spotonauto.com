@@ -179,6 +179,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const supportText = 'Use the exact vehicle page to confirm fitment, compare related repair paths, and build the one-trip parts list before you start.';
     const description = [baseDescription, answerText, supportText].filter(Boolean).join(' ');
 
+    // Keep generic tool pages indexed — they aggregate all years and maintain AI citation equity.
+    // Vehicle-specific maintenance pages coexist and rank for year-specific queries.
     const robots = quality === 'medium'
         ? { index: false, follow: true }
         : undefined;

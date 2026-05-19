@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
+import { getToolPagesForVehicle } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 
 export const revalidate = 86400;
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
   const title = `${year} ${displayMake} ${displayModel} Maintenance Specs | AllOEMManuals`;
-  const description = `Factory maintenance specifications for the ${year} ${displayMake} ${displayModel}: oil type, capacity, tire size, pressure, and coolant specs from the OEM service manual.`;
+  const description = `Factory maintenance specifications for the ${year} ${displayMake} ${displayModel}: oil type, capacity, tire size, pressure, coolant, spark plugs, transmission fluid, and more from the OEM service manual.`;
   return {
     title,
     description,
@@ -47,12 +48,16 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
     notFound();
   }
 
-  const data = await fetchMaintenanceData(year, displayMake, displayModel);
-  if (!data) {
-    notFound();
+  let data: Awaited<ReturnType<typeof fetchMaintenanceData>> = null;
+  try {
+    data = await fetchMaintenanceData(year, displayMake, displayModel);
+  } catch {
+    // allow fallback to tool-page-only specs
   }
 
-  const { oil, coolant, tires, variant } = data;
+  const toolPages = getToolPagesForVehicle(displayMake, displayModel);
+  const hasToolPage = (type: string) => toolPages.some((p) => p.toolType === type);
+
   const basePath = `/maintenance/${year}/${canonicalMake}/${canonicalModel}`;
 
   const specs = [
@@ -60,9 +65,9 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
       id: "oil-type",
       label: "Oil Type & Capacity",
       icon: "🛢️",
-      available: !!oil,
-      summary: oil
-        ? `${oil.oilType} · ${oil.capacityQt}`
+      available: !!data?.oil,
+      summary: data?.oil
+        ? `${data.oil.oilType} · ${data.oil.capacityQt}`
         : "Not available for this variant",
       href: `${basePath}/oil-type`,
       tone: "cyan",
@@ -71,9 +76,9 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
       id: "tire-size",
       label: "Tire Size & Pressure",
       icon: "🛞",
-      available: !!tires,
-      summary: tires
-        ? `${tires.size} · ${tires.pressureFront} front / ${tires.pressureRear} rear`
+      available: !!data?.tires,
+      summary: data?.tires
+        ? `${data.tires.size} · ${data.tires.pressureFront} front / ${data.tires.pressureRear} rear`
         : "Not available for this variant",
       href: `${basePath}/tire-size`,
       tone: "violet",
@@ -82,12 +87,84 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
       id: "coolant-type",
       label: "Coolant Type & Capacity",
       icon: "❄️",
-      available: !!coolant,
-      summary: coolant
-        ? `${coolant.coolantType || "OEM spec"} · ${coolant.capacityQt}`
+      available: !!data?.coolant,
+      summary: data?.coolant
+        ? `${data.coolant.coolantType || "OEM spec"} · ${data.coolant.capacityQt}`
         : "Not available for this variant",
       href: `${basePath}/coolant-type`,
       tone: "emerald",
+    },
+    {
+      id: "battery-location",
+      label: "Battery Location & Size",
+      icon: "🔋",
+      available: hasToolPage('battery-location'),
+      summary: "OEM battery spec",
+      href: `${basePath}/battery-location`,
+      tone: "green",
+    },
+    {
+      id: "wiper-blade-size",
+      label: "Wiper Blade Size",
+      icon: "🌧️",
+      available: hasToolPage('wiper-blade-size'),
+      summary: "OEM wiper blade sizes",
+      href: `${basePath}/wiper-blade-size`,
+      tone: "sky",
+    },
+    {
+      id: "serpentine-belt",
+      label: "Serpentine Belt",
+      icon: "⚙️",
+      available: hasToolPage('serpentine-belt'),
+      summary: "OEM belt routing & part number",
+      href: `${basePath}/serpentine-belt`,
+      tone: "purple",
+    },
+    {
+      id: "spark-plug-type",
+      label: "Spark Plug Type & Gap",
+      icon: "⚡",
+      available: hasToolPage('spark-plug-type'),
+      summary: "OEM plug, gap & torque",
+      href: `${basePath}/spark-plug-type`,
+      tone: "orange",
+    },
+    {
+      id: "transmission-fluid-type",
+      label: "Transmission Fluid",
+      icon: "⚙️",
+      available: hasToolPage('transmission-fluid-type'),
+      summary: "OEM ATF/MTF spec & capacity",
+      href: `${basePath}/transmission-fluid-type`,
+      tone: "rose",
+    },
+    {
+      id: "headlight-bulb",
+      label: "Headlight Bulb Size",
+      icon: "💡",
+      available: hasToolPage('headlight-bulb'),
+      summary: "OEM low/high beam & fog light",
+      href: `${basePath}/headlight-bulb`,
+      tone: "yellow",
+    },
+    {
+      id: "brake-fluid-type",
+      label: "Brake Fluid",
+      icon: "🚨",
+      available: hasToolPage('brake-fluid-type'),
+      summary: "OEM DOT spec & capacity",
+      href: `${basePath}/brake-fluid-type`,
+      tone: "red",
+    },
+    {
+      id: "fluid-capacity",
+      label: "Fluid Capacities",
+      icon: "🧪",
+      available: hasToolPage('fluid-capacity'),
+      summary: "Oil, coolant, trans & more",
+      href: `${basePath}/fluid-capacity`,
+      tone: "cyan",
     },
   ];
 
@@ -108,18 +185,39 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
     cyan: "border-cyan-500/20 hover:border-cyan-500/40",
     violet: "border-violet-500/20 hover:border-violet-500/40",
     emerald: "border-emerald-500/20 hover:border-emerald-500/40",
+    green: "border-green-500/20 hover:border-green-500/40",
+    sky: "border-sky-500/20 hover:border-sky-500/40",
+    purple: "border-purple-500/20 hover:border-purple-500/40",
+    orange: "border-orange-500/20 hover:border-orange-500/40",
+    rose: "border-rose-500/20 hover:border-rose-500/40",
+    yellow: "border-yellow-500/20 hover:border-yellow-500/40",
+    red: "border-red-500/20 hover:border-red-500/40",
   };
 
   const toneBg: Record<string, string> = {
     cyan: "bg-cyan-500/[0.04]",
     violet: "bg-violet-500/[0.04]",
     emerald: "bg-emerald-500/[0.04]",
+    green: "bg-green-500/[0.04]",
+    sky: "bg-sky-500/[0.04]",
+    purple: "bg-purple-500/[0.04]",
+    orange: "bg-orange-500/[0.04]",
+    rose: "bg-rose-500/[0.04]",
+    yellow: "bg-yellow-500/[0.04]",
+    red: "bg-red-500/[0.04]",
   };
 
   const toneText: Record<string, string> = {
     cyan: "text-cyan-300",
     violet: "text-violet-300",
     emerald: "text-emerald-300",
+    green: "text-green-300",
+    sky: "text-sky-300",
+    purple: "text-purple-300",
+    orange: "text-orange-300",
+    rose: "text-rose-300",
+    yellow: "text-yellow-300",
+    red: "text-red-300",
   };
 
   return (
@@ -145,7 +243,7 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
           {year} {displayMake} {displayModel} Maintenance Specs
         </h1>
         <p className="text-gray-400 text-sm mb-2">
-          Factory service manual data for the {variant} variant.
+          Factory service manual data for the {data?.variant || displayModel} variant.
         </p>
         <p className="text-gray-500 text-xs mb-8">
           {availableCount} of {specs.length} specs available
