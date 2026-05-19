@@ -3,7 +3,7 @@
 This file is the durable project memory for future Codex runs in this repo.
 Update it when product decisions, traps, or standing preferences change.
 
-## Current State Snapshot (2026-05-19)
+## Current State Snapshot (2026-05-19 — Post Full Audit)
 
 ### Domain & Traffic
 - **Primary domain:** `alloemmanuals.com` (purchased 2026-05-07, ~12 days old)
@@ -16,6 +16,20 @@ Update it when product decisions, traps, or standing preferences change.
 - **Amazon Associates:** Already generating commissions
 - **GA4 property:** `G-KS1JPX0V7P` (alloemmanuals.com) — GSC linked
 - **spotonauto.com GA4:** Archive only. Was receiving misrouted alloemmanuals traffic due to hardcoded fallback ID (`G-WNFX6CY9RN`). Fixed 2026-05-14.
+
+### Full Audit Summary (conducted 2026-05-19)
+See comprehensive audit section at bottom of this file for full details.
+**Top critical findings:**
+- **OpenAI crawling 47,813 requests in 7 hours** — 55% of all traffic. Mostly `_rsc` internal URLs (now blocked in robots.txt).
+- **syslogd burning 99.9% CPU** — rsyslog stuck in infinite loop since ~05:25.
+- **Stray Next.js process on port 3000** — old `spotonauto-web` ghost process wasting 175MB RAM.
+- **No `error.tsx` anywhere** — uncaught errors may inject unintended noindex.
+- **robots.txt / sitemap contradictions** — `/guides/` and `/symptoms/` in sitemap but disallowed AND noindex.
+- **PostgreSQL shared_buffers = 128MB** on 62GB server — severely under-provisioned.
+- **No automated backups** — zero PostgreSQL, Neo4j, or file backups anywhere.
+- **Maintenance pages 404ing** — `/maintenance/2010/toyota/camry/oil-type` returns 404 (data lookup failure, not build issue).
+- **Wiring pages returning 502** — 17 wiring URLs hit 502 in last 7 hours (LMDB backend timeout).
+- **SSL expires Aug 5** — 78 days remaining.
 
 ### Recent Deploys (2026-05-19)
 1. **Noindex crisis FIXED** — Reverted noindex on generic `/tools/` pages (oil-type, coolant-type, tire-size, battery-location, wiper-blade-size, serpentine-belt). These pages were getting 32-736 AI citations each; noindexing them would have destroyed citation equity. Vehicle-specific `/maintenance/...` pages coexist and compete naturally.
@@ -550,3 +564,294 @@ The product is NOT a manual browser. It is a **translation layer**:
   - `scripts/content-machine/generate-profiles.mjs`
   - `src/services/geminiService.ts`
   - `src/app/api/chat/route.ts`
+
+
+---
+
+## Comprehensive A-Z Audit (2026-05-19)
+
+Audited by: Kimi Code CLI across 6 parallel agents + direct live site testing.
+Scope: Live site, VPS infrastructure, codebase, databases, nginx logs, SSL/DNS, bot traffic.
+
+---
+
+### 1. TRAFFIC & BOT ANALYSIS (Nginx Access Logs)
+
+**Time window:** Current log = 7 hours (00:00–07:00 May 19). 87,830 total requests.
+
+#### Status Code Distribution
+| Code | Count | % |
+|------|-------|---|
+| 200 | 78,534 | 89.4% |
+| 308 | 5,074 | 5.8% |
+| 404 | 2,081 | 2.4% |
+| 429 | 1,507 | 1.7% |
+| 502 | 130 | 0.15% |
+| 500 | 55 | 0.06% |
+| 301 | 114 | 0.13% |
+| 400 | 156 | 0.18% |
+| 499 | 71 | 0.08% |
+
+#### Bot Traffic Breakdown (7 hours)
+| Operator | Requests | % of Total |
+|----------|----------|------------|
+| **OpenAI** | **47,813** | **54.4%** |
+| Amazon | 1,461 | 1.7% |
+| Semrush | 1,047 | 1.2% |
+| Bing | 889 | 1.0% |
+| Moz | 693 | 0.8% |
+| Anthropic | 633 | 0.7% |
+| Google | 495 | 0.6% |
+| Apple | 452 | 0.5% |
+| Meta | 307 | 0.3% |
+| Majestic | 191 | 0.2% |
+| Perplexity | 10 | 0.01% |
+| Ahrefs | 1 | 0.001% |
+
+**Critical:** OpenAI is the dominant traffic source. It crawled 46,512 unique URLs in 7 hours, many of which were Next.js `_rsc` internal payload URLs. `Disallow: /*?_rsc=` and `/*?_rsc=*` added to robots.txt 2026-05-19.
+
+#### Top 20 404s (All Traffic)
+| Path | Hits | Note |
+|------|------|------|
+| `/favicon.ico` | 42 | Should serve 200 now (favicon deployed) |
+| `/wp-admin/install.php?step=1` | 33 | WordPress probe attacks |
+| `/apple-touch-icon.png` | 23 | iOS requests |
+| `/apple-touch-icon-precomposed.png` | 13 | iOS requests |
+| `/maintenance/2010/toyota/camry/oil-type` | 4 | **BUG — page returns 404** |
+| Various `/tools/...` | 3-5 each | Non-existent tool pages (bot guesses) |
+
+#### Top 20 URLs (All Traffic)
+| Path | Hits |
+|------|------|
+| `/api/generate-guide` | 1,022 |
+| `/robots.txt` | 486 |
+| `/` | 198 |
+| `/_next/static/css/35d7ea13da595721.css` | 85 |
+| `/icon.svg` | 77 |
+| Various `_next/static/...` | 70-76 each |
+
+#### 500/502 Errors
+- **17 wiring URLs returned 502** — LMDB backend timing out on wiring diagram requests
+- **3 API wiring endpoints returned 500** — `/api/wiring?action=diagrams&make=...`
+- **2 tool pages returned 502** — `/tools/pontiac-grand-am-transmission-fluid-type`
+
+---
+
+### 2. LIVE SITE PERFORMANCE
+
+| Page | Status | TTFB | Total | Size |
+|------|--------|------|-------|------|
+| `/` | 200 | 0.86s | 0.86s | 77KB |
+| `/vehicles/2010/toyota/camry` | 200 | 0.79s | 0.80s | 21KB |
+| `/repair/2008/nissan/pathfinder/battery-replacement` | 200 | 1.37s | **2.49s** | 323KB |
+| `/maintenance/2010/toyota/camry/oil-type` | **404** | 0.78s | 0.78s | 38KB |
+| `/codes/P0420` | 200 | 0.79s | 1.54s | 193KB |
+| `/wiring/2010/toyota/camry` | **404** | 0.78s | 1.03s | 69KB |
+| `/tools/toyota-camry-oil-type` | 200 | 0.76s | 1.32s | 185KB |
+| `/diagnose` | 200 | **1.71s** | **2.05s** | 98KB |
+| `/sitemap.xml` | 200 | 0.67s | 0.67s | 21KB |
+| `/robots.txt` | 200 | 0.53s | 0.53s | 204B |
+
+**Notes:**
+- Repair guide TTFB 1.37s (corpus data fetch + Neo4j query).
+- Diagnose TTFB 1.71s (slowest — loads chat UI + vehicle selector).
+- Maintenance oil-type 404s (data lookup failure in `fetchMaintenanceData`).
+- Wiring hub 404s (no hub page at `/wiring/{y}/{m}/{model}` — only system-specific pages exist).
+
+---
+
+### 3. SEO TECHNICAL AUDIT
+
+#### robots.ts
+```
+Disallow: /admin/
+Disallow: /api/internal/
+Disallow: /community/*?page=
+Disallow: /manual/hyperlink/
+Disallow: /guides/
+Disallow: /repairs/
+Disallow: /symptoms/
+Disallow: /tools/type/
+Disallow: /manual-navigator
+Disallow: /*?_rsc=
+Disallow: /*?_rsc=*
+```
+
+**Fixed 2026-05-19:** Removed `/repair`, `/manual`, `/parts` from disallow (were blocking ALL vehicle-specific pages under those prefixes). Generic landing pages already have `noindex` meta tags.
+
+**Contradictions found:**
+- `/guides/` and `/symptoms/` are in the main sitemap but disallowed in robots.txt AND set to `noindex`. Triple contradiction wastes crawl budget.
+
+#### Sitemaps
+| Sitemap | URLs | Status |
+|---------|------|--------|
+| `/sitemap.xml` (main) | ~1,850 + guides + symptoms | Dynamic |
+| `/repair/sitemap.xml` | ~103,554 | Static index → 11 chunks |
+| `/wiring/sitemap.xml` | ~171,456 | Static index → 18 chunks |
+| `/vehicles/sitemap.xml` | ~100K+ | Dynamic (all Y/M/M combos) |
+| `/codes/sitemap.xml` | ~300 | Dynamic |
+| `/manual/sitemap.xml` | 82 makes | Dynamic |
+
+#### Noindex Patterns
+22 page groups have explicit noindex. All are intentional generic/thin pages EXCEPT:
+- `/repair/[year]/[make]/[model]/[task]` — conditional noindex if `!hasRealContent` (good)
+- `/repair/[year]/[make]/[model]` — conditional noindex if `NOINDEX_MAKES` or non-US model
+
+**Critical gap:** Zero `error.tsx` files anywhere in `src/app/`. Next.js may inject `<meta name="robots" content="noindex">` on uncaught errors.
+
+#### Schema Markup
+| Page Type | Schema |
+|-----------|--------|
+| Homepage | Organization, LocalBusiness, WebSite, SearchAction |
+| Repair Task | FAQPage, BreadcrumbList, HowTo |
+| Vehicle Hub | FAQPage, BreadcrumbList, CollectionPage |
+| Codes | FAQPage, BreadcrumbList, Article |
+| Maintenance | FAQPage, BreadcrumbList, Question microdata |
+| Tools | FAQPage, BreadcrumbList |
+
+**Missing:** Product schema on affiliate links, Vehicle schema on hubs, AggregateRating.
+
+#### Canonical URLs
+- ✅ Excellent consistency — all dynamic pages use `slugifyRoutePart()` + `permanentRedirect()` for non-canonical slugs.
+- ❌ `/diagnose/live` missing canonical.
+
+#### Metadata Coverage
+- 31 files implement `generateMetadata()`
+- Missing: `contact/page.tsx`, `repair/test-interactive/page.tsx`
+
+---
+
+### 4. INFRASTRUCTURE HEALTH
+
+#### System (VPS `116.202.210.109`)
+| Metric | Value |
+|--------|-------|
+| OS | Ubuntu 24.04.4 LTS |
+| Kernel | 6.8.0-100-generic |
+| CPU | 16 cores |
+| RAM | 62 GB (27 used, 35 available) |
+| Load | 2.17 (moderate) |
+| Uptime | 31 days |
+| Root disk | 938 GB / 55 GB used (7%) |
+| Data disk (`/data`) | 3.5 TB / 1.3 TB used (38%) |
+
+#### Services
+| Service | Status | Port | Notes |
+|---------|--------|------|-------|
+| alloemmanuals-web | ✅ Active | 3002 | Next.js 16.2.4, 208MB RAM |
+| nginx | ✅ Active | 80/443 | 18 workers, 56MB RAM |
+| postgresql | ✅ Active | 5432 | 16.13 |
+| neo4j | ✅ Active | 7474/7687 | 23.7GB RAM (!) |
+| LMDB backend | ✅ Active | 8080 | 10.8GB RAM |
+| ollama | ✅ Active | 11434 | qwen2.5:3b, 522MB |
+| **spotonauto-web (OLD)** | ⚠️ **GHOST** | **3000** | **175MB RAM waste** |
+
+#### SSL Certificates
+| Domain | Expiry | Days Left |
+|--------|--------|-----------|
+| alloemmanuals.com + www | 2026-08-05 | 78 |
+| spotonauto.com + www | 2026-07-23 | 65 |
+
+#### Firewall (UFW)
+- 22, 80, 443, 51413 (transmission), 5432 ALLOW
+- 9091 DENY
+- 8080 DENY (LMDB only localhost)
+
+#### Critical Infrastructure Issues
+1. **syslogd PID 1112362 consuming 99.9% CPU** — rsyslog stuck in infinite loop since ~05:25. `action-0-builtin:omfile` suspended/resumed thousands of times per second.
+2. **Stray Next.js on port 3000** — `spotonauto-web.service` disabled in systemd but process still running.
+3. **4 failed systemd units** — `alloemmanuals-indexer`, `spotonauto-graph-backbone-full`, `spotonauto-graph-backbone-sweep`, `transmission-daemon`.
+4. **Port 8086** — unknown `python3` service (`lemon_proxy.py`). Purpose unclear.
+5. **No backups** — zero automated backups for PostgreSQL, Neo4j, or files.
+
+---
+
+### 5. DATABASE HEALTH
+
+#### PostgreSQL (`spotonauto`)
+| Metric | Value |
+|--------|-------|
+| Version | 16.13 |
+| Size | 8.9 GB |
+| Connections | 6 / 100 |
+| **shared_buffers** | **128 MB** ⚠️ (should be 4–8 GB on 62GB server) |
+| pg_stat_statements | ❌ Not installed |
+| Backups | ❌ None |
+
+**Tables:**
+| Table | Size | Rows |
+|-------|------|------|
+| manual_embeddings | 6,142 MB | 1,835,283 |
+| kb_documents | 2,701 MB | 433,052 |
+| kb_entities | 67 MB | 229,541 |
+| kb_edges | 39 MB | 105,037 |
+
+#### Neo4j
+| Metric | Value |
+|--------|-------|
+| Version | 2026.03.1 Community |
+| Memory | 23.7 GB (peak 28.6 GB) |
+| Heap | 16 GB |
+| Data | 6.3 GB |
+| Auth | Enabled but **password not in any .env file** |
+| cypher-shell access | ❌ Blocked (unauthorized) |
+
+#### LMDB Backend
+| Metric | Value |
+|--------|-------|
+| Binary | `lemon-website-linux-x86_64-musl` |
+| Listen | 127.0.0.1:8080 |
+| Memory | 10.8 GB |
+| Data | 1.3 TB total (542 GB CHARM + LEMON) |
+| Health | Returns 415 on `/` but process alive |
+
+---
+
+### 6. CODEBASE QUALITY
+
+- **TypeScript:** ✅ Zero errors (`npx tsc --noEmit` clean)
+- **TODO/FIXME:** ✅ Zero found
+- **Console statements:** ~11 `console.warn/error` in production server code (low severity)
+- **Backup file clutter:** `src/app/repair_page_backup.tsx.bak` exists
+
+---
+
+### 7. SECURITY HEADERS (All Present)
+
+- X-Frame-Options: SAMEORIGIN
+- X-Content-Type-Options: nosniff
+- Referrer-Policy: strict-origin-when-cross-origin
+- Strict-Transport-Security: max-age=63072000
+- Cross-Origin-Opener-Policy: same-origin
+- Permissions-Policy: camera=(), microphone=(), geolocation=()
+- Content-Security-Policy: Comprehensive (script-src includes unsafe-inline/unsafe-eval for Next.js)
+
+---
+
+### 8. CRITICAL ACTION ITEMS (Prioritized)
+
+#### 🔴 P0 — Fix Immediately
+1. **Kill rsyslog infinite loop** (`kill 1112362` or `systemctl restart rsyslog`) — burning 1 CPU core.
+2. **Kill stray Next.js on port 3000** — `kill 1139226` or `systemctl stop spotonauto-web`.
+3. **Fix maintenance page 404s** — `/maintenance/2010/toyota/camry/oil-type` returns 404 because `fetchMaintenanceData()` returns null for this vehicle. Debug data pipeline.
+4. **Add `error.tsx`** to `src/app/` — prevents Next.js from injecting noindex on uncaught errors.
+5. **Fix robots.txt / sitemap contradiction** — remove `/guides/` and `/symptoms/` from main sitemap OR remove robots.txt disallow.
+
+#### 🟡 P1 — This Week
+6. **PostgreSQL shared_buffers → 4GB+** — currently 128MB on 62GB server.
+7. **Add `pg_stat_statements`** extension for query diagnostics.
+8. **Set up automated PostgreSQL backups** — daily `pg_dump` to `/data/backups/`.
+9. **Document Neo4j password** — currently unknown, cypher-shell blocked.
+10. **Fix wiring 502 errors** — 17 wiring URLs hitting LMDB backend timeouts.
+11. **Add metadata to `contact/page.tsx`** — missing title/description.
+12. **Noindex `repair/test-interactive/page.tsx`** — test page should not be indexed.
+13. **Remove `repair_page_backup.tsx.bak`** — repo clutter.
+
+#### 🟢 P2 — Next Sprint
+14. **Add Product schema** to affiliate links (Amazon/Topdon) for rich snippets.
+15. **Add Vehicle schema** (`schema.org/Vehicle`) to vehicle hub pages.
+16. **Bundle analyzer** — check for bloat in `_next/static/chunks`.
+17. **Investigate `lemon_proxy.py` on port 8086** — unknown service.
+18. **SSL renewal automation** — certbot renews Aug 5, verify auto-renewal works.
+
+---
