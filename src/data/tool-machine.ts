@@ -293,7 +293,7 @@ const TEMPLATES: Record<string, ToolTypeTemplate> = {
   },
 };
 
-function generateToolPage(make: string, model: string, typeKey: string): ToolPage | null {
+export function generateLegacyToolPage(make: string, model: string, typeKey: string): ToolPage | null {
   const template = TEMPLATES[typeKey];
   if (!template) return null;
   const prodData = VEHICLE_PRODUCTION_YEARS[make]?.[model];
@@ -330,7 +330,7 @@ function generateLegacyPages(): ToolPage[] {
       if (isNonUsModel(make.toLowerCase(), model.toLowerCase().replace(/\s+/g, '-'))) continue;
       if (isEvModel(make, model)) continue;
       for (const typeKey of toolTypes) {
-        const page = generateToolPage(make, model, typeKey);
+        const page = generateLegacyToolPage(make, model, typeKey);
         if (page) pages.push(page);
       }
     }

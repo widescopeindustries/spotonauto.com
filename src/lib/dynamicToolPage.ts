@@ -15,6 +15,7 @@ import { TOOL_TYPE_META } from '@/data/tools-pages';
 import { findManualSectionsByTerms, type ManualSectionMatchRow } from '@/lib/manualEmbeddingsStore';
 import { parseToolSlug, type KnownToolType } from '@/lib/slugParser';
 import { getToolPage } from '@/data/tools-pages';
+import { generateLegacyToolPage } from '@/data/tool-machine';
 
 // ─── Tool-type keyword mappings for corpus search ───────────────────
 
@@ -383,12 +384,26 @@ export async function getToolPageAsync(slug: string): Promise<ToolPageResult | n
   const staticPage = getToolPage(slug);
   if (staticPage) return { page: staticPage };
 
-  // Try dynamic generation
+  // Try dynamic generation from corpus DB
   try {
     const dynamic = await generateDynamicToolPage(slug);
     if (dynamic) return { page: dynamic.page, quality: dynamic.quality };
   } catch (err) {
     console.error(`[dynamicToolPage] Failed to generate dynamic page for ${slug}:`, err);
+  }
+
+  // Fallback: legacy template for tool types not yet mined from corpus
+  try {
+    const parsed = parseToolSlug(slug);
+    if (parsed) {
+      const legacy = generateLegacyToolPage(parsed.make, parsed.model, parsed.toolType);
+      if (legacy) {
+        console.log(`[dynamicToolPage] Legacy fallback for ${slug}`);
+        return { page: legacy };
+      }
+    }
+  } catch (err) {
+    console.error(`[dynamicToolPage] Legacy fallback failed for ${slug}:`, err);
   }
 
   return null;
