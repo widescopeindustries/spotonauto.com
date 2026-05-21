@@ -6,7 +6,7 @@
 const { google } = require('googleapis');
 const path = require('path');
 
-const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
+const KEY_PATH = path.join(__dirname, '..', 'credentials', 'gen-lang-client-0236137325-629b7b811bc1.json');
 const SITE_URL = 'sc-domain:alloemmanuals.com';
 
 const SITEMAPS = [
