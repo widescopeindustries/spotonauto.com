@@ -264,7 +264,11 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                     id: storedSession.id,
                     history: storedSession.history,
                 }));
-                setMessages(storedSession.messages);
+                const sanitizedMessages = storedSession.messages.map((m, idx) => ({
+                    ...m,
+                    id: m.id && m.id !== 'undefined' ? m.id : `restored-${storedSession.id}-${idx}`,
+                }));
+                setMessages(sanitizedMessages);
                 setSessionCreatedAt(storedSession.createdAt);
                 syncThreadInUrl(storedSession.id);
                 return;
@@ -533,9 +537,9 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
 
             <div className="z-10 flex-1 space-y-6 overflow-y-auto p-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-neon-cyan/20">
                 <AnimatePresence mode="popLayout">
-                    {messages.map((msg) => (
+                    {messages.map((msg, index) => (
                         <motion.div
-                            key={msg.id}
+                            key={(!msg.id || msg.id === 'undefined') ? `msg-${index}` : msg.id}
                             layout
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
