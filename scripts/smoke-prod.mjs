@@ -18,7 +18,7 @@ const checks = [
   { path: '/community', expectedStatus: [200], bodyIncludes: 'Community' },
   { path: '/community/new', expectedStatus: [200, 302, 307, 308] },
   { path: '/parts', expectedStatus: [200], bodyIncludes: 'earns from qualifying purchases' },
-  { path: '/tools', expectedStatus: [200], bodyIncludes: 'Auto Repair Tools' },
+  { path: '/tools', expectedStatus: [200], bodyIncludes: 'Auto Repair Tools', followRedirects: true },
   { path: '/codes', expectedStatus: [200], bodyIncludes: 'DTC' },
   { path: '/manual', expectedStatus: [200], bodyIncludes: 'Factory Service Manuals', bodyExcludes: 'Unable to load the service manual database right now' },
   // NOTE: if the manual backend is down, the page shows a helpful fallback with links to /repair and /codes.
