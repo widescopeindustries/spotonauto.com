@@ -36,8 +36,10 @@ const TASK_MIN_YEAR = {
     'glow-plug-replacement': 1980,
 };
 
+let slugifyRoutePart;
+
 function slugify(s) {
-    return s.toLowerCase().replace(/\s+/g, '-');
+    return slugifyRoutePart ? slugifyRoutePart(s) : s.toLowerCase().replace(/\s+/g, '-');
 }
 
 function escapeXml(s) {
@@ -55,7 +57,7 @@ function getEligibleTasksForYear(year) {
 
 // Inline the vehicle data and tasks to avoid TS import issues
 // These must stay in sync with src/data/vehicles.ts
-const { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, isEvModel, ICE_ONLY_TASKS } = await import(
+const importedVehicles = await import(
     '../src/data/vehicles.ts'
 ).catch(() => {
     // Fallback: read and eval the TS file (strips types at import)
@@ -63,6 +65,9 @@ const { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, isEv
         'Could not import vehicles.ts — run with --experimental-strip-types or tsx'
     );
 });
+
+const { VEHICLE_PRODUCTION_YEARS, VALID_TASKS, NOINDEX_MAKES, isNonUsModel, isEvModel, ICE_ONLY_TASKS } = importedVehicles;
+slugifyRoutePart = importedVehicles.slugifyRoutePart;
 
 function buildAllEntries() {
     const entries = [];

@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next'
-import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES, isNonUsModel } from '@/data/vehicles';
+import { VEHICLE_PRODUCTION_YEARS, NOINDEX_MAKES, isNonUsModel, slugifyRoutePart } from '@/data/vehicles';
 import { getSitemapLastMod } from '@/lib/sitemap';
 
 function slugify(s: string) {
-    return s.toLowerCase().replace(/\s+/g, '-');
+    return slugifyRoutePart(s);
 }
 
 const LAST_MOD = getSitemapLastMod();
