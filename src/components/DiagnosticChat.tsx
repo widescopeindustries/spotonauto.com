@@ -173,7 +173,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
             setMessages((prev) => [
                 ...prev,
                 {
-                    id: `${Date.now()}-user`,
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}-user`,
                     type: 'user',
                     text,
                 },
@@ -195,7 +195,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
             setMessages((prev) => [
                 ...prev,
                 {
-                    id: `${Date.now()}-system`,
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}-system`,
                     type: 'system',
                     text: response.text,
                     imageUrl: response.imageUrl,
@@ -214,7 +214,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
             setMessages((prev) => [
                 ...prev,
                 {
-                    id: `${Date.now()}-error`,
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}-error`,
                     type: 'system',
                     text: message,
                 },
@@ -635,6 +635,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                     {/* Inject scanner recommendations if the last message pairs imply it's useful */}
                     {messages.length >= 2 && !typing && (
                         <TopdonDiagnosticInjected
+                            key="topdon-injected-scanner"
                             lastUserMessage={messages.filter(m => m.type === 'user').slice(-1)[0]?.text || ''}
                             lastAiMessage={messages.filter(m => m.type === 'system').slice(-1)[0]?.text || ''}
                         />
@@ -642,6 +643,7 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
 
                     {typing && (
                         <motion.div
+                            key="typing-indicator"
                             layout
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
