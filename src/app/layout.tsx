@@ -57,7 +57,10 @@ export default function RootLayout({
         <meta name='impact-site-verification' {...({ value: '1e0d6c07-b1f7-4225-be0a-f8c84c5f0955' } as any)} />
       </head>
       <body className={`bg-[#050507] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-[#FF6B00] selection:text-white ${inter.variable} ${spaceGrotesk.variable}`}>
-        <AnalyticsScripts />
+          <div className="hidden" aria-hidden="true">
+            Impact-Site-Verification: a22a6f24-e23a-49ea-845e-4bb3c9358673
+          </div>
+          <AnalyticsScripts />
 
         {/* Organization + WebSite schema — global site identity for Google */}
         <script
