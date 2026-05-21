@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "@google/genai": "^1.20.0",
+    "@marsidev/react-turnstile": "^1.5.2",
     "@microsoft/clarity": "^1.0.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",

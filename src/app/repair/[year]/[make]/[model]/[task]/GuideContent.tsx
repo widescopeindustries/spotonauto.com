@@ -8,6 +8,7 @@ import { saveGuide, getGuideById } from '@/services/storageService';
 import { RepairGuide } from '@/types';
 import { trackGuideGenerated, trackRepairGuideOpen, trackRepairPageView, trackRetrievalBackbone } from '@/lib/analytics';
 import { deriveIntentCluster } from '@/lib/analyticsContext';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 interface GuideContentProps {
     params: {
@@ -34,6 +35,8 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
     const [guide, setGuide] = useState<RepairGuide>(fallbackGuide);
     const [enhancing, setEnhancing] = useState(true);
     const [enhanceError, setEnhanceError] = useState<string | null>(null);
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+    const [needsGeneration, setNeedsGeneration] = useState(false);
 
     useEffect(() => {
         trackRepairPageView(`${year} ${make} ${model}`, cleanTask, {
@@ -54,7 +57,30 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
         });
     }, [cleanTask, guideIntentCluster, make, model, task, year]);
 
+    // Check cache first
     useEffect(() => {
+        const checkCache = async () => {
+            const guideId = `${year}-${make}-${model}-${cleanTask}`.toLowerCase().replace(/\s+/g, '-');
+            const cached = await getGuideById(guideId);
+            if (cached) {
+                setGuide(cached);
+                setEnhancing(false);
+                return;
+            }
+            if (guideCache.has(guideId)) {
+                setGuide(guideCache.get(guideId)!);
+                setEnhancing(false);
+                return;
+            }
+            setNeedsGeneration(true);
+        };
+        checkCache();
+    }, [cleanTask, make, model, year]);
+
+    // Generate once we have the Turnstile token
+    useEffect(() => {
+        if (!needsGeneration || !turnstileToken) return;
+
         const fetchGuide = async () => {
             setEnhanceError(null);
             setEnhancing(true);
@@ -63,20 +89,7 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
                 const vehicle = { year, make, model };
                 const guideId = `${year}-${make}-${model}-${cleanTask}`.toLowerCase().replace(/\s+/g, '-');
 
-                const cached = await getGuideById(guideId);
-                if (cached) {
-                    setGuide(cached);
-                    setEnhancing(false);
-                    return;
-                }
-
-                if (guideCache.has(guideId)) {
-                    setGuide(guideCache.get(guideId)!);
-                    setEnhancing(false);
-                    return;
-                }
-
-                const generatedGuide = await generateFullRepairGuide(vehicle, cleanTask);
+                const generatedGuide = await generateFullRepairGuide(vehicle, cleanTask, turnstileToken);
                 guideCache.set(guideId, generatedGuide);
                 await saveGuide(generatedGuide);
                 trackGuideGenerated({
@@ -113,14 +126,24 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
                 setEnhanceError('AI enhancement unavailable — showing static guide data.');
             } finally {
                 setEnhancing(false);
+                setNeedsGeneration(false);
             }
         };
 
         fetchGuide();
-    }, [cleanTask, fallbackGuide, guideIntentCluster, make, model, task, year]);
+    }, [needsGeneration, turnstileToken, cleanTask, guideIntentCluster, make, model, task, year]);
 
     return (
         <div className="relative">
+            {needsGeneration && !turnstileToken && (
+                <div className="absolute right-4 top-16 z-20 overflow-hidden rounded opacity-50 transition-opacity hover:opacity-100">
+                    <Turnstile
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                        onError={() => setEnhanceError('Security check failed.')}
+                    />
+                </div>
+            )}
             {enhancing && (
                 <div className="absolute right-4 top-4 z-20 flex items-center gap-2 rounded-full border border-neon-cyan/20 bg-black/70 px-3 py-1.5 text-[10px] text-neon-cyan">
                     <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />

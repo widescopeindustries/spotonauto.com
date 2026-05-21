@@ -56,7 +56,7 @@ function getClientLocale(): string {
   return localStorage.getItem('spoton-locale') || 'en';
 }
 
-async function makeApiRequest(action: string, payload: any, options?: { stream?: boolean }) {
+async function makeApiRequest(action: string, payload: any, options?: { stream?: boolean, turnstileToken?: string }) {
   const headers = await getAuthHeaders();
   const locale = getClientLocale();
 
@@ -65,7 +65,7 @@ async function makeApiRequest(action: string, payload: any, options?: { stream?:
     response = await fetch(API_ENDPOINT, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ action, payload: { ...payload, locale }, stream: options?.stream }),
+      body: JSON.stringify({ action, payload: { ...payload, locale }, stream: options?.stream, turnstileToken: options?.turnstileToken }),
     });
   } catch (error) {
     throw new Error(normalizeApiErrorMessage(error));
@@ -82,8 +82,8 @@ async function makeApiRequest(action: string, payload: any, options?: { stream?:
 export const decodeVin = async (vin: string): Promise<Vehicle> => makeApiRequest('decode-vin', { vin });
 export const getVehicleInfo = async (vehicle: Vehicle, task: string): Promise<VehicleInfo> =>
   makeApiRequest('vehicle-info', { vehicle, task });
-export const generateFullRepairGuide = async (vehicle: Vehicle, task: string): Promise<RepairGuide> =>
-  makeApiRequest('generate-guide', { vehicle, task });
+export const generateFullRepairGuide = async (vehicle: Vehicle, task: string, turnstileToken?: string): Promise<RepairGuide> =>
+  makeApiRequest('generate-guide', { vehicle, task }, { turnstileToken });
 
 export const generateStepImage = async (vehicle: string, instruction: string): Promise<string> => {
   const response = await fetch('/api/generate-step-image', {

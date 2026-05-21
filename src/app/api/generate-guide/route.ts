@@ -100,7 +100,33 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { action, payload = {}, stream } = body;
+    const { action, payload = {}, stream, turnstileToken } = body;
+
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+
+    // Verify Turnstile for expensive actions
+    if (action === 'generate-guide') {
+      if (!turnstileToken) {
+        return NextResponse.json({ error: 'Missing security token' }, { status: 400 });
+      }
+
+      const turnstileSecret = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA'; // fallback to test key
+      const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          secret: turnstileSecret,
+          response: turnstileToken,
+          remoteip: ip,
+        }),
+      });
+
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        logWarn(`[Turnstile] Validation failed for IP ${ip}: ${JSON.stringify(verifyData['error-codes'])}`);
+        return NextResponse.json({ error: 'Security validation failed' }, { status: 403 });
+      }
+    }
 
     const limited = checkRateLimit(req, 10, 60_000); // 10 actions/min per IP
     if (limited) return limited;
