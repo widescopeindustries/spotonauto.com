@@ -1,0 +1,572 @@
+[
+  {
+    "make": "Toyota",
+    "year": 2012,
+    "model": "Camry LE",
+    "fluids": [
+      {
+        "headers": [
+          "Fluid Type",
+          "Application",
+          "",
+          "Standard",
+          "Metric",
+          "Fluid Spec",
+          "Note",
+          "S/H"
+        ],
+        "rows": [
+          {
+            "Fluid Type": "Air Cond Compressor Oil",
+            "Application": "Gas",
+            "": "",
+            "Standard": "7.00 OZS.",
+            "Metric": "0.2 L",
+            "Fluid Spec": "PAG 46",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Air Cond Refrigerant",
+            "Application": "",
+            "": "",
+            "Standard": "1.17 LBS.",
+            "Metric": "0.53 KG",
+            "Fluid Spec": "HFC-134a (R-134a)",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Automatic Transmission Fluid",
+            "Application": "Base,LE,SE,XLE",
+            "": "",
+            "Standard": "6.90 QTS.",
+            "Metric": "6.52 L",
+            "Fluid Spec": "TOYOTA Genuine Automatic Transmission Fluid Type WS",
+            "Note": "The fluid capacity is the quantity of reference.\nUsing transaxle fluid other than \"TOYOTA Genuine ATF WS\" may cause deterioration in shift quality, locking up of transaxle accompanied by vibration, and ultimately damage the transaxle of the vehicle.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Brake Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "N/A",
+            "Metric": "N/A",
+            "Fluid Spec": "SAE J1703 or FMVSS No. 116 DOT 3",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Coolant",
+            "Application": "Base,L,LE,SE,XLE,2.5L Eng",
+            "": "",
+            "Standard": "7.70 QTS.",
+            "Metric": "7.28 L",
+            "Fluid Spec": "TOYOTA Super Long Life Coolant or similar high-quality ethylene glycol-based non-silicate, non-amine, non-nitrate and non-borate coolant with long-life hybrid organic acid technology",
+            "Note": "DO NOT use plain water alone.\nThe fluid capacity is the quantity of reference.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Oil",
+            "Application": "2.5L Eng",
+            "": "Drain and Refill,w/Filter",
+            "Standard": "4.70 QTS.",
+            "Metric": "4.44 L",
+            "Fluid Spec": "TOYOTA Genuine Motor Oil SAE 0W-20 or equivalent ILSAC multigrade oil",
+            "Note": "SAE 0W-20 is the best choice for good fuel economy and good starting in cold weather. If SAE 0W-20 is not available, SAE 5W-20 oil may be used. However, it must be replaced with SAE 0W-20 at the next oil change.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Oil",
+            "Application": "2.5L Eng",
+            "": "Drain and Refill,w/o Filter",
+            "Standard": "4.20 QTS.",
+            "Metric": "3.97 L",
+            "Fluid Spec": "TOYOTA Genuine Motor Oil SAE 0W-20 or equivalent ILSAC multigrade oil",
+            "Note": "SAE 0W-20 is the best choice for good fuel economy and good starting in cold weather. If SAE 0W-20 is not available, SAE 5W-20 oil may be used. However, it must be replaced with SAE 0W-20 at the next oil change.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Fuel Tank",
+            "Application": "",
+            "": "",
+            "Standard": "17.00 GALS.",
+            "Metric": "64.35 L",
+            "Fluid Spec": "",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Windshield Washer Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "N/A",
+            "Metric": "N/A",
+            "Fluid Spec": "Plain water",
+            "Note": "In cold areas where temperatures range below the freezing point, use washer fluid containing antifreeze.",
+            "S/H": "S"
+          }
+        ]
+      }
+    ],
+    "tires": [
+      {
+        "headers": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "Size Description",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "rows": [
+          {
+            "": "Rim Size",
+            "Size Description": "Standard",
+            "col_11": "Bolt (# - mm)"
+          },
+          {
+            "": "6.5JJ",
+            "Size Description": "P205/65R16 94S",
+            "col_11": "5-114.3mm"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "make": "Kia",
+    "year": 2012,
+    "model": "Soul !",
+    "fluids": [
+      {
+        "headers": [
+          "Fluid Type",
+          "Application",
+          "",
+          "Standard",
+          "Metric",
+          "Fluid Spec",
+          "Note",
+          "S/H"
+        ],
+        "rows": [
+          {
+            "Fluid Type": "Air Cond Compressor Oil",
+            "Application": "",
+            "": "",
+            "Standard": "3.70 OZS.",
+            "Metric": "0.1 L",
+            "Fluid Spec": "PAG 46",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Air Cond Refrigerant",
+            "Application": "",
+            "": "",
+            "Standard": "1.21 LBS.",
+            "Metric": "0.54 KG",
+            "Fluid Spec": "R-134a",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Automatic Transmission Fluid",
+            "Application": "2.0L Eng",
+            "": "",
+            "Standard": "7.50 QTS.",
+            "Metric": "7.09 L",
+            "Fluid Spec": "MICHANG ATF SP-IV, SK ATF SP-IV, NOCA ATF SP-IV, KIA genuine ATF SP-IV or other brands meeting the specifications approved by Kia Motors Corp.",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Brake Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "N/A",
+            "Metric": "N/A",
+            "Fluid Spec": "FMVSS116 DOT 3 or DOT 4 Brake Fluid",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Coolant",
+            "Application": "2.0L Eng",
+            "": "",
+            "Standard": "6.76 QTS.",
+            "Metric": "6.39 L",
+            "Fluid Spec": "50/50 mixture of Ethylene Glycol Antifreeze and water",
+            "Note": "The engine coolant should be compatible with aluminum engine parts.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Oil",
+            "Application": "2.0L Eng",
+            "": "",
+            "Standard": "4.23 QTS.",
+            "Metric": "4 L",
+            "Fluid Spec": "API - SM, ILSAC GF-4, SAE 5W-20",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Fuel Tank",
+            "Application": "",
+            "": "",
+            "Standard": "12.68 GALS.",
+            "Metric": "47.99 L",
+            "Fluid Spec": "",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Manual Transmission Fluid",
+            "Application": "2.0L Eng",
+            "": "",
+            "Standard": "2.06 QTS.",
+            "Metric": "1.94 L",
+            "Fluid Spec": "API - GL-4 SAE- 75W-85 or other brands meeting the GL-4 specification approved by KIA Motors Corp.",
+            "Note": "Fill for-life.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Windshield Washer Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "N/A",
+            "Metric": "N/A",
+            "Fluid Spec": "",
+            "Note": "",
+            "S/H": "S"
+          }
+        ]
+      }
+    ],
+    "tires": [
+      {
+        "headers": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "Size Description",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "rows": [
+          {
+            "": "Rim Size",
+            "Size Description": "Standard",
+            "col_11": "Bolt (# - mm)"
+          },
+          {
+            "": "7.5J",
+            "Size Description": "P235/45R18 94V",
+            "col_11": "5-114.3mm"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "make": "Kia",
+    "year": 2012,
+    "model": "Sportage LX, FWD",
+    "fluids": [
+      {
+        "headers": [
+          "Fluid Type",
+          "Application",
+          "",
+          "Standard",
+          "Metric",
+          "Fluid Spec",
+          "Note",
+          "S/H"
+        ],
+        "rows": [
+          {
+            "Fluid Type": "Air Cond Compressor Oil",
+            "Application": "",
+            "": "",
+            "Standard": "4.40 OZS.",
+            "Metric": "0.13 L",
+            "Fluid Spec": "PAG 46",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Air Cond Refrigerant",
+            "Application": "",
+            "": "",
+            "Standard": "1.11 LBS.",
+            "Metric": "0.5 KG",
+            "Fluid Spec": "R-134a",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Automatic Transmission Fluid",
+            "Application": "2.4L Eng",
+            "": "",
+            "Standard": "7.50 QTS.",
+            "Metric": "7.09 L",
+            "Fluid Spec": "MICHANG ATF SP-IV, SK ATF SP-IV, NOCA ATF SP-IV, Kia genuine ATF SP-IV or other brands meeting the specification approved by KIA Motor Corp.",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Brake Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "0.75 QTS.",
+            "Metric": "0.7 L",
+            "Fluid Spec": "FMVSS116 DOT 3 or DOT 4 Brake Fluid",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Coolant",
+            "Application": "2.4L Eng,Automatic Trans",
+            "": "",
+            "Standard": "7.08 QTS.",
+            "Metric": "6.7 L",
+            "Fluid Spec": "Mixture of antifreeze and distilled water (Ethylene glycol base coolant for aluminum radiator)",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Oil",
+            "Application": "2.4L Eng",
+            "": "Drain and Refill,w/Filter",
+            "Standard": "4.86 QTS.",
+            "Metric": "4.59 L",
+            "Fluid Spec": "API - SM, ILSAC GF-4 or Above, SAE 5W-20, 5W-30, SAE 10W-30 Above 0Deg F (-18Deg C)",
+            "Note": "If the API service SM engine oil is not available, you may use API service SL.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Fuel Tank",
+            "Application": "",
+            "": "",
+            "Standard": "14.53 GALS.",
+            "Metric": "55 L",
+            "Fluid Spec": "",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Manual Transmission Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "1.90 QTS.",
+            "Metric": "1.79 L",
+            "Fluid Spec": "API - GL-4, SAE 75W-85",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Transfer Case Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "0.63 QTS.",
+            "Metric": "0.59 L",
+            "Fluid Spec": "Hypoid Gear Oil API - GL-5, SAE 75W-90",
+            "Note": "SHELL SPIRAX  X or equivalent.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Windshield Washer Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "N/A",
+            "Metric": "N/A",
+            "Fluid Spec": "",
+            "Note": "",
+            "S/H": "S"
+          }
+        ]
+      }
+    ],
+    "tires": [
+      {
+        "headers": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "Size Description",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "rows": [
+          {
+            "": "Rim Size",
+            "Size Description": "Standard",
+            "col_11": "Bolt (# - mm)"
+          },
+          {
+            "": "6.5J",
+            "Size Description": "215/70R16 100H",
+            "col_11": "5-114.3mm"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "make": "Ford",
+    "year": 2011,
+    "model": "Fiesta S, Automatic DCT",
+    "fluids": [
+      {
+        "headers": [
+          "Fluid Type",
+          "Application",
+          "",
+          "Standard",
+          "Metric",
+          "Fluid Spec",
+          "Note",
+          "S/H"
+        ],
+        "rows": [
+          {
+            "Fluid Type": "Air Cond Refrigerant",
+            "Application": "",
+            "": "",
+            "Standard": "1.19 LBS.",
+            "Metric": "0.53 KG",
+            "Fluid Spec": "R-134a",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Automatic Transmission Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "1.80 QTS.",
+            "Metric": "1.7 L",
+            "Fluid Spec": "MOTORCRAFT Dual Clutch Transmission Fluid",
+            "Note": "The use of any transmission fluid other than what is recommended for this transaxle will cause transaxle damage.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Brake Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "N/A",
+            "Metric": "N/A",
+            "Fluid Spec": "MOTORCRAFT High Performance DOT 3 Motor Vehicle Brake Fluid",
+            "Note": "Fill to line on reservoir.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Coolant",
+            "Application": "",
+            "": "",
+            "Standard": "5.80 QTS.",
+            "Metric": "5.48 L",
+            "Fluid Spec": "MOTORCRAFT Specialty Orange Engine Coolant with Bittering Agent",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Oil",
+            "Application": "",
+            "": "w/Filter",
+            "Standard": "4.30 QTS.",
+            "Metric": "4.06 L",
+            "Fluid Spec": "MOTORCRAFT SAE 5W-20 Premium Synthetic Blend Motor Oil or Motorcraft SAE 5W-20 Full Synthetic Motor Oil, or equivalent",
+            "Note": "FORD specification: WWS-M2C930-A API Certification Mark.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Engine Oil",
+            "Application": "",
+            "": "w/o Filter",
+            "Standard": "3.96 QTS.",
+            "Metric": "3.74 L",
+            "Fluid Spec": "MOTORCRAFT SAE 5W-20 Premium Synthetic Blend Motor Oil or Motorcraft SAE 5W-20 Full Synthetic Motor Oil, or equivalent",
+            "Note": "FORD specification: WWS-M2C930-A API Certification Mark.",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Fuel Tank",
+            "Application": "",
+            "": "",
+            "Standard": "12.40 GALS.",
+            "Metric": "46.93 L",
+            "Fluid Spec": "",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Manual Transmission Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "2.40 QTS.",
+            "Metric": "2.27 L",
+            "Fluid Spec": "MOTORCRAFT Full Synthetic Manual Transmission Fluid",
+            "Note": "",
+            "S/H": "S"
+          },
+          {
+            "Fluid Type": "Windshield Washer Fluid",
+            "Application": "",
+            "": "",
+            "Standard": "N/A",
+            "Metric": "N/A",
+            "Fluid Spec": "MOTORCRAFT Premium Windshield Washer Concentrate Fluid",
+            "Note": "Follow the Manufacturer's Instructions for the mixture ratio.",
+            "S/H": "S"
+          }
+        ]
+      }
+    ],
+    "tires": [
+      {
+        "headers": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "Size Description",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "rows": [
+          {
+            "": "Rim Size",
+            "Size Description": "Standard",
+            "col_11": "Bolt (# - mm)"
+          },
+          {
+            "": "6J",
+            "Size Description": "P185/60R15 84H",
+            "col_11": "4-108mm"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -362,7 +362,7 @@ export default function VehicleLaneClient({
                   s.name.toLowerCase().includes(vehicleSearch.toLowerCase()),
                 ).length === 0 && (
                   <div className="px-4 py-3 text-center text-gray-500 text-sm">
-                    No matches. Try "brake", "P0420", or a system name.
+                    No matches. Try &quot;brake&quot;, &quot;P0420&quot;, or a system name.
                   </div>
                 )}
             </div>

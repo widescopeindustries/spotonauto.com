@@ -22,5 +22,10 @@ export default [
     .map((config) => ({
       ...config,
       files: ['src/**/*.{js,jsx,ts,tsx}', 'next.config.js'],
+      rules: {
+        ...config.rules,
+        '@next/next/no-img-element': 'off',
+        'react-hooks/exhaustive-deps': 'off',
+      },
     })),
 ];

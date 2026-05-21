@@ -1,0 +1,262 @@
+[
+  {
+    "slug": "toyota-camry-le-fluid-capacity",
+    "make": "Toyota",
+    "model": "Camry LE",
+    "toolType": "fluid-capacity",
+    "title": "2012 Toyota Camry LE Fluid Capacities & Specifications",
+    "description": "Factory fluid capacities for the 2012 Toyota Camry LE.",
+    "keywords": [
+      "Toyota Camry LE fluid capacity"
+    ],
+    "quickAnswer": "4.20 QTS. (3.97 L) \u2014 TOYOTA Genuine Motor Oil SAE 0W-20 or equivalent ILSAC multigrade oil",
+    "generations": [
+      {
+        "name": "2012 Camry LE",
+        "years": "2012",
+        "specs": {
+          "Transmission Fluid": "6.90 QTS. (6.52 L)",
+          "Brake Fluid": "SAE J1703 or FMVSS No. 116 DOT 3",
+          "Coolant": "7.70 QTS. (7.28 L)",
+          "Engine Oil": "4.20 QTS. (3.97 L) \u2014 TOYOTA Genuine Motor Oil SAE 0W-20 or equivalent ILSAC multigrade oil"
+        },
+        "notes": [
+          "Extracted from factory service manual."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "What oil for 2012 Toyota Camry LE?",
+        "a": "4.20 QTS. (3.97 L) \u2014 TOYOTA Genuine Motor Oil SAE 0W-20 or equivalent ILSAC multigrade oil"
+      }
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "toyota-camry-le-tire-size",
+    "make": "Toyota",
+    "model": "Camry LE",
+    "toolType": "tire-size",
+    "title": "2012 Toyota Camry LE Tire Size & Fitment",
+    "description": "Factory tire size for the 2012 Toyota Camry LE.",
+    "keywords": [
+      "Toyota Camry LE tire size"
+    ],
+    "quickAnswer": "P205/65R16 94S",
+    "generations": [
+      {
+        "name": "2012 Camry LE",
+        "years": "2012",
+        "specs": {
+          "Tire Size": "P205/65R16 94S"
+        },
+        "notes": [
+          "Extracted from factory service manual."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "What tires fit 2012 Toyota Camry LE?",
+        "a": "P205/65R16 94S"
+      }
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "kia-soul-fluid-capacity",
+    "make": "Kia",
+    "model": "Soul !",
+    "toolType": "fluid-capacity",
+    "title": "2012 Kia Soul ! Fluid Capacities & Specifications",
+    "description": "Factory fluid capacities for the 2012 Kia Soul !.",
+    "keywords": [
+      "Kia Soul ! fluid capacity"
+    ],
+    "quickAnswer": "4.23 QTS. (4 L) \u2014 API - SM, ILSAC GF-4, SAE 5W-20",
+    "generations": [
+      {
+        "name": "2012 Soul !",
+        "years": "2012",
+        "specs": {
+          "Transmission Fluid": "2.06 QTS. (1.94 L)",
+          "Brake Fluid": "FMVSS116 DOT 3 or DOT 4 Brake Fluid",
+          "Coolant": "6.76 QTS. (6.39 L)",
+          "Engine Oil": "4.23 QTS. (4 L) \u2014 API - SM, ILSAC GF-4, SAE 5W-20"
+        },
+        "notes": [
+          "Extracted from factory service manual."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "What oil for 2012 Kia Soul !?",
+        "a": "4.23 QTS. (4 L) \u2014 API - SM, ILSAC GF-4, SAE 5W-20"
+      }
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "kia-soul-tire-size",
+    "make": "Kia",
+    "model": "Soul !",
+    "toolType": "tire-size",
+    "title": "2012 Kia Soul ! Tire Size & Fitment",
+    "description": "Factory tire size for the 2012 Kia Soul !.",
+    "keywords": [
+      "Kia Soul ! tire size"
+    ],
+    "quickAnswer": "P235/45R18 94V",
+    "generations": [
+      {
+        "name": "2012 Soul !",
+        "years": "2012",
+        "specs": {
+          "Tire Size": "P235/45R18 94V"
+        },
+        "notes": [
+          "Extracted from factory service manual."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "What tires fit 2012 Kia Soul !?",
+        "a": "P235/45R18 94V"
+      }
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "kia-sportage-lx-fwd-fluid-capacity",
+    "make": "Kia",
+    "model": "Sportage LX, FWD",
+    "toolType": "fluid-capacity",
+    "title": "2012 Kia Sportage LX, FWD Fluid Capacities & Specifications",
+    "description": "Factory fluid capacities for the 2012 Kia Sportage LX, FWD.",
+    "keywords": [
+      "Kia Sportage LX, FWD fluid capacity"
+    ],
+    "quickAnswer": "4.86 QTS. (4.59 L) \u2014 API - SM, ILSAC GF-4 or Above, SAE 5W-20, 5W-30, SAE 10W-30 Above 0Deg F (-18Deg C)",
+    "generations": [
+      {
+        "name": "2012 Sportage LX, FWD",
+        "years": "2012",
+        "specs": {
+          "Transmission Fluid": "1.90 QTS. (1.79 L)",
+          "Brake Fluid": "FMVSS116 DOT 3 or DOT 4 Brake Fluid",
+          "Coolant": "7.08 QTS. (6.7 L)",
+          "Engine Oil": "4.86 QTS. (4.59 L) \u2014 API - SM, ILSAC GF-4 or Above, SAE 5W-20, 5W-30, SAE 10W-30 Above 0Deg F (-18Deg C)"
+        },
+        "notes": [
+          "Extracted from factory service manual."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "What oil for 2012 Kia Sportage LX, FWD?",
+        "a": "4.86 QTS. (4.59 L) \u2014 API - SM, ILSAC GF-4 or Above, SAE 5W-20, 5W-30, SAE 10W-30 Above 0Deg F (-18Deg C)"
+      }
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "kia-sportage-lx-fwd-tire-size",
+    "make": "Kia",
+    "model": "Sportage LX, FWD",
+    "toolType": "tire-size",
+    "title": "2012 Kia Sportage LX, FWD Tire Size & Fitment",
+    "description": "Factory tire size for the 2012 Kia Sportage LX, FWD.",
+    "keywords": [
+      "Kia Sportage LX, FWD tire size"
+    ],
+    "quickAnswer": "215/70R16 100H",
+    "generations": [
+      {
+        "name": "2012 Sportage LX, FWD",
+        "years": "2012",
+        "specs": {
+          "Tire Size": "215/70R16 100H"
+        },
+        "notes": [
+          "Extracted from factory service manual."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "What tires fit 2012 Kia Sportage LX, FWD?",
+        "a": "215/70R16 100H"
+      }
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "ford-fiesta-s-automatic-dct-fluid-capacity",
+    "make": "Ford",
+    "model": "Fiesta S, Automatic DCT",
+    "toolType": "fluid-capacity",
+    "title": "2011 Ford Fiesta S, Automatic DCT Fluid Capacities & Specifications",
+    "description": "Factory fluid capacities for the 2011 Ford Fiesta S, Automatic DCT.",
+    "keywords": [
+      "Ford Fiesta S, Automatic DCT fluid capacity"
+    ],
+    "quickAnswer": "3.96 QTS. (3.74 L) \u2014 MOTORCRAFT SAE 5W-20 Premium Synthetic Blend Motor Oil or Motorcraft SAE 5W-20 Full Synthetic Motor Oil, or equivalent",
+    "generations": [
+      {
+        "name": "2011 Fiesta S, Automatic DCT",
+        "years": "2011",
+        "specs": {
+          "Transmission Fluid": "2.40 QTS. (2.27 L)",
+          "Brake Fluid": "MOTORCRAFT High Performance DOT 3 Motor Vehicle Brake Fluid",
+          "Coolant": "5.80 QTS. (5.48 L)",
+          "Engine Oil": "3.96 QTS. (3.74 L) \u2014 MOTORCRAFT SAE 5W-20 Premium Synthetic Blend Motor Oil or Motorcraft SAE 5W-20 Full Synthetic Motor Oil, or equivalent"
+        },
+        "notes": [
+          "Extracted from factory service manual."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "What oil for 2011 Ford Fiesta S, Automatic DCT?",
+        "a": "3.96 QTS. (3.74 L) \u2014 MOTORCRAFT SAE 5W-20 Premium Synthetic Blend Motor Oil or Motorcraft SAE 5W-20 Full Synthetic Motor Oil, or equivalent"
+      }
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "ford-fiesta-s-automatic-dct-tire-size",
+    "make": "Ford",
+    "model": "Fiesta S, Automatic DCT",
+    "toolType": "tire-size",
+    "title": "2011 Ford Fiesta S, Automatic DCT Tire Size & Fitment",
+    "description": "Factory tire size for the 2011 Ford Fiesta S, Automatic DCT.",
+    "keywords": [
+      "Ford Fiesta S, Automatic DCT tire size"
+    ],
+    "quickAnswer": "P185/60R15 84H",
+    "generations": [
+      {
+        "name": "2011 Fiesta S, Automatic DCT",
+        "years": "2011",
+        "specs": {
+          "Tire Size": "P185/60R15 84H"
+        },
+        "notes": [
+          "Extracted from factory service manual."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "What tires fit 2011 Ford Fiesta S, Automatic DCT?",
+        "a": "P185/60R15 84H"
+      }
+    ],
+    "isDynamic": true
+  }
+]

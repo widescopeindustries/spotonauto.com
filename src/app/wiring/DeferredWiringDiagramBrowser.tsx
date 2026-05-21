@@ -80,7 +80,7 @@ export default function DeferredWiringDiagramBrowser() {
     return () => {
       cancelled = true;
     };
-  }, [selectorData, shouldLoad]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectorData, shouldLoad]);  
 
   useEffect(() => {
     if (!vehicle.make || !vehicle.year) {

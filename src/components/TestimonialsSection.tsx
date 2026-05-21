@@ -67,7 +67,7 @@ const TestimonialsSection = () => {
             </div>
             <div>
               <div className="font-display font-bold text-2xl text-cyan-400">FREE</div>
-              <div className="font-body text-xs text-gray-400 uppercase tracking-wider mt-1">Manuel's Diagnosis</div>
+              <div className="font-body text-xs text-gray-400 uppercase tracking-wider mt-1">Manuel&apos;s Diagnosis</div>
             </div>
           </div>
         </div>

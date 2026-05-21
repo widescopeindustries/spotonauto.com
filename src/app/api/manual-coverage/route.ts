@@ -18,7 +18,7 @@ import {
   resolveDbManualPath,
 } from '@/lib/manualEmbeddingsStore';
 
-export const revalidate = 86400;
+export const dynamic = 'force-dynamic';
 
 /** DB-first with static-JSON fallback. The deep indexer populates the
  *  manual_embeddings table; when it has data for a vehicle we serve live

@@ -306,7 +306,7 @@ function DiagramViewer({
                 <div className="w-8 h-8 border-2 border-violet-500/30 border-t-violet-400 rounded-full animate-spin" />
               </div>
             )}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            { }
             <img
               src={images[currentIndex]}
               alt={diagram.name}

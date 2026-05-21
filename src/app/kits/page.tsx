@@ -18,7 +18,7 @@ export default function KitsPage() {
           🎁 Perfect Gift for Car People
         </div>
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Manual's Oil Change Kits
+          Manual&apos;s Oil Change Kits
         </h1>
         <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-4">
           The exact oil, filter, drain plug washer, and tools for your car —

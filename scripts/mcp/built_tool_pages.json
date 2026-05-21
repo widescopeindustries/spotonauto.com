@@ -1,0 +1,109 @@
+[
+  {
+    "slug": "ford-fiesta-spark-plug-type",
+    "make": "Ford",
+    "model": "Fiesta",
+    "toolType": "spark-plug-type",
+    "title": "Ford Fiesta Spark Plug Type, Gap & Torque | OEM Specs",
+    "description": "Factory spark plug specifications for the Ford Fiesta. Type, gap, and torque specs per engine from the OEM service manual.",
+    "keywords": ["ford fiesta spark plug type", "fiesta spark plug gap", "fiesta spark plug torque"],
+    "quickAnswer": "1.0L EcoBoost: HYFS 093 YEC, gap 0.7 mm, torque 115 in-lbs. 1.6L Duratec: CYFS 12Y EC, gap 0.7-0.8 mm, torque 133 in-lbs. 1.6L EcoBoost: CYFS 13Y RC, gap 0.8 mm, torque 133 in-lbs.",
+    "generations": [
+      {"name": "1.0L EcoBoost", "years": "2011-2019", "specs": {"Spark Plug Type": "HYFS 093 YEC", "Gap": "0.7 mm (0.028 in)", "Torque": "115 in-lbs (13 Nm)"}, "notes": ["Coil-on-plug design. Use only specified plug type to avoid misfire."]},
+      {"name": "1.6L Duratec", "years": "2011-2019", "specs": {"Spark Plug Type": "CYFS 12Y EC", "Gap": "0.7-0.8 mm (0.028-0.031 in)", "Torque": "133 in-lbs (15 Nm)"}, "notes": ["Motorcraft CYFS-12-YEC or equivalent."]},
+      {"name": "1.6L EcoBoost", "years": "2014-2019", "specs": {"Spark Plug Type": "CYFS 13Y RC", "Gap": "0.8 mm (0.031 in)", "Torque": "133 in-lbs (15 Nm)"}, "notes": ["Turbocharged engine requires correct heat-range plug."]}
+    ],
+    "faq": [
+      {"q": "What spark plugs does a Ford Fiesta use?", "a": "Depends on engine: 1.0L EcoBoost uses HYFS 093 YEC with 0.7 mm gap. 1.6L Duratec uses CYFS 12Y EC with 0.7-0.8 mm gap. 1.6L EcoBoost uses CYFS 13Y RC with 0.8 mm gap."},
+      {"q": "What is the spark plug torque for a Ford Fiesta?", "a": "115 in-lbs (13 Nm) for 1.0L EcoBoost. 133 in-lbs (15 Nm) for 1.6L Duratec and 1.6L EcoBoost."}
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "ford-fiesta-serpentine-belt",
+    "make": "Ford",
+    "model": "Fiesta",
+    "toolType": "serpentine-belt",
+    "title": "Ford Fiesta Serpentine Belt Routing & Replacement",
+    "description": "Factory serpentine belt routing and adjustment for the Ford Fiesta. Accessory drive belt system specs per engine.",
+    "keywords": ["ford fiesta serpentine belt", "fiesta drive belt routing", "fiesta accessory belt"],
+    "quickAnswer": "Auto-tensioner system. Belt routing varies by engine: 1.0L EcoBoost, 1.6L Duratec, and 1.6L EcoBoost each have specific component locations.",
+    "generations": [
+      {"name": "All Engines", "years": "2011-2019", "specs": {"Adjustment": "Auto-tensioner — no manual adjustment required", "Belt Routing": "Varies by engine. See Accessory Drive Belt component location diagram."}, "notes": ["Replace belt if chunks missing or cords exposed. Cracks on rib side are acceptable per Ford."]}
+    ],
+    "faq": [
+      {"q": "Does the Ford Fiesta have a serpentine belt tensioner?", "a": "Yes. All Fiesta engines use an automatic tensioner. No manual belt adjustment is required."}
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "kia-soul-spark-plug-type",
+    "make": "Kia",
+    "model": "Soul",
+    "toolType": "spark-plug-type",
+    "title": "Kia Soul Spark Plug Type, Gap & Torque | OEM Specs",
+    "description": "Factory spark plug specifications for the Kia Soul. Type, gap, and torque specs per engine from the OEM service manual.",
+    "keywords": ["kia soul spark plug type", "soul spark plug gap", "soul spark plug torque"],
+    "quickAnswer": "1.6L: Champion RER8MC, gap 0.0394-0.0433 in (1.0-1.1 mm). 2.0L: Refer to IGNITION SYSTEM page for specific type. Both use coil-on-plug design.",
+    "generations": [
+      {"name": "1.6L", "years": "2010-2024", "specs": {"Spark Plug Type": "Champion RER8MC", "Gap": "0.0394-0.0433 in (1.0-1.1 mm)", "Firing Order": "1-3-4-2"}, "notes": ["No. 1 cylinder is closest to water pump. Coil-on-plug design."]},
+      {"name": "2.0L", "years": "2010-2024", "specs": {"Firing Order": "1-3-4-2", "Design": "Coil-on-plug"}, "notes": ["Refer to factory IGNITION SYSTEM page for specific plug type."]}
+    ],
+    "faq": [
+      {"q": "What spark plugs does a Kia Soul use?", "a": "1.6L engine uses Champion RER8MC with gap 0.0394-0.0433 in (1.0-1.1 mm). 2.0L uses coil-on-plug; check the factory IGNITION SYSTEM page for specific type."}
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "kia-soul-serpentine-belt",
+    "make": "Kia",
+    "model": "Soul",
+    "toolType": "serpentine-belt",
+    "title": "Kia Soul Serpentine Belt Routing & Replacement",
+    "description": "Factory serpentine belt routing and adjustment for the Kia Soul. Drive belt system specs per engine.",
+    "keywords": ["kia soul serpentine belt", "soul drive belt routing", "soul accessory belt"],
+    "quickAnswer": "Auto-tensioner on 1.6L and 2.0L. Belt routing diagrams are in the REMOVAL AND INSTALLATION section for each engine.",
+    "generations": [
+      {"name": "1.6L & 2.0L", "years": "2010-2024", "specs": {"Adjustment": "Auto-tensioner", "Belt Routing": "See Identifying Drive Belt figure under REMOVAL AND INSTALLATION for your engine."}, "notes": ["Replace if chunks missing or cords exposed."]}
+    ],
+    "faq": [
+      {"q": "How do you replace the serpentine belt on a Kia Soul?", "a": "Use the auto-tensioner to release belt tension. Routing diagram is in the factory REMOVAL AND INSTALLATION section for your specific engine (1.6L or 2.0L)."}
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "kia-sportage-serpentine-belt",
+    "make": "Kia",
+    "model": "Sportage",
+    "toolType": "serpentine-belt",
+    "title": "Kia Sportage Serpentine Belt Routing & Replacement",
+    "description": "Factory serpentine belt routing and adjustment for the Kia Sportage. Drive belt system specs per engine.",
+    "keywords": ["kia sportage serpentine belt", "sportage drive belt routing", "sportage accessory belt"],
+    "quickAnswer": "Auto-tensioner on 2.0L and 2.4L. Belt routing diagrams are in the REMOVAL AND INSTALLATION section for each engine.",
+    "generations": [
+      {"name": "2.0L & 2.4L", "years": "2008-2024", "specs": {"Adjustment": "Auto-tensioner", "Belt Routing": "See Turning Drive Belt Tensioner figure under REMOVAL AND INSTALLATION for your engine."}, "notes": ["Replace if chunks missing or cords exposed."]}
+    ],
+    "faq": [
+      {"q": "How do you replace the serpentine belt on a Kia Sportage?", "a": "Use the auto-tensioner to release belt tension. Routing diagram is in the factory REMOVAL AND INSTALLATION section for your specific engine (2.0L or 2.4L)."}
+    ],
+    "isDynamic": true
+  },
+  {
+    "slug": "ford-fiesta-battery-location",
+    "make": "Ford",
+    "model": "Fiesta",
+    "toolType": "battery-location",
+    "title": "Ford Fiesta Battery Location & Specifications",
+    "description": "Factory battery specifications for the Ford Fiesta. Location, CCA, and amp-hour ratings per engine.",
+    "keywords": ["ford fiesta battery", "fiesta battery location", "fiesta battery size"],
+    "quickAnswer": "1.0L EcoBoost: 56 amp/hr, 590 CCA. 1.6L Duratec/EcoBoost: 48 amp/hr, 500 CCA. 12V system.",
+    "generations": [
+      {"name": "1.0L EcoBoost", "years": "2014-2019", "specs": {"Voltage": "12 Volts", "Amp-Hour Rating": "56 amp/hr", "Cold Cranking Amps (CCA)": "590 CCA at -18C (-0.4F)"}, "notes": []},
+      {"name": "1.6L Duratec & 1.6L EcoBoost", "years": "2011-2019", "specs": {"Voltage": "12 Volts", "Amp-Hour Rating": "48 amp/hr", "Cold Cranking Amps (CCA)": "500 CCA at -18C (-0.4F)"}, "notes": []}
+    ],
+    "faq": [
+      {"q": "What size battery does a Ford Fiesta need?", "a": "1.0L EcoBoost: 56 amp/hr, 590 CCA. 1.6L Duratec or EcoBoost: 48 amp/hr, 500 CCA. All are 12V."}
+    ],
+    "isDynamic": true
+  }
+]

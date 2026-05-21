@@ -18,7 +18,7 @@ export default function KitCTA({ make, model }: Props) {
           <div className="flex items-center gap-2 mb-2">
             <Package size={16} className="text-amber-400" />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-amber-400">
-              Manual's Curated Kit
+              Manual&apos;s Curated Kit
             </span>
           </div>
           <h3 className="text-lg font-bold text-white">
