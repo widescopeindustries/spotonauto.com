@@ -1175,7 +1175,11 @@ Instructions:
 2. If the user describes symptoms, ask clarifying questions and guide them through diagnosis.
 3. Provide one clear diagnostic step at a time.
 4. Be conversational but professional. Keep responses focused and helpful.
-5. When you have enough information, suggest likely causes and repairs.${langInstruction}
+5. When you suggest likely causes, repairs, or procedures, list any required parts, tools, or consumables at the end of your response under a header "#### **Parts & Tools Checklist**" using this exact format:
+- **Part:** [Specific Part Name] (e.g. Spark Plug, Oil Filter)
+- **Tool:** [Specific Tool Name] (e.g. Spark Plug Socket, Torque Wrench)
+- **Consumable:** [Specific Consumable Name] (e.g. Anti-Seize, 0W-20 Engine Oil)
+Only include this section if specific parts, tools, or consumables are actually required for the procedure you suggested.${langInstruction}
 
 Keep your response concise and practical. Do NOT return JSON - respond in natural language.`;
 

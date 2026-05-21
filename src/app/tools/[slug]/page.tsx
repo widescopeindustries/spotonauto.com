@@ -18,6 +18,7 @@ import KitCTA from '@/components/KitCTA';
 import AffiliateLink from '@/components/AffiliateLink';
 import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
+import LlmExtractionBox from '@/components/LlmExtractionBox';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { getToolManualCitationGroups, getToolVerificationNote } from '@/lib/toolManualCitations';
 import type { ToolPage } from '@/data/tools-pages';
@@ -312,6 +313,18 @@ export default async function ToolPage({ params }: PageProps) {
         })),
     };
 
+    // Build specs record for the LLM extraction box
+    const llmSpecs: Record<string, string> = {};
+    if (page.quickAnswer) {
+        llmSpecs['Quick Answer'] = page.quickAnswer;
+    }
+    page.generations.forEach((gen) => {
+        Object.entries(gen.specs).forEach(([key, value]) => {
+            const cleanKey = `${key} (${gen.years})`;
+            llmSpecs[cleanKey] = String(value);
+        });
+    });
+
     // Amazon search links
     const amazonSearch = (query: string) => buildAmazonSearchUrl(query, 'automotive', 'tool-dynamic');
 
@@ -397,6 +410,12 @@ export default async function ToolPage({ params }: PageProps) {
                         </table>
                     </div>
                 </div>
+
+                <LlmExtractionBox
+                    title={`${page.make} ${page.model} ${toolLabel}`}
+                    data={llmSpecs}
+                    className="mb-8"
+                />
 
                 {/* Kit CTA Integration */}
                 {(page.toolType === 'oil-type' || page.toolType === 'fluid-capacity') && (

@@ -14,6 +14,7 @@ import {
 } from '../services/diagnosticMemory';
 import type { Vehicle } from '../types';
 import TopdonDiagnosticInjected from './TopdonDiagnosticInjected';
+import PartsConcierge from './PartsConcierge';
 
 interface DiagnosticChatProps {
     vehicle?: Vehicle;
@@ -555,6 +556,13 @@ const DiagnosticChat: React.FC<DiagnosticChatProps> = ({ vehicle: vehicleProp, i
                                         </div>
                                         <img src={msg.imageUrl} alt="Diagnostic Illustration" className="h-auto w-full object-cover" />
                                     </div>
+                                )}
+
+                                {msg.type === 'system' && (
+                                    <PartsConcierge
+                                        text={msg.text}
+                                        vehicle={vehicle ? { year: vehicle.year, make: vehicle.make, model: vehicle.model } : undefined}
+                                    />
                                 )}
 
                                 {msg.type === 'system' && (
