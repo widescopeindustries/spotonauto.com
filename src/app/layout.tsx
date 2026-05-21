@@ -42,7 +42,6 @@ export const metadata: Metadata = {
   },
   other: {
     "fo-verify": "e75768c4-61f2-457f-a6b9-22cc832e8e7f",
-    "impact-site-verification": "12c76e59-e391-4a93-a177-0b830133c6f0",
   },
 };
 
@@ -55,6 +54,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt — AI crawler context for AllOEMManuals" />
+        <meta name='impact-site-verification' value='12c76e59-e391-4a93-a177-0b830133c6f0' />
       </head>
       <body className={`bg-[#050507] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-[#FF6B00] selection:text-white ${inter.variable} ${spaceGrotesk.variable}`}>
         <AnalyticsScripts />
