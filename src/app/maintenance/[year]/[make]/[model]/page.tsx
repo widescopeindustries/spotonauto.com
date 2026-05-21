@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { getToolPagesForVehicle } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
+import KitCTA from '@/components/KitCTA';
 
 export const revalidate = 86400;
 
@@ -249,6 +250,8 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
           {availableCount} of {specs.length} specs available
         </p>
 
+        <KitCTA make={displayMake} model={displayModel} />
+
         <div className="grid md:grid-cols-3 gap-4 mb-10">
           {specs.map((spec) => (
             <div
@@ -283,6 +286,53 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
               )}
             </div>
           ))}
+        </div>
+
+        {/* Maintenance Intervals Hub */}
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-white mb-6 border-b border-white/10 pb-2">
+            Typical Service Intervals
+          </h2>
+          <p className="text-gray-400 text-sm mb-6">
+            These are the standard maintenance intervals for most vehicles under normal driving conditions. Always verify with your owner&apos;s manual for severe service schedules.
+          </p>
+          <div className="space-y-4">
+            <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-6">
+              <h3 className="text-lg font-bold text-cyan-300 mb-3 flex items-center gap-2">
+                <span className="bg-cyan-500/20 px-2 py-1 rounded text-cyan-400 text-sm">Every 30,000 Miles</span>
+              </h3>
+              <ul className="grid sm:grid-cols-2 gap-3 text-sm text-gray-300">
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/brake-pad-replacement`} className="hover:text-cyan-400 hover:underline transition">Inspect brake pads & rotors</Link></li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/engine-air-filter-replacement`} className="hover:text-cyan-400 hover:underline transition">Replace engine air filter</Link></li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/cabin-air-filter-replacement`} className="hover:text-cyan-400 hover:underline transition">Replace cabin air filter</Link></li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/serpentine-belt-replacement`} className="hover:text-cyan-400 hover:underline transition">Inspect drive belts & hoses</Link></li>
+              </ul>
+            </div>
+            
+            <div className="rounded-xl border border-violet-500/20 bg-violet-500/5 p-6">
+              <h3 className="text-lg font-bold text-violet-300 mb-3 flex items-center gap-2">
+                <span className="bg-violet-500/20 px-2 py-1 rounded text-violet-400 text-sm">Every 60,000 Miles</span>
+              </h3>
+              <ul className="grid sm:grid-cols-2 gap-3 text-sm text-gray-300">
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/spark-plug-replacement`} className="hover:text-violet-400 hover:underline transition">Replace spark plugs (standard)</Link></li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/battery-replacement`} className="hover:text-violet-400 hover:underline transition">Replace battery</Link> (typical 3-5 years)</li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/transmission-fluid-change`} className="hover:text-violet-400 hover:underline transition">Change automatic transmission fluid</Link></li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/brake-fluid-flush`} className="hover:text-violet-400 hover:underline transition">Flush brake fluid system</Link></li>
+              </ul>
+            </div>
+
+            <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-6">
+              <h3 className="text-lg font-bold text-rose-300 mb-3 flex items-center gap-2">
+                <span className="bg-rose-500/20 px-2 py-1 rounded text-rose-400 text-sm">Every 90,000+ Miles</span>
+              </h3>
+              <ul className="grid sm:grid-cols-2 gap-3 text-sm text-gray-300">
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/spark-plug-replacement`} className="hover:text-rose-400 hover:underline transition">Replace spark plugs (iridium)</Link></li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/timing-belt-replacement`} className="hover:text-rose-400 hover:underline transition">Replace timing belt & water pump</Link></li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/coolant-flush`} className="hover:text-rose-400 hover:underline transition">Change engine coolant/antifreeze</Link></li>
+                <li>• <Link href={`/repair/${year}/${canonicalMake}/${canonicalModel}/oxygen-sensor-replacement`} className="hover:text-rose-400 hover:underline transition">Replace oxygen sensors (O2)</Link></li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         {/* Cross-links */}

@@ -403,6 +403,11 @@ export default async function ToolPage({ params }: PageProps) {
                     </div>
                 </div>
 
+                {/* Kit CTA Integration */}
+                {(page.toolType === 'oil-type' || page.toolType === 'fluid-capacity') && (
+                    <KitCTA make={page.make} model={page.model} />
+                )}
+
                 {/* Factory Specs CTA — drives internal link equity to maintenance hubs */}
                 <div className="mb-8 rounded-xl border border-teal-500/20 bg-teal-500/5 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>

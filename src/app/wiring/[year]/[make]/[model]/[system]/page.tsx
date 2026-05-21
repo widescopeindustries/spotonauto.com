@@ -57,7 +57,8 @@ type WiringCtaTarget =
   | 'repair_path'
   | 'code_path'
   | 'manual_path'
-  | 'same_system_vehicle';
+  | 'same_system_vehicle'
+  | 'diagnostic_chat';
 
 type WiringCardTone = 'emerald' | 'cyan' | 'amber' | 'slate' | 'violet';
 
@@ -494,6 +495,27 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
           <StatCard label="Matched Diagrams" value={String(systemDiagrams.length)} />
           <StatCard label="Variant Used" value={data.resolvedVariant} />
           <StatCard label="Total Vehicle Diagrams" value={String(data.index.totalDiagrams)} />
+        </div>
+
+        {/* Wiring-to-AI Funnel CTA */}
+        <div className="mt-8 rounded-2xl border border-violet-500/30 bg-gradient-to-r from-violet-500/10 to-transparent p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <span className="text-violet-400">🤖</span> Stuck on this electrical issue?
+            </h3>
+            <p className="text-gray-300">
+              Wiring diagrams can be a maze. Ask Manuel, our factory-trained AI mechanic, to analyze this circuit or troubleshoot your specific symptom.
+            </p>
+          </div>
+          <WiringTrackedLink
+            href={`/diagnose?year=${vehicle.year}&make=${encodeURIComponent(vehicle.make)}&model=${encodeURIComponent(vehicle.model)}&issue=${encodeURIComponent('Electrical issue with ' + systemMeta.shortLabel)}`}
+            vehicle={vehicleLabel}
+            system={systemMeta.shortLabel}
+            target="diagnostic_chat"
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-500 text-white font-bold hover:bg-violet-400 hover:shadow-lg hover:shadow-violet-500/20 transition-all whitespace-nowrap"
+          >
+            Ask AI Mechanic ➔
+          </WiringTrackedLink>
         </div>
       </section>
 

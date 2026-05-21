@@ -14,7 +14,8 @@ interface WiringTrackedLinkProps {
     | 'repair_path'
     | 'code_path'
     | 'manual_path'
-    | 'same_system_vehicle';
+    | 'same_system_vehicle'
+    | 'diagnostic_chat';
   children: ReactNode;
 }
 
