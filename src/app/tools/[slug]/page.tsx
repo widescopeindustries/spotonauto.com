@@ -181,15 +181,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     // Keep generic tool pages indexed — they aggregate all years and maintain AI citation equity.
     // Vehicle-specific maintenance pages coexist and rank for year-specific queries.
-    const robots = quality === 'medium'
-        ? { index: false, follow: true }
-        : undefined;
-
     return {
         title,
         description,
         keywords: page.keywords,
-        robots,
         openGraph: {
             title,
             description,
