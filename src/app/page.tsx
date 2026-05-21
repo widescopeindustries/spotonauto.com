@@ -92,6 +92,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://alloemmanuals.com',
   },
+  other: {
+    "impact-site-verification": "12c76e59-e391-4a93-a177-0b830133c6f0",
+  },
 };
 
 export default async function HomePage() {
