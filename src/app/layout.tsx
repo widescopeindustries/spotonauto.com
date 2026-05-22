@@ -54,7 +54,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt — AI crawler context for AllOEMManuals" />
-        <meta name='impact-site-verification' {...({ value: '1e0d6c07-b1f7-4225-be0a-f8c84c5f0955' } as any)} />
+        <meta name='impact-site-verification' {...({ value: '9ebeeb0f-e69a-48a4-a2bc-2f6b69c15df0' } as any)} />
       </head>
       <body className={`bg-[#050507] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-[#FF6B00] selection:text-white ${inter.variable} ${spaceGrotesk.variable}`}>
           <div className="hidden" aria-hidden="true">
