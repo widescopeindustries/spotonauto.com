@@ -12,13 +12,12 @@ const Footer = () => {
 
                     {/* Brand */}
                     <div className="md:col-span-1">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF6B00] to-[#FF9500] flex items-center justify-center">
-                                <Cpu className="w-4 h-4 text-white" />
-                            </div>
-                            <span className="font-bold text-lg text-white">
-                                AllOEM<span className="text-[#FF6B00]">Manuals</span>
-                            </span>
+                        <div className="flex items-center mb-4">
+                            <img
+                                src="/logo.png"
+                                alt="AllOEMManuals"
+                                className="h-10 w-auto object-contain"
+                            />
                         </div>
                         <p className="text-sm text-[#6E6E80] leading-relaxed mb-4">
                             AI-powered auto repair guides. Save $200–$500 per repair with step-by-step instructions tailored to your exact vehicle.

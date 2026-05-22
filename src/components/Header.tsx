@@ -48,15 +48,14 @@ export default function Header() {
           <div className="flex items-center justify-between h-16 md:h-20 gap-4">
             <Link
               href="/"
-              className="flex items-center gap-2 group"
+              className="flex items-center group"
               aria-label="AllOEMManuals Home"
             >
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-[#FF6B00] to-[#FF9500] flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(255,107,0,0.4)] transition-shadow">
-                <Cpu className="w-4 h-4 md:w-5 md:h-5 text-white" />
-              </div>
-              <span className="font-bold text-lg md:text-xl text-white tracking-tight">
-                AllOEM<span className="text-[#FF6B00]">Manuals</span>
-              </span>
+              <img
+                src="/logo.png"
+                alt="AllOEMManuals"
+                className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+              />
             </Link>
 
             <form onSubmit={handleSearchSubmit} className="hidden lg:flex min-w-[260px] items-center gap-2 rounded-full border border-white/10 bg-[#0a0a0f]/60 px-3 py-1.5">
