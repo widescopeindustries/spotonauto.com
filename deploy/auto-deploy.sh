@@ -15,7 +15,10 @@ REMOTE_URL="${AUTO_DEPLOY_REMOTE:-https://github.com/widescopeindustries/spotona
 REMOTE_BRANCH="${AUTO_DEPLOY_BRANCH:-origin/main}"
 
 log() {
-  printf '[%s] %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*" | tee /dev/tty | logger -t "${LOG_TAG}"
+  local msg
+  msg="$(printf '[%s] %s' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*")"
+  echo "${msg}"
+  logger -t "${LOG_TAG}" "${msg}"
 }
 
 # ── Prevent concurrent deploys ─────────────────────────────────────
