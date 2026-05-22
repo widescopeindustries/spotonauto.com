@@ -16,7 +16,7 @@ const path = require('path');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
 const SITE_URL = 'sc-domain:alloemmanuals.com';
-const GA_PROPERTY_ID = '520432705';
+const GA_PROPERTY_ID = '537013586';
 
 function getArg(name, fallback = null) {
   const idx = process.argv.indexOf(`--${name}`);

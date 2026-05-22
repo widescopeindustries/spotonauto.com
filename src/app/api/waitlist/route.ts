@@ -2,16 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const DATA_DIR = process.env.SPOTONAUTO_DATA_DIR || '/data/spotonauto';
-const WAITLIST_FILE = path.join(DATA_DIR, 'waitlist.json');
+const PRIMARY_DATA_DIR = process.env.SPOTONAUTO_DATA_DIR || '/data/spotonauto';
+const FALLBACK_DATA_DIR = path.join(process.cwd(), 'data-fallback');
 
-async function ensureDataDir(): Promise<void> {
-  await fs.mkdir(DATA_DIR, { recursive: true });
+async function getWritableDir(): Promise<string> {
+  try {
+    await fs.mkdir(PRIMARY_DATA_DIR, { recursive: true });
+    const testFile = path.join(PRIMARY_DATA_DIR, '.write_test');
+    await fs.writeFile(testFile, 'test');
+    await fs.unlink(testFile);
+    return PRIMARY_DATA_DIR;
+  } catch {
+    try {
+      await fs.mkdir(FALLBACK_DATA_DIR, { recursive: true });
+      return FALLBACK_DATA_DIR;
+    } catch {
+      const tmpDir = path.join(process.env.TMPDIR || '/tmp', 'spotonauto');
+      await fs.mkdir(tmpDir, { recursive: true });
+      return tmpDir;
+    }
+  }
+}
+
+async function getWaitlistFilePath(): Promise<string> {
+  const dir = await getWritableDir();
+  return path.join(dir, 'waitlist.json');
 }
 
 async function readWaitlist(): Promise<Array<{ email: string; vehicle: string; year: number | null; created_at: string }>> {
   try {
-    const raw = await fs.readFile(WAITLIST_FILE, 'utf8');
+    const filePath = await getWaitlistFilePath();
+    const raw = await fs.readFile(filePath, 'utf8');
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
@@ -20,8 +41,8 @@ async function readWaitlist(): Promise<Array<{ email: string; vehicle: string; y
 }
 
 async function writeWaitlist(rows: Array<{ email: string; vehicle: string; year: number | null; created_at: string }>): Promise<void> {
-  await ensureDataDir();
-  await fs.writeFile(WAITLIST_FILE, JSON.stringify(rows, null, 2));
+  const filePath = await getWaitlistFilePath();
+  await fs.writeFile(filePath, JSON.stringify(rows, null, 2));
 }
 
 export async function POST(req: NextRequest) {

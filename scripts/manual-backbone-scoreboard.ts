@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
 const OUTPUT_DIR = path.join(__dirname, 'seo-reports');
 const SITE_URL = 'sc-domain:alloemmanuals.com';
-const GA_PROPERTY_ID = '520432705';
+const GA_PROPERTY_ID = '537013586';
 
 function loadEnv(): void {
   const candidates = [

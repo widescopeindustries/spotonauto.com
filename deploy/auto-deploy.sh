@@ -67,36 +67,67 @@ else
   log "Deploy script not found or not executable: ${DEPLOY_SCRIPT}"
   log "Falling back to manual deploy steps..."
 
-  # Manual fallback (same logic as deploy-production.sh)
-  systemctl stop "${SERVICE_NAME}" || true
-  sleep 2
+  # Pull changes
+  git reset --hard "${REMOTE_BRANCH}"
 
-  # Backup .next
+  # ── dependencies & Build (Isolated directory to prevent downtime) ──
+  log "Installing dependencies in main app directory"
+  npm ci
+
+  log "Preparing temporary build directory"
+  BUILD_DIR="${APP_DIR}/.build-temp"
+  rm -rf "${BUILD_DIR}"
+  mkdir -p "${BUILD_DIR}"
+
+  log "Syncing files to build directory"
+  rsync -az --delete --exclude='node_modules' --exclude='.next' --exclude='.git' --exclude='.build-temp' "${APP_DIR}/" "${BUILD_DIR}/"
+
+  log "Linking node_modules to build directory"
+  ln -s "${APP_DIR}/node_modules" "${BUILD_DIR}/node_modules"
+
+  log "Building application in build directory"
+  cd "${BUILD_DIR}"
+  if ! npm run build; then
+    log "BUILD FAILED — cleaning up build folder and aborting deploy"
+    rm -rf "${BUILD_DIR}"
+    exit 1
+  fi
+  cd "${APP_DIR}"
+
+  log "Build successful, preparing swap"
+  NEW_BUILD_DIR="${BUILD_DIR}/.next"
+  if [ ! -d "${NEW_BUILD_DIR}" ]; then
+    log "Build directory .next not found"
+    rm -rf "${BUILD_DIR}"
+    exit 1
+  fi
+
+  # ── Service Swap and Restart (Minimal Downtime Window) ──────────────
+  # Backup current build
   if [ -d ".next" ]; then
+    log "Backing up current .next to .next.backup"
     rm -rf ".next.backup"
     mv .next ".next.backup"
   fi
 
-  # Pull changes
-  git reset --hard "${REMOTE_BRANCH}"
+  log "Swapping in new build"
+  mv "${NEW_BUILD_DIR}" .next
+  rm -rf "${BUILD_DIR}"
 
-  # Build
-  if npm ci && npm run build; then
+  log "Stopping service: ${SERVICE_NAME} (for quick swap)"
+  systemctl stop "${SERVICE_NAME}" || true
+
+  log "Starting service: ${SERVICE_NAME}"
+  systemctl start "${SERVICE_NAME}"
+
+  log "Waiting for service"
+  sleep 4
+  if curl -fsS "http://127.0.0.1:3002" >/dev/null; then
+    log "Fallback deploy completed successfully"
     rm -rf ".next.backup"
-    systemctl start "${SERVICE_NAME}"
-    sleep 4
-    if curl -fsS "http://127.0.0.1:3002" >/dev/null; then
-      log "Fallback deploy completed successfully"
-    else
-      log "Healthcheck failed — rolling back"
-      systemctl stop "${SERVICE_NAME}"
-      rm -rf .next
-      mv ".next.backup" .next 2>/dev/null || true
-      systemctl start "${SERVICE_NAME}"
-      exit 1
-    fi
   else
-    log "Build failed — rolling back"
+    log "Healthcheck failed — rolling back"
+    systemctl stop "${SERVICE_NAME}"
     rm -rf .next
     mv ".next.backup" .next 2>/dev/null || true
     systemctl start "${SERVICE_NAME}"

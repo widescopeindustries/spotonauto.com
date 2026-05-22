@@ -14,7 +14,7 @@ const path = require('path');
 const fs = require('fs');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
-const GA_PROPERTY_ID = '520432705';
+const GA_PROPERTY_ID = '537013586';
 const KEY_EVENTS = [
   'affiliate_click',
   'guide_generated',

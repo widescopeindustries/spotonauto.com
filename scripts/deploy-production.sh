@@ -32,41 +32,64 @@ if [ ! -f package.json ] || [ ! -f package-lock.json ]; then
   exit 1
 fi
 
-# ── Pre-deploy: stop service and backup current build ──────────────
-log "Stopping service: ${SERVICE_NAME}"
-run_systemctl stop "${SERVICE_NAME}" || true
-sleep 2
+# ── dependencies & Build (Isolated directory to prevent downtime) ──
+log "Installing dependencies in main app directory"
+npm ci
 
-# Backup existing .next so we can rollback if build fails
+log "Preparing temporary build directory"
+BUILD_DIR="${APP_DIR}/.build-temp"
+rm -rf "${BUILD_DIR}"
+mkdir -p "${BUILD_DIR}"
+
+log "Syncing files to build directory"
+rsync -az --delete --exclude='node_modules' --exclude='.next' --exclude='.git' --exclude='.build-temp' "${APP_DIR}/" "${BUILD_DIR}/"
+
+log "Linking node_modules to build directory"
+ln -s "${APP_DIR}/node_modules" "${BUILD_DIR}/node_modules"
+
+log "Building application in build directory"
+cd "${BUILD_DIR}"
+if ! npm run build; then
+  log "BUILD FAILED — cleaning up build folder and aborting deploy"
+  rm -rf "${BUILD_DIR}"
+  exit 1
+fi
+cd "${APP_DIR}"
+
+log "Build successful, preparing swap"
+NEW_BUILD_DIR="${BUILD_DIR}/.next"
+if [ ! -d "${NEW_BUILD_DIR}" ]; then
+  log "Build directory .next not found"
+  rm -rf "${BUILD_DIR}"
+  exit 1
+fi
+
+# ── Service Swap and Restart (Minimal Downtime Window) ──────────────
+log "Preparing build swap..."
+
+# Get Service Working Directory
+SERVICE_WD="$(run_systemctl show "${SERVICE_NAME}" --property=WorkingDirectory --value || true)"
+
+# Backup current build
 if [ -d ".next" ]; then
   log "Backing up current .next to ${ROLLBACK_DIR}"
   rm -rf "${ROLLBACK_DIR}"
   mv .next "${ROLLBACK_DIR}"
 fi
 
-# ── Build ──────────────────────────────────────────────────────────
-log "Installing dependencies"
-npm ci
+log "Swapping in new build"
+mv "${NEW_BUILD_DIR}" .next
+rm -rf "${BUILD_DIR}"
 
-log "Building app"
-if ! npm run build; then
-  log "BUILD FAILED — restoring previous build and restarting service"
-  rm -rf .next
-  if [ -d "${ROLLBACK_DIR}" ]; then
-    mv "${ROLLBACK_DIR}" .next
-  fi
-  run_systemctl start "${SERVICE_NAME}"
-  exit 1
-fi
-
-# ── Post-build: sync if service WorkingDirectory differs ───────────
-SERVICE_WD="$(run_systemctl show "${SERVICE_NAME}" --property=WorkingDirectory --value || true)"
+# Sync if working directory differs
 if [ -n "${SERVICE_WD}" ] && [ "${SERVICE_WD}" != "${APP_DIR}" ] && [ -d "${SERVICE_WD}" ]; then
   log "Service WorkingDirectory (${SERVICE_WD}) differs from build dir (${APP_DIR}). Syncing .next..."
   rsync -az --delete "${APP_DIR}/.next/" "${SERVICE_WD}/.next/"
 fi
 
-# ── Start service ──────────────────────────────────────────────────
+log "Stopping service: ${SERVICE_NAME} (for quick swap)"
+run_systemctl stop "${SERVICE_NAME}" || true
+
 log "Ensuring port ${PORT:-3002} is free"
 if command -v fuser >/dev/null 2>&1; then
   fuser -k "${PORT:-3002}/tcp" 2>/dev/null || true
@@ -82,7 +105,7 @@ log "Waiting for service"
 sleep 4
 run_systemctl is-active --quiet "${SERVICE_NAME}"
 
-# ── Healthchecks ───────────────────────────────────────────────────
+# ── Healthchecks & Fallback ─────────────────────────────────────────
 log "Running local healthcheck: ${HEALTHCHECK_URL}"
 if ! curl -fsS "${HEALTHCHECK_URL}" >/dev/null; then
   log "HEALTHCHECK FAILED — restoring previous build and restarting service"
@@ -90,6 +113,9 @@ if ! curl -fsS "${HEALTHCHECK_URL}" >/dev/null; then
   rm -rf .next
   if [ -d "${ROLLBACK_DIR}" ]; then
     mv "${ROLLBACK_DIR}" .next
+    if [ -n "${SERVICE_WD}" ] && [ "${SERVICE_WD}" != "${APP_DIR}" ] && [ -d "${SERVICE_WD}" ]; then
+      rsync -az --delete "${APP_DIR}/.next/" "${SERVICE_WD}/.next/"
+    fi
   fi
   run_systemctl start "${SERVICE_NAME}"
   exit 1

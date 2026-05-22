@@ -89,13 +89,6 @@ export default function NotFound() {
                         <Search className="w-5 h-5" />
                         Ask Manuel
                     </button>
-                    <button
-                        onClick={() => router.push('/guides')}
-                        className="flex items-center justify-center gap-2 px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-semibold text-white transition-all"
-                    >
-                        <BookOpen className="w-5 h-5" />
-                        Browse Repair Guides
-                    </button>
                 </motion.div>
 
                 {/* Popular Guides */}

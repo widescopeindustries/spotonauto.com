@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
-const GA_PROPERTY_ID = '520432705';
+const GA_PROPERTY_ID = '537013586';
 const LIVE_OVERRIDE_PATH = path.join(__dirname, '..', 'src', 'data', 'knowledge-graph-overrides.json');
 const DEFAULT_SURFACE_BASE = {
   repair: { manual: 90, spec: 80, tool: 60, wiring: 50, dtc: 40, repair: 30 },

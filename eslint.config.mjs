@@ -1,11 +1,4 @@
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { FlatCompat } from '@eslint/eslintrc';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import nextVitals from 'eslint-config-next/core-web-vitals';
 
 export default [
   {
@@ -17,15 +10,16 @@ export default [
       'workers/**',
     ],
   },
-  ...compat
-    .extends('next/core-web-vitals')
-    .map((config) => ({
-      ...config,
-      files: ['src/**/*.{js,jsx,ts,tsx}', 'next.config.js'],
-      rules: {
-        ...config.rules,
-        '@next/next/no-img-element': 'off',
-        'react-hooks/exhaustive-deps': 'off',
-      },
-    })),
+  ...nextVitals,
+  {
+    files: ['src/**/*.{js,jsx,ts,tsx}', 'next.config.js'],
+    rules: {
+      '@next/next/no-img-element': 'off',
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/purity': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/static-components': 'off',
+      'react-hooks/immutability': 'off',
+    },
+  },
 ];

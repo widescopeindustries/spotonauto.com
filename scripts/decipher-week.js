@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
-const GA_PROPERTY_ID = '520432705';
+const GA_PROPERTY_ID = '537013586';
 
 async function buildGaClient() {
   const credentials = JSON.parse(fs.readFileSync(KEY_PATH, 'utf8'));
@@ -56,7 +56,7 @@ async function main() {
   
   // Also check spotonauto.com property if there is one
   console.log('\n=== Checking if spotonauto.com has its own GA4 property... ===');
-  console.log('(We only have access to property 520432705 which is alloemmanuals.com)');
+  console.log('(We only have access to property 537013586 which is alloemmanuals.com)');
 }
 
 main().catch(console.error);

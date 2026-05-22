@@ -52,7 +52,7 @@ export default function Header() {
               aria-label="AllOEMManuals Home"
             >
               <img
-                src="/logo.png"
+                src="/logo.png?v=2"
                 alt="AllOEMManuals"
                 className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
               />

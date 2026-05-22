@@ -8,7 +8,7 @@ const ROOT = path.join(__dirname, '..');
 const REPORTS_DIR = path.join(__dirname, 'seo-reports');
 const KEY_PATH = path.join(ROOT, 'credentials', 'google-service-account.json');
 const SITE_URL = 'sc-domain:alloemmanuals.com';
-const GA_PROPERTY_ID = '520432705';
+const GA_PROPERTY_ID = '537013586';
 const DOMAIN_PREFIX = 'https://alloemmanuals.com';
 const MULTI_WORD_MAKES = [
   'alfa romeo',

@@ -31,7 +31,7 @@ const fs = require('fs');
 const path = require('path');
 
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
-const GA_PROPERTY_ID = '520432705';
+const GA_PROPERTY_ID = '537013586';
 
 const DEFAULT_KEY_EVENTS = [
   'guide_generated',

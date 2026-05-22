@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const path = require('path');
 const KEY_PATH = path.join(__dirname, '..', 'credentials', 'google-service-account.json');
-const GA_PROPERTY_ID = '520432705';
+const GA_PROPERTY_ID = '537013586';
 const auth = new google.auth.GoogleAuth({ keyFile: KEY_PATH, scopes: ['https://www.googleapis.com/auth/analytics.readonly'] });
 const ga = google.analyticsdata({ version: 'v1beta', auth });
 
