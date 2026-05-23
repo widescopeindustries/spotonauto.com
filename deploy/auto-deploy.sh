@@ -57,6 +57,9 @@ fi
 
 log "New commit detected: ${LOCAL_HEAD:0:8} -> ${REMOTE_HEAD:0:8}"
 
+# Pull changes first to update working tree
+git reset --hard "${REMOTE_BRANCH}"
+
 # ── Deploy ─────────────────────────────────────────────────────────
 if [ -x "${DEPLOY_SCRIPT}" ]; then
   log "Running deploy script: ${DEPLOY_SCRIPT}"
@@ -69,9 +72,6 @@ if [ -x "${DEPLOY_SCRIPT}" ]; then
 else
   log "Deploy script not found or not executable: ${DEPLOY_SCRIPT}"
   log "Falling back to manual deploy steps..."
-
-  # Pull changes
-  git reset --hard "${REMOTE_BRANCH}"
 
   # ── dependencies & Build (Isolated directory to prevent downtime) ──
   log "Installing dependencies in main app directory"
