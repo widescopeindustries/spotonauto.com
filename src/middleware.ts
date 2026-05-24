@@ -87,7 +87,14 @@ export function middleware(request: NextRequest) {
 
   // 1.5 AI bot monetization/denial policy: paywall-capable bots forward to TollBit,
   // non-paying AI bots are hard blocked. Skip this logic on TollBit host itself.
-  if (host !== tollbitHost) {
+  const hasTollbitToken =
+    request.headers.has('tollbittoken') ||
+    request.headers.has('x-tollbit-token') ||
+    request.headers.has('x-tollbit-key') ||
+    request.headers.has('signature') ||
+    request.headers.has('signature-input');
+
+  if (host !== tollbitHost && !hasTollbitToken) {
     if (matchesBot(userAgent, tollbitForwardBots)) {
       const tollbitUrl = request.nextUrl.clone();
       tollbitUrl.protocol = 'https:';
