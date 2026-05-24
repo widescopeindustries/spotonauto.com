@@ -451,7 +451,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
               </Link>
             ))}
             <Link
-              href="/repairs"
+              href="/repair"
               className="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-400 hover:bg-cyan-500/20 transition-all"
             >
               All Repair Families

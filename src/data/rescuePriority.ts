@@ -11,10 +11,10 @@ export interface RescuePriorityEntry {
 
 export const TIER_1_RESCUE_PAGES: RescuePriorityEntry[] = [
   {
-    href: '/repair/2013/honda/cr-v/spark-plug-replacement',
+    href: '/repair/2013/honda/crv/spark-plug-replacement',
     year: 2013,
     make: 'Honda',
-    model: 'CR-V',
+    model: 'CRV',
     task: 'spark-plug-replacement',
     tier: 1,
   },
@@ -51,10 +51,10 @@ export const TIER_1_RESCUE_PAGES: RescuePriorityEntry[] = [
     tier: 1,
   },
   {
-    href: '/repair/2013/honda/cr-v/oil-change',
+    href: '/repair/2013/honda/crv/oil-change',
     year: 2013,
     make: 'Honda',
-    model: 'CR-V',
+    model: 'CRV',
     task: 'oil-change',
     tier: 1,
   },
@@ -75,10 +75,10 @@ export const TIER_1_RESCUE_PAGES: RescuePriorityEntry[] = [
     tier: 1,
   },
   {
-    href: '/repair/2010/honda/cr-v/battery-replacement',
+    href: '/repair/2010/honda/crv/battery-replacement',
     year: 2010,
     make: 'Honda',
-    model: 'CR-V',
+    model: 'CRV',
     task: 'battery-replacement',
     tier: 1,
   },

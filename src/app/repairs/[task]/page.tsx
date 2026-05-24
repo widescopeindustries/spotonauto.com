@@ -124,7 +124,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
         <nav className="text-sm text-gray-500 mb-6">
           <Link href="/" className="hover:text-cyan-400 transition-colors">Home</Link>
           <span className="mx-2">/</span>
-          <Link href="/repairs" className="hover:text-cyan-400 transition-colors">Repairs</Link>
+          <Link href="/repair" className="hover:text-cyan-400 transition-colors">Repairs</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-300">{taskName}</span>
         </nav>
@@ -318,7 +318,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
               </Link>
             ))}
             <Link
-              href="/repairs"
+              href="/repair"
               className="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-400 hover:bg-cyan-500/20 transition-all"
             >
               View All Categories

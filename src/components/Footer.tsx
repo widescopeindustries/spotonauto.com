@@ -70,7 +70,7 @@ const Footer = () => {
                                 { href: '/repairs/battery-replacement', label: 'Battery Guides' },
                                 { href: '/repairs/spark-plug-replacement', label: 'Spark Plug Guides' },
                                 { href: '/repairs/serpentine-belt-replacement', label: 'Serpentine Belt Guides' },
-                                { href: '/repairs', label: 'All Repair Categories →' },
+                                { href: '/repair', label: 'All Repair Categories →' },
                             ].map((item) => (
                                 <li key={item.href}>
                                     <Link

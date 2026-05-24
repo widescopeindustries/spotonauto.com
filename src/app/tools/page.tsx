@@ -137,7 +137,7 @@ const POPULAR_SEARCHES = [
     { query: 'bmw x3 battery location', href: '/tools/bmw-x3-battery-location' },
     { query: 'jeep wrangler tire size', href: '/tools/jeep-wrangler-tire-size' },
     { query: 'toyota rav4 oil type', href: '/tools/toyota-rav4-oil-type' },
-    { query: 'honda crv oil type', href: '/tools/honda-cr-v-oil-type' },
+    { query: 'honda crv oil type', href: '/tools/honda-crv-oil-type' },
     { query: 'check engine light p0300', href: '/diagnose' },
 ];
 
