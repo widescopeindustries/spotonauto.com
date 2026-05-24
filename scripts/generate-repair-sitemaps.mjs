@@ -150,6 +150,8 @@ function loadWinnerEntries() {
             .split(/\r?\n/)
             .map((line) => line.trim())
             .filter((line) => line.startsWith(`${BASE_URL}/repair/`))
+            // Canonicalize legacy Honda CR-V path variant.
+            .map((line) => line.replace('/honda/cr-v/', '/honda/crv/').replace(/\/honda\/cr-v$/, '/honda/crv'))
     )];
 
     return {

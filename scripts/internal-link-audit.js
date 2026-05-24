@@ -53,6 +53,11 @@ function extractLinks(html, baseUrl) {
     try {
       const u = new URL(raw, baseUrl);
       if (u.hostname === 'alloemmanuals.com' || u.hostname === 'www.alloemmanuals.com') {
+        // Cloudflare email-obfuscation links are synthetic /cdn-cgi URLs and
+        // are not real site routes we control at the app level.
+        if (u.pathname === '/cdn-cgi/l/email-protection') {
+          continue;
+        }
         u.hash = '';
         out.push(u.toString());
       }

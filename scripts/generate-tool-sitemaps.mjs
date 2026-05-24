@@ -40,11 +40,13 @@ const NON_ROAD_VEHICLE_PATTERN =
   /\b(trailer|scooter|motorcycle|motocross|enduro|atv|utv|quad|snowmobile|roadking|softail|sportster|electra\s+glide|heritage\s+classic|fat\s+boy|shadow\s+ace|gold\s+wing|vulcan|hayabusa|ninja|gsx-r|rm-z|xr\d|crf\d|dr\d|yz[f]?\d|vt\d|cbr\d|klr\d|intruder|boulevard|virago|v-star|roadstar|nighthawk|speedfight|manufacturing)\b/i;
 
 function slugify(value) {
-  return value
+  const slug = value
     .toLowerCase()
     .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+  // Canonicalize common model variants to avoid redirect-only sitemap URLs.
+  return slug.replace(/-cr-v\b/g, '-crv');
 }
 
 function escapeXml(s) {
