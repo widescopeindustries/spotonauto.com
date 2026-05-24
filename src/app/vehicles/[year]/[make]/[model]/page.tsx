@@ -260,8 +260,7 @@ export default async function VehicleLanePage({ params }: PageProps) {
                 const concise = getConciseQuickAnswer(yearNum, tp);
                 // Skip cards with no real data — generic text poisons SERP snippets
                 if (!concise) return null;
-                // Link to vehicle-specific maintenance page when available, otherwise fallback to tool page
-                const maintPath = `${basePath}/${tp.toolType}`;
+                const maintPath = `/maintenance/${year}/${identity.makeSlug}/${identity.modelSlug}/${tp.toolType}`;
                 const href = MAINTENANCE_TOOL_TYPES.has(tp.toolType) ? maintPath : `/tools/${tp.slug}`;
                 return (
                   <Link

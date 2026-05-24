@@ -110,7 +110,7 @@ export default function MaintenanceSupplies({ toolType, make, model, specHint }:
         <section className="mb-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
-                    <h2 className="text-2xl font-bold text-white">One-Trip Shopping List</h2>
+                    <h2 className="text-2xl font-bold text-white tracking-wide">One-Trip Shopping List</h2>
                     <p className="text-gray-400 text-sm mt-1">Recommended supplies and tools for this job, grouped so you can buy everything before the repair starts.</p>
                 </div>
             </div>
@@ -124,14 +124,18 @@ export default function MaintenanceSupplies({ toolType, make, model, specHint }:
                         vehicle={`${make} ${model}`}
                         pageType="parts_page"
                         subtag="tool-supplies"
-                        className="group flex flex-col p-5 bg-white/[0.03] border border-white/10 rounded-2xl hover:border-amber-500/40 hover:bg-white/[0.05] transition-all duration-300"
+                        className="group flex flex-col p-5 bg-white/[0.02] border border-white/[0.08] backdrop-blur-md rounded-2xl hover:border-amber-500/35 hover:bg-white/[0.04] hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(245,158,11,0.03)] transition-all duration-300"
                     >
-                        <div className="flex items-start justify-between mb-3">
-                            <span className="text-3xl grayscale group-hover:grayscale-0 transition-all duration-300">{item.icon}</span>
-                            <span className="text-xs font-bold uppercase tracking-widest text-amber-500/60 group-hover:text-amber-500 transition-colors">Shop →</span>
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/5 border border-amber-500/10 text-2xl shadow-[0_0_15px_rgba(245,158,11,0.03)] group-hover:bg-amber-500/10 group-hover:border-amber-500/25 group-hover:shadow-[0_0_15px_rgba(245,158,11,0.1)] transition-all duration-300">
+                                <span className="grayscale group-hover:grayscale-0 transition-all duration-300">{item.icon}</span>
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500/60 group-hover:text-amber-400 transition-colors bg-amber-500/5 px-2.5 py-1 rounded-full border border-amber-500/10 group-hover:border-amber-500/30">
+                                Shop →
+                            </span>
                         </div>
                         <h3 className="text-white font-bold mb-1 group-hover:text-amber-400 transition-colors">{item.name}</h3>
-                        <p className="text-gray-400 text-xs leading-relaxed">{item.description}</p>
+                        <p className="text-gray-400 text-xs leading-relaxed flex-grow">{item.description}</p>
                     </AffiliateLink>
                 ))}
                 
@@ -142,14 +146,18 @@ export default function MaintenanceSupplies({ toolType, make, model, specHint }:
                     vehicle={`${make} ${model}`}
                     pageType="parts_page"
                     subtag="tool-supplies"
-                    className="group flex flex-col p-5 bg-cyan-500/5 border border-cyan-500/20 rounded-2xl hover:border-cyan-500/40 hover:bg-cyan-500/10 transition-all duration-300"
+                    className="group flex flex-col p-5 bg-gradient-to-br from-cyan-500/[0.03] to-transparent border border-cyan-500/20 rounded-2xl hover:border-cyan-500/45 hover:bg-cyan-500/[0.06] hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(6,182,212,0.03)] transition-all duration-300"
                 >
-                    <div className="flex items-start justify-between mb-3">
-                        <span className="text-3xl">🧰</span>
-                        <span className="text-xs font-bold uppercase tracking-widest text-cyan-500/60 group-hover:text-cyan-500 transition-colors">View All →</span>
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/5 border border-cyan-500/10 text-2xl shadow-[0_0_15px_rgba(6,182,212,0.03)] group-hover:bg-cyan-500/10 group-hover:border-cyan-500/25 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.1)] transition-all duration-300">
+                            <span>🧰</span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-500/60 group-hover:text-cyan-400 transition-colors bg-cyan-500/5 px-2.5 py-1 rounded-full border border-cyan-500/10 group-hover:border-cyan-500/30">
+                            View All →
+                        </span>
                     </div>
-                    <h3 className="text-white font-bold mb-1">Project Essentials</h3>
-                    <p className="text-gray-400 text-xs leading-relaxed">Basic tool sets, gloves, and cleaning supplies for your {make} {model} so the job is ready when the parts arrive.</p>
+                    <h3 className="text-white font-bold mb-1 group-hover:text-cyan-400 transition-colors">Project Essentials</h3>
+                    <p className="text-gray-400 text-xs leading-relaxed flex-grow">Basic tool sets, gloves, and cleaning supplies for your {make} {model} so the job is ready when the parts arrive.</p>
                 </AffiliateLink>
             </div>
         </section>

@@ -4,7 +4,7 @@ import type { AmazonCtaVariant } from '@/lib/abTests';
 import { getAmazonCtaLabel } from '@/lib/abTests';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { getToolSpecHighlights } from '@/lib/toolIntentOffers';
-import { Wrench, Package, AlertCircle } from 'lucide-react';
+import { Wrench, Package, AlertCircle, ShieldCheck, ArrowRight } from 'lucide-react';
 
 interface ToolIntentCommerceProps {
   page: ToolPage;
@@ -174,17 +174,17 @@ export default function ToolIntentCommerce({ page, ctaVariant = 'A' }: ToolInten
   if (!primary) return null;
 
   return (
-    <section className="mb-12 rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+    <section className="mb-12 rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-6 md:p-8 backdrop-blur-md transition-all duration-300 hover:border-white/15">
       {/* Header — Manual's voice */}
       <div className="flex items-start gap-4 mb-6">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-cyan-400">
-          <Wrench size={20} />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+          <Wrench size={18} />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-white">
+          <h2 className="text-lg font-bold text-white tracking-wide">
             Manual already checked Amazon for you
           </h2>
-          <p className="mt-1 text-sm text-gray-400">
+          <p className="mt-1 text-sm text-gray-400 leading-relaxed">
             You came here for the exact spec. Now here is the exact part — plus the two things
             people always forget and have to run back to the store for.
           </p>
@@ -192,17 +192,26 @@ export default function ToolIntentCommerce({ page, ctaVariant = 'A' }: ToolInten
       </div>
 
       {/* Primary offer — the thing they came for */}
-      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <Package size={16} className="text-amber-400" />
-              <span className="text-xs font-bold uppercase tracking-[0.18em] text-amber-400">
-                The Exact Part
-              </span>
+      <div className="mb-6 relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-br from-amber-500/[0.07] to-amber-500/[0.01] p-5 md:p-6 backdrop-blur-md transition-all duration-300 hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(245,158,11,0.08)] group/card">
+        {/* Decorative corner glow */}
+        <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-amber-500/10 blur-xl pointer-events-none group-hover/card:bg-amber-500/15 transition-all duration-300" />
+        
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between relative z-10">
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <Package size={14} className="text-amber-400" />
+                <span className="text-xs font-bold uppercase tracking-[0.18em] text-amber-400">
+                  The Exact Part
+                </span>
+              </div>
+              <div className="flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.05)]">
+                <ShieldCheck size={12} className="text-emerald-400" />
+                Verified Fit
+              </div>
             </div>
-            <h3 className="mt-2 text-xl font-bold text-white">{primary.title}</h3>
-            <p className="mt-1 text-sm text-gray-300">{primary.subtitle}</p>
+            <h3 className="mt-2.5 text-xl font-bold text-white leading-snug">{primary.title}</h3>
+            <p className="mt-1 text-sm text-gray-300 leading-relaxed max-w-2xl">{primary.subtitle}</p>
           </div>
           <AffiliateLink
             href={buildAmazonSearchUrl(`${vehicleName} ${primary.query}`, 'automotive', subtag)}
@@ -210,9 +219,10 @@ export default function ToolIntentCommerce({ page, ctaVariant = 'A' }: ToolInten
             vehicle={vehicleName}
             pageType="parts_page"
             subtag={subtag}
-            className="shrink-0 inline-flex items-center justify-center rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-bold text-black transition hover:bg-amber-400"
+            className="shrink-0 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-6 py-3 text-sm font-bold text-black shadow-[0_4px_12px_rgba(245,158,11,0.2)] transition-all duration-300 hover:bg-amber-400 hover:shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:scale-[1.03] active:scale-[0.98] group/btn"
           >
-            {getAmazonCtaLabel(ctaVariant)} →
+            {getAmazonCtaLabel(ctaVariant)}
+            <ArrowRight size={16} className="transition-transform duration-300 group-hover/btn:translate-x-1" />
           </AffiliateLink>
         </div>
       </div>
@@ -221,12 +231,14 @@ export default function ToolIntentCommerce({ page, ctaVariant = 'A' }: ToolInten
       {forgotten.length > 0 && (
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-4">
-            <AlertCircle size={16} className="text-rose-400" />
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">
+              <AlertCircle size={12} />
+            </div>
             <span className="text-xs font-bold uppercase tracking-[0.18em] text-rose-400">
               The 2 things people always forget
             </span>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             {forgotten.map((item) => (
               <AffiliateLink
                 key={item.name}
@@ -235,19 +247,23 @@ export default function ToolIntentCommerce({ page, ctaVariant = 'A' }: ToolInten
                 vehicle={vehicleName}
                 pageType="parts_page"
                 subtag={`${subtag}-forgotten`}
-                className="group flex flex-col rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-rose-500/30 hover:bg-white/[0.05] transition-all"
+                className="group relative flex flex-col rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 backdrop-blur-md transition-all duration-300 hover:border-rose-500/30 hover:bg-white/[0.04] hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(244,63,94,0.04)]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <h4 className="font-semibold text-white group-hover:text-rose-300 transition-colors">
                     {item.name}
                   </h4>
-                  <span className="shrink-0 text-xs font-bold uppercase tracking-wider text-rose-500/60 group-hover:text-rose-500 transition-colors">
-                    Shop →
-                  </span>
                 </div>
-                <p className="mt-2 text-xs leading-relaxed text-gray-400">
+                <p className="mt-2 text-xs leading-relaxed text-gray-400 flex-grow">
                   {item.why}
                 </p>
+                <div className="mt-4 flex items-center justify-between text-[11px] pt-3 border-t border-white/5">
+                  <span className="text-gray-500 font-medium group-hover:text-gray-400 transition-colors">Confirm fit on Amazon</span>
+                  <span className="inline-flex items-center gap-1 font-bold text-rose-400 group-hover:text-rose-300 transition-colors">
+                    Get Item
+                    <ArrowRight size={12} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+                  </span>
+                </div>
               </AffiliateLink>
             ))}
           </div>

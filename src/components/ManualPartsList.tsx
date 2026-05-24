@@ -167,23 +167,23 @@ export default function ManualPartsList({ page, ctaVariant = 'A' }: { page: Tool
   const compiledUrl = buildAmazonSearchUrl(`${vehicleName} ${compiledQuery}`.slice(0, 400), 'automotive', `${subtag}-compiled`);
 
   return (
-    <section className="mb-12 rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+    <section className="mb-12 rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-6 md:p-8 backdrop-blur-md transition-all duration-300 hover:border-white/15">
       {/* Header */}
       <div className="flex items-start gap-4 mb-6">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-cyan-400">
-          <Package size={20} />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+          <Package size={18} />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-white">{config.heading}</h2>
-          <p className="mt-1 text-sm text-gray-400">{config.subtitle}</p>
+          <h2 className="text-lg font-bold text-white tracking-wide">{config.heading}</h2>
+          <p className="mt-1 text-sm text-gray-400 leading-relaxed">{config.subtitle}</p>
         </div>
       </div>
 
-      <div className="mb-5 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.04] p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6 relative overflow-hidden rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/[0.08] to-cyan-500/[0.02] p-5 backdrop-blur-md transition-all duration-300 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.06)] group/banner">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between relative z-10">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-300">Vehicle-Scoped Amazon Search</p>
-            <p className="mt-1 text-sm text-gray-300">
+            <p className="mt-1.5 text-sm text-gray-300 leading-relaxed max-w-2xl">
               Opens Amazon with {vehicleName} prefilled so you can confirm fitment and avoid wrong parts.
             </p>
           </div>
@@ -193,10 +193,10 @@ export default function ManualPartsList({ page, ctaVariant = 'A' }: { page: Tool
             vehicle={vehicleName}
             pageType="parts_page"
             subtag={`${subtag}-compiled`}
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-cyan-400 px-4 py-2 text-sm font-bold text-black transition hover:bg-cyan-300"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-cyan-400 px-5 py-2.5 text-sm font-bold text-black shadow-[0_4px_12px_rgba(6,182,212,0.15)] transition-all duration-300 hover:bg-cyan-300 hover:shadow-[0_4px_18px_rgba(6,182,212,0.3)] hover:scale-[1.02] active:scale-[0.98] group/btn"
           >
             {getAmazonCtaLabel(ctaVariant)}
-            <ArrowRight size={14} />
+            <ArrowRight size={16} className="transition-transform duration-300 group-hover/btn:translate-x-0.5" />
           </AffiliateLink>
         </div>
       </div>
@@ -206,8 +206,8 @@ export default function ManualPartsList({ page, ctaVariant = 'A' }: { page: Tool
         {items.map((item, i) => {
           const url = buildAmazonSearchUrl(item.query, 'automotive', `${subtag}-${i}`);
           return (
-            <li key={i} className="flex items-start gap-4 py-4 group">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/[0.05] text-xs font-bold text-gray-500 group-hover:bg-cyan-500/10 group-hover:text-cyan-400 transition-colors">
+            <li key={i} className="flex items-center gap-4 py-4 group transition-all duration-200">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs font-bold text-gray-500 group-hover:bg-cyan-500/10 group-hover:border-cyan-500/25 group-hover:text-cyan-400 shadow-[0_2px_8px_rgba(0,0,0,0.2)] transition-all duration-300">
                 {i + 1}
               </span>
               <div className="min-w-0 flex-1">
@@ -229,7 +229,7 @@ export default function ManualPartsList({ page, ctaVariant = 'A' }: { page: Tool
                 vehicle={vehicleName}
                 pageType="parts_page"
                 subtag={`${subtag}-${i}-quick`}
-                className="shrink-0 rounded-md border border-white/10 px-2.5 py-1 text-xs font-semibold text-gray-300 transition-colors hover:border-cyan-400/40 hover:text-cyan-300"
+                className="shrink-0 rounded-full border border-white/10 px-3.5 py-1.5 text-xs font-bold text-gray-300 bg-white/[0.01] hover:bg-cyan-400 hover:text-black hover:border-cyan-400 hover:shadow-[0_2px_10px_rgba(6,182,212,0.15)] transition-all duration-300 active:scale-95"
               >
                 Shop →
               </AffiliateLink>
@@ -239,9 +239,9 @@ export default function ManualPartsList({ page, ctaVariant = 'A' }: { page: Tool
       </ul>
 
       {/* Compiled cart link */}
-      <div className="mt-6 flex items-center justify-between rounded-xl border border-amber-500/15 bg-amber-500/[0.03] px-5 py-4">
+      <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-amber-500/25 bg-gradient-to-r from-amber-500/[0.06] to-transparent p-5 backdrop-blur-md">
         <div>
-          <p className="text-sm font-semibold text-white">Get everything at once</p>
+          <p className="text-sm font-bold text-white">Get everything at once</p>
           <p className="text-xs text-gray-500">One search shows all of the above on a single page.</p>
         </div>
         <AffiliateLink
@@ -250,10 +250,10 @@ export default function ManualPartsList({ page, ctaVariant = 'A' }: { page: Tool
           vehicle={vehicleName}
           pageType="parts_page"
           subtag={`${subtag}-compiled-footer`}
-          className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-black hover:bg-amber-400 transition-colors"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-bold text-black shadow-[0_4px_12px_rgba(245,158,11,0.15)] transition-all duration-300 hover:bg-amber-400 hover:shadow-[0_4px_18px_rgba(245,158,11,0.3)] hover:scale-[1.02] active:scale-[0.98] group/footer-btn"
         >
           See All on Amazon
-          <ArrowRight size={14} />
+          <ArrowRight size={16} className="transition-transform duration-300 group-hover/footer-btn:translate-x-0.5" />
         </AffiliateLink>
       </div>
 

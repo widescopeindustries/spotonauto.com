@@ -383,9 +383,8 @@ export default function VehicleLaneClient({
             {toolPages.map((tp) => {
               const meta = toolTypeMeta[tp.toolType] || { icon: '📋', label: tp.toolType, tone: 'slate' };
               const styles = toneStyles[meta.tone] || toneStyles.slate;
-              // Prefer vehicle-specific maintenance page over generic /tools/ page
               const href = MAINTENANCE_TOOL_TYPES.has(tp.toolType)
-                ? `${basePath}/${tp.toolType}`
+                ? `/maintenance/${basePath.split('/').slice(2).join('/')}/${tp.toolType}`
                 : `/tools/${tp.slug}`;
               return (
                 <Link

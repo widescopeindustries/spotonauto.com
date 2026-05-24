@@ -1,6 +1,7 @@
 import AffiliateLink from '@/components/AffiliateLink';
 import { PricingTrackedLink } from '@/components/PricingTracking';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { ArrowRight } from 'lucide-react';
 
 type MonetizationIntent = 'diagnostic' | 'repair' | 'manual' | 'maintenance';
 
@@ -171,38 +172,39 @@ export default function SearchLandingMonetizationRail({
   const subtag = `landing-${surface}-${intent}`;
   const vehicleName = contextLabel || 'AllOEMManuals';
   const wrapperClassName =
-    className || 'my-12 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8';
+    className || 'my-12 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-950/20 to-transparent p-6 md:p-8 backdrop-blur-md transition-all duration-300 hover:border-emerald-500/35';
 
   return (
     <section className={wrapperClassName}>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
+        <span className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
           Recommended Tools & Savings
         </span>
       </div>
 
-      <h2 className="mt-4 text-2xl font-bold text-white">{copy.title}</h2>
+      <h2 className="mt-4 text-2xl font-bold text-white tracking-wide">{copy.title}</h2>
       <p className="mt-3 text-sm leading-6 text-gray-300">{copy.description}</p>
-      <p className="mt-2 text-xs uppercase tracking-[0.16em] text-emerald-100/80">
+      <p className="mt-2 text-xs uppercase tracking-[0.16em] text-emerald-400/60 font-medium">
         Affiliate disclosure: We may earn a commission at no extra cost to you.
       </p>
 
-      <div className="mt-5 flex flex-wrap gap-3">
+      <div className="mt-6 flex flex-wrap gap-3">
         <AffiliateLink
           href={buildAmazonSearchUrl(query, 'automotive', subtag)}
           partName={`${intent}-tooling`}
           vehicle={vehicleName}
           pageType="parts_page"
           subtag={subtag}
-          className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-black transition hover:bg-amber-400"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-bold text-black shadow-[0_4px_12px_rgba(245,158,11,0.15)] transition-all duration-300 hover:bg-amber-400 hover:shadow-[0_4px_18px_rgba(245,158,11,0.3)] hover:scale-[1.02] active:scale-[0.98] group/rail-btn"
         >
           {copy.affiliateCta}
+          <ArrowRight size={14} className="transition-transform group-hover/rail-btn:translate-x-0.5" />
         </AffiliateLink>
         <PricingTrackedLink
           href="/second-opinion"
           target="starter_free"
           label={`${surface}_${intent}_free_quote`}
-          className="inline-flex items-center justify-center rounded-lg bg-cyan-300 px-4 py-2 text-sm font-bold text-black transition hover:bg-cyan-200"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-cyan-300 px-5 py-2.5 text-sm font-bold text-black shadow-[0_4px_12px_rgba(6,182,212,0.1)] transition-all duration-300 hover:bg-cyan-200 hover:shadow-[0_4px_18px_rgba(6,182,212,0.2)] hover:scale-[1.02] active:scale-[0.98]"
         >
           Free Quote Check
         </PricingTrackedLink>
@@ -210,15 +212,15 @@ export default function SearchLandingMonetizationRail({
           href="/pricing"
           target="pro_waitlist"
           label={`${surface}_${intent}_pro_offer`}
-          className="inline-flex items-center justify-center rounded-lg border border-cyan-200/40 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-100 hover:text-white"
+          className="inline-flex items-center justify-center gap-2 rounded-lg border border-cyan-200/30 px-5 py-2.5 text-sm font-semibold text-cyan-100 transition-all duration-300 hover:border-cyan-100 hover:text-white hover:bg-cyan-500/5 active:scale-[0.98]"
         >
           Quote Shield Pro
         </PricingTrackedLink>
       </div>
 
       {!compact && (
-        <details className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100/80">
+        <details className="mt-6 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 backdrop-blur-md transition-all duration-300">
+          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100/80 hover:text-emerald-300 transition-colors select-none">
             View supporting tool options
           </summary>
           <div className="mt-3 grid gap-3 md:grid-cols-3">
@@ -230,14 +232,15 @@ export default function SearchLandingMonetizationRail({
                 vehicle={vehicleName}
                 pageType="parts_page"
                 subtag={`${subtag}-support`}
-                className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-emerald-400/35 hover:bg-white/[0.07]"
+                className="group rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 text-left transition-all duration-300 hover:border-emerald-400/30 hover:bg-white/[0.05] hover:-translate-y-0.5 hover:shadow-[0_6px_15px_rgba(16,185,129,0.03)] flex flex-col h-full"
               >
                 <div className="flex h-full flex-col">
-                  <h3 className="text-sm font-semibold text-white">{offer.title}</h3>
-                  <p className="mt-2 text-xs leading-5 text-gray-300">{offer.description}</p>
-                  <p className="mt-3 text-xs leading-5 text-emerald-100/80">{offer.reason}</p>
-                  <span className="mt-4 inline-flex text-xs font-semibold text-amber-300">
-                    Shop on Amazon →
+                  <h3 className="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">{offer.title}</h3>
+                  <p className="mt-2 text-xs leading-5 text-gray-300 flex-grow">{offer.description}</p>
+                  <p className="mt-3 text-xs leading-5 text-emerald-400/60 font-medium">{offer.reason}</p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-amber-300 group-hover:text-amber-400 transition-colors">
+                    Shop on Amazon
+                    <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
               </AffiliateLink>
