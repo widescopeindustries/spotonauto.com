@@ -8,6 +8,44 @@ const ALLOWED_ORIGINS = [
   ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
 ];
 
+const DEFAULT_TOLLBIT_FORWARD_BOTS = [
+  'meta-webindexer',
+  'claude-searchbot',
+  'duckassistbot',
+  'chatgpt-user',
+  'oai-searchbot',
+];
+
+const DEFAULT_HARD_BLOCK_BOTS = [
+  'gptbot',
+  'claudebot',
+  'claude-web',
+  'anthropic-ai',
+  'bytespider',
+  'ccbot',
+  'cohere-ai',
+  'perplexitybot',
+  'perplexity-user',
+  'amazonbot',
+  'amzn-searchbot',
+  'youbot',
+  'diffbot',
+  'meta-externalagent',
+];
+
+function parseBotList(value: string | undefined, fallback: string[]) {
+  if (!value) return fallback;
+  const parsed = value
+    .split(',')
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+  return parsed.length > 0 ? parsed : fallback;
+}
+
+function matchesBot(userAgent: string, botTokens: string[]) {
+  return botTokens.some((token) => userAgent.includes(token));
+}
+
 function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean, isRobots: boolean) {
   response.headers.set('Vary', 'Accept-Encoding');
   response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');
@@ -29,6 +67,10 @@ function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean,
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const host = normalizeHost(request.headers.get('x-forwarded-host') || request.headers.get('host'));
+  const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
+  const tollbitHost = (process.env.TOLLBIT_HOST || 'tollbit.alloemmanuals.com').toLowerCase();
+  const tollbitForwardBots = parseBotList(process.env.TOLLBIT_FORWARD_BOTS, DEFAULT_TOLLBIT_FORWARD_BOTS);
+  const hardBlockBots = parseBotList(process.env.HARD_BLOCK_AI_BOTS, DEFAULT_HARD_BLOCK_BOTS);
   const shouldNoindexHost = !isCanonicalHost(host) && isPreviewHost(host);
   const isRootOrNestedSitemap = pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
   const isNestedSitemapChunk = pathname.includes('/sitemap/') && pathname.endsWith('.xml');
@@ -41,6 +83,26 @@ export function middleware(request: NextRequest) {
     url.protocol = 'https:';
     url.host = CANONICAL_HOST;
     return NextResponse.redirect(url, 308);
+  }
+
+  // 1.5 AI bot monetization/denial policy: paywall-capable bots forward to TollBit,
+  // non-paying AI bots are hard blocked. Skip this logic on TollBit host itself.
+  if (host !== tollbitHost) {
+    if (matchesBot(userAgent, tollbitForwardBots)) {
+      const tollbitUrl = request.nextUrl.clone();
+      tollbitUrl.protocol = 'https:';
+      tollbitUrl.host = tollbitHost;
+      return NextResponse.redirect(tollbitUrl, 302);
+    }
+
+    if (matchesBot(userAgent, hardBlockBots)) {
+      return new NextResponse('Forbidden', {
+        status: 403,
+        headers: {
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
+    }
   }
 
   // 2. Robots.txt on non-indexable hosts
