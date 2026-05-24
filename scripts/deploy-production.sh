@@ -77,6 +77,9 @@ if [ -d ".next" ]; then
   mv .next "${ROLLBACK_DIR}"
 fi
 
+log "Syncing generated public assets"
+rsync -az "${BUILD_DIR}/public/" "${APP_DIR}/public/"
+
 log "Swapping in new build"
 mv "${NEW_BUILD_DIR}" .next
 rm -rf "${BUILD_DIR}"
