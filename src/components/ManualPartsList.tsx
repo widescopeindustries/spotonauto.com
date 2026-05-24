@@ -1,5 +1,8 @@
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import type { ToolPage } from '@/data/tools-pages';
+import type { AmazonCtaVariant } from '@/lib/abTests';
+import { getAmazonCtaLabel } from '@/lib/abTests';
+import AffiliateLink from '@/components/AffiliateLink';
 import { Package, ArrowRight } from 'lucide-react';
 
 interface PartsListItem {
@@ -150,14 +153,14 @@ function extractSpecHint(page: ToolPage): string {
   return firstValue.slice(0, 30);
 }
 
-export default function ManualPartsList({ page }: { page: ToolPage }) {
+export default function ManualPartsList({ page, ctaVariant = 'A' }: { page: ToolPage; ctaVariant?: AmazonCtaVariant }) {
   const config = PARTS_LISTS[page.toolType];
   if (!config) return null;
 
   const specHint = extractSpecHint(page);
   const items = config.items(page.make, page.model, specHint);
   const vehicleName = `${page.make} ${page.model}`;
-  const subtag = `tool-parts-${page.toolType}`;
+  const subtag = `tool-parts-${page.toolType}-v${ctaVariant}`;
 
   // Build a compiled "all at once" search query
   const compiledQuery = items.map(i => i.query.replace(new RegExp(`${vehicleName}\\s*`, 'i'), '')).join(' ');
@@ -176,6 +179,28 @@ export default function ManualPartsList({ page }: { page: ToolPage }) {
         </div>
       </div>
 
+      <div className="mb-5 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.04] p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-300">Vehicle-Scoped Amazon Search</p>
+            <p className="mt-1 text-sm text-gray-300">
+              Opens Amazon with {vehicleName} prefilled so you can confirm fitment and avoid wrong parts.
+            </p>
+          </div>
+          <AffiliateLink
+            href={compiledUrl}
+            partName={`${vehicleName} ${config.heading}`}
+            vehicle={vehicleName}
+            pageType="parts_page"
+            subtag={`${subtag}-compiled`}
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-cyan-400 px-4 py-2 text-sm font-bold text-black transition hover:bg-cyan-300"
+          >
+            {getAmazonCtaLabel(ctaVariant)}
+            <ArrowRight size={14} />
+          </AffiliateLink>
+        </div>
+      </div>
+
       {/* Parts List */}
       <ul className="space-y-0 divide-y divide-white/5">
         {items.map((item, i) => {
@@ -186,24 +211,28 @@ export default function ManualPartsList({ page }: { page: ToolPage }) {
                 {i + 1}
               </span>
               <div className="min-w-0 flex-1">
-                <a
+                <AffiliateLink
                   href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  partName={item.name}
+                  vehicle={vehicleName}
+                  pageType="parts_page"
+                  subtag={`${subtag}-${i}`}
                   className="text-sm font-semibold text-white hover:text-cyan-400 transition-colors"
                 >
                   {item.name}
-                </a>
+                </AffiliateLink>
                 <p className="mt-0.5 text-xs text-gray-500">{item.description}</p>
               </div>
-              <a
+              <AffiliateLink
                 href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 text-xs font-medium text-gray-600 hover:text-cyan-400 transition-colors"
+                partName={`${item.name} quick shop`}
+                vehicle={vehicleName}
+                pageType="parts_page"
+                subtag={`${subtag}-${i}-quick`}
+                className="shrink-0 rounded-md border border-white/10 px-2.5 py-1 text-xs font-semibold text-gray-300 transition-colors hover:border-cyan-400/40 hover:text-cyan-300"
               >
-                Amazon →
-              </a>
+                Shop →
+              </AffiliateLink>
             </li>
           );
         })}
@@ -215,15 +244,17 @@ export default function ManualPartsList({ page }: { page: ToolPage }) {
           <p className="text-sm font-semibold text-white">Get everything at once</p>
           <p className="text-xs text-gray-500">One search shows all of the above on a single page.</p>
         </div>
-        <a
+        <AffiliateLink
           href={compiledUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          partName={`${vehicleName} full parts list`}
+          vehicle={vehicleName}
+          pageType="parts_page"
+          subtag={`${subtag}-compiled-footer`}
           className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-black hover:bg-amber-400 transition-colors"
         >
           See All on Amazon
           <ArrowRight size={14} />
-        </a>
+        </AffiliateLink>
       </div>
 
       <p className="mt-4 text-xs text-gray-600">

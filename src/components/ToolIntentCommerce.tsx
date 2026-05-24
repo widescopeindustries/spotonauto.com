@@ -1,11 +1,14 @@
 import AffiliateLink from '@/components/AffiliateLink';
 import type { ToolPage } from '@/data/tools-pages';
+import type { AmazonCtaVariant } from '@/lib/abTests';
+import { getAmazonCtaLabel } from '@/lib/abTests';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { getToolSpecHighlights } from '@/lib/toolIntentOffers';
 import { Wrench, Package, AlertCircle } from 'lucide-react';
 
 interface ToolIntentCommerceProps {
   page: ToolPage;
+  ctaVariant?: AmazonCtaVariant;
 }
 
 interface ForgottenItem {
@@ -162,11 +165,11 @@ function getPrimaryOffer(page: ToolPage): { title: string; query: string; subtit
   }
 }
 
-export default function ToolIntentCommerce({ page }: ToolIntentCommerceProps) {
+export default function ToolIntentCommerce({ page, ctaVariant = 'A' }: ToolIntentCommerceProps) {
   const primary = getPrimaryOffer(page);
   const forgotten = FORGOTTEN_ITEMS[page.toolType] || [];
   const vehicleName = `${page.make} ${page.model}`;
-  const subtag = `tool-intent-${page.toolType}`;
+  const subtag = `tool-intent-${page.toolType}-v${ctaVariant}`;
 
   if (!primary) return null;
 
@@ -209,7 +212,7 @@ export default function ToolIntentCommerce({ page }: ToolIntentCommerceProps) {
             subtag={subtag}
             className="shrink-0 inline-flex items-center justify-center rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-bold text-black transition hover:bg-amber-400"
           >
-            Get This Sorted →
+            {getAmazonCtaLabel(ctaVariant)} →
           </AffiliateLink>
         </div>
       </div>

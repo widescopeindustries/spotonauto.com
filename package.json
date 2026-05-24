@@ -26,6 +26,7 @@
     "analytics:graph-scoreboard": "node scripts/graph-scoreboard.js",
     "analytics:graph-apply": "node scripts/graph-scoreboard.js --apply-live",
     "analytics:graph-coverage": "node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/graph-coverage-audit.ts",
+    "analytics:tool-cta-ab": "node scripts/tool-cta-ab-report.js --days 7",
     "analytics:lost-pages": "node scripts/lost-pages-report.js",
     "analytics:indexing-trust": "node scripts/indexing-trust-monitor.js",
     "report:weekly-launch": "node scripts/weekly-launch-report.js",

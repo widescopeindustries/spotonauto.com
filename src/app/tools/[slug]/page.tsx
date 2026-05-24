@@ -15,11 +15,13 @@ import ToolManualConfirmation from '@/components/ToolManualConfirmation';
 import MaintenanceSupplies from '@/components/MaintenanceSupplies';
 import ManualPartsList from '@/components/ManualPartsList';
 import KitCTA from '@/components/KitCTA';
+import ToolIntentCommerce from '@/components/ToolIntentCommerce';
 import AffiliateLink from '@/components/AffiliateLink';
 import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
 import LlmExtractionBox from '@/components/LlmExtractionBox';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { getAmazonCtaLabel, getAmazonCtaVariantForSlug } from '@/lib/abTests';
 import { getToolManualCitationGroups, getToolVerificationNote } from '@/lib/toolManualCitations';
 import type { ToolPage } from '@/data/tools-pages';
 
@@ -208,6 +210,7 @@ export default async function ToolPage({ params }: PageProps) {
     const result = await getToolPageAsync(slug);
     if (!result) notFound();
     const { page, quality } = result;
+    const amazonCtaVariant = getAmazonCtaVariantForSlug(slug);
 
     const makeSlug = page.make.toLowerCase().replace(/\s+/g, '-');
     const modelSlug = page.model.toLowerCase().replace(/\s+/g, '-');
@@ -497,10 +500,10 @@ export default async function ToolPage({ params }: PageProps) {
                                         partName={`${page.make} ${page.model} ${meta.label}`}
                                         vehicle={vehicleName}
                                         pageType="parts_page"
-                                        subtag={`tool-spec-${page.toolType}`}
+                                        subtag={`tool-spec-${page.toolType}-v${amazonCtaVariant}`}
                                         className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded-lg hover:bg-amber-400 transition"
                                     >
-                                        Shop on Amazon →
+                                        {getAmazonCtaLabel(amazonCtaVariant)} →
                                     </AffiliateLink>
                                     <Link
                                         href={`/repair/${gen.years.split('-')[0]}/${makeSlug}/${modelSlug}/${primaryRepairTask}`}
@@ -518,7 +521,9 @@ export default async function ToolPage({ params }: PageProps) {
                     <KitCTA make={page.make} model={page.model} />
                 )}
 
-                <ManualPartsList page={page} />
+                <ToolIntentCommerce page={page} ctaVariant={amazonCtaVariant} />
+
+                <ManualPartsList page={page} ctaVariant={amazonCtaVariant} />
 
                 {/* Suggested Supplies */}
                 <MaintenanceSupplies
