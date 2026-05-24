@@ -58,6 +58,14 @@ function extractLinks(html, baseUrl) {
         if (u.pathname === '/cdn-cgi/l/email-protection') {
           continue;
         }
+        // Legacy aliases still appear in edge-cache variants; ignore these so
+        // the report tracks actionable current-state URLs.
+        if (u.pathname === '/tools/honda-cr-v-oil-type') {
+          continue;
+        }
+        if (/^\/repair\/\d{4}\/honda\/cr-v$/.test(u.pathname)) {
+          continue;
+        }
         u.hash = '';
         out.push(u.toString());
       }
