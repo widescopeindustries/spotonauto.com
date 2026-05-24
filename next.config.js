@@ -100,14 +100,15 @@ const nextConfig = {
       { source: '/tools/ford-f150-oil-type', destination: '/tools/ford-f-150-oil-type', permanent: true },
       { source: '/tools/ford-f150-battery-location', destination: '/tools/ford-f-150-battery-location', permanent: true },
       { source: '/tools/ford-f150-tire-size', destination: '/tools/ford-f-150-tire-size', permanent: true },
-      { source: '/tools/honda-cr-v-oil-type', destination: '/tools/honda-crv-oil-type', permanent: true },
-      { source: '/tools/honda-cr-v-tire-size', destination: '/tools/honda-crv-tire-size', permanent: true },
       { source: '/login', destination: '/auth', permanent: true },
       { source: '/signup', destination: '/auth', permanent: true },
       { source: '/privacy', destination: '/privacy-policy', permanent: true },
       { source: '/terms', destination: '/terms-of-service', permanent: true },
       // Consolidate overlapping routes
-      { source: '/repairs', destination: '/repair', permanent: true },
+      // CR-V legacy slug canonicalization
+      { source: '/repair/:year/honda/cr-v', destination: '/repair/:year/honda/crv', permanent: true },
+      { source: '/repair/:year/honda/cr-v/:task', destination: '/repair/:year/honda/crv/:task', permanent: true },
+      { source: '/tools/honda-cr-v-:tool', destination: '/tools/honda-crv-:tool', permanent: true },
       { source: '/cel', destination: '/codes', permanent: true },
       { source: '/scanner', destination: '/', permanent: true },
       { source: '/simulation', destination: '/', permanent: true },
