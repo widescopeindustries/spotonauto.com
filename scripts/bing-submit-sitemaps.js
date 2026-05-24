@@ -19,6 +19,7 @@ const SITEMAPS = [
   'https://alloemmanuals.com/repair/sitemap.xml',
   'https://alloemmanuals.com/manual/sitemap.xml',
   'https://alloemmanuals.com/wiring/sitemap.xml',
+  'https://alloemmanuals.com/tools/sitemap.xml',
 ];
 
 function bingRequest(path, method = 'GET', body = null) {

@@ -125,6 +125,7 @@ async function main() {
       'https://alloemmanuals.com/repair/sitemap.xml',
       'https://alloemmanuals.com/manual/sitemap.xml',
       'https://alloemmanuals.com/wiring/sitemap.xml',
+      'https://alloemmanuals.com/tools/sitemap.xml',
     ];
     for (const sm of sitemaps) {
       const found = await fetchSitemapUrls(sm);
