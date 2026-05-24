@@ -46,7 +46,7 @@ function slugify(value) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
   // Canonicalize common model variants to avoid redirect-only sitemap URLs.
-  return slug.replace(/-cr-v\b/g, '-crv');
+  return slug.replace(/-cr-v(?=-|$)/g, '-crv');
 }
 
 function escapeXml(s) {

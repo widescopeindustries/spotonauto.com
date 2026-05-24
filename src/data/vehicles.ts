@@ -1125,6 +1125,8 @@ export function slugifyRoutePart(value: string): string {
         .trim()
         .toLowerCase()
         .replace(/,/g, '')
+        // Canonicalize common model variant punctuation.
+        .replace(/\bcr-v\b/g, 'crv')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '');
