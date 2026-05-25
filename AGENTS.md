@@ -170,6 +170,11 @@ See comprehensive audit section at bottom of this file for full details.
   Use GSC daily visibility plus GA4 organic sessions / landing pages for recovery reads.
 - **IPv6 SSH to VPS is currently failing** (`Permission denied` on `2a01:4f8:2200:3291::2`). Use IPv4 `116.202.210.109` for all deploys.
 - **systemd WorkingDirectory trap:** `alloemmanuals-web.service` has `WorkingDirectory=/root/spotonauto.com/` but the build may run in `/root/alloemmanuals.com/`. After any build, sync `.next/` to the service's WorkingDirectory or the old build will keep being served. Also, `systemctl restart` can hang if the old `next-server` process doesn't exit cleanly — use `kill -9` on the stale PID if `status` shows `deactivating (final-sigterm)`.
+- **CRITICAL — Nginx cache poisoning with Tollbit bot redirects (2026-05-25):**
+  - The Nginx `proxy_cache_key` does NOT include User-Agent. If a bot 302 redirect gets cached, ALL users receive the redirect for the cache TTL (up to 1h). This caused a full-site outage on 2026-05-25.
+  - **Fix applied:** Added `map $http_user_agent $is_ai_bot` in `/etc/nginx/sites-enabled/alloemmanuals.com` that matches all Tollbit-forwarded bot UAs, plus `proxy_no_cache $is_ai_bot` / `proxy_cache_bypass $is_ai_bot` so bot requests always bypass the Nginx proxy cache. Also removed 302 from all `proxy_cache_valid` directives as a safety net.
+  - **NEVER add 302 back to `proxy_cache_valid`** while Tollbit middleware is active. Any cached 302 can poison the cache for human visitors.
+  - If the Nginx config is ever regenerated or overwritten, the `$is_ai_bot` map and cache bypass directives MUST be re-added or Tollbit redirects will take the site down again.
 
 ## Current Durable Changes
 
