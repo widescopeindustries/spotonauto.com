@@ -191,7 +191,7 @@ const InteractiveRepairGuide: React.FC<InteractiveRepairGuideProps> = ({
 
     // ─── Panels ───────────────────────────────────────────────────────────────
 
-    const DiagramPanel = () => (
+    const diagramPanelJsx = (
         <div className="flex h-full flex-col">
             <div className="flex items-center gap-2 border-b border-white/10 bg-black/40 p-3">
                 <ImageIcon className="h-4 w-4 text-neon-cyan" />
@@ -289,7 +289,7 @@ const InteractiveRepairGuide: React.FC<InteractiveRepairGuideProps> = ({
         </div>
     );
 
-    const ChecklistPanel = () => (
+    const checklistPanelJsx = (
         <div className="flex h-full flex-col">
             {/* Header with progress */}
             <div className="border-b border-white/10 bg-black/40 p-4">
@@ -564,7 +564,7 @@ const InteractiveRepairGuide: React.FC<InteractiveRepairGuideProps> = ({
         </div>
     );
 
-    const ChatPanel = () => (
+    const chatPanelJsx = (
         <div className="flex h-full flex-col">
             <div className="flex items-center justify-between border-b border-white/10 bg-black/40 p-3">
                 <div className="flex items-center gap-2">
@@ -624,7 +624,7 @@ const InteractiveRepairGuide: React.FC<InteractiveRepairGuideProps> = ({
                         mobilePanel === 'diagram' ? 'flex' : 'hidden'
                     } w-full flex-col border-r border-white/10 md:flex md:w-[280px] lg:w-[320px]`}
                 >
-                    <DiagramPanel />
+                    {diagramPanelJsx}
                 </div>
 
                 {/* Checklist Panel */}
@@ -633,7 +633,7 @@ const InteractiveRepairGuide: React.FC<InteractiveRepairGuideProps> = ({
                         mobilePanel === 'checklist' ? 'flex' : 'hidden'
                     } w-full flex-1 flex-col md:flex`}
                 >
-                    <ChecklistPanel />
+                    {checklistPanelJsx}
                 </div>
 
                 {/* Chat Panel */}
@@ -642,7 +642,7 @@ const InteractiveRepairGuide: React.FC<InteractiveRepairGuideProps> = ({
                         mobilePanel === 'chat' ? 'flex' : 'hidden'
                     } w-full flex-col border-l border-white/10 md:flex md:w-[340px] lg:w-[380px]`}
                 >
-                    <ChatPanel />
+                    {chatPanelJsx}
                 </div>
             </div>
 
