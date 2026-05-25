@@ -31,6 +31,7 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'tollbit',
   'tollbitbot',
   'timpibot',
+  'applebot',
 ];
 
 const DEFAULT_HARD_BLOCK_BOTS: string[] = [];
