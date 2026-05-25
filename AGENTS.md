@@ -289,6 +289,11 @@ See comprehensive audit section at bottom of this file for full details.
     - this specifically matters for `Dodge or Ram Truck`-style entries where `RAM 3500 Truck 2WD` is a model bucket and the real diagrams live under engine-specific children
   - AI runtime can now fall back from Gemini to OpenAI for guide generation, vehicle info, diagnostic chat, homepage chat, and second-opinion flows when Gemini is missing or quota-limited
   - deploys that rely on the fallback need `OPENAI_API_KEY` set in the runtime environment
+- **Tollbit Bot Paywall Integration & Nginx Cache Bypass:**
+  - AI bot monetization / denial policy is enforced at Next.js Edge Middleware (`src/middleware.ts`) level.
+  - Monetization-eligible bots (such as ChatGPT/Claude search agents) requesting site URLs (including `/robots.txt` and `/sitemap.xml`) are redirected via `302 Found` to the Tollbit host (`tollbit.alloemmanuals.com`) to be authenticated/metered.
+  - Nginx is configured to bypass/disable caching (`proxy_cache off;`) for `/robots.txt` and sitemap paths (using `location = /robots.txt` and `location ~* /sitemap` in `/etc/nginx/sites-enabled/alloemmanuals.com`). This prevents Nginx from caching 302 redirects globally and serving them to search engines (like Googlebot) or standard users.
+  - The middleware overrides caching on sitemaps/robots to set `Vary: Accept-Encoding, User-Agent`. This allows Cloudflare to cache user-agent partitioned versions of sitemaps and bypass/redirect correctly for bots, while robots.txt has cache-control set to `no-store, no-cache, must-revalidate` to prevent any edge caching of the robots file.
 ## Working Norms
 
 - This repo is often dirty with unrelated local edits. Stage only task-relevant files.
