@@ -65,6 +65,27 @@ const TARGET_TASKS = [
 // Helper to sleep
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+async function submitToIndexNow(year, make, model, task) {
+  const sMake = slugifyRoutePart(make);
+  const sModel = slugifyRoutePart(model);
+  const sTask = slugifyRoutePart(task);
+  const url = `https://alloemmanuals.com/repair/${year}/${sMake}/${sModel}/${sTask}`;
+  const encodedUrl = encodeURIComponent(url);
+  const INDEXNOW_KEY = "b2e1ed9a4693444c8bf73f80fe75f1e0";
+  const endpoint = `https://api.indexnow.org/IndexNow?url=${encodedUrl}&key=${INDEXNOW_KEY}`;
+
+  try {
+    const res = await fetch(endpoint);
+    if (res.ok) {
+      console.log(`   📡 IndexNow: Submitted successfully (${url})`);
+    } else {
+      console.log(`   ⚠️ IndexNow: Failed to submit (${url}) - HTTP status ${res.status}`);
+    }
+  } catch (err) {
+    console.log(`   ⚠️ IndexNow: Error submitting (${url}): ${err.message}`);
+  }
+}
+
 async function mineOEMContent(pool, year, make, model, task) {
   const profile = getRepairTaskProfile(task);
   const taskLabel = task.replace(/-/g, " ");
@@ -276,6 +297,7 @@ async function main() {
       );
 
       console.log(`   ✅ Stored: ${profile.supportNote?.title || "No Title"}`);
+      await submitToIndexNow(target.year, target.make, target.model, target.task);
     } catch (err) {
       console.error(`   ❌ Failed:`, err.message);
     }
@@ -328,6 +350,7 @@ async function main() {
           );
 
           console.log(`   ✅ Stored: ${profile.supportNote?.title || "No Title"}`);
+          await submitToIndexNow(vehicle.year, vehicle.make, vehicle.model, task);
         } catch (err) {
           console.error(`   ❌ Failed:`, err.message);
         }
