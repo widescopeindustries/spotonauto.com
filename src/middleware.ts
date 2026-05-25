@@ -96,16 +96,16 @@ export function middleware(request: NextRequest) {
     request.headers.has('signature') ||
     request.headers.has('signature-input');
 
-  if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
+  if (host !== tollbitHost && !hasTollbitToken) {
     if (matchesBot(userAgent, tollbitForwardBots)) {
       const tollbitUrl = request.nextUrl.clone();
       tollbitUrl.protocol = 'https:';
       tollbitUrl.host = tollbitHost;
       tollbitUrl.port = '';
-      return NextResponse.rewrite(tollbitUrl);
+      return NextResponse.redirect(tollbitUrl, 302);
     }
 
-    if (matchesBot(userAgent, hardBlockBots)) {
+    if (matchesBot(userAgent, hardBlockBots) && !isCrawlerEndpoint) {
       return new NextResponse('Forbidden', {
         status: 403,
         headers: {
