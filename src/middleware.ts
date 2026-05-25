@@ -96,7 +96,7 @@ export function middleware(request: NextRequest) {
     request.headers.has('signature') ||
     request.headers.has('signature-input');
 
-  if (host !== tollbitHost && !hasTollbitToken) {
+  if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
     if (matchesBot(userAgent, tollbitForwardBots)) {
       const tollbitUrl = request.nextUrl.clone();
       tollbitUrl.protocol = 'https:';
