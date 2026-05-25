@@ -102,7 +102,7 @@ export function middleware(request: NextRequest) {
       tollbitUrl.protocol = 'https:';
       tollbitUrl.host = tollbitHost;
       tollbitUrl.port = '';
-      return NextResponse.redirect(tollbitUrl, 302);
+      return NextResponse.rewrite(tollbitUrl);
     }
 
     if (matchesBot(userAgent, hardBlockBots)) {
