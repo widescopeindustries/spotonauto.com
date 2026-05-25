@@ -14,9 +14,6 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'duckassistbot',
   'chatgpt-user',
   'oai-searchbot',
-];
-
-const DEFAULT_HARD_BLOCK_BOTS = [
   'gptbot',
   'claudebot',
   'claude-web',
@@ -31,7 +28,12 @@ const DEFAULT_HARD_BLOCK_BOTS = [
   'youbot',
   'diffbot',
   'meta-externalagent',
+  'tollbit',
+  'tollbitbot',
+  'timpibot',
 ];
+
+const DEFAULT_HARD_BLOCK_BOTS: string[] = [];
 
 function parseBotList(value: string | undefined, fallback: string[]) {
   if (!value) return fallback;
