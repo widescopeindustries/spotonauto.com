@@ -109,7 +109,7 @@ Create a structured content profile for the exact vehicle and task above. The ou
     "bullets": [
       "3-5 actionable bullets, each a complete, specific sentence citing exact details (e.g. specs, tools, socket sizes)."
     ],
-    "tone": "cyan | emerald | amber | violet"
+    "tone": "cyan"
   },
   "faqs": [
     {
