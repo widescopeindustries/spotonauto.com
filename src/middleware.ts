@@ -101,6 +101,7 @@ export function middleware(request: NextRequest) {
       const tollbitUrl = request.nextUrl.clone();
       tollbitUrl.protocol = 'https:';
       tollbitUrl.host = tollbitHost;
+      tollbitUrl.port = '';
       return NextResponse.redirect(tollbitUrl, 302);
     }
 
