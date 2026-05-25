@@ -337,7 +337,7 @@ function generateSymptomReply(message: string): { reply: string; redirect: strin
   return null;
 }
 
-function generateCorpusReply(message: string): { reply: string; redirect: string | null } | null {
+async function generateCorpusReply(message: string): Promise<{ reply: string; redirect: string | null } | null> {
   // ── 1. DTC code lookup (highest priority, no vehicle needed) ─────────────
   const dtcMatch = message.match(/\b([A-Z]\d{4})\b/i);
   if (dtcMatch) {
@@ -353,7 +353,7 @@ function generateCorpusReply(message: string): { reply: string; redirect: string
     const { year, make, model, task } = extracted;
     
     if (year && make && model && task) {
-      const match = findNearestRepairProfile(year, make, model, task);
+      const match = await findNearestRepairProfile(year, make, model, task);
       if (match) {
         const p = match.profile;
         const bullets = p.supportNote?.bullets || [];
@@ -375,8 +375,11 @@ function generateCorpusReply(message: string): { reply: string; redirect: string
         if (bullets.length > 0) {
           reply += bullets.map((b: string) => "• " + b).join("\n") + "\n\n";
         }
-        if (faq) {
-          reply += `**Q: ${faq.question}**\n${faq.answer}\n\n`;
+        const faqs = p.faqs || (p.faq ? [p.faq] : []);
+        if (faqs.length > 0) {
+          for (const faqItem of faqs) {
+            reply += `**Q: ${faqItem.question}**\n${faqItem.answer}\n\n`;
+          }
         }
         reply += "*Data sourced from OEM factory service manuals (CHARM/LEMON corpuses).*";
         
@@ -837,7 +840,7 @@ export async function POST(req: NextRequest) {
     
     // ── FINAL FALLBACK: Corpus-based reply (no LLM required) ────────────────
     if (lastMessage && lastMessage.content) {
-      const corpusReply = generateCorpusReply(lastMessage.content);
+      const corpusReply = await generateCorpusReply(lastMessage.content);
       if (corpusReply) {
         return NextResponse.json({
           reply: corpusReply.reply,

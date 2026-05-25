@@ -116,7 +116,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const specsSnippet = buildSpecsSnippet(yearNum, toolPages);
 
   // Load repair profiles for a more specific fallback title
-  const repairProfiles = getProfilesForVehicle(yearNum, identity.make, identity.model);
+  const repairProfiles = await getProfilesForVehicle(yearNum, identity.make, identity.model);
   const topRepairTasks = repairProfiles.slice(0, 4).map((p) => humanizeTask(p.task));
 
   const topicSnippet = buildTopicKeywordSnippet(toolPages);
@@ -176,7 +176,7 @@ export default async function VehicleLanePage({ params }: PageProps) {
   const repairPath = `/repair/${year}/${identity.makeSlug}/${identity.modelSlug}`;
 
   // Load generated repair profiles for this exact vehicle
-  const repairProfiles = getProfilesForVehicle(yearNum, identity.make, identity.model);
+  const repairProfiles = await getProfilesForVehicle(yearNum, identity.make, identity.model);
 
   // Load corpus tool pages for this vehicle (oil-type, tire-size, etc.)
   const toolPages = getToolPagesForVehicle(identity.make, identity.model);

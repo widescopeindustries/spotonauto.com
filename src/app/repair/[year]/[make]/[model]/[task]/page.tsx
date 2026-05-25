@@ -1,4 +1,4 @@
-﻿import { Metadata } from 'next';
+import { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import DeferredGuideContent from './DeferredGuideContent';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
@@ -696,6 +696,7 @@ interface ExactGuideProfile {
     extraKeywords?: string[];
     supportNote?: TaskSupportNote;
     faq?: { question: string; answer: string };
+    faqs?: { question: string; answer: string }[];
 }
 
 interface IntentQuickAnswerLink {
@@ -805,14 +806,14 @@ const TASK_SUPPORT_NOTES: Partial<Record<string, TaskSupportNote>> = {
     },
 };
 
-function getExactGuideProfile(year: string, make: string, model: string, task: string): ExactGuideProfile | null {
+async function getExactGuideProfile(year: string, make: string, model: string, task: string): Promise<ExactGuideProfile | null> {
     const yearNum = Number(year);
     const makeKey = slugifyRoutePart(make);
     const modelKey = slugifyRoutePart(model);
     const taskKey = slugifyRoutePart(task);
 
     // Check machine-generated profiles first
-    const generated = getGeneratedRepairProfile(year, make, model, task);
+    const generated = await getGeneratedRepairProfile(year, make, model, task);
     if (generated) {
         return generated as ExactGuideProfile;
     }
@@ -2016,7 +2017,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const displayMake = getDisplayName(canonicalMake, 'make') || toTitleCase(canonicalMake);
     const displayModel = getDisplayName(canonicalModel, 'model') || toTitleCase(canonicalModel);
     const vehicleName = `${canonicalYear} ${displayMake} ${displayModel}`;
-    const exactGuideProfile = getExactGuideProfile(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
+    const exactGuideProfile = await getExactGuideProfile(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
     const vehicleSpec = getVehicleRepairSpec(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
     const hasRealContent = vehicleSpec !== null || exactGuideProfile !== null;
 
@@ -2253,7 +2254,7 @@ export default async function Page({ params }: PageProps) {
         }));
     const commercialConfig = getCommercialTaskConfig(canonicalTask);
     const taskSupportNote = TASK_SUPPORT_NOTES[canonicalTask];
-    const exactGuideProfile = getExactGuideProfile(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
+    const exactGuideProfile = await getExactGuideProfile(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
     const fullGuideHref = '?fullGuide=1#full-ai-guide';
     const quickAnswerModule = getIntentQuickAnswerModule({
         year: resolvedYear,
@@ -2375,6 +2376,7 @@ export default async function Page({ params }: PageProps) {
             question: sparkPlugIgnitionNote.faqQuestion,
             answer: sparkPlugIgnitionNote.faqAnswer,
         }] : []),
+        ...(exactGuideProfile?.faqs ? exactGuideProfile.faqs : []),
         ...(exactGuideProfile?.faq ? [exactGuideProfile.faq] : []),
     ];
 

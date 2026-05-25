@@ -1,0 +1,17 @@
+[Unit]
+Description=AllOEMManuals 24/7 Content Generation Pipeline
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/spotonauto.com
+EnvironmentFile=/root/spotonauto.com/.env.local
+ExecStart=/usr/bin/node --experimental-strip-types --loader ./scripts/ts-path-loader.mjs scripts/content-machine/daemon-worker.mjs
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

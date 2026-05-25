@@ -38,7 +38,7 @@ const TYPE_ORDER = [
   "fluid-capacity",
 ];
 
-export default function RelatedForVehicle({ year, make, model, excludeType }: RelatedForVehicleProps) {
+export default async function RelatedForVehicle({ year, make, model, excludeType }: RelatedForVehicleProps) {
   const yearNum = typeof year === "string" ? parseInt(year, 10) : year;
   const canonicalMake = slugifyRoutePart(make);
   const canonicalModel = slugifyRoutePart(model);
@@ -65,7 +65,7 @@ export default function RelatedForVehicle({ year, make, model, excludeType }: Re
     .filter(Boolean) as Array<{ type: string; label: string; icon: string; href: string }>;
 
   // Find repair profiles for this vehicle
-  const repairProfiles = getProfilesForVehicle(yearNum, make, model).slice(0, 4);
+  const repairProfiles = (await getProfilesForVehicle(yearNum, make, model)).slice(0, 4);
 
   return (
     <section className="mt-12 pt-10 border-t border-white/10">
