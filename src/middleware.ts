@@ -116,7 +116,7 @@ export function middleware(request: NextRequest) {
   }
 
   // 2. Robots.txt on non-indexable hosts
-  if (pathname === '/robots.txt' && !isIndexableHost(host)) {
+  if (pathname === '/robots.txt' && !isIndexableHost(host) && host !== tollbitHost) {
     return new NextResponse('User-agent: *\nDisallow: /\n', {
       status: 200,
       headers: {
