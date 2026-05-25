@@ -49,15 +49,16 @@ function matchesBot(userAgent: string, botTokens: string[]) {
 }
 
 function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean, isRobots: boolean) {
-  response.headers.set('Vary', 'Accept-Encoding');
-  response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');
-  if (shouldNoindexHost) {
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
-  }
+  response.headers.set('Vary', 'Accept-Encoding, User-Agent');
   if (isRobots) {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     response.headers.set('Content-Type', 'text/plain; charset=utf-8');
   } else {
+    response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');
     response.headers.set('Content-Type', 'application/xml; charset=utf-8');
+  }
+  if (shouldNoindexHost) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   }
   return response;
 }
