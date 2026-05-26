@@ -17,6 +17,7 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'gptbot',
   'claudebot',
   'claude-web',
+  'claude-user',
   'anthropic-ai',
   'bytespider',
   'ccbot',
