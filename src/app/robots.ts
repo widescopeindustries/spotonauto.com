@@ -19,6 +19,7 @@ export default function robots(): MetadataRoute.Robots {
       'https://alloemmanuals.com/manual/sitemap.xml', // factory service manual browser (82 makes)
       'https://alloemmanuals.com/wiring/sitemap.xml', // wiring SEO entry pages
       'https://alloemmanuals.com/tools/sitemap.xml',  // dynamic tool pages sitemap index
+      'https://alloemmanuals.com/maintenance/sitemap.xml', // maintenance hub pages (~5,700 vehicles)
     ],
   }
 }
