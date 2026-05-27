@@ -13,10 +13,9 @@
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import OpenAI from "openai";
 import { getLocalPool } from "../../src/lib/manualEmbeddingsStore.ts";
-import { getRepairTaskProfile } from "../../src/lib/repairTaskProfiles.ts";
 import { slugifyRoutePart } from "../../src/data/vehicles.ts";
+import { mineOEMContent, generateProfile } from "@/lib/repairGuideCompiler";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, "../..");
@@ -36,15 +35,7 @@ try {
 }
 
 // Configuration
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://127.0.0.1:7475/v1";
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.2:3b";
 const SLEEP_MS = Number(process.env.DAEMON_SLEEP_MS) || 5000;
-
-// Connect to Llama/Ollama server
-const openai = new OpenAI({
-  baseURL: OLLAMA_BASE_URL,
-  apiKey: "ollama-dummy",
-});
 
 // Target tasks to generate
 const TARGET_TASKS = [
@@ -83,133 +74,6 @@ async function submitToIndexNow(year, make, model, task) {
     }
   } catch (err) {
     console.log(`   ⚠️ IndexNow: Error submitting (${url}): ${err.message}`);
-  }
-}
-
-async function mineOEMContent(pool, year, make, model, task) {
-  const profile = getRepairTaskProfile(task);
-  const taskLabel = task.replace(/-/g, " ");
-  const terms = [...profile.keywords, taskLabel];
-
-  const conditions = [];
-  const params = [make, Number(year)];
-  
-  const termConditions = [];
-  for (let i = 0; i < terms.length; i++) {
-    const paramIndex = params.length + 1;
-    params.push(`%${terms[i].toLowerCase()}%`);
-    termConditions.push(`(LOWER(section_title) LIKE $${paramIndex} OR LOWER(content_preview) LIKE $${paramIndex})`);
-  }
-  
-  if (termConditions.length > 0) {
-    conditions.push(`(${termConditions.join(" OR ")})`);
-  }
-
-  const query = `
-    SELECT path, make, year, model, section_title, content_preview
-    FROM manual_embeddings
-    WHERE LOWER(make) = LOWER($1)
-      AND year = $2
-      ${conditions.length > 0 ? "AND " + conditions.join(" AND ") : ""}
-    LIMIT 5
-  `;
-
-  const result = await pool.query(query, params);
-  return result.rows.map((r) => ({
-    sectionTitle: r.section_title,
-    contentPreview: r.content_preview,
-    path: r.path,
-  }));
-}
-
-async function generateProfile(year, make, model, task, oemExcerpts) {
-  const taskLabel = task.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const vehicleLabel = `${year} ${make} ${model}`;
-
-  const excerptText = oemExcerpts
-    .map(
-      (e, i) =>
-        `[Excerpt ${i + 1}] Section: ${e.sectionTitle}\nSource Path: ${e.path}\nContent:\n${e.contentPreview.slice(0, 500)}`
-    )
-    .join("\n\n");
-
-  const prompt = `You are an expert automotive technical writer creating SEO-optimized repair guide content.
-
-VEHICLE: ${vehicleLabel}
-TASK: ${taskLabel}
-
-RAW OEM SERVICE MANUAL EXCERPTS:
-${excerptText}
-
-INSTRUCTIONS:
-Create a structured content profile for the exact vehicle and task above. The output will be used on a repair guide webpage and must be:
-1. Keyword-dense for search engines.
-2. Formatted as a JSON object containing the fields below.
-3. Specific to the exact year, make, and model - not generic. Identify actual specs like torque values, socket sizes, and battery group sizes from the excerpts. If the excerpts do not contain them, use general automotive knowledge for this exact model.
-4. Output ONLY valid JSON matching this schema exactly.
-5. IMPORTANT: All FAQs must be 100% relevant to the specific task (${taskLabel}) and vehicle (${vehicleLabel}). Do not mix tasks! If the task is ${taskLabel}, do not generate FAQs about unrelated tasks like battery, spark plugs, or brakes.
-
-{
-  "titleSuffix": "Title suffix under 50 chars highlighting exact specs or warnings",
-  "descriptionSuffix": "Meta description under 120 chars summarizing exact spec details",
-  "extraKeywords": [
-    "5-10 long-tail keywords specific to this vehicle and task"
-  ],
-  "supportNote": {
-    "eyebrow": "Short label, e.g., 'Exact-fit check' or 'Warning'",
-    "title": "Specific warning or tip for this exact vehicle",
-    "intro": "1-2 sentence context explaining why this matters for this car",
-    "bullets": [
-      "3-5 actionable bullets, each a complete, specific sentence citing exact details (e.g. specs, tools, socket sizes)."
-    ],
-    "tone": "cyan"
-  },
-  "faqs": [
-    {
-      "question": "A specific search question directly about ${taskLabel} for this vehicle",
-      "answer": "Detailed 2-4 sentence answer with specific specs/details from the excerpts."
-    },
-    {
-      "question": "A second search question directly about ${taskLabel} for this vehicle (e.g. regarding symptoms, locations, or warnings)",
-      "answer": "Detailed 2-4 sentence answer."
-    },
-    {
-      "question": "A third search question directly about ${taskLabel} for this vehicle (e.g. regarding tools, torque values, or specific procedures)",
-      "answer": "Detailed 2-4 sentence answer."
-    }
-  ]
-}
-
-Return ONLY the raw JSON string. Do not include markdown codeblocks or any conversational wrapper.`;
-
-  const response = await openai.chat.completions.create({
-    model: OLLAMA_MODEL,
-    messages: [
-      { role: "system", content: "You are a professional JSON generator. Output valid raw JSON only, matching the requested schema. No markdown formatting." },
-      { role: "user", content: prompt }
-    ],
-    temperature: 0.2,
-  });
-
-  const rawText = response.choices[0]?.message?.content?.trim() || "";
-  
-  // Clean markdown json blocks if returned by the LLM
-  let cleaned = rawText;
-  if (cleaned.startsWith("```json")) {
-    cleaned = cleaned.substring(7);
-  } else if (cleaned.startsWith("```")) {
-    cleaned = cleaned.substring(3);
-  }
-  if (cleaned.endsWith("```")) {
-    cleaned = cleaned.substring(0, cleaned.length - 3);
-  }
-  cleaned = cleaned.trim();
-
-  try {
-    return JSON.parse(cleaned);
-  } catch (err) {
-    console.error(`❌ Failed to parse JSON for ${vehicleLabel} - ${task}:`, err.message);
-    return null;
   }
 }
 
@@ -273,7 +137,7 @@ async function main() {
     console.log(`\n⚡ Priority Target: ${target.year} ${target.make} ${target.model} - ${target.task}`);
 
     try {
-      const excerpts = await mineOEMContent(pool, target.year, target.make, target.model, target.task);
+      const excerpts = await mineOEMContent(target.year, target.make, target.model, target.task);
       if (excerpts.length === 0) {
         console.log(`⏭ Skipping: No relevant OEM excerpts found in DB`);
         continue;
@@ -326,7 +190,7 @@ async function main() {
         console.log(`\n🚗 General Queue: ${vehicle.year} ${vehicle.make} ${vehicle.model} - ${task}`);
 
         try {
-          const excerpts = await mineOEMContent(pool, vehicle.year, vehicle.make, vehicle.model, task);
+          const excerpts = await mineOEMContent(vehicle.year, vehicle.make, vehicle.model, task);
           if (excerpts.length === 0) {
             continue;
           }
