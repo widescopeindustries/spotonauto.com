@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import // DiagnosticChatRoute from './DiagnosticChatRoute';
+// import DiagnosticChatRoute from './DiagnosticChatRoute';
 import DiagnosticVehicleSelector from './DiagnosticVehicleSelector';
 import { PricingTrackedLink } from '@/components/PricingTracking';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
@@ -89,7 +89,7 @@ export default async function DiagnosticPage({
                     <h2 className="mb-8 text-2xl font-mono uppercase tracking-widest text-neon-cyan">
                         MANUEL
                     </h2>
-                    <DiagnosticChatRoute />
+                    {/* <DiagnosticChatRoute /> */}
                     <div className="mt-8 w-full max-w-3xl rounded-2xl border border-white/10 bg-white/[0.03] p-5">
                         <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/80">How Manuel Thinks</p>
                         <div className="mt-4 space-y-3">

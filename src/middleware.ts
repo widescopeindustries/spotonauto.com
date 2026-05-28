@@ -120,7 +120,6 @@ export function middleware(request: NextRequest) {
   const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
   const tollbitHost = (process.env.TOLLBIT_HOST || 'tollbit.alloemmanuals.com').toLowerCase();
   const tollbitForwardBots = parseBotList(process.env.TOLLBIT_FORWARD_BOTS, DEFAULT_TOLLBIT_FORWARD_BOTS);
-  const hardBlockBots = parseBotList(process.env.HARD_BLOCK_AI_BOTS, DEFAULT_HARD_BLOCK_BOTS);
   const shouldNoindexHost = !isCanonicalHost(host) && isPreviewHost(host);
   const isRootOrNestedSitemap = pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
   const isNestedSitemapChunk = pathname.includes('/sitemap/') && pathname.endsWith('.xml');

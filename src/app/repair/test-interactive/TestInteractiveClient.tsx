@@ -1,6 +1,6 @@
 'use client';
 
-import InteractiveRepairGuide from '@/components/InteractiveRepairGuide';
+// import InteractiveRepairGuide from '@/components/InteractiveRepairGuide';
 
 const dummyGuide = {
   id: '2015-toyota-camry-fuel-injector-replacement',
@@ -49,6 +49,7 @@ export default function TestInteractiveClient() {
         <h1 className="text-lg font-semibold text-white">Interactive Repair Guide — Test Page</h1>
         <p className="text-sm text-gray-400">2015 Toyota Camry — Fuel Injector Replacement</p>
       </div>
+      {/* 
       <InteractiveRepairGuide
         guide={dummyGuide}
         vehicle={{ year: '2015', make: 'toyota', model: 'camry' }}
@@ -62,6 +63,7 @@ export default function TestInteractiveClient() {
           vehicleModel: 'camry',
         }}
       />
+      */}
     </div>
   );
 }

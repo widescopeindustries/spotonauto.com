@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import // // InteractiveRepairGuide from '@/components/// InteractiveRepairGuide';
+// import InteractiveRepairGuide from '@/components/InteractiveRepairGuide';
 import { generateFullRepairGuide } from '@/services/apiClient';
 import { saveGuide, getGuideById } from '@/services/storageService';
 import { RepairGuide } from '@/types';
@@ -155,7 +155,8 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
                     {enhanceError}
                 </div>
             )}
-            <// InteractiveRepairGuide
+            {/* 
+            <InteractiveRepairGuide
                 guide={guide}
                 vehicle={{ year, make, model }}
                 onReset={() => router.push('/')}
@@ -169,6 +170,7 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
                     vehicleModel: model,
                 }}
             />
+            */}
         </div>
     );
 }
