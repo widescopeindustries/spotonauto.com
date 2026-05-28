@@ -124,7 +124,8 @@ export function middleware(request: NextRequest) {
   const isRootOrNestedSitemap = pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
   const isNestedSitemapChunk = pathname.includes('/sitemap/') && pathname.endsWith('.xml');
   const isRobots = pathname === '/robots.txt';
-  const isCrawlerEndpoint = isRootOrNestedSitemap || isNestedSitemapChunk || isRobots;
+  const isLlmstxt = pathname === '/llms.txt';
+  const isCrawlerEndpoint = isRootOrNestedSitemap || isNestedSitemapChunk || isRobots || isLlmstxt;
 
   // 1. Legacy host redirect
   if (isLegacyRedirectHost(host)) {
@@ -184,15 +185,6 @@ export function middleware(request: NextRequest) {
   }
 
   if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
-    if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
-      return new NextResponse('Forbidden', {
-        status: 403,
-        headers: {
-          'Cache-Control': 'public, max-age=3600',
-        },
-      });
-    }
-
     if (matchesBot(userAgent, tollbitForwardBots)) {
       const tollbitUrl = request.nextUrl.clone();
       tollbitUrl.protocol = 'https:';
@@ -201,6 +193,15 @@ export function middleware(request: NextRequest) {
       const proxyResponse = NextResponse.rewrite(tollbitUrl);
       proxyResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
       return proxyResponse;
+    }
+
+    if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
+      return new NextResponse('Forbidden', {
+        status: 403,
+        headers: {
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
     }
   }
 
