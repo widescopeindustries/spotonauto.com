@@ -1,54 +1,29 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  return {
+return {
     rules: [
-      // Block all AI search engine bots that scrape for free
-      {
-        userAgent: 'gptbot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'anthropic-ai',
-        disallow: '/',
-      },
-      {
-        userAgent: 'claudebot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'claudebot/1.0',
-        disallow: '/',
-      },
+      // Allow major search engines to index public pages (real humans will click)
       {
         userAgent: 'googlebot',
-        disallow: '/',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],  // Only block internals
+        allow: ['/'],
       },
       {
         userAgent: 'bingbot',
-        disallow: '/',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
       },
       {
         userAgent: 'yahoobot',
-        disallow: '/',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
       },
-      {
-        userAgent: 'duckduckbot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'perplexitybot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'perplexity-user',
-        disallow: '/',
-      },
-      // Block all other bots from JSON payloads and internal APIs
+      // Block other bots from JSON payloads and internal APIs
       {
         userAgent: '*',
         disallow: ['/admin/', '/api/internal/', '/api/generate-guide', '/community/*?page=', '/manual/hyperlink/', '/guides/', '/repairs/', '/symptoms/', '/tools/type/', '/manual-navigator', '/*?_rsc=', '/*?_rsc=*'],
-        allow: '/',
+        allow: ['/'],
       },
     ],
     // List all sitemap entry points explicitly so Googlebot discovers everything.
