@@ -110,7 +110,7 @@ run_systemctl is-active --quiet "${SERVICE_NAME}"
 
 # ── Healthchecks & Fallback ─────────────────────────────────────────
 log "Running local healthcheck: ${HEALTHCHECK_URL}"
-if ! curl -fsS "${HEALTHCHECK_URL}" >/dev/null; then
+if ! curl -A "HealthcheckBot" -fsS "${HEALTHCHECK_URL}" >/dev/null; then
   log "HEALTHCHECK FAILED — restoring previous build and restarting service"
   run_systemctl stop "${SERVICE_NAME}"
   rm -rf .next
@@ -126,7 +126,7 @@ fi
 
 API_HEALTH_URL="${HEALTHCHECK_URL}/api/health"
 log "Running API healthcheck: ${API_HEALTH_URL}"
-if curl -fsS "${API_HEALTH_URL}" >/dev/null 2>&1; then
+if curl -A "HealthcheckBot" -fsS "${API_HEALTH_URL}" >/dev/null 2>&1; then
   log "API healthcheck passed"
 else
   log "API healthcheck skipped or failed (route may not exist)"
