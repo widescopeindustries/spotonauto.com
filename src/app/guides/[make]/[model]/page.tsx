@@ -444,7 +444,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
             {VALID_TASKS.slice(0, 12).map((task) => (
               <Link
                 key={task}
-                href={`/repairs/${task}`}
+                href={`/repair`}
                 className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-all capitalize"
               >
                 {task.replace(/-/g, ' ')}

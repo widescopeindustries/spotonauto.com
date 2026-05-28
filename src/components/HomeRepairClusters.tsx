@@ -106,12 +106,12 @@ const ACTIONS = [
 ];
 
 const TASK_HUB_LINKS = [
-  { href: '/repairs/battery-replacement', label: 'Battery replacement guides by vehicle' },
-  { href: '/repairs/alternator-replacement', label: 'Alternator replacement guides by vehicle' },
-  { href: '/repairs/starter-replacement', label: 'Starter replacement guides by vehicle' },
-  { href: '/repairs/brake-pad-replacement', label: 'Brake pad replacement guides by vehicle' },
-  { href: '/repairs/serpentine-belt-replacement', label: 'Serpentine belt replacement guides by vehicle' },
-  { href: '/repairs/thermostat-replacement', label: 'Thermostat replacement guides by vehicle' },
+  { href: '/repair', label: 'Battery replacement guides by vehicle' },
+  { href: '/repair', label: 'Alternator replacement guides by vehicle' },
+  { href: '/repair', label: 'Starter replacement guides by vehicle' },
+  { href: '/repair', label: 'Brake pad replacement guides by vehicle' },
+  { href: '/repair', label: 'Serpentine belt replacement guides by vehicle' },
+  { href: '/repair', label: 'Thermostat replacement guides by vehicle' },
 ];
 
 const symptomIconMap: Record<string, ComponentType<{ className?: string }>> = {

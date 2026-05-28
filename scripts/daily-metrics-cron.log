@@ -483,3 +483,93 @@ Done.
   Domain age: ~5 days (launched ~2026-05-07)
 
 Error: invalid_grant: Invalid grant: account not found
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-05-27
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      19,698 (+64.4%)
+  Organic sessions:    48 (+33.3%)
+  Active users:        19,836
+  New users:           19,736
+  Page views:          109
+  Avg engagement:      2s
+  Bounce rate:         100.0%
+
+=== CHANNELS ===
+
+  Direct               19,628 sessions
+  Unassigned               74 sessions
+  Organic Search           51 sessions
+  Referral                  5 sessions
+
+=== TOP PAGES ===
+
+   10 views  /diagnose
+    8 views  /repair
+    7 views  /maintenance
+    6 views  /
+    6 views  /wiring
+    4 views  /repair/1999/lexus/es/engine-air-filter-replacement
+    3 views  /repair/1999/lexus/es
+    3 views  /tools/nissan-titan-fluid-capacity
+    3 views  /symptoms
+    2 views  /repair/1990/volvo/740-turbo-4d-wagon-2.3-82-automatic-aw71/coolant-flush
+
+=== TOP EVENTS ===
+
+  session_start             19,753
+  first_visit               19,736
+  scroll                    19,679
+  time_on_page               136
+  page_view                  109
+  scroll_depth                74
+  time_on_page_exit           52
+  track_impression            28
+  page_view_custom            20
+  entry_route_click           19
+  user_engagement             17
+  wiring_diagram_search       15
+  vehicle_hub_enter           14
+  repair_guide_open           13
+  repair_page_view            13
+
+=== TOP COUNTRIES ===
+
+  Vietnam            3,773 users
+  Singapore          2,358 users
+  United States      1,850 users
+  Indonesia          1,729 users
+  Hong Kong          1,724 users
+  Brazil             964 users
+  Japan              852 users
+  Germany            764 users
+  India              729 users
+  Philippines        495 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-05-27.json
+
+══════════════════════════════════════════════════════════════
+Done.
+

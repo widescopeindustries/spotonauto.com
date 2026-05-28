@@ -47,9 +47,9 @@ try {
     }
   }
 
-  // Calculate revenue — rates as of 2026-05-28 ($2/$12 set in dashboard)
+  // Calculate revenue — rates as of 2026-05-28 ($2/$6 set in dashboard)
   const SUMMARY_CPM = 2.00;
-  const FULL_CPM = 12.00;
+  const FULL_CPM = 6.00;
   const summaryRevenue = (summaryCount / 1000) * SUMMARY_CPM;
   const fullRevenue = (fullCount / 1000) * FULL_CPM;
   const totalRevenue = summaryRevenue + fullRevenue;

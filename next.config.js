@@ -168,6 +168,9 @@ const nextConfig = {
       { source: '/repair/:year/mercedes/glk-class/:task', destination: '/repair/:year/mercedes/glk/:task', permanent: true },
       { source: '/wiring/:year/mercedes/glk-class/:system', destination: '/wiring/:year/mercedes/glk/:system', permanent: true },
       { source: '/tools/mercedes-glk-class-:tool', destination: '/tools/mercedes-glk-:tool', permanent: true },
+      // Consolidate generic /repairs/ → /repair (vehicle-specific hub)
+      { source: '/repairs/:path*', destination: '/repair', permanent: true },
+      { source: '/repairs', destination: '/repair', permanent: true },
     ];
   },
 }

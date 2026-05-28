@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import DiagnosticChatRoute from './DiagnosticChatRoute';
+import // DiagnosticChatRoute from './DiagnosticChatRoute';
 import DiagnosticVehicleSelector from './DiagnosticVehicleSelector';
 import { PricingTrackedLink } from '@/components/PricingTracking';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';

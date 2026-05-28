@@ -65,11 +65,11 @@ const Footer = () => {
                         <h3 className="text-sm font-semibold text-white mb-4">Popular Repairs</h3>
                         <ul className="space-y-3">
                             {[
-                                { href: '/repairs/oil-change', label: 'Oil Change Guides' },
-                                { href: '/repairs/brake-pad-replacement', label: 'Brake Pad Guides' },
-                                { href: '/repairs/battery-replacement', label: 'Battery Guides' },
-                                { href: '/repairs/spark-plug-replacement', label: 'Spark Plug Guides' },
-                                { href: '/repairs/serpentine-belt-replacement', label: 'Serpentine Belt Guides' },
+                                { href: '/repair', label: 'Oil Change Guides' },
+                                { href: '/repair', label: 'Brake Pad Guides' },
+                                { href: '/repair', label: 'Battery Guides' },
+                                { href: '/repair', label: 'Spark Plug Guides' },
+                                { href: '/repair', label: 'Serpentine Belt Guides' },
                                 { href: '/repair', label: 'All Repair Categories →' },
                             ].map((item) => (
                                 <li key={item.href}>

@@ -371,7 +371,7 @@ export async function buildVehicleHubGraph(args: {
     ...(repairNodes.length > 0 ? [{
       kind: 'repair' as const,
       title: 'Exact Repair Workflows',
-      browseHref: '/repairs',
+      browseHref: '/repair',
       theme: 'cyan' as const,
       nodes: repairNodes,
     }] : []),
