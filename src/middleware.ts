@@ -46,6 +46,16 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'facebookexternalhit',
 ];
 
+const ALLOWED_SEARCH_ENGINES = [
+  'googlebot',
+  'bingbot',
+  'yandexbot',
+  'duckduckbot',
+  'slurp',
+  'baiduspider',
+  'applebot' // Included here for basic indexing, though sometimes sent to Tollbit
+];
+
 function isBot(userAgent: string): boolean {
   const botPatterns = [
     /\bbot\b/i,
@@ -185,7 +195,12 @@ export function middleware(request: NextRequest) {
   }
 
   if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
-    if (matchesBot(userAgent, tollbitForwardBots)) {
+    // 1. Let good search engines through normally (bypasses blocks and paywalls)
+    if (matchesBot(userAgent, ALLOWED_SEARCH_ENGINES)) {
+      // Intentionally do nothing; let the request pass through to Next.js
+    }
+    // 2. Forward AI bots to Tollbit
+    else if (matchesBot(userAgent, tollbitForwardBots)) {
       const tollbitUrl = request.nextUrl.clone();
       tollbitUrl.protocol = 'https:';
       tollbitUrl.host = tollbitHost;
@@ -194,8 +209,8 @@ export function middleware(request: NextRequest) {
       proxyResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
       return proxyResponse;
     }
-
-    if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
+    // 3. Hard block all other unsupported bots
+    else if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
       return new NextResponse('Forbidden', {
         status: 403,
         headers: {
