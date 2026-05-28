@@ -102,7 +102,7 @@ export function middleware(request: NextRequest) {
   // 1.5 AI bot monetization/denial policy: paywall-capable bots forward to TollBit,
   // non-paying AI bots are hard blocked. Skip this logic on TollBit host itself.
   const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for')?.split(',')[0].trim() || '';
-  const isTollbitIp = clientIp === '52.22.183.94';
+  const isTollbitIp = clientIp === '52.22.183.94' || clientIp === '3.220.109.109';
   const isLocal =
     host.includes('localhost') ||
     host.includes('127.0.0.1') ||
