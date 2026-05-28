@@ -48,12 +48,7 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
 
 const ALLOWED_SEARCH_ENGINES = [
   'googlebot',
-  'bingbot',
-  'yandexbot',
-  'duckduckbot',
-  'slurp',
-  'baiduspider',
-  'applebot' // Included here for basic indexing, though sometimes sent to Tollbit
+  'bingbot'
 ];
 
 function isBot(userAgent: string): boolean {
