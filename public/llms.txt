@@ -110,7 +110,7 @@ Example: https://alloemmanuals.com/vehicles/2020/toyota/camry
 
 ## About
 
-AllOEMManuals is an independent, AI-powered auto repair guide platform built on proprietary access to factory service manual corpuses (CHARM + LEMON). It is not affiliated with any dealership, repair chain, or parts retailer. Repair guides combine AI-generated explanations with factory OEM data and are intended as a starting point — always consult a certified mechanic for safety-critical repairs.
+AllOEMManuals is an independent, AI-powered auto repair guide platform built on factory service manuals. It is not affiliated with any dealership, repair chain, or parts retailer. Repair guides combine AI-generated explanations with factory OEM data and are intended as a starting point — always consult a certified mechanic for safety-critical repairs.
 
 ## Contact & Legal
 
