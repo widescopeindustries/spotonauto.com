@@ -47,16 +47,48 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
 ];
 
 const DEFAULT_HARD_BLOCK_BOTS: string[] = [
-  // Major AI search engines scraping for free (not via Tollbit)
+  // AI search engine scrapers (not forwarding to Tollbit yet)
   'gptbot',
   'anthropic-ai',
   'claudebot',
+  'claudebot/1.0',
+  'claude-searchbot',
+  'claudesearchbot',
+  'duckassistbot',
+  'chatgpt-user',
+  'oai-searchbot',
+  'perplexitybot',
+  'perplexity-user',
+  'amazonbot',
+  'amzn-searchbot',
+  'youbot',
+  'diffbot',
+  'meta-externalagent',
+  'meta-webindexer',
+  'timpibot',
+  'applebot',
+  'google-extended',
+  'applebot-extended',
+  'facebookbot',
+  'meta-externalfetcher',
+  'imagesiftbot',
+  'omgili',
+  'omgilibot',
+  'petalbot',
+  'meta-',
+  'facebookexternalhit',
+  // General AI training bots
+  'bytespider',
+  'ccbot',
+  'cohere-ai',
+  // Search engine crawlers that scrape without paying
   'googlebot',
   'bingbot',
   'yahoobot',
   'duckduckbot',
-  'perplexitybot',
-  'perplexity-user',
+  'facebookexternalhit',
+  // Custom AI agents
+  'customagent',
 ];
 
 function parseBotList(value: string | undefined, fallback: string[]) {
