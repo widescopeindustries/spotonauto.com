@@ -46,50 +46,41 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'facebookexternalhit',
 ];
 
-const DEFAULT_HARD_BLOCK_BOTS: string[] = [
-  // AI search engine scrapers (not forwarding to Tollbit yet)
-  'gptbot',
-  'anthropic-ai',
-  'claudebot',
-  'claudebot/1.0',
-  'claude-searchbot',
-  'claudesearchbot',
-  'duckassistbot',
-  'chatgpt-user',
-  'oai-searchbot',
-  'perplexitybot',
-  'perplexity-user',
-  'amazonbot',
-  'amzn-searchbot',
-  'youbot',
-  'diffbot',
-  'meta-externalagent',
-  'meta-webindexer',
-  'timpibot',
-  'applebot',
-  'google-extended',
-  'applebot-extended',
-  'facebookbot',
-  'meta-externalfetcher',
-  'imagesiftbot',
-  'omgili',
-  'omgilibot',
-  'petalbot',
-  'meta-',
-  'facebookexternalhit',
-  // General AI training bots
-  'bytespider',
-  'ccbot',
-  'cohere-ai',
-  // Search engine crawlers that scrape without paying
-  'googlebot',
-  'bingbot',
-  'yahoobot',
-  'duckduckbot',
-  'facebookexternalhit',
-  // Custom AI agents
-  'customagent',
-];
+function isBot(userAgent: string): boolean {
+  const botPatterns = [
+    /\bbot\b/i,
+    /\bcrawl/i,
+    /\bspider\b/i,
+    /\bscraper/i,
+    /\bcurl\b/i,
+    /\bwget\b/i,
+    /\bpython\b/i,
+    /\baxios\b/i,
+    /\brequests\b/i,
+    /\bhttpclient/i,
+    /\bjava\/\d/i,
+    /\bgo-http/i,
+    /\bnode/i,
+    /\bgptbot/i,
+    /\bclaudebot/i,
+    /\bclaude-web/i,
+    /\banthropic/i,
+    /\bperplexity/i,
+    /\bamazonbot/i,
+    /\bdiffbot/i,
+    /\bmeta-/i,
+    /\btollbot/i,
+    /\boai-/i,
+    /\byoubot/i,
+    /\btimpibot/i,
+    /\bfacebookbot/i,
+    /\bpetalbot/i,
+    /\bbytespider/i,
+    /\bccbot/i,
+    /\bcohere/i,
+  ];
+  return botPatterns.some(pattern => pattern.test(userAgent));
+}
 
 function parseBotList(value: string | undefined, fallback: string[]) {
   if (!value) return fallback;
@@ -194,23 +185,23 @@ export function middleware(request: NextRequest) {
   }
 
   if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
-    if (matchesBot(userAgent, tollbitForwardBots)) {
-      const tollbitUrl = request.nextUrl.clone();
-      tollbitUrl.protocol = 'https:';
-      tollbitUrl.host = tollbitHost;
-      tollbitUrl.port = '';
-      const redirectResponse = NextResponse.redirect(tollbitUrl, 302);
-      redirectResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-      return redirectResponse;
-    }
-
-    if (matchesBot(userAgent, hardBlockBots) && !isCrawlerEndpoint) {
+    if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
       return new NextResponse('Forbidden', {
         status: 403,
         headers: {
           'Cache-Control': 'public, max-age=3600',
         },
       });
+    }
+
+    if (matchesBot(userAgent, tollbitForwardBots)) {
+      const tollbitUrl = request.nextUrl.clone();
+      tollbitUrl.protocol = 'https:';
+      tollbitUrl.host = tollbitHost;
+      tollbitUrl.port = '';
+      const proxyResponse = NextResponse.rewrite(tollbitUrl);
+      proxyResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      return proxyResponse;
     }
   }
 
@@ -245,7 +236,7 @@ export function middleware(request: NextRequest) {
     const [, rYear, rMake, rModel, rTask] = repairMatch;
     const isBot = matchesBot(userAgent, tollbitForwardBots);
     const wantsJson = request.headers.get('accept')?.toLowerCase().includes('application/json');
-    const isAuthorized = hasTollbitToken || host === tollbitHost || isLocal;
+    const isAuthorized = hasTollbitToken || host === tollbitHost || isLocal || isTollbitIp;
 
     if (isAuthorized && (isBot || wantsJson)) {
       const apiUr = request.nextUrl.clone();
