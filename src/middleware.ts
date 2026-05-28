@@ -194,24 +194,16 @@ export function middleware(request: NextRequest) {
     if (matchesBot(userAgent, ALLOWED_SEARCH_ENGINES)) {
       // Intentionally do nothing; let the request pass through to Next.js
     }
-    // 2. Forward AI bots to Tollbit
-    else if (matchesBot(userAgent, tollbitForwardBots)) {
+    // 2. Forward ALL other bots to Tollbit via 302 Redirect
+    else if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
       const tollbitUrl = request.nextUrl.clone();
       tollbitUrl.protocol = 'https:';
       tollbitUrl.host = tollbitHost;
       tollbitUrl.port = '';
-      const proxyResponse = NextResponse.rewrite(tollbitUrl);
+      
+      const proxyResponse = NextResponse.redirect(tollbitUrl, 302);
       proxyResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
       return proxyResponse;
-    }
-    // 3. Hard block all other unsupported bots
-    else if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
-      return new NextResponse('Forbidden', {
-        status: 403,
-        headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-        },
-      });
     }
   }
 
