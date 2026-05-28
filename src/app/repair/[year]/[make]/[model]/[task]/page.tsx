@@ -2238,8 +2238,8 @@ export default async function Page({ params }: PageProps) {
     const priorityCodePages = getPriorityCodePagesForTasks([canonicalTask], 4)
         .filter((entry) => !relatedVehicleCodeNodes.some((node) => node.href === entry.href));
     const toolResourceLinks = getRelatedToolLinksForRepair(displayMake, displayModel, canonicalTask, 4);
-    const manualMakeHref = `/maintenance`;
-    const manualYearHref = `/maintenance/${resolvedYear}/${canonicalMake}/${canonicalModel}`;
+    const manualMakeHref = buildManualBrowserPath(displayMake);
+    const manualYearHref = buildManualBrowserPath(displayMake, resolvedYear);
     const sparkPlugIgnitionNote = getSparkPlugIgnitionNote(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
     const affiliateSourceParts = dedupeCommerceParts([
         ...(vehicleSpec?.parts ?? repairData.parts.map((partName) => ({ name: partName }))),
@@ -2275,20 +2275,6 @@ export default async function Page({ params }: PageProps) {
             beltRouting: vehicleSpec.beltRouting,
         } : undefined,
     });
-
-    // Update labels in the quick answer cards to match the new targets
-    quickAnswerModule.cards = quickAnswerModule.cards.map((card) => ({
-        ...card,
-        links: card.links.map((link) => {
-            if (link.href === manualYearHref) {
-                return { ...link, label: 'View maintenance specs' };
-            }
-            if (link.href === manualMakeHref) {
-                return { ...link, label: 'View all specs' };
-            }
-            return link;
-        }),
-    }));
     const primaryAffiliatePart = affiliateSpotlightParts[0];
     const primaryAffiliateQuery = primaryAffiliatePart?.query || `${vehicleName} ${cleanTask}`;
     const primaryAffiliateName = primaryAffiliatePart?.name || `${cleanTask} parts`;
@@ -3309,21 +3295,21 @@ export default async function Page({ params }: PageProps) {
                         href={manualMakeHref}
                         className={resourceCardClass}
                     >
-                        <p className="text-xs font-medium tracking-wide text-cyan-300/80 mb-2">Specifications</p>
+                        <p className="text-xs font-medium tracking-wide text-cyan-300/80 mb-2">Factory manual</p>
                         <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                            Browse {displayMake} specifications
+                            Browse {displayMake} manual sections
                         </h3>
-                        <p className="mt-2 text-sm leading-6 text-gray-400">Find fluid capacities, torque specs, and maintenance schedules for all models.</p>
+                        <p className="mt-2 text-sm leading-6 text-gray-400">Move from make-level manual navigation into service sections and procedures.</p>
                     </Link>
                     <Link
                         href={manualYearHref}
                         className={resourceCardClass}
                     >
-                        <p className="text-xs font-medium tracking-wide text-cyan-300/80 mb-2">Maintenance Hub</p>
+                        <p className="text-xs font-medium tracking-wide text-cyan-300/80 mb-2">Year index</p>
                         <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                            Open the {resolvedYear} {displayMake} hub
+                            Open the {resolvedYear} {displayMake} manual
                         </h3>
-                        <p className="mt-2 text-sm leading-6 text-gray-400">View standard capacities, fluids, and exact-fit details for this specific vehicle model year.</p>
+                        <p className="mt-2 text-sm leading-6 text-gray-400">Jump directly into the OEM year tree for this vehicle before drilling into sections.</p>
                     </Link>
                     {toolResourceLinks.map((toolLink) => (
                         <Link

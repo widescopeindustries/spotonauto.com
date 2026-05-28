@@ -455,7 +455,7 @@ export default async function ToolPage({ params }: PageProps) {
                     quickAnswer={page.quickAnswer}
                     verificationNote={verificationNote}
                     manualNavigatorHref={manualNavigatorHref}
-                    maintenanceHubHref={maintenanceHubHref}
+                    makeManualHref={makeManualHref}
                     citationGroups={manualCitationGroups}
                 />
 

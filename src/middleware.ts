@@ -40,6 +40,8 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'omgili',
   'omgilibot',
   'petalbot',
+  'meta-',
+  'facebookexternalhit',
 ];
 
 const DEFAULT_HARD_BLOCK_BOTS: string[] = [];

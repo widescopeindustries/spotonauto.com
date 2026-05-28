@@ -47,10 +47,10 @@ try {
     }
   }
 
-  // Calculate revenue — rates as of 2026-05-27
-  // Strategy: start low ($2/$10) to rebuild crawl volume, then increase incrementally
-  const SUMMARY_CPM = 2.00;
-  const FULL_CPM = 10.00;
+  // Calculate revenue — rates as of 2026-05-28
+  // Strategy: raised rates to $5/$15
+  const SUMMARY_CPM = 5.00;
+  const FULL_CPM = 15.00;
   const summaryRevenue = (summaryCount / 1000) * SUMMARY_CPM;
   const fullRevenue = (fullCount / 1000) * FULL_CPM;
   const totalRevenue = summaryRevenue + fullRevenue;
