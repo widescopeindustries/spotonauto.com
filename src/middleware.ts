@@ -11,6 +11,7 @@ const ALLOWED_ORIGINS = [
 const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'meta-webindexer',
   'claude-searchbot',
+  'claudesearchbot',
   'duckassistbot',
   'chatgpt-user',
   'oai-searchbot',
@@ -18,6 +19,7 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'claudebot',
   'claude-web',
   'claude-user',
+  'claudeuser',
   'claudeweb',
   'anthropic-ai',
   'bytespider',
@@ -44,7 +46,18 @@ const DEFAULT_TOLLBIT_FORWARD_BOTS = [
   'facebookexternalhit',
 ];
 
-const DEFAULT_HARD_BLOCK_BOTS: string[] = [];
+const DEFAULT_HARD_BLOCK_BOTS: string[] = [
+  // Major AI search engines scraping for free (not via Tollbit)
+  'gptbot',
+  'anthropic-ai',
+  'claudebot',
+  'googlebot',
+  'bingbot',
+  'yahoobot',
+  'duckduckbot',
+  'perplexitybot',
+  'perplexity-user',
+];
 
 function parseBotList(value: string | undefined, fallback: string[]) {
   if (!value) return fallback;
