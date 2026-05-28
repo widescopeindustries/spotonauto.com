@@ -209,7 +209,7 @@ export function middleware(request: NextRequest) {
       return new NextResponse('Forbidden', {
         status: 403,
         headers: {
-          'Cache-Control': 'public, max-age=3600',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
         },
       });
     }
