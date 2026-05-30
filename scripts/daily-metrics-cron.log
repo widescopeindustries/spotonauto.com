@@ -573,3 +573,93 @@ Error: invalid_grant: Invalid grant: account not found
 ══════════════════════════════════════════════════════════════
 Done.
 
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-05-28
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      23,465 (+5.1%)
+  Organic sessions:    75 (+36.4%)
+  Active users:        22,945
+  New users:           23,150
+  Page views:          90
+  Avg engagement:      3s
+  Bounce rate:         100.0%
+
+=== CHANNELS ===
+
+  Direct               23,337 sessions
+  Unassigned              119 sessions
+  Organic Search           77 sessions
+  Referral                  3 sessions
+
+=== TOP PAGES ===
+
+   17 views  /wiring
+    4 views  /repair/2018/ford/focus
+    4 views  /guides/ford/focus
+    4 views  /diagnose
+    4 views  /wiring
+    3 views  /repair/2003/saab/9-5/engine-air-filter-replacement
+    3 views  /codes
+    2 views  /maintenance/2003/saab/9-5-(9600)-v6-3.0l-turbo-(b308)
+    2 views  /repair/2018/ford/focus/coolant-flush
+    2 views  /tools/best-topdon-scanner
+
+=== TOP EVENTS ===
+
+  session_start             23,175
+  first_visit               23,150
+  scroll                    23,106
+  time_on_page               164
+  scroll_depth               107
+  page_view                   90
+  time_on_page_exit           88
+  page_view_custom            36
+  view_search_results         32
+  track_impression            23
+  user_engagement             23
+  wiring_diagram_search       19
+  entry_route_click           13
+  vehicle_hub_enter           11
+  wiring_diagram_open         11
+
+=== TOP COUNTRIES ===
+
+  Vietnam            4,370 users
+  Singapore          3,505 users
+  Indonesia          2,101 users
+  United States      2,092 users
+  Hong Kong          1,931 users
+  India              1,132 users
+  Japan              990 users
+  Brazil             802 users
+  Germany            766 users
+  Philippines        696 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-05-28.json
+
+══════════════════════════════════════════════════════════════
+Done.
+

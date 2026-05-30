@@ -51,6 +51,9 @@ const ALLOWED_SEARCH_ENGINES = [
   'bingbot'
 ];
 
+/** Known TollBit crawler IPs. Expandable via env if TollBit adds more. */
+const DEFAULT_TOLLBIT_IPS = ['52.22.183.94', '3.220.109.109'];
+
 function isBot(userAgent: string): boolean {
   const botPatterns = [
     /bot/i,
@@ -88,6 +91,15 @@ function parseBotList(value: string | undefined, fallback: string[]) {
   return parsed.length > 0 ? parsed : fallback;
 }
 
+function parseIpList(value: string | undefined, fallback: string[]) {
+  if (!value) return fallback;
+  const parsed = value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return parsed.length > 0 ? parsed : fallback;
+}
+
 function matchesBot(userAgent: string, botTokens: string[]) {
   return botTokens.some((token) => userAgent.includes(token));
 }
@@ -109,7 +121,12 @@ function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean,
 
 /**
  * Unified edge middleware — handles host normalization, legacy redirects,
- * crawler headers, CORS gating, and comma-containing URL cleanup.
+ * crawler headers, CORS gating, comma-containing URL cleanup, and TollBit
+ * audit logging.
+ *
+ * NOTE: Bot forwarding to TollBit should happen at the Cloudflare Worker
+ * level for best performance. This middleware serves as a fallback + handles
+ * TollBit crawler allowlisting and structured content rewrites.
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -117,6 +134,7 @@ export function middleware(request: NextRequest) {
   const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
   const tollbitHost = (process.env.TOLLBIT_HOST || 'tollbit.alloemmanuals.com').toLowerCase();
   const tollbitForwardBots = parseBotList(process.env.TOLLBIT_FORWARD_BOTS, DEFAULT_TOLLBIT_FORWARD_BOTS);
+  const tollbitIps = parseIpList(process.env.TOLLBIT_IPS, DEFAULT_TOLLBIT_IPS);
   const shouldNoindexHost = !isCanonicalHost(host) && isPreviewHost(host);
   const isRootOrNestedSitemap = pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
   const isNestedSitemapChunk = pathname.includes('/sitemap/') && pathname.endsWith('.xml');
@@ -132,10 +150,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
-  // 1.5 AI bot monetization/denial policy: paywall-capable bots forward to TollBit,
-  // non-paying AI bots are hard blocked. Skip this logic on TollBit host itself.
+  // 1.5 TollBit detection
   const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for')?.split(',')[0].trim() || '';
-  const isTollbitIp = clientIp === '52.22.183.94' || clientIp === '3.220.109.109';
+  const isTollbitIp = tollbitIps.includes(clientIp);
   const isLocal =
     host.includes('localhost') ||
     host.includes('127.0.0.1') ||
@@ -154,15 +171,15 @@ export function middleware(request: NextRequest) {
   // Verify that if a token is present, it actually came from Tollbit's proxy IP
   const hasTollbitToken = hasRawTollbitToken && (isTollbitIp || isLocal);
 
-  const isTollbitCrawler = userAgent.includes('tollbot');
+  const isTollbitCrawler = userAgent.includes('tollbot') || userAgent.includes('tollbit');
 
   if (isTollbitCrawler) {
     const allHeaders = Array.from(request.headers.entries()).map(([k, v]) => `${k}: ${v}`).join(' | ');
     console.log(`[tollbot debug] Request to ${pathname} from ${clientIp}. All Headers: ${allHeaders}`);
   }
 
-  // 1.52. Tollbit's own crawler (tollbot/1.0 from 52.22.183.94) fetching content
-  // to serve to paying AI consumers — let it through, do NOT redirect back to Tollbit.
+  // 1.52. Tollbit's own crawler (tollbot/1.0) fetching content to serve to
+  // paying AI consumers — let it through, do NOT redirect back to Tollbit.
   if (isTollbitCrawler || isTollbitIp) {
     const tollbitKey = request.headers.get('x-tollbit-key') || request.headers.get('tollbittoken') || request.headers.get('signature')?.slice(0, 16) || 'ip-verified';
     console.log(`[TOLLBIT_AUDIT] path=${pathname} bot=${userAgent.slice(0, 60)} ip=${clientIp} token=${tollbitKey}`);
@@ -181,18 +198,18 @@ export function middleware(request: NextRequest) {
     console.log(`[TOLLBIT_AUDIT] path=${pathname} bot=${userAgent.slice(0, 60)} ip=${clientIp} token=${tollbitKey}`);
   }
 
+  // FALLBACK: If Cloudflare Worker misses a bot, redirect it here.
+  // In normal operation the Worker handles this at the edge and this
+  // branch is never reached.
   if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
-    // 1. Let good search engines through normally (bypasses blocks and paywalls)
     if (matchesBot(userAgent, ALLOWED_SEARCH_ENGINES)) {
-      // Intentionally do nothing; let the request pass through to Next.js
-    }
-    // 2. Forward ALL other bots to Tollbit via 302 Redirect
-    else if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
+      // Let Google/Bing through for SEO
+    } else if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
       const tollbitUrl = request.nextUrl.clone();
       tollbitUrl.protocol = 'https:';
       tollbitUrl.host = tollbitHost;
       tollbitUrl.port = '';
-      
+
       const proxyResponse = NextResponse.redirect(tollbitUrl, 302);
       proxyResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
       return proxyResponse;
@@ -228,11 +245,11 @@ export function middleware(request: NextRequest) {
   const repairMatch = pathname.match(/^\/repair\/(\d{4})\/([^/]+)\/([^/]+)\/([^/]+)$/);
   if (repairMatch) {
     const [, rYear, rMake, rModel, rTask] = repairMatch;
-    const isBot = matchesBot(userAgent, tollbitForwardBots);
+    const isKnownBot = matchesBot(userAgent, tollbitForwardBots);
     const wantsJson = request.headers.get('accept')?.toLowerCase().includes('application/json');
     const isAuthorized = hasTollbitToken || host === tollbitHost || isLocal || isTollbitIp;
 
-    if (isAuthorized && (isBot || wantsJson)) {
+    if (isAuthorized && (isKnownBot || wantsJson)) {
       const apiUr = request.nextUrl.clone();
       apiUr.pathname = '/api/v1/repair';
       apiUr.searchParams.set('year', rYear);

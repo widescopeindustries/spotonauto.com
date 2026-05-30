@@ -144,43 +144,116 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!result) return { title: 'Tool Not Found' };
     const { page, quality } = result;
 
-    // CTR-optimized title: use the concise spec (e.g. "0W-20 Oil") from the
-    // newest generation so the title stays under ~70 chars and the answer is
-    // visible in the SERP.
-    let baseTitle = page.title.replace(/\s*\|\s*AllOEMManuals$/, '').replace(/\s*\|\s*All Years Guide$/, '');
-    // Strip verbose suffixes that eat title space without adding click value
-    baseTitle = baseTitle
-        .replace(/\s+Location by Year$/i, '')
-        .replace(/\s+Type & Capacity$/i, '')
-        .replace(/\s+by Year$/i, '')
-        .replace(/\s+Type$/i, '');
+    // CTR-optimized title: rewrite based on tool type for maximum click-through.
+    // Formulas tested against GSC data — pages at positions 8-10 with 0 clicks
+    // need emotional hooks, authority signals, and completeness promises.
+    const { make, model, toolType } = page;
+    const vehicle = `${make} ${model}`;
 
-    // Pick the newest generation year for a concise spec extraction
+    // Extract year range for "All Years" signal
+    const yearRange = page.generations.length > 0
+        ? page.generations.map(g => g.years).join(', ').replace(/, ([^,]+)$/, '–$1')
+        : 'All Years';
+    const shortYearRange = yearRange.length > 12
+        ? yearRange.replace(/,.*$/, '') + '+'
+        : yearRange;
+
+    // Extract concise spec for authority hook
     const newestGen = page.generations[0];
     const newestYear = newestGen
         ? parseInt(newestGen.years.split('-').pop()?.trim() || '2020', 10)
         : 2020;
     const conciseSpec = getConciseQuickAnswer(newestYear, page);
+    const shortSpec = conciseSpec
+        ? conciseSpec.length > 20 ? conciseSpec.slice(0, 19) + '…' : conciseSpec
+        : null;
 
     function trunc(s: string, n: number): string {
         return s.length > n ? s.slice(0, n - 1) + '…' : s;
     }
 
     let title: string;
-    if (conciseSpec) {
-        const shortBase = trunc(baseTitle, 28);
-        const shortSpec = trunc(conciseSpec, 26);
-        const candidate = `${shortBase}: ${shortSpec} | AllOEMManuals`;
-        title = candidate.length <= 70 ? candidate : `${shortBase} | AllOEMManuals`;
-    } else {
-        title = `${trunc(baseTitle, 50)} | AllOEMManuals`;
+
+    switch (toolType) {
+        case 'oil-type':
+            title = shortSpec
+                ? `${vehicle} Oil Type [${shortSpec}] — OEM Spec | AllOEMManuals`
+                : `${vehicle} Oil Type — Factory Manual Spec | AllOEMManuals`;
+            break;
+        case 'coolant-type':
+            title = shortSpec
+                ? `${vehicle} Coolant Type [${shortSpec}] — OEM Spec | AllOEMManuals`
+                : `${vehicle} Coolant Type — Factory Manual Spec | AllOEMManuals`;
+            break;
+        case 'transmission-fluid-type':
+            title = shortSpec
+                ? `${vehicle} Transmission Fluid [${shortSpec}] — OEM | AllOEMManuals`
+                : `${vehicle} Transmission Fluid — Factory Spec | AllOEMManuals`;
+            break;
+        case 'brake-fluid-type':
+            title = shortSpec
+                ? `${vehicle} Brake Fluid [${shortSpec}] — OEM Spec | AllOEMManuals`
+                : `${vehicle} Brake Fluid Type — Factory Manual | AllOEMManuals`;
+            break;
+        case 'battery-location':
+            title = `Where Is the Battery on a ${vehicle}? [OEM Diagram] | AllOEMManuals`;
+            break;
+        case 'serpentine-belt':
+            title = `${vehicle} Serpentine Belt Routing [OEM Diagram] | AllOEMManuals`;
+            break;
+        case 'tire-size':
+            title = `${vehicle} Tire Size & Pressure [OEM Spec] — ${shortYearRange} | AllOEMManuals`;
+            break;
+        case 'spark-plug-type':
+            title = shortSpec
+                ? `${vehicle} Spark Plug [${shortSpec}] — OEM Spec | AllOEMManuals`
+                : `${vehicle} Spark Plug Type — Factory Spec | AllOEMManuals`;
+            break;
+        case 'wiper-blade-size':
+            title = `${vehicle} Wiper Blade Size [OEM Spec] — ${shortYearRange} | AllOEMManuals`;
+            break;
+        case 'headlight-bulb':
+            title = `${vehicle} Headlight Bulb [OEM Spec] — ${shortYearRange} | AllOEMManuals`;
+            break;
+        case 'fluid-capacity':
+            title = `${vehicle} Fluid Capacity Chart [OEM Specs] | AllOEMManuals`;
+            break;
+        default:
+            title = `${trunc(vehicle + ' ' + (TOOL_TYPE_META[toolType]?.label || 'Specs'), 50)} | AllOEMManuals`;
     }
 
-    // Lead description with the quick answer so actual specs appear in SERP snippet
-    const baseDescription = page.description.replace(/\s+/g, ' ').trim();
-    const answerText = page.quickAnswer ? page.quickAnswer.replace(/\s+/g, ' ').trim().replace(/\.$/, '') : '';
-    const supportText = 'Use the exact vehicle page to confirm fitment, compare related repair paths, and build the one-trip parts list before you start.';
-    const description = [baseDescription, answerText, supportText].filter(Boolean).join(' ');
+    // Hard cap at 70 chars for SERP safety
+    if (title.length > 70) {
+        title = trunc(title.replace(/\s*\|\s*AllOEMManuals$/, ''), 58) + ' | AllOEMManuals';
+    }
+
+    // CTR-optimized description: lead with the answer, signal authority,
+    // promise completeness. Google truncates at ~160 chars — front-load value.
+    const cleanAnswer = page.quickAnswer
+        ? page.quickAnswer.replace(/\s+/g, ' ').trim().replace(/\.$/, '')
+        : '';
+
+    let description: string;
+    if (cleanAnswer) {
+        const authSnippet = toolType === 'battery-location'
+            ? `Factory service manual diagram.`
+            : `Factory service manual spec.`;
+        const coverageSnippet = page.generations.length > 1
+            ? `Covers ${shortYearRange}.`
+            : '';
+        const parts = [cleanAnswer, authSnippet, coverageSnippet].filter(Boolean);
+        // Hard cap: join and truncate at ~155 chars to avoid Google ellipsis
+        let desc = parts.join(' ');
+        if (desc.length > 155) {
+            desc = desc.slice(0, 152).trim().replace(/[^\w\s]$/, '') + '…';
+        }
+        description = desc;
+    } else {
+        const fallback = page.description.replace(/\s+/g, ' ').trim();
+        description = fallback.length > 155
+            ? fallback.slice(0, 152).trim().replace(/[^\w\s]$/, '') + '…'
+            : fallback;
+    }
 
     // Keep generic tool pages indexed — they aggregate all years and maintain AI citation equity.
     // Vehicle-specific maintenance pages coexist and rank for year-specific queries.
