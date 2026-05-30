@@ -199,22 +199,23 @@ export function middleware(request: NextRequest) {
   }
 
   // FALLBACK: If Cloudflare Worker misses a bot, redirect it here.
-  // In normal operation the Worker handles this at the edge and this
-  // branch is never reached.
-  if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
-    if (matchesBot(userAgent, ALLOWED_SEARCH_ENGINES)) {
-      // Let Google/Bing through for SEO
-    } else if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
-      const tollbitUrl = request.nextUrl.clone();
-      tollbitUrl.protocol = 'https:';
-      tollbitUrl.host = tollbitHost;
-      tollbitUrl.port = '';
-
-      const proxyResponse = NextResponse.redirect(tollbitUrl, 302);
-      proxyResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-      return proxyResponse;
-    }
-  }
+  // DISABLED 2026-05-30: Tollbit subdomain has no DNS record. Re-enable after
+  // proper setup per /root/tollbit-setup/README.md
+  //
+  // if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
+  //   if (matchesBot(userAgent, ALLOWED_SEARCH_ENGINES)) {
+  //     // Let Google/Bing through for SEO
+  //   } else if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
+  //     const tollbitUrl = request.nextUrl.clone();
+  //     tollbitUrl.protocol = 'https:';
+  //     tollbitUrl.host = tollbitHost;
+  //     tollbitUrl.port = '';
+  //
+  //     const proxyResponse = NextResponse.redirect(tollbitUrl, 302);
+  //     proxyResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  //     return proxyResponse;
+  //   }
+  // }
 
   // Helper to apply Tollbit headers and prevent caching on successful proxy responses
   const applyTollbitResponseHeaders = (res: NextResponse) => {
