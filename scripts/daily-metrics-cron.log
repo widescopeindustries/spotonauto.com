@@ -663,3 +663,63 @@ Done.
 ══════════════════════════════════════════════════════════════
 Done.
 
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-05-29
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      4 (-100.0%)
+  Organic sessions:    0 (-100.0%)
+  Active users:        4
+  New users:           4
+  Page views:          0
+  Avg engagement:      0s
+  Bounce rate:         100.0%
+
+=== CHANNELS ===
+
+  Direct                    4 sessions
+
+=== TOP PAGES ===
+
+  No page data.
+
+
+=== TOP EVENTS ===
+
+  first_visit                  4
+  scroll                       4
+  session_start                4
+
+=== TOP COUNTRIES ===
+
+  Singapore            2 users
+  Brazil               1 users
+  India                1 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-05-29.json
+
+══════════════════════════════════════════════════════════════
+Done.
+
