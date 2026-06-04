@@ -1013,6 +1013,8 @@ Disallow: /*?_rsc=*
 14. **SSL renewal automation** — certbot renews Aug 5, verify auto-renewal works.
 
 #### ✅ Completed During This Audit
+- ~~Fix GSC Product snippet validation error~~ — Changed vehicle hub schema from `@type: Vehicle` (with invalid `offers.price: '0'`) to `@type: WebPage` with nested `about: { @type: Vehicle }`. Google treats Vehicle as a Product subtype and requires positive price; these are informational pages, not listings.
+- ~~Fix GSC indexing crisis~~ — Slimmed repair sitemap from 196K thin URLs to 4,803 qualified URLs with real DB content. Fixed corrupted `package.json` prebuild script.
 - ~~Kill rsyslog infinite loop~~ — Killed PID 1112362. Load dropped from 2.17 to 0.73.
 - ~~Kill stray Next.js on port 3000~~ — Killed PID 1139226. Freed 175MB RAM.
 - ~~Add `error.tsx`~~ — Added `src/app/error.tsx` to prevent noindex injection.
