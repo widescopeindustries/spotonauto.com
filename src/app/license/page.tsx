@@ -25,16 +25,64 @@ export default function LicensePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">2. Permitted Uses (Metered)</h2>
+            <h2 className="text-xl font-semibold text-white mb-3">2. Content Tiers</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Not all content is equal. Factory manual pages with diagnostic flowcharts and teardown 
+              procedures are priced at a premium compared to general repair guides.
+            </p>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center border border-white/10 rounded-xl p-4 bg-white/[0.02]">
+                <div>
+                  <h3 className="font-medium text-white">Factory Manual Pages</h3>
+                  <p className="text-xs text-gray-500">/manual/* — OEM diagnostic trees, DTC flowcharts, teardown procedures</p>
+                </div>
+                <span className="text-xl font-bold text-cyan-400">$2.00 <span className="text-sm font-normal text-gray-500">/ page</span></span>
+              </div>
+
+              <div className="flex justify-between items-center border border-white/10 rounded-xl p-4 bg-white/[0.02]">
+                <div>
+                  <h3 className="font-medium text-white">Wiring Diagrams</h3>
+                  <p className="text-xs text-gray-500">/wiring/* — Schematics, pinouts, connector maps</p>
+                </div>
+                <span className="text-xl font-bold text-white">$1.50 <span className="text-sm font-normal text-gray-500">/ page</span></span>
+              </div>
+
+              <div className="flex justify-between items-center border border-white/10 rounded-xl p-4 bg-white/[0.02]">
+                <div>
+                  <h3 className="font-medium text-white">DTC Codes & Flowcharts</h3>
+                  <p className="text-xs text-gray-500">/codes/* — Diagnostic trouble codes with factory test procedures</p>
+                </div>
+                <span className="text-xl font-bold text-white">$1.00 <span className="text-sm font-normal text-gray-500">/ page</span></span>
+              </div>
+
+              <div className="flex justify-between items-center border border-white/10 rounded-xl p-4 bg-white/[0.02]">
+                <div>
+                  <h3 className="font-medium text-white">Repair Guides</h3>
+                  <p className="text-xs text-gray-500">/repair/* — Step-by-step repair procedures</p>
+                </div>
+                <span className="text-xl font-bold text-white">$0.50 <span className="text-sm font-normal text-gray-500">/ page</span></span>
+              </div>
+
+              <div className="flex justify-between items-center border border-white/10 rounded-xl p-4 bg-white/[0.02]">
+                <div>
+                  <h3 className="font-medium text-white">Tool / Spec Pages</h3>
+                  <p className="text-xs text-gray-500">/tools/*, /maintenance/* — Fluid capacities, torque specs, part numbers</p>
+                </div>
+                <span className="text-xl font-bold text-white">$0.25 <span className="text-sm font-normal text-gray-500">/ page</span></span>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-white mb-3">3. Use Cases</h2>
             <div className="space-y-4">
               <div className="border border-white/10 rounded-xl p-5 bg-white/[0.02]">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-medium text-cyan-400">Training / Pre-training</h3>
-                  <span className="text-lg font-bold text-white">$0.50 <span className="text-sm font-normal text-gray-500">/ page</span></span>
                 </div>
                 <p className="text-sm text-gray-400">
                   Use of page content for training, pre-training, or fine-tuning generative AI models. 
-                  Rate applies per page per training run. Minimum commitment: 12 months.
+                  Rates apply per page per training run based on content tier above. Minimum commitment: 12 months.
                 </p>
               </div>
 
@@ -45,25 +93,25 @@ export default function LicensePage() {
                 </div>
                 <p className="text-sm text-gray-400">
                   Live retrieval of content for end-user query responses. Billed per successful 
-                  API retrieval call.
+                  API retrieval call regardless of content tier.
                 </p>
               </div>
 
               <div className="border border-white/10 rounded-xl p-5 bg-white/[0.02]">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-medium text-cyan-400">Embeddings / Vectorization</h3>
-                  <span className="text-lg font-bold text-white">$0.25 <span className="text-sm font-normal text-gray-500">/ page</span></span>
+                  <span className="text-lg font-bold text-white">50% <span className="text-sm font-normal text-gray-500">of training rate</span></span>
                 </div>
                 <p className="text-sm text-gray-400">
                   Creation of vector embeddings, semantic indexes, or compressed representations 
-                  for search and retrieval systems.
+                  for search and retrieval systems. Priced at half the training tier rate.
                 </p>
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">3. Bulk Discounts</h2>
+            <h2 className="text-xl font-semibold text-white mb-3">4. Bulk Discounts</h2>
             <ul className="space-y-2 text-gray-400">
               <li className="flex justify-between border-b border-white/5 pb-2">
                 <span>100K+ pages</span>
@@ -81,7 +129,7 @@ export default function LicensePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">4. Prohibited Uses</h2>
+            <h2 className="text-xl font-semibold text-white mb-3">5. Prohibited Uses</h2>
             <ul className="list-disc list-inside space-y-2 text-gray-400">
               <li>Redistribution of raw corpus downloads without attribution</li>
               <li>Use in competing automotive repair products without a separate commercial agreement</li>
@@ -91,7 +139,7 @@ export default function LicensePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">5. Attribution Requirement</h2>
+            <h2 className="text-xl font-semibold text-white mb-3">6. Attribution Requirement</h2>
             <p className="text-gray-400 leading-relaxed">
               Any output derived from AllOEMManuals content must include attribution to the 
               source URL. Example: &quot;Data sourced from AllOEMManuals — 
@@ -100,7 +148,7 @@ export default function LicensePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">6. Contact</h2>
+            <h2 className="text-xl font-semibold text-white mb-3">7. Contact</h2>
             <p className="text-gray-400 leading-relaxed">
               For enterprise licensing, custom terms, or questions:{' '}
               <a href="mailto:info@widescopeindustries.com" className="text-cyan-400 hover:underline">
