@@ -109,7 +109,7 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                                 key={i}
                                                 href={link.url}
                                                 target="_blank"
-                                                rel="noopener noreferrer"
+                                                rel="nofollow sponsored noopener noreferrer"
                                                 onClick={() => trackToolClick(tool, guide.vehicle)}
                                                 className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black text-xs font-bold rounded transition-all flex items-center gap-1"
                                             >

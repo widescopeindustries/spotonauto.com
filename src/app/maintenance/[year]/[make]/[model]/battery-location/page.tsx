@@ -221,22 +221,22 @@ export default async function BatteryLocationPage({ params }: PageProps) {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a href={buildAmazonSearchUrl(`${displayMake} ${displayModel} battery ${size || ''} ${year}`, "automotive", `battery-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-green-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(`${displayMake} ${displayModel} battery ${size || ''} ${year}`, "automotive", `battery-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-green-400/40 transition-all group">
               <p className="text-sm text-green-400 mb-1">Battery</p>
               <h3 className="text-base font-semibold text-white group-hover:text-green-300 transition-colors">{displayMake} {displayModel} {size || 'Replacement Battery'}</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("battery terminal cleaner brush", "automotive", `cleaner-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-green-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("battery terminal cleaner brush", "automotive", `cleaner-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-green-400/40 transition-all group">
               <p className="text-sm text-green-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-green-300 transition-colors">Battery Terminal Cleaner</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("battery tender maintainer", "automotive", `tender-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-green-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("battery tender maintainer", "automotive", `tender-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-green-400/40 transition-all group">
               <p className="text-sm text-green-400 mb-1">Accessory</p>
               <h3 className="text-base font-semibold text-white group-hover:text-green-300 transition-colors">Battery Tender / Maintainer</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("dielectric grease battery terminals", "automotive", `grease-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-green-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("dielectric grease battery terminals", "automotive", `grease-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-green-400/40 transition-all group">
               <p className="text-sm text-green-400 mb-1">Supply</p>
               <h3 className="text-base font-semibold text-white group-hover:text-green-300 transition-colors">Dielectric Grease</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>

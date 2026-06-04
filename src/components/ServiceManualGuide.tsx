@@ -250,7 +250,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
                                                 key={linkIdx}
                                                 href={link.url}
                                                 target="_blank"
-                                                rel="noopener noreferrer"
+                                                rel="nofollow sponsored noopener noreferrer"
                                                 onClick={() => trackAffiliateClick({
                                                     provider: 'Amazon',
                                                     partName: part.name,
@@ -291,7 +291,7 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
                                                 <a
                                                     href={links[0].url}
                                                     target="_blank"
-                                                    rel="noopener noreferrer"
+                                                    rel="nofollow sponsored noopener noreferrer"
                                                     onClick={() => trackToolClick(tool, guide.vehicle, guideAnalyticsContext)}
                                                     className="tool-buy"
                                                 >

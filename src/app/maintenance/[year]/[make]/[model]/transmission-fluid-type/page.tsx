@@ -230,22 +230,22 @@ export default async function TransmissionFluidTypePage({ params }: PageProps) {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a href={buildAmazonSearchUrl(fluidSearchQuery, "automotive", `trans-fluid-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-rose-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(fluidSearchQuery, "automotive", `trans-fluid-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-rose-400/40 transition-all group">
               <p className="text-sm text-rose-400 mb-1">Transmission Fluid</p>
               <h3 className="text-base font-semibold text-white group-hover:text-rose-300 transition-colors">{displayMake} {displayModel} ATF / MTF</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl(funnelQuery, "automotive", `funnel-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-rose-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(funnelQuery, "automotive", `funnel-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-rose-400/40 transition-all group">
               <p className="text-sm text-rose-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-rose-300 transition-colors">Long-Neck Transmission Funnel</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl(drainPanQuery, "automotive", `pan-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-rose-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(drainPanQuery, "automotive", `pan-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-rose-400/40 transition-all group">
               <p className="text-sm text-rose-400 mb-1">Drain Pan</p>
               <h3 className="text-base font-semibold text-white group-hover:text-rose-300 transition-colors">Large Capacity Drain Pan</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("torque wrench ft lb", "automotive", `wrench-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-rose-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("torque wrench ft lb", "automotive", `wrench-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-rose-400/40 transition-all group">
               <p className="text-sm text-rose-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-rose-300 transition-colors">Torque Wrench (ft-lb)</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>

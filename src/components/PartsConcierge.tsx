@@ -124,7 +124,7 @@ export default function PartsConcierge({ text, vehicle }: PartsConciergeProps) {
                 <a
                   href={item.affiliateUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="nofollow sponsored noopener noreferrer"
                   className={`ml-4 flex items-center space-x-1 rounded-lg px-3 py-1.5 text-xs font-semibold bg-white/[0.04] border border-white/5 hover:border-white/10 hover:bg-white/[0.08] transition duration-200 ${textColor}`}
                 >
                   <span>Shop</span>

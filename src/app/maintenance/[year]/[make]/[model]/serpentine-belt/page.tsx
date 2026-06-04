@@ -216,22 +216,22 @@ export default async function SerpentineBeltPage({ params }: PageProps) {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a href={buildAmazonSearchUrl(`${displayMake} ${displayModel} serpentine belt ${partNum || ''} ${year}`, "automotive", `belt-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-purple-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(`${displayMake} ${displayModel} serpentine belt ${partNum || ''} ${year}`, "automotive", `belt-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-purple-400/40 transition-all group">
               <p className="text-sm text-purple-400 mb-1">Serpentine Belt</p>
               <h3 className="text-base font-semibold text-white group-hover:text-purple-300 transition-colors">{displayMake} {displayModel} {partNum || 'Replacement Belt'}</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("serpentine belt tool kit tensioner", "automotive", `tool-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-purple-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("serpentine belt tool kit tensioner", "automotive", `tool-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-purple-400/40 transition-all group">
               <p className="text-sm text-purple-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-purple-300 transition-colors">Belt Tensioner Tool</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("idler pulley replacement", "automotive", `pulley-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-purple-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("idler pulley replacement", "automotive", `pulley-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-purple-400/40 transition-all group">
               <p className="text-sm text-purple-400 mb-1">Related Part</p>
               <h3 className="text-base font-semibold text-white group-hover:text-purple-300 transition-colors">Idler / Tensioner Pulley</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("belt dressing squeal stop", "automotive", `dressing-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-purple-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("belt dressing squeal stop", "automotive", `dressing-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-purple-400/40 transition-all group">
               <p className="text-sm text-purple-400 mb-1">Supply</p>
               <h3 className="text-base font-semibold text-white group-hover:text-purple-300 transition-colors">Belt Dressing / Squeal Stop</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>

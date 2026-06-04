@@ -204,12 +204,12 @@ export default async function HeadlightBulbPage({ params }: PageProps) {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a href={buildAmazonSearchUrl(bulbSearchQuery, "automotive", `bulb-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-yellow-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(bulbSearchQuery, "automotive", `bulb-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-yellow-400/40 transition-all group">
               <p className="text-sm text-yellow-400 mb-1">Headlight Bulbs</p>
               <h3 className="text-base font-semibold text-white group-hover:text-yellow-300 transition-colors">{displayMake} {displayModel} Replacement Bulbs</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("headlight bulb installation tool", "automotive", `tool-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-yellow-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("headlight bulb installation tool", "automotive", `tool-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-yellow-400/40 transition-all group">
               <p className="text-sm text-yellow-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-yellow-300 transition-colors">Bulb Installation Gloves / Tool</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>

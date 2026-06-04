@@ -188,12 +188,12 @@ export default async function FluidCapacityPage({ params }: PageProps) {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a href={buildAmazonSearchUrl(funnelQuery, "automotive", `funnel-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(funnelQuery, "automotive", `funnel-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group">
               <p className="text-sm text-cyan-400 mb-1">Tools</p>
               <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">Fluid Funnel Set</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("large drain pan 10 quart", "automotive", `pan-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("large drain pan 10 quart", "automotive", `pan-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group">
               <p className="text-sm text-cyan-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">Large Capacity Drain Pan</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>

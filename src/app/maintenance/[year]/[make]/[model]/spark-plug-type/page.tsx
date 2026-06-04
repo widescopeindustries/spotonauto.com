@@ -237,22 +237,22 @@ export default async function SparkPlugTypePage({ params }: PageProps) {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a href={buildAmazonSearchUrl(plugSearchQuery, "automotive", `plugs-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-orange-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(plugSearchQuery, "automotive", `plugs-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-orange-400/40 transition-all group">
               <p className="text-sm text-orange-400 mb-1">Spark Plugs</p>
               <h3 className="text-base font-semibold text-white group-hover:text-orange-300 transition-colors">{displayMake} {displayModel} Spark Plugs</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl(gapToolQuery, "automotive", `gap-tool-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-orange-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(gapToolQuery, "automotive", `gap-tool-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-orange-400/40 transition-all group">
               <p className="text-sm text-orange-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-orange-300 transition-colors">Spark Plug Gap Tool / Feeler Gauge</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl(torqueWrenchQuery, "automotive", `torque-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-orange-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(torqueWrenchQuery, "automotive", `torque-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-orange-400/40 transition-all group">
               <p className="text-sm text-orange-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-orange-300 transition-colors">Inch-Pound Torque Wrench</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("spark plug socket set magnetic", "automotive", `socket-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-orange-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("spark plug socket set magnetic", "automotive", `socket-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-orange-400/40 transition-all group">
               <p className="text-sm text-orange-400 mb-1">Tool</p>
               <h3 className="text-base font-semibold text-white group-hover:text-orange-300 transition-colors">Magnetic Spark Plug Socket</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>

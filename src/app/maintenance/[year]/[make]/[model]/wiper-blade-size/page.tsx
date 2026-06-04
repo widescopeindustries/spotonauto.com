@@ -212,22 +212,22 @@ export default async function WiperBladeSizePage({ params }: PageProps) {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <a href={buildAmazonSearchUrl(`${displayMake} ${displayModel} wiper blades ${driver || ''} ${year}`, "automotive", `wipers-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-sky-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl(`${displayMake} ${displayModel} wiper blades ${driver || ''} ${year}`, "automotive", `wipers-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-sky-400/40 transition-all group">
               <p className="text-sm text-sky-400 mb-1">Wiper Blades</p>
               <h3 className="text-base font-semibold text-white group-hover:text-sky-300 transition-colors">{displayMake} {displayModel} Replacement Wipers</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("wiper blade refills universal", "automotive", `refills-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-sky-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("wiper blade refills universal", "automotive", `refills-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-sky-400/40 transition-all group">
               <p className="text-sm text-sky-400 mb-1">Refills</p>
               <h3 className="text-base font-semibold text-white group-hover:text-sky-300 transition-colors">Wiper Blade Refills</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("rainx windshield treatment", "automotive", `rainx-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-sky-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("rainx windshield treatment", "automotive", `rainx-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-sky-400/40 transition-all group">
               <p className="text-sm text-sky-400 mb-1">Treatment</p>
               <h3 className="text-base font-semibold text-white group-hover:text-sky-300 transition-colors">Rain-X Windshield Treatment</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
-            <a href={buildAmazonSearchUrl("windshield washer fluid concentrate", "automotive", `washer-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="noopener noreferrer" className="block glass rounded-xl p-5 hover:border-sky-400/40 transition-all group">
+            <a href={buildAmazonSearchUrl("windshield washer fluid concentrate", "automotive", `washer-${year}-${canonicalMake}-${canonicalModel}`)} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block glass rounded-xl p-5 hover:border-sky-400/40 transition-all group">
               <p className="text-sm text-sky-400 mb-1">Fluid</p>
               <h3 className="text-base font-semibold text-white group-hover:text-sky-300 transition-colors">Windshield Washer Fluid</h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>

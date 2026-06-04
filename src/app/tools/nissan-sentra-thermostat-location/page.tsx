@@ -136,7 +136,7 @@ export default function NissanSentraThermostatPage() {
                                             <a
                                                 href={buildAmazonSearchUrl(`Nissan Sentra ${gen.years.split('-')[0]} thermostat`)}
                                                 target="_blank"
-                                                rel="noopener noreferrer"
+                                                rel="nofollow sponsored noopener noreferrer"
                                                 className="px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"
                                             >
                                                 Find Part
@@ -227,17 +227,17 @@ export default function NissanSentraThermostatPage() {
                 <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-12">
                     <h2 className="text-xl font-bold mb-4">⭐ Recommended Thermostats</h2>
                     <div className="grid md:grid-cols-3 gap-4">
-                        <a href={buildAmazonSearchUrl('Stant thermostat Nissan Sentra')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Stant thermostat Nissan Sentra')} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Stant SuperStat</h3>
                             <p className="text-sm text-gray-400">OEM equivalent, reliable</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
-                        <a href={buildAmazonSearchUrl('Motorad thermostat Nissan')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Motorad thermostat Nissan')} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Motorad</h3>
                             <p className="text-sm text-gray-400">Fail-safe design</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
-                        <a href={buildAmazonSearchUrl('Nissan Sentra thermostat housing gasket kit', 'automotive', 'tool-sentra-thermostat')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Nissan Sentra thermostat housing gasket kit', 'automotive', 'tool-sentra-thermostat')} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Housing + Gasket Kit</h3>
                             <p className="text-sm text-gray-400">Complete replacement</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>

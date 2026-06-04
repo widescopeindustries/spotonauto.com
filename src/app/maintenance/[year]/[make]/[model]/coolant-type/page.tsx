@@ -207,7 +207,7 @@ export default async function CoolantTypePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl(coolantSearchQuery, "automotive", `coolant-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-emerald-400/40 transition-all group"
             >
               <p className="text-sm text-emerald-400 mb-1">Engine Coolant / Antifreeze</p>
@@ -219,7 +219,7 @@ export default async function CoolantTypePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl("coolant funnel spill free", "automotive", `funnel-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-emerald-400/40 transition-all group"
             >
               <p className="text-sm text-emerald-400 mb-1">Tool</p>
@@ -231,7 +231,7 @@ export default async function CoolantTypePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl("coolant tester hydrometer", "automotive", `tester-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-emerald-400/40 transition-all group"
             >
               <p className="text-sm text-emerald-400 mb-1">Tester</p>
@@ -243,7 +243,7 @@ export default async function CoolantTypePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl("drain pan coolant catch", "automotive", `pan-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-emerald-400/40 transition-all group"
             >
               <p className="text-sm text-emerald-400 mb-1">Drain Pan</p>

@@ -185,7 +185,7 @@ export default async function TireSizePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl(tireSearchQuery, "automotive", `tire-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
             >
               <p className="text-sm text-cyan-400 mb-1">Replacement Tires</p>
@@ -197,7 +197,7 @@ export default async function TireSizePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl("tire pressure gauge digital", "automotive", `gauge-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
             >
               <p className="text-sm text-cyan-400 mb-1">Tool</p>

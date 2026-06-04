@@ -113,7 +113,7 @@ export default function HyundaiSonataBeltDiagramPage() {
                                             <a
                                                 href={buildAmazonSearchUrl(`Hyundai Sonata ${gen.years.split('-')[0]} serpentine belt`, 'automotive', 'tool-sonata-belt')}
                                                 target="_blank"
-                                                rel="noopener noreferrer"
+                                                rel="nofollow sponsored noopener noreferrer"
                                                 className="px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"
                                             >
                                                 Find Belt
@@ -196,17 +196,17 @@ export default function HyundaiSonataBeltDiagramPage() {
                 <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-12">
                     <h2 className="text-xl font-bold mb-4">⭐ Recommended Belts</h2>
                     <div className="grid md:grid-cols-3 gap-4">
-                        <a href={buildAmazonSearchUrl('Gates serpentine belt Hyundai Sonata')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Gates serpentine belt Hyundai Sonata')} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Gates K-Series</h3>
                             <p className="text-sm text-gray-400">OEM quality, EPDM rubber</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
-                        <a href={buildAmazonSearchUrl('Continental serpentine belt Hyundai')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Continental serpentine belt Hyundai')} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Continental Elite</h3>
                             <p className="text-sm text-gray-400">Premium aftermarket</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>
                         </a>
-                        <a href={buildAmazonSearchUrl('Hyundai Sonata belt tensioner kit', 'automotive', 'tool-sonata-belt')} target="_blank" rel="noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
+                        <a href={buildAmazonSearchUrl('Hyundai Sonata belt tensioner kit', 'automotive', 'tool-sonata-belt')} target="_blank" rel="nofollow sponsored noopener noreferrer" className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition">
                             <h3 className="font-bold">Belt + Tensioner Kit</h3>
                             <p className="text-sm text-gray-400">Replace both for reliability</p>
                             <p className="text-amber-400 text-sm mt-2">Shop on Amazon →</p>

@@ -110,7 +110,7 @@ export default function BMWX3HeadlightPage() {
                                             <a
                                                 href={buildAmazonSearchUrl(`BMW X3 ${gen.years.split('-')[0]} headlight bulb`)}
                                                 target="_blank"
-                                                rel="noopener noreferrer"
+                                                rel="nofollow sponsored noopener noreferrer"
                                                 className="px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded hover:bg-amber-400 transition inline-block"
                                             >
                                                 Find Bulbs
@@ -151,7 +151,7 @@ export default function BMWX3HeadlightPage() {
                     <a
                         href={buildAmazonSearchUrl('BMW headlight replacement tool kit')}
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="nofollow sponsored noopener noreferrer"
                         className="inline-block mt-4 text-cyan-400 hover:underline text-sm"
                     >
                         Shop complete tool kits →
@@ -231,7 +231,7 @@ export default function BMWX3HeadlightPage() {
                         <a
                             href={buildAmazonSearchUrl('Philips H7 headlight bulb', 'automotive', 'tool-bmw-x3-headlight')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
                         >
                             <h3 className="font-bold">Philips X-tremeVision</h3>
@@ -241,7 +241,7 @@ export default function BMWX3HeadlightPage() {
                         <a
                             href={buildAmazonSearchUrl('Sylvania Silverstar H7', 'automotive', 'tool-bmw-x3-headlight')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
                         >
                             <h3 className="font-bold">Sylvania SilverStar</h3>
@@ -251,7 +251,7 @@ export default function BMWX3HeadlightPage() {
                         <a
                             href={buildAmazonSearchUrl('BMW X3 LED headlight bulb H7')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
                         >
                             <h3 className="font-bold">LED Upgrade Kit</h3>

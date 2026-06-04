@@ -282,7 +282,7 @@ export default function BMWX3OilTypePage() {
                                                 <a
                                                     href={buildAmazonSearchUrl(`BMW ${e.spec} ${e.oilType} oil`, 'automotive', 'tool-bmw-x3-oil')}
                                                     target="_blank"
-                                                    rel="noopener noreferrer"
+                                                    rel="nofollow sponsored noopener noreferrer"
                                                     className="px-3 py-2 bg-amber-500 text-black text-xs font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"
                                                 >
                                                     Find Oil
@@ -315,7 +315,7 @@ export default function BMWX3OilTypePage() {
                         <a
                             href={buildAmazonSearchUrl('Castrol Edge 0W-30 BMW LL01')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-amber-400 transition"
                         >
                             <h3 className="font-bold">Castrol Edge 0W-30</h3>
@@ -326,7 +326,7 @@ export default function BMWX3OilTypePage() {
                         <a
                             href={buildAmazonSearchUrl('Liqui Moly Synthoil 0W-40 BMW', 'automotive', 'tool-bmw-x3-oil')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-amber-400 transition"
                         >
                             <h3 className="font-bold">Liqui-Moly Synthoil 0W-40</h3>
@@ -337,7 +337,7 @@ export default function BMWX3OilTypePage() {
                         <a
                             href={buildAmazonSearchUrl('Motul 8100 X-clean 5W-30 BMW LL04')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-amber-400 transition"
                         >
                             <h3 className="font-bold">Motul 8100 X-clean 5W-30</h3>

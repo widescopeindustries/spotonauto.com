@@ -202,7 +202,7 @@ export default async function OilTypePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl(oilSearchQuery, "automotive", `oil-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
             >
               <p className="text-sm text-cyan-400 mb-1">Engine Oil</p>
@@ -214,7 +214,7 @@ export default async function OilTypePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl(filterSearchQuery, "automotive", `filter-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
             >
               <p className="text-sm text-cyan-400 mb-1">Oil Filter</p>
@@ -226,7 +226,7 @@ export default async function OilTypePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl("oil filter wrench", "automotive", `wrench-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
             >
               <p className="text-sm text-cyan-400 mb-1">Tool</p>
@@ -238,7 +238,7 @@ export default async function OilTypePage({ params }: PageProps) {
             <a
               href={buildAmazonSearchUrl("funnel oil change drain pan kit", "automotive", `kit-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
             >
               <p className="text-sm text-cyan-400 mb-1">Kit</p>

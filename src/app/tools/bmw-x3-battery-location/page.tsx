@@ -133,7 +133,7 @@ export default function BMWX3BatteryLocationPage() {
                                             <a
                                                 href={buildAmazonSearchUrl(`BMW X3 battery ${gen.agm.includes('Yes') ? 'AGM ' : ''}H7 94R`, 'automotive', 'tool-bmw-x3-battery')}
                                                 target="_blank"
-                                                rel="noopener noreferrer"
+                                                rel="nofollow sponsored noopener noreferrer"
                                                 className="px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded hover:bg-amber-400 transition inline-block whitespace-nowrap"
                                             >
                                                 Find Battery
@@ -212,7 +212,7 @@ export default function BMWX3BatteryLocationPage() {
                         <a
                             href={buildAmazonSearchUrl('ACDelco 94R AGM battery')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
                         >
                             <h3 className="font-bold">ACDelco 94R AGM</h3>
@@ -222,7 +222,7 @@ export default function BMWX3BatteryLocationPage() {
                         <a
                             href={buildAmazonSearchUrl('Optima RedTop H7 battery')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
                         >
                             <h3 className="font-bold">Optima RedTop</h3>
@@ -232,7 +232,7 @@ export default function BMWX3BatteryLocationPage() {
                         <a
                             href={buildAmazonSearchUrl('Bosch S6 AGM battery H7')}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="nofollow sponsored noopener noreferrer"
                             className="block bg-white/5 rounded-lg p-4 border border-white/10 hover:border-cyan-400 transition"
                         >
                             <h3 className="font-bold">Bosch S6 AGM</h3>
