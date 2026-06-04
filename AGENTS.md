@@ -3,12 +3,13 @@
 This file is the durable project memory for future Codex runs in this repo.
 Update it when product decisions, traps, or standing preferences change.
 
-## Current State Snapshot (2026-05-19 — Post Full Audit)
+## Current State Snapshot (2026-06-04 — Post Indexing Crisis Fix)
 
 ### Domain & Traffic
 - **Primary domain:** `alloemmanuals.com` (purchased 2026-05-07, ~12 days old)
 - **Legacy domain:** `spotonauto.com` → 301 redirects to `alloemmanuals.com` (nginx + Next.js)
-- **Google index:** 278,787 pages discovered, 447 excluded by noindex, 64 server errors
+- **Google index:** 268,038 pages "Discovered - currently not indexed", 6,336 excluded by noindex (FIXED 2026-06-04 — see below)
+- **Previous state:** 278,787 pages discovered, 447 excluded by noindex, 64 server errors
 - **Homepage SERP:** US position 11.7 (page 2); international positions 4-7
 - **Bing Search:** 160 clicks, 3K impressions, 5.32% CTR
 - **Bing AI/Copilot citations:** 736 citations, 43 unique pages cited daily
@@ -46,6 +47,18 @@ See comprehensive audit section at bottom of this file for full details.
 7. **Vehicle hub links** — `MAINTENANCE_TOOL_TYPES` already routes tool type cards to `/maintenance/{year}/{make}/{model}/{toolType}` instead of generic `/tools/`.
 8. **IndexNow submission** — Submitted new maintenance URLs to Bing/Google via IndexNow.
 9. **SSH key auth** — Set up ed25519 key-based auth for VPS deploy. No more password/fail2ban issues.
+
+### Critical Fix: GSC Indexing Crisis (2026-06-04)
+**Problem:** 268,038 pages "Discovered - currently not indexed" + 6,336 excluded by `noindex`. Root cause: repair sitemap had 196,155 URLs but only ~4,300 had real OEM content in DB; the rest were thin pages wasting Google's crawl budget.
+
+**Fix:**
+1. **Added `scripts/export-qualified-keys.mjs`** — Queries `vehicle_repair_profiles` + `vehicle_repair_specs` to export ONLY URLs with real content.
+2. **Rewrote `scripts/generate-repair-sitemaps.mjs`** — Now loads `qualified-keys.json` instead of generating all 196K vehicle/task combinations.
+3. **Rebuilt repair sitemap** — Down from 196,155 URLs to **4,803 qualified URLs** (all have real DB-backed content).
+4. **Fixed corrupted `package.json` prebuild** — Failed sed edit had mangled the script into concatenated duplicates.
+5. **Deployed + purged nginx cache** — New sitemap now live at `https://alloemmanuals.com/repair/sitemap.xml`.
+
+**Result:** Google now receives a sitemap of exclusively high-quality, content-rich pages. Crawl budget should shift to indexing the good pages instead of discovering and abandoning thin ones.
 
 ### Earlier Deploys (2026-05-14)
 - Manuel AI chat rebrand, brand consistency fix, schema validation, auto-generated FAQs, generic text filter, BreadcrumbList schema, GA4 tracking fix
