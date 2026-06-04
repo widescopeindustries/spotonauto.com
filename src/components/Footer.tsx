@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Cpu, Zap, Car, BookOpen, Shield, Mail, Phone, MapPin } from 'lucide-react';
 import { COMPANY_INFO, formatBusinessAddress } from '@/lib/companyInfo';
 
@@ -13,9 +14,11 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="md:col-span-1">
                         <div className="flex items-center mb-4">
-                            <img
+                            <Image
                                 src="/logo.png?v=3"
                                 alt="AllOEMManuals"
+                                width={200}
+                                height={83}
                                 className="h-10 w-auto object-contain"
                             />
                         </div>

@@ -1,109 +1,8 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HomeVehiclePicker from "../HomeVehiclePicker";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function HeroSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const bgTextRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const sublineRef = useRef<HTMLParagraphElement>(null);
-  const pickerRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Parallax on giant background text — moves slower than scroll (layered depth)
-      if (bgTextRef.current) {
-        gsap.to(bgTextRef.current, {
-          y: 300,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 1,
-          },
-        });
-      }
-
-      // Subtle parallax on grid background
-      if (gridRef.current) {
-        gsap.to(gridRef.current, {
-          y: 100,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 2,
-          },
-        });
-      }
-
-      // Headline word-by-word stagger reveal on load
-      if (headlineRef.current) {
-        const words = headlineRef.current.querySelectorAll(".word");
-        gsap.from(words, {
-          y: 80,
-          opacity: 0,
-          rotateX: -40,
-          duration: 1,
-          stagger: 0.1,
-          ease: "power3.out",
-          delay: 0.2,
-        });
-      }
-
-      // Subline fade up
-      if (sublineRef.current) {
-        gsap.from(sublineRef.current, {
-          y: 30,
-          opacity: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          delay: 0.8,
-        });
-      }
-
-      // Picker glass container scale + fade in
-      if (pickerRef.current) {
-        gsap.from(pickerRef.current, {
-          y: 50,
-          opacity: 0,
-          scale: 0.95,
-          duration: 1,
-          ease: "power3.out",
-          delay: 1.0,
-        });
-      }
-
-      // Stats stagger in with glass effect
-      if (statsRef.current) {
-        gsap.from(statsRef.current.children, {
-          y: 20,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.08,
-          ease: "power3.out",
-          delay: 1.3,
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section
-      ref={sectionRef}
       id="home"
       className="relative flex min-h-[100vh] items-center overflow-hidden"
     >
@@ -113,7 +12,6 @@ export default function HeroSection() {
 
       {/* Animated grid lines — subtle parallax layer */}
       <div
-        ref={gridRef}
         className="absolute inset-0 opacity-[0.035]"
         style={{
           backgroundImage: `
@@ -131,10 +29,7 @@ export default function HeroSection() {
       <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-[#FF6B00]/[0.03] blur-[120px] rounded-full pointer-events-none" />
 
       {/* Giant layered background text — "OEM" sits BEHIND content like "Japan" behind mountains */}
-      <div
-        ref={bgTextRef}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] pointer-events-none select-none z-0"
-      >
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] pointer-events-none select-none z-0">
         <span
           className="block text-[22vw] font-black tracking-tighter text-white/[0.025] whitespace-nowrap font-display leading-none"
           style={{
@@ -150,10 +45,7 @@ export default function HeroSection() {
         <div className="mx-auto max-w-3xl text-center">
           {/* Perspective container for 3D text reveal */}
           <div className="perspective-1000">
-            <h1
-              ref={headlineRef}
-              className="text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-7xl font-display preserve-3d"
-            >
+            <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-7xl font-display preserve-3d">
               <span className="word inline-block">Silence</span>{" "}
               <span className="word inline-block">The</span>
               <br className="hidden sm:block" />
@@ -169,10 +61,7 @@ export default function HeroSection() {
             </h1>
           </div>
 
-          <p
-            ref={sublineRef}
-            className="mx-auto mt-6 max-w-xl text-base text-gray-400 sm:text-lg leading-relaxed"
-          >
+          <p className="mx-auto mt-6 max-w-xl text-base text-gray-400 sm:text-lg leading-relaxed">
             Factory repair data for your exact year, make, and model — DTC
             codes, wiring diagrams, torque specs, and step-by-step procedures.
             The same manuals the pros use, organized so you can fix it yourself.
@@ -180,7 +69,7 @@ export default function HeroSection() {
         </div>
 
         {/* Glass morphism vehicle picker — frosted over the grid */}
-        <div ref={pickerRef} className="mx-auto mt-10 max-w-3xl">
+        <div className="mx-auto mt-10 max-w-3xl">
           <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-2xl p-6 sm:p-8 shadow-[0_0_80px_-20px_rgba(0,212,255,0.12)] overflow-hidden">
             {/* Inner gradient border shimmer */}
             <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
@@ -198,10 +87,7 @@ export default function HeroSection() {
         </div>
 
         {/* Glass morphism stat pills */}
-        <div
-          ref={statsRef}
-          className="mx-auto mt-10 flex flex-wrap items-center justify-center gap-3 text-sm"
-        >
+        <div className="mx-auto mt-10 flex flex-wrap items-center justify-center gap-3 text-sm">
           {[
             { label: "1.4M+ OEM Procedures", color: "bg-cyan-400", glow: "shadow-[0_0_8px_rgba(0,212,255,0.4)]" },
             { label: "8,881 DTC Codes", color: "bg-cyan-400", glow: "shadow-[0_0_8px_rgba(0,212,255,0.4)]" },

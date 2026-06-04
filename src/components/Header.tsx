@@ -2,6 +2,7 @@
 
 import { FormEvent, useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Cpu, Menu, X, Car } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -51,9 +52,12 @@ export default function Header() {
               className="flex items-center group"
               aria-label="AllOEMManuals Home"
             >
-              <img
+              <Image
                 src="/logo.png?v=3"
                 alt="AllOEMManuals"
+                width={200}
+                height={83}
+                priority
                 className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
               />
             </Link>
