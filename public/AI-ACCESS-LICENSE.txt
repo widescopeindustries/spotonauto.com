@@ -1,0 +1,69 @@
+ALLOEMMANUALS AI ACCESS LICENSE v1.0
+Effective Date: June 4, 2026
+
+1. GRANT OF LICENSE
+AllOEMManuals ("Licensor") grants to the licensee ("Licensee") a non-exclusive, 
+non-transferable license to access and use the content available at 
+https://alloemmanuals.com ("the Content") for artificial intelligence training, 
+retrieval, and embedding purposes, subject to the terms and conditions set forth 
+herein.
+
+2. PERMITTED USES
+Licensee may use the Content for the following purposes, provided all applicable 
+fees are paid through Tollbit metering:
+
+   a) TRAINING: Use of page content for training, pre-training, or fine-tuning 
+      generative AI models. Rates are determined by content tier:
+      - Factory Manual Pages (/manual/*): $2.00 per page per training run
+      - Wiring Diagrams (/wiring/*): $1.50 per page per training run
+      - DTC Codes & Flowcharts (/codes/*): $1.00 per page per training run
+      - Repair Guides (/repair/*): $0.50 per page per training run
+      - Tool / Spec Pages (/tools/*, /maintenance/*): $0.25 per page per training run
+
+   b) REAL-TIME RETRIEVAL (RAG): Live retrieval of Content for end-user query 
+      responses at $0.02 per query.
+
+   c) EMBEDDINGS / VECTORIZATION: Creation of vector embeddings or semantic 
+      indexes at 50% of the applicable training rate.
+
+3. BULK PRICING
+   - 100,000+ pages: 15% discount
+   - 500,000+ pages: 25% discount
+   - Full corpus (1,000,000+ pages): Custom enterprise pricing
+
+4. ATTRIBUTION REQUIREMENT
+All outputs derived from the Content must include attribution to the source URL.
+Example: "Data sourced from AllOEMManuals — https://alloemmanuals.com/..."
+
+5. PROHIBITED USES
+Licensee is expressly prohibited from:
+   a) Redistributing raw corpus downloads without attribution
+   b) Using the Content in competing automotive repair products without a 
+      separate commercial agreement
+   c) Circumventing Tollbit metering or accessing Content outside the licensed scope
+   d) Reselling the Content to third parties without written permission
+   e) Using the Content to generate misleading or harmful automotive repair advice
+
+6. TERM AND TERMINATION
+This license is effective upon acceptance and payment of applicable fees. 
+Licensor reserves the right to terminate this license immediately upon breach 
+of any term herein. Upon termination, Licensee must cease all use of the Content 
+and destroy any copies or derivatives in its possession.
+
+7. DISCLAIMER OF WARRANTY
+THE CONTENT IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. LICENSOR MAKES NO 
+REPRESENTATIONS REGARDING THE ACCURACY, COMPLETENESS, OR FITNESS FOR A PARTICULAR 
+PURPOSE OF THE CONTENT.
+
+8. LIMITATION OF LIABILITY
+IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR 
+CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION WITH THIS LICENSE.
+
+9. GOVERNING LAW
+This license shall be governed by the laws of the State of Texas, USA.
+
+10. CONTACT
+For enterprise licensing inquiries: info@widescopeindustries.com
+
+BY ACCESSING OR USING THE CONTENT, LICENSEE ACKNOWLEDGES THAT IT HAS READ, 
+UNDERSTOOD, AND AGREES TO BE BOUND BY THE TERMS OF THIS LICENSE.
