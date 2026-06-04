@@ -1,5 +1,4 @@
 import { MetadataRoute } from 'next'
-import { TOOL_PAGES } from '@/data/tools-pages';
 import { getSitemapLastMod } from '@/lib/sitemap';
 
 const LAST_MOD = getSitemapLastMod();
@@ -41,18 +40,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/disclaimer`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
     );
 
-    // ── Tool pages (~90 high-priority) ────────────────────────────────
-    // Tool pages have conditional noindex (thin content fallback).
-    // They remain in the sitemap; noindex is applied at the page level.
-    for (const tp of TOOL_PAGES) {
-        if (!tp?.slug) continue;
-        entries.push({
-            url: `${baseUrl}/tools/${tp.slug}`,
-            lastModified: LAST_MOD,
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        });
-    }
+    // NOTE: Tool pages (~8,900) are intentionally omitted from the main sitemap.
+    // They have their own dedicated sitemap at /tools/sitemap.xml to keep
+    // this file lightweight and avoid redundant crawl signals.
 
     return entries;
 }
