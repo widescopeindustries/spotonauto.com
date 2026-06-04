@@ -226,6 +226,12 @@ export default async function VehicleLanePage({ params }: PageProps) {
             model: identity.displayModel,
             productionDate: year,
             url: `https://alloemmanuals.com/vehicles/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}`,
+            offers: {
+              '@type': 'Offer',
+              availability: 'https://schema.org/InStock',
+              price: '0',
+              priceCurrency: 'USD',
+            },
             ...(identity.displayVariant
               ? { vehicleEngine: { '@type': 'EngineSpecification', name: identity.displayVariant } }
               : {}),
