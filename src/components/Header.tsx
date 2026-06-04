@@ -53,7 +53,7 @@ export default function Header() {
               aria-label="AllOEMManuals Home"
             >
               <Image
-                src="/logo.png?v=3"
+                src="/logo.png"
                 alt="AllOEMManuals"
                 width={200}
                 height={83}
