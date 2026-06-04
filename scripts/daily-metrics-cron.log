@@ -723,3 +723,185 @@ Done.
 ══════════════════════════════════════════════════════════════
 Done.
 
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-05-30
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      8,271 (+206675.0%)
+  Organic sessions:    53
+  Active users:        8,353
+  New users:           8,309
+  Page views:          99
+  Avg engagement:      3s
+  Bounce rate:         100.0%
+
+=== CHANNELS ===
+
+  Direct                8,191 sessions
+  Unassigned               64 sessions
+  Organic Search           54 sessions
+  Referral                  7 sessions
+  Cross-network             1 sessions
+
+=== TOP PAGES ===
+
+   19 views  /wiring
+    6 views  /diagnose
+    4 views  /repair
+    3 views  /repair/2005/chrysler/pt-cruiser
+    3 views  /repair/2009/honda/fit/brake-rotor-replacement
+    2 views  /repair/2006/mercedes/s-class
+    2 views  /repair/2007/suzuki/swift
+    2 views  /repair/2008/ford/fusion/engine-air-filter-replacement
+    2 views  /repair/2008/honda/civic/engine-air-filter-replacement
+    2 views  /wiring/2011/bmw/335xi-coupe-awd/headlight
+
+=== TOP EVENTS ===
+
+  session_start             8,320
+  first_visit               8,309
+  scroll                    8,223
+  time_on_page               149
+  page_view                   99
+  scroll_depth                81
+  time_on_page_exit           64
+  entry_route_click           44
+  track_impression            34
+  view_search_results         33
+  wiring_diagram_interact     21
+  page_view_custom            20
+  vehicle_hub_enter           20
+  user_engagement             18
+  wiring_diagram_search       15
+
+=== TOP COUNTRIES ===
+
+  Singapore          6,825 users
+  Vietnam            329 users
+  United States      185 users
+  Indonesia          152 users
+  Hong Kong          148 users
+  Japan               93 users
+  India               89 users
+  Germany             61 users
+  Brazil              50 users
+  Philippines         46 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-05-30.json
+
+══════════════════════════════════════════════════════════════
+Done.
+
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-06-02
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      6,522 (-40.5%)
+  Organic sessions:    28 (-58.2%)
+  Active users:        6,450
+  New users:           6,489
+  Page views:          57
+  Avg engagement:      3s
+  Bounce rate:         100.0%
+
+=== CHANNELS ===
+
+  Direct                6,446 sessions
+  Unassigned               45 sessions
+  Organic Search           30 sessions
+  Referral                  6 sessions
+  Cross-network             1 sessions
+
+=== TOP PAGES ===
+
+    8 views  /wiring
+    7 views  /diagnose
+    4 views  /repair
+    3 views  /repair/2000/mercedes/e-class
+    3 views  /
+    2 views  /repair/2004/nissan/350z
+    2 views  /repair/2013/bmw/3-series
+    2 views  /repair/2020/land-rover/discovery
+    2 views  /repair/2024/ford/escape/tail-light-replacement
+    2 views  /manual/Mazda
+
+=== TOP EVENTS ===
+
+  session_start             6,494
+  first_visit               6,489
+  scroll                    6,453
+  time_on_page               103
+  scroll_depth                59
+  page_view                   57
+  entry_route_click           41
+  time_on_page_exit           25
+  vehicle_hub_enter           17
+  page_view_custom             7
+  user_engagement              5
+  knowledge_graph_impression    3
+  repair_guide_open            3
+  repair_page_view             3
+  track_click                  3
+
+=== TOP COUNTRIES ===
+
+  Singapore          4,677 users
+  Vietnam            411 users
+  United States      210 users
+  Hong Kong          169 users
+  Indonesia          152 users
+  Japan               98 users
+  Germany             72 users
+  Brazil              68 users
+  India               60 users
+  Bangladesh          44 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-06-02.json
+
+══════════════════════════════════════════════════════════════
+Done.
+

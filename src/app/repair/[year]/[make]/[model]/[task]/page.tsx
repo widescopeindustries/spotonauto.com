@@ -2019,7 +2019,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const vehicleName = `${canonicalYear} ${displayMake} ${displayModel}`;
     const exactGuideProfile = await getExactGuideProfile(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
     const vehicleSpec = getVehicleRepairSpec(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
-    const hasRealContent = vehicleSpec !== null || exactGuideProfile !== null;
+    const hasGenericContent = canonicalTask in REPAIR_DATA || canonicalTask in TASK_META;
+    const hasRealContent = vehicleSpec !== null || exactGuideProfile !== null || hasGenericContent;
 
     const taskMeta = TASK_META[canonicalTask];
     const title = taskMeta

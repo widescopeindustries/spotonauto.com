@@ -17,7 +17,7 @@ const WINNERS_SITEMAP_PATH = join(WINNERS_DIR, 'sitemap.xml');
 const WINNERS_LIST_PATH = join(WINNERS_DIR, 'urls.txt');
 
 const LAST_MOD = process.env.SITEMAP_LAST_MOD || new Date().toISOString().slice(0, 10);
-const YEAR_STEP = 5;
+const YEAR_STEP = 2;
 // Keep chunks small and stable for crawler fetch reliability.
 const URLS_PER_SITEMAP = 10000;
 const BASE_URL = 'https://alloemmanuals.com';

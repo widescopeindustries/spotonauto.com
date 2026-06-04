@@ -8,88 +8,8 @@ const ALLOWED_ORIGINS = [
   ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
 ];
 
-const DEFAULT_TOLLBIT_FORWARD_BOTS = [
-  'meta-webindexer',
-  'claude-searchbot',
-  'claudesearchbot',
-  'duckassistbot',
-  'chatgpt-user',
-  'oai-searchbot',
-  'gptbot',
-  'claudebot',
-  'claude-web',
-  'claude-user',
-  'claudeuser',
-  'claudeweb',
-  'anthropic-ai',
-  'bytespider',
-  'ccbot',
-  'cohere-ai',
-  'perplexitybot',
-  'perplexity-user',
-  'amazonbot',
-  'amzn-searchbot',
-  'youbot',
-  'diffbot',
-  'meta-externalagent',
-  'timpibot',
-  'applebot',
-  'google-extended',
-  'applebot-extended',
-  'facebookbot',
-  'meta-externalfetcher',
-  'imagesiftbot',
-  'omgili',
-  'omgilibot',
-  'petalbot',
-  'meta-',
-  'facebookexternalhit',
-];
-
-const ALLOWED_SEARCH_ENGINES = [
-  'googlebot',
-  'bingbot'
-];
-
 /** Known TollBit crawler IPs. Expandable via env if TollBit adds more. */
 const DEFAULT_TOLLBIT_IPS = ['52.22.183.94', '3.220.109.109'];
-
-function isBot(userAgent: string): boolean {
-  const botPatterns = [
-    /bot/i,
-    /crawl/i,
-    /spider/i,
-    /scraper/i,
-    /curl/i,
-    /wget/i,
-    /python/i,
-    /axios/i,
-    /requests/i,
-    /httpclient/i,
-    /java\/\d/i,
-    /go-http/i,
-    /node/i,
-    /claude-web/i,
-    /anthropic/i,
-    /perplexity/i,
-    /meta-/i,
-    /oai-/i,
-    /cohere/i,
-    /bytedance/i,
-    /tiktok/i,
-    /facebook/i,
-  ];
-  return botPatterns.some(pattern => pattern.test(userAgent));
-}
-
-function parseBotList(value: string | undefined, fallback: string[]) {
-  if (!value) return fallback;
-  const parsed = value
-    .split(',')
-    .map((item) => item.trim().toLowerCase())
-    .filter(Boolean);
-  return parsed.length > 0 ? parsed : fallback;
-}
 
 function parseIpList(value: string | undefined, fallback: string[]) {
   if (!value) return fallback;
@@ -98,10 +18,6 @@ function parseIpList(value: string | undefined, fallback: string[]) {
     .map((item) => item.trim())
     .filter(Boolean);
   return parsed.length > 0 ? parsed : fallback;
-}
-
-function matchesBot(userAgent: string, botTokens: string[]) {
-  return botTokens.some((token) => userAgent.includes(token));
 }
 
 function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean, isRobots: boolean) {
@@ -133,7 +49,6 @@ export function middleware(request: NextRequest) {
   const host = normalizeHost(request.headers.get('x-forwarded-host') || request.headers.get('host'));
   const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
   const tollbitHost = (process.env.TOLLBIT_HOST || 'tollbit.alloemmanuals.com').toLowerCase();
-  const tollbitForwardBots = parseBotList(process.env.TOLLBIT_FORWARD_BOTS, DEFAULT_TOLLBIT_FORWARD_BOTS);
   const tollbitIps = parseIpList(process.env.TOLLBIT_IPS, DEFAULT_TOLLBIT_IPS);
   const shouldNoindexHost = !isCanonicalHost(host) && isPreviewHost(host);
   const isRootOrNestedSitemap = pathname === '/sitemap.xml' || pathname.endsWith('/sitemap.xml');
@@ -198,22 +113,6 @@ export function middleware(request: NextRequest) {
     console.log(`[TOLLBIT_AUDIT] path=${pathname} bot=${userAgent.slice(0, 60)} ip=${clientIp} token=${tollbitKey}`);
   }
 
-  // FALLBACK: If Cloudflare Worker misses a bot, redirect it here.
-  if (host !== tollbitHost && !hasTollbitToken && !isCrawlerEndpoint) {
-    if (matchesBot(userAgent, ALLOWED_SEARCH_ENGINES)) {
-      // Let Google/Bing through for SEO
-    } else if (isBot(userAgent) && !isTollbitCrawler && !isTollbitIp) {
-      const tollbitUrl = request.nextUrl.clone();
-      tollbitUrl.protocol = 'https:';
-      tollbitUrl.host = tollbitHost;
-      tollbitUrl.port = '';
-
-      const proxyResponse = NextResponse.redirect(tollbitUrl, 302);
-      proxyResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-      return proxyResponse;
-    }
-  }
-
   // Helper to apply Tollbit headers and prevent caching on successful proxy responses
   const applyTollbitResponseHeaders = (res: NextResponse) => {
     if (isTollbitIp || isTollbitCrawler || hasTollbitToken) {
@@ -243,11 +142,10 @@ export function middleware(request: NextRequest) {
   const repairMatch = pathname.match(/^\/repair\/(\d{4})\/([^/]+)\/([^/]+)\/([^/]+)$/);
   if (repairMatch) {
     const [, rYear, rMake, rModel, rTask] = repairMatch;
-    const isKnownBot = matchesBot(userAgent, tollbitForwardBots);
     const wantsJson = request.headers.get('accept')?.toLowerCase().includes('application/json');
     const isAuthorized = hasTollbitToken || host === tollbitHost || isLocal || isTollbitIp;
 
-    if (isAuthorized && (isKnownBot || wantsJson)) {
+    if (isAuthorized && wantsJson) {
       const apiUr = request.nextUrl.clone();
       apiUr.pathname = '/api/v1/repair';
       apiUr.searchParams.set('year', rYear);

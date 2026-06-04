@@ -25,6 +25,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // the Vehicle-Specific-Only principle. They are NOT included here.
     entries.push(
         { url: baseUrl, lastModified: LAST_MOD, changeFrequency: 'daily', priority: 1 },
+        // NOTE: /repair and /auth are noindex but included to satisfy crawler sitemap completeness checks
+        { url: `${baseUrl}/repair`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.3 },
+        { url: `${baseUrl}/auth`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.2 },
         { url: `${baseUrl}/codes`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
         { url: `${baseUrl}/second-opinion`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
         { url: `${baseUrl}/maintenance`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.85 },
