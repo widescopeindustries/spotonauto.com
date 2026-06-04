@@ -68,3 +68,5 @@ scripts/generated-specs/
 scripts/content-machine/batches/
 scripts/indexing-cron.log
 seo-analysis.txt
+public/repair/sitemap.xml
+__pycache__/
