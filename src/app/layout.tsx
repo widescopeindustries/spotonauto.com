@@ -54,6 +54,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt — AI crawler context for AllOEMManuals" />
+        <meta name="ai-license" content="https://alloemmanuals.com/license" />
         <meta name='impact-site-verification' {...({ value: '39ff62d6-58f8-468a-80a0-5a794bd799fc' } as any)} />
         <script
           type="text/javascript"
