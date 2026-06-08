@@ -98,13 +98,13 @@ export interface HistoryItem {
   manualReferenceCount?: number;
 }
 
-export type AffiliateProvider = 'Amazon' | 'Topdon';
+export type AffiliateProvider = 'Amazon' | 'Topdon' | 'Advance Auto Parts' | 'SuncentAuto' | 'Thinkcar' | 'CarParts.com';
 
 export interface AffiliateLink {
   provider: AffiliateProvider;
   url: string;
   buttonText: string;
-  badge?: 'Prime' | 'OEM Parts' | 'Local Pickup' | 'Best Value' | 'Wholesale';
+  badge?: string;
   priceRange?: 'low' | 'mid' | 'high';
   icon?: string; // For retailer-specific styling
 }

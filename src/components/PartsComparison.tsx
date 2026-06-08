@@ -35,6 +35,38 @@ const RETAILER_STYLES: Record<AffiliateProvider, {
         border: 'border-emerald-500/30',
         accent: 'text-emerald-400',
         gradient: 'from-emerald-500 to-teal-500'
+    },
+    'Advance Auto Parts': {
+        bg: 'bg-red-600',
+        bgHover: 'hover:bg-red-500',
+        text: 'text-white',
+        border: 'border-red-500/30',
+        accent: 'text-red-400',
+        gradient: 'from-red-600 to-red-500'
+    },
+    SuncentAuto: {
+        bg: 'bg-orange-500',
+        bgHover: 'hover:bg-orange-400',
+        text: 'text-black',
+        border: 'border-orange-500/30',
+        accent: 'text-orange-400',
+        gradient: 'from-orange-500 to-yellow-500'
+    },
+    Thinkcar: {
+        bg: 'bg-blue-500',
+        bgHover: 'hover:bg-blue-400',
+        text: 'text-black',
+        border: 'border-blue-500/30',
+        accent: 'text-blue-400',
+        gradient: 'from-blue-500 to-cyan-500'
+    },
+    'CarParts.com': {
+        bg: 'bg-indigo-500',
+        bgHover: 'hover:bg-indigo-400',
+        text: 'text-black',
+        border: 'border-indigo-500/30',
+        accent: 'text-indigo-400',
+        gradient: 'from-indigo-500 to-purple-500'
     }
 };
 

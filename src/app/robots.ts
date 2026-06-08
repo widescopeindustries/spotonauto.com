@@ -94,6 +94,7 @@ export default function robots(): MetadataRoute.Robots {
       'https://alloemmanuals.com/vehicles/sitemap.xml',
       'https://alloemmanuals.com/codes/sitemap.xml',
       'https://alloemmanuals.com/repair/sitemap.xml',
+      'https://alloemmanuals.com/repair/winners/sitemap.xml',
       'https://alloemmanuals.com/manual/sitemap.xml',
       'https://alloemmanuals.com/wiring/sitemap.xml',
       'https://alloemmanuals.com/tools/sitemap.xml',

@@ -7,6 +7,7 @@ interface AffiliateLinkProps {
   className?: string;
   children: React.ReactNode;
   subtag?: string;
+  provider?: string;
 }
 
 export default function AffiliateLink({
@@ -18,6 +19,7 @@ export default function AffiliateLink({
   className,
   children,
   subtag,
+  provider = 'Amazon',
 }: AffiliateLinkProps) {
   return (
     <a
@@ -27,7 +29,7 @@ export default function AffiliateLink({
       className={className}
       data-track-click={JSON.stringify({
         event_category: 'affiliate_click',
-        provider: 'Amazon',
+        provider,
         partName,
         vehicle,
         isHighTicket,

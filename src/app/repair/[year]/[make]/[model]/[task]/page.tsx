@@ -19,6 +19,7 @@ import OEMExcerpt from '@/components/OEMExcerpt';
 import TopdonProductSpotlight from '@/components/TopdonProductSpotlight';
 import CoverageWaitlist from '@/components/CoverageWaitlist';
 import SafetyWarningBox from '@/components/SafetyWarningBox';
+import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
@@ -3505,6 +3506,15 @@ export default async function Page({ params }: PageProps) {
             </section>
 
             <CoverageWaitlist vehicleName={vehicleName} year={Number(resolvedYear)} />
+
+            {/* Sticky affiliate bar — captures high-intent mobile scrollers */}
+            <StickyAffiliateBar
+                vehicle={vehicleName}
+                intent={cleanTask}
+                query={`${vehicleName} ${cleanTask} parts`}
+                subtag={`repair-${canonicalTask}`}
+                variant="mixed"
+            />
         </>
     );
 }

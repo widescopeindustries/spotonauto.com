@@ -6,6 +6,8 @@ import { slugifyRoutePart, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { canonicalizeVehicleIdentity } from '@/lib/vehicleIdentity';
 import { getProfilesForVehicle } from '@/lib/vehicleRepairProfiles';
 import { getToolPagesForVehicle, TOOL_TYPE_META, getConciseQuickAnswer } from '@/data/tools-pages';
+import { generateShopAllLinks } from '@/services/affiliateService';
+import AffiliateLink from '@/components/AffiliateLink';
 import VehicleLaneClient from './VehicleLaneClient';
 
 /**
@@ -250,6 +252,36 @@ export default async function VehicleLanePage({ params }: PageProps) {
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-1">{displayName}</h1>
           <p className="text-gray-500 text-sm">{identity.displayVariant || identity.displayModel}</p>
+        </div>
+
+        {/* ── SHOP PARTS CTA ── */}
+        <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-r from-amber-500/[0.06] to-transparent p-5 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 className="text-sm font-semibold text-amber-300 uppercase tracking-wider mb-1">
+                Shop Parts for Your {identity.displayModel}
+              </h2>
+              <p className="text-gray-400 text-sm">
+                Compare prices across retailers. Find exact-fit parts shipped fast.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {generateShopAllLinks(displayName).map((link) => (
+                <AffiliateLink
+                  key={link.provider}
+                  href={link.url}
+                  partName={`${displayName} parts`}
+                  vehicle={displayName}
+                  pageType="parts_page"
+                  provider={link.provider}
+                  subtag={`vehicle-hub-${link.provider.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/30 text-amber-200 text-sm font-medium hover:bg-amber-500/10 hover:border-amber-400/50 transition"
+                >
+                  {link.buttonText}
+                </AffiliateLink>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* ── SERVER-RENDERED Quick Specs Card ── */}
