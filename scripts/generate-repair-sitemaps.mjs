@@ -67,14 +67,25 @@ function loadWinnerEntries() {
 async function main() {
     const pool = new Pool({ host: '127.0.0.1', port: 5432, database: 'spotonauto', user: 'spotonauto', password: 'spotonauto2026' });
 
+    // Load filters from vehicle data
+    const { NOINDEX_MAKES, isNonUsModel } = await import(join(ROOT, 'src', 'data', 'vehicles.ts'));
+
+    function shouldIndex(year, make, model) {
+        if (!make || NOINDEX_MAKES.has(make.toLowerCase())) return false;
+        if (isNonUsModel(make, model)) return false;
+        return true;
+    }
+
     // 1. Get all profile keys from DB
     const { rows } = await pool.query('SELECT key FROM vehicle_repair_profiles');
     const entries = [];
     const hubUrls = new Set();
+    let skippedNoindex = 0;
 
     for (const { key } of rows) {
         const [year, make, model, task] = key.split(':');
         if (!year || !make || !model || !task) continue;
+        if (!shouldIndex(year, make, model)) { skippedNoindex++; continue; }
         const url = `${BASE_URL}/repair/${year}/${make}/${model}/${task}`;
         entries.push({ url, lastmod: LAST_MOD, changefreq: 'weekly', priority: 0.9 });
         hubUrls.add(`${BASE_URL}/repair/${year}/${make}/${model}`);
@@ -96,6 +107,7 @@ async function main() {
             const year = segs[0];
             const make = segs[1];
             const model = segs.slice(2).join('-');
+            if (!shouldIndex(year, make, model)) { skippedNoindex++; continue; }
             const url = `${BASE_URL}/repair/${year}/${make}/${model}/${task}`;
             if (!entries.some((e) => e.url === url)) {
                 entries.push({ url, lastmod: LAST_MOD, changefreq: 'weekly', priority: 0.88 });
@@ -105,6 +117,7 @@ async function main() {
     }
 
     await pool.end();
+    console.log(`Skipped ${skippedNoindex} noindex / non-US URLs`);
 
     // 4. Write chunks
     mkdirSync(OUT_DIR, { recursive: true });
