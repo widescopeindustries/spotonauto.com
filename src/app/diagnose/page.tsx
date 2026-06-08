@@ -178,7 +178,7 @@ export default async function DiagnosticPage({
                         reason="If the diagnosis points to a wiring, battery, or module issue, a wireless scan tool keeps the workflow moving."
                         surface="diagnose_page"
                     />
-                    <WhenToSeeMechanic />
+                    <WhenToSeeMechanic context="diagnose" />
                 </div>
             </div>
         </>

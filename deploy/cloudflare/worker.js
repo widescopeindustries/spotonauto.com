@@ -1,86 +1,46 @@
 /**
- * TollBit Bot Forwarding Worker for alloemmanuals.com
- * Deploy this in Cloudflare Dashboard → Workers & Pages
+ * Cloudflare Worker — Bot Gate for alloemmanuals.com
  * Route: alloemmanuals.com/*
  *
- * This worker intercepts AI bot traffic at the Cloudflare edge and redirects
- * it to your TollBit subdomain BEFORE it ever hits your origin server.
+ * Blocks malicious/scraper bots. Allows search engines, AI crawlers, and humans.
+ * No Tollbit redirect — AI crawlers are welcome for citation indexing.
  */
 
-// Comprehensive bot list matching TollBit's known AI agents + common crawlers
-const BOT_LIST = [
-  'ChatGPT-User',
-  'GPTBot',
-  'OAI-SearchBot',
-  'ClaudeBot',
-  'Claude-Web',
-  'Claude-User',
-  'anthropic-ai',
-  'PerplexityBot',
-  'Perplexity-User',
-  'cohere-ai',
-  'meta-webindexer',
-  'meta-externalagent',
-  'meta-externalfetcher',
-  'facebookbot',
-  'Amazonbot',
-  'AmazonAdBot',
-  'amzn-searchbot',
-  'Bytespider',
-  'YouBot',
-  'Diffbot',
-  'CCBot',
-  'applebot',
-  'applebot-extended',
-  'timpibot',
-  'imagesiftbot',
-  'omgili',
-  'omgilibot',
-  'petalbot',
-  'google-extended',
-  'AhrefsBot',
-  'MJ12bot',
-  'SemrushBot',
-  'DotBot',
-  'bingbot',
-  'yandex',
-  'baiduspider',
-  'duckduckbot',
-  'slurp',
+const MALICIOUS_BOTS = [
+  'AhrefsBot','SemrushBot','DotBot','MJ12bot','DataForSeoBot',
+  'webzio','webzio-extended','Screaming Frog','Sitebulb','Turnitin','Copyscape',
+  'Sogou','Baiduspider','YandexBot','YandexRenderResources',
 ];
 
-// Bots that should NEVER be redirected (search engines you want direct)
-const ALLOWLIST = [
-  'googlebot',
-  'bingbot',
+const ALLOW_LIST = [
+  'Googlebot','Bingbot','Googlebot-Mobile','Googlebot-Image','Googlebot-Video',
+  'Googlebot-News','AdsBot-Google','Mediapartners-Google','BingPreview','MicrosoftPreview',
+  'DuckDuckBot','Applebot','ChatGPT-User','GPTBot','OAI-SearchBot','ClaudeBot',
+  'Claude-Web','Claude-User','anthropic','PerplexityBot','Perplexity-User',
+  'cohere-ai','Amazonbot','Bytespider','YouBot','Diffbot','CCBot',
+  'Meta-ExternalAgent','Meta-ExternalFetcher','Meta-WebIndexer','FacebookBot',
 ];
 
-function isBotRequest(request) {
-  const userAgent = (request.headers.get('User-Agent') || '').toLowerCase();
+function isMaliciousBot(request) {
+  const ua = (request.headers.get('User-Agent') || '').toLowerCase();
+  if (!ua) return true; // Empty UA = block
 
-  // Allow good search engines through directly
-  for (const allowed of ALLOWLIST) {
-    if (userAgent.includes(allowed.toLowerCase())) {
-      return false;
-    }
+  // Always allow known good crawlers
+  for (const a of ALLOW_LIST) {
+    if (ua.includes(a.toLowerCase())) return false;
   }
 
-  // Check against known AI/crawler bots
-  for (const bot of BOT_LIST) {
-    if (userAgent.includes(bot.toLowerCase())) {
+  // Block known malicious SEO/scraper bots
+  for (const b of MALICIOUS_BOTS) {
+    if (ua.includes(b.toLowerCase())) return true;
+  }
+
+  // Block generic scrapers that don't claim to be browsers
+  if (/bot|crawl|spider|scraper/.test(ua)) {
+    // Double-check it's not a browser with "bot" in the UA somehow
+    if (!ua.includes('chrome') && !ua.includes('safari') && !ua.includes('firefox') && !ua.includes('edge')) {
       return true;
     }
-  }
-
-  // Broad catch-all for anything claiming to be a bot/crawler
-  if (
-    /bot|crawl|spider|scraper/.test(userAgent) &&
-    !userAgent.includes('chrome') &&
-    !userAgent.includes('safari') &&
-    !userAgent.includes('firefox') &&
-    !userAgent.includes('edge')
-  ) {
-    return true;
   }
 
   return false;
@@ -89,14 +49,8 @@ function isBotRequest(request) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    const host = url.hostname;
 
-    // Don't redirect if already on tollbit subdomain
-    if (host.startsWith('tollbit.')) {
-      return fetch(request);
-    }
-
-    // Don't redirect static assets or known endpoints
+    // Always pass through static assets
     if (
       url.pathname.startsWith('/_next/') ||
       url.pathname.startsWith('/static/') ||
@@ -107,21 +61,12 @@ export default {
       return fetch(request);
     }
 
-    // Check if this is a bot
-    if (isBotRequest(request)) {
-      // Build tollbit URL
-      let tollbitHost = 'tollbit.' + host;
-      if (host.startsWith('www.')) {
-        tollbitHost = 'tollbit.' + host.slice(4);
-      }
-
-      const tollbitUrl = new URL(url.pathname + url.search, `https://${tollbitHost}`);
-
-      // 302 redirect to TollBit
-      return Response.redirect(tollbitUrl.toString(), 302);
+    // Block malicious bots at the edge
+    if (isMaliciousBot(request)) {
+      return new Response('Forbidden', { status: 403 });
     }
 
-    // Normal user — pass through to origin
+    // Everyone else (humans, search engines, AI crawlers) passes through
     return fetch(request);
   },
 };

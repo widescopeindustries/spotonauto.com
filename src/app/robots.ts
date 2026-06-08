@@ -1,12 +1,12 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-return {
+  return {
     rules: [
-      // Allow major search engines to index public pages (real humans will click)
+      // Search engines
       {
         userAgent: 'googlebot',
-        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],  // Only block internals
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
         allow: ['/'],
       },
       {
@@ -14,29 +14,90 @@ return {
         disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
         allow: ['/'],
       },
+      // AI crawlers — explicitly welcome for citation indexing
       {
-        userAgent: 'yahoobot',
+        userAgent: 'ChatGPT-User',
         disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
         allow: ['/'],
       },
-      // Block other bots from JSON payloads and internal APIs
+      {
+        userAgent: 'GPTBot',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      {
+        userAgent: 'ClaudeBot',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Claude-Web',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      {
+        userAgent: 'PerplexityBot',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Perplexity-User',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Amazonbot',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Meta-ExternalAgent',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Meta-ExternalFetcher',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      {
+        userAgent: 'Applebot',
+        disallow: ['/admin/', '/api/', '/*?_rsc=', '/*?_rsc=*'],
+        allow: ['/'],
+      },
+      // Block malicious SEO scrapers from everything
+      {
+        userAgent: 'AhrefsBot',
+        disallow: ['/'],
+      },
+      {
+        userAgent: 'SemrushBot',
+        disallow: ['/'],
+      },
+      {
+        userAgent: 'MJ12bot',
+        disallow: ['/'],
+      },
+      {
+        userAgent: 'DotBot',
+        disallow: ['/'],
+      },
+      // Default: allow public pages, block internals
       {
         userAgent: '*',
         disallow: ['/admin/', '/api/internal/', '/api/generate-guide', '/community/*?page=', '/manual/hyperlink/', '/guides/', '/repairs/', '/symptoms/', '/tools/type/', '/manual-navigator', '/*?_rsc=', '/*?_rsc=*'],
         allow: ['/'],
       },
     ],
-    // List all sitemap entry points explicitly so Googlebot discovers everything.
-    // /repair/sitemap.xml is a static sitemap index generated at build time.
     sitemap: [
-      'https://alloemmanuals.com/sitemap.xml',        // main: static pages, tools, guides
+      'https://alloemmanuals.com/sitemap.xml',
       'https://alloemmanuals.com/vehicles/sitemap.xml',
-      'https://alloemmanuals.com/codes/sitemap.xml',  // ~170 curated DTC code pages
-      'https://alloemmanuals.com/repair/sitemap.xml', // repair sitemap index -> chunked child sitemaps
-      'https://alloemmanuals.com/manual/sitemap.xml', // factory service manual browser (82 makes)
-      'https://alloemmanuals.com/wiring/sitemap.xml', // wiring SEO entry pages
-      'https://alloemmanuals.com/tools/sitemap.xml',  // dynamic tool pages sitemap index
-      'https://alloemmanuals.com/maintenance/sitemap.xml', // maintenance hub pages (~5,700 vehicles)
+      'https://alloemmanuals.com/codes/sitemap.xml',
+      'https://alloemmanuals.com/repair/sitemap.xml',
+      'https://alloemmanuals.com/manual/sitemap.xml',
+      'https://alloemmanuals.com/wiring/sitemap.xml',
+      'https://alloemmanuals.com/tools/sitemap.xml',
+      'https://alloemmanuals.com/maintenance/sitemap.xml',
     ],
   }
 }

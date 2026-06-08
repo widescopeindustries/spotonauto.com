@@ -1,6 +1,10 @@
+import MobileMechanicCTA from './MobileMechanicCTA';
+
 interface WhenToSeeMechanicProps {
   className?: string;
   title?: string;
+  vehicle?: string;
+  context?: 'repair_page' | 'diagnose' | 'second_opinion' | 'wiring' | 'symptom';
 }
 
 const DEFAULT_SIGNALS = [
@@ -14,20 +18,25 @@ const DEFAULT_SIGNALS = [
 export default function WhenToSeeMechanic({
   className = '',
   title = 'When to See a Mechanic',
+  vehicle = 'your vehicle',
+  context = 'repair_page',
 }: WhenToSeeMechanicProps) {
   return (
-    <section className={`rounded-2xl border border-amber-400/25 bg-amber-500/[0.08] p-6 ${className}`}>
-      <h2 className="text-xl font-semibold tracking-tight text-amber-100">{title}</h2>
-      <p className="mt-2 text-sm leading-6 text-amber-50/80">
-        Stop DIY work and contact a certified mechanic immediately if any of the following apply:
-      </p>
-      <ul className="mt-4 space-y-2">
-        {DEFAULT_SIGNALS.map((signal) => (
-          <li key={signal} className="text-sm leading-6 text-amber-50/95">
-            • {signal}
-          </li>
-        ))}
-      </ul>
-    </section>
+    <div className={`space-y-5 ${className}`}>
+      <section className="rounded-2xl border border-amber-400/25 bg-amber-500/[0.08] p-6">
+        <h2 className="text-xl font-semibold tracking-tight text-amber-100">{title}</h2>
+        <p className="mt-2 text-sm leading-6 text-amber-50/80">
+          Stop DIY work and contact a certified mechanic immediately if any of the following apply:
+        </p>
+        <ul className="mt-4 space-y-2">
+          {DEFAULT_SIGNALS.map((signal) => (
+            <li key={signal} className="text-sm leading-6 text-amber-50/95">
+              • {signal}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <MobileMechanicCTA vehicle={vehicle} context={context} />
+    </div>
   );
 }

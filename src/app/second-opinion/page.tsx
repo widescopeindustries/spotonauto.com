@@ -29,6 +29,7 @@ import {
   trackSecondOpinionSubmit,
   trackSecondOpinionView,
 } from '@/lib/analytics';
+import MobileMechanicCTA from '@/components/MobileMechanicCTA';
 
 const FREE_CHECKS_PER_DAY = 1;
 const DAILY_QUOTE_KEY = 'spotonauto-second-opinion-daily-usage-v1';
@@ -750,6 +751,8 @@ export default function SecondOpinionPage() {
           ))}
         </div>
       </motion.div>
+
+      <MobileMechanicCTA context="second_opinion" className="mt-10 max-w-2xl w-full" />
     </div>
   );
 }

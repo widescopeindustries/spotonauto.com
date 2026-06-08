@@ -300,7 +300,7 @@ export default async function SymptomHubPage({ params }: PageProps) {
           className="mt-8 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-6 md:p-8"
           compact
         />
-        <WhenToSeeMechanic className="mt-8" />
+        <WhenToSeeMechanic className="mt-8" context="symptom" />
       </section>
     </main>
   );

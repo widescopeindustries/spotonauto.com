@@ -3041,7 +3041,7 @@ export default async function Page({ params }: PageProps) {
                     </ul>
                 </section>
 
-                <WhenToSeeMechanic className="mb-8" />
+                <WhenToSeeMechanic className="mb-8" vehicle={`${year} ${make} ${model}`} context="repair_page" />
 
                 {/* Ad: After Safety Warnings */}
                 <AdUnit slot="repair-after-safety" format="horizontal" />
