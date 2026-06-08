@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import AnalyticsScripts from "@/components/AnalyticsScripts";
 import TrackingScript from "@/components/TrackingScript";
+import AmazonOneLink from "@/components/AmazonOneLink";
+import AmazonGeoRedirect from "@/components/AmazonGeoRedirect";
 import { COMPANY_INFO } from "@/lib/companyInfo";
 // SpotOnGuide moved into Providers (client component) for lazy loading
 
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
     description: "Save hundreds on auto repairs. Instant AI guides for your exact vehicle.",
   },
   other: {
-    "fo-verify": "e75768c4-61f2-457f-a6b9-22cc832e8e7f",
+    "fo-verify": "b3487b75-b248-4d32-9c11-5746d7d02087",
   },
 };
 
@@ -153,6 +155,8 @@ export default function RootLayout({
           {/* SpotOnGuide rendered inside Providers */}
         </Providers>
         <TrackingScript />
+        <AmazonOneLink />
+        <AmazonGeoRedirect />
       </body>
     </html>
   );
