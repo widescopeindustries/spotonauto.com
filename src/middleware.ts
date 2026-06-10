@@ -67,7 +67,51 @@ export function middleware(request: NextRequest) {
     return applyCrawlerHeaders(NextResponse.next(), shouldNoindexHost, isRobots);
   }
 
-  // 4. Rewrite repair requests from JSON requests to the API
+  // 4. Markdown negotiation for AI agents
+  const acceptHeader = request.headers.get('accept') || '';
+  const wantsMarkdown = acceptHeader.includes('text/markdown');
+  if (wantsMarkdown && pathname === '/') {
+    const markdown = `# AllOEMManuals — Factory Repair Data for 300K+ Vehicles
+
+**AllOEMManuals** is the single answer for every automotive repair question.
+We provide factory service manual data for 300,000+ vehicles covering
+torque specs, fluid capacities, wiring diagrams, DTC codes, diagnostic
+flowcharts, and repair procedures.
+
+## Quick Links
+
+- **Vehicle Hub**: \`/vehicles/{year}/{make}/{model}\`
+- **Repair Guide**: \`/repair/{year}/{make}/{model}/{task}\`
+- **DTC Lookup**: \`/api/v1/dtc?code={code}\`
+- **API Catalog**: \`/.well-known/api-catalog\`
+- **MCP Server**: \`/.well-known/mcp/server-card.json\`
+- **Agent Skills**: \`/.well-known/agent-skills/index.json\`
+
+## Agent Discovery
+
+- **API Catalog** (RFC 9727): \`/.well-known/api-catalog\`
+- **MCP Server Card**: \`/.well-known/mcp/server-card.json\`
+- **Agent Skills**: \`/.well-known/agent-skills/index.json\`
+- **ACP Discovery**: \`/.well-known/acp.json\`
+- **UCP Profile**: \`/.well-known/ucp\`
+- **Auth.md**: \`/auth.md\`
+
+## Payment
+
+Premium data available via **x402** on Solana devnet.
+Endpoint: \`/api/premium-repair-data\`
+Price: $0.01 USDC per request.
+`;
+    return new NextResponse(markdown, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/markdown; charset=utf-8',
+        'Vary': 'Accept',
+      },
+    });
+  }
+
+  // 5. Rewrite repair requests from JSON requests to the API
   const repairMatch = pathname.match(/^\/repair\/(\d{4})\/([^/]+)\/([^/]+)\/([^/]+)$/);
   if (repairMatch) {
     const [, rYear, rMake, rModel, rTask] = repairMatch;
@@ -87,7 +131,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 5. x402 payment gating for premium API routes (must run before CORS)
+  // 6. x402 payment gating for premium API routes (must run before CORS)
   if (x402Proxy && pathname === '/api/premium-repair-data') {
     return x402Proxy(request);
   }
@@ -98,7 +142,7 @@ export function middleware(request: NextRequest) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   }
 
-  // 6. Agent discovery Link headers on homepage
+  // 7. Agent discovery Link headers on homepage
   if (pathname === '/') {
     response.headers.set(
       'Link',
@@ -108,11 +152,15 @@ export function middleware(request: NextRequest) {
         '</.well-known/agent-skills/index.json>; rel="agent-skills"; type="application/json"',
         '</.well-known/acp.json>; rel="acp-discovery"; type="application/json"',
         '</.well-known/ucp>; rel="ucp-profile"; type="application/json"',
+        '</auth.md>; rel="auth"; type="text/markdown"',
+        '</openapi.json>; rel="openapi"; type="application/json"',
+        '</.well-known/oauth-authorization-server>; rel="oauth-authorization-server"; type="application/json"',
+        '</.well-known/openid-configuration>; rel="openid-configuration"; type="application/json"',
       ].join(', ')
     );
   }
 
-  // 7. API routes - block external origins
+  // 8. API routes - block external origins
   if (pathname.startsWith('/api/')) {
     const origin = request.headers.get('origin');
     const referer = request.headers.get('referer');
@@ -129,7 +177,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 7. Comma-containing URL cleanup
+  // 9. Comma-containing URL cleanup
   if (pathname.includes(',')) {
     const cleanPath = pathname.replace(/,/g, '').replace(/--+/g, '-');
     if (cleanPath !== pathname) {
