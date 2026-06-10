@@ -2,8 +2,11 @@
  * Cloudflare Worker — Bot Gate for alloemmanuals.com
  * Route: alloemmanuals.com/*
  *
- * Blocks malicious/scraper bots. Allows search engines, AI crawlers, and humans.
- * No Tollbit redirect — AI crawlers are welcome for citation indexing.
+ * Policy:
+ * - Allow search engines and AI crawlers that send referral traffic.
+ * - Return HTTP 402 to AI crawlers with zero referrals (Meta, Apple, TikTok, Amazon, CCBot, ClaudeBot, GPTBot, OAI-SearchBot, PerplexityBot).
+ * - Block malicious SEO scrapers.
+ * - Pass through humans and browsers.
  */
 
 const MALICIOUS_BOTS = [
@@ -12,13 +15,19 @@ const MALICIOUS_BOTS = [
   'Sogou','Baiduspider','YandexBot','YandexRenderResources',
 ];
 
+// Bots that send measurable referral traffic — allowed to crawl
 const ALLOW_LIST = [
   'Googlebot','Bingbot','Googlebot-Mobile','Googlebot-Image','Googlebot-Video',
   'Googlebot-News','AdsBot-Google','Mediapartners-Google','BingPreview','MicrosoftPreview',
-  'DuckDuckBot','Applebot','ChatGPT-User','GPTBot','OAI-SearchBot','ClaudeBot',
-  'Claude-Web','Claude-User','anthropic','PerplexityBot','Perplexity-User',
-  'cohere-ai','Amazonbot','Bytespider','YouBot','Diffbot','CCBot',
+  'DuckDuckBot','DuckAssistBot','ChatGPT-User',
+];
+
+// AI crawlers with zero referrals — paywalled via HTTP 402 / x402 signal
+const PAYWALL_LIST = [
+  'GPTBot','OAI-SearchBot','ClaudeBot','Claude-Web','anthropic',
+  'PerplexityBot','Perplexity-User','Amazonbot','Bytespider','CCBot',
   'Meta-ExternalAgent','Meta-ExternalFetcher','Meta-WebIndexer','FacebookBot',
+  'Applebot','TikTok Spider','Bytespider','YouBot','Diffbot',
 ];
 
 function isMaliciousBot(request) {
@@ -37,7 +46,6 @@ function isMaliciousBot(request) {
 
   // Block generic scrapers that don't claim to be browsers
   if (/bot|crawl|spider|scraper/.test(ua)) {
-    // Double-check it's not a browser with "bot" in the UA somehow
     if (!ua.includes('chrome') && !ua.includes('safari') && !ua.includes('firefox') && !ua.includes('edge')) {
       return true;
     }
@@ -46,17 +54,48 @@ function isMaliciousBot(request) {
   return false;
 }
 
+function isPaywalledBot(request) {
+  const ua = (request.headers.get('User-Agent') || '').toLowerCase();
+  if (!ua) return false;
+  for (const p of PAYWALL_LIST) {
+    if (ua.includes(p.toLowerCase())) return true;
+  }
+  return false;
+}
+
+function build402Response(request) {
+  const url = new URL(request.url);
+  return new Response(
+    JSON.stringify({
+      error: 'Payment Required',
+      message: 'This content requires payment for AI training or bulk ingestion. Search engines and citation bots that send referral traffic are exempt. Visit https://alloemmanuals.com/.well-known/acp.json for payment options.',
+      policy: 'ai-train=no, search=yes, ai-input=conditional',
+      payment_discovery: 'https://alloemmanuals.com/.well-known/acp.json',
+      premium_api: 'https://alloemmanuals.com/api/premium-repair-data',
+    }),
+    {
+      status: 402,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Payment-Required': 'x402',
+        'Link': '<https://alloemmanuals.com/.well-known/acp.json>; rel="payment"',
+      },
+    }
+  );
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // Always pass through static assets
+    // Always pass through static assets and discovery endpoints
     if (
       url.pathname.startsWith('/_next/') ||
       url.pathname.startsWith('/static/') ||
       url.pathname === '/favicon.ico' ||
       url.pathname === '/robots.txt' ||
-      url.pathname.includes('sitemap')
+      url.pathname.includes('sitemap') ||
+      url.pathname.startsWith('/.well-known/')
     ) {
       return fetch(request);
     }
@@ -66,7 +105,12 @@ export default {
       return new Response('Forbidden', { status: 403 });
     }
 
-    // Everyone else (humans, search engines, AI crawlers) passes through
+    // Paywall zero-referral AI crawlers on content pages
+    if (isPaywalledBot(request)) {
+      return build402Response(request);
+    }
+
+    // Everyone else (humans, search engines, referral AI crawlers) passes through
     return fetch(request);
   },
 };

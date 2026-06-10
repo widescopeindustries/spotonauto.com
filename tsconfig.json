@@ -46,6 +46,7 @@
     "contexts",
     "lib",
     "services",
+    "remotion-repair-videos",
     "types.ts",
     "constants.ts",
     "App.tsx",

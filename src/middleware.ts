@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { CANONICAL_HOST, isCanonicalHost, isIndexableHost, isLegacyRedirectHost, isPreviewHost, normalizeHost } from '@/lib/host';
+import { x402Proxy } from '@/lib/x402';
 
 const ALLOWED_ORIGINS = [
   'https://alloemmanuals.com',
@@ -86,13 +87,32 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // 5. x402 payment gating for premium API routes (must run before CORS)
+  if (x402Proxy && pathname === '/api/premium-repair-data') {
+    return x402Proxy(request);
+  }
+
   const response = NextResponse.next();
 
   if (shouldNoindexHost) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   }
 
-  // 5. API routes - block external origins
+  // 6. Agent discovery Link headers on homepage
+  if (pathname === '/') {
+    response.headers.set(
+      'Link',
+      [
+        '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+        '</.well-known/mcp/server-card.json>; rel="mcp-server-card"; type="application/json"',
+        '</.well-known/agent-skills/index.json>; rel="agent-skills"; type="application/json"',
+        '</.well-known/acp.json>; rel="acp-discovery"; type="application/json"',
+        '</.well-known/ucp>; rel="ucp-profile"; type="application/json"',
+      ].join(', ')
+    );
+  }
+
+  // 7. API routes - block external origins
   if (pathname.startsWith('/api/')) {
     const origin = request.headers.get('origin');
     const referer = request.headers.get('referer');
@@ -109,7 +129,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 6. Comma-containing URL cleanup
+  // 7. Comma-containing URL cleanup
   if (pathname.includes(',')) {
     const cleanPath = pathname.replace(/,/g, '').replace(/--+/g, '-');
     if (cleanPath !== pathname) {
