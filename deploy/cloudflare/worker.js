@@ -39,6 +39,11 @@ function isMaliciousBot(request) {
     if (ua.includes(a.toLowerCase())) return false;
   }
 
+  // Don't treat paywalled AI crawlers as malicious — they get 402 instead
+  for (const p of PAYWALL_LIST) {
+    if (ua.includes(p.toLowerCase())) return false;
+  }
+
   // Block known malicious SEO/scraper bots
   for (const b of MALICIOUS_BOTS) {
     if (ua.includes(b.toLowerCase())) return true;
