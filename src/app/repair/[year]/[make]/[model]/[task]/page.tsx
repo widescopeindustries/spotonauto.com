@@ -347,6 +347,11 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
         description: 'Complete step-by-step timing belt replacement for your {v} featuring timing marks diagrams, torque specs, and water pump tips. Interference engine warning and DIY costs included.',
         extraKeywords: ['timing belt diagram', 'timing marks', 'timing belt cost'],
     },
+    'timing-chain-replacement': {
+        title: 'Timing Chain Replacement Guide',
+        description: 'Timing chain rattle or stretch? Get exact replacement steps, tensioner notes, and timing marks for your {v}. Prevent engine damage with this factory-based guide.',
+        extraKeywords: ['timing chain rattle', 'timing chain replacement cost', 'timing chain marks', 'stretched timing chain'],
+    },
     'battery-replacement': {
         title: 'Battery Replacement — Size & Cost',
         description: 'Find the exact battery group size, terminal location, and step-by-step replacement steps for your {v}. Simple 15-minute DIY job — save $50–$100 vs. the dealer. Free guide with OEM specs.',
@@ -416,6 +421,11 @@ const TASK_META: Record<string, { title: string; description: string; extraKeywo
         title: 'Engine Air Filter Size & Replacement',
         description: 'Correct engine air filter part number and replacement steps for your {v}. 5-minute airbox service — no special tools needed. Includes change intervals and fitment check tips.',
         extraKeywords: ['engine air filter size', 'air filter part number', 'how to change air filter', 'air filter replacement'],
+    },
+    'egr-valve-replacement': {
+        title: 'EGR Valve Replacement Guide',
+        description: 'Fix P0401 and rough idle with this EGR valve replacement guide for your {v}. Covers exact location, carbon cleaning, gasket install, and PCM relearn steps.',
+        extraKeywords: ['egr valve location', 'egr valve replacement cost', 'p0401 fix', 'rough idle fix'],
     },
     'ignition-coil-replacement': {
         title: 'Ignition Coil Replacement Guide',
