@@ -6,6 +6,7 @@ import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicle
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
+import StickyAffiliateBar from "@/components/StickyAffiliateBar";
 
 export const revalidate = 86400;
 
@@ -248,6 +249,14 @@ export default async function WiperBladeSizePage({ params }: PageProps) {
             ))}
           </dl>
         </section>
+
+        <StickyAffiliateBar
+          vehicle={`${year} ${displayMake} ${displayModel}`}
+          intent="Wiper Blades"
+          query={`${year} ${displayMake} ${displayModel} wiper blades windshield`}
+          subtag="maint-wiperbladesize"
+          variant="mixed"
+        />
       </div>
     </>
   );

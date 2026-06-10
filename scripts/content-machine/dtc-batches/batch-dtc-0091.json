@@ -1,0 +1,202 @@
+[
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0420",
+    "codeTitle": "Catalyst System Efficiency Below Threshold (Bank 1)",
+    "system": "Emissions",
+    "commonFix": "Replace catalytic converter or O2 sensor"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0300",
+    "codeTitle": "Random/Multiple Cylinder Misfire Detected",
+    "system": "Engine",
+    "commonFix": "Replace spark plugs, coils, or injectors"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0010",
+    "codeTitle": "Intake Camshaft Position Actuator Circuit (Bank 1)",
+    "system": "Engine",
+    "commonFix": "Replace VVT solenoid"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0301",
+    "codeTitle": "Cylinder 1 Misfire Detected",
+    "system": "Engine",
+    "commonFix": "Replace spark plug, coil, or injector for cylinder 1"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0302",
+    "codeTitle": "Cylinder 2 Misfire Detected",
+    "system": "Engine",
+    "commonFix": "Replace spark plug, coil, or injector for cylinder 2"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0303",
+    "codeTitle": "Cylinder 3 Misfire Detected",
+    "system": "Engine",
+    "commonFix": "Replace spark plug, coil, or injector for cylinder 3"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0304",
+    "codeTitle": "Cylinder 4 Misfire Detected",
+    "system": "Engine",
+    "commonFix": "Replace spark plug, coil, or injector for cylinder 4"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0305",
+    "codeTitle": "Cylinder 5 Misfire Detected",
+    "system": "Engine",
+    "commonFix": "Replace spark plug, coil, or injector for cylinder 5"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0306",
+    "codeTitle": "Cylinder 6 Misfire Detected",
+    "system": "Engine",
+    "commonFix": "Replace spark plug, coil, or injector for cylinder 6"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0171",
+    "codeTitle": "System Too Lean (Bank 1)",
+    "system": "Fuel",
+    "commonFix": "Fix vacuum leak or replace MAF sensor"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0174",
+    "codeTitle": "System Too Lean (Bank 2)",
+    "system": "Fuel",
+    "commonFix": "Fix vacuum leak or replace MAF sensor"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0442",
+    "codeTitle": "Evaporative Emission System Leak Detected (Small Leak)",
+    "system": "Emissions",
+    "commonFix": "Replace gas cap or EVAP purge valve"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0455",
+    "codeTitle": "Evaporative Emission System Leak Detected (Gross Leak)",
+    "system": "Emissions",
+    "commonFix": "Replace EVAP canister or repair hose"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0456",
+    "codeTitle": "Evaporative Emission System Leak Detected (Very Small Leak)",
+    "system": "Emissions",
+    "commonFix": "Replace gas cap or purge valve"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0401",
+    "codeTitle": "Exhaust Gas Recirculation Flow Insufficient",
+    "system": "Emissions",
+    "commonFix": "Clean or replace EGR valve"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0135",
+    "codeTitle": "O2 Sensor Heater Circuit (Bank 1, Sensor 1)",
+    "system": "Emissions",
+    "commonFix": "Replace upstream O2 sensor"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0141",
+    "codeTitle": "O2 Sensor Heater Circuit (Bank 1, Sensor 2)",
+    "system": "Emissions",
+    "commonFix": "Replace downstream O2 sensor"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0155",
+    "codeTitle": "O2 Sensor Heater Circuit (Bank 2, Sensor 1)",
+    "system": "Emissions",
+    "commonFix": "Replace upstream O2 sensor bank 2"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0161",
+    "codeTitle": "O2 Sensor Heater Circuit (Bank 2, Sensor 2)",
+    "system": "Emissions",
+    "commonFix": "Replace downstream O2 sensor bank 2"
+  },
+  {
+    "year": 2014,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0325",
+    "codeTitle": "Knock Sensor Circuit (Bank 1)",
+    "system": "Engine",
+    "commonFix": "Replace knock sensor"
+  }
+]

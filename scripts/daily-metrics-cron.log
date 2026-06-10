@@ -905,3 +905,454 @@ Done.
 ══════════════════════════════════════════════════════════════
 Done.
 
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-06-03
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      9,002 (+17.6%)
+  Organic sessions:    77 (+126.5%)
+  Active users:        8,819
+  New users:           8,830
+  Page views:          121
+  Avg engagement:      3s
+  Bounce rate:         100.0%
+
+=== CHANNELS ===
+
+  Direct                8,903 sessions
+  Unassigned               85 sessions
+  Organic Search           77 sessions
+  Referral                 12 sessions
+
+=== TOP PAGES ===
+
+   17 views  /wiring
+   15 views  /diagnose
+    5 views  /
+    4 views  /repair/2007/volkswagen/polo
+    3 views  /repair/2013/toyota/corolla/starter-replacement
+    3 views  /repair
+    3 views  /second-opinion
+    2 views  /wiring/1998/chevrolet/lumina/ac-heater
+    2 views  /repair/1998/chevrolet/lumina
+    2 views  /repair/1999/toyota/land-cruiser
+
+=== TOP EVENTS ===
+
+  session_start             8,847
+  first_visit               8,830
+  scroll                    8,736
+  time_on_page               213
+  scroll_depth               134
+  page_view                  121
+  time_on_page_exit          112
+  wiring_diagram_interact     32
+  entry_route_click           29
+  knowledge_graph_impression   26
+  vehicle_hub_enter           24
+  page_view_custom            20
+  user_engagement             20
+  search_submit               13
+  track_impression            11
+
+=== TOP COUNTRIES ===
+
+  Singapore          6,775 users
+  Vietnam            440 users
+  United States      291 users
+  Hong Kong          207 users
+  Indonesia          182 users
+  Japan              109 users
+  Germany             81 users
+  India               71 users
+  Brazil              70 users
+  Bangladesh          38 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-06-03.json
+
+══════════════════════════════════════════════════════════════
+Done.
+
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-06-04
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      1,275 (-87.2%)
+  Organic sessions:    83 (-8.8%)
+  Active users:        1,266
+  New users:           1,267
+  Page views:          95
+  Avg engagement:      23s
+  Bounce rate:         99.9%
+
+=== CHANNELS ===
+
+  Direct                1,147 sessions
+  Organic Search           88 sessions
+  Unassigned               86 sessions
+  Referral                  8 sessions
+  Cross-network             1 sessions
+
+=== TOP PAGES ===
+
+    7 views  /wiring
+    5 views  /repair/2019/lincoln/mkc
+    5 views  /repair
+    4 views  /repair/2019/lincoln/mkc/battery-replacement
+    4 views  /repair/2019/lincoln/mkc/headlight-bulb-replacement
+    4 views  /
+    3 views  /repair/2023/dodge/challenger
+    3 views  /diagnose
+    2 views  /vehicles/2000/mazda/b2500-se-2d-pickup-standard
+    2 views  /repair/2005/volkswagen/golf/engine-air-filter-replacement
+
+=== TOP EVENTS ===
+
+  session_start             1,276
+  first_visit               1,267
+  scroll                    1,160
+  time_on_page               220
+  page_view                   95
+  scroll_depth                86
+  time_on_page_exit           74
+  vehicle_hub_enter           31
+  page_view_custom            30
+  user_engagement             25
+  knowledge_graph_impression   24
+  entry_route_click           20
+  repair_guide_open           18
+  repair_page_view            18
+  track_impression            17
+
+=== TOP COUNTRIES ===
+
+  Singapore          234 users
+  Vietnam            185 users
+  United States      179 users
+  Indonesia          103 users
+  Hong Kong           85 users
+  Japan               53 users
+  Germany             38 users
+  Brazil              36 users
+  Iraq                26 users
+  United Kingdom      19 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-06-04.json
+
+══════════════════════════════════════════════════════════════
+Done.
+
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-06-06
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      266 (-67.6%)
+  Organic sessions:    76 (-33.3%)
+  Active users:        263
+  New users:           255
+  Page views:          134
+  Avg engagement:      98s
+  Bounce rate:         98.9%
+
+=== CHANNELS ===
+
+  Direct                  160 sessions
+  Organic Search           79 sessions
+  Unassigned               62 sessions
+  Referral                  4 sessions
+
+=== TOP PAGES ===
+
+   14 views  /wiring
+   13 views  /diagnose
+    7 views  /
+    6 views  /repair/2016/chrysler/200
+    5 views  /wiring
+    5 views  /wiring
+    4 views  /repair
+    3 views  /repair/2020/bmw/x7
+    3 views  /manual
+    3 views  /manual/Ford
+
+=== TOP EVENTS ===
+
+  session_start              263
+  first_visit                260
+  scroll                     172
+  time_on_page               162
+  page_view                  134
+  scroll_depth                93
+  time_on_page_exit           60
+  entry_route_click           37
+  page_view_custom            34
+  vehicle_hub_enter           23
+  track_impression            22
+  wiring_diagram_interact     20
+  user_engagement             17
+  repair_guide_open           16
+  repair_page_view            16
+
+=== TOP COUNTRIES ===
+
+  Singapore          117 users
+  United States       64 users
+  Canada               9 users
+  United Kingdom       7 users
+  Hong Kong            5 users
+  Brazil               3 users
+  India                3 users
+  Indonesia            3 users
+  Mexico               3 users
+  China                2 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-06-06.json
+
+══════════════════════════════════════════════════════════════
+Done.
+
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-06-07
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      334 (+14.8%)
+  Organic sessions:    62 (-26.2%)
+  Active users:        328
+  New users:           324
+  Page views:          103
+  Avg engagement:      66s
+  Bounce rate:         98.2%
+
+=== CHANNELS ===
+
+  Direct                  241 sessions
+  Organic Search           66 sessions
+  Unassigned               56 sessions
+  Referral                  5 sessions
+
+=== TOP PAGES ===
+
+    9 views  /diagnose
+    8 views  /wiring
+    5 views  /
+    5 views  /
+    4 views  /repair/2015/mercedes/ml-class
+    3 views  /repair/2007/volkswagen/golf
+    3 views  /repair
+    3 views  /guides
+    3 views  /repair/2026/hyundai/sonata
+    2 views  /repair/2008/toyota/corolla
+
+=== TOP EVENTS ===
+
+  session_start              333
+  first_visit                327
+  scroll                     248
+  time_on_page               140
+  page_view                  103
+  scroll_depth                89
+  time_on_page_exit           50
+  page_view_custom            36
+  entry_route_click           27
+  vehicle_hub_enter           25
+  wiring_diagram_interact     21
+  user_engagement             20
+  track_impression            13
+  wiring_diagram_search       13
+  knowledge_graph_impression   12
+
+=== TOP COUNTRIES ===
+
+  Singapore          144 users
+  United States       60 users
+  Brazil              10 users
+  Indonesia            7 users
+  Germany              6 users
+  Hong Kong            6 users
+  Japan                6 users
+  Vietnam              6 users
+  Canada               5 users
+  Iraq                 5 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-06-07.json
+
+══════════════════════════════════════════════════════════════
+Done.
+
+
+╔══════════════════════════════════════════════════════════════╗
+║        alloemmanuals.com — Daily Metrics Report             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Date: 2026-06-09
+  Domain age: ~5 days (launched ~2026-05-07)
+
+=== GA4 OVERVIEW ===
+
+  Total sessions:      456 (+34.5%)
+  Organic sessions:    74 (-30.2%)
+  Active users:        447
+  New users:           431
+  Page views:          75
+  Avg engagement:      179s
+  Bounce rate:         99.8%
+
+=== CHANNELS ===
+
+  Direct                  344 sessions
+  Organic Search           76 sessions
+  Unassigned               69 sessions
+  Referral                  9 sessions
+
+=== TOP PAGES ===
+
+    7 views  /wiring
+    3 views  /repair/2022/jeep/renegade
+    2 views  /repair/1989/toyota/mr2
+    2 views  /repair/2006/toyota/sienna
+    2 views  /wiring/2009/toyota/corolla/abs
+    2 views  /repair/2012/mercedes/e-class
+    2 views  /repair/2014/kia/forte/brake-pad-replacement
+    2 views  /repair/2018/audi/a3
+    2 views  /repair/2024/bmw/3-series/brake-pad-replacement
+    2 views  /
+
+=== TOP EVENTS ===
+
+  session_start              441
+  first_visit                433
+  scroll                     343
+  time_on_page               154
+  scroll_depth                79
+  time_on_page_exit           79
+  page_view                   75
+  page_view_custom            30
+  knowledge_graph_impression   28
+  user_engagement             17
+  vehicle_hub_enter           16
+  wiring_diagram_interact     13
+  entry_route_click           11
+  wiring_diagram_search       11
+  wiring_diagram_open         10
+
+=== TOP COUNTRIES ===
+
+  Singapore          139 users
+  United States       94 users
+  Hong Kong           21 users
+  Vietnam             15 users
+  Brazil              14 users
+  Indonesia           14 users
+  Japan               13 users
+  Canada               9 users
+  Bangladesh           8 users
+  India                8 users
+
+=== GSC SEARCH PERFORMANCE ===
+
+  No GSC data yet (common for new domains).
+
+
+=== TOP QUERIES (GSC) ===
+
+  No query data yet.
+
+
+=== TOP PAGES (GSC) ===
+
+  No page data yet.
+
+
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-master.csv
+✅ Saved to /home/lyndon/projects/spotonauto.com/scripts/seo-reports/daily-metrics-2026-06-09.json
+
+══════════════════════════════════════════════════════════════
+Done.
+

@@ -42,6 +42,12 @@ for (const make of allCharmMakes) {
   }
 }
 
+// Manual overrides for corpus make names that differ from display names
+CHARM_MAKE_MERGE['Nissan-Datsun'] = 'Nissan';
+CHARM_MAKE_MERGE['Nissan-Datsun Truck'] = 'Nissan';
+CHARM_MAKE_MERGE['Mercedes Benz'] = 'Mercedes-Benz';
+CHARM_MAKE_MERGE['Mercedes Benz Truck'] = 'Mercedes-Benz';
+
 /** Get the display make name for a CHARM make. */
 export function getDisplayMake(charmMake: string): string {
   return CHARM_MAKE_MERGE[charmMake] ?? charmMake;

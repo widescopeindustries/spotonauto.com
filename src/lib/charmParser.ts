@@ -79,6 +79,7 @@ export async function fetchCharmPage(
   if (backendSegments.length > 0) {
     if (backendSegments[0] === 'Dodge') backendSegments[0] = 'Dodge and Ram';
     if (backendSegments[0] === 'Nissan') backendSegments[0] = 'Nissan-Datsun';
+    if (backendSegments[0] === 'Mercedes-Benz') backendSegments[0] = 'Mercedes Benz';
   }
 
   // Re-encode each segment for the upstream URL

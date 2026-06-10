@@ -698,6 +698,13 @@ interface ExactGuideProfile {
     supportNote?: TaskSupportNote;
     faq?: { question: string; answer: string };
     faqs?: { question: string; answer: string }[];
+    partsNeeded?: { name: string; partNumber?: string; quantity?: string; notes?: string }[];
+    toolsNeeded?: { name: string; size?: string; notes?: string }[];
+    torqueSpecs?: { component: string; value: string; notes?: string }[];
+    affiliateLinks?: {
+        parts?: { amazon?: string };
+        tools?: { amazon?: string };
+    };
 }
 
 interface IntentQuickAnswerLink {
@@ -2690,6 +2697,154 @@ export default async function Page({ params }: PageProps) {
                     </section>
                     );
                 })()}
+
+                {/* Generated profile: parts, tools, torque specs */}
+                {(exactGuideProfile?.partsNeeded?.length || exactGuideProfile?.toolsNeeded?.length || exactGuideProfile?.torqueSpecs?.length) ? (
+                    <section className="mb-8 space-y-6">
+                        {/* Parts You'll Need */}
+                        {exactGuideProfile.partsNeeded && exactGuideProfile.partsNeeded.length > 0 && (
+                            <div className="rounded-2xl border border-blue-500/20 bg-blue-500/[0.06] p-6 md:p-7">
+                                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                                    <div>
+                                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200/80">
+                                            Exact-fit parts
+                                        </p>
+                                        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                                            Parts You&apos;ll Need
+                                        </h2>
+                                        <p className="mt-2 text-sm leading-7 text-blue-50/85">
+                                            Vehicle-specific part numbers and quantities pulled from the factory service manual data for this repair.
+                                        </p>
+                                    </div>
+                                    {exactGuideProfile.affiliateLinks?.parts?.amazon && (
+                                        <a
+                                            href={exactGuideProfile.affiliateLinks.parts.amazon}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center justify-center rounded-full bg-blue-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-blue-400"
+                                        >
+                                            Check Amazon
+                                        </a>
+                                    )}
+                                </div>
+                                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                                    {exactGuideProfile.partsNeeded.map((part, i) => (
+                                        <div key={`${part.name}-${i}`} className="flex flex-col gap-1 rounded-xl border border-white/10 bg-black/20 p-4">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <span className="text-white font-medium">{part.name}</span>
+                                                {part.quantity && (
+                                                    <span className="inline-block rounded-full bg-blue-500/20 px-2.5 py-1 text-xs text-blue-200 whitespace-nowrap">
+                                                        Qty: {part.quantity}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {part.partNumber && (
+                                                <span className="text-sm text-blue-200/80">{part.partNumber}</span>
+                                            )}
+                                            {part.notes && (
+                                                <p className="text-sm text-gray-400 leading-6 mt-1">{part.notes}</p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                            </div>
+                        )}
+
+                        {/* Tools Required */}
+                        {exactGuideProfile.toolsNeeded && exactGuideProfile.toolsNeeded.length > 0 && (
+                            <div className="rounded-2xl border border-slate-500/20 bg-slate-500/[0.06] p-6 md:p-7">
+                                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                                    <div>
+                                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-200/80">
+                                            Shop prep
+                                        </p>
+                                        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                                            Tools Required
+                                        </h2>
+                                        <p className="mt-2 text-sm leading-7 text-slate-50/85">
+                                            Gather these exact sizes and tools before you start — the manual calls each one out for a reason.
+                                        </p>
+                                    </div>
+                                    {exactGuideProfile.affiliateLinks?.tools?.amazon && (
+                                        <a
+                                            href={exactGuideProfile.affiliateLinks.tools.amazon}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center justify-center rounded-full bg-slate-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-slate-400"
+                                        >
+                                            Check Amazon
+                                        </a>
+                                    )}
+                                </div>
+                                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                                    {exactGuideProfile.toolsNeeded.map((tool, i) => (
+                                        <div key={`${tool.name}-${i}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-4">
+                                            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-slate-500/20">
+                                                <WrenchIcon className="w-4 h-4 text-slate-300" />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-white font-medium">{tool.name}</p>
+                                                {(tool.size || tool.notes) && (
+                                                    <p className="text-sm text-gray-400 leading-6">
+                                                        {tool.size && <span className="text-slate-200/80">{tool.size}</span>}
+                                                        {tool.size && tool.notes && <span className="text-gray-500"> · </span>}
+                                                        {tool.notes}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Torque Specifications */}
+                        {exactGuideProfile.torqueSpecs && exactGuideProfile.torqueSpecs.length > 0 && (
+                            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.06] p-6 md:p-7">
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-200/80">
+                                    Safety-critical values
+                                </p>
+                                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                                    Torque Specifications
+                                </h2>
+                                <p className="mt-2 text-sm leading-7 text-rose-50/85">
+                                    These are factory torque values from the OEM service manual. Overtightening can strip threads; undertightening can cause leaks or component failure.
+                                </p>
+                                <div className="mt-5 overflow-hidden rounded-xl border border-white/10">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-black/30">
+                                            <tr>
+                                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-rose-200/80">Component</th>
+                                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-rose-200/80">Torque Value</th>
+                                                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-rose-200/80 hidden md:table-cell">Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/10">
+                                            {exactGuideProfile.torqueSpecs.map((spec, i) => (
+                                                <tr key={`${spec.component}-${i}`} className="bg-black/20">
+                                                    <td className="px-4 py-3.5 text-sm font-medium text-white">{spec.component}</td>
+                                                    <td className="px-4 py-3.5 text-sm font-semibold text-rose-200">{spec.value}</td>
+                                                    <td className="px-4 py-3.5 text-sm text-gray-400 hidden md:table-cell">{spec.notes || '—'}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    {/* Mobile notes row for each spec */}
+                                    <div className="md:hidden divide-y divide-white/10">
+                                        {exactGuideProfile.torqueSpecs.map((spec, i) => (
+                                            spec.notes ? (
+                                                <div key={`mobile-note-${i}`} className="bg-black/10 px-4 py-2.5 text-xs text-gray-400">
+                                                    <span className="text-rose-200/70 font-medium">{spec.component}:</span> {spec.notes}
+                                                </div>
+                                            ) : null
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </section>
+                ) : null}
 
                 <section className="mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-6 md:p-7">
                     <h2 className="text-xl font-semibold text-white tracking-tight">How this page is grounded</h2>

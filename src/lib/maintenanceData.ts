@@ -4,6 +4,20 @@ const CHARM_BASE = CHARM_ARCHIVE_BASE;
 const FETCH_TIMEOUT = 15000;
 const FETCH_RETRIES = 2;
 
+/**
+ * Maps user-facing make names (from validated-vehicles.json) to corpus backend
+ * make names. The LEMON/CHARM archive uses different naming in some cases.
+ */
+const CORPUS_MAKE_MAP: Record<string, string> = {
+  Nissan: "Nissan-Datsun",
+  Dodge: "Dodge and Ram",
+  "Mercedes-Benz": "Mercedes Benz",
+};
+
+function toCorpusMake(make: string): string {
+  return CORPUS_MAKE_MAP[make] ?? make;
+}
+
 function buildFetchOpts(): RequestInit {
   return {
     headers: {
@@ -97,7 +111,8 @@ export interface MaintenanceData {
 // ─── Vehicle Discovery ───────────────────────────────────────────────────────
 
 export async function listVariants(year: string, make: string, model: string): Promise<Array<{ label: string; href: string }>> {
-  const yearUrl = `${CHARM_BASE}/${encodeSegment(make)}/${year}/`;
+  const corpusMake = toCorpusMake(make);
+  const yearUrl = `${CHARM_BASE}/${encodeSegment(corpusMake)}/${year}/`;
   const html = await fetchText(yearUrl);
   const folders = extractFolders(html);
 

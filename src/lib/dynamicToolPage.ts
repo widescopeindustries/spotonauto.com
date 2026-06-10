@@ -94,6 +94,7 @@ const EXTRACTION_PATTERNS: Partial<Record<KnownToolType, ExtractionPatterns>> = 
     specs: [
       { label: 'Driver Side', pattern: /(?:driver|left)\s*(?:side)?\s*:?\s*(\d{2,3})\s*(?:in|inch|\"|mm)/i, transform: (m) => `${m[1]}\"` },
       { label: 'Passenger Side', pattern: /(?:passenger|right)\s*(?:side)?\s*:?\s*(\d{2,3})\s*(?:in|inch|\"|mm)/i, transform: (m) => `${m[1]}\"` },
+      { label: 'Rear', pattern: /rear\s*(?:wiper)?\s*[:\-]?\s*(\d{2,3})\s*(?:in|inch|\"|mm)/i, transform: (m) => `${m[1]}"` },
     ],
   },
   'headlight-bulb': {
@@ -355,13 +356,14 @@ export async function generateDynamicToolPage(slug: string): Promise<DynamicTool
     ? `${newestGen.years} ${make} ${model}: ${firstSpecKey} — ${firstSpecValue}`
     : `${make} ${model} ${TOOL_TYPE_META[toolType]?.label || 'specifications'} — see generation details below.`;
 
+  const label = TOOL_TYPE_META[toolType]?.label || 'Spec';
   const page: ToolPage & { isDynamic: true } = {
     slug,
     make,
     model,
     toolType,
-    title: `${make} ${model} ${TOOL_TYPE_META[toolType]?.label || 'Guide'} | AllOEMManuals`,
-    description: `Factory manual ${TOOL_TYPE_META[toolType]?.label.toLowerCase() || 'specifications'} for the ${make} ${model}. Extracted from OEM service manual archives.`,
+    title: `${make} ${model} ${label} — Exact Factory Manual Spec`,
+    description: `Exact ${label.toLowerCase()} for the ${make} ${model} from the factory service manual. ${generations.length > 1 ? `Covers ${generations[0].years}+.` : ''} Don't guess — use the OEM spec technicians use.`,
     keywords: [`${make} ${model} ${toolType.replace(/-/g, ' ')}`, `${make} ${model} factory manual`, `${slug}`],
     quickAnswer,
     generations,

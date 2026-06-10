@@ -1,0 +1,202 @@
+[
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0174",
+    "codeTitle": "System Too Lean (Bank 2)",
+    "system": "Fuel",
+    "commonFix": "Fix vacuum leak or replace MAF sensor"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0442",
+    "codeTitle": "Evaporative Emission System Leak Detected (Small Leak)",
+    "system": "Emissions",
+    "commonFix": "Replace gas cap or EVAP purge valve"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0455",
+    "codeTitle": "Evaporative Emission System Leak Detected (Gross Leak)",
+    "system": "Emissions",
+    "commonFix": "Replace EVAP canister or repair hose"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0456",
+    "codeTitle": "Evaporative Emission System Leak Detected (Very Small Leak)",
+    "system": "Emissions",
+    "commonFix": "Replace gas cap or purge valve"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0401",
+    "codeTitle": "Exhaust Gas Recirculation Flow Insufficient",
+    "system": "Emissions",
+    "commonFix": "Clean or replace EGR valve"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0135",
+    "codeTitle": "O2 Sensor Heater Circuit (Bank 1, Sensor 1)",
+    "system": "Emissions",
+    "commonFix": "Replace upstream O2 sensor"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0141",
+    "codeTitle": "O2 Sensor Heater Circuit (Bank 1, Sensor 2)",
+    "system": "Emissions",
+    "commonFix": "Replace downstream O2 sensor"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0155",
+    "codeTitle": "O2 Sensor Heater Circuit (Bank 2, Sensor 1)",
+    "system": "Emissions",
+    "commonFix": "Replace upstream O2 sensor bank 2"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0161",
+    "codeTitle": "O2 Sensor Heater Circuit (Bank 2, Sensor 2)",
+    "system": "Emissions",
+    "commonFix": "Replace downstream O2 sensor bank 2"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0325",
+    "codeTitle": "Knock Sensor Circuit (Bank 1)",
+    "system": "Engine",
+    "commonFix": "Replace knock sensor"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0335",
+    "codeTitle": "Crankshaft Position Sensor A Circuit",
+    "system": "Engine",
+    "commonFix": "Replace crankshaft position sensor"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0340",
+    "codeTitle": "Camshaft Position Sensor Circuit",
+    "system": "Engine",
+    "commonFix": "Replace camshaft position sensor"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0400",
+    "codeTitle": "Exhaust Gas Recirculation Flow",
+    "system": "Emissions",
+    "commonFix": "Clean or replace EGR valve"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0411",
+    "codeTitle": "Secondary Air Injection System Incorrect Flow",
+    "system": "Emissions",
+    "commonFix": "Replace air injection pump or valve"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0430",
+    "codeTitle": "Catalyst System Efficiency Below Threshold (Bank 2)",
+    "system": "Emissions",
+    "commonFix": "Replace catalytic converter bank 2"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0440",
+    "codeTitle": "Evaporative Emission Control System",
+    "system": "Emissions",
+    "commonFix": "Replace gas cap or purge valve"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0441",
+    "codeTitle": "Evaporative Emission Control System Incorrect Purge Flow",
+    "system": "Emissions",
+    "commonFix": "Replace purge valve"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0446",
+    "codeTitle": "Evaporative Emission Control System Vent Control Circuit",
+    "system": "Emissions",
+    "commonFix": "Replace vent valve"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0452",
+    "codeTitle": "Evaporative Emission Control System Pressure Sensor Low Input",
+    "system": "Emissions",
+    "commonFix": "Replace fuel tank pressure sensor"
+  },
+  {
+    "year": 2001,
+    "make": "nissan",
+    "model": "Sentra",
+    "modelSlug": "sentra",
+    "code": "P0453",
+    "codeTitle": "Evaporative Emission Control System Pressure Sensor High Input",
+    "system": "Emissions",
+    "commonFix": "Replace fuel tank pressure sensor"
+  }
+]

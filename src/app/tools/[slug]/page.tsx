@@ -19,6 +19,7 @@ import ToolIntentCommerce from '@/components/ToolIntentCommerce';
 import AffiliateLink from '@/components/AffiliateLink';
 import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
+import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import LlmExtractionBox from '@/components/LlmExtractionBox';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { getAmazonCtaLabel, getAmazonCtaVariantForSlug } from '@/lib/abTests';
@@ -177,82 +178,101 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     switch (toolType) {
         case 'oil-type':
             title = shortSpec
-                ? `${vehicle} Oil Type [${shortSpec}] — OEM Spec | AllOEMManuals`
-                : `${vehicle} Oil Type — Factory Manual Spec | AllOEMManuals`;
+                ? `${vehicle} Oil Type — Exact Factory Spec [${shortSpec}]`
+                : `${vehicle} Oil Type — Exact Factory Manual Spec`;
             break;
         case 'coolant-type':
             title = shortSpec
-                ? `${vehicle} Coolant Type [${shortSpec}] — OEM Spec | AllOEMManuals`
-                : `${vehicle} Coolant Type — Factory Manual Spec | AllOEMManuals`;
+                ? `${vehicle} Coolant — Exact Factory Spec [${shortSpec}]`
+                : `${vehicle} Coolant Type — Exact Factory Manual Spec`;
             break;
         case 'transmission-fluid-type':
             title = shortSpec
-                ? `${vehicle} Transmission Fluid [${shortSpec}] — OEM | AllOEMManuals`
-                : `${vehicle} Transmission Fluid — Factory Spec | AllOEMManuals`;
+                ? `${vehicle} Transmission Fluid — Exact Spec [${shortSpec}]`
+                : `${vehicle} Transmission Fluid — Exact Factory Spec`;
             break;
         case 'brake-fluid-type':
             title = shortSpec
-                ? `${vehicle} Brake Fluid [${shortSpec}] — OEM Spec | AllOEMManuals`
-                : `${vehicle} Brake Fluid Type — Factory Manual | AllOEMManuals`;
+                ? `${vehicle} Brake Fluid — Exact Spec [${shortSpec}]`
+                : `${vehicle} Brake Fluid — Exact Factory Manual Spec`;
             break;
         case 'battery-location':
-            title = `Where Is the Battery on a ${vehicle}? [OEM Diagram] | AllOEMManuals`;
+            title = `Where Is the Battery on a ${vehicle}? [Factory Diagram]`;
             break;
         case 'serpentine-belt':
-            title = `${vehicle} Serpentine Belt Routing [OEM Diagram] | AllOEMManuals`;
+            title = `${vehicle} Serpentine Belt — Exact Routing Diagram`;
             break;
         case 'tire-size':
-            title = `${vehicle} Tire Size & Pressure [OEM Spec] — ${shortYearRange} | AllOEMManuals`;
+            title = `${vehicle} Tire Size & Pressure — Exact OEM Spec ${shortYearRange}`;
             break;
         case 'spark-plug-type':
             title = shortSpec
-                ? `${vehicle} Spark Plug [${shortSpec}] — OEM Spec | AllOEMManuals`
-                : `${vehicle} Spark Plug Type — Factory Spec | AllOEMManuals`;
+                ? `${vehicle} Spark Plug — Exact Spec [${shortSpec}]`
+                : `${vehicle} Spark Plug Type — Exact Factory Spec`;
             break;
         case 'wiper-blade-size':
-            title = `${vehicle} Wiper Blade Size [OEM Spec] — ${shortYearRange} | AllOEMManuals`;
+            title = `${vehicle} Wiper Blade Size — Exact OEM Spec ${shortYearRange}`;
             break;
         case 'headlight-bulb':
-            title = `${vehicle} Headlight Bulb [OEM Spec] — ${shortYearRange} | AllOEMManuals`;
+            title = `${vehicle} Headlight Bulb — Exact OEM Spec ${shortYearRange}`;
             break;
         case 'fluid-capacity':
-            title = `${vehicle} Fluid Capacity Chart [OEM Specs] | AllOEMManuals`;
+            title = `${vehicle} Fluid Capacity — Exact Factory Specs`;
             break;
         default:
-            title = `${trunc(vehicle + ' ' + (TOOL_TYPE_META[toolType]?.label || 'Specs'), 50)} | AllOEMManuals`;
+            title = `${trunc(vehicle + ' ' + (TOOL_TYPE_META[toolType]?.label || 'Specs'), 55)} — Exact Factory Spec`;
     }
 
-    // Hard cap at 70 chars for SERP safety
-    if (title.length > 70) {
-        title = trunc(title.replace(/\s*\|\s*AllOEMManuals$/, ''), 58) + ' | AllOEMManuals';
+    // Hard cap at 60 chars for SERP safety; drop brand suffix if needed
+    if (title.length > 60) {
+        title = trunc(title, 58);
     }
 
-    // CTR-optimized description: lead with the answer, signal authority,
-    // promise completeness. Google truncates at ~160 chars — front-load value.
+    // CTR-optimized description: lead with consequence/authority hook,
+    // then the exact answer, then coverage. Positions 8-12 need urgency
+    // to steal clicks from higher-ranked results.
     const cleanAnswer = page.quickAnswer
         ? page.quickAnswer.replace(/\s+/g, ' ').trim().replace(/\.$/, '')
         : '';
 
+    const CONSEQUENCE_HOOKS: Record<string, string> = {
+        'oil-type': 'Wrong oil accelerates engine wear.',
+        'coolant-type': 'Wrong coolant causes corrosion and gasket damage.',
+        'transmission-fluid-type': 'Wrong ATF destroys transmissions.',
+        'brake-fluid-type': 'Wrong brake fluid risks brake failure.',
+        'battery-location': 'OEM battery location and group size.',
+        'serpentine-belt': 'Wrong belt routing destroys accessories.',
+        'tire-size': 'Wrong tire size throws off speedometer and handling.',
+        'spark-plug-type': 'Wrong plugs cause misfires and converter damage.',
+        'wiper-blade-size': 'Wrong wiper size leaves streaks or hits trim.',
+        'headlight-bulb': 'Wrong bulbs blind oncoming traffic or fail inspection.',
+        'fluid-capacity': 'Wrong capacity causes overheating or starvation.',
+    };
+
     let description: string;
     if (cleanAnswer) {
-        const authSnippet = toolType === 'battery-location'
-            ? `Factory service manual diagram.`
-            : `Factory service manual spec.`;
+        const hook = CONSEQUENCE_HOOKS[toolType] || 'Exact factory manual data.';
         const coverageSnippet = page.generations.length > 1
             ? `Covers ${shortYearRange}.`
             : '';
-        const parts = [cleanAnswer, authSnippet, coverageSnippet].filter(Boolean);
-        // Hard cap: join and truncate at ~155 chars to avoid Google ellipsis
-        let desc = parts.join(' ');
+        // Build: Hook + Answer + Coverage — front-load the consequence
+        let desc = `${hook} ${cleanAnswer}`;
+        if (coverageSnippet) {
+            desc = `${desc} ${coverageSnippet}`;
+        }
+        // Hard cap: truncate at ~155 chars to avoid Google ellipsis
         if (desc.length > 155) {
             desc = desc.slice(0, 152).trim().replace(/[^\w\s]$/, '') + '…';
         }
         description = desc;
     } else {
+        const hook = CONSEQUENCE_HOOKS[toolType] || 'Exact factory manual data.';
         const fallback = page.description.replace(/\s+/g, ' ').trim();
-        description = fallback.length > 155
-            ? fallback.slice(0, 152).trim().replace(/[^\w\s]$/, '') + '…'
-            : fallback;
+        let desc = `${hook} ${fallback}`;
+        if (desc.length > 155) {
+            desc = desc.slice(0, 152).trim().replace(/[^\w\s]$/, '') + '…';
+        }
+        description = desc;
     }
 
     // Keep generic tool pages indexed — they aggregate all years and maintain AI citation equity.
@@ -709,6 +729,14 @@ export default async function ToolPage({ params }: PageProps) {
                     <p className="text-gray-600 text-sm mt-3">100% Free — No signup required</p>
                 </div>
             </section>
+
+            <StickyAffiliateBar
+                vehicle={`${page.make} ${page.model}`}
+                intent={TOOL_TYPE_META[page.toolType]?.label || 'Parts'}
+                query={`${page.make} ${page.model} ${page.toolType.replace(/-/g, ' ')}`}
+                subtag={`tool-sticky-${page.toolType}`}
+                variant="mixed"
+            />
         </div>
     );
 }

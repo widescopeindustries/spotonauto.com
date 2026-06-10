@@ -1,0 +1,4010 @@
+{
+  "generatedAt": "2026-06-10T11:59:57.201Z",
+  "totalCombinations": 10000,
+  "totalBatches": 500,
+  "batchSize": 20,
+  "vehicles": 200,
+  "codes": 50,
+  "batches": [
+    {
+      "batchNum": 1,
+      "count": 20,
+      "inputFile": "batch-dtc-0001.json",
+      "outputFile": "batch-dtc-0001-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0001.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0001-output.json"
+    },
+    {
+      "batchNum": 2,
+      "count": 20,
+      "inputFile": "batch-dtc-0002.json",
+      "outputFile": "batch-dtc-0002-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0002.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0002-output.json"
+    },
+    {
+      "batchNum": 3,
+      "count": 20,
+      "inputFile": "batch-dtc-0003.json",
+      "outputFile": "batch-dtc-0003-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0003.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0003-output.json"
+    },
+    {
+      "batchNum": 4,
+      "count": 20,
+      "inputFile": "batch-dtc-0004.json",
+      "outputFile": "batch-dtc-0004-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0004.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0004-output.json"
+    },
+    {
+      "batchNum": 5,
+      "count": 20,
+      "inputFile": "batch-dtc-0005.json",
+      "outputFile": "batch-dtc-0005-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0005.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0005-output.json"
+    },
+    {
+      "batchNum": 6,
+      "count": 20,
+      "inputFile": "batch-dtc-0006.json",
+      "outputFile": "batch-dtc-0006-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0006.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0006-output.json"
+    },
+    {
+      "batchNum": 7,
+      "count": 20,
+      "inputFile": "batch-dtc-0007.json",
+      "outputFile": "batch-dtc-0007-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0007.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0007-output.json"
+    },
+    {
+      "batchNum": 8,
+      "count": 20,
+      "inputFile": "batch-dtc-0008.json",
+      "outputFile": "batch-dtc-0008-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0008.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0008-output.json"
+    },
+    {
+      "batchNum": 9,
+      "count": 20,
+      "inputFile": "batch-dtc-0009.json",
+      "outputFile": "batch-dtc-0009-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0009.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0009-output.json"
+    },
+    {
+      "batchNum": 10,
+      "count": 20,
+      "inputFile": "batch-dtc-0010.json",
+      "outputFile": "batch-dtc-0010-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0010.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0010-output.json"
+    },
+    {
+      "batchNum": 11,
+      "count": 20,
+      "inputFile": "batch-dtc-0011.json",
+      "outputFile": "batch-dtc-0011-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0011.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0011-output.json"
+    },
+    {
+      "batchNum": 12,
+      "count": 20,
+      "inputFile": "batch-dtc-0012.json",
+      "outputFile": "batch-dtc-0012-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0012.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0012-output.json"
+    },
+    {
+      "batchNum": 13,
+      "count": 20,
+      "inputFile": "batch-dtc-0013.json",
+      "outputFile": "batch-dtc-0013-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0013.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0013-output.json"
+    },
+    {
+      "batchNum": 14,
+      "count": 20,
+      "inputFile": "batch-dtc-0014.json",
+      "outputFile": "batch-dtc-0014-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0014.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0014-output.json"
+    },
+    {
+      "batchNum": 15,
+      "count": 20,
+      "inputFile": "batch-dtc-0015.json",
+      "outputFile": "batch-dtc-0015-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0015.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0015-output.json"
+    },
+    {
+      "batchNum": 16,
+      "count": 20,
+      "inputFile": "batch-dtc-0016.json",
+      "outputFile": "batch-dtc-0016-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0016.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0016-output.json"
+    },
+    {
+      "batchNum": 17,
+      "count": 20,
+      "inputFile": "batch-dtc-0017.json",
+      "outputFile": "batch-dtc-0017-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0017.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0017-output.json"
+    },
+    {
+      "batchNum": 18,
+      "count": 20,
+      "inputFile": "batch-dtc-0018.json",
+      "outputFile": "batch-dtc-0018-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0018.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0018-output.json"
+    },
+    {
+      "batchNum": 19,
+      "count": 20,
+      "inputFile": "batch-dtc-0019.json",
+      "outputFile": "batch-dtc-0019-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0019.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0019-output.json"
+    },
+    {
+      "batchNum": 20,
+      "count": 20,
+      "inputFile": "batch-dtc-0020.json",
+      "outputFile": "batch-dtc-0020-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0020.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0020-output.json"
+    },
+    {
+      "batchNum": 21,
+      "count": 20,
+      "inputFile": "batch-dtc-0021.json",
+      "outputFile": "batch-dtc-0021-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0021.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0021-output.json"
+    },
+    {
+      "batchNum": 22,
+      "count": 20,
+      "inputFile": "batch-dtc-0022.json",
+      "outputFile": "batch-dtc-0022-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0022.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0022-output.json"
+    },
+    {
+      "batchNum": 23,
+      "count": 20,
+      "inputFile": "batch-dtc-0023.json",
+      "outputFile": "batch-dtc-0023-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0023.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0023-output.json"
+    },
+    {
+      "batchNum": 24,
+      "count": 20,
+      "inputFile": "batch-dtc-0024.json",
+      "outputFile": "batch-dtc-0024-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0024.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0024-output.json"
+    },
+    {
+      "batchNum": 25,
+      "count": 20,
+      "inputFile": "batch-dtc-0025.json",
+      "outputFile": "batch-dtc-0025-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0025.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0025-output.json"
+    },
+    {
+      "batchNum": 26,
+      "count": 20,
+      "inputFile": "batch-dtc-0026.json",
+      "outputFile": "batch-dtc-0026-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0026.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0026-output.json"
+    },
+    {
+      "batchNum": 27,
+      "count": 20,
+      "inputFile": "batch-dtc-0027.json",
+      "outputFile": "batch-dtc-0027-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0027.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0027-output.json"
+    },
+    {
+      "batchNum": 28,
+      "count": 20,
+      "inputFile": "batch-dtc-0028.json",
+      "outputFile": "batch-dtc-0028-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0028.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0028-output.json"
+    },
+    {
+      "batchNum": 29,
+      "count": 20,
+      "inputFile": "batch-dtc-0029.json",
+      "outputFile": "batch-dtc-0029-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0029.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0029-output.json"
+    },
+    {
+      "batchNum": 30,
+      "count": 20,
+      "inputFile": "batch-dtc-0030.json",
+      "outputFile": "batch-dtc-0030-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0030.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0030-output.json"
+    },
+    {
+      "batchNum": 31,
+      "count": 20,
+      "inputFile": "batch-dtc-0031.json",
+      "outputFile": "batch-dtc-0031-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0031.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0031-output.json"
+    },
+    {
+      "batchNum": 32,
+      "count": 20,
+      "inputFile": "batch-dtc-0032.json",
+      "outputFile": "batch-dtc-0032-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0032.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0032-output.json"
+    },
+    {
+      "batchNum": 33,
+      "count": 20,
+      "inputFile": "batch-dtc-0033.json",
+      "outputFile": "batch-dtc-0033-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0033.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0033-output.json"
+    },
+    {
+      "batchNum": 34,
+      "count": 20,
+      "inputFile": "batch-dtc-0034.json",
+      "outputFile": "batch-dtc-0034-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0034.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0034-output.json"
+    },
+    {
+      "batchNum": 35,
+      "count": 20,
+      "inputFile": "batch-dtc-0035.json",
+      "outputFile": "batch-dtc-0035-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0035.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0035-output.json"
+    },
+    {
+      "batchNum": 36,
+      "count": 20,
+      "inputFile": "batch-dtc-0036.json",
+      "outputFile": "batch-dtc-0036-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0036.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0036-output.json"
+    },
+    {
+      "batchNum": 37,
+      "count": 20,
+      "inputFile": "batch-dtc-0037.json",
+      "outputFile": "batch-dtc-0037-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0037.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0037-output.json"
+    },
+    {
+      "batchNum": 38,
+      "count": 20,
+      "inputFile": "batch-dtc-0038.json",
+      "outputFile": "batch-dtc-0038-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0038.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0038-output.json"
+    },
+    {
+      "batchNum": 39,
+      "count": 20,
+      "inputFile": "batch-dtc-0039.json",
+      "outputFile": "batch-dtc-0039-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0039.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0039-output.json"
+    },
+    {
+      "batchNum": 40,
+      "count": 20,
+      "inputFile": "batch-dtc-0040.json",
+      "outputFile": "batch-dtc-0040-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0040.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0040-output.json"
+    },
+    {
+      "batchNum": 41,
+      "count": 20,
+      "inputFile": "batch-dtc-0041.json",
+      "outputFile": "batch-dtc-0041-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0041.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0041-output.json"
+    },
+    {
+      "batchNum": 42,
+      "count": 20,
+      "inputFile": "batch-dtc-0042.json",
+      "outputFile": "batch-dtc-0042-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0042.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0042-output.json"
+    },
+    {
+      "batchNum": 43,
+      "count": 20,
+      "inputFile": "batch-dtc-0043.json",
+      "outputFile": "batch-dtc-0043-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0043.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0043-output.json"
+    },
+    {
+      "batchNum": 44,
+      "count": 20,
+      "inputFile": "batch-dtc-0044.json",
+      "outputFile": "batch-dtc-0044-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0044.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0044-output.json"
+    },
+    {
+      "batchNum": 45,
+      "count": 20,
+      "inputFile": "batch-dtc-0045.json",
+      "outputFile": "batch-dtc-0045-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0045.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0045-output.json"
+    },
+    {
+      "batchNum": 46,
+      "count": 20,
+      "inputFile": "batch-dtc-0046.json",
+      "outputFile": "batch-dtc-0046-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0046.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0046-output.json"
+    },
+    {
+      "batchNum": 47,
+      "count": 20,
+      "inputFile": "batch-dtc-0047.json",
+      "outputFile": "batch-dtc-0047-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0047.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0047-output.json"
+    },
+    {
+      "batchNum": 48,
+      "count": 20,
+      "inputFile": "batch-dtc-0048.json",
+      "outputFile": "batch-dtc-0048-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0048.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0048-output.json"
+    },
+    {
+      "batchNum": 49,
+      "count": 20,
+      "inputFile": "batch-dtc-0049.json",
+      "outputFile": "batch-dtc-0049-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0049.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0049-output.json"
+    },
+    {
+      "batchNum": 50,
+      "count": 20,
+      "inputFile": "batch-dtc-0050.json",
+      "outputFile": "batch-dtc-0050-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0050.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0050-output.json"
+    },
+    {
+      "batchNum": 51,
+      "count": 20,
+      "inputFile": "batch-dtc-0051.json",
+      "outputFile": "batch-dtc-0051-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0051.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0051-output.json"
+    },
+    {
+      "batchNum": 52,
+      "count": 20,
+      "inputFile": "batch-dtc-0052.json",
+      "outputFile": "batch-dtc-0052-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0052.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0052-output.json"
+    },
+    {
+      "batchNum": 53,
+      "count": 20,
+      "inputFile": "batch-dtc-0053.json",
+      "outputFile": "batch-dtc-0053-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0053.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0053-output.json"
+    },
+    {
+      "batchNum": 54,
+      "count": 20,
+      "inputFile": "batch-dtc-0054.json",
+      "outputFile": "batch-dtc-0054-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0054.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0054-output.json"
+    },
+    {
+      "batchNum": 55,
+      "count": 20,
+      "inputFile": "batch-dtc-0055.json",
+      "outputFile": "batch-dtc-0055-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0055.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0055-output.json"
+    },
+    {
+      "batchNum": 56,
+      "count": 20,
+      "inputFile": "batch-dtc-0056.json",
+      "outputFile": "batch-dtc-0056-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0056.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0056-output.json"
+    },
+    {
+      "batchNum": 57,
+      "count": 20,
+      "inputFile": "batch-dtc-0057.json",
+      "outputFile": "batch-dtc-0057-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0057.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0057-output.json"
+    },
+    {
+      "batchNum": 58,
+      "count": 20,
+      "inputFile": "batch-dtc-0058.json",
+      "outputFile": "batch-dtc-0058-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0058.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0058-output.json"
+    },
+    {
+      "batchNum": 59,
+      "count": 20,
+      "inputFile": "batch-dtc-0059.json",
+      "outputFile": "batch-dtc-0059-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0059.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0059-output.json"
+    },
+    {
+      "batchNum": 60,
+      "count": 20,
+      "inputFile": "batch-dtc-0060.json",
+      "outputFile": "batch-dtc-0060-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0060.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0060-output.json"
+    },
+    {
+      "batchNum": 61,
+      "count": 20,
+      "inputFile": "batch-dtc-0061.json",
+      "outputFile": "batch-dtc-0061-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0061.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0061-output.json"
+    },
+    {
+      "batchNum": 62,
+      "count": 20,
+      "inputFile": "batch-dtc-0062.json",
+      "outputFile": "batch-dtc-0062-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0062.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0062-output.json"
+    },
+    {
+      "batchNum": 63,
+      "count": 20,
+      "inputFile": "batch-dtc-0063.json",
+      "outputFile": "batch-dtc-0063-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0063.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0063-output.json"
+    },
+    {
+      "batchNum": 64,
+      "count": 20,
+      "inputFile": "batch-dtc-0064.json",
+      "outputFile": "batch-dtc-0064-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0064.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0064-output.json"
+    },
+    {
+      "batchNum": 65,
+      "count": 20,
+      "inputFile": "batch-dtc-0065.json",
+      "outputFile": "batch-dtc-0065-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0065.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0065-output.json"
+    },
+    {
+      "batchNum": 66,
+      "count": 20,
+      "inputFile": "batch-dtc-0066.json",
+      "outputFile": "batch-dtc-0066-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0066.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0066-output.json"
+    },
+    {
+      "batchNum": 67,
+      "count": 20,
+      "inputFile": "batch-dtc-0067.json",
+      "outputFile": "batch-dtc-0067-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0067.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0067-output.json"
+    },
+    {
+      "batchNum": 68,
+      "count": 20,
+      "inputFile": "batch-dtc-0068.json",
+      "outputFile": "batch-dtc-0068-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0068.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0068-output.json"
+    },
+    {
+      "batchNum": 69,
+      "count": 20,
+      "inputFile": "batch-dtc-0069.json",
+      "outputFile": "batch-dtc-0069-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0069.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0069-output.json"
+    },
+    {
+      "batchNum": 70,
+      "count": 20,
+      "inputFile": "batch-dtc-0070.json",
+      "outputFile": "batch-dtc-0070-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0070.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0070-output.json"
+    },
+    {
+      "batchNum": 71,
+      "count": 20,
+      "inputFile": "batch-dtc-0071.json",
+      "outputFile": "batch-dtc-0071-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0071.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0071-output.json"
+    },
+    {
+      "batchNum": 72,
+      "count": 20,
+      "inputFile": "batch-dtc-0072.json",
+      "outputFile": "batch-dtc-0072-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0072.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0072-output.json"
+    },
+    {
+      "batchNum": 73,
+      "count": 20,
+      "inputFile": "batch-dtc-0073.json",
+      "outputFile": "batch-dtc-0073-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0073.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0073-output.json"
+    },
+    {
+      "batchNum": 74,
+      "count": 20,
+      "inputFile": "batch-dtc-0074.json",
+      "outputFile": "batch-dtc-0074-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0074.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0074-output.json"
+    },
+    {
+      "batchNum": 75,
+      "count": 20,
+      "inputFile": "batch-dtc-0075.json",
+      "outputFile": "batch-dtc-0075-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0075.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0075-output.json"
+    },
+    {
+      "batchNum": 76,
+      "count": 20,
+      "inputFile": "batch-dtc-0076.json",
+      "outputFile": "batch-dtc-0076-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0076.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0076-output.json"
+    },
+    {
+      "batchNum": 77,
+      "count": 20,
+      "inputFile": "batch-dtc-0077.json",
+      "outputFile": "batch-dtc-0077-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0077.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0077-output.json"
+    },
+    {
+      "batchNum": 78,
+      "count": 20,
+      "inputFile": "batch-dtc-0078.json",
+      "outputFile": "batch-dtc-0078-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0078.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0078-output.json"
+    },
+    {
+      "batchNum": 79,
+      "count": 20,
+      "inputFile": "batch-dtc-0079.json",
+      "outputFile": "batch-dtc-0079-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0079.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0079-output.json"
+    },
+    {
+      "batchNum": 80,
+      "count": 20,
+      "inputFile": "batch-dtc-0080.json",
+      "outputFile": "batch-dtc-0080-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0080.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0080-output.json"
+    },
+    {
+      "batchNum": 81,
+      "count": 20,
+      "inputFile": "batch-dtc-0081.json",
+      "outputFile": "batch-dtc-0081-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0081.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0081-output.json"
+    },
+    {
+      "batchNum": 82,
+      "count": 20,
+      "inputFile": "batch-dtc-0082.json",
+      "outputFile": "batch-dtc-0082-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0082.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0082-output.json"
+    },
+    {
+      "batchNum": 83,
+      "count": 20,
+      "inputFile": "batch-dtc-0083.json",
+      "outputFile": "batch-dtc-0083-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0083.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0083-output.json"
+    },
+    {
+      "batchNum": 84,
+      "count": 20,
+      "inputFile": "batch-dtc-0084.json",
+      "outputFile": "batch-dtc-0084-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0084.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0084-output.json"
+    },
+    {
+      "batchNum": 85,
+      "count": 20,
+      "inputFile": "batch-dtc-0085.json",
+      "outputFile": "batch-dtc-0085-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0085.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0085-output.json"
+    },
+    {
+      "batchNum": 86,
+      "count": 20,
+      "inputFile": "batch-dtc-0086.json",
+      "outputFile": "batch-dtc-0086-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0086.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0086-output.json"
+    },
+    {
+      "batchNum": 87,
+      "count": 20,
+      "inputFile": "batch-dtc-0087.json",
+      "outputFile": "batch-dtc-0087-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0087.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0087-output.json"
+    },
+    {
+      "batchNum": 88,
+      "count": 20,
+      "inputFile": "batch-dtc-0088.json",
+      "outputFile": "batch-dtc-0088-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0088.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0088-output.json"
+    },
+    {
+      "batchNum": 89,
+      "count": 20,
+      "inputFile": "batch-dtc-0089.json",
+      "outputFile": "batch-dtc-0089-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0089.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0089-output.json"
+    },
+    {
+      "batchNum": 90,
+      "count": 20,
+      "inputFile": "batch-dtc-0090.json",
+      "outputFile": "batch-dtc-0090-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0090.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0090-output.json"
+    },
+    {
+      "batchNum": 91,
+      "count": 20,
+      "inputFile": "batch-dtc-0091.json",
+      "outputFile": "batch-dtc-0091-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0091.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0091-output.json"
+    },
+    {
+      "batchNum": 92,
+      "count": 20,
+      "inputFile": "batch-dtc-0092.json",
+      "outputFile": "batch-dtc-0092-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0092.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0092-output.json"
+    },
+    {
+      "batchNum": 93,
+      "count": 20,
+      "inputFile": "batch-dtc-0093.json",
+      "outputFile": "batch-dtc-0093-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0093.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0093-output.json"
+    },
+    {
+      "batchNum": 94,
+      "count": 20,
+      "inputFile": "batch-dtc-0094.json",
+      "outputFile": "batch-dtc-0094-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0094.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0094-output.json"
+    },
+    {
+      "batchNum": 95,
+      "count": 20,
+      "inputFile": "batch-dtc-0095.json",
+      "outputFile": "batch-dtc-0095-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0095.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0095-output.json"
+    },
+    {
+      "batchNum": 96,
+      "count": 20,
+      "inputFile": "batch-dtc-0096.json",
+      "outputFile": "batch-dtc-0096-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0096.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0096-output.json"
+    },
+    {
+      "batchNum": 97,
+      "count": 20,
+      "inputFile": "batch-dtc-0097.json",
+      "outputFile": "batch-dtc-0097-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0097.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0097-output.json"
+    },
+    {
+      "batchNum": 98,
+      "count": 20,
+      "inputFile": "batch-dtc-0098.json",
+      "outputFile": "batch-dtc-0098-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0098.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0098-output.json"
+    },
+    {
+      "batchNum": 99,
+      "count": 20,
+      "inputFile": "batch-dtc-0099.json",
+      "outputFile": "batch-dtc-0099-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0099.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0099-output.json"
+    },
+    {
+      "batchNum": 100,
+      "count": 20,
+      "inputFile": "batch-dtc-0100.json",
+      "outputFile": "batch-dtc-0100-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0100.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0100-output.json"
+    },
+    {
+      "batchNum": 101,
+      "count": 20,
+      "inputFile": "batch-dtc-0101.json",
+      "outputFile": "batch-dtc-0101-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0101.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0101-output.json"
+    },
+    {
+      "batchNum": 102,
+      "count": 20,
+      "inputFile": "batch-dtc-0102.json",
+      "outputFile": "batch-dtc-0102-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0102.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0102-output.json"
+    },
+    {
+      "batchNum": 103,
+      "count": 20,
+      "inputFile": "batch-dtc-0103.json",
+      "outputFile": "batch-dtc-0103-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0103.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0103-output.json"
+    },
+    {
+      "batchNum": 104,
+      "count": 20,
+      "inputFile": "batch-dtc-0104.json",
+      "outputFile": "batch-dtc-0104-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0104.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0104-output.json"
+    },
+    {
+      "batchNum": 105,
+      "count": 20,
+      "inputFile": "batch-dtc-0105.json",
+      "outputFile": "batch-dtc-0105-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0105.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0105-output.json"
+    },
+    {
+      "batchNum": 106,
+      "count": 20,
+      "inputFile": "batch-dtc-0106.json",
+      "outputFile": "batch-dtc-0106-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0106.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0106-output.json"
+    },
+    {
+      "batchNum": 107,
+      "count": 20,
+      "inputFile": "batch-dtc-0107.json",
+      "outputFile": "batch-dtc-0107-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0107.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0107-output.json"
+    },
+    {
+      "batchNum": 108,
+      "count": 20,
+      "inputFile": "batch-dtc-0108.json",
+      "outputFile": "batch-dtc-0108-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0108.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0108-output.json"
+    },
+    {
+      "batchNum": 109,
+      "count": 20,
+      "inputFile": "batch-dtc-0109.json",
+      "outputFile": "batch-dtc-0109-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0109.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0109-output.json"
+    },
+    {
+      "batchNum": 110,
+      "count": 20,
+      "inputFile": "batch-dtc-0110.json",
+      "outputFile": "batch-dtc-0110-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0110.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0110-output.json"
+    },
+    {
+      "batchNum": 111,
+      "count": 20,
+      "inputFile": "batch-dtc-0111.json",
+      "outputFile": "batch-dtc-0111-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0111.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0111-output.json"
+    },
+    {
+      "batchNum": 112,
+      "count": 20,
+      "inputFile": "batch-dtc-0112.json",
+      "outputFile": "batch-dtc-0112-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0112.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0112-output.json"
+    },
+    {
+      "batchNum": 113,
+      "count": 20,
+      "inputFile": "batch-dtc-0113.json",
+      "outputFile": "batch-dtc-0113-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0113.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0113-output.json"
+    },
+    {
+      "batchNum": 114,
+      "count": 20,
+      "inputFile": "batch-dtc-0114.json",
+      "outputFile": "batch-dtc-0114-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0114.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0114-output.json"
+    },
+    {
+      "batchNum": 115,
+      "count": 20,
+      "inputFile": "batch-dtc-0115.json",
+      "outputFile": "batch-dtc-0115-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0115.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0115-output.json"
+    },
+    {
+      "batchNum": 116,
+      "count": 20,
+      "inputFile": "batch-dtc-0116.json",
+      "outputFile": "batch-dtc-0116-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0116.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0116-output.json"
+    },
+    {
+      "batchNum": 117,
+      "count": 20,
+      "inputFile": "batch-dtc-0117.json",
+      "outputFile": "batch-dtc-0117-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0117.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0117-output.json"
+    },
+    {
+      "batchNum": 118,
+      "count": 20,
+      "inputFile": "batch-dtc-0118.json",
+      "outputFile": "batch-dtc-0118-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0118.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0118-output.json"
+    },
+    {
+      "batchNum": 119,
+      "count": 20,
+      "inputFile": "batch-dtc-0119.json",
+      "outputFile": "batch-dtc-0119-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0119.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0119-output.json"
+    },
+    {
+      "batchNum": 120,
+      "count": 20,
+      "inputFile": "batch-dtc-0120.json",
+      "outputFile": "batch-dtc-0120-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0120.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0120-output.json"
+    },
+    {
+      "batchNum": 121,
+      "count": 20,
+      "inputFile": "batch-dtc-0121.json",
+      "outputFile": "batch-dtc-0121-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0121.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0121-output.json"
+    },
+    {
+      "batchNum": 122,
+      "count": 20,
+      "inputFile": "batch-dtc-0122.json",
+      "outputFile": "batch-dtc-0122-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0122.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0122-output.json"
+    },
+    {
+      "batchNum": 123,
+      "count": 20,
+      "inputFile": "batch-dtc-0123.json",
+      "outputFile": "batch-dtc-0123-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0123.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0123-output.json"
+    },
+    {
+      "batchNum": 124,
+      "count": 20,
+      "inputFile": "batch-dtc-0124.json",
+      "outputFile": "batch-dtc-0124-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0124.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0124-output.json"
+    },
+    {
+      "batchNum": 125,
+      "count": 20,
+      "inputFile": "batch-dtc-0125.json",
+      "outputFile": "batch-dtc-0125-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0125.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0125-output.json"
+    },
+    {
+      "batchNum": 126,
+      "count": 20,
+      "inputFile": "batch-dtc-0126.json",
+      "outputFile": "batch-dtc-0126-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0126.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0126-output.json"
+    },
+    {
+      "batchNum": 127,
+      "count": 20,
+      "inputFile": "batch-dtc-0127.json",
+      "outputFile": "batch-dtc-0127-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0127.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0127-output.json"
+    },
+    {
+      "batchNum": 128,
+      "count": 20,
+      "inputFile": "batch-dtc-0128.json",
+      "outputFile": "batch-dtc-0128-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0128.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0128-output.json"
+    },
+    {
+      "batchNum": 129,
+      "count": 20,
+      "inputFile": "batch-dtc-0129.json",
+      "outputFile": "batch-dtc-0129-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0129.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0129-output.json"
+    },
+    {
+      "batchNum": 130,
+      "count": 20,
+      "inputFile": "batch-dtc-0130.json",
+      "outputFile": "batch-dtc-0130-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0130.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0130-output.json"
+    },
+    {
+      "batchNum": 131,
+      "count": 20,
+      "inputFile": "batch-dtc-0131.json",
+      "outputFile": "batch-dtc-0131-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0131.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0131-output.json"
+    },
+    {
+      "batchNum": 132,
+      "count": 20,
+      "inputFile": "batch-dtc-0132.json",
+      "outputFile": "batch-dtc-0132-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0132.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0132-output.json"
+    },
+    {
+      "batchNum": 133,
+      "count": 20,
+      "inputFile": "batch-dtc-0133.json",
+      "outputFile": "batch-dtc-0133-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0133.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0133-output.json"
+    },
+    {
+      "batchNum": 134,
+      "count": 20,
+      "inputFile": "batch-dtc-0134.json",
+      "outputFile": "batch-dtc-0134-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0134.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0134-output.json"
+    },
+    {
+      "batchNum": 135,
+      "count": 20,
+      "inputFile": "batch-dtc-0135.json",
+      "outputFile": "batch-dtc-0135-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0135.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0135-output.json"
+    },
+    {
+      "batchNum": 136,
+      "count": 20,
+      "inputFile": "batch-dtc-0136.json",
+      "outputFile": "batch-dtc-0136-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0136.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0136-output.json"
+    },
+    {
+      "batchNum": 137,
+      "count": 20,
+      "inputFile": "batch-dtc-0137.json",
+      "outputFile": "batch-dtc-0137-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0137.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0137-output.json"
+    },
+    {
+      "batchNum": 138,
+      "count": 20,
+      "inputFile": "batch-dtc-0138.json",
+      "outputFile": "batch-dtc-0138-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0138.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0138-output.json"
+    },
+    {
+      "batchNum": 139,
+      "count": 20,
+      "inputFile": "batch-dtc-0139.json",
+      "outputFile": "batch-dtc-0139-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0139.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0139-output.json"
+    },
+    {
+      "batchNum": 140,
+      "count": 20,
+      "inputFile": "batch-dtc-0140.json",
+      "outputFile": "batch-dtc-0140-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0140.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0140-output.json"
+    },
+    {
+      "batchNum": 141,
+      "count": 20,
+      "inputFile": "batch-dtc-0141.json",
+      "outputFile": "batch-dtc-0141-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0141.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0141-output.json"
+    },
+    {
+      "batchNum": 142,
+      "count": 20,
+      "inputFile": "batch-dtc-0142.json",
+      "outputFile": "batch-dtc-0142-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0142.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0142-output.json"
+    },
+    {
+      "batchNum": 143,
+      "count": 20,
+      "inputFile": "batch-dtc-0143.json",
+      "outputFile": "batch-dtc-0143-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0143.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0143-output.json"
+    },
+    {
+      "batchNum": 144,
+      "count": 20,
+      "inputFile": "batch-dtc-0144.json",
+      "outputFile": "batch-dtc-0144-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0144.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0144-output.json"
+    },
+    {
+      "batchNum": 145,
+      "count": 20,
+      "inputFile": "batch-dtc-0145.json",
+      "outputFile": "batch-dtc-0145-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0145.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0145-output.json"
+    },
+    {
+      "batchNum": 146,
+      "count": 20,
+      "inputFile": "batch-dtc-0146.json",
+      "outputFile": "batch-dtc-0146-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0146.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0146-output.json"
+    },
+    {
+      "batchNum": 147,
+      "count": 20,
+      "inputFile": "batch-dtc-0147.json",
+      "outputFile": "batch-dtc-0147-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0147.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0147-output.json"
+    },
+    {
+      "batchNum": 148,
+      "count": 20,
+      "inputFile": "batch-dtc-0148.json",
+      "outputFile": "batch-dtc-0148-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0148.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0148-output.json"
+    },
+    {
+      "batchNum": 149,
+      "count": 20,
+      "inputFile": "batch-dtc-0149.json",
+      "outputFile": "batch-dtc-0149-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0149.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0149-output.json"
+    },
+    {
+      "batchNum": 150,
+      "count": 20,
+      "inputFile": "batch-dtc-0150.json",
+      "outputFile": "batch-dtc-0150-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0150.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0150-output.json"
+    },
+    {
+      "batchNum": 151,
+      "count": 20,
+      "inputFile": "batch-dtc-0151.json",
+      "outputFile": "batch-dtc-0151-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0151.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0151-output.json"
+    },
+    {
+      "batchNum": 152,
+      "count": 20,
+      "inputFile": "batch-dtc-0152.json",
+      "outputFile": "batch-dtc-0152-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0152.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0152-output.json"
+    },
+    {
+      "batchNum": 153,
+      "count": 20,
+      "inputFile": "batch-dtc-0153.json",
+      "outputFile": "batch-dtc-0153-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0153.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0153-output.json"
+    },
+    {
+      "batchNum": 154,
+      "count": 20,
+      "inputFile": "batch-dtc-0154.json",
+      "outputFile": "batch-dtc-0154-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0154.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0154-output.json"
+    },
+    {
+      "batchNum": 155,
+      "count": 20,
+      "inputFile": "batch-dtc-0155.json",
+      "outputFile": "batch-dtc-0155-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0155.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0155-output.json"
+    },
+    {
+      "batchNum": 156,
+      "count": 20,
+      "inputFile": "batch-dtc-0156.json",
+      "outputFile": "batch-dtc-0156-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0156.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0156-output.json"
+    },
+    {
+      "batchNum": 157,
+      "count": 20,
+      "inputFile": "batch-dtc-0157.json",
+      "outputFile": "batch-dtc-0157-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0157.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0157-output.json"
+    },
+    {
+      "batchNum": 158,
+      "count": 20,
+      "inputFile": "batch-dtc-0158.json",
+      "outputFile": "batch-dtc-0158-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0158.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0158-output.json"
+    },
+    {
+      "batchNum": 159,
+      "count": 20,
+      "inputFile": "batch-dtc-0159.json",
+      "outputFile": "batch-dtc-0159-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0159.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0159-output.json"
+    },
+    {
+      "batchNum": 160,
+      "count": 20,
+      "inputFile": "batch-dtc-0160.json",
+      "outputFile": "batch-dtc-0160-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0160.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0160-output.json"
+    },
+    {
+      "batchNum": 161,
+      "count": 20,
+      "inputFile": "batch-dtc-0161.json",
+      "outputFile": "batch-dtc-0161-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0161.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0161-output.json"
+    },
+    {
+      "batchNum": 162,
+      "count": 20,
+      "inputFile": "batch-dtc-0162.json",
+      "outputFile": "batch-dtc-0162-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0162.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0162-output.json"
+    },
+    {
+      "batchNum": 163,
+      "count": 20,
+      "inputFile": "batch-dtc-0163.json",
+      "outputFile": "batch-dtc-0163-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0163.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0163-output.json"
+    },
+    {
+      "batchNum": 164,
+      "count": 20,
+      "inputFile": "batch-dtc-0164.json",
+      "outputFile": "batch-dtc-0164-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0164.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0164-output.json"
+    },
+    {
+      "batchNum": 165,
+      "count": 20,
+      "inputFile": "batch-dtc-0165.json",
+      "outputFile": "batch-dtc-0165-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0165.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0165-output.json"
+    },
+    {
+      "batchNum": 166,
+      "count": 20,
+      "inputFile": "batch-dtc-0166.json",
+      "outputFile": "batch-dtc-0166-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0166.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0166-output.json"
+    },
+    {
+      "batchNum": 167,
+      "count": 20,
+      "inputFile": "batch-dtc-0167.json",
+      "outputFile": "batch-dtc-0167-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0167.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0167-output.json"
+    },
+    {
+      "batchNum": 168,
+      "count": 20,
+      "inputFile": "batch-dtc-0168.json",
+      "outputFile": "batch-dtc-0168-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0168.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0168-output.json"
+    },
+    {
+      "batchNum": 169,
+      "count": 20,
+      "inputFile": "batch-dtc-0169.json",
+      "outputFile": "batch-dtc-0169-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0169.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0169-output.json"
+    },
+    {
+      "batchNum": 170,
+      "count": 20,
+      "inputFile": "batch-dtc-0170.json",
+      "outputFile": "batch-dtc-0170-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0170.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0170-output.json"
+    },
+    {
+      "batchNum": 171,
+      "count": 20,
+      "inputFile": "batch-dtc-0171.json",
+      "outputFile": "batch-dtc-0171-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0171.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0171-output.json"
+    },
+    {
+      "batchNum": 172,
+      "count": 20,
+      "inputFile": "batch-dtc-0172.json",
+      "outputFile": "batch-dtc-0172-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0172.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0172-output.json"
+    },
+    {
+      "batchNum": 173,
+      "count": 20,
+      "inputFile": "batch-dtc-0173.json",
+      "outputFile": "batch-dtc-0173-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0173.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0173-output.json"
+    },
+    {
+      "batchNum": 174,
+      "count": 20,
+      "inputFile": "batch-dtc-0174.json",
+      "outputFile": "batch-dtc-0174-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0174.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0174-output.json"
+    },
+    {
+      "batchNum": 175,
+      "count": 20,
+      "inputFile": "batch-dtc-0175.json",
+      "outputFile": "batch-dtc-0175-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0175.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0175-output.json"
+    },
+    {
+      "batchNum": 176,
+      "count": 20,
+      "inputFile": "batch-dtc-0176.json",
+      "outputFile": "batch-dtc-0176-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0176.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0176-output.json"
+    },
+    {
+      "batchNum": 177,
+      "count": 20,
+      "inputFile": "batch-dtc-0177.json",
+      "outputFile": "batch-dtc-0177-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0177.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0177-output.json"
+    },
+    {
+      "batchNum": 178,
+      "count": 20,
+      "inputFile": "batch-dtc-0178.json",
+      "outputFile": "batch-dtc-0178-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0178.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0178-output.json"
+    },
+    {
+      "batchNum": 179,
+      "count": 20,
+      "inputFile": "batch-dtc-0179.json",
+      "outputFile": "batch-dtc-0179-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0179.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0179-output.json"
+    },
+    {
+      "batchNum": 180,
+      "count": 20,
+      "inputFile": "batch-dtc-0180.json",
+      "outputFile": "batch-dtc-0180-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0180.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0180-output.json"
+    },
+    {
+      "batchNum": 181,
+      "count": 20,
+      "inputFile": "batch-dtc-0181.json",
+      "outputFile": "batch-dtc-0181-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0181.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0181-output.json"
+    },
+    {
+      "batchNum": 182,
+      "count": 20,
+      "inputFile": "batch-dtc-0182.json",
+      "outputFile": "batch-dtc-0182-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0182.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0182-output.json"
+    },
+    {
+      "batchNum": 183,
+      "count": 20,
+      "inputFile": "batch-dtc-0183.json",
+      "outputFile": "batch-dtc-0183-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0183.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0183-output.json"
+    },
+    {
+      "batchNum": 184,
+      "count": 20,
+      "inputFile": "batch-dtc-0184.json",
+      "outputFile": "batch-dtc-0184-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0184.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0184-output.json"
+    },
+    {
+      "batchNum": 185,
+      "count": 20,
+      "inputFile": "batch-dtc-0185.json",
+      "outputFile": "batch-dtc-0185-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0185.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0185-output.json"
+    },
+    {
+      "batchNum": 186,
+      "count": 20,
+      "inputFile": "batch-dtc-0186.json",
+      "outputFile": "batch-dtc-0186-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0186.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0186-output.json"
+    },
+    {
+      "batchNum": 187,
+      "count": 20,
+      "inputFile": "batch-dtc-0187.json",
+      "outputFile": "batch-dtc-0187-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0187.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0187-output.json"
+    },
+    {
+      "batchNum": 188,
+      "count": 20,
+      "inputFile": "batch-dtc-0188.json",
+      "outputFile": "batch-dtc-0188-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0188.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0188-output.json"
+    },
+    {
+      "batchNum": 189,
+      "count": 20,
+      "inputFile": "batch-dtc-0189.json",
+      "outputFile": "batch-dtc-0189-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0189.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0189-output.json"
+    },
+    {
+      "batchNum": 190,
+      "count": 20,
+      "inputFile": "batch-dtc-0190.json",
+      "outputFile": "batch-dtc-0190-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0190.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0190-output.json"
+    },
+    {
+      "batchNum": 191,
+      "count": 20,
+      "inputFile": "batch-dtc-0191.json",
+      "outputFile": "batch-dtc-0191-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0191.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0191-output.json"
+    },
+    {
+      "batchNum": 192,
+      "count": 20,
+      "inputFile": "batch-dtc-0192.json",
+      "outputFile": "batch-dtc-0192-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0192.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0192-output.json"
+    },
+    {
+      "batchNum": 193,
+      "count": 20,
+      "inputFile": "batch-dtc-0193.json",
+      "outputFile": "batch-dtc-0193-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0193.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0193-output.json"
+    },
+    {
+      "batchNum": 194,
+      "count": 20,
+      "inputFile": "batch-dtc-0194.json",
+      "outputFile": "batch-dtc-0194-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0194.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0194-output.json"
+    },
+    {
+      "batchNum": 195,
+      "count": 20,
+      "inputFile": "batch-dtc-0195.json",
+      "outputFile": "batch-dtc-0195-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0195.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0195-output.json"
+    },
+    {
+      "batchNum": 196,
+      "count": 20,
+      "inputFile": "batch-dtc-0196.json",
+      "outputFile": "batch-dtc-0196-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0196.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0196-output.json"
+    },
+    {
+      "batchNum": 197,
+      "count": 20,
+      "inputFile": "batch-dtc-0197.json",
+      "outputFile": "batch-dtc-0197-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0197.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0197-output.json"
+    },
+    {
+      "batchNum": 198,
+      "count": 20,
+      "inputFile": "batch-dtc-0198.json",
+      "outputFile": "batch-dtc-0198-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0198.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0198-output.json"
+    },
+    {
+      "batchNum": 199,
+      "count": 20,
+      "inputFile": "batch-dtc-0199.json",
+      "outputFile": "batch-dtc-0199-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0199.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0199-output.json"
+    },
+    {
+      "batchNum": 200,
+      "count": 20,
+      "inputFile": "batch-dtc-0200.json",
+      "outputFile": "batch-dtc-0200-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0200.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0200-output.json"
+    },
+    {
+      "batchNum": 201,
+      "count": 20,
+      "inputFile": "batch-dtc-0201.json",
+      "outputFile": "batch-dtc-0201-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0201.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0201-output.json"
+    },
+    {
+      "batchNum": 202,
+      "count": 20,
+      "inputFile": "batch-dtc-0202.json",
+      "outputFile": "batch-dtc-0202-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0202.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0202-output.json"
+    },
+    {
+      "batchNum": 203,
+      "count": 20,
+      "inputFile": "batch-dtc-0203.json",
+      "outputFile": "batch-dtc-0203-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0203.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0203-output.json"
+    },
+    {
+      "batchNum": 204,
+      "count": 20,
+      "inputFile": "batch-dtc-0204.json",
+      "outputFile": "batch-dtc-0204-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0204.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0204-output.json"
+    },
+    {
+      "batchNum": 205,
+      "count": 20,
+      "inputFile": "batch-dtc-0205.json",
+      "outputFile": "batch-dtc-0205-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0205.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0205-output.json"
+    },
+    {
+      "batchNum": 206,
+      "count": 20,
+      "inputFile": "batch-dtc-0206.json",
+      "outputFile": "batch-dtc-0206-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0206.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0206-output.json"
+    },
+    {
+      "batchNum": 207,
+      "count": 20,
+      "inputFile": "batch-dtc-0207.json",
+      "outputFile": "batch-dtc-0207-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0207.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0207-output.json"
+    },
+    {
+      "batchNum": 208,
+      "count": 20,
+      "inputFile": "batch-dtc-0208.json",
+      "outputFile": "batch-dtc-0208-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0208.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0208-output.json"
+    },
+    {
+      "batchNum": 209,
+      "count": 20,
+      "inputFile": "batch-dtc-0209.json",
+      "outputFile": "batch-dtc-0209-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0209.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0209-output.json"
+    },
+    {
+      "batchNum": 210,
+      "count": 20,
+      "inputFile": "batch-dtc-0210.json",
+      "outputFile": "batch-dtc-0210-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0210.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0210-output.json"
+    },
+    {
+      "batchNum": 211,
+      "count": 20,
+      "inputFile": "batch-dtc-0211.json",
+      "outputFile": "batch-dtc-0211-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0211.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0211-output.json"
+    },
+    {
+      "batchNum": 212,
+      "count": 20,
+      "inputFile": "batch-dtc-0212.json",
+      "outputFile": "batch-dtc-0212-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0212.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0212-output.json"
+    },
+    {
+      "batchNum": 213,
+      "count": 20,
+      "inputFile": "batch-dtc-0213.json",
+      "outputFile": "batch-dtc-0213-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0213.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0213-output.json"
+    },
+    {
+      "batchNum": 214,
+      "count": 20,
+      "inputFile": "batch-dtc-0214.json",
+      "outputFile": "batch-dtc-0214-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0214.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0214-output.json"
+    },
+    {
+      "batchNum": 215,
+      "count": 20,
+      "inputFile": "batch-dtc-0215.json",
+      "outputFile": "batch-dtc-0215-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0215.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0215-output.json"
+    },
+    {
+      "batchNum": 216,
+      "count": 20,
+      "inputFile": "batch-dtc-0216.json",
+      "outputFile": "batch-dtc-0216-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0216.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0216-output.json"
+    },
+    {
+      "batchNum": 217,
+      "count": 20,
+      "inputFile": "batch-dtc-0217.json",
+      "outputFile": "batch-dtc-0217-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0217.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0217-output.json"
+    },
+    {
+      "batchNum": 218,
+      "count": 20,
+      "inputFile": "batch-dtc-0218.json",
+      "outputFile": "batch-dtc-0218-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0218.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0218-output.json"
+    },
+    {
+      "batchNum": 219,
+      "count": 20,
+      "inputFile": "batch-dtc-0219.json",
+      "outputFile": "batch-dtc-0219-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0219.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0219-output.json"
+    },
+    {
+      "batchNum": 220,
+      "count": 20,
+      "inputFile": "batch-dtc-0220.json",
+      "outputFile": "batch-dtc-0220-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0220.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0220-output.json"
+    },
+    {
+      "batchNum": 221,
+      "count": 20,
+      "inputFile": "batch-dtc-0221.json",
+      "outputFile": "batch-dtc-0221-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0221.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0221-output.json"
+    },
+    {
+      "batchNum": 222,
+      "count": 20,
+      "inputFile": "batch-dtc-0222.json",
+      "outputFile": "batch-dtc-0222-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0222.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0222-output.json"
+    },
+    {
+      "batchNum": 223,
+      "count": 20,
+      "inputFile": "batch-dtc-0223.json",
+      "outputFile": "batch-dtc-0223-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0223.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0223-output.json"
+    },
+    {
+      "batchNum": 224,
+      "count": 20,
+      "inputFile": "batch-dtc-0224.json",
+      "outputFile": "batch-dtc-0224-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0224.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0224-output.json"
+    },
+    {
+      "batchNum": 225,
+      "count": 20,
+      "inputFile": "batch-dtc-0225.json",
+      "outputFile": "batch-dtc-0225-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0225.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0225-output.json"
+    },
+    {
+      "batchNum": 226,
+      "count": 20,
+      "inputFile": "batch-dtc-0226.json",
+      "outputFile": "batch-dtc-0226-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0226.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0226-output.json"
+    },
+    {
+      "batchNum": 227,
+      "count": 20,
+      "inputFile": "batch-dtc-0227.json",
+      "outputFile": "batch-dtc-0227-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0227.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0227-output.json"
+    },
+    {
+      "batchNum": 228,
+      "count": 20,
+      "inputFile": "batch-dtc-0228.json",
+      "outputFile": "batch-dtc-0228-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0228.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0228-output.json"
+    },
+    {
+      "batchNum": 229,
+      "count": 20,
+      "inputFile": "batch-dtc-0229.json",
+      "outputFile": "batch-dtc-0229-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0229.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0229-output.json"
+    },
+    {
+      "batchNum": 230,
+      "count": 20,
+      "inputFile": "batch-dtc-0230.json",
+      "outputFile": "batch-dtc-0230-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0230.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0230-output.json"
+    },
+    {
+      "batchNum": 231,
+      "count": 20,
+      "inputFile": "batch-dtc-0231.json",
+      "outputFile": "batch-dtc-0231-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0231.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0231-output.json"
+    },
+    {
+      "batchNum": 232,
+      "count": 20,
+      "inputFile": "batch-dtc-0232.json",
+      "outputFile": "batch-dtc-0232-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0232.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0232-output.json"
+    },
+    {
+      "batchNum": 233,
+      "count": 20,
+      "inputFile": "batch-dtc-0233.json",
+      "outputFile": "batch-dtc-0233-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0233.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0233-output.json"
+    },
+    {
+      "batchNum": 234,
+      "count": 20,
+      "inputFile": "batch-dtc-0234.json",
+      "outputFile": "batch-dtc-0234-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0234.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0234-output.json"
+    },
+    {
+      "batchNum": 235,
+      "count": 20,
+      "inputFile": "batch-dtc-0235.json",
+      "outputFile": "batch-dtc-0235-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0235.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0235-output.json"
+    },
+    {
+      "batchNum": 236,
+      "count": 20,
+      "inputFile": "batch-dtc-0236.json",
+      "outputFile": "batch-dtc-0236-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0236.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0236-output.json"
+    },
+    {
+      "batchNum": 237,
+      "count": 20,
+      "inputFile": "batch-dtc-0237.json",
+      "outputFile": "batch-dtc-0237-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0237.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0237-output.json"
+    },
+    {
+      "batchNum": 238,
+      "count": 20,
+      "inputFile": "batch-dtc-0238.json",
+      "outputFile": "batch-dtc-0238-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0238.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0238-output.json"
+    },
+    {
+      "batchNum": 239,
+      "count": 20,
+      "inputFile": "batch-dtc-0239.json",
+      "outputFile": "batch-dtc-0239-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0239.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0239-output.json"
+    },
+    {
+      "batchNum": 240,
+      "count": 20,
+      "inputFile": "batch-dtc-0240.json",
+      "outputFile": "batch-dtc-0240-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0240.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0240-output.json"
+    },
+    {
+      "batchNum": 241,
+      "count": 20,
+      "inputFile": "batch-dtc-0241.json",
+      "outputFile": "batch-dtc-0241-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0241.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0241-output.json"
+    },
+    {
+      "batchNum": 242,
+      "count": 20,
+      "inputFile": "batch-dtc-0242.json",
+      "outputFile": "batch-dtc-0242-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0242.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0242-output.json"
+    },
+    {
+      "batchNum": 243,
+      "count": 20,
+      "inputFile": "batch-dtc-0243.json",
+      "outputFile": "batch-dtc-0243-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0243.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0243-output.json"
+    },
+    {
+      "batchNum": 244,
+      "count": 20,
+      "inputFile": "batch-dtc-0244.json",
+      "outputFile": "batch-dtc-0244-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0244.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0244-output.json"
+    },
+    {
+      "batchNum": 245,
+      "count": 20,
+      "inputFile": "batch-dtc-0245.json",
+      "outputFile": "batch-dtc-0245-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0245.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0245-output.json"
+    },
+    {
+      "batchNum": 246,
+      "count": 20,
+      "inputFile": "batch-dtc-0246.json",
+      "outputFile": "batch-dtc-0246-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0246.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0246-output.json"
+    },
+    {
+      "batchNum": 247,
+      "count": 20,
+      "inputFile": "batch-dtc-0247.json",
+      "outputFile": "batch-dtc-0247-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0247.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0247-output.json"
+    },
+    {
+      "batchNum": 248,
+      "count": 20,
+      "inputFile": "batch-dtc-0248.json",
+      "outputFile": "batch-dtc-0248-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0248.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0248-output.json"
+    },
+    {
+      "batchNum": 249,
+      "count": 20,
+      "inputFile": "batch-dtc-0249.json",
+      "outputFile": "batch-dtc-0249-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0249.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0249-output.json"
+    },
+    {
+      "batchNum": 250,
+      "count": 20,
+      "inputFile": "batch-dtc-0250.json",
+      "outputFile": "batch-dtc-0250-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0250.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0250-output.json"
+    },
+    {
+      "batchNum": 251,
+      "count": 20,
+      "inputFile": "batch-dtc-0251.json",
+      "outputFile": "batch-dtc-0251-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0251.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0251-output.json"
+    },
+    {
+      "batchNum": 252,
+      "count": 20,
+      "inputFile": "batch-dtc-0252.json",
+      "outputFile": "batch-dtc-0252-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0252.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0252-output.json"
+    },
+    {
+      "batchNum": 253,
+      "count": 20,
+      "inputFile": "batch-dtc-0253.json",
+      "outputFile": "batch-dtc-0253-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0253.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0253-output.json"
+    },
+    {
+      "batchNum": 254,
+      "count": 20,
+      "inputFile": "batch-dtc-0254.json",
+      "outputFile": "batch-dtc-0254-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0254.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0254-output.json"
+    },
+    {
+      "batchNum": 255,
+      "count": 20,
+      "inputFile": "batch-dtc-0255.json",
+      "outputFile": "batch-dtc-0255-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0255.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0255-output.json"
+    },
+    {
+      "batchNum": 256,
+      "count": 20,
+      "inputFile": "batch-dtc-0256.json",
+      "outputFile": "batch-dtc-0256-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0256.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0256-output.json"
+    },
+    {
+      "batchNum": 257,
+      "count": 20,
+      "inputFile": "batch-dtc-0257.json",
+      "outputFile": "batch-dtc-0257-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0257.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0257-output.json"
+    },
+    {
+      "batchNum": 258,
+      "count": 20,
+      "inputFile": "batch-dtc-0258.json",
+      "outputFile": "batch-dtc-0258-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0258.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0258-output.json"
+    },
+    {
+      "batchNum": 259,
+      "count": 20,
+      "inputFile": "batch-dtc-0259.json",
+      "outputFile": "batch-dtc-0259-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0259.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0259-output.json"
+    },
+    {
+      "batchNum": 260,
+      "count": 20,
+      "inputFile": "batch-dtc-0260.json",
+      "outputFile": "batch-dtc-0260-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0260.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0260-output.json"
+    },
+    {
+      "batchNum": 261,
+      "count": 20,
+      "inputFile": "batch-dtc-0261.json",
+      "outputFile": "batch-dtc-0261-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0261.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0261-output.json"
+    },
+    {
+      "batchNum": 262,
+      "count": 20,
+      "inputFile": "batch-dtc-0262.json",
+      "outputFile": "batch-dtc-0262-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0262.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0262-output.json"
+    },
+    {
+      "batchNum": 263,
+      "count": 20,
+      "inputFile": "batch-dtc-0263.json",
+      "outputFile": "batch-dtc-0263-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0263.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0263-output.json"
+    },
+    {
+      "batchNum": 264,
+      "count": 20,
+      "inputFile": "batch-dtc-0264.json",
+      "outputFile": "batch-dtc-0264-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0264.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0264-output.json"
+    },
+    {
+      "batchNum": 265,
+      "count": 20,
+      "inputFile": "batch-dtc-0265.json",
+      "outputFile": "batch-dtc-0265-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0265.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0265-output.json"
+    },
+    {
+      "batchNum": 266,
+      "count": 20,
+      "inputFile": "batch-dtc-0266.json",
+      "outputFile": "batch-dtc-0266-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0266.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0266-output.json"
+    },
+    {
+      "batchNum": 267,
+      "count": 20,
+      "inputFile": "batch-dtc-0267.json",
+      "outputFile": "batch-dtc-0267-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0267.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0267-output.json"
+    },
+    {
+      "batchNum": 268,
+      "count": 20,
+      "inputFile": "batch-dtc-0268.json",
+      "outputFile": "batch-dtc-0268-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0268.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0268-output.json"
+    },
+    {
+      "batchNum": 269,
+      "count": 20,
+      "inputFile": "batch-dtc-0269.json",
+      "outputFile": "batch-dtc-0269-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0269.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0269-output.json"
+    },
+    {
+      "batchNum": 270,
+      "count": 20,
+      "inputFile": "batch-dtc-0270.json",
+      "outputFile": "batch-dtc-0270-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0270.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0270-output.json"
+    },
+    {
+      "batchNum": 271,
+      "count": 20,
+      "inputFile": "batch-dtc-0271.json",
+      "outputFile": "batch-dtc-0271-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0271.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0271-output.json"
+    },
+    {
+      "batchNum": 272,
+      "count": 20,
+      "inputFile": "batch-dtc-0272.json",
+      "outputFile": "batch-dtc-0272-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0272.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0272-output.json"
+    },
+    {
+      "batchNum": 273,
+      "count": 20,
+      "inputFile": "batch-dtc-0273.json",
+      "outputFile": "batch-dtc-0273-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0273.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0273-output.json"
+    },
+    {
+      "batchNum": 274,
+      "count": 20,
+      "inputFile": "batch-dtc-0274.json",
+      "outputFile": "batch-dtc-0274-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0274.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0274-output.json"
+    },
+    {
+      "batchNum": 275,
+      "count": 20,
+      "inputFile": "batch-dtc-0275.json",
+      "outputFile": "batch-dtc-0275-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0275.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0275-output.json"
+    },
+    {
+      "batchNum": 276,
+      "count": 20,
+      "inputFile": "batch-dtc-0276.json",
+      "outputFile": "batch-dtc-0276-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0276.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0276-output.json"
+    },
+    {
+      "batchNum": 277,
+      "count": 20,
+      "inputFile": "batch-dtc-0277.json",
+      "outputFile": "batch-dtc-0277-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0277.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0277-output.json"
+    },
+    {
+      "batchNum": 278,
+      "count": 20,
+      "inputFile": "batch-dtc-0278.json",
+      "outputFile": "batch-dtc-0278-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0278.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0278-output.json"
+    },
+    {
+      "batchNum": 279,
+      "count": 20,
+      "inputFile": "batch-dtc-0279.json",
+      "outputFile": "batch-dtc-0279-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0279.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0279-output.json"
+    },
+    {
+      "batchNum": 280,
+      "count": 20,
+      "inputFile": "batch-dtc-0280.json",
+      "outputFile": "batch-dtc-0280-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0280.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0280-output.json"
+    },
+    {
+      "batchNum": 281,
+      "count": 20,
+      "inputFile": "batch-dtc-0281.json",
+      "outputFile": "batch-dtc-0281-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0281.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0281-output.json"
+    },
+    {
+      "batchNum": 282,
+      "count": 20,
+      "inputFile": "batch-dtc-0282.json",
+      "outputFile": "batch-dtc-0282-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0282.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0282-output.json"
+    },
+    {
+      "batchNum": 283,
+      "count": 20,
+      "inputFile": "batch-dtc-0283.json",
+      "outputFile": "batch-dtc-0283-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0283.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0283-output.json"
+    },
+    {
+      "batchNum": 284,
+      "count": 20,
+      "inputFile": "batch-dtc-0284.json",
+      "outputFile": "batch-dtc-0284-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0284.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0284-output.json"
+    },
+    {
+      "batchNum": 285,
+      "count": 20,
+      "inputFile": "batch-dtc-0285.json",
+      "outputFile": "batch-dtc-0285-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0285.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0285-output.json"
+    },
+    {
+      "batchNum": 286,
+      "count": 20,
+      "inputFile": "batch-dtc-0286.json",
+      "outputFile": "batch-dtc-0286-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0286.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0286-output.json"
+    },
+    {
+      "batchNum": 287,
+      "count": 20,
+      "inputFile": "batch-dtc-0287.json",
+      "outputFile": "batch-dtc-0287-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0287.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0287-output.json"
+    },
+    {
+      "batchNum": 288,
+      "count": 20,
+      "inputFile": "batch-dtc-0288.json",
+      "outputFile": "batch-dtc-0288-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0288.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0288-output.json"
+    },
+    {
+      "batchNum": 289,
+      "count": 20,
+      "inputFile": "batch-dtc-0289.json",
+      "outputFile": "batch-dtc-0289-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0289.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0289-output.json"
+    },
+    {
+      "batchNum": 290,
+      "count": 20,
+      "inputFile": "batch-dtc-0290.json",
+      "outputFile": "batch-dtc-0290-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0290.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0290-output.json"
+    },
+    {
+      "batchNum": 291,
+      "count": 20,
+      "inputFile": "batch-dtc-0291.json",
+      "outputFile": "batch-dtc-0291-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0291.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0291-output.json"
+    },
+    {
+      "batchNum": 292,
+      "count": 20,
+      "inputFile": "batch-dtc-0292.json",
+      "outputFile": "batch-dtc-0292-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0292.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0292-output.json"
+    },
+    {
+      "batchNum": 293,
+      "count": 20,
+      "inputFile": "batch-dtc-0293.json",
+      "outputFile": "batch-dtc-0293-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0293.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0293-output.json"
+    },
+    {
+      "batchNum": 294,
+      "count": 20,
+      "inputFile": "batch-dtc-0294.json",
+      "outputFile": "batch-dtc-0294-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0294.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0294-output.json"
+    },
+    {
+      "batchNum": 295,
+      "count": 20,
+      "inputFile": "batch-dtc-0295.json",
+      "outputFile": "batch-dtc-0295-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0295.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0295-output.json"
+    },
+    {
+      "batchNum": 296,
+      "count": 20,
+      "inputFile": "batch-dtc-0296.json",
+      "outputFile": "batch-dtc-0296-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0296.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0296-output.json"
+    },
+    {
+      "batchNum": 297,
+      "count": 20,
+      "inputFile": "batch-dtc-0297.json",
+      "outputFile": "batch-dtc-0297-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0297.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0297-output.json"
+    },
+    {
+      "batchNum": 298,
+      "count": 20,
+      "inputFile": "batch-dtc-0298.json",
+      "outputFile": "batch-dtc-0298-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0298.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0298-output.json"
+    },
+    {
+      "batchNum": 299,
+      "count": 20,
+      "inputFile": "batch-dtc-0299.json",
+      "outputFile": "batch-dtc-0299-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0299.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0299-output.json"
+    },
+    {
+      "batchNum": 300,
+      "count": 20,
+      "inputFile": "batch-dtc-0300.json",
+      "outputFile": "batch-dtc-0300-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0300.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0300-output.json"
+    },
+    {
+      "batchNum": 301,
+      "count": 20,
+      "inputFile": "batch-dtc-0301.json",
+      "outputFile": "batch-dtc-0301-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0301.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0301-output.json"
+    },
+    {
+      "batchNum": 302,
+      "count": 20,
+      "inputFile": "batch-dtc-0302.json",
+      "outputFile": "batch-dtc-0302-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0302.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0302-output.json"
+    },
+    {
+      "batchNum": 303,
+      "count": 20,
+      "inputFile": "batch-dtc-0303.json",
+      "outputFile": "batch-dtc-0303-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0303.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0303-output.json"
+    },
+    {
+      "batchNum": 304,
+      "count": 20,
+      "inputFile": "batch-dtc-0304.json",
+      "outputFile": "batch-dtc-0304-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0304.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0304-output.json"
+    },
+    {
+      "batchNum": 305,
+      "count": 20,
+      "inputFile": "batch-dtc-0305.json",
+      "outputFile": "batch-dtc-0305-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0305.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0305-output.json"
+    },
+    {
+      "batchNum": 306,
+      "count": 20,
+      "inputFile": "batch-dtc-0306.json",
+      "outputFile": "batch-dtc-0306-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0306.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0306-output.json"
+    },
+    {
+      "batchNum": 307,
+      "count": 20,
+      "inputFile": "batch-dtc-0307.json",
+      "outputFile": "batch-dtc-0307-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0307.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0307-output.json"
+    },
+    {
+      "batchNum": 308,
+      "count": 20,
+      "inputFile": "batch-dtc-0308.json",
+      "outputFile": "batch-dtc-0308-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0308.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0308-output.json"
+    },
+    {
+      "batchNum": 309,
+      "count": 20,
+      "inputFile": "batch-dtc-0309.json",
+      "outputFile": "batch-dtc-0309-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0309.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0309-output.json"
+    },
+    {
+      "batchNum": 310,
+      "count": 20,
+      "inputFile": "batch-dtc-0310.json",
+      "outputFile": "batch-dtc-0310-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0310.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0310-output.json"
+    },
+    {
+      "batchNum": 311,
+      "count": 20,
+      "inputFile": "batch-dtc-0311.json",
+      "outputFile": "batch-dtc-0311-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0311.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0311-output.json"
+    },
+    {
+      "batchNum": 312,
+      "count": 20,
+      "inputFile": "batch-dtc-0312.json",
+      "outputFile": "batch-dtc-0312-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0312.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0312-output.json"
+    },
+    {
+      "batchNum": 313,
+      "count": 20,
+      "inputFile": "batch-dtc-0313.json",
+      "outputFile": "batch-dtc-0313-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0313.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0313-output.json"
+    },
+    {
+      "batchNum": 314,
+      "count": 20,
+      "inputFile": "batch-dtc-0314.json",
+      "outputFile": "batch-dtc-0314-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0314.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0314-output.json"
+    },
+    {
+      "batchNum": 315,
+      "count": 20,
+      "inputFile": "batch-dtc-0315.json",
+      "outputFile": "batch-dtc-0315-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0315.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0315-output.json"
+    },
+    {
+      "batchNum": 316,
+      "count": 20,
+      "inputFile": "batch-dtc-0316.json",
+      "outputFile": "batch-dtc-0316-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0316.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0316-output.json"
+    },
+    {
+      "batchNum": 317,
+      "count": 20,
+      "inputFile": "batch-dtc-0317.json",
+      "outputFile": "batch-dtc-0317-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0317.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0317-output.json"
+    },
+    {
+      "batchNum": 318,
+      "count": 20,
+      "inputFile": "batch-dtc-0318.json",
+      "outputFile": "batch-dtc-0318-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0318.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0318-output.json"
+    },
+    {
+      "batchNum": 319,
+      "count": 20,
+      "inputFile": "batch-dtc-0319.json",
+      "outputFile": "batch-dtc-0319-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0319.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0319-output.json"
+    },
+    {
+      "batchNum": 320,
+      "count": 20,
+      "inputFile": "batch-dtc-0320.json",
+      "outputFile": "batch-dtc-0320-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0320.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0320-output.json"
+    },
+    {
+      "batchNum": 321,
+      "count": 20,
+      "inputFile": "batch-dtc-0321.json",
+      "outputFile": "batch-dtc-0321-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0321.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0321-output.json"
+    },
+    {
+      "batchNum": 322,
+      "count": 20,
+      "inputFile": "batch-dtc-0322.json",
+      "outputFile": "batch-dtc-0322-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0322.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0322-output.json"
+    },
+    {
+      "batchNum": 323,
+      "count": 20,
+      "inputFile": "batch-dtc-0323.json",
+      "outputFile": "batch-dtc-0323-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0323.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0323-output.json"
+    },
+    {
+      "batchNum": 324,
+      "count": 20,
+      "inputFile": "batch-dtc-0324.json",
+      "outputFile": "batch-dtc-0324-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0324.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0324-output.json"
+    },
+    {
+      "batchNum": 325,
+      "count": 20,
+      "inputFile": "batch-dtc-0325.json",
+      "outputFile": "batch-dtc-0325-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0325.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0325-output.json"
+    },
+    {
+      "batchNum": 326,
+      "count": 20,
+      "inputFile": "batch-dtc-0326.json",
+      "outputFile": "batch-dtc-0326-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0326.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0326-output.json"
+    },
+    {
+      "batchNum": 327,
+      "count": 20,
+      "inputFile": "batch-dtc-0327.json",
+      "outputFile": "batch-dtc-0327-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0327.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0327-output.json"
+    },
+    {
+      "batchNum": 328,
+      "count": 20,
+      "inputFile": "batch-dtc-0328.json",
+      "outputFile": "batch-dtc-0328-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0328.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0328-output.json"
+    },
+    {
+      "batchNum": 329,
+      "count": 20,
+      "inputFile": "batch-dtc-0329.json",
+      "outputFile": "batch-dtc-0329-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0329.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0329-output.json"
+    },
+    {
+      "batchNum": 330,
+      "count": 20,
+      "inputFile": "batch-dtc-0330.json",
+      "outputFile": "batch-dtc-0330-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0330.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0330-output.json"
+    },
+    {
+      "batchNum": 331,
+      "count": 20,
+      "inputFile": "batch-dtc-0331.json",
+      "outputFile": "batch-dtc-0331-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0331.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0331-output.json"
+    },
+    {
+      "batchNum": 332,
+      "count": 20,
+      "inputFile": "batch-dtc-0332.json",
+      "outputFile": "batch-dtc-0332-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0332.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0332-output.json"
+    },
+    {
+      "batchNum": 333,
+      "count": 20,
+      "inputFile": "batch-dtc-0333.json",
+      "outputFile": "batch-dtc-0333-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0333.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0333-output.json"
+    },
+    {
+      "batchNum": 334,
+      "count": 20,
+      "inputFile": "batch-dtc-0334.json",
+      "outputFile": "batch-dtc-0334-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0334.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0334-output.json"
+    },
+    {
+      "batchNum": 335,
+      "count": 20,
+      "inputFile": "batch-dtc-0335.json",
+      "outputFile": "batch-dtc-0335-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0335.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0335-output.json"
+    },
+    {
+      "batchNum": 336,
+      "count": 20,
+      "inputFile": "batch-dtc-0336.json",
+      "outputFile": "batch-dtc-0336-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0336.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0336-output.json"
+    },
+    {
+      "batchNum": 337,
+      "count": 20,
+      "inputFile": "batch-dtc-0337.json",
+      "outputFile": "batch-dtc-0337-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0337.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0337-output.json"
+    },
+    {
+      "batchNum": 338,
+      "count": 20,
+      "inputFile": "batch-dtc-0338.json",
+      "outputFile": "batch-dtc-0338-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0338.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0338-output.json"
+    },
+    {
+      "batchNum": 339,
+      "count": 20,
+      "inputFile": "batch-dtc-0339.json",
+      "outputFile": "batch-dtc-0339-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0339.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0339-output.json"
+    },
+    {
+      "batchNum": 340,
+      "count": 20,
+      "inputFile": "batch-dtc-0340.json",
+      "outputFile": "batch-dtc-0340-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0340.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0340-output.json"
+    },
+    {
+      "batchNum": 341,
+      "count": 20,
+      "inputFile": "batch-dtc-0341.json",
+      "outputFile": "batch-dtc-0341-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0341.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0341-output.json"
+    },
+    {
+      "batchNum": 342,
+      "count": 20,
+      "inputFile": "batch-dtc-0342.json",
+      "outputFile": "batch-dtc-0342-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0342.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0342-output.json"
+    },
+    {
+      "batchNum": 343,
+      "count": 20,
+      "inputFile": "batch-dtc-0343.json",
+      "outputFile": "batch-dtc-0343-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0343.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0343-output.json"
+    },
+    {
+      "batchNum": 344,
+      "count": 20,
+      "inputFile": "batch-dtc-0344.json",
+      "outputFile": "batch-dtc-0344-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0344.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0344-output.json"
+    },
+    {
+      "batchNum": 345,
+      "count": 20,
+      "inputFile": "batch-dtc-0345.json",
+      "outputFile": "batch-dtc-0345-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0345.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0345-output.json"
+    },
+    {
+      "batchNum": 346,
+      "count": 20,
+      "inputFile": "batch-dtc-0346.json",
+      "outputFile": "batch-dtc-0346-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0346.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0346-output.json"
+    },
+    {
+      "batchNum": 347,
+      "count": 20,
+      "inputFile": "batch-dtc-0347.json",
+      "outputFile": "batch-dtc-0347-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0347.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0347-output.json"
+    },
+    {
+      "batchNum": 348,
+      "count": 20,
+      "inputFile": "batch-dtc-0348.json",
+      "outputFile": "batch-dtc-0348-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0348.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0348-output.json"
+    },
+    {
+      "batchNum": 349,
+      "count": 20,
+      "inputFile": "batch-dtc-0349.json",
+      "outputFile": "batch-dtc-0349-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0349.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0349-output.json"
+    },
+    {
+      "batchNum": 350,
+      "count": 20,
+      "inputFile": "batch-dtc-0350.json",
+      "outputFile": "batch-dtc-0350-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0350.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0350-output.json"
+    },
+    {
+      "batchNum": 351,
+      "count": 20,
+      "inputFile": "batch-dtc-0351.json",
+      "outputFile": "batch-dtc-0351-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0351.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0351-output.json"
+    },
+    {
+      "batchNum": 352,
+      "count": 20,
+      "inputFile": "batch-dtc-0352.json",
+      "outputFile": "batch-dtc-0352-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0352.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0352-output.json"
+    },
+    {
+      "batchNum": 353,
+      "count": 20,
+      "inputFile": "batch-dtc-0353.json",
+      "outputFile": "batch-dtc-0353-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0353.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0353-output.json"
+    },
+    {
+      "batchNum": 354,
+      "count": 20,
+      "inputFile": "batch-dtc-0354.json",
+      "outputFile": "batch-dtc-0354-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0354.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0354-output.json"
+    },
+    {
+      "batchNum": 355,
+      "count": 20,
+      "inputFile": "batch-dtc-0355.json",
+      "outputFile": "batch-dtc-0355-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0355.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0355-output.json"
+    },
+    {
+      "batchNum": 356,
+      "count": 20,
+      "inputFile": "batch-dtc-0356.json",
+      "outputFile": "batch-dtc-0356-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0356.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0356-output.json"
+    },
+    {
+      "batchNum": 357,
+      "count": 20,
+      "inputFile": "batch-dtc-0357.json",
+      "outputFile": "batch-dtc-0357-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0357.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0357-output.json"
+    },
+    {
+      "batchNum": 358,
+      "count": 20,
+      "inputFile": "batch-dtc-0358.json",
+      "outputFile": "batch-dtc-0358-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0358.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0358-output.json"
+    },
+    {
+      "batchNum": 359,
+      "count": 20,
+      "inputFile": "batch-dtc-0359.json",
+      "outputFile": "batch-dtc-0359-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0359.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0359-output.json"
+    },
+    {
+      "batchNum": 360,
+      "count": 20,
+      "inputFile": "batch-dtc-0360.json",
+      "outputFile": "batch-dtc-0360-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0360.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0360-output.json"
+    },
+    {
+      "batchNum": 361,
+      "count": 20,
+      "inputFile": "batch-dtc-0361.json",
+      "outputFile": "batch-dtc-0361-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0361.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0361-output.json"
+    },
+    {
+      "batchNum": 362,
+      "count": 20,
+      "inputFile": "batch-dtc-0362.json",
+      "outputFile": "batch-dtc-0362-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0362.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0362-output.json"
+    },
+    {
+      "batchNum": 363,
+      "count": 20,
+      "inputFile": "batch-dtc-0363.json",
+      "outputFile": "batch-dtc-0363-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0363.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0363-output.json"
+    },
+    {
+      "batchNum": 364,
+      "count": 20,
+      "inputFile": "batch-dtc-0364.json",
+      "outputFile": "batch-dtc-0364-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0364.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0364-output.json"
+    },
+    {
+      "batchNum": 365,
+      "count": 20,
+      "inputFile": "batch-dtc-0365.json",
+      "outputFile": "batch-dtc-0365-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0365.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0365-output.json"
+    },
+    {
+      "batchNum": 366,
+      "count": 20,
+      "inputFile": "batch-dtc-0366.json",
+      "outputFile": "batch-dtc-0366-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0366.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0366-output.json"
+    },
+    {
+      "batchNum": 367,
+      "count": 20,
+      "inputFile": "batch-dtc-0367.json",
+      "outputFile": "batch-dtc-0367-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0367.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0367-output.json"
+    },
+    {
+      "batchNum": 368,
+      "count": 20,
+      "inputFile": "batch-dtc-0368.json",
+      "outputFile": "batch-dtc-0368-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0368.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0368-output.json"
+    },
+    {
+      "batchNum": 369,
+      "count": 20,
+      "inputFile": "batch-dtc-0369.json",
+      "outputFile": "batch-dtc-0369-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0369.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0369-output.json"
+    },
+    {
+      "batchNum": 370,
+      "count": 20,
+      "inputFile": "batch-dtc-0370.json",
+      "outputFile": "batch-dtc-0370-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0370.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0370-output.json"
+    },
+    {
+      "batchNum": 371,
+      "count": 20,
+      "inputFile": "batch-dtc-0371.json",
+      "outputFile": "batch-dtc-0371-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0371.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0371-output.json"
+    },
+    {
+      "batchNum": 372,
+      "count": 20,
+      "inputFile": "batch-dtc-0372.json",
+      "outputFile": "batch-dtc-0372-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0372.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0372-output.json"
+    },
+    {
+      "batchNum": 373,
+      "count": 20,
+      "inputFile": "batch-dtc-0373.json",
+      "outputFile": "batch-dtc-0373-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0373.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0373-output.json"
+    },
+    {
+      "batchNum": 374,
+      "count": 20,
+      "inputFile": "batch-dtc-0374.json",
+      "outputFile": "batch-dtc-0374-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0374.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0374-output.json"
+    },
+    {
+      "batchNum": 375,
+      "count": 20,
+      "inputFile": "batch-dtc-0375.json",
+      "outputFile": "batch-dtc-0375-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0375.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0375-output.json"
+    },
+    {
+      "batchNum": 376,
+      "count": 20,
+      "inputFile": "batch-dtc-0376.json",
+      "outputFile": "batch-dtc-0376-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0376.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0376-output.json"
+    },
+    {
+      "batchNum": 377,
+      "count": 20,
+      "inputFile": "batch-dtc-0377.json",
+      "outputFile": "batch-dtc-0377-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0377.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0377-output.json"
+    },
+    {
+      "batchNum": 378,
+      "count": 20,
+      "inputFile": "batch-dtc-0378.json",
+      "outputFile": "batch-dtc-0378-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0378.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0378-output.json"
+    },
+    {
+      "batchNum": 379,
+      "count": 20,
+      "inputFile": "batch-dtc-0379.json",
+      "outputFile": "batch-dtc-0379-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0379.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0379-output.json"
+    },
+    {
+      "batchNum": 380,
+      "count": 20,
+      "inputFile": "batch-dtc-0380.json",
+      "outputFile": "batch-dtc-0380-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0380.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0380-output.json"
+    },
+    {
+      "batchNum": 381,
+      "count": 20,
+      "inputFile": "batch-dtc-0381.json",
+      "outputFile": "batch-dtc-0381-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0381.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0381-output.json"
+    },
+    {
+      "batchNum": 382,
+      "count": 20,
+      "inputFile": "batch-dtc-0382.json",
+      "outputFile": "batch-dtc-0382-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0382.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0382-output.json"
+    },
+    {
+      "batchNum": 383,
+      "count": 20,
+      "inputFile": "batch-dtc-0383.json",
+      "outputFile": "batch-dtc-0383-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0383.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0383-output.json"
+    },
+    {
+      "batchNum": 384,
+      "count": 20,
+      "inputFile": "batch-dtc-0384.json",
+      "outputFile": "batch-dtc-0384-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0384.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0384-output.json"
+    },
+    {
+      "batchNum": 385,
+      "count": 20,
+      "inputFile": "batch-dtc-0385.json",
+      "outputFile": "batch-dtc-0385-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0385.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0385-output.json"
+    },
+    {
+      "batchNum": 386,
+      "count": 20,
+      "inputFile": "batch-dtc-0386.json",
+      "outputFile": "batch-dtc-0386-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0386.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0386-output.json"
+    },
+    {
+      "batchNum": 387,
+      "count": 20,
+      "inputFile": "batch-dtc-0387.json",
+      "outputFile": "batch-dtc-0387-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0387.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0387-output.json"
+    },
+    {
+      "batchNum": 388,
+      "count": 20,
+      "inputFile": "batch-dtc-0388.json",
+      "outputFile": "batch-dtc-0388-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0388.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0388-output.json"
+    },
+    {
+      "batchNum": 389,
+      "count": 20,
+      "inputFile": "batch-dtc-0389.json",
+      "outputFile": "batch-dtc-0389-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0389.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0389-output.json"
+    },
+    {
+      "batchNum": 390,
+      "count": 20,
+      "inputFile": "batch-dtc-0390.json",
+      "outputFile": "batch-dtc-0390-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0390.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0390-output.json"
+    },
+    {
+      "batchNum": 391,
+      "count": 20,
+      "inputFile": "batch-dtc-0391.json",
+      "outputFile": "batch-dtc-0391-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0391.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0391-output.json"
+    },
+    {
+      "batchNum": 392,
+      "count": 20,
+      "inputFile": "batch-dtc-0392.json",
+      "outputFile": "batch-dtc-0392-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0392.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0392-output.json"
+    },
+    {
+      "batchNum": 393,
+      "count": 20,
+      "inputFile": "batch-dtc-0393.json",
+      "outputFile": "batch-dtc-0393-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0393.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0393-output.json"
+    },
+    {
+      "batchNum": 394,
+      "count": 20,
+      "inputFile": "batch-dtc-0394.json",
+      "outputFile": "batch-dtc-0394-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0394.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0394-output.json"
+    },
+    {
+      "batchNum": 395,
+      "count": 20,
+      "inputFile": "batch-dtc-0395.json",
+      "outputFile": "batch-dtc-0395-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0395.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0395-output.json"
+    },
+    {
+      "batchNum": 396,
+      "count": 20,
+      "inputFile": "batch-dtc-0396.json",
+      "outputFile": "batch-dtc-0396-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0396.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0396-output.json"
+    },
+    {
+      "batchNum": 397,
+      "count": 20,
+      "inputFile": "batch-dtc-0397.json",
+      "outputFile": "batch-dtc-0397-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0397.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0397-output.json"
+    },
+    {
+      "batchNum": 398,
+      "count": 20,
+      "inputFile": "batch-dtc-0398.json",
+      "outputFile": "batch-dtc-0398-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0398.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0398-output.json"
+    },
+    {
+      "batchNum": 399,
+      "count": 20,
+      "inputFile": "batch-dtc-0399.json",
+      "outputFile": "batch-dtc-0399-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0399.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0399-output.json"
+    },
+    {
+      "batchNum": 400,
+      "count": 20,
+      "inputFile": "batch-dtc-0400.json",
+      "outputFile": "batch-dtc-0400-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0400.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0400-output.json"
+    },
+    {
+      "batchNum": 401,
+      "count": 20,
+      "inputFile": "batch-dtc-0401.json",
+      "outputFile": "batch-dtc-0401-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0401.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0401-output.json"
+    },
+    {
+      "batchNum": 402,
+      "count": 20,
+      "inputFile": "batch-dtc-0402.json",
+      "outputFile": "batch-dtc-0402-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0402.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0402-output.json"
+    },
+    {
+      "batchNum": 403,
+      "count": 20,
+      "inputFile": "batch-dtc-0403.json",
+      "outputFile": "batch-dtc-0403-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0403.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0403-output.json"
+    },
+    {
+      "batchNum": 404,
+      "count": 20,
+      "inputFile": "batch-dtc-0404.json",
+      "outputFile": "batch-dtc-0404-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0404.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0404-output.json"
+    },
+    {
+      "batchNum": 405,
+      "count": 20,
+      "inputFile": "batch-dtc-0405.json",
+      "outputFile": "batch-dtc-0405-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0405.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0405-output.json"
+    },
+    {
+      "batchNum": 406,
+      "count": 20,
+      "inputFile": "batch-dtc-0406.json",
+      "outputFile": "batch-dtc-0406-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0406.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0406-output.json"
+    },
+    {
+      "batchNum": 407,
+      "count": 20,
+      "inputFile": "batch-dtc-0407.json",
+      "outputFile": "batch-dtc-0407-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0407.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0407-output.json"
+    },
+    {
+      "batchNum": 408,
+      "count": 20,
+      "inputFile": "batch-dtc-0408.json",
+      "outputFile": "batch-dtc-0408-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0408.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0408-output.json"
+    },
+    {
+      "batchNum": 409,
+      "count": 20,
+      "inputFile": "batch-dtc-0409.json",
+      "outputFile": "batch-dtc-0409-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0409.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0409-output.json"
+    },
+    {
+      "batchNum": 410,
+      "count": 20,
+      "inputFile": "batch-dtc-0410.json",
+      "outputFile": "batch-dtc-0410-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0410.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0410-output.json"
+    },
+    {
+      "batchNum": 411,
+      "count": 20,
+      "inputFile": "batch-dtc-0411.json",
+      "outputFile": "batch-dtc-0411-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0411.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0411-output.json"
+    },
+    {
+      "batchNum": 412,
+      "count": 20,
+      "inputFile": "batch-dtc-0412.json",
+      "outputFile": "batch-dtc-0412-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0412.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0412-output.json"
+    },
+    {
+      "batchNum": 413,
+      "count": 20,
+      "inputFile": "batch-dtc-0413.json",
+      "outputFile": "batch-dtc-0413-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0413.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0413-output.json"
+    },
+    {
+      "batchNum": 414,
+      "count": 20,
+      "inputFile": "batch-dtc-0414.json",
+      "outputFile": "batch-dtc-0414-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0414.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0414-output.json"
+    },
+    {
+      "batchNum": 415,
+      "count": 20,
+      "inputFile": "batch-dtc-0415.json",
+      "outputFile": "batch-dtc-0415-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0415.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0415-output.json"
+    },
+    {
+      "batchNum": 416,
+      "count": 20,
+      "inputFile": "batch-dtc-0416.json",
+      "outputFile": "batch-dtc-0416-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0416.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0416-output.json"
+    },
+    {
+      "batchNum": 417,
+      "count": 20,
+      "inputFile": "batch-dtc-0417.json",
+      "outputFile": "batch-dtc-0417-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0417.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0417-output.json"
+    },
+    {
+      "batchNum": 418,
+      "count": 20,
+      "inputFile": "batch-dtc-0418.json",
+      "outputFile": "batch-dtc-0418-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0418.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0418-output.json"
+    },
+    {
+      "batchNum": 419,
+      "count": 20,
+      "inputFile": "batch-dtc-0419.json",
+      "outputFile": "batch-dtc-0419-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0419.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0419-output.json"
+    },
+    {
+      "batchNum": 420,
+      "count": 20,
+      "inputFile": "batch-dtc-0420.json",
+      "outputFile": "batch-dtc-0420-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0420.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0420-output.json"
+    },
+    {
+      "batchNum": 421,
+      "count": 20,
+      "inputFile": "batch-dtc-0421.json",
+      "outputFile": "batch-dtc-0421-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0421.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0421-output.json"
+    },
+    {
+      "batchNum": 422,
+      "count": 20,
+      "inputFile": "batch-dtc-0422.json",
+      "outputFile": "batch-dtc-0422-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0422.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0422-output.json"
+    },
+    {
+      "batchNum": 423,
+      "count": 20,
+      "inputFile": "batch-dtc-0423.json",
+      "outputFile": "batch-dtc-0423-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0423.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0423-output.json"
+    },
+    {
+      "batchNum": 424,
+      "count": 20,
+      "inputFile": "batch-dtc-0424.json",
+      "outputFile": "batch-dtc-0424-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0424.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0424-output.json"
+    },
+    {
+      "batchNum": 425,
+      "count": 20,
+      "inputFile": "batch-dtc-0425.json",
+      "outputFile": "batch-dtc-0425-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0425.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0425-output.json"
+    },
+    {
+      "batchNum": 426,
+      "count": 20,
+      "inputFile": "batch-dtc-0426.json",
+      "outputFile": "batch-dtc-0426-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0426.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0426-output.json"
+    },
+    {
+      "batchNum": 427,
+      "count": 20,
+      "inputFile": "batch-dtc-0427.json",
+      "outputFile": "batch-dtc-0427-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0427.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0427-output.json"
+    },
+    {
+      "batchNum": 428,
+      "count": 20,
+      "inputFile": "batch-dtc-0428.json",
+      "outputFile": "batch-dtc-0428-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0428.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0428-output.json"
+    },
+    {
+      "batchNum": 429,
+      "count": 20,
+      "inputFile": "batch-dtc-0429.json",
+      "outputFile": "batch-dtc-0429-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0429.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0429-output.json"
+    },
+    {
+      "batchNum": 430,
+      "count": 20,
+      "inputFile": "batch-dtc-0430.json",
+      "outputFile": "batch-dtc-0430-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0430.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0430-output.json"
+    },
+    {
+      "batchNum": 431,
+      "count": 20,
+      "inputFile": "batch-dtc-0431.json",
+      "outputFile": "batch-dtc-0431-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0431.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0431-output.json"
+    },
+    {
+      "batchNum": 432,
+      "count": 20,
+      "inputFile": "batch-dtc-0432.json",
+      "outputFile": "batch-dtc-0432-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0432.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0432-output.json"
+    },
+    {
+      "batchNum": 433,
+      "count": 20,
+      "inputFile": "batch-dtc-0433.json",
+      "outputFile": "batch-dtc-0433-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0433.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0433-output.json"
+    },
+    {
+      "batchNum": 434,
+      "count": 20,
+      "inputFile": "batch-dtc-0434.json",
+      "outputFile": "batch-dtc-0434-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0434.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0434-output.json"
+    },
+    {
+      "batchNum": 435,
+      "count": 20,
+      "inputFile": "batch-dtc-0435.json",
+      "outputFile": "batch-dtc-0435-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0435.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0435-output.json"
+    },
+    {
+      "batchNum": 436,
+      "count": 20,
+      "inputFile": "batch-dtc-0436.json",
+      "outputFile": "batch-dtc-0436-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0436.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0436-output.json"
+    },
+    {
+      "batchNum": 437,
+      "count": 20,
+      "inputFile": "batch-dtc-0437.json",
+      "outputFile": "batch-dtc-0437-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0437.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0437-output.json"
+    },
+    {
+      "batchNum": 438,
+      "count": 20,
+      "inputFile": "batch-dtc-0438.json",
+      "outputFile": "batch-dtc-0438-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0438.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0438-output.json"
+    },
+    {
+      "batchNum": 439,
+      "count": 20,
+      "inputFile": "batch-dtc-0439.json",
+      "outputFile": "batch-dtc-0439-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0439.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0439-output.json"
+    },
+    {
+      "batchNum": 440,
+      "count": 20,
+      "inputFile": "batch-dtc-0440.json",
+      "outputFile": "batch-dtc-0440-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0440.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0440-output.json"
+    },
+    {
+      "batchNum": 441,
+      "count": 20,
+      "inputFile": "batch-dtc-0441.json",
+      "outputFile": "batch-dtc-0441-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0441.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0441-output.json"
+    },
+    {
+      "batchNum": 442,
+      "count": 20,
+      "inputFile": "batch-dtc-0442.json",
+      "outputFile": "batch-dtc-0442-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0442.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0442-output.json"
+    },
+    {
+      "batchNum": 443,
+      "count": 20,
+      "inputFile": "batch-dtc-0443.json",
+      "outputFile": "batch-dtc-0443-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0443.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0443-output.json"
+    },
+    {
+      "batchNum": 444,
+      "count": 20,
+      "inputFile": "batch-dtc-0444.json",
+      "outputFile": "batch-dtc-0444-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0444.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0444-output.json"
+    },
+    {
+      "batchNum": 445,
+      "count": 20,
+      "inputFile": "batch-dtc-0445.json",
+      "outputFile": "batch-dtc-0445-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0445.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0445-output.json"
+    },
+    {
+      "batchNum": 446,
+      "count": 20,
+      "inputFile": "batch-dtc-0446.json",
+      "outputFile": "batch-dtc-0446-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0446.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0446-output.json"
+    },
+    {
+      "batchNum": 447,
+      "count": 20,
+      "inputFile": "batch-dtc-0447.json",
+      "outputFile": "batch-dtc-0447-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0447.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0447-output.json"
+    },
+    {
+      "batchNum": 448,
+      "count": 20,
+      "inputFile": "batch-dtc-0448.json",
+      "outputFile": "batch-dtc-0448-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0448.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0448-output.json"
+    },
+    {
+      "batchNum": 449,
+      "count": 20,
+      "inputFile": "batch-dtc-0449.json",
+      "outputFile": "batch-dtc-0449-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0449.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0449-output.json"
+    },
+    {
+      "batchNum": 450,
+      "count": 20,
+      "inputFile": "batch-dtc-0450.json",
+      "outputFile": "batch-dtc-0450-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0450.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0450-output.json"
+    },
+    {
+      "batchNum": 451,
+      "count": 20,
+      "inputFile": "batch-dtc-0451.json",
+      "outputFile": "batch-dtc-0451-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0451.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0451-output.json"
+    },
+    {
+      "batchNum": 452,
+      "count": 20,
+      "inputFile": "batch-dtc-0452.json",
+      "outputFile": "batch-dtc-0452-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0452.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0452-output.json"
+    },
+    {
+      "batchNum": 453,
+      "count": 20,
+      "inputFile": "batch-dtc-0453.json",
+      "outputFile": "batch-dtc-0453-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0453.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0453-output.json"
+    },
+    {
+      "batchNum": 454,
+      "count": 20,
+      "inputFile": "batch-dtc-0454.json",
+      "outputFile": "batch-dtc-0454-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0454.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0454-output.json"
+    },
+    {
+      "batchNum": 455,
+      "count": 20,
+      "inputFile": "batch-dtc-0455.json",
+      "outputFile": "batch-dtc-0455-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0455.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0455-output.json"
+    },
+    {
+      "batchNum": 456,
+      "count": 20,
+      "inputFile": "batch-dtc-0456.json",
+      "outputFile": "batch-dtc-0456-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0456.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0456-output.json"
+    },
+    {
+      "batchNum": 457,
+      "count": 20,
+      "inputFile": "batch-dtc-0457.json",
+      "outputFile": "batch-dtc-0457-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0457.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0457-output.json"
+    },
+    {
+      "batchNum": 458,
+      "count": 20,
+      "inputFile": "batch-dtc-0458.json",
+      "outputFile": "batch-dtc-0458-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0458.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0458-output.json"
+    },
+    {
+      "batchNum": 459,
+      "count": 20,
+      "inputFile": "batch-dtc-0459.json",
+      "outputFile": "batch-dtc-0459-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0459.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0459-output.json"
+    },
+    {
+      "batchNum": 460,
+      "count": 20,
+      "inputFile": "batch-dtc-0460.json",
+      "outputFile": "batch-dtc-0460-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0460.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0460-output.json"
+    },
+    {
+      "batchNum": 461,
+      "count": 20,
+      "inputFile": "batch-dtc-0461.json",
+      "outputFile": "batch-dtc-0461-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0461.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0461-output.json"
+    },
+    {
+      "batchNum": 462,
+      "count": 20,
+      "inputFile": "batch-dtc-0462.json",
+      "outputFile": "batch-dtc-0462-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0462.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0462-output.json"
+    },
+    {
+      "batchNum": 463,
+      "count": 20,
+      "inputFile": "batch-dtc-0463.json",
+      "outputFile": "batch-dtc-0463-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0463.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0463-output.json"
+    },
+    {
+      "batchNum": 464,
+      "count": 20,
+      "inputFile": "batch-dtc-0464.json",
+      "outputFile": "batch-dtc-0464-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0464.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0464-output.json"
+    },
+    {
+      "batchNum": 465,
+      "count": 20,
+      "inputFile": "batch-dtc-0465.json",
+      "outputFile": "batch-dtc-0465-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0465.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0465-output.json"
+    },
+    {
+      "batchNum": 466,
+      "count": 20,
+      "inputFile": "batch-dtc-0466.json",
+      "outputFile": "batch-dtc-0466-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0466.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0466-output.json"
+    },
+    {
+      "batchNum": 467,
+      "count": 20,
+      "inputFile": "batch-dtc-0467.json",
+      "outputFile": "batch-dtc-0467-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0467.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0467-output.json"
+    },
+    {
+      "batchNum": 468,
+      "count": 20,
+      "inputFile": "batch-dtc-0468.json",
+      "outputFile": "batch-dtc-0468-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0468.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0468-output.json"
+    },
+    {
+      "batchNum": 469,
+      "count": 20,
+      "inputFile": "batch-dtc-0469.json",
+      "outputFile": "batch-dtc-0469-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0469.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0469-output.json"
+    },
+    {
+      "batchNum": 470,
+      "count": 20,
+      "inputFile": "batch-dtc-0470.json",
+      "outputFile": "batch-dtc-0470-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0470.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0470-output.json"
+    },
+    {
+      "batchNum": 471,
+      "count": 20,
+      "inputFile": "batch-dtc-0471.json",
+      "outputFile": "batch-dtc-0471-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0471.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0471-output.json"
+    },
+    {
+      "batchNum": 472,
+      "count": 20,
+      "inputFile": "batch-dtc-0472.json",
+      "outputFile": "batch-dtc-0472-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0472.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0472-output.json"
+    },
+    {
+      "batchNum": 473,
+      "count": 20,
+      "inputFile": "batch-dtc-0473.json",
+      "outputFile": "batch-dtc-0473-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0473.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0473-output.json"
+    },
+    {
+      "batchNum": 474,
+      "count": 20,
+      "inputFile": "batch-dtc-0474.json",
+      "outputFile": "batch-dtc-0474-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0474.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0474-output.json"
+    },
+    {
+      "batchNum": 475,
+      "count": 20,
+      "inputFile": "batch-dtc-0475.json",
+      "outputFile": "batch-dtc-0475-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0475.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0475-output.json"
+    },
+    {
+      "batchNum": 476,
+      "count": 20,
+      "inputFile": "batch-dtc-0476.json",
+      "outputFile": "batch-dtc-0476-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0476.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0476-output.json"
+    },
+    {
+      "batchNum": 477,
+      "count": 20,
+      "inputFile": "batch-dtc-0477.json",
+      "outputFile": "batch-dtc-0477-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0477.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0477-output.json"
+    },
+    {
+      "batchNum": 478,
+      "count": 20,
+      "inputFile": "batch-dtc-0478.json",
+      "outputFile": "batch-dtc-0478-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0478.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0478-output.json"
+    },
+    {
+      "batchNum": 479,
+      "count": 20,
+      "inputFile": "batch-dtc-0479.json",
+      "outputFile": "batch-dtc-0479-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0479.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0479-output.json"
+    },
+    {
+      "batchNum": 480,
+      "count": 20,
+      "inputFile": "batch-dtc-0480.json",
+      "outputFile": "batch-dtc-0480-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0480.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0480-output.json"
+    },
+    {
+      "batchNum": 481,
+      "count": 20,
+      "inputFile": "batch-dtc-0481.json",
+      "outputFile": "batch-dtc-0481-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0481.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0481-output.json"
+    },
+    {
+      "batchNum": 482,
+      "count": 20,
+      "inputFile": "batch-dtc-0482.json",
+      "outputFile": "batch-dtc-0482-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0482.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0482-output.json"
+    },
+    {
+      "batchNum": 483,
+      "count": 20,
+      "inputFile": "batch-dtc-0483.json",
+      "outputFile": "batch-dtc-0483-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0483.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0483-output.json"
+    },
+    {
+      "batchNum": 484,
+      "count": 20,
+      "inputFile": "batch-dtc-0484.json",
+      "outputFile": "batch-dtc-0484-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0484.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0484-output.json"
+    },
+    {
+      "batchNum": 485,
+      "count": 20,
+      "inputFile": "batch-dtc-0485.json",
+      "outputFile": "batch-dtc-0485-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0485.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0485-output.json"
+    },
+    {
+      "batchNum": 486,
+      "count": 20,
+      "inputFile": "batch-dtc-0486.json",
+      "outputFile": "batch-dtc-0486-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0486.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0486-output.json"
+    },
+    {
+      "batchNum": 487,
+      "count": 20,
+      "inputFile": "batch-dtc-0487.json",
+      "outputFile": "batch-dtc-0487-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0487.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0487-output.json"
+    },
+    {
+      "batchNum": 488,
+      "count": 20,
+      "inputFile": "batch-dtc-0488.json",
+      "outputFile": "batch-dtc-0488-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0488.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0488-output.json"
+    },
+    {
+      "batchNum": 489,
+      "count": 20,
+      "inputFile": "batch-dtc-0489.json",
+      "outputFile": "batch-dtc-0489-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0489.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0489-output.json"
+    },
+    {
+      "batchNum": 490,
+      "count": 20,
+      "inputFile": "batch-dtc-0490.json",
+      "outputFile": "batch-dtc-0490-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0490.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0490-output.json"
+    },
+    {
+      "batchNum": 491,
+      "count": 20,
+      "inputFile": "batch-dtc-0491.json",
+      "outputFile": "batch-dtc-0491-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0491.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0491-output.json"
+    },
+    {
+      "batchNum": 492,
+      "count": 20,
+      "inputFile": "batch-dtc-0492.json",
+      "outputFile": "batch-dtc-0492-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0492.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0492-output.json"
+    },
+    {
+      "batchNum": 493,
+      "count": 20,
+      "inputFile": "batch-dtc-0493.json",
+      "outputFile": "batch-dtc-0493-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0493.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0493-output.json"
+    },
+    {
+      "batchNum": 494,
+      "count": 20,
+      "inputFile": "batch-dtc-0494.json",
+      "outputFile": "batch-dtc-0494-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0494.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0494-output.json"
+    },
+    {
+      "batchNum": 495,
+      "count": 20,
+      "inputFile": "batch-dtc-0495.json",
+      "outputFile": "batch-dtc-0495-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0495.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0495-output.json"
+    },
+    {
+      "batchNum": 496,
+      "count": 20,
+      "inputFile": "batch-dtc-0496.json",
+      "outputFile": "batch-dtc-0496-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0496.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0496-output.json"
+    },
+    {
+      "batchNum": 497,
+      "count": 20,
+      "inputFile": "batch-dtc-0497.json",
+      "outputFile": "batch-dtc-0497-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0497.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0497-output.json"
+    },
+    {
+      "batchNum": 498,
+      "count": 20,
+      "inputFile": "batch-dtc-0498.json",
+      "outputFile": "batch-dtc-0498-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0498.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0498-output.json"
+    },
+    {
+      "batchNum": 499,
+      "count": 20,
+      "inputFile": "batch-dtc-0499.json",
+      "outputFile": "batch-dtc-0499-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0499.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0499-output.json"
+    },
+    {
+      "batchNum": 500,
+      "count": 20,
+      "inputFile": "batch-dtc-0500.json",
+      "outputFile": "batch-dtc-0500-output.json",
+      "inputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0500.json",
+      "outputPath": "/home/lyndon/projects/spotonauto.com/scripts/content-machine/dtc-batches/batch-dtc-0500-output.json"
+    }
+  ]
+}

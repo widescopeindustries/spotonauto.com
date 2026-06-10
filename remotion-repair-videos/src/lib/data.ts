@@ -1,0 +1,62 @@
+export const repairData = {
+  vehicle: {
+    year: 2010,
+    make: "Toyota",
+    model: "Camry",
+    engine: "2.5L 4-cylinder (2AR-FE)",
+  },
+  task: "Oil Change",
+  specs: {
+    oilType: "SAE 0W-20",
+    oilCapacity: "4.6 quarts (with filter)",
+    drainPlugTorque: "30 ft-lb",
+    filterTorque: "18 ft-lb",
+    oilFilterWrenchSize: "64mm / 14-flute",
+  },
+  tools: [
+    "14mm socket & ratchet",
+    "Torque wrench",
+    "Oil filter wrench",
+    "Drain pan (6+ quart)",
+    "Funnel",
+    "Shop towels",
+    "Jack & jack stands (optional)",
+  ],
+  steps: [
+    {
+      number: 1,
+      title: "Warm Up & Prep",
+      duration: 10,
+      text: "Run the engine for 3-5 minutes until warm. Warm oil drains faster and carries more contaminants. Park on level ground and set the parking brake.",
+      spec: null,
+    },
+    {
+      number: 2,
+      title: "Drain the Old Oil",
+      duration: 15,
+      text: "Position the drain pan under the oil pan. Remove the 14mm drain plug and let the oil fully drain. Inspect the drain plug washer — replace if cracked or deformed.",
+      spec: { label: "Drain Plug Torque", value: "30 ft-lb" },
+    },
+    {
+      number: 3,
+      title: "Replace the Oil Filter",
+      duration: 15,
+      text: "Use the oil filter wrench to remove the old filter. Smear fresh oil on the new filter's rubber gasket. Hand-tighten until snug, then tighten 3/4 turn. Do NOT overtighten.",
+      spec: { label: "Filter Torque", value: "18 ft-lb" },
+    },
+    {
+      number: 4,
+      title: "Add Fresh Oil",
+      duration: 15,
+      text: "Reinstall the drain plug. Remove the oil filler cap on the valve cover. Insert a funnel and pour in 4.5 quarts of SAE 0W-20. Wait 2 minutes, then check the dipstick.",
+      spec: { label: "Capacity", value: "4.6 qt (with filter)" },
+    },
+    {
+      number: 5,
+      title: "Check Level & Reset",
+      duration: 10,
+      text: "Start the engine and let it run for 30 seconds. Shut off and wait 2 minutes. Check the dipstick — level should be between the dots. Top off if needed. Reset the maintenance light via the trip meter.",
+      spec: null,
+    },
+  ],
+};

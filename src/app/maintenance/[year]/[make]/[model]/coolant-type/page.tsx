@@ -8,6 +8,7 @@ import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicle
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
+import StickyAffiliateBar from "@/components/StickyAffiliateBar";
 
 export const revalidate = 86400;
 
@@ -268,6 +269,14 @@ export default async function CoolantTypePage({ params }: PageProps) {
             ))}
           </dl>
         </section>
+
+        <StickyAffiliateBar
+          vehicle={`${year} ${displayMake} ${displayModel}`}
+          intent="Coolant"
+          query={`${year} ${displayMake} ${displayModel} coolant antifreeze`}
+          subtag="maint-coolanttype"
+          variant="mixed"
+        />
       </div>
     </>
   );

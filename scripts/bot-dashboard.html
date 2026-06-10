@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bot Gate Monitor | AllOEMManuals</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      line-height: 1.6;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: #d4a574;
+    }
+    .subtitle {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: #14141f;
+      border: 1px solid #2a2a3a;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .card h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #888;
+      margin-bottom: 0.5rem;
+    }
+    .card .value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #f5e6d3;
+    }
+    .card .value.danger { color: #ff6b6b; }
+    .card .value.ok { color: #7fd17f; }
+    .card .value.warn { color: #ffd93d; }
+    .card .detail {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+    .section {
+      background: #14141f;
+      border: 1px solid #2a2a3a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section h2 {
+      font-size: 1.1rem;
+      color: #d4a574;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.6rem 0.5rem;
+      border-bottom: 1px solid #2a2a3a;
+    }
+    th {
+      color: #888;
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.03em;
+    }
+    td {
+      color: #ccc;
+    }
+    td.path {
+      font-family: 'SF Mono', monospace;
+      font-size: 0.8rem;
+      max-width: 400px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .status-200 { color: #7fd17f; }
+    .status-301 { color: #ffd93d; }
+    .status-302 { color: #4dabf7; }
+    .status-404 { color: #ff6b6b; }
+    .status-other { color: #888; }
+    .empty {
+      color: #555;
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+    .refresh {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #d4a574;
+      color: #0a0a0f;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 100px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .refresh:hover { background: #e8c090; }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-cf { background: #1a3a1a; color: #7fd17f; }
+    .badge-direct { background: #3a1a1a; color: #ff6b6b; }
+  </style>
+</head>
+<body>
+  <h1>Bot Gate Monitor</h1>
+  <p class="subtitle">Real-time visibility into AI bot traffic hitting your origin</p>
+
+  <div class="grid" id="summary"></div>
+
+  <div class="section">
+    <h2>Leakage Alerts (bots that got through)</h2>
+    <div id="leakage"></div>
+  </div>
+
+  <div class="section">
+    <h2>Bot Traffic Breakdown (24h)</h2>
+    <div id="breakdown"></div>
+  </div>
+
+  <div class="section">
+    <h2>Top Requested Paths (bots)</h2>
+    <div id="paths"></div>
+  </div>
+
+  <button class="refresh" onclick="location.reload()">Refresh</button>
+
+  <script>
+    async function load() {
+      try {
+        const res = await fetch('report.json');
+        const data = await res.json();
+        render(data);
+      } catch (e) {
+        document.body.innerHTML = '<div class="empty">Failed to load report: ' + e.message + '</div>';
+      }
+    }
+
+    function statusClass(s) {
+      if (s === 200) return 'status-200';
+      if (s === 301) return 'status-301';
+      if (s === 302) return 'status-302';
+      if (s === 404) return 'status-404';
+      return 'status-other';
+    }
+
+    function render(data) {
+      const s = data.all_traffic_day;
+      const d = data.day;
+      const hour = data.hour;
+      const leakage = data.leakage;
+
+      document.getElementById('summary').innerHTML = `
+        <div class="card">
+          <h3>Bot Hits (24h)</h3>
+          <div class="value ${s.bots > 100 ? 'warn' : ''}">${s.bots || 0}</div>
+          <div class="detail">${hour.total || 0} in last hour</div>
+        </div>
+        <div class="card">
+          <h3>Leakage (24h)</h3>
+          <div class="value ${leakage.count_24h > 0 ? 'danger' : 'ok'}">${leakage.count_24h || 0}</div>
+          <div class="detail">Bots that got 200/404 instead of 302</div>
+        </div>
+        <div class="card">
+          <h3>Tollbit Cache Hits</h3>
+          <div class="value">${s.tollbit || 0}</div>
+          <div class="detail">Last: ${data.tollbit.last_hit ? new Date(data.tollbit.last_hit).toLocaleString() : 'None'}</div>
+        </div>
+        <div class="card">
+          <h3>Total Origin Hits (24h)</h3>
+          <div class="value">${s.total || 0}</div>
+          <div class="detail">${s.search || 0} search engine</div>
+        </div>
+      `;
+
+      const statuses = d.statuses || {};
+      document.getElementById('breakdown').innerHTML = Object.keys(statuses).length === 0
+        ? '<div class="empty">No bot traffic in last 24h</div>'
+        : `<table><thead><tr><th>Status</th><th>Count</th></tr></thead><tbody>` +
+          Object.entries(statuses).sort((a,b) => b[1]-a[1]).map(([status, count]) =>
+            `<tr><td class="${statusClass(parseInt(status))}">${status}</td><td>${count}</td></tr>`
+          ).join('') + `</tbody></table>`;
+
+      const paths = d.top_paths || {};
+      document.getElementById('paths').innerHTML = Object.keys(paths).length === 0
+        ? '<div class="empty">No bot requests logged</div>'
+        : `<table><thead><tr><th>Path</th><th>Hits</th></tr></thead><tbody>` +
+          Object.entries(paths).slice(0, 15).map(([path, count]) =>
+            `<tr><td class="path" title="${path}">${path}</td><td>${count}</td></tr>`
+          ).join('') + `</tbody></table>`;
+
+      const leaks = leakage.recent || [];
+      document.getElementById('leakage').innerHTML = leaks.length === 0
+        ? '<div class="empty">No leakage detected. All bots properly redirected.</div>'
+        : `<table><thead><tr><th>Time</th><th>IP</th><th>Status</th><th>Path</th><th>UA</th></tr></thead><tbody>` +
+          leaks.slice().reverse().map(r =>
+            `<tr>
+              <td>${new Date(r.time).toLocaleTimeString()}</td>
+              <td>${r.ip}</td>
+              <td class="${statusClass(r.status)}">${r.status}</td>
+              <td class="path" title="${r.path}">${r.path}</td>
+              <td>${r.ua}</td>
+            </tr>`
+          ).join('') + `</tbody></table>`;
+    }
+
+    load();
+    setInterval(load, 30000);
+  </script>
+</body>
+</html>

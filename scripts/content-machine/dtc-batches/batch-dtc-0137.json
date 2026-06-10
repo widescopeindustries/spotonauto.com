@@ -1,0 +1,202 @@
+[
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0335",
+    "codeTitle": "Crankshaft Position Sensor A Circuit",
+    "system": "Engine",
+    "commonFix": "Replace crankshaft position sensor"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0340",
+    "codeTitle": "Camshaft Position Sensor Circuit",
+    "system": "Engine",
+    "commonFix": "Replace camshaft position sensor"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0400",
+    "codeTitle": "Exhaust Gas Recirculation Flow",
+    "system": "Emissions",
+    "commonFix": "Clean or replace EGR valve"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0411",
+    "codeTitle": "Secondary Air Injection System Incorrect Flow",
+    "system": "Emissions",
+    "commonFix": "Replace air injection pump or valve"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0430",
+    "codeTitle": "Catalyst System Efficiency Below Threshold (Bank 2)",
+    "system": "Emissions",
+    "commonFix": "Replace catalytic converter bank 2"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0440",
+    "codeTitle": "Evaporative Emission Control System",
+    "system": "Emissions",
+    "commonFix": "Replace gas cap or purge valve"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0441",
+    "codeTitle": "Evaporative Emission Control System Incorrect Purge Flow",
+    "system": "Emissions",
+    "commonFix": "Replace purge valve"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0446",
+    "codeTitle": "Evaporative Emission Control System Vent Control Circuit",
+    "system": "Emissions",
+    "commonFix": "Replace vent valve"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0452",
+    "codeTitle": "Evaporative Emission Control System Pressure Sensor Low Input",
+    "system": "Emissions",
+    "commonFix": "Replace fuel tank pressure sensor"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0453",
+    "codeTitle": "Evaporative Emission Control System Pressure Sensor High Input",
+    "system": "Emissions",
+    "commonFix": "Replace fuel tank pressure sensor"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0463",
+    "codeTitle": "Fuel Level Sensor Circuit High Input",
+    "system": "Fuel",
+    "commonFix": "Replace fuel level sensor"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0500",
+    "codeTitle": "Vehicle Speed Sensor",
+    "system": "Transmission",
+    "commonFix": "Replace VSS or repair wiring"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0505",
+    "codeTitle": "Idle Air Control System",
+    "system": "Engine",
+    "commonFix": "Clean or replace IAC valve"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0506",
+    "codeTitle": "Idle Air Control System RPM Lower Than Expected",
+    "system": "Engine",
+    "commonFix": "Clean throttle body or replace IAC"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0507",
+    "codeTitle": "Idle Air Control System RPM Higher Than Expected",
+    "system": "Engine",
+    "commonFix": "Clean throttle body or replace IAC"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0562",
+    "codeTitle": "System Voltage Low",
+    "system": "Electrical",
+    "commonFix": "Replace battery or alternator"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0603",
+    "codeTitle": "Internal Control Module Keep Alive Memory Error",
+    "system": "Electrical",
+    "commonFix": "Replace ECM or check battery"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0700",
+    "codeTitle": "Transmission Control System Malfunction",
+    "system": "Transmission",
+    "commonFix": "Diagnose with scan tool for specific transmission code"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0705",
+    "codeTitle": "Transmission Range Sensor Circuit Malfunction",
+    "system": "Transmission",
+    "commonFix": "Replace neutral safety switch"
+  },
+  {
+    "year": 2008,
+    "make": "nissan",
+    "model": "Pathfinder",
+    "modelSlug": "pathfinder",
+    "code": "P0715",
+    "codeTitle": "Input/Turbine Speed Sensor Circuit",
+    "system": "Transmission",
+    "commonFix": "Replace input speed sensor"
+  }
+]

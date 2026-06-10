@@ -6,6 +6,7 @@ import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicle
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
+import StickyAffiliateBar from "@/components/StickyAffiliateBar";
 
 export const revalidate = 86400;
 
@@ -230,6 +231,14 @@ export default async function HeadlightBulbPage({ params }: PageProps) {
             ))}
           </dl>
         </section>
+
+        <StickyAffiliateBar
+          vehicle={`${year} ${displayMake} ${displayModel}`}
+          intent="Headlight Bulbs"
+          query={`${year} ${displayMake} ${displayModel} headlight bulbs LED halogen`}
+          subtag="maint-headlightbulb"
+          variant="mixed"
+        />
       </div>
     </>
   );

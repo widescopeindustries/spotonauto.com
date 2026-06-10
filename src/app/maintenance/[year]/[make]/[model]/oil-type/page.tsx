@@ -8,6 +8,7 @@ import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicle
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
+import StickyAffiliateBar from "@/components/StickyAffiliateBar";
 
 export const revalidate = 86400;
 
@@ -152,7 +153,7 @@ export default async function OilTypePage({ params }: PageProps) {
           <div className="grid sm:grid-cols-3 gap-6" itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
             <div>
               <p className="text-sm text-gray-400 mb-1">Oil Type</p>
-              <p className="text-2xl font-display font-bold text-white" itemProp="text">{oil.oilType}</p>
+              <p className="text-2xl font-display font-bold text-white" itemProp="text">${oil.oilType}</p>
             </div>
             <div>
               <p className="text-sm text-gray-400 mb-1">Capacity (w/ Filter)</p>
@@ -207,7 +208,7 @@ export default async function OilTypePage({ params }: PageProps) {
             >
               <p className="text-sm text-cyan-400 mb-1">Engine Oil</p>
               <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                {oil.oilType} for {displayMake} {displayModel}
+                ${oil.oilType} for {displayMake} {displayModel}
               </h3>
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
@@ -263,6 +264,14 @@ export default async function OilTypePage({ params }: PageProps) {
             ))}
           </dl>
         </section>
+
+        <StickyAffiliateBar
+          vehicle={`${year} ${displayMake} ${displayModel}`}
+          intent="Oil Change"
+          query={`${year} ${displayMake} ${displayModel} ${oil.oilType} oil filter`}
+          subtag={`maint-oil-${year}-${canonicalMake}-${canonicalModel}`}
+          variant="mixed"
+        />
       </div>
     </>
   );

@@ -8,6 +8,7 @@ import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicle
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
+import StickyAffiliateBar from "@/components/StickyAffiliateBar";
 
 export const revalidate = 86400;
 
@@ -222,6 +223,14 @@ export default async function TireSizePage({ params }: PageProps) {
             ))}
           </dl>
         </section>
+
+        <StickyAffiliateBar
+          vehicle={`${year} ${displayMake} ${displayModel}`}
+          intent="Tires"
+          query={`${year} ${displayMake} ${displayModel} tires OEM`}
+          subtag="maint-tiresize"
+          variant="mixed"
+        />
       </div>
     </>
   );

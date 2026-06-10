@@ -14,7 +14,7 @@ Update it when product decisions, traps, or standing preferences change.
 - **Bing Search:** 160 clicks, 3K impressions, 5.32% CTR
 - **Bing AI/Copilot citations:** 736 citations, 43 unique pages cited daily
 - **ChatGPT referrals:** 17 sessions in GA4
-- **Amazon Associates:** Already generating commissions
+- **Amazon Associates:** $6.28/30d, 112 clicks, 0% conversion this month. Traffic is 50%+ Asia/Singapore but links only go to amazon.com. Geo-redirect + OneLink + sticky CTAs deployed 2026-06-07 to fix this.
 - **GA4 property:** `G-KS1JPX0V7P` (alloemmanuals.com) — GSC linked
 - **spotonauto.com GA4:** Archive only. Was receiving misrouted alloemmanuals traffic due to hardcoded fallback ID (`G-WNFX6CY9RN`). Fixed 2026-05-14.
 
@@ -59,6 +59,20 @@ See comprehensive audit section at bottom of this file for full details.
 5. **Deployed + purged nginx cache** — New sitemap now live at `https://alloemmanuals.com/repair/sitemap.xml`.
 
 **Result:** Google now receives a sitemap of exclusively high-quality, content-rich pages. Crawl budget should shift to indexing the good pages instead of discovering and abandoning thin ones.
+
+### Affiliate Monetization Fix (2026-06-07)
+**Problem:** 256 real users/day but only ~4 Amazon clicks/day. 50%+ traffic from Singapore/Hong Kong/Asia, yet all affiliate links hardcoded to `amazon.com`.
+
+**Fix:**
+1. **`src/lib/amazonGeo.ts`** — Country-to-marketplace mapping (US, UK, CA, DE, FR, IT, ES, JP, AU, IN, SG, etc.) with per-market affiliate tags.
+2. **`src/components/AmazonGeoRedirect.tsx`** — Client-side script intercepts `amazon.com` clicks and rewrites to local store (e.g., Singapore → `amazon.sg`). Falls back to browser timezone/language if no Cloudflare country header.
+3. **`src/components/AmazonOneLink.tsx`** — Loads official Amazon OneLink script when `NEXT_PUBLIC_AMAZON_ONELINK_ID` is set. OneLink takes precedence over custom redirect.
+4. **`src/components/StickyAffiliateBar.tsx`** — Persistent bottom CTA on tool + maintenance pages. Appears after scroll, mobile-optimized, dismissible.
+5. **Added sticky bar to:** all 11 maintenance pages (`oil-type`, `coolant-type`, `transmission-fluid-type`, `brake-fluid-type`, `spark-plug-type`, `tire-size`, `battery-location`, `serpentine-belt`, `headlight-bulb`, `wiper-blade-size`, `fluid-capacity`) and all tool pages.
+6. **Added `ElectricalToolsCTA` to wiring diagrams** — #1 page by views had only modal tool links; now shows multimeter + wire repair kit CTA below the diagram browser.
+7. **Env vars added to `.env.local.example`** — `NEXT_PUBLIC_AMAZON_ONELINK_ID` and `NEXT_PUBLIC_AMAZON_TAG_*` for every supported marketplace.
+
+**Expected result:** 2–4x affiliate CTR from international traffic; sticky bar should lift mobile CTR on high-intent maintenance/tool pages.
 
 ### Earlier Deploys (2026-05-14)
 - Manuel AI chat rebrand, brand consistency fix, schema validation, auto-generated FAQs, generic text filter, BreadcrumbList schema, GA4 tracking fix

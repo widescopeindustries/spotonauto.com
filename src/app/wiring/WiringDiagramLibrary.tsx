@@ -11,6 +11,7 @@ import {
 import type { WiringSelectorData } from '@/lib/wiringCoverage';
 import AffiliateLink from '@/components/AffiliateLink';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { Zap, Wrench, ShoppingCart, ArrowRight } from 'lucide-react';
 
 interface DiagramEntry {
   name: string;
@@ -245,6 +246,76 @@ function WiringDiagramAffiliateStrip({ vehicle }: { vehicle: string }) {
           <span className="text-[10px] text-cyan-200/60 hidden sm:inline">{tool.reason}</span>
         </AffiliateLink>
       ))}
+    </div>
+  );
+}
+
+function ElectricalToolsCTA({ vehicle }: { vehicle: string }) {
+  const kits = [
+    {
+      icon: <Zap className="h-4 w-4" />,
+      name: 'Multimeter',
+      why: 'The #1 tool for tracing opens, shorts, and voltage drops.',
+      query: `${vehicle} multimeter automotive`,
+    },
+    {
+      icon: <Wrench className="h-4 w-4" />,
+      name: 'Wire Repair Kit',
+      why: 'Heat-shrink butt connectors, strippers, and crimpers for harness fixes.',
+      query: `${vehicle} wire stripper crimper heat shrink connectors`,
+    },
+  ];
+
+  const mainSearch = buildAmazonSearchUrl(`${vehicle} electrical diagnostic tools`, 'automotive', 'wiring-page-cta');
+
+  return (
+    <div className="mt-8 rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/[0.06] to-transparent p-5 md:p-6">
+      <div className="flex items-start gap-4 mb-5">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+          <Zap size={18} />
+        </div>
+        <div>
+          <h3 className="text-base font-bold text-white tracking-wide">Electrical Repair Tools for {vehicle}</h3>
+          <p className="text-sm text-gray-400 mt-1">
+            Tracing wiring faults without the right tools is frustrating. Here is what Manual recommends.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 mb-5">
+        {kits.map((kit) => (
+          <AffiliateLink
+            key={kit.name}
+            href={buildAmazonSearchUrl(kit.query, 'automotive', 'wiring-page-tool')}
+            partName={kit.name}
+            vehicle={vehicle || 'AllOEMManuals'}
+            pageType="parts_page"
+            subtag="wiring-page-tool"
+            className="group flex items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4 hover:border-cyan-500/30 hover:bg-white/[0.04] transition"
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500/20 transition">
+              {kit.icon}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white group-hover:text-cyan-300 transition">{kit.name}</p>
+              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{kit.why}</p>
+            </div>
+          </AffiliateLink>
+        ))}
+      </div>
+
+      <AffiliateLink
+        href={mainSearch}
+        partName={`${vehicle} electrical tools`}
+        vehicle={vehicle || 'AllOEMManuals'}
+        pageType="parts_page"
+        subtag="wiring-page-main-cta"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-500 text-black text-sm font-bold hover:bg-cyan-400 transition"
+      >
+        <ShoppingCart size={16} />
+        Shop Electrical Tools on Amazon
+        <ArrowRight size={16} />
+      </AffiliateLink>
     </div>
   );
 }
@@ -1107,6 +1178,8 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                 No diagrams match &ldquo;{search}&rdquo;. Try a different search term.
               </div>
             )}
+
+            <ElectricalToolsCTA vehicle={currentVehicleLabel} />
           </div>
         )}
 

@@ -1,0 +1,202 @@
+[
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0463",
+    "codeTitle": "Fuel Level Sensor Circuit High Input",
+    "system": "Fuel",
+    "commonFix": "Replace fuel level sensor"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0500",
+    "codeTitle": "Vehicle Speed Sensor",
+    "system": "Transmission",
+    "commonFix": "Replace VSS or repair wiring"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0505",
+    "codeTitle": "Idle Air Control System",
+    "system": "Engine",
+    "commonFix": "Clean or replace IAC valve"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0506",
+    "codeTitle": "Idle Air Control System RPM Lower Than Expected",
+    "system": "Engine",
+    "commonFix": "Clean throttle body or replace IAC"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0507",
+    "codeTitle": "Idle Air Control System RPM Higher Than Expected",
+    "system": "Engine",
+    "commonFix": "Clean throttle body or replace IAC"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0562",
+    "codeTitle": "System Voltage Low",
+    "system": "Electrical",
+    "commonFix": "Replace battery or alternator"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0603",
+    "codeTitle": "Internal Control Module Keep Alive Memory Error",
+    "system": "Electrical",
+    "commonFix": "Replace ECM or check battery"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0700",
+    "codeTitle": "Transmission Control System Malfunction",
+    "system": "Transmission",
+    "commonFix": "Diagnose with scan tool for specific transmission code"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0705",
+    "codeTitle": "Transmission Range Sensor Circuit Malfunction",
+    "system": "Transmission",
+    "commonFix": "Replace neutral safety switch"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0715",
+    "codeTitle": "Input/Turbine Speed Sensor Circuit",
+    "system": "Transmission",
+    "commonFix": "Replace input speed sensor"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0720",
+    "codeTitle": "Output Speed Sensor Circuit",
+    "system": "Transmission",
+    "commonFix": "Replace output speed sensor"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0730",
+    "codeTitle": "Incorrect Gear Ratio",
+    "system": "Transmission",
+    "commonFix": "Repair transmission or replace sensors"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0740",
+    "codeTitle": "Torque Converter Clutch Circuit Malfunction",
+    "system": "Transmission",
+    "commonFix": "Replace TCC solenoid"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0750",
+    "codeTitle": "Shift Solenoid A Malfunction",
+    "system": "Transmission",
+    "commonFix": "Replace shift solenoid A"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0760",
+    "codeTitle": "Shift Solenoid C Malfunction",
+    "system": "Transmission",
+    "commonFix": "Replace shift solenoid C"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0770",
+    "codeTitle": "Shift Solenoid E Malfunction",
+    "system": "Transmission",
+    "commonFix": "Replace shift solenoid E"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0780",
+    "codeTitle": "Shift Malfunction",
+    "system": "Transmission",
+    "commonFix": "Diagnose transmission internals"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0800",
+    "codeTitle": "Transfer Case Control System",
+    "system": "Transmission",
+    "commonFix": "Service transfer case or replace actuator"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0011",
+    "codeTitle": "Intake Camshaft Position Timing Over-Advanced (Bank 1)",
+    "system": "Engine",
+    "commonFix": "Replace VVT solenoid or change oil"
+  },
+  {
+    "year": 1997,
+    "make": "honda",
+    "model": "Civic",
+    "modelSlug": "civic",
+    "code": "P0012",
+    "codeTitle": "Intake Camshaft Position Timing Over-Retarded (Bank 1)",
+    "system": "Engine",
+    "commonFix": "Replace VVT solenoid or change oil"
+  }
+]

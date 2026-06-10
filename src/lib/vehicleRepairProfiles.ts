@@ -15,6 +15,34 @@ export interface GeneratedFAQ {
   answer: string;
 }
 
+export interface GeneratedPart {
+  name: string;
+  partNumber?: string;
+  quantity?: string;
+  notes?: string;
+}
+
+export interface GeneratedTool {
+  name: string;
+  size?: string;
+  notes?: string;
+}
+
+export interface GeneratedTorqueSpec {
+  component: string;
+  value: string;
+  notes?: string;
+}
+
+export interface GeneratedAffiliateLinks {
+  parts?: {
+    amazon?: string;
+  };
+  tools?: {
+    amazon?: string;
+  };
+}
+
 export interface GeneratedRepairProfile {
   titleSuffix?: string;
   descriptionSuffix?: string;
@@ -22,6 +50,10 @@ export interface GeneratedRepairProfile {
   supportNote?: GeneratedSupportNote;
   faq?: GeneratedFAQ;
   faqs?: GeneratedFAQ[];
+  partsNeeded?: GeneratedPart[];
+  toolsNeeded?: GeneratedTool[];
+  torqueSpecs?: GeneratedTorqueSpec[];
+  affiliateLinks?: GeneratedAffiliateLinks;
 }
 
 interface StoredProfile {
