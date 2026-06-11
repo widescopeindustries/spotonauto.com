@@ -11,6 +11,7 @@ export async function GET() {
       version: '0.1.0',
     },
     api_base_url: 'https://alloemmanuals.com',
+    transports: ['https', 'x402'],
     acp: {
       version: '0.1.0',
       protocol: {
