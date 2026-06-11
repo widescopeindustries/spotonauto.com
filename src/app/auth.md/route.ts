@@ -11,16 +11,32 @@ export async function GET() {
 
 AI agents can register and authenticate with AllOEMManuals to access factory repair data for 300,000+ vehicles.
 
+### How to Register
+
+**Step 1**: Review the API catalog at \`/.well-known/api-catalog\`
+
+**Step 2**: Choose your access level:
+- **Free tier**: No registration required. Use public endpoints immediately.
+- **Premium tier**: Pay per request via x402. No account needed.
+- **Partner tier**: Contact us for API key provisioning.
+
+**Step 3**: For partner access, email \`lyndon@widescopeindustries.com\` with:
+- Your domain or DID
+- Intended use case
+- Expected request volume
+
+**Step 4**: Upon approval, receive your API key and begin accessing premium endpoints.
+
 ### Registration Endpoint
 
 - **Register**: https://alloemmanuals.com/auth.md
-- **No formal registration** required for public endpoints. Agents can begin using the API immediately.
-- **x402 payment** for premium data — no account needed, pay per request
+- **OAuth Authorization Server**: https://alloemmanuals.com/.well-known/oauth-authorization-server
+- **OAuth Protected Resource**: https://alloemmanuals.com/.well-known/oauth-protected-resource
 
 ### Supported Identity Types
 
 - \`domain\` — Domain-verified agents
-- \`did\` — DID-based agents
+- \`did\` — DID-based agents  
 - \`anonymous\` — Anonymous agents (limited access)
 
 ### Supported Credential Types

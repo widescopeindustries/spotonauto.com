@@ -10,6 +10,7 @@ export async function GET() {
       name: 'acp',
       version: '0.1.0',
     },
+    api_base_url: 'https://alloemmanuals.com',
     acp: {
       version: '0.1.0',
       protocol: {
