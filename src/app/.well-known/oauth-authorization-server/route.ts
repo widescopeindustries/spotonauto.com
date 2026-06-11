@@ -17,6 +17,7 @@ export async function GET() {
     grant_types_supported: ['client_credentials'],
     token_endpoint_auth_methods_supported: ['none'],
     agent_auth: {
+      skill: 'https://alloemmanuals.com/auth.md',
       register_uri: 'https://alloemmanuals.com/auth.md',
       supported_identity_types: ['domain', 'did', 'anonymous'],
       supported_credential_types: ['api_key', 'x402_payment'],

@@ -15,6 +15,12 @@ export async function GET() {
         name: 'AllOEMManuals',
         url: 'https://alloemmanuals.com',
       },
+      'x-payment-info': {
+        protocol: 'x402',
+        asset: 'USDC',
+        network: 'solana',
+        price: '$0.01',
+      },
     },
     servers: [
       {
