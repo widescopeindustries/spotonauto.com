@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
  * https://workos.com/blog/introducing-auth-md
  */
 export async function GET() {
-  const body = `# Agent Authentication — AllOEMManuals
+  const body = `# auth.md — Agent Authentication for AllOEMManuals
 
 ## Overview
 

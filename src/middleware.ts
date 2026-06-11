@@ -107,6 +107,7 @@ Price: $0.01 USDC per request.
       headers: {
         'Content-Type': 'text/markdown; charset=utf-8',
         'Vary': 'Accept',
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
       },
     });
   }

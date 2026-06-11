@@ -9,8 +9,12 @@ export async function GET() {
     keys: [
       {
         id: 'alloemmanuals-signing-key-2026',
-        algorithm: 'ed25519',
-        url: 'https://alloemmanuals.com/.well-known/http-message-signatures-directory/key.pem',
+        kty: 'OKP',
+        crv: 'Ed25519',
+        alg: 'EdDSA',
+        use: 'sig',
+        kid: 'alloemmanuals-signing-key-2026',
+        x: 'base64url-encoded-public-key-placeholder',
         purpose: 'request-verification',
         status: 'active',
         created: '2026-06-10T00:00:00Z',

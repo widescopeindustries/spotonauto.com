@@ -6,10 +6,8 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const ucp = {
     ucp: {
-      protocol: {
-        name: 'ucp',
-        version: '0.1.0',
-      },
+      version: '0.1.0',
+      name: 'ucp',
       services: [
         {
           id: 'premium-repair-data',

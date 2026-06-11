@@ -7,10 +7,8 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const acp = {
     acp: {
-      protocol: {
-        name: 'acp',
-        version: '0.1.0',
-      },
+      version: '0.1.0',
+      name: 'acp',
       api_base_url: 'https://alloemmanuals.com',
       transports: ['https', 'x402'],
       capabilities: {
