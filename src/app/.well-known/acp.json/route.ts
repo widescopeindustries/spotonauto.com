@@ -8,6 +8,10 @@ export async function GET() {
   const acp = {
     acp: {
       version: '0.1.0',
+      protocol: {
+        name: 'acp',
+        version: '0.1.0',
+      },
       name: 'acp',
       api_base_url: 'https://alloemmanuals.com',
       transports: ['https', 'x402'],
