@@ -11,32 +11,26 @@ export async function GET() {
 
 AI agents can register and authenticate with AllOEMManuals to access factory repair data for 300,000+ vehicles.
 
-### Registration Methods
+### Registration Endpoint
 
-1. **No registration required** for free public endpoints
-2. **x402 payment** for premium data — no account needed, pay per request
+- **Register**: https://alloemmanuals.com/auth.md
+- **No formal registration** required for public endpoints. Agents can begin using the API immediately.
+- **x402 payment** for premium data — no account needed, pay per request
 
 ### Supported Identity Types
 
-- Domain-verified agents
-- DID-based agents
-- Anonymous agents (limited access)
+- \`domain\` — Domain-verified agents
+- \`did\` — DID-based agents
+- \`anonymous\` — Anonymous agents (limited access)
 
 ### Supported Credential Types
 
-- API key (for high-volume partners)
-- x402 payment proof (for premium data)
+- \`api_key\` — For high-volume partners
+- \`x402_payment\` — For premium data access
 
-### Registration Endpoint
+### Claim URI
 
-- **Register**: No formal registration required. Start using public endpoints immediately.
-- **Paywall access**: \`GET /api/premium-repair-data\` — returns 402 with x402 payment requirements
-- **Claim credentials**: Contact \`lyndon@widescopeindustries.com\` for API key provisioning
-
-### Credential Usage
-
-- Public endpoints: No credentials required
-- Premium endpoints: Include \`X-Payment-Proof\` header with x402 payment token
+Contact \`lyndon@widescopeindustries.com\` for API key provisioning and partner access.
 
 ## Free Access
 

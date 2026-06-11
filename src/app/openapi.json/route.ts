@@ -73,7 +73,7 @@ export async function GET() {
         },
       },
       '/api/premium-repair-data': {
-        'x-payment-info': {
+        'x-payment-required': {
           protocol: 'x402',
           asset: 'USDC',
           network: 'solana',
@@ -83,7 +83,7 @@ export async function GET() {
           summary: 'Premium factory repair data (x402 paid)',
           description:
             'Structured OEM repair data including torque specs, fluid capacities, wiring diagrams, and part numbers. Requires x402 payment.',
-          'x-payment-info': {
+          'x-payment-required': {
             protocol: 'x402',
             asset: 'USDC',
             network: 'solana',

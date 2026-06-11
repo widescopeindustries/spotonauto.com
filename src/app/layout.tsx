@@ -64,6 +64,12 @@ export default function RootLayout({
             __html: `(function(i,m,p,a,c,t){c.ire_o=p;c[p]=c[p]||function(){(c[p].a=c[p].a||[]).push(arguments)};t=a.createElement(m);var z=a.getElementsByTagName(m)[0];t.async=1;t.src=i;z.parentNode.insertBefore(t,z)})('https://utt.impactcdn.com/P-A7329204-a09d-47c6-b03e-929ff1738bb31.js','script','impactStat',document,window);impactStat('transformLinks');impactStat('trackImpression');`
           }}
         />
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html: `if('modelContext' in navigator){try{navigator.modelContext.provideContext({name:'alloemmanuals',tools:[{name:'getRepairGuide',description:'Get a vehicle-specific repair guide.',inputSchema:{type:'object',properties:{year:{type:'integer'},make:{type:'string'},model:{type:'string'},task:{type:'string'}},required:['year','make','model','task']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/v1/repair?year='+i.year+'&make='+i.make+'&model='+i.model+'&task='+i.task);return r.json();}},{name:'getDTCInfo',description:'Look up diagnostic trouble code.',inputSchema:{type:'object',properties:{code:{type:'string'}},required:['code']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/v1/dtc?code='+i.code);return r.json();}}]});}catch(e){}}`
+          }}
+        />
       </head>
       <body className={`bg-[#050507] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-[#FF6B00] selection:text-white ${inter.variable} ${spaceGrotesk.variable}`}>
           <div className="hidden" aria-hidden="true">

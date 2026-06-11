@@ -11,15 +11,19 @@ export async function GET() {
     authorization_endpoint: 'https://alloemmanuals.com/.well-known/oauth-authorization-server',
     token_endpoint: 'https://alloemmanuals.com/.well-known/oauth-authorization-server',
     jwks_uri: 'https://alloemmanuals.com/.well-known/jwks.json',
-    registration_endpoint: 'https://alloemmanuals.com/.well-known/oauth-authorization-server',
+    registration_endpoint: 'https://alloemmanuals.com/auth.md',
     scopes_supported: ['read:repair', 'read:dtc', 'read:premium'],
     response_types_supported: ['token'],
     grant_types_supported: ['client_credentials'],
     token_endpoint_auth_methods_supported: ['none'],
     agent_auth: {
+      skill: 'https://isitagentready.com/.well-known/agent-skills/auth-md/SKILL.md',
       register_uri: 'https://alloemmanuals.com/auth.md',
-      supported_identity_types: ['domain', 'did'],
+      supported_identity_types: ['domain', 'did', 'anonymous'],
       supported_credential_types: ['api_key', 'x402_payment'],
+      identity_types_supported: ['domain', 'did', 'anonymous'],
+      credential_types_supported: ['api_key', 'x402_payment'],
+      claim_uri: 'https://alloemmanuals.com/auth.md',
     },
   };
 

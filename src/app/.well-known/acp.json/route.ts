@@ -6,6 +6,10 @@ import { NextResponse } from 'next/server';
  */
 export async function GET() {
   const acp = {
+    protocol: {
+      name: 'acp',
+      version: '0.1.0',
+    },
     acp: {
       version: '0.1.0',
       protocol: {
