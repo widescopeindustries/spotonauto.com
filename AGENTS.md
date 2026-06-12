@@ -32,6 +32,14 @@ Update it when product decisions, traps, or standing preferences change.
   - Created composite index `manual_embeddings(make, year, model)` and trigram GIN indexes on `content_full` and `section_title` to fix timeouts.
   - Purged Cloudflare cache for robots + sitemap index.
 
+### 2026-06-12 (Part 3) — Full Sitemap Coverage + IndexNow
+- **Sitemap index now comprehensive:**
+  - Updated `/sitemap_index.xml` to dynamically scan `/public` for urlset sitemaps and hardcode route-generated sitemaps (`vehicles`, `codes`, `manual`, `maintenance`).
+  - Total sitemaps in index: **29** (repair, wiring, tools, vehicles, codes, manual, maintenance, repair/winners, root).
+  - Total discoverable URLs: **~224,747**.
+- **IndexNow resubmission:**
+  - Bulk-submitted all 224,747 URLs to Bing/Yandex via IndexNow POST API in 23 batches. All returned HTTP 200.
+
 ### Domain & Traffic
 - **Primary domain:** `alloemmanuals.com` (purchased 2026-05-07, ~12 days old)
 - **Legacy domain:** `spotonauto.com` → 301 redirects to `alloemmanuals.com` (nginx + Next.js)
