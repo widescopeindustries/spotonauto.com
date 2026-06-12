@@ -8,6 +8,7 @@ import {
   TOPDON_BATTERY_TESTERS,
   TOPDON_LOGO,
   buildTopdonProductUrl,
+  buildProductItemListSchema,
 } from '@/lib/topdonAffiliate';
 
 export const metadata: Metadata = {
@@ -78,11 +79,20 @@ export default function TopdonBatteryTesterPage() {
     })),
   };
 
+  const productListSchema = buildProductItemListSchema(
+    TESTERS,
+    'TOPDON Battery Tester Comparison 2026',
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productListSchema) }}
       />
 
       <section className="py-16 px-4 max-w-6xl mx-auto">

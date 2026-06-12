@@ -1,0 +1,54 @@
+# Disavow file for alloemmanuals.com
+# Created: 2026-06-11
+# Reason: Negative SEO attack - unauthorized PBN/spam backlinks
+# 48 spam referring domains identified in Ahrefs
+# These links were NOT requested or paid for by alloemmanuals.com
+
+domain:rankyour.website
+domain:rankio.agency
+domain:linkspro.agency
+domain:linkly.agency
+domain:seogrow.pro
+domain:seonix.agency
+domain:buybacklinks.agency
+domain:boost-instant.website
+domain:rankgrowth.agency
+domain:fiverr-affordable-seo-services.site
+domain:rank-top.click
+domain:backlinker.shop
+domain:seodaro.com
+domain:rankxlinks.shop
+domain:buyseobacklinks.shop
+domain:linkrankpro.shop
+domain:ranklinkerpro.shop
+domain:seorankflow.shop
+domain:authoritybacklinks.shop
+domain:pbnseolinks.shop
+domain:toplinkranker.shop
+domain:linkseopro.shop
+domain:premiumseolinks.shop
+domain:seolinkpro.shop
+domain:ranklinkx.shop
+domain:ranklinkpro.shop
+domain:linkrankboost.shop
+domain:linkrankseo.shop
+domain:primeseo.xyz
+domain:seopxl-traffic-growth-lab.shop
+domain:seopxl-organic-boost-lab.shop
+domain:seopxl-performance-authority-engine.shop
+domain:seo-growth-optimization-hub.shop
+domain:seoagency.sale
+domain:rglinks.org
+domain:seogeko.shop
+domain:ranksupreme.shop
+domain:rankcrown.shop
+domain:high-traffic-backlinks.site
+domain:rankongoogle.agency
+domain:rankpilot.shop
+domain:linkbooster.website
+domain:geko-backlinks.site
+domain:netranko.shop
+domain:nexusnext.agency
+domain:seorankoo.site
+domain:rankbasket.shop
+domain:high-quality-backlinks.site

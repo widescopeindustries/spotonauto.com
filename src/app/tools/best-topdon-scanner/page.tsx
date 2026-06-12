@@ -10,6 +10,7 @@ import {
   TOPDON_LOGO,
   buildTopdonProductUrl,
   buildTopdonStoreUrl,
+  buildProductItemListSchema,
 } from '@/lib/topdonAffiliate';
 
 export const metadata: Metadata = {
@@ -77,17 +78,10 @@ export default function BestTopdonScannerPage() {
     })),
   };
 
-  const itemListSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: 'Best TOPDON Scanners 2026',
-    itemListElement: TOPDON_SCANNERS.slice(0, 6).map((p, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: p.name,
-      url: buildTopdonProductUrl(p.slug),
-    })),
-  };
+  const itemListSchema = buildProductItemListSchema(
+    TOPDON_SCANNERS.slice(0, 6),
+    'Best TOPDON Scanners 2026',
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">

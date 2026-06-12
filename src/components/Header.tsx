@@ -13,6 +13,7 @@ const desktopNavItems = [
   { key: 'nav.diagnose', label: 'Diagnose', href: '/diagnose' },
   { key: 'nav.repairGuides', label: 'Guides', href: '/repair' },
   { key: 'nav.codes', label: 'Codes', href: '/codes' },
+  { key: 'nav.developers', label: 'API', href: '/developers' },
 ];
 
 export default function Header() {

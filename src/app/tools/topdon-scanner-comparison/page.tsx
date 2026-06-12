@@ -9,6 +9,7 @@ import {
   TOPDON_LOGO,
   buildTopdonProductUrl,
   buildTopdonStoreUrl,
+  buildProductItemListSchema,
 } from '@/lib/topdonAffiliate';
 
 export const metadata: Metadata = {
@@ -196,11 +197,20 @@ export default function TopdonScannerComparisonPage() {
     })),
   };
 
+  const productListSchema = buildProductItemListSchema(
+    SCANNERS,
+    'TOPDON Scanner Comparison 2026',
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productListSchema) }}
       />
 
       <section className="py-16 px-4 max-w-7xl mx-auto">

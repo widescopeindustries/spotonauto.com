@@ -272,3 +272,86 @@ export function getContextFromCode(code: string): 'code-reader' | 'advanced' | '
   }
   return 'code-reader';
 }
+
+/* ─────────────── Schema.org Product JSON-LD ─────────────── */
+
+/**
+ * Build a complete schema.org Product object for a TOPDON product.
+ * Includes offers with hasMerchantReturnPolicy and shippingDetails
+ * to satisfy Google Merchant Listing rich result requirements.
+ */
+export function buildProductSchema(product: TopdonProduct): Record<string, unknown> {
+  const url = buildTopdonProductUrl(product.slug);
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: product.image,
+    description: product.description,
+    brand: {
+      '@type': 'Brand',
+      name: 'TOPDON',
+    },
+    offers: {
+      '@type': 'Offer',
+      price: product.price.toFixed(2),
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+      url,
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 30,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn',
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: '0',
+          currency: 'USD',
+        },
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'US',
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 0,
+            maxValue: 1,
+            unitCode: 'DAY',
+          },
+          transitTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 3,
+            maxValue: 7,
+            unitCode: 'DAY',
+          },
+        },
+      },
+    },
+  };
+}
+
+/**
+ * Build an ItemList schema where each item is a full Product schema.
+ * Use this on product carousel / comparison pages.
+ */
+export function buildProductItemListSchema(
+  products: TopdonProduct[],
+  listName: string,
+): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: listName,
+    itemListElement: products.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: buildProductSchema(p),
+    })),
+  };
+}

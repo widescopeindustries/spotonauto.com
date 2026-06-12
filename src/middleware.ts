@@ -98,7 +98,7 @@ flowcharts, and repair procedures.
 
 ## Payment
 
-Premium data available via **x402** on Solana devnet.
+Premium data available via **x402** on Solana devnet (mainnet-ready).
 Endpoint: \`/api/premium-repair-data\`
 Price: $0.01 USDC per request.
 `;
@@ -133,8 +133,119 @@ Price: $0.01 USDC per request.
   }
 
   // 6. x402 payment gating for premium API routes (must run before CORS)
-  if (x402Proxy && pathname === '/api/premium-repair-data') {
-    return x402Proxy(request);
+  const isX402Gated = pathname === '/api/premium-repair-data' || pathname.startsWith('/api/data/');
+  if (x402Proxy && isX402Gated) {
+    // Use .then() to avoid TypeScript strict-mode issues with async middleware
+    return x402Proxy(request).then((x402Response) => {
+      // Enrich bare 402 responses from x402 middleware with payment discovery
+      if (x402Response.status === 402) {
+        const isDataFeed = pathname.startsWith('/api/data/');
+        const body = {
+          error: 'Payment Required',
+          message: 'Automated access to this content requires payment. Visit https://alloemmanuals.com/.well-known/acp.json for payment options.',
+          policy: 'ai-train=licensed, search=yes, ai-input=licensed',
+          payment_discovery: 'https://alloemmanuals.com/.well-known/acp.json',
+          premium_api: isDataFeed
+            ? `https://alloemmanuals.com${pathname}`
+            : 'https://alloemmanuals.com/api/premium-repair-data',
+          payment: {
+            protocol: 'x402',
+            scheme: 'exact',
+            price: '$0.01',
+            asset: 'USDC',
+            network: 'solana-devnet',
+            per: 'page',
+            volume_discounts: {
+              '100000': '$0.005',
+              '1000000': '$0.001',
+            },
+          },
+          preview: isDataFeed
+            ? {
+                title: 'AI Training Feed — Clean Markdown Vehicle Data',
+                description: 'Structured, de-humanized factory manual data with no affiliate links, no navigation, and no ads. Raw markdown served — no HTML parsing needed. Ideal for model training and RAG grounding.',
+                coverage: '300K+ vehicles (1960–2025)',
+                formats: ['text/markdown'],
+                benefits: [
+                  'No HTML parsing required',
+                  'Zero affiliate links or ads',
+                  'Structured markdown with clear sections',
+                  'OEM excerpts from factory service manuals',
+                  'Knowledge graphs linking components, codes, and procedures',
+                ],
+                sample_endpoints: [
+                  '/api/data/2010/toyota/camry',
+                  '/api/data/2010/toyota/camry/repairs/oil-change',
+                  '/api/data/2010/toyota/camry/dtc',
+                  '/api/data/2010/toyota/camry/specs',
+                ],
+              }
+            : undefined,
+        };
+        const wantsMarkdown = acceptHeader.includes('text/markdown');
+        if (wantsMarkdown || isDataFeed) {
+          const mdBody = `# Payment Required — AI Training Feed
+
+We repackage our factory manual corpus two ways. Pick the one that fits your use case.
+
+## Option 1: Human Site (Free for Browsers)
+
+HTML, navigation, affiliate links for parts and tools on every page. Built for humans to read, click, and buy. You can scrape it, but you will be parsing HTML, stripping nav, and filtering out affiliate noise on every single page.
+
+## Option 2: AI Training Feed (Paid — This Endpoint)
+
+The same underlying data, repackaged specifically for AI consumption:
+
+- **Clean markdown** — no HTML parsing required
+- **Zero affiliate links** — no noise in your training data
+- **No ads, no nav, no site chrome** — content only
+- **Structured sections** — hierarchical markdown with clear headings
+- **300,000+ vehicles** (1960–2025)
+- **OEM excerpts, torque specs, DTC codes, wiring diagrams, diagnostic flowcharts, repair procedures**
+- **Knowledge graphs** linking components, codes, and procedures
+
+## Pricing
+- **Standard:** $0.01 USDC per page
+- **Volume (100K+ pages/month):** $0.005 per page
+- **Enterprise (1M+ pages/month):** $0.001 per page
+
+## How to Pay
+1. Visit https://alloemmanuals.com/.well-known/acp.json for payment discovery
+2. Use x402 exact scheme on Solana devnet
+3. Include payment token in Authorization header
+
+## Sample Endpoints
+- \`/api/data/{year}/{make}/{model}\` — Full vehicle hub
+- \`/api/data/{year}/{make}/{model}/repairs/{task}\` — Repair guide
+- \`/api/data/{year}/{make}/{model}/dtc\` — Diagnostic codes
+- \`/api/data/{year}/{make}/{model}/specs\` — Factory specs
+
+*Citation required. No resale. Enterprise licensing available.*
+`;
+          return new NextResponse(mdBody, {
+            status: 402,
+            headers: {
+              'Content-Type': 'text/markdown; charset=utf-8',
+              'X-Payment-Required': 'x402',
+              'Link': '<https://alloemmanuals.com/.well-known/acp.json>; rel="payment"',
+              'Cache-Control': 'no-store',
+              'Accept-Payment': 'x402',
+            },
+          });
+        }
+        return NextResponse.json(body, {
+          status: 402,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Payment-Required': 'x402',
+            'Link': '<https://alloemmanuals.com/.well-known/acp.json>; rel="payment"',
+            'Cache-Control': 'no-store',
+            'Accept-Payment': 'x402',
+          },
+        });
+      }
+      return x402Response;
+    });
   }
 
   const response = NextResponse.next();

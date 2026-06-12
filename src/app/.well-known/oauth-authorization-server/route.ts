@@ -23,6 +23,18 @@ export async function GET() {
       supported_credential_types: ['api_key', 'x402_payment'],
       identity_types_supported: ['domain', 'did', 'anonymous'],
       credential_types_supported: ['api_key', 'x402_payment'],
+      anonymous: {
+        credential_types_supported: ['api_key', 'x402_payment'],
+        registration_methods_supported: ['registration_endpoint'],
+      },
+      domain: {
+        credential_types_supported: ['api_key', 'x402_payment'],
+        registration_methods_supported: ['registration_endpoint'],
+      },
+      did: {
+        credential_types_supported: ['api_key', 'x402_payment'],
+        registration_methods_supported: ['registration_endpoint'],
+      },
       claim_uri: 'https://alloemmanuals.com/auth.md',
     },
   };
@@ -30,6 +42,7 @@ export async function GET() {
   return NextResponse.json(metadata, {
     headers: {
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
     },
   });
 }

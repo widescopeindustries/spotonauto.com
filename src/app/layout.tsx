@@ -115,9 +115,20 @@ export default function RootLayout({
                 description: "Manuel — your factory-trained AI mechanic. Free OEM repair guides, DTC codes, wiring diagrams, and torque specs for your exact year, make, and model.",
                 url: "https://alloemmanuals.com",
                 logo: "https://alloemmanuals.com/logo.png",
-                sameAs: [],
+                sameAs: [
+                  "https://www.youtube.com/@alloemmanuals",
+                  "https://widescopeindustries.com",
+                  COMPANY_INFO.googleReviewUrl.replace('/review', ''),
+                ],
+                priceRange: "$$",
                 telephone: COMPANY_INFO.phoneE164,
                 email: COMPANY_INFO.supportEmail,
+                openingHoursSpecification: {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                  opens: "09:00",
+                  closes: "17:00",
+                },
                 address: {
                   "@type": "PostalAddress",
                   streetAddress: COMPANY_INFO.streetAddress,

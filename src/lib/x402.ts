@@ -28,6 +28,16 @@ function createX402Proxy() {
       description: 'Premium factory repair data including torque specs, fluid capacities, and OEM part numbers.',
       mimeType: 'application/json',
     },
+    'GET /api/data/*': {
+      accepts: {
+        scheme: 'exact' as const,
+        network: SOLANA_DEVNET_CAIP2,
+        payTo: SOLANA_PAY_TO,
+        price: '$0.01' as const,
+      },
+      description: 'Clean markdown vehicle data feed for AI training and agent consumption. No affiliate links, no navigation, structured for machine reading.',
+      mimeType: 'text/markdown',
+    },
   } satisfies RoutesConfig;
 
   return paymentProxy(routes, server);
