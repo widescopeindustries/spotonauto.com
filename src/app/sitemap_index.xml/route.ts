@@ -37,10 +37,17 @@ async function collectUrlsetSitemaps(dir: string, baseDir: string): Promise<stri
 
 export async function GET() {
   const discovered = await collectUrlsetSitemaps(PUBLIC_DIR, PUBLIC_DIR);
-  const sitemaps = [
+
+  // Static route-generated sitemaps (not in /public)
+  const routeSitemaps = [
     `${HOST}/sitemap.xml`,
-    ...discovered,
+    `${HOST}/vehicles/sitemap.xml`,
+    `${HOST}/codes/sitemap.xml`,
+    `${HOST}/manual/sitemap.xml`,
+    `${HOST}/maintenance/sitemap.xml`,
   ];
+
+  const sitemaps = Array.from(new Set([...routeSitemaps, ...discovered]));
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemaps
     .map((loc) => `  <sitemap><loc>${loc}</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod></sitemap>`)
