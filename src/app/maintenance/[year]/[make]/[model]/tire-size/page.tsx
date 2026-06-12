@@ -4,6 +4,10 @@ import { logWarn } from '@/lib/logger';
 import { notFound, redirect } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
+import {
+  getTireRackSizeAffiliateLink,
+  parseTireSize,
+} from "@/lib/tireRackAffiliate";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
@@ -182,14 +186,37 @@ export default async function TireSizePage({ params }: PageProps) {
 
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">Shop Tires</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a
+              href={getTireRackSizeAffiliateLink(
+                tires.size,
+                `maint-tiresize-tirerack-${year}-${canonicalMake}-${canonicalModel}`
+              )}
+              target="_blank"
+              rel="nofollow sponsored noopener noreferrer"
+              className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
+              data-track-click={JSON.stringify({
+                event_category: 'affiliate_click',
+                provider: 'Tire Rack',
+                partName: `${tires.size} tires`,
+                vehicle: `${year} ${displayMake} ${displayModel}`,
+                pageType: 'maintenance',
+                subtag: `maint-tiresize-tirerack-${year}-${canonicalMake}-${canonicalModel}`,
+              })}
+            >
+              <p className="text-sm text-cyan-400 mb-1">Exact Fit — Tire Rack</p>
+              <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
+                {tires.size} for {displayMake} {displayModel}
+              </h3>
+              <p className="text-xs text-gray-500 mt-2">See tires in this exact size →</p>
+            </a>
             <a
               href={buildAmazonSearchUrl(tireSearchQuery, "automotive", `tire-${year}-${canonicalMake}-${canonicalModel}`)}
               target="_blank"
               rel="nofollow sponsored noopener noreferrer"
               className="block glass rounded-xl p-5 hover:border-cyan-400/40 transition-all group"
             >
-              <p className="text-sm text-cyan-400 mb-1">Replacement Tires</p>
+              <p className="text-sm text-cyan-400 mb-1">Replacement Tires — Amazon</p>
               <h3 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
                 {tires.size} for {displayMake} {displayModel}
               </h3>
@@ -208,6 +235,11 @@ export default async function TireSizePage({ params }: PageProps) {
               <p className="text-xs text-gray-500 mt-2">Search Amazon →</p>
             </a>
           </div>
+          {!parseTireSize(tires.size) && (
+            <p className="text-xs text-amber-400/80 mt-3">
+              Tire Rack link defaulted to search mode because the stored size "{tires.size}" does not match a standard parseable format. If CJ tracking is configured, the link still affiliates.
+            </p>
+          )}
         </div>
 
         <RelatedForVehicle year={year} make={displayMake} model={displayModel} excludeType="tire-size" />

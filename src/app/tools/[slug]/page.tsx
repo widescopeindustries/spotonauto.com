@@ -22,6 +22,10 @@ import AuthorBioCard from '@/components/AuthorBioCard';
 import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import LlmExtractionBox from '@/components/LlmExtractionBox';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import {
+  getTireRackSizeAffiliateLink,
+  parseTireSize,
+} from '@/lib/tireRackAffiliate';
 import { getAmazonCtaLabel, getAmazonCtaVariantForSlug } from '@/lib/abTests';
 import { getToolManualCitationGroups, getToolVerificationNote } from '@/lib/toolManualCitations';
 import type { ToolPage } from '@/data/tools-pages';
@@ -588,6 +592,22 @@ export default async function ToolPage({ params }: PageProps) {
 
                                 {/* Shop CTA */}
                                 <div className="mt-4 flex flex-wrap gap-3">
+                                    {page.toolType === 'tire-size' && parseTireSize(gen.specs['B Tire Size'] || gen.specs['F Tire Size'] || '') && (
+                                        <AffiliateLink
+                                            href={getTireRackSizeAffiliateLink(
+                                                gen.specs['B Tire Size'] || gen.specs['F Tire Size'] || '',
+                                                `tool-spec-tiresize-${page.make.toLowerCase()}-${modelSlug}-v${amazonCtaVariant}`
+                                            )}
+                                            partName={`${gen.specs['B Tire Size'] || gen.specs['F Tire Size'] || ''} tires`}
+                                            vehicle={vehicleName}
+                                            pageType="parts_page"
+                                            provider="Tire Rack"
+                                            subtag={`tool-spec-tiresize-${page.make.toLowerCase()}-${modelSlug}-v${amazonCtaVariant}`}
+                                            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white text-sm font-bold rounded-lg hover:bg-cyan-500 transition"
+                                        >
+                                            Shop Tire Rack →
+                                        </AffiliateLink>
+                                    )}
                                     <AffiliateLink
                                         href={amazonSearch(`${page.make} ${page.model} ${gen.years.split('-')[0]} ${meta.label.toLowerCase()}`)}
                                         partName={`${page.make} ${page.model} ${meta.label}`}
