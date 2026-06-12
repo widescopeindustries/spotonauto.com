@@ -5,6 +5,18 @@ Update it when product decisions, traps, or standing preferences change.
 
 ## Current State Snapshot (2026-06-04 — Post Indexing Crisis Fix)
 
+### 2026-06-12 — CJ Tire Rack Affiliate Live + Bing IndexNow Bulk Fix
+- **CJ Affiliate Tire Rack integration deployed:**
+  - Added `src/lib/tireRackAffiliate.ts` to build size- and vehicle-specific Tire Rack search URLs.
+  - Wired CJ tracking (`www.anrdoezrs.net/click-101766028-15734228`) into `/maintenance/[year]/[make]/[model]/tire-size` and `/tools/[slug]` pages.
+  - Env vars added to VPS `.env.local`: `NEXT_PUBLIC_CJ_DOMAIN=anrdoezrs.net`, `NEXT_PUBLIC_CJ_PID=101766028`, `NEXT_PUBLIC_CJ_AID_TIRE_RACK=15734228`.
+  - Fixed systemd `alloemmanuals-web.service` to load `EnvironmentFile=/root/spotonauto.com/.env.local` so NEXT_PUBLIC_ vars are available at runtime.
+  - Pushed to GitHub and auto-deployed to VPS. Smoke test confirmed CJ affiliate link on `2016 Chevrolet Silverado 1500` tire-size page.
+  - Nginx + Cloudflare caches purged.
+- **Bing IndexNow 21-page "not submitted" error fixed:**
+  - Bulk-submitted all 16,425 sitemap URLs to IndexNow via the POST `urlList` API (2 batches of 10,000 + 6,425). All returned HTTP 200.
+  - Root cause: daily safe submitter only sends lastmod ≤48h URLs; older high-priority pages were never bulk-submitted after the qualified-keys sitemap rewrite.
+
 ### Domain & Traffic
 - **Primary domain:** `alloemmanuals.com` (purchased 2026-05-07, ~12 days old)
 - **Legacy domain:** `spotonauto.com` → 301 redirects to `alloemmanuals.com` (nginx + Next.js)
@@ -81,6 +93,7 @@ See comprehensive audit section at bottom of this file for full details.
 - **VPS:** `116.202.210.109` / IPv6 `2a01:4f8:2200:3291::2`
 - **SSH:** Key-based auth (`~/.ssh/id_ed25519`) working. IPv6 preferred; IPv4 port 22 sometimes blocked by fail2ban.
 - **Next.js:** Port 3002, `alloemmanuals-web.service`
+- **Systemd env:** `/etc/systemd/system/alloemmanuals-web.service` loads `EnvironmentFile=/root/spotonauto.com/.env.local` so `NEXT_PUBLIC_*` vars are available to the running app.
 - **nginx cache:** `alloemmanuals_cache` (1GB, 1h TTL). Cache already warmed to ~900 files.
 - **Deploy process:** `rsync` local `/home/lyndon/projects/spotonauto.com/` to VPS `/root/spotonauto.com/` → `bash scripts/deploy-production.sh` on VPS (handles npm ci, build, service restart, healthcheck)
 - **Nginx cache clear:** `rm -rf /var/cache/nginx/alloemmanuals/* && nginx -s reload`
