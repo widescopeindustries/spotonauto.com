@@ -17,6 +17,21 @@ Update it when product decisions, traps, or standing preferences change.
   - Bulk-submitted all 16,425 sitemap URLs to IndexNow via the POST `urlList` API (2 batches of 10,000 + 6,425). All returned HTTP 200.
   - Root cause: daily safe submitter only sends lastmod ≤48h URLs; older high-priority pages were never bulk-submitted after the qualified-keys sitemap rewrite.
 
+### 2026-06-12 (Part 2) — Full Audit & Repo Sync
+- **Full audit findings:**
+  - Tire Rack CJ integration was confirmed live and working.
+  - Critical repo drift: `src/app/api/data/`, `src/app/developers/`, `src/app/sitemap_index.xml/`, x402/middleware updates, and marketing docs existed only in the working tree, never committed.
+  - `robots.txt` still had `ai-train=no` and listed empty sitemaps; `sitemap_index.xml` omitted `repair/winners/sitemap.xml`.
+  - `alloemmanuals-web.service` was active but disabled (would not start on boot).
+  - Postgres `manual_embeddings` queries for DTC/tool pages were timing out on 1.8M rows.
+- **Fixes applied:**
+  - Committed and pushed all deployed features to GitHub (`3f7e28f1`).
+  - Updated `robots.txt` to `ai-train=licensed` and pointed to `sitemap_index.xml` only.
+  - Added `repair/winners/sitemap.xml` to `sitemap_index.xml`.
+  - Enabled `alloemmanuals-web.service` for boot.
+  - Created composite index `manual_embeddings(make, year, model)` and trigram GIN indexes on `content_full` and `section_title` to fix timeouts.
+  - Purged Cloudflare cache for robots + sitemap index.
+
 ### Domain & Traffic
 - **Primary domain:** `alloemmanuals.com` (purchased 2026-05-07, ~12 days old)
 - **Legacy domain:** `spotonauto.com` → 301 redirects to `alloemmanuals.com` (nginx + Next.js)
