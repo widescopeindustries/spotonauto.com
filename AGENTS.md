@@ -14,8 +14,9 @@ Update it when product decisions, traps, or standing preferences change.
 3. Vehicle-specific repair guides are now indexable unless the make is in `NOINDEX_MAKES` or the model is in `NON_US_MODELS`.
 4. Built and deployed on VPS (`116.202.210.109`).
 5. Purged nginx cache (`/var/cache/nginx/alloemmanuals/*`) and purged Cloudflare cache globally.
-6. Verified sample URLs (e.g., `/repair/2010/toyota/camry/brake-caliper-replacement`, `/repair/2015/ford/f-150/throttle-body-cleaning`) no longer emit `noindex` meta or `X-Robots-Tag: noindex`.
-7. Confirmed intentional noindex rules still apply: generic `/repair`, `/manual/hyperlink/*`, `NOINDEX_MAKES` (Isuzu), and `NON_US_MODELS` (e.g., Suzuki Swift).
+6. Committed and pushed to GitHub (`8acefba`); VPS auto-deploy watcher pulled the commit and `alloemmanuals-web` stayed healthy.
+7. Verified sample URLs (e.g., `/repair/2010/toyota/camry/brake-caliper-replacement`, `/repair/2015/ford/f-150/throttle-body-cleaning`) no longer emit `noindex` meta or `X-Robots-Tag: noindex`.
+8. Confirmed intentional noindex rules still apply: generic `/repair`, `/manual/hyperlink/*`, `NOINDEX_MAKES` (Isuzu), and `NON_US_MODELS` (e.g., Suzuki Swift).
 
 **Next step:** Request GSC validation for the affected pages.
 
