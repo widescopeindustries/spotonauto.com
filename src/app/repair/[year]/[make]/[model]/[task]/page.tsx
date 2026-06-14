@@ -2036,9 +2036,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const displayModel = getDisplayName(canonicalModel, 'model') || toTitleCase(canonicalModel);
     const vehicleName = `${canonicalYear} ${displayMake} ${displayModel}`;
     const exactGuideProfile = await getExactGuideProfile(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
-    const vehicleSpec = getVehicleRepairSpec(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
-    const hasGenericContent = canonicalTask in REPAIR_DATA || canonicalTask in TASK_META;
-    const hasRealContent = vehicleSpec !== null || exactGuideProfile !== null || hasGenericContent;
 
     const taskMeta = TASK_META[canonicalTask];
     const title = taskMeta
@@ -2063,7 +2060,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title,
         description,
         keywords,
-        ...(NOINDEX_MAKES.has(canonicalMake) || isNonUsModel(canonicalMake, canonicalModel) || !hasRealContent ? { robots: { index: false, follow: true } } : {}),
+        ...(NOINDEX_MAKES.has(canonicalMake) || isNonUsModel(canonicalMake, canonicalModel) ? { robots: { index: false, follow: true } } : {}),
         openGraph: {
             title,
             description,

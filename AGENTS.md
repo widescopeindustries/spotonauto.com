@@ -5,6 +5,20 @@ Update it when product decisions, traps, or standing preferences change.
 
 ## Current State Snapshot (2026-06-04 — Post Indexing Crisis Fix)
 
+### 2026-06-14 — Repair Guide Noindex Fix (GSC 8,950 Pages)
+**Problem:** Google Search Console showed **8,950+ vehicle-specific repair guide pages** (`/repair/{year}/{make}/{model}/{task}`) excluded by the `noindex` tag. Root cause: `src/app/repair/[year]/[make]/[model]/[task]/page.tsx` `generateMetadata` was noindexing any page where `hasRealContent` was false, but `hasRealContent` only counted tasks present in the limited in-page `REPAIR_DATA` / `TASK_META` dictionaries or the `VALID_TASKS` array. Many valid repair task slugs rendered a generic guide but were still marked `noindex`.
+
+**Fix:**
+1. Removed the `!hasRealContent` condition from the repair task metadata `robots` logic.
+2. Removed the now-unused `hasRealContent` / `hasGenericContent` computation and the unused `getVehicleRepairSpec` call in metadata (the spec is still fetched by the page component).
+3. Vehicle-specific repair guides are now indexable unless the make is in `NOINDEX_MAKES` or the model is in `NON_US_MODELS`.
+4. Built and deployed on VPS (`116.202.210.109`).
+5. Purged nginx cache (`/var/cache/nginx/alloemmanuals/*`) and purged Cloudflare cache globally.
+6. Verified sample URLs (e.g., `/repair/2010/toyota/camry/brake-caliper-replacement`, `/repair/2015/ford/f-150/throttle-body-cleaning`) no longer emit `noindex` meta or `X-Robots-Tag: noindex`.
+7. Confirmed intentional noindex rules still apply: generic `/repair`, `/manual/hyperlink/*`, `NOINDEX_MAKES` (Isuzu), and `NON_US_MODELS` (e.g., Suzuki Swift).
+
+**Next step:** Request GSC validation for the affected pages.
+
 ### 2026-06-12 — CJ Tire Rack Affiliate Live + Bing IndexNow Bulk Fix
 - **CJ Affiliate Tire Rack integration deployed:**
   - Added `src/lib/tireRackAffiliate.ts` to build size- and vehicle-specific Tire Rack search URLs.
@@ -906,8 +920,8 @@ Disallow: /*?_rsc=*
 
 #### Noindex Patterns
 22 page groups have explicit noindex. All are intentional generic/thin pages EXCEPT:
-- `/repair/[year]/[make]/[model]/[task]` — conditional noindex if `!hasRealContent` (good)
 - `/repair/[year]/[make]/[model]` — conditional noindex if `NOINDEX_MAKES` or non-US model
+- `/repair/[year]/[make]/[model]/[task]` — indexable for all valid vehicle/task combos; noindex only for `NOINDEX_MAKES` or non-US models
 
 **Critical gap:** Zero `error.tsx` files anywhere in `src/app/`. Next.js may inject `<meta name="robots" content="noindex">` on uncaught errors.
 
