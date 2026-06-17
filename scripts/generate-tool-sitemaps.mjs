@@ -36,6 +36,50 @@ const KNOWN_TOOL_TYPES = [
   'brake-fluid-type',
 ];
 
+// Brands with minimal search volume — noindex to save crawl budget
+const NOINDEX_MAKES = new Set(['isuzu']);
+
+// Models never sold in the US (or only briefly under a different name).
+// Format: 'make:model' (lowercase, hyphenated).
+const NON_US_MODELS = new Set([
+  'nissan:qashqai',
+  'nissan:micra',
+  'nissan:note',
+  'nissan:juke',
+  'hyundai:i10',
+  'hyundai:i20',
+  'hyundai:i30',
+  'kia:ceed',
+  'kia:picanto',
+  'volkswagen:polo',
+  'volkswagen:t-roc',
+  'volkswagen:caddy',
+  'volkswagen:transporter',
+  'volkswagen:up',
+  'audi:a1',
+  'audi:q2',
+  'mitsubishi:pajero',
+  'mitsubishi:l200',
+  'mitsubishi:asx',
+  'suzuki:jimny',
+  'suzuki:ignis',
+  'suzuki:swift',
+  'suzuki:vitara',
+  'suzuki:sx4',
+  'suzuki:baleno',
+  'suzuki:celerio',
+  'suzuki:s-cross',
+  'ford:mondeo',
+  'acura:cdx',
+  'volvo:v40',
+]);
+
+function isNonUsModel(make, model) {
+  const normalizedMake = make.toLowerCase().replace(/-datsun$/, '');
+  const key = `${normalizedMake}:${model.toLowerCase().replace(/\s+/g, '-')}`;
+  return NON_US_MODELS.has(key);
+}
+
 const NON_ROAD_VEHICLE_PATTERN =
   /\b(trailer|scooter|motorcycle|motocross|enduro|atv|utv|quad|snowmobile|roadking|softail|sportster|electra\s+glide|heritage\s+classic|fat\s+boy|shadow\s+ace|gold\s+wing|vulcan|hayabusa|ninja|gsx-r|rm-z|xr\d|crf\d|dr\d|yz[f]?\d|vt\d|cbr\d|klr\d|intruder|boulevard|virago|v-star|roadstar|nighthawk|speedfight|manufacturing)\b/i;
 
@@ -73,8 +117,10 @@ function buildAllEntries() {
 
   for (const [make, models] of Object.entries(rawData)) {
     const makeSlug = slugify(make);
+    if (NOINDEX_MAKES.has(makeSlug)) continue;
     for (const [model, info] of Object.entries(models)) {
       if (!isPublicRoadVehicle(make, model)) continue;
+      if (isNonUsModel(makeSlug, slugify(model))) continue;
       const modelSlug = slugify(model);
 
       for (const toolType of KNOWN_TOOL_TYPES) {

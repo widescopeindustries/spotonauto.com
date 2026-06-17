@@ -47,7 +47,7 @@ export default function WebMCP() {
               required: ['code'],
             },
             execute: async (input: any) => {
-              const url = `https://alloemmanuals.com/api/v1/dtc?code=${input.code}`;
+              const url = `https://alloemmanuals.com/api/graph/dtc/${encodeURIComponent(input.code)}`;
               const res = await fetch(url);
               return res.json();
             },

@@ -61,11 +61,11 @@ const ENDPOINTS = [
   },
   {
     method: 'GET',
-    path: '/api/v1/dtc',
+    path: '/api/graph/dtc/{code}',
     auth: 'none',
     desc: 'Diagnostic trouble code lookup with graph-linked procedures.',
     example:
-      'curl "https://alloemmanuals.com/api/v1/dtc?code=P0420"',
+      'curl "https://alloemmanuals.com/api/graph/dtc/P0420"',
   },
   {
     method: 'GET',

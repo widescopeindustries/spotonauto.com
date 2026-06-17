@@ -3,12 +3,15 @@ import neo4j, { Driver, Session, QueryResult } from 'neo4j-driver';
 
 const NEO4J_URI = process.env.NEO4J_URI || 'bolt://localhost:7687';
 const NEO4J_USER = process.env.NEO4J_USER || 'neo4j';
-const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD || 'spotonauto2026';
+const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD;
 
 let driver: Driver | null = null;
 
 function getDriver(): Driver {
   if (!driver) {
+    if (!NEO4J_PASSWORD) {
+      throw new Error('NEO4J_PASSWORD environment variable is required');
+    }
     driver = neo4j.driver(
       NEO4J_URI,
       neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD),

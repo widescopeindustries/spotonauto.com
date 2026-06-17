@@ -67,6 +67,16 @@ const RATE_LIMIT_BOTS = {
   'googleother': 5,
 };
 
+// ASNs observed pulling large volumes of HTML with spoofed browser UAs.
+// Search-engine UAs from these ASNs are still allowed via ALLOW_LIST.
+const BANDWIDTH_THEFT_ASNS = {
+  45102: 'Alibaba (US) Technology Co., Ltd.',
+  150436: 'Byteplus Pte. Ltd.',
+  45899: 'VNPT Corp',
+  14061: 'DigitalOcean, LLC',
+  // 8075 Microsoft left out intentionally — Bing crawlers use it.
+};
+
 /* ─────────────── Helpers ─────────────── */
 
 function normalizeUA(request) {
@@ -75,32 +85,35 @@ function normalizeUA(request) {
 
 function isAllowedBot(ua) {
   if (!ua) return false;
+  const lower = ua.toLowerCase();
   for (const a of ALLOW_LIST) {
-    if (ua.includes(a.toLowerCase())) return true;
+    if (lower.includes(a.toLowerCase())) return true;
   }
   return false;
 }
 
 function isMaliciousBot(ua) {
   if (!ua) return false;
+  const lower = ua.toLowerCase();
   for (const b of MALICIOUS_BOTS) {
-    if (ua.includes(b.toLowerCase())) return true;
+    if (lower.includes(b.toLowerCase())) return true;
   }
   return false;
 }
 
 function isPaywalledBot(ua) {
   if (!ua) return false;
+  const lower = ua.toLowerCase();
   for (const p of PAYWALL_LIST) {
-    if (ua.includes(p.toLowerCase())) return true;
+    if (lower.includes(p.toLowerCase())) return true;
   }
   return false;
 }
 
 function isGenericBot(ua) {
-  if (!ua) return true; // empty UA = bot
-  if (/bot|crawl|spider|scraper/.test(ua)) {
-    const browserSig = /chrome|safari|firefox|edge/.test(ua);
+  if (!ua) return false; // empty UA alone is not reliable bot evidence
+  if (/bot|crawl|spider|scraper/i.test(ua)) {
+    const browserSig = /chrome|safari|firefox|edge/i.test(ua);
     if (!browserSig) return true;
   }
   return false;
@@ -192,6 +205,15 @@ The same underlying data, repackaged specifically for AI consumption — cheaper
 - **Enterprise (1M+ pages/month):** $0.001 per page
 
 ## How to Pay
+
+### Option A: Stripe (Real Money, Immediate)
+1. Visit https://alloemmanuals.com/for-ai for details and sample data
+2. Buy credits at https://alloemmanuals.com/api/stripe/checkout?pack=starter
+3. Complete checkout
+4. Your API key will be shown after payment
+5. Include your key: Authorization: Bearer <api_key>
+
+### Option B: x402 (Agent-Native, Solana Devnet)
 1. Visit https://alloemmanuals.com/.well-known/acp.json for payment discovery
 2. Use x402 exact scheme on Solana devnet
 3. Include payment token in Authorization header
@@ -215,8 +237,8 @@ function build402Response(url, preferMarkdown = false) {
       status: 402,
       headers: {
         'Content-Type': 'text/markdown; charset=utf-8',
-        'X-Payment-Required': 'x402',
-        'Accept-Payment': 'x402',
+        'X-Payment-Required': 'stripe,x402',
+        'Accept-Payment': 'stripe,x402',
         'Link': `<https://alloemmanuals.com/.well-known/acp.json>; rel="payment", <${premiumApi}>; rel="premium-api"`,
         'Cache-Control': 'no-store',
       },
@@ -229,18 +251,29 @@ function build402Response(url, preferMarkdown = false) {
     policy: 'ai-train=licensed, search=yes, ai-input=licensed',
     payment_discovery: 'https://alloemmanuals.com/.well-known/acp.json',
     premium_api: premiumApi,
-    payment: {
-      protocol: 'x402',
-      scheme: 'exact',
-      price: '$0.01',
-      asset: 'USDC',
-      network: 'solana',
-      per: 'page',
-      volume_discounts: {
-        '100000': '$0.005',
-        '1000000': '$0.001',
+    payment_options: [
+      {
+        protocol: 'x402',
+        scheme: 'exact',
+        price: '$0.01',
+        asset: 'USDC',
+        network: 'solana-devnet',
+        per: 'page',
+        volume_discounts: {
+          '100000': '$0.005',
+          '1000000': '$0.001',
+        },
       },
-    },
+      {
+        protocol: 'stripe',
+        model: 'credits',
+        price: '$0.01',
+        per: 'page',
+        info_url: 'https://alloemmanuals.com/for-ai',
+        checkout_url: 'https://alloemmanuals.com/api/stripe/checkout',
+        account_url: 'https://alloemmanuals.com/api/account',
+      },
+    ],
     preview: {
       title: 'AllOEMManuals — Factory Repair Data for 300K+ Vehicles',
       description: 'OEM technical data covering 300,000+ vehicles (1960–2025). Torque specs, fluid capacities, wiring diagrams, DTC codes, diagnostic flowcharts, and step-by-step repair procedures.',
@@ -258,8 +291,8 @@ function build402Response(url, preferMarkdown = false) {
     status: 402,
     headers: {
       'Content-Type': 'application/json',
-      'X-Payment-Required': 'x402',
-      'Accept-Payment': 'x402',
+      'X-Payment-Required': 'stripe,x402',
+      'Accept-Payment': 'stripe,x402',
       'Link': `<https://alloemmanuals.com/.well-known/acp.json>; rel="payment", <${premiumApi}>; rel="premium-api"`,
       'Cache-Control': 'no-store',
     },
@@ -288,6 +321,12 @@ function build403Response() {
   });
 }
 
+function isBandwidthTheftAsn(request) {
+  const asn = request.cf?.asn;
+  if (!asn) return false;
+  return BANDWIDTH_THEFT_ASNS.hasOwnProperty(asn);
+}
+
 /* ─────────────── Main ─────────────── */
 
 export default {
@@ -300,6 +339,10 @@ export default {
       url.pathname.startsWith('/static/') ||
       url.pathname === '/favicon.ico' ||
       url.pathname === '/robots.txt' ||
+      url.pathname === '/llms.txt' ||
+      url.pathname === '/openapi.json' ||
+      url.pathname === '/auth.md' ||
+      url.pathname.startsWith('/for-ai') ||
       url.pathname.includes('sitemap') ||
       url.pathname.startsWith('/.well-known/')
     ) {
@@ -314,7 +357,14 @@ export default {
       return fetch(request);
     }
 
-    // ── 3. Malicious / SEO scrapers → 403 ──
+    // ── 3. Known bandwidth-theft ASNs → 403 ──
+    // These data centers pull GBs/day of HTML with spoofed browser UAs.
+    // Allowed-bot UAs are already handled above, so real search crawlers are safe.
+    if (isBandwidthTheftAsn(request)) {
+      return build403Response();
+    }
+
+    // ── 4. Malicious / SEO scrapers → 403 ──
     if (isMaliciousBot(ua)) {
       return build403Response();
     }

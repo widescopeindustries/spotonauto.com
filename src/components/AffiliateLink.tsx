@@ -25,7 +25,7 @@ export default function AffiliateLink({
     <a
       href={href}
       target="_blank"
-      rel="sponsored noopener noreferrer"
+      rel="nofollow sponsored noopener noreferrer"
       className={className}
       data-track-click={JSON.stringify({
         event_category: 'affiliate_click',

@@ -947,7 +947,8 @@ export const NON_US_MODELS = new Set([
 ]);
 
 export function isNonUsModel(make: string, model: string): boolean {
-    const key = `${make.toLowerCase()}:${model.toLowerCase().replace(/\s+/g, '-')}`;
+    const normalizedMake = make.toLowerCase().replace(/-datsun$/, '');
+    const key = `${normalizedMake}:${model.toLowerCase().replace(/\s+/g, '-')}`;
     return NON_US_MODELS.has(key);
 }
 

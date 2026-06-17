@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
+import { getNoindexRobots } from "@/lib/seo";
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -29,6 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    robots: getNoindexRobots(displayMake, displayModel),
     alternates: {
       canonical: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/oil-type`,
     },

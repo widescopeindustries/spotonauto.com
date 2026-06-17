@@ -5,7 +5,9 @@ from neo4j import GraphDatabase
 
 URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
 USER = os.environ.get("NEO4J_USER", "neo4j")
-PASS = os.environ.get("NEO4J_PASSWORD", "spotonauto2026")
+PASS = os.environ.get("NEO4J_PASSWORD")
+if not PASS:
+    raise RuntimeError("NEO4J_PASSWORD environment variable is required")
 
 CODE_PATTERNS = {
     "Oxygen Sensor": ["P0030", "P0031", "P0032", "P0033", "P0034", "P0035", "P0036", "P0037", "P0038", "P0039",

@@ -11,6 +11,7 @@ import { getGeneratedRepairProfile } from '@/lib/vehicleRepairProfiles';
 import { getOEMExcerptsForRepair } from '@/lib/manualSectionLinks';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
 import { buildRepairUrl } from '@/lib/vehicleIdentity';
+import { checkStripeAccess, attachCreditHeader, buildStripeRequiredResponse } from '@/lib/paymentGate';
 
 const TASK_META: Record<string, { title: string; description: string }> = {
   'oil-change': { title: 'Oil Change', description: 'Oil change guide for {v}.' },
@@ -58,6 +59,18 @@ function toTitleCase(slug: string): string {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
+export async function HEAD(request: NextRequest) {
+  const pagePath = request.nextUrl.pathname + request.nextUrl.search;
+  const access = await checkStripeAccess(request, pagePath);
+  if (!access.allowed) {
+    return access.response ?? buildStripeRequiredResponse(request, pagePath, 'missing_payment');
+  }
+  return new NextResponse(null, {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const year = searchParams.get('year') || '';
@@ -80,6 +93,13 @@ export async function GET(request: NextRequest) {
 
   if (!isValidVehicleCombination(resolvedYear, canonicalMake, canonicalModel, canonicalTask)) {
     return NextResponse.json({ error: 'Invalid vehicle or task combination' }, { status: 404 });
+  }
+
+  // Stripe credits gate (x402 is handled in middleware before this route runs)
+  const pagePath = request.nextUrl.pathname + request.nextUrl.search;
+  const access = await checkStripeAccess(request, pagePath);
+  if (!access.allowed) {
+    return access.response!;
   }
 
   const cleanTask = canonicalTask.replace(/-/g, ' ');
@@ -208,11 +228,28 @@ export async function GET(request: NextRequest) {
       price: '$0.01',
       asset: 'USDC',
       network: 'solana',
+      options: [
+        {
+          protocol: 'x402',
+          scheme: 'exact',
+          price: '$0.01',
+          asset: 'USDC',
+          network: 'solana-devnet',
+        },
+        {
+          protocol: 'stripe',
+          model: 'credits',
+          price: '$0.01',
+          per: 'page',
+          checkout_url: 'https://alloemmanuals.com/api/stripe/checkout',
+          account_url: 'https://alloemmanuals.com/api/account',
+        },
+      ],
     },
   };
 
   const res = NextResponse.json(response);
   res.headers.set('Cache-Control', 'public, max-age=60, s-maxage=60');
   res.headers.set('Vary', 'Accept-Encoding, Authorization');
-  return res;
+  return attachCreditHeader(res, access.remaining);
 }

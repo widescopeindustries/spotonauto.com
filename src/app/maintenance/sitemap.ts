@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { TOOL_PAGES } from '@/data/tools-pages';
-import { slugifyRoutePart } from '@/data/vehicles';
+import { slugifyRoutePart, NOINDEX_MAKES, isNonUsModel } from '@/data/vehicles';
 import { getSitemapLastMod } from '@/lib/sitemap';
 
 const LAST_MOD = getSitemapLastMod();
@@ -39,6 +39,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
         const makeSlug = slugifyRoutePart(page.make);
         const modelSlug = slugifyRoutePart(page.model);
+
+        if (NOINDEX_MAKES.has(makeSlug) || isNonUsModel(makeSlug, modelSlug)) continue;
 
         for (const gen of page.generations) {
             if (!gen.years) continue;

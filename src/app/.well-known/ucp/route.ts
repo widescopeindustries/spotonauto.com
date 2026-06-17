@@ -10,6 +10,18 @@ export async function GET() {
       name: 'ucp',
       services: [
         {
+          id: 'ai-training-feed',
+          name: 'AI Training Feed — Clean Markdown Vehicle Data',
+          description:
+            'De-humanized factory manual data in clean markdown. No affiliate links, no navigation, no ads. 300K+ vehicles.',
+          endpoints: {
+            purchase: 'https://alloemmanuals.com/api/data/{year}/{make}/{model}',
+            docs: 'https://alloemmanuals.com/for-ai',
+            discovery: 'https://alloemmanuals.com/.well-known/acp.json',
+          },
+          capabilities: ['read', 'purchase'],
+        },
+        {
           id: 'premium-repair-data',
           name: 'Premium Factory Repair Data',
           description:
@@ -23,7 +35,7 @@ export async function GET() {
         },
       ],
       capabilities: {
-        payments: ['x402'],
+        payments: ['x402', 'stripe'],
         networks: ['solana-devnet'],
       },
       spec_url: 'https://ucp.dev/specification/overview/',

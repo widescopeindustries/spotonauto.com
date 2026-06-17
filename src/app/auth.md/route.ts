@@ -54,23 +54,33 @@ The following endpoints are available without authentication or registration:
 
 - **Vehicle Hubs**: \`GET /vehicles/{year}/{make}/{model}\` — Browse all content for a specific vehicle
 - **Repair Guides**: \`GET /repair/{year}/{make}/{model}/{task}\` — Vehicle-specific repair procedures
-- **DTC Lookup**: \`GET /api/v1/dtc?code={code}\` — Diagnostic trouble code information
+- **DTC Lookup**: \`GET /api/graph/dtc/{code}\` — Diagnostic trouble code information
 - **API Catalog**: \`GET /.well-known/api-catalog\` — Discovery via RFC 9727
 - **MCP Server Card**: \`GET /.well-known/mcp/server-card.json\`
 - **Agent Skills**: \`GET /.well-known/agent-skills/index.json\`
 
-## Paid Access (x402)
+## Paid Access
 
-Premium structured OEM data requires payment via the x402 protocol:
+Premium structured OEM data is available through two payment models:
 
-- **Endpoint**: \`GET /api/premium-repair-data\`
-- **Payment**: x402 on Solana devnet (USDC, $0.01 per request)
+### Option A: Stripe Credits (Recommended for most agents)
+
+- **Endpoint**: \`GET /api/data/{year}/{make}/{model}\`
+- **Pricing**: $0.01 per page; volume discounts at 100K+ and 1M+ pages/month
+- **Purchase**: \`GET /api/stripe/checkout?pack=starter\`
+- **Auth**: \`Authorization: Bearer <api_key>\` (shown once after checkout)
+- **Info**: https://alloemmanuals.com/for-ai
+
+### Option B: x402 (Agent-Native, Solana Devnet)
+
+- **Endpoint**: \`GET /api/premium-repair-data\` or \`GET /api/data/{year}/{make}/{model}\`
+- **Payment**: x402 exact scheme on Solana devnet (USDC, $0.01 per request)
 - **Discovery**: \`GET /.well-known/acp.json\`
 - **UCP Profile**: \`GET /.well-known/ucp\`
 
 ### x402 Payment Flow
 
-1. Agent requests \`/api/premium-repair-data\` without payment
+1. Agent requests a paid endpoint without payment
 2. Server responds with **402 Payment Required** and \`X-Payment-Required\` header
 3. Agent obtains payment proof from x402 facilitator
 4. Agent re-requests with \`X-Payment-Proof\` header
@@ -90,6 +100,7 @@ For agent integration questions: \`lyndon@widescopeindustries.com\`
   return new NextResponse(body, {
     headers: {
       'Content-Type': 'text/markdown; charset=utf-8',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
     },
   });
 }

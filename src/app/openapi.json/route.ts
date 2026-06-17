@@ -8,9 +8,19 @@ export async function GET() {
   const x402Payment = {
     protocol: 'x402',
     asset: 'USDC',
-    network: 'solana',
+    network: 'solana-devnet',
     scheme: 'exact',
     price: '$0.01',
+  };
+
+  const stripePayment = {
+    protocol: 'stripe',
+    model: 'credits',
+    price: '$0.01',
+    per: 'page',
+    info_url: 'https://alloemmanuals.com/for-ai',
+    checkout_url: 'https://alloemmanuals.com/api/stripe/checkout',
+    account_url: 'https://alloemmanuals.com/api/account',
   };
 
   const spec = {
@@ -25,7 +35,7 @@ export async function GET() {
         url: 'https://alloemmanuals.com/developers',
         email: 'api@alloemmanuals.com',
       },
-      'x-payment-info': [x402Payment],
+      'x-payment-info': [x402Payment, stripePayment],
       'x-service-info': {
         categories: ['automotive', 'repair-data', 'diagnostics', 'OEM', 'factory-manual'],
       },
@@ -33,11 +43,16 @@ export async function GET() {
     servers: [
       { url: 'https://alloemmanuals.com', description: 'Production' },
     ],
+    security: [
+      { ApiKeyAuth: [] },
+      { x402: [] },
+    ],
     tags: [
       { name: 'Repair', description: 'Vehicle-specific repair guides and specs' },
       { name: 'Premium', description: 'Payment-gated OEM excerpts and knowledge graph' },
       { name: 'Diagnostics', description: 'DTC codes and graph-based diagnosis' },
       { name: 'Training Feed', description: 'Clean markdown vehicle data for AI training and agent consumption' },
+      { name: 'Payments', description: 'Stripe credit packs, webhooks, and account management' },
     ],
     paths: {
       '/api/v1/repair': {
@@ -119,8 +134,8 @@ export async function GET() {
           tags: ['Premium'],
           summary: 'Premium factory repair data (x402 paid)',
           description:
-            'Structured OEM repair data including full factory manual excerpts, knowledge graph relationships, generated repair profiles, and wiring diagram references. Requires x402 payment ($0.01 USDC on Solana) or Stripe. This is the same dataset as /api/v1/repair with deeper OEM excerpts and richer graph data.',
-          'x-payment-info': [x402Payment],
+            'Structured OEM repair data including full factory manual excerpts, knowledge graph relationships, generated repair profiles, and wiring diagram references. Paid via x402 (Solana devnet) or Stripe credits. This is the same dataset as /api/v1/repair with deeper OEM excerpts and richer graph data.',
+          'x-payment-info': [x402Payment, stripePayment],
           parameters: [
             {
               name: 'year',
@@ -189,7 +204,7 @@ export async function GET() {
           },
         },
       },
-      '/api/v1/dtc': {
+      '/api/graph/dtc/{code}': {
         get: {
           tags: ['Diagnostics'],
           summary: 'DTC code lookup',
@@ -199,7 +214,7 @@ export async function GET() {
           parameters: [
             {
               name: 'code',
-              in: 'query',
+              in: 'path',
               required: true,
               schema: { type: 'string', example: 'P0420' },
               description: 'OBD-II DTC code (e.g. P0420, B1234, C0561)',
@@ -230,8 +245,8 @@ export async function GET() {
           tags: ['Training Feed'],
           summary: 'AI Training Feed — Clean Markdown Vehicle Data',
           description:
-            'De-humanized, structured factory manual data in clean markdown format. No affiliate links, no navigation, no ads. Optimized for AI model training, RAG grounding, and agent consumption. Returns full vehicle hub by default; append /repairs/{task}, /dtc, or /specs for subsets. Requires x402 payment ($0.01 USDC per page). Volume discounts: 100K+ pages at $0.005, 1M+ at $0.001.',
-          'x-payment-info': [x402Payment],
+            'De-humanized, structured factory manual data in clean markdown format. No affiliate links, no navigation, no ads. Optimized for AI model training, RAG grounding, and agent consumption. Returns full vehicle hub by default; append /repairs/{task}, /dtc, or /specs for subsets. Paid via x402 (Solana devnet) or Stripe credits at $0.01 per page. Volume discounts: 100K+ pages at $0.005, 1M+ at $0.001.',
+          'x-payment-info': [x402Payment, stripePayment],
           parameters: [
             {
               name: 'year',
@@ -297,6 +312,165 @@ export async function GET() {
             },
             '404': {
               description: 'Invalid vehicle combination',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/stripe/checkout': {
+        get: {
+          tags: ['Payments'],
+          summary: 'Create Stripe Checkout Session',
+          description:
+            'Creates a Stripe Checkout Session for a prepaid credit pack. Returns a URL to complete payment. After payment, the webhook credits the account and /api/account returns the API key.',
+          'x-payment-info': [],
+          parameters: [
+            {
+              name: 'pack',
+              in: 'query',
+              required: false,
+              schema: { type: 'string', enum: ['starter', 'growth', 'scale', 'enterprise'], example: 'starter' },
+              description: 'Credit pack to purchase',
+            },
+            {
+              name: 'email',
+              in: 'query',
+              required: false,
+              schema: { type: 'string', example: 'dev@example.com' },
+              description: 'Customer email for Stripe Checkout',
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Checkout session created',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      url: { type: 'string' },
+                      pack: { type: 'object' },
+                    },
+                  },
+                },
+              },
+            },
+            '500': {
+              description: 'Stripe not configured or price missing',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/stripe/webhook': {
+        post: {
+          tags: ['Payments'],
+          summary: 'Stripe Webhook',
+          description: 'Receives Stripe webhook events. Currently processes checkout.session.completed to credit customer accounts.',
+          'x-payment-info': [],
+          responses: {
+            '200': {
+              description: 'Webhook processed',
+              content: {
+                'application/json': {
+                  schema: { type: 'object', properties: { received: { type: 'boolean' } } },
+                },
+              },
+            },
+            '400': {
+              description: 'Invalid signature or metadata',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/account': {
+        get: {
+          tags: ['Payments'],
+          summary: 'Get account balance and API key',
+          description:
+            'Returns the API key, current credit balance, and recent transaction history for the authenticated customer. Can also be used as a Stripe success URL to retrieve the API key after checkout.',
+          'x-payment-info': [],
+          security: [{ ApiKeyAuth: [] }],
+          parameters: [
+            {
+              name: 'session_id',
+              in: 'query',
+              required: false,
+              schema: { type: 'string' },
+              description: 'Stripe Checkout Session ID (used after redirect from checkout)',
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Account details',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      customer_id: { type: 'string' },
+                      email: { type: 'string' },
+                      balance_cents: { type: 'integer' },
+                      balance_usd: { type: 'string' },
+                      api_key: { type: 'string' },
+                      transactions: { type: 'array' },
+                    },
+                  },
+                },
+              },
+            },
+            '401': {
+              description: 'Authentication required',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' },
+                },
+              },
+            },
+          },
+        },
+        post: {
+          tags: ['Payments'],
+          summary: 'Account actions',
+          description: 'Rotate API key or update account email. Requires Bearer API key.',
+          'x-payment-info': [],
+          security: [{ ApiKeyAuth: [] }],
+          requestBody: {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    action: { type: 'string', enum: ['rotate_key'], example: 'rotate_key' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Action completed',
+              content: {
+                'application/json': {
+                  schema: { type: 'object' },
+                },
+              },
+            },
+            '401': {
+              description: 'Authentication required',
               content: {
                 'application/json': {
                   schema: { $ref: '#/components/schemas/Error' },
@@ -377,7 +551,7 @@ export async function GET() {
           properties: {
             error: { type: 'string', example: 'Payment Required' },
             message: { type: 'string' },
-            policy: { type: 'string', example: 'ai-train=no, search=yes, ai-input=conditional' },
+            policy: { type: 'string', example: 'ai-train=licensed, search=yes, ai-input=licensed' },
             payment_discovery: { type: 'string', example: 'https://alloemmanuals.com/.well-known/acp.json' },
             premium_api: { type: 'string', example: 'https://alloemmanuals.com/api/premium-repair-data' },
           },
@@ -526,6 +700,20 @@ export async function GET() {
             likelyCauses: { type: 'array', items: { type: 'string' } },
             graph: { $ref: '#/components/schemas/KnowledgeGraph' },
           },
+        },
+      },
+      securitySchemes: {
+        ApiKeyAuth: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'Authorization',
+          description: 'Bearer API key from /api/account after Stripe checkout.',
+        },
+        x402: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'Authorization',
+          description: 'x402 payment token (Authorization header).',
         },
       },
     },

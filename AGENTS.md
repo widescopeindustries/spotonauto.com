@@ -3,7 +3,66 @@
 This file is the durable project memory for future Codex runs in this repo.
 Update it when product decisions, traps, or standing preferences change.
 
-## Current State Snapshot (2026-06-04 — Post Indexing Crisis Fix)
+## Current State Snapshot (2026-06-17 — Post Full-Stack Audit)
+
+### 2026-06-17 — Full-Stack Audit Completed
+- **Trigger:** User requested a comprehensive audit of every facet of alloemmanuals.com (codebase, live site, monetization, VPS, AI discovery, SEO, security).
+- **Report:** `AUDIT-2026-06-17.md` saved in project root.
+- **Headline finding:** Production is currently behind the local working tree. Critical fixes for `/llms.txt` content-type, Cloudflare Worker (Stripe credits + ASN blocklist + empty-UA fix), and middleware payment-gating exist locally but are not deployed.
+- **Critical issues identified (11 total):**
+  1. Live Cloudflare API key + account/zone IDs committed in `AGENTS.md`.
+  2. Hardcoded Neo4j fallback password in `src/lib/neo4jClient.ts` and Python workers.
+  3. Services run as root; `.env.local` and credential files are world-readable/writable.
+  4. Free `/api/v1/repair` endpoint serves the same data as the paid AI Training Feed.
+  5. x402 payment verification is set on response headers, not forwarded as request headers, so paid x402 agents fail at route handlers.
+  6. `auto-deploy.sh` uses `git reset --hard`, risking loss of uncommitted local fixes.
+  7. Deploy scripts run `npm ci` / `npm run build` as root.
+  8. Nginx cache key does not vary on `Accept` or `Authorization`.
+  9. Maintenance/tool pages index non-US models and submit them via sitemap.
+  10. `auth.md` documents a broken DTC endpoint (`/api/v1/dtc` instead of `/api/graph/dtc/{code}`).
+  11. MCP Server Card exposes an internal SSH command and root IP.
+- **High issues (15 total):** Stripe webhook double-credit risk; refund/dispute audit events silently dropped; paid API HEAD requests debit credits; paid API can charge before returning 404; API key exposed via `?session_id=` success URL; CSP allows unsafe inline/eval; affiliate Impact/CJ links bypass tracking domains; Amazon links missing `nofollow`; OAuth/OIDC discovery is non-functional; JWKS empty; HTTP Message Signatures key is a placeholder; middleware blocks cross-origin API usage even with valid Bearer keys; CORS preflight not handled; high sustained VPS load (~8.0); manual pages return 200 for missing content.
+- **Verified live:** Stripe checkout returns real checkout URLs; AI Training Feed correctly 402s paywalled bots while allowing search engines; repair guide noindex crisis remains fixed; TypeScript passes; nginx config is valid.
+- **Next step:** Commit and deploy the working tree, then address the 11 critical items before returning to growth work.
+
+### 2026-06-17 — Audit Critical Fixes Deployed
+- **Scope:** Deployed fixes for the 11 critical issues identified in the full-stack audit.
+- **Security:**
+  - Removed hardcoded Neo4j fallback password from `src/lib/neo4jClient.ts` and Python workers (`workers/worker_*.py`). Missing `NEO4J_PASSWORD` now throws at startup.
+  - Removed internal SSH command/root IP from MCP Server Card (`src/app/.well-known/mcp/server-card.json/route.ts`).
+  - Secured VPS `.env.local` to `chmod 600`.
+- **Monetization:**
+  - Gated `/api/v1/repair` behind the same payment flow as `/api/data` (Stripe credits or x402) so it no longer gives away the paid training feed.
+  - Fixed x402 payment verification forwarding in `src/middleware.ts` (`X-Payment-Verified` now attached to the request, not the response).
+  - Fixed `/repair/{...}` JSON rewrite to use internal `http://127.0.0.1:3002` origin and added `Cache-Control: no-store` + `Vary: Accept` to prevent Cloudflare from caching HTML for JSON requests.
+  - Restored lost Stripe keys to VPS `.env.local` after an rsync overwrote the file. Live Stripe checkout now returns real URLs for starter/growth/scale/enterprise packs.
+- **AI/Agent discovery:**
+  - Fixed `auth.md` DTC endpoint documentation to `/api/graph/dtc/{code}`.
+  - Fixed broken DTC references in `src/app/developers/page.tsx` and `src/components/WebMCP.tsx`.
+  - Added `/llms.txt`, `/openapi.json`, `/auth.md`, and `/for-ai` to Cloudflare Worker bypass list so bots can read discovery endpoints.
+  - Fixed Worker UA matching to lowercase the UA before checking allow/paywall/malicious lists.
+- **SEO:**
+  - Added `getNoindexRobots()` helper in `src/lib/seo.ts` and applied it to all maintenance pages + tools page.
+  - Filtered non-US models and `NOINDEX_MAKES` from `src/app/maintenance/sitemap.ts` and `scripts/generate-tool-sitemaps.mjs`.
+  - Regenerated tool sitemaps (`public/tools/sitemap/*.xml`).
+  - Normalized `nissan-datsun` → `nissan` in `isNonUsModel()` for correct non-US detection.
+- **Infrastructure:**
+  - Updated nginx cache key to include `$http_accept` and `$http_authorization`.
+  - Hardened `deploy/auto-deploy.sh` to stash local changes before `git reset --hard` and restore them after.
+  - Removed aggressive `fuser -k` / `lsof` kill logic from `scripts/deploy-production.sh`; now relies on `systemctl stop`.
+  - Added `/api/health` route for deploy verification.
+- **Verification:**
+  - `/llms.txt` serves `text/plain; charset=utf-8`.
+  - `/api/data` returns 402 for paywalled bots and 200 only for humans (search engines get 402 on the paid API, which is correct policy).
+  - `/repair/{...}` HTML returns 200; JSON requests return 402.
+  - Stripe checkout returns live checkout URLs for all four packs.
+  - Non-US maintenance/tool pages emit `noindex, follow` and are excluded from sitemaps.
+  - Health endpoint returns 200.
+- **Remaining / follow-up:**
+  - Cloudflare API key should be rotated and removed from any git history/memory (it was used for this deploy).
+  - Services still run as root; create unprivileged `alloemmanuals` user when convenient.
+  - Affiliate Impact/CJ tracking links, Amazon `nofollow`, OAuth/OIDC stubs, JWKS placeholder, HEAD billing, 404 billing, and other medium/high items remain in the audit backlog.
+  - Changes are deployed to VPS but **not yet committed/pushed to GitHub** (per no-git-mutation rule).
 
 ### 2026-06-14 — Repair Guide Noindex Fix (GSC 8,950 Pages)
 **Problem:** Google Search Console showed **8,950+ vehicle-specific repair guide pages** (`/repair/{year}/{make}/{model}/{task}`) excluded by the `noindex` tag. Root cause: `src/app/repair/[year]/[make]/[model]/[task]/page.tsx` `generateMetadata` was noindexing any page where `hasRealContent` was false, but `hasRealContent` only counted tasks present in the limited in-page `REPAIR_DATA` / `TASK_META` dictionaries or the `VALID_TASKS` array. Many valid repair task slugs rendered a generic guide but were still marked `noindex`.

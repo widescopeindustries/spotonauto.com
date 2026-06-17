@@ -92,13 +92,7 @@ fi
 
 log "Stopping service: ${SERVICE_NAME} (for quick swap)"
 run_systemctl stop "${SERVICE_NAME}" || true
-
-log "Ensuring port ${PORT:-3002} is free"
-if command -v fuser >/dev/null 2>&1; then
-  fuser -k "${PORT:-3002}/tcp" 2>/dev/null || true
-elif command -v lsof >/dev/null 2>&1; then
-  lsof -ti:"${PORT:-3002}" | xargs -r kill -9 2>/dev/null || true
-fi
+# Give the service a moment to release the port; avoid killing arbitrary PIDs.
 sleep 2
 
 log "Starting service: ${SERVICE_NAME}"
@@ -110,7 +104,7 @@ run_systemctl is-active --quiet "${SERVICE_NAME}"
 
 # ── Healthchecks & Fallback ─────────────────────────────────────────
 log "Running local healthcheck: ${HEALTHCHECK_URL}"
-if ! curl -A "HealthcheckBot" -fsS "${HEALTHCHECK_URL}" >/dev/null; then
+if ! curl -A "AllOEMManuals-Healthcheck/1.0" -fsS "${HEALTHCHECK_URL}" >/dev/null; then
   log "HEALTHCHECK FAILED — restoring previous build and restarting service"
   run_systemctl stop "${SERVICE_NAME}"
   rm -rf .next
@@ -126,7 +120,7 @@ fi
 
 API_HEALTH_URL="${HEALTHCHECK_URL}/api/health"
 log "Running API healthcheck: ${API_HEALTH_URL}"
-if curl -A "HealthcheckBot" -fsS "${API_HEALTH_URL}" >/dev/null 2>&1; then
+if curl -A "AllOEMManuals-Healthcheck/1.0" -fsS "${API_HEALTH_URL}" >/dev/null 2>&1; then
   log "API healthcheck passed"
 else
   log "API healthcheck skipped or failed (route may not exist)"

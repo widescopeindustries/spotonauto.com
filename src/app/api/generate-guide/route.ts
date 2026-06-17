@@ -110,7 +110,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Missing security token' }, { status: 400 });
       }
 
-      const turnstileSecret = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA'; // fallback to test key
+      const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+      if (!turnstileSecret) {
+        console.error('[Turnstile] TURNSTILE_SECRET_KEY is not configured');
+        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+      }
       const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

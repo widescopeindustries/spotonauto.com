@@ -401,6 +401,15 @@ export async function findManualSectionsByTerms(args: {
   const normalizedTerms = [...new Set(args.terms.map((term) => term.trim().toLowerCase()).filter(Boolean))];
   if (normalizedTerms.length === 0) return [];
 
+  const { exact, prefix } = getModelHints(args.model);
+  const modelFilter = exact
+    ? `AND (
+         LOWER(model) = LOWER($3)
+         OR LOWER(model) LIKE LOWER($4)
+         OR LOWER(model) LIKE LOWER($5)
+       )`
+    : '';
+
   const { rows } = await pool.query(
     `SELECT
        path,
@@ -412,8 +421,11 @@ export async function findManualSectionsByTerms(args: {
        content_full
      FROM manual_embeddings
      WHERE LOWER(make) = LOWER($1)
-       AND year = $2`,
-    [args.make, args.year],
+       AND year = $2
+       ${modelFilter}`,
+    exact
+      ? [args.make, args.year, exact, `${prefix}%`, `%${exact}%`]
+      : [args.make, args.year],
   );
 
   const filtered = (rows || [])
@@ -465,6 +477,15 @@ export async function findVehicleManualSections(args: {
   if (!pool) return [];
   await ensureLocalSchema();
 
+  const { exact, prefix } = getModelHints(args.model);
+  const modelFilter = exact
+    ? `AND (
+         LOWER(model) = LOWER($3)
+         OR LOWER(model) LIKE LOWER($4)
+         OR LOWER(model) LIKE LOWER($5)
+       )`
+    : '';
+
   const { rows } = await pool.query(
     `SELECT
        path,
@@ -477,9 +498,12 @@ export async function findVehicleManualSections(args: {
      FROM manual_embeddings
      WHERE LOWER(make) = LOWER($1)
        AND year = $2
+       ${modelFilter}
      ORDER BY section_title ASC
-     LIMIT $3`,
-    [args.make, args.year, Math.max(1, args.limit)],
+     LIMIT $${exact ? 6 : 3}`,
+    exact
+      ? [args.make, args.year, exact, `${prefix}%`, `%${exact}%`, Math.max(1, args.limit)]
+      : [args.make, args.year, Math.max(1, args.limit)],
   );
 
   return sortSectionMatchesByModelHints(mapSectionRows(rows), args.model);

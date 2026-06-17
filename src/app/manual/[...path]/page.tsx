@@ -14,7 +14,6 @@ import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
 import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 
 export const revalidate = 86400;
-export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ path: string[] }>;

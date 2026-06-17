@@ -12,6 +12,7 @@ import { getGeneratedRepairProfile } from '@/lib/vehicleRepairProfiles';
 import { getOEMExcerptsForRepair } from '@/lib/manualSectionLinks';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
 import { buildRepairUrl } from '@/lib/vehicleIdentity';
+import { checkStripeAccess, attachCreditHeader, buildStripeRequiredResponse } from '@/lib/paymentGate';
 
 // Inlined from page.tsx so API route can serve the same data without importing a page component
 const TASK_META: Record<string, { title: string; description: string; extraKeywords: string[] }> = {
@@ -217,7 +218,15 @@ function toTitleCase(slug: string): string {
 }
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+  const { pathname, searchParams } = new URL(request.url);
+  const pagePath = pathname;
+
+  // Payment gate: x402 verified in middleware, Stripe credits validated here.
+  const access = await checkStripeAccess(request, pagePath);
+  if (!access.allowed) {
+    return access.response ?? buildStripeRequiredResponse(request, pagePath, 'missing_payment');
+  }
+
   const year = searchParams.get('year') || '';
   const make = searchParams.get('make') || '';
   const model = searchParams.get('model') || '';
@@ -354,7 +363,8 @@ export async function GET(request: NextRequest) {
   };
 
   const res = NextResponse.json(response);
-  res.headers.set('Cache-Control', 'public, max-age=300, s-maxage=300');
-  res.headers.set('Vary', 'Accept-Encoding, User-Agent');
+  res.headers.set('Cache-Control', 'private, no-store');
+  res.headers.set('Vary', 'Accept-Encoding, User-Agent, Authorization');
+  attachCreditHeader(res, access.remaining);
   return res;
 }

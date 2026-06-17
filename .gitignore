@@ -67,6 +67,13 @@ scripts/mined-output/
 scripts/generated-specs/
 scripts/content-machine/batches/
 scripts/indexing-cron.log
+scripts/*.log
 seo-analysis.txt
 public/repair/sitemap.xml
 __pycache__/
+
+# Local tooling / virtual envs
+.venv-youtube/
+test-results/
+.youtube-oauth-state.json
+.youtube-token.pickle

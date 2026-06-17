@@ -57,8 +57,22 @@ fi
 
 log "New commit detected: ${LOCAL_HEAD:0:8} -> ${REMOTE_HEAD:0:8}"
 
+# Preserve any local config/files (e.g., .env.local, generated sitemaps) before
+# resetting the tracked tree to the new commit.
+STASH_NAME="auto-deploy-$(date -u +%s)"
+if ! git diff --quiet HEAD || [ -n "$(git status --porcelain)" ]; then
+  log "Working tree is dirty — stashing local changes as ${STASH_NAME}"
+  git stash push -u -m "${STASH_NAME}" || true
+fi
+
 # Pull changes first to update working tree
 git reset --hard "${REMOTE_BRANCH}"
+
+# Restore local changes; if the pop conflicts, leave the stash in place for manual review.
+if git stash list | grep -q "${STASH_NAME}"; then
+  log "Restoring stashed local changes"
+  git stash pop || log "Stash pop failed — local changes remain in stash '${STASH_NAME}'"
+fi
 
 # ── Deploy ─────────────────────────────────────────────────────────
 if [ -x "${DEPLOY_SCRIPT}" ]; then

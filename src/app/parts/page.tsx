@@ -99,7 +99,7 @@ export default function PartsPage() {
                                         <a
                                             href={buildAmazonSearchUrl(part)}
                                             target="_blank"
-                                            rel="noopener noreferrer sponsored"
+                                            rel="nofollow sponsored noopener noreferrer"
                                             className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors group"
                                         >
                                             <span className="text-gray-300 group-hover:text-white transition-colors">{part}</span>

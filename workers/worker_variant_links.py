@@ -10,7 +10,9 @@ from neo4j import GraphDatabase
 
 URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
 USER = os.environ.get("NEO4J_USER", "neo4j")
-PASS = os.environ.get("NEO4J_PASSWORD", "spotonauto2026")
+PASS = os.environ.get("NEO4J_PASSWORD")
+if not PASS:
+    raise RuntimeError("NEO4J_PASSWORD environment variable is required")
 
 PROC_RE = re.compile(r"^vehicle:(\d{4}):([^:]+):([^:]+):proc:(.+)$")
 BATCH_SIZE = 5000

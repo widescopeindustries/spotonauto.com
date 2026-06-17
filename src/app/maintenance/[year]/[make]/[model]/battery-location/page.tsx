@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear, TOOL_TYPE_META } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
+import { getNoindexRobots } from "@/lib/seo";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    robots: getNoindexRobots(displayMake, displayModel),
     alternates: {
       canonical: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/battery-location`,
     },

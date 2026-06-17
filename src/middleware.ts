@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { CANONICAL_HOST, isCanonicalHost, isIndexableHost, isLegacyRedirectHost, isPreviewHost, normalizeHost } from '@/lib/host';
 import { x402Proxy } from '@/lib/x402';
+import { extractBearerToken, isStripeApiKeyFormat } from '@/lib/apiKey';
 
 const ALLOWED_ORIGINS = [
   'https://alloemmanuals.com',
@@ -9,9 +10,9 @@ const ALLOWED_ORIGINS = [
   ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
 ];
 
-function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean, isRobots: boolean) {
+function applyCrawlerHeaders(response: NextResponse, shouldNoindexHost: boolean, isRobots: boolean, isLlmsTxt: boolean) {
   response.headers.set('Vary', 'Accept-Encoding, User-Agent');
-  if (isRobots) {
+  if (isRobots || isLlmsTxt) {
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     response.headers.set('Content-Type', 'text/plain; charset=utf-8');
   } else {
@@ -64,7 +65,7 @@ export function middleware(request: NextRequest) {
 
   // 3. Crawler endpoints - force plain cache/Vary semantics
   if (isCrawlerEndpoint) {
-    return applyCrawlerHeaders(NextResponse.next(), shouldNoindexHost, isRobots);
+    return applyCrawlerHeaders(NextResponse.next(), shouldNoindexHost, isRobots, isLlmstxt);
   }
 
   // 4. Markdown negotiation for AI agents
@@ -82,7 +83,7 @@ flowcharts, and repair procedures.
 
 - **Vehicle Hub**: \`/vehicles/{year}/{make}/{model}\`
 - **Repair Guide**: \`/repair/{year}/{make}/{model}/{task}\`
-- **DTC Lookup**: \`/api/v1/dtc?code={code}\`
+- **DTC Lookup**: \`/api/graph/dtc/{code}\`
 - **API Catalog**: \`/.well-known/api-catalog\`
 - **MCP Server**: \`/.well-known/mcp/server-card.json\`
 - **Agent Skills**: \`/.well-known/agent-skills/index.json\`
@@ -119,21 +120,35 @@ Price: $0.01 USDC per request.
     const wantsJson = request.headers.get('accept')?.toLowerCase().includes('application/json');
 
     if (wantsJson) {
-      const apiUr = request.nextUrl.clone();
-      apiUr.pathname = '/api/v1/repair';
-      apiUr.searchParams.set('year', rYear);
-      apiUr.searchParams.set('make', rMake);
-      apiUr.searchParams.set('model', rModel);
-      apiUr.searchParams.set('task', rTask);
+      // Rewrite to the internal Next.js origin to avoid proxying through the
+      // public HTTPS host (which causes TLS/SNI errors when Next.js tries to
+      // fetch itself via localhost with the alloemmanuals.com certificate).
+      const apiUrl = new URL('http://127.0.0.1:3002/api/v1/repair');
+      apiUrl.searchParams.set('year', rYear);
+      apiUrl.searchParams.set('make', rMake);
+      apiUrl.searchParams.set('model', rModel);
+      apiUrl.searchParams.set('task', rTask);
 
-      console.log(`[Middleware] Rewriting ${pathname} to ${apiUr.pathname}${apiUr.search} for JSON request`);
+      console.log(`[Middleware] Rewriting ${pathname} to ${apiUrl.pathname}${apiUrl.search} for JSON request`);
 
-      return NextResponse.rewrite(apiUr);
+      const rewriteResponse = NextResponse.rewrite(apiUrl);
+      rewriteResponse.headers.set('Vary', 'Accept');
+      rewriteResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      return rewriteResponse;
     }
   }
 
-  // 6. x402 payment gating for premium API routes (must run before CORS)
-  const isX402Gated = pathname === '/api/premium-repair-data' || pathname.startsWith('/api/data/');
+  // 6. Payment gating for premium API routes (must run before CORS)
+  const isX402Gated =
+    pathname === '/api/premium-repair-data' ||
+    pathname.startsWith('/api/data/') ||
+    pathname === '/api/v1/repair';
+
+  // Stripe-format API keys bypass x402 entirely; the route handler validates the key and deducts credit.
+  if (isX402Gated && isStripeApiKeyFormat(extractBearerToken(request))) {
+    return NextResponse.next();
+  }
+
   if (x402Proxy && isX402Gated) {
     // Use .then() to avoid TypeScript strict-mode issues with async middleware
     return x402Proxy(request).then((x402Response) => {
@@ -148,18 +163,29 @@ Price: $0.01 USDC per request.
           premium_api: isDataFeed
             ? `https://alloemmanuals.com${pathname}`
             : 'https://alloemmanuals.com/api/premium-repair-data',
-          payment: {
-            protocol: 'x402',
-            scheme: 'exact',
-            price: '$0.01',
-            asset: 'USDC',
-            network: 'solana-devnet',
-            per: 'page',
-            volume_discounts: {
-              '100000': '$0.005',
-              '1000000': '$0.001',
+          payment_options: [
+            {
+              protocol: 'x402',
+              scheme: 'exact',
+              price: '$0.01',
+              asset: 'USDC',
+              network: 'solana-devnet',
+              per: 'page',
+              volume_discounts: {
+                '100000': '$0.005',
+                '1000000': '$0.001',
+              },
             },
-          },
+            {
+              protocol: 'stripe',
+              model: 'credits',
+              price: '$0.01',
+              per: 'page',
+              info_url: 'https://alloemmanuals.com/for-ai',
+              checkout_url: 'https://alloemmanuals.com/api/stripe/checkout',
+              account_url: 'https://alloemmanuals.com/api/account',
+            },
+          ],
           preview: isDataFeed
             ? {
                 title: 'AI Training Feed — Clean Markdown Vehicle Data',
@@ -210,6 +236,15 @@ The same underlying data, repackaged specifically for AI consumption:
 - **Enterprise (1M+ pages/month):** $0.001 per page
 
 ## How to Pay
+
+### Option A: Stripe (Real Money, Immediate)
+1. Visit https://alloemmanuals.com/for-ai for details and sample data
+2. Buy credits at https://alloemmanuals.com/api/stripe/checkout?pack=starter
+3. Complete checkout
+4. Your API key will be shown after payment
+5. Include your key: Authorization: Bearer <api_key>
+
+### Option B: x402 (Agent-Native, Solana Devnet)
 1. Visit https://alloemmanuals.com/.well-known/acp.json for payment discovery
 2. Use x402 exact scheme on Solana devnet
 3. Include payment token in Authorization header
@@ -226,10 +261,10 @@ The same underlying data, repackaged specifically for AI consumption:
             status: 402,
             headers: {
               'Content-Type': 'text/markdown; charset=utf-8',
-              'X-Payment-Required': 'x402',
+              'X-Payment-Required': 'stripe,x402',
               'Link': '<https://alloemmanuals.com/.well-known/acp.json>; rel="payment"',
               'Cache-Control': 'no-store',
-              'Accept-Payment': 'x402',
+              'Accept-Payment': 'stripe,x402',
             },
           });
         }
@@ -237,14 +272,23 @@ The same underlying data, repackaged specifically for AI consumption:
           status: 402,
           headers: {
             'Content-Type': 'application/json',
-            'X-Payment-Required': 'x402',
+            'X-Payment-Required': 'stripe,x402',
             'Link': '<https://alloemmanuals.com/.well-known/acp.json>; rel="payment"',
             'Cache-Control': 'no-store',
-            'Accept-Payment': 'x402',
+            'Accept-Payment': 'stripe,x402',
           },
         });
       }
-      return x402Response;
+      // x402 payment succeeded; mark request as paid so route handlers skip Stripe credit gate.
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set('X-Payment-Verified', 'x402');
+      return NextResponse.next({ request: { headers: requestHeaders } });
+    }).catch((err: any) => {
+      console.error('[middleware] x402 proxy error:', err);
+      return NextResponse.json(
+        { error: 'Payment verification unavailable', message: err?.message || 'Unknown error' },
+        { status: 502, headers: { 'Cache-Control': 'no-store' } }
+      );
     });
   }
 

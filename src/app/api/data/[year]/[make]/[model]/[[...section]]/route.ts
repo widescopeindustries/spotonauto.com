@@ -14,6 +14,7 @@ import { getVehicleRepairSpec } from '@/data/vehicle-repair-specs';
 import { getGeneratedRepairProfile } from '@/lib/vehicleRepairProfiles';
 import { getOEMExcerptsForRepair } from '@/lib/manualSectionLinks';
 import { buildRepairKnowledgeGraph } from '@/lib/repairKnowledgeGraph';
+import { checkStripeAccess, attachCreditHeader, buildStripeRequiredResponse } from '@/lib/paymentGate';
 
 const X402_PAYMENT_INFO = {
   protocol: 'x402',
@@ -339,6 +340,37 @@ async function buildRepairMarkdown(
   return stripAffiliateLinks(lines.join('\n'));
 }
 
+export async function HEAD(
+  request: NextRequest,
+  { params }: { params: Promise<{ year: string; make: string; model: string; section?: string[] }> }
+) {
+  const { year, make, model } = await params;
+  const yearNum = parseInt(year, 10);
+
+  if (isNaN(yearNum) || yearNum < 1960 || yearNum > 2025) {
+    return NextResponse.json({ error: 'Invalid year. Must be 1960–2025.' }, { status: 400 });
+  }
+
+  const makeSlug = slugifyRoutePart(decodeURIComponent(make));
+  const modelSlug = slugifyRoutePart(decodeURIComponent(model));
+  const clampedYear = getClampedYear(year, makeSlug, modelSlug);
+  const resolvedYear = clampedYear ?? yearNum;
+
+  if (!isValidVehicleCombination(String(resolvedYear), makeSlug, modelSlug, '')) {
+    return NextResponse.json({ error: 'Invalid vehicle combination' }, { status: 404 });
+  }
+
+  const access = await checkStripeAccess(request, request.nextUrl.pathname);
+  if (!access.allowed) {
+    return access.response ?? buildStripeRequiredResponse(request, request.nextUrl.pathname, 'missing_payment');
+  }
+
+  return new NextResponse(null, {
+    status: 200,
+    headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
+  });
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ year: string; make: string; model: string; section?: string[] }> }
@@ -365,6 +397,13 @@ export async function GET(
     make: decodeURIComponent(make),
     model: decodeURIComponent(model),
   });
+
+  // Stripe credits gate (x402 is handled in middleware before this route runs)
+  const pagePath = request.nextUrl.pathname;
+  const access = await checkStripeAccess(request, pagePath);
+  if (!access.allowed) {
+    return access.response!;
+  }
 
   let markdown: string | null = null;
 
@@ -439,10 +478,17 @@ export async function GET(
       'Content-Type': 'text/markdown; charset=utf-8',
       'Vary': 'Accept-Encoding, Authorization',
       'Cache-Control': 'public, max-age=300, s-maxage=300',
-      'X-Payment-Info': JSON.stringify(X402_PAYMENT_INFO),
+      'X-Payment-Info': JSON.stringify([X402_PAYMENT_INFO, {
+        protocol: 'stripe',
+        model: 'credits',
+        price: '$0.01',
+        per: 'page',
+        checkout_url: 'https://alloemmanuals.com/api/stripe/checkout',
+        account_url: 'https://alloemmanuals.com/api/account',
+      }]),
       'Link': '<https://alloemmanuals.com/.well-known/acp.json>; rel="payment"',
     },
   });
 
-  return response;
+  return attachCreditHeader(response, access.remaining);
 }

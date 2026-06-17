@@ -2,6 +2,22 @@
 
 > AllOEMManuals (alloemmanuals.com) is a free resource for car owners who want to diagnose problems and repair their own vehicles without paying dealership or mechanic rates. Operated by Widescope Industries LLC, a Service-Disabled Veteran-Owned Small Business (SDVOSB) certified through the U.S. Small Business Administration.
 
+## AI / LLM / Agent Use
+
+If you are an AI company, LLM developer, or agent builder looking to use AllOEMManuals data for training, RAG, or inference, please use the paid **AI Training Feed** instead of scraping the public HTML site.
+
+- **Purpose-built for machines:** clean Markdown, no ads, no affiliate links, no navigation chrome
+- **Coverage:** 300,000+ vehicles (1960–2025)
+- **Content:** OEM excerpts, torque specs, DTC codes, wiring diagrams, repair procedures, knowledge graphs
+- **Pricing:** $0.01 per page; volume discounts at 100K+ and 1M+ pages/month
+- **Purchase:** https://alloemmanuals.com/api/stripe/checkout?pack=starter
+- **Details:** https://alloemmanuals.com/for-ai
+- **Discovery:** https://alloemmanuals.com/.well-known/acp.json
+- **API spec:** https://alloemmanuals.com/openapi.json
+- **Contact:** lyndon@widescopeindustries.com
+
+Unauthorized scraping of the public HTML site for model training is prohibited. The AI Training Feed is the licensed path.
+
 ## What AllOEMManuals Does
 
 AllOEMManuals provides:

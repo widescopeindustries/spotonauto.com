@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { getToolPagesForVehicle } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
+import { getNoindexRobots } from "@/lib/seo";
 import KitCTA from '@/components/KitCTA';
 
 export const revalidate = 86400;
@@ -25,6 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    robots: getNoindexRobots(displayMake, displayModel),
     alternates: {
       canonical: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}`,
     },

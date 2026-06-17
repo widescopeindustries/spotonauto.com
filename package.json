@@ -10,7 +10,7 @@
     "dev": "next dev",
     "prebuild": "node --experimental-strip-types scripts/content-integrity-check.mjs && node --experimental-strip-types scripts/export-qualified-keys.mjs && node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs && node scripts/generate-tool-sitemaps.mjs",
     "build": "next build --webpack",
-    "prestart": "node --experimental-strip-types scripts/export-qualified-keys.mjs node --experimental-strip-types scripts/generate-repair-sitemaps.mjsnode --experimental-strip-types scripts/generate-repair-sitemaps.mjs node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs && node scripts/generate-tool-sitemaps.mjs",
+    "prestart": "node --experimental-strip-types scripts/export-qualified-keys.mjs && node --experimental-strip-types scripts/generate-repair-sitemaps.mjs && node scripts/generate-wiring-sitemaps.mjs && node scripts/generate-tool-sitemaps.mjs",
     "start": "next start",
     "start:web": "next start -p ${PORT:-3000} -H ${HOSTNAME:-127.0.0.1}",
     "lint": "eslint src next.config.js",

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { getNoindexRobots } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -284,6 +285,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
         title,
         description,
+        robots: getNoindexRobots(page.make, page.model),
         keywords: page.keywords,
         openGraph: {
             title,

@@ -16,7 +16,7 @@ export async function GET() {
     accepts: [
       {
         scheme: 'exact',
-        network: 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
+        network: 'solana-devnet',
         amount: '10000',
         asset: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAFERSYqZKWQnQdNVS',
         payTo: 'A3pgu4FXYkmfvzDdp6bTD77JcNXsNFTEtd3exnANxKJT',
@@ -29,12 +29,36 @@ export async function GET() {
     JSON.stringify({
       error: 'Payment Required',
       message: 'This endpoint requires x402 payment. See /.well-known/acp.json for payment details.',
+      payment_discovery: 'https://alloemmanuals.com/.well-known/acp.json',
+      premium_api: 'https://alloemmanuals.com/api/premium-repair-data',
+      payment_options: [
+        {
+          protocol: 'x402',
+          scheme: 'exact',
+          price: '$0.01',
+          asset: 'USDC',
+          network: 'solana-devnet',
+          per: 'page',
+        },
+        {
+          protocol: 'stripe',
+          model: 'credits',
+          price: '$0.01',
+          per: 'page',
+          info_url: 'https://alloemmanuals.com/for-ai',
+          checkout_url: 'https://alloemmanuals.com/api/stripe/checkout',
+          account_url: 'https://alloemmanuals.com/api/account',
+        },
+      ],
     }),
     {
       status: 402,
       headers: {
         'Content-Type': 'application/json',
-        'payment-required': Buffer.from(JSON.stringify(x402Payload)).toString('base64'),
+        'X-Payment-Required': 'stripe,x402',
+        'Accept-Payment': 'stripe,x402',
+        'Link': '<https://alloemmanuals.com/.well-known/acp.json>; rel="payment"',
+        'Cache-Control': 'no-store',
       },
     }
   );

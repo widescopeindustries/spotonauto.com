@@ -44,13 +44,23 @@ export async function GET() {
       sha256: digest('get_vehicle_specs:OEM specification lookup'),
     },
     {
+      name: 'purchase_ai_training_feed',
+      type: 'payment',
+      description:
+        'Purchase clean markdown vehicle data for AI training and RAG via x402 (Solana USDC) or Stripe credits. 300K+ vehicles, no affiliate noise.',
+      url: `${baseUrl}/api/data/{year}/{make}/{model}`,
+      sha256: digest(
+        'purchase_ai_training_feed:payment-gated clean markdown vehicle data feed'
+      ),
+    },
+    {
       name: 'purchase_premium_repair_data',
       type: 'payment',
       description:
-        'Purchase structured premium factory repair data via x402 (Solana USDC). Returns torque specs, capacities, and OEM part numbers.',
+        'Purchase structured premium factory repair data via x402 (Solana USDC) or Stripe credits. Returns torque specs, capacities, and OEM part numbers.',
       url: `${baseUrl}/api/premium-repair-data`,
       sha256: digest(
-        'purchase_premium_repair_data:x402 payment-gated structured repair data'
+        'purchase_premium_repair_data:payment-gated structured repair data'
       ),
     },
   ];

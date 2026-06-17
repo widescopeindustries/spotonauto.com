@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Training Feed — AllOEMManuals</title>
+  <meta name="description" content="Clean, structured factory manual data for 300,000+ vehicles. Purpose-built for AI training, RAG, and agent consumption. Pay-per-page via Stripe or x402.">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }
+    .container { max-width: 900px; margin: 0 auto; padding: 64px 24px; }
+    h1 { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 16px; }
+    h2 { font-size: 1.75rem; font-weight: 700; margin: 0 0 12px; }
+    p { margin: 0 0 16px; color: #334155; }
+    .lead { font-size: 1.25rem; color: #475569; }
+    .card { background: #fff; border-radius: 16px; padding: 32px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    ul { margin: 16px 0; padding-left: 20px; }
+    li { margin-bottom: 8px; color: #334155; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-top: 20px; }
+    .pricing-card { background: #f1f5f9; border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #e2e8f0; }
+    .pricing-card .name { font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+    .pricing-card .price { font-size: 2rem; font-weight: 800; color: #0f172a; margin: 8px 0; }
+    .pricing-card .credits { color: #334155; }
+    .pricing-card .per { font-size: 0.875rem; color: #64748b; }
+    .btn { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; }
+    .btn:hover { background: #1d4ed8; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    pre { background: #0f172a; color: #cbd5e1; padding: 20px; border-radius: 12px; overflow-x: auto; font-size: 0.9rem; }
+    a { color: #2563eb; }
+    .small { font-size: 0.875rem; color: #64748b; }
+    .check { color: #059669; font-weight: 700; margin-right: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="card">
+      <h1>AI Training Feed</h1>
+      <p class="lead">Clean, structured factory manual data for 300,000+ vehicles — built for AI training, RAG grounding, and agent consumption.</p>
+    </header>
+
+    <section class="card">
+      <h2>Why this feed exists</h2>
+      <p>The public HTML site is built for humans: navigation, affiliate links, ads, and rich formatting. The AI Training Feed is the same underlying corpus repackaged for machines:</p>
+      <ul>
+        <li><span class="check">✓</span> Clean Markdown — no HTML parsing required</li>
+        <li><span class="check">✓</span> Zero affiliate links or ads — pure content</li>
+        <li><span class="check">✓</span> Vehicle-specific data only — every URL is tied to a real year/make/model</li>
+        <li><span class="check">✓</span> OEM excerpts, torque specs, DTC codes, wiring diagrams, repair procedures</li>
+        <li><span class="check">✓</span> Knowledge graphs linking components, codes, symptoms, and procedures</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Pricing</h2>
+      <p>Prepaid credits. One page = one credit. No subscriptions, no commitments.</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="name">Starter</div>
+          <div class="price">$10</div>
+          <div class="credits">1,000 credits</div>
+          <div class="per">$0.0100/page</div>
+        </div>
+        <div class="pricing-card">
+          <div class="name">Growth</div>
+          <div class="price">$50</div>
+          <div class="credits">5,500 credits</div>
+          <div class="per">$0.0091/page</div>
+        </div>
+        <div class="pricing-card">
+          <div class="name">Scale</div>
+          <div class="price">$200</div>
+          <div class="credits">24,000 credits</div>
+          <div class="per">$0.0083/page</div>
+        </div>
+        <div class="pricing-card">
+          <div class="name">Enterprise</div>
+          <div class="price">$1,000</div>
+          <div class="credits">130,000 credits</div>
+          <div class="per">$0.0077/page</div>
+        </div>
+      </div>
+      <p class="small">Volume discounts: 100K+ pages/month at $0.005/page, 1M+ at $0.001/page. Enterprise licensing available.</p>
+    </section>
+
+    <section class="card">
+      <h2>How to buy</h2>
+      <ol>
+        <li>Create a checkout session: <a href="https://alloemmanuals.com/api/stripe/checkout?pack=starter">https://alloemmanuals.com/api/stripe/checkout?pack=starter</a><br><span class="small">(Replace <code>pack=starter</code> with growth, scale, or enterprise.)</span></li>
+        <li>Complete payment.</li>
+        <li>Your API key is returned at the success URL and via webhook.</li>
+        <li>Include the key on every request: <code>Authorization: Bearer &lt;api_key&gt;</code></li>
+      </ol>
+      <p><a class="btn" href="https://alloemmanuals.com/api/stripe/checkout?pack=starter">Buy credits</a></p>
+    </section>
+
+    <section class="card">
+      <h2>Sample endpoints</h2>
+      <ul>
+        <li><code>/api/data/2010/toyota/camry</code> — Full vehicle hub</li>
+        <li><code>/api/data/2010/toyota/camry/repairs/oil-change</code> — Specific repair guide</li>
+        <li><code>/api/data/2010/toyota/camry/dtc</code> — Diagnostic trouble codes</li>
+        <li><code>/api/data/2010/toyota/camry/specs</code> — Factory specifications</li>
+      </ul>
+    </section>
+
+    <section class="card" style="background:#0f172a; color:#e2e8f0;">
+      <h2 style="color:#fff;">Sample response</h2>
+      <pre># 2010 Toyota Camry — Factory Service Manual Data
+
+## Engine — 2.5L 2AR-FE
+- **Displacement:** 2.5 L (2,494 cc)
+- **Power:** 169 hp @ 6,000 rpm
+- **Torque:** 167 lb-ft @ 4,100 rpm
+- **Oil capacity:** 4.5 qt (4.3 L) with filter
+- **Oil type:** 0W-20 synthetic
+
+## Common Repairs
+### Oil Change
+**Interval:** 5,000–10,000 miles
+
+**Procedure:**
+1. Warm engine to operating temperature.
+2. Remove drain plug and drain oil.
+3. Replace drain plug washer.
+4. Remove and replace oil filter.
+5. Fill with 0W-20 synthetic oil to 4.5 qt.
+
+**Torque specs:**
+- Drain plug: 30 N·m (22 ft-lb)
+- Oil filter: hand-tight + 3/4 turn
+
+## Diagnostic Trouble Codes
+- **P0017** — Crank/cam position correlation
+- **P0300** — Random/multiple cylinder misfire</pre>
+    </section>
+
+    <section class="card">
+      <h2>Agent-native payment</h2>
+      <p>For agents that support the x402 protocol, payment discovery is available at:</p>
+      <ul>
+        <li><a href="https://alloemmanuals.com/.well-known/acp.json">/.well-known/acp.json</a> — Agentic Commerce Protocol</li>
+        <li><a href="https://alloemmanuals.com/openapi.json">/openapi.json</a> — OpenAPI spec with payment info</li>
+        <li><a href="https://alloemmanuals.com/.well-known/api-catalog">/.well-known/api-catalog</a> — API catalog</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Contact</h2>
+      <p>For enterprise licensing, custom data formats, or volume agreements, contact:</p>
+      <p><a href="mailto:lyndon@widescopeindustries.com">lyndon@widescopeindustries.com</a></p>
+    </section>
+  </div>
+</body>
+</html>

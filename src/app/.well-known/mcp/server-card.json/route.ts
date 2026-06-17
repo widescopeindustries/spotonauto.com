@@ -15,14 +15,9 @@ export async function GET() {
       url: 'https://alloemmanuals.com',
     },
     transport: {
-      type: 'stdio',
-      command: 'ssh',
-      args: [
-        'root@116.202.210.109',
-        '/opt/corpus-mcp/bin/python3',
-        '/root/spotonauto.com/scripts/mcp/manual_mcp.py',
-      ],
-      documentation: 'https://alloemmanuals.com/',
+      type: 'sse',
+      url: 'https://alloemmanuals.com/.well-known/mcp/server-card.json',
+      documentation: 'https://alloemmanuals.com/developers',
     },
     capabilities: {
       tools: [
@@ -38,7 +33,7 @@ export async function GET() {
     },
     auth: {
       type: 'none',
-      note: 'Direct SSH invocation for authorized clients. For agent access, use x402-gated API at /api/premium-repair-data.',
+      note: 'For agent access to the full corpus, use the x402/Stripe-gated AI Training Feed at /api/data/{year}/{make}/{model} or /api/premium-repair-data.',
     },
   };
 

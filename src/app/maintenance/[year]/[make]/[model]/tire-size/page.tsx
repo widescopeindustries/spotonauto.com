@@ -9,6 +9,7 @@ import {
   parseTireSize,
 } from "@/lib/tireRackAffiliate";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
+import { getNoindexRobots } from "@/lib/seo";
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    robots: getNoindexRobots(displayMake, displayModel),
     alternates: {
       canonical: `https://alloemmanuals.com/maintenance/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/tire-size`,
     },
@@ -237,7 +239,7 @@ export default async function TireSizePage({ params }: PageProps) {
           </div>
           {!parseTireSize(tires.size) && (
             <p className="text-xs text-amber-400/80 mt-3">
-              Tire Rack link defaulted to search mode because the stored size "{tires.size}" does not match a standard parseable format. If CJ tracking is configured, the link still affiliates.
+              Tire Rack link defaulted to search mode because the stored size &quot;{tires.size}&quot; does not match a standard parseable format. If CJ tracking is configured, the link still affiliates.
             </p>
           )}
         </div>
