@@ -212,39 +212,35 @@ Price: $0.01 USDC per request.
         if (wantsMarkdown || isDataFeed) {
           const mdBody = `# Payment Required — AI Training Feed
 
-We repackage our factory manual corpus two ways. Pick the one that fits your use case.
+This content is available in two forms. Human visitors can browse the HTML site for free. Automated crawlers and AI trainers must license the data.
 
-## Option 1: Human Site (Free for Browsers)
+## Option 1: Human Site (Free for Human Browsers)
 
-HTML, navigation, affiliate links for parts and tools on every page. Built for humans to read, click, and buy. You can scrape it, but you will be parsing HTML, stripping nav, and filtering out affiliate noise on every single page.
+HTML, navigation, affiliate links for parts and tools on every page. Built for humans to read and click. Free for browsers.
 
-## Option 2: AI Training Feed (Paid — This Endpoint)
+## Option 2: AI Training Feed (Paid — For Automated Crawlers)
 
-The same underlying data, repackaged specifically for AI consumption:
+The same factory manual corpus, repackaged for AI consumption:
 
 - **Clean markdown** — no HTML parsing required
 - **Zero affiliate links** — no noise in your training data
 - **No ads, no nav, no site chrome** — content only
 - **Structured sections** — hierarchical markdown with clear headings
 - **300,000+ vehicles** (1960–2025)
-- **OEM excerpts, torque specs, DTC codes, wiring diagrams, diagnostic flowcharts, repair procedures**
-- **Knowledge graphs** linking components, codes, and procedures
 
 ## Pricing
-- **Standard:** $0.01 USDC per page
+- **Standard:** $0.01 per page
 - **Volume (100K+ pages/month):** $0.005 per page
 - **Enterprise (1M+ pages/month):** $0.001 per page
 
-## How to Pay
-
-### Option A: Stripe (Real Money, Immediate)
+## Pay with Stripe (Real Money)
 1. Visit https://alloemmanuals.com/for-ai for details and sample data
 2. Buy credits at https://alloemmanuals.com/api/stripe/checkout?pack=starter
 3. Complete checkout
 4. Your API key will be shown after payment
-5. Include your key: Authorization: Bearer <api_key>
+5. Include your key: \`Authorization: Bearer <api_key>\`
 
-### Option B: x402 (Agent-Native, Solana Devnet)
+## Pay with x402 (Agent-Native, Devnet)
 1. Visit https://alloemmanuals.com/.well-known/acp.json for payment discovery
 2. Use x402 exact scheme on Solana devnet
 3. Include payment token in Authorization header
