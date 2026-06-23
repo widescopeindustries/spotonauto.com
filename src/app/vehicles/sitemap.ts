@@ -41,6 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             if (isNonUsModel(makeSlug, slugify(model))) continue;
 
             for (let year = range.start; year <= range.end; year++) {
+                if (year < 1982) continue;
                 entries.push({
                     url: `${baseUrl}/vehicles/${year}/${makeSlug}/${slugify(model)}`,
                     lastModified: LAST_MOD,

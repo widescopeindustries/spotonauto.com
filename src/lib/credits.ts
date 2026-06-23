@@ -152,7 +152,7 @@ export async function creditCustomer(
 ): Promise<Customer> {
   const pool = getLocalPool();
   if (!pool) throw new Error('Database not configured');
-  if (amountCents <= 0) throw new Error('Credit amount must be positive');
+  if (amountCents < 0) throw new Error('Credit amount must be non-negative');
 
   const client = await pool.connect();
   try {
