@@ -60,7 +60,7 @@ export default function AffiliateDisclosure() {
             <li>We earn a <strong>5% commission</strong> on TOPDON products purchased through our referral links.</li>
             <li>TOPDON product recommendations appear on our DTC code pages, live diagnostic tool, and dedicated comparison guides (e.g., <Link href="/tools/best-topdon-scanner" className="text-cyan-400 hover:underline">Best TOPDON Scanner</Link>).</li>
             <li>We recommend TOPDON products because we believe they offer good value for DIY mechanics. Our product recommendations are based on the diagnostic context (what code you&apos;re reading, what system you&apos;re diagnosing) — not commission rates.</li>
-            <li>TOPDON referral links on our Site use the referral code: <code className="text-cyan-400">spoton</code>.</li>
+            <li>TOPDON referral links on our Site include a referral code assigned by the TOPDON affiliate program.</li>
           </ul>
         </section>
 
