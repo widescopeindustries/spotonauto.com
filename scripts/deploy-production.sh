@@ -134,7 +134,16 @@ rm -rf "${ROLLBACK_DIR}"
 NGINX_SITE_SRC="${DEPLOY_NGINX_SITE_SRC:-}"
 if [ -n "${NGINX_SITE_SRC}" ] && [ -f "${NGINX_SITE_SRC}" ]; then
   log "Syncing nginx site config"
-  cp "${NGINX_SITE_SRC}" /etc/nginx/sites-enabled/alloemmanuals.com
+  NGINX_AVAILABLE="/etc/nginx/sites-available/alloemmanuals.conf"
+  NGINX_ENABLED="/etc/nginx/sites-enabled/alloemmanuals.conf"
+  cp "${NGINX_SITE_SRC}" "${NGINX_AVAILABLE}"
+  # Ensure sites-enabled is a symlink to sites-available; remove any stale
+  # duplicate files (e.g., .com copy) that would cause "duplicate listen" errors.
+  rm -f /etc/nginx/sites-enabled/alloemmanuals.com
+  if [ -e "${NGINX_ENABLED}" ] && [ ! -L "${NGINX_ENABLED}" ]; then
+    rm -f "${NGINX_ENABLED}"
+  fi
+  ln -sf "${NGINX_AVAILABLE}" "${NGINX_ENABLED}"
   nginx -t && nginx -s reload
   log "Nginx reloaded"
 fi
