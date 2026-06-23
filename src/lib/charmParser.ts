@@ -623,9 +623,10 @@ export function buildManualDescription(pathSegments: string[]): string {
   }
 
   if (pathSegments.length === 2) {
-    return `Free ${decoded[1]} ${decoded[0]} factory service manual. Repair procedures, torque specs, wiring diagrams, and diagnostic information.`;
+    return `Free ${decoded[1]} ${decoded[0]} factory service manual. Download or browse OEM repair procedures, torque specs, wiring diagrams, diagnostic information, and TSBs for every ${decoded[0]} model year.`;
   }
 
   const vehicle = decoded.slice(0, 3).join(' ');
-  return `${decoded[decoded.length - 1]} for the ${vehicle}. Factory service manual with repair procedures, torque specs, and diagnostic information.`;
+  const last = decoded[decoded.length - 1];
+  return `${last} for the ${vehicle}. Factory service manual section with OEM repair procedures, torque specs, wiring diagrams, and diagnostic information. Free, vehicle-specific reference data.`;
 }

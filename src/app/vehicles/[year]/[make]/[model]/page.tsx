@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { buildVehicleLaneData } from '@/lib/vehicleLane';
 import { slugifyRoutePart, VEHICLE_PRODUCTION_YEARS } from '@/data/vehicles';
 import { canonicalizeVehicleIdentity } from '@/lib/vehicleIdentity';
@@ -16,8 +16,10 @@ import VehicleLaneClient from './VehicleLaneClient';
  * Google is discovering these corpus variant paths and wasting crawl budget.
  */
 function resolveCleanModelSlug(make: string, incomingModelSlug: string): string | null {
-  const makeNormalized = decodeURIComponent(make).trim();
-  const models = VEHICLE_PRODUCTION_YEARS[makeNormalized];
+  const makeSlug = slugifyRoutePart(decodeURIComponent(make));
+  const models = Object.entries(VEHICLE_PRODUCTION_YEARS).find(
+    ([key]) => slugifyRoutePart(key) === makeSlug,
+  )?.[1];
   if (!models) return null;
 
   const incoming = slugifyRoutePart(incomingModelSlug);
@@ -158,10 +160,10 @@ export default async function VehicleLanePage({ params }: PageProps) {
   const yearNum = parseInt(year, 10);
   if (isNaN(yearNum) || yearNum < 1982 || yearNum > 2025) notFound();
 
-  // Redirect variant-slug URLs to clean hub format
+  // Redirect variant-slug URLs to clean hub format (301 so search engines update canonical)
   const cleanModelSlug = resolveCleanModelSlug(make, model);
   if (cleanModelSlug && cleanModelSlug !== slugifyRoutePart(model)) {
-    redirect(`/vehicles/${yearNum}/${slugifyRoutePart(make)}/${cleanModelSlug}`);
+    permanentRedirect(`/vehicles/${yearNum}/${slugifyRoutePart(make)}/${cleanModelSlug}`);
   }
 
   // We don't 404 when DB data is missing — the hub still has repair profiles,

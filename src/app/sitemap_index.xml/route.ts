@@ -38,13 +38,9 @@ async function collectUrlsetSitemaps(dir: string, baseDir: string): Promise<stri
 export async function GET() {
   const discovered = await collectUrlsetSitemaps(PUBLIC_DIR, PUBLIC_DIR);
 
-  // Static route-generated sitemaps (not in /public)
+  // Next.js route-generated sitemap (not in /public)
   const routeSitemaps = [
     `${HOST}/sitemap.xml`,
-    `${HOST}/vehicles/sitemap.xml`,
-    `${HOST}/codes/sitemap.xml`,
-    `${HOST}/manual/sitemap.xml`,
-    `${HOST}/maintenance/sitemap.xml`,
   ];
 
   const sitemaps = Array.from(new Set([...routeSitemaps, ...discovered]));

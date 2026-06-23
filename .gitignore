@@ -70,6 +70,10 @@ scripts/indexing-cron.log
 scripts/*.log
 seo-analysis.txt
 public/repair/sitemap.xml
+public/repair/winners/sitemap.xml
+public/repair/winners/urls.txt
+public/manual/sitemap/
+public/manual/sitemap.xml
 __pycache__/
 
 # Local tooling / virtual envs

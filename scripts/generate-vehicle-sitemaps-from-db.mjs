@@ -57,7 +57,7 @@ async function main() {
   const connectionString =
     process.env.DATABASE_URL ||
     process.env.LOCAL_DATABASE_URL ||
-    'postgresql://spotonauto:pnjkD6ip8hRXsLEj9A087u71@127.0.0.1:5432/spotonauto';
+    'postgresql://spotonauto:spotonauto2026@127.0.0.1:5432/spotonauto';
 
   const pool = new Pool({
     connectionString,

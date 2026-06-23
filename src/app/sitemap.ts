@@ -30,7 +30,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/codes`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
         { url: `${baseUrl}/second-opinion`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.7 },
         { url: `${baseUrl}/maintenance`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.85 },
+        { url: `${baseUrl}/vehicles`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.8 },
         { url: `${baseUrl}/about`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.5 },
+        { url: `${baseUrl}/for-ai`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.75 },
+        { url: `${baseUrl}/developers`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.7 },
+        { url: `${baseUrl}/kits`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.7 },
+        { url: `${baseUrl}/pricing`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.6 },
+        { url: `${baseUrl}/community`, lastModified: LAST_MOD, changeFrequency: 'weekly', priority: 0.6 },
         { url: `${baseUrl}/author/alloemmanuals-editorial-team`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },
         { url: `${baseUrl}/author/lyndon-bedford`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.45 },
         { url: `${baseUrl}/blog/amazon-auto-parts-by-vehicle-year-and-type`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.6 },
@@ -38,6 +44,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/privacy-policy`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
         { url: `${baseUrl}/terms-of-service`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
         { url: `${baseUrl}/disclaimer`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
+        { url: `${baseUrl}/disclosure`, lastModified: LAST_MOD, changeFrequency: 'monthly', priority: 0.35 },
     );
 
     // NOTE: Tool pages (~8,900) are intentionally omitted from the main sitemap.
