@@ -102,15 +102,15 @@ export function buildStripeRequiredResponse(
   if (wantsMarkdown) {
     const mdBody = `# Payment Required — AI Training Feed
 
-We repackage our factory manual corpus two ways.
+This content is available in two forms. Human visitors can browse the HTML site for free. Automated crawlers and AI trainers must license the data.
 
-## Option 1: Human Site (Free for Browsers)
+## Option 1: Human Site (Free for Human Browsers)
 
-HTML, navigation, affiliate links for parts and tools on every page. Built for humans to read and click.
+HTML, navigation, affiliate links for parts and tools on every page. Built for humans to read and click. Free for browsers.
 
-## Option 2: AI Training Feed (Paid — This Endpoint)
+## Option 2: AI Training Feed (Paid — For Automated Crawlers)
 
-The same underlying data, repackaged for AI consumption:
+The same factory manual corpus, repackaged for AI consumption:
 
 - **Clean markdown** — no HTML parsing required
 - **Zero affiliate links** — no noise in your training data

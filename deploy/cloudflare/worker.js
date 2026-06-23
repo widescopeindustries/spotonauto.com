@@ -181,15 +181,15 @@ function build402Markdown(url) {
   const apiPath = apiEquivalent || '/api/data/{year}/{make}/{model}';
   return `# Payment Required — AI Training Feed
 
-We repackage our factory manual corpus two ways. For automated training crawlers, both are paid products.
+This content is available in two forms. Human visitors can browse the HTML site for free. Automated crawlers and AI trainers must license the data.
 
-## Option 1: Human Site (HTML)
+## Option 1: Human Site (Free for Human Browsers)
 
-HTML, navigation, affiliate links for parts and tools on every page. Built for humans. For AI crawlers, this costs $0.01/page and you will be parsing HTML, stripping nav, and filtering affiliate noise.
+HTML, navigation, affiliate links for parts and tools on every page. Built for humans to read and click. Free for browsers.
 
-## Option 2: AI Training Feed (Clean Markdown)
+## Option 2: AI Training Feed (Paid — For Automated Crawlers)
 
-The same underlying data, repackaged specifically for AI consumption — cheaper to ingest and cleaner to train on:
+The same factory manual corpus, repackaged specifically for AI consumption — cheaper to ingest and cleaner to train on:
 
 - **Clean markdown** — no HTML parsing required
 - **Zero affiliate links** — no noise in your training data
@@ -369,7 +369,7 @@ export default {
       return build403Response();
     }
 
-    // ── 4. Known AI / data crawlers → redirect to clean feed or 402 ──
+    // ── 5. Known AI / data crawlers → redirect to clean feed or 402 ──
     if (isPaywalledBot(ua)) {
       // Still rate-limit for 429 hammer protection, but floor is 402
       const rl = getRateLimitKey(ua);
@@ -396,7 +396,7 @@ export default {
       return build402Response(url, acceptHeader.includes('text/markdown'));
     }
 
-    // ── 5. Markdown negotiation — ONLY for non-bots ──
+    // ── 6. Markdown negotiation — ONLY for non-bots ──
     // Bots must not bypass gating via Accept: text/markdown
     if (acceptHeader.includes('text/markdown')) {
       if (isGenericBot(ua)) {
@@ -414,7 +414,7 @@ export default {
       return fetch(modifiedRequest, { cf: { cacheTtl: 0 } });
     }
 
-    // ── 6. Cloudflare Bot Management (if available on plan) ──
+    // ── 7. Cloudflare Bot Management (if available on plan) ──
     const botScore = request.cf?.botManagement?.score;
     if (botScore !== undefined && botScore < 30) {
       return build402Response(url);
@@ -424,7 +424,7 @@ export default {
       return build402Response(url);
     }
 
-    // ── 7. Generic bot catch-all → 402 (not 403) ──
+    // ── 8. Generic bot catch-all → 402 (not 403) ──
     // Unknown automated traffic gets paywalled, not blocked,
     // because it might be a legitimate crawler willing to pay.
     if (isGenericBot(ua)) {
@@ -444,7 +444,7 @@ export default {
       return build402Response(url, acceptHeader.includes('text/markdown'));
     }
 
-    // ── 8. Everything else = human / allowed ──
+    // ── 9. Everything else = human / allowed ──
     return fetch(request);
   },
 };
