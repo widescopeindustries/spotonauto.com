@@ -356,8 +356,22 @@ export async function fetchWiringDiagramIndex(
   make: string,
   year: string,
   variant: string,
-): Promise<WiringDiagramIndex> {
-  let { html, resolvedVariant, resolvedMake } = await fetchRepairAndDiagnosisHtml(make, year, variant);
+): Promise<WiringDiagramIndex | null> {
+  let html: string;
+  let resolvedVariant: string;
+  let resolvedMake: string;
+  try {
+    const result = await fetchRepairAndDiagnosisHtml(make, year, variant);
+    html = result.html;
+    resolvedVariant = result.resolvedVariant;
+    resolvedMake = result.resolvedMake;
+  } catch (error) {
+    // No wiring data for this vehicle — return null so callers can 404 instead of 500.
+    if (error instanceof Error && error.message.includes('not found')) {
+      return null;
+    }
+    throw error;
+  }
   let repairAndDiagnosisUrl = `${CHARM_BASE}/${encodeCharmSegment(resolvedMake)}/${year}/${encodeCharmSegment(resolvedVariant)}/Repair%20and%20Diagnosis/`;
   let allLinks = extractLinks(html, repairAndDiagnosisUrl);
   let diagramLinks = allLinks.filter(link => link.includes('Diagrams/'));

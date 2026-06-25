@@ -58,6 +58,9 @@ export async function GET(req: NextRequest) {
       if (!data) {
         data = await fetchWiringDiagramIndex(make, year, variant);
       }
+      if (!data) {
+        return NextResponse.json({ error: 'Wiring diagrams not found for this vehicle' }, { status: 404, headers: { 'Cache-Control': 'public, max-age=60' } });
+      }
       return NextResponse.json(data, { headers: { 'Cache-Control': 'public, max-age=3600' } });
     }
 

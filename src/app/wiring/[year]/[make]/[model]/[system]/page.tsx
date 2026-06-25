@@ -142,6 +142,7 @@ const loadVehicleWiringData = cache(async (year: number, make: string, model: st
 
   const resolvedVariant = resolveVariantForModel(variants, model) || variants[0];
   const index = await fetchWiringDiagramIndex(make, String(year), resolvedVariant);
+  if (!index) return null;
   return {
     resolvedVariant,
     index,
