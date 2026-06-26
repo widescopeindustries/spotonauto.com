@@ -92,7 +92,6 @@ async function main() {
         isEvModel,
         ICE_ONLY_TASKS,
         VALID_TASKS,
-        getClampedYear,
         slugifyRoutePart,
     } = await import(join(ROOT, 'src', 'data', 'vehicles.ts'));
 
@@ -103,7 +102,6 @@ async function main() {
     }
 
     const entries = [];
-    const hubUrls = new Set();
     let skippedNoindex = 0;
 
     function addRepairUrl(year, make, model, task, priority = 0.9) {
@@ -113,7 +111,6 @@ async function main() {
         const modelSlug = slugifyRoutePart(model);
         const url = `${BASE_URL}/repair/${year}/${makeSlug}/${modelSlug}/${task}`;
         entries.push({ url, lastmod: LAST_MOD, changefreq: 'weekly', priority });
-        hubUrls.add(`${BASE_URL}/repair/${year}/${makeSlug}/${modelSlug}`);
     }
 
     // ── 1. Curated vehicle/task corpus from validated-vehicles.json ──────────
@@ -170,11 +167,6 @@ async function main() {
     }
 
     await pool.end();
-
-    // ── 4. Hub pages for every vehicle that has at least one qualified task ──
-    for (const hubUrl of hubUrls) {
-        entries.push({ url: hubUrl, lastmod: LAST_MOD, changefreq: 'weekly', priority: 0.85 });
-    }
 
     console.log(`Skipped ${skippedNoindex} noindex / non-US URLs`);
     console.log(`Curated corpus: ${corpusVehicles} vehicle-years, ${corpusTasks} tasks`);

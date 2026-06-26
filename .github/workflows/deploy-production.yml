@@ -35,7 +35,9 @@ jobs:
         run: npm run typecheck
 
       - name: Build
-        run: npm run build
+        # Use `next build` directly to skip prebuild DB-dependent sitemap generation.
+        # The VPS auto-deploy runs the full `npm run build` with Postgres available.
+        run: npx next build --webpack
 
   # NOTE: VPS deployment is handled by the auto-deploy watcher running on
   # the server (auto-deploy.timer + auto-deploy.service). The watcher polls
