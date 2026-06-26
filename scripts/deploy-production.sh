@@ -49,6 +49,8 @@ ln -s "${APP_DIR}/node_modules" "${BUILD_DIR}/node_modules"
 
 log "Building application in build directory"
 cd "${BUILD_DIR}"
+# Submit changed URLs to Bing/IndexNow after a successful build.
+export RUN_INDEXNOW=1
 if ! npm run build; then
   log "BUILD FAILED — cleaning up build folder and aborting deploy"
   rm -rf "${BUILD_DIR}"
