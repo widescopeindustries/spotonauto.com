@@ -66,6 +66,7 @@ scripts/seo-reports/
 scripts/mined-output/
 scripts/generated-specs/
 scripts/content-machine/batches/
+public/repair/qualified-keys.json
 scripts/indexing-cron.log
 scripts/*.log
 seo-analysis.txt
