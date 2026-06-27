@@ -2085,17 +2085,32 @@ export default async function Page({ params }: PageProps) {
     const canonicalModel = slugifyRoutePart(model);
     const canonicalTask = slugifyRoutePart(task);
 
+    // Resolve canonical make/model slugs so aliases (e.g. /mercedes/glc/) 301 to
+    // the canonical form (/mercedes-benz/glc-class/). This prevents Bing/Google
+    // from indexing duplicate URLs that differ only by make/model abbreviation.
+    const canonicalMakeName = getDisplayName(canonicalMake, 'make');
+    const canonicalModelName = getDisplayName(canonicalModel, 'model');
+    const resolvedMakeSlug = canonicalMakeName ? slugifyRoutePart(canonicalMakeName) : canonicalMake;
+    const resolvedModelSlug = canonicalModelName ? slugifyRoutePart(canonicalModelName) : canonicalModel;
+
     // For known vehicles outside their production range, redirect to nearest valid year
     // so users land on useful content and Google updates its index via 301.
-    const clampedYear = getClampedYear(year, canonicalMake, canonicalModel);
+    const clampedYear = getClampedYear(year, resolvedMakeSlug, resolvedModelSlug);
     const resolvedYear = String(clampedYear ?? year);
-    const canonicalPath = buildRepairPath(resolvedYear, canonicalMake, canonicalModel, canonicalTask);
-    if (clampedYear !== null || make !== canonicalMake || model !== canonicalModel || task !== canonicalTask) {
+    const canonicalPath = buildRepairPath(resolvedYear, resolvedMakeSlug, resolvedModelSlug, canonicalTask);
+    if (
+        clampedYear !== null ||
+        make !== resolvedMakeSlug ||
+        model !== resolvedModelSlug ||
+        task !== canonicalTask ||
+        canonicalMake !== resolvedMakeSlug ||
+        canonicalModel !== resolvedModelSlug
+    ) {
         permanentRedirect(canonicalPath);
     }
 
     // For truly unknown make/model/task combos, return 404
-    if (!isValidVehicleCombination(resolvedYear, canonicalMake, canonicalModel, canonicalTask)) {
+    if (!isValidVehicleCombination(resolvedYear, resolvedMakeSlug, resolvedModelSlug, canonicalTask)) {
         notFound();
     }
 
