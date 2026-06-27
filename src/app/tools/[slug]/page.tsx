@@ -255,6 +255,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 
     let description: string;
+    const toolLabel = (TOOL_TYPE_META[toolType]?.label || 'spec').toLowerCase();
+    const yearCoverage = page.generations.length > 1
+        ? shortYearRange
+        : (page.generations[0]?.years || 'All Years');
     if (cleanAnswer) {
         const hook = CONSEQUENCE_HOOKS[toolType] || 'Exact factory manual data.';
         const coverageSnippet = page.generations.length > 1
@@ -265,6 +269,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         if (coverageSnippet) {
             desc = `${desc} ${coverageSnippet}`;
         }
+        // Ensure ~150–155 chars for Bing/Google by adding vehicle/tool context
+        if (desc.length < 150) {
+            const context = ` Factory ${toolLabel} spec for the ${vehicle} (${yearCoverage}). Verify before buying parts or fluids.`;
+            desc = `${desc}${context}`;
+        }
         // Hard cap: truncate at ~155 chars to avoid Google ellipsis
         if (desc.length > 155) {
             desc = desc.slice(0, 152).trim().replace(/[^\w\s]$/, '') + '…';
@@ -274,6 +283,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         const hook = CONSEQUENCE_HOOKS[toolType] || 'Exact factory manual data.';
         const fallback = page.description.replace(/\s+/g, ' ').trim();
         let desc = `${hook} ${fallback}`;
+        // Ensure ~150–155 chars
+        if (desc.length < 150) {
+            const context = ` Factory ${toolLabel} spec for the ${vehicle} (${yearCoverage}). Verify before buying parts or fluids.`;
+            desc = `${desc}${context}`;
+        }
         if (desc.length > 155) {
             desc = desc.slice(0, 152).trim().replace(/[^\w\s]$/, '') + '…';
         }
