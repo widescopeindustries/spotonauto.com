@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
+// Force dynamic rendering to avoid prerender errors from data helpers that may
+// depend on runtime state (DB/Neo4j). This page is noindex, so static caching
+// is not important.
+export const dynamic = 'force-dynamic';
+
 export default function RepairsIndexPage() {
   const homepageMomentum = getHomepageMomentumData();
   const supportGapRepairs = getTier1RepairSupportGaps(6);
