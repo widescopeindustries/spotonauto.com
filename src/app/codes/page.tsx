@@ -5,7 +5,7 @@ import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizatio
 
 export const metadata: Metadata = {
     title: 'OBD2 Code Lookup | AllOEMManuals',
-    description: 'Free OBD2 trouble code lookup. Find what your check engine light means with 8,500+ DTC codes explained in plain English — symptoms, likely causes, and DIY fixes.',
+    description: 'Free OBD2 trouble code lookup for 8,500+ DTC codes. Decode your check engine light with plain-English explanations, common symptoms, likely causes, typical repair costs, and step-by-step DIY fixes for P0xxx, B0xxx, C0xxx, and U0xxx codes.',
     keywords: ['OBD2 codes', 'DTC codes', 'check engine light codes', 'trouble codes', 'P0420', 'engine codes', 'car diagnostic codes'],
     openGraph: {
         title: 'OBD2 DTC Trouble Code Lookup | AllOEMManuals',

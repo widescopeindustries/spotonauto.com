@@ -20,7 +20,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: 'Factory Service Manuals | Verified Archive Coverage | AllOEMManuals',
   description:
-    'Open free factory service manual coverage for cars and trucks. Repair procedures, torque specs, wiring diagrams, and TSBs from verified archive paths.',
+    'Open free factory service manual coverage for cars and trucks. Browse verified OEM repair procedures, torque specs, wiring diagrams, TSBs, and diagnostic information from archive paths spanning 1982-2025.',
   alternates: {
     canonical: 'https://alloemmanuals.com/manual',
   },

@@ -10,7 +10,7 @@ import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 export const metadata: Metadata = {
   title: 'Exact Repair Hub | AllOEMManuals',
   description:
-    'Find factory-accurate DIY repair guides by year, make, and model. Browse brakes, batteries, lighting, filters, fluids, and step-by-step repair walkthroughs.',
+    'Find factory-accurate, vehicle-specific DIY repair guides by year, make, and model. Browse brakes, batteries, lighting, filters, fluids, engine, transmission, and step-by-step repair walkthroughs grounded in OEM service manual data.',
   alternates: {
     canonical: 'https://alloemmanuals.com/repair',
   },

@@ -1329,14 +1329,14 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                       />
                       <img
                         src="/diagram-watermark.svg"
-                        alt=""
+                        alt="AllOEMManuals watermark"
                         aria-hidden="true"
                         className="wl-modal-watermark wl-modal-watermark-left"
                         draggable={false}
                       />
                       <img
                         src="/diagram-watermark.svg"
-                        alt=""
+                        alt="AllOEMManuals watermark"
                         aria-hidden="true"
                         className="wl-modal-watermark wl-modal-watermark-right"
                         draggable={false}
@@ -1367,7 +1367,7 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                           >
                             <img
                               src={src}
-                              alt=""
+                              alt={`${selectedDiagram.entry.name} diagram thumbnail ${idx + 1} of ${selectedDiagram.images.images.length}`}
                               loading="lazy"
                               draggable={false}
                             />

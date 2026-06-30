@@ -6,7 +6,7 @@ import PartsVehiclePicker from './PartsVehiclePicker';
 
 export const metadata: Metadata = {
     title: 'Auto Parts | Shop Amazon & More | AllOEMManuals',
-    description: 'Compare prices on OEM and aftermarket auto parts from Amazon. Find the right fit for your exact year, make, and model with fast shipping and verified compatibility.',
+    description: 'Compare prices on OEM and aftermarket auto parts from Amazon, RockAuto, and top retailers. Find the right fit for your exact year, make, and model with fast shipping, verified compatibility, and repair-guide-matched part recommendations.',
     keywords: [
         'auto parts',
         'car parts',

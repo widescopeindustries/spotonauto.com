@@ -15,17 +15,26 @@ const ROOT = join(__dirname, '..');
 const OUT_PATH = join(ROOT, 'public', 'repair', 'qualified-keys.json');
 
 async function main() {
-  const pool = new Pool({
-    host: '127.0.0.1',
-    port: 5432,
-    database: 'spotonauto',
-    user: 'spotonauto',
-    password: 'spotonauto2026',
-  });
+  let dbKeys = new Set();
 
-  // 1. Get all generated profile keys from DB
-  const { rows } = await pool.query(`SELECT key FROM vehicle_repair_profiles`);
-  const dbKeys = new Set(rows.map((r) => r.key));
+  try {
+    const pool = new Pool({
+      host: '127.0.0.1',
+      port: 5432,
+      database: 'spotonauto',
+      user: 'spotonauto',
+      password: 'spotonauto2026',
+      connectionTimeoutMillis: 5000,
+      query_timeout: 30000,
+    });
+
+    // 1. Get all generated profile keys from DB
+    const { rows } = await pool.query(`SELECT key FROM vehicle_repair_profiles`);
+    dbKeys = new Set(rows.map((r) => r.key));
+    await pool.end();
+  } catch (err) {
+    console.warn('[export-qualified-keys] DB unavailable; writing empty qualified-keys.json for local build:', err.message);
+  }
 
   // 2. Get all VEHICLE_REPAIR_SPECS keys (static file)
   const { VEHICLE_REPAIR_SPECS } = await import(
@@ -73,8 +82,6 @@ async function main() {
 
   writeFileSync(OUT_PATH, JSON.stringify(output, null, 2));
   console.log(`Exported ${output.totalQualified} qualified URLs to ${OUT_PATH}`);
-
-  await pool.end();
 }
 
 main().catch((e) => {

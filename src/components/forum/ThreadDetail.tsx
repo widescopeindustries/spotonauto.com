@@ -41,7 +41,7 @@ export default function ThreadDetail({ thread, posts }: ThreadDetailProps) {
         <div className="flex items-center gap-3 mb-4">
           <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center">
             {thread.author.avatar_url ? (
-              <img src={thread.author.avatar_url} alt="" className="w-8 h-8 rounded-full" />
+              <img src={thread.author.avatar_url} alt={`${thread.author.display_name} avatar`} className="w-8 h-8 rounded-full" />
             ) : (
               <User className="w-4 h-4 text-cyan-400" />
             )}
@@ -106,7 +106,7 @@ export default function ThreadDetail({ thread, posts }: ThreadDetailProps) {
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-6 h-6 rounded-full bg-cyan-500/10 flex items-center justify-center">
                   {post.author.avatar_url ? (
-                    <img src={post.author.avatar_url} alt="" className="w-6 h-6 rounded-full" />
+                    <img src={post.author.avatar_url} alt={`${post.author.display_name} avatar`} className="w-6 h-6 rounded-full" />
                   ) : (
                     <User className="w-3 h-3 text-cyan-400" />
                   )}

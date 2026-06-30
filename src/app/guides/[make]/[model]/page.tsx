@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: PageProps) {
   const displayModel = originalModel || model.charAt(0).toUpperCase() + model.slice(1).replace(/-/g, ' ');
   return {
     title: `${displayMake} ${displayModel} DIY Repair Guides | AllOEMManuals`,
-    description: `Open step-by-step DIY repair guides for the ${displayMake} ${displayModel}, including maintenance intervals, common fault diagnosis, parts planning, exact year-by-year repair paths, and matching OEM manual sections.`,
+    description: `Explore the ${displayMake} ${displayModel} DIY repair hub. Find step-by-step maintenance and repair guides, common fault diagnosis, factory service manual sections, parts planning, wiring diagrams, DTC codes, and fluid specs for every model year.`,
     alternates: {
       canonical: `https://alloemmanuals.com/guides/${canonicalMake}/${canonicalModel}`,
     },

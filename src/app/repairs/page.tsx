@@ -13,7 +13,7 @@ function toTitleCase(slug: string): string {
 export const metadata: Metadata = {
   title: 'DIY Auto Repair Categories and Exact Vehicle Guides | AllOEMManuals',
   description:
-    'Choose a repair family, symptom path, or exact vehicle guide. Start with brakes, batteries, lighting, filters, fluids, and exact step-by-step repair walkthroughs.',
+    'Choose a repair family, symptom path, or exact vehicle guide. Start with brakes, batteries, lighting, filters, fluids, engine, transmission, and step-by-step vehicle-specific repair walkthroughs on AllOEMManuals.',
   alternates: {
     canonical: 'https://alloemmanuals.com/repairs',
   },

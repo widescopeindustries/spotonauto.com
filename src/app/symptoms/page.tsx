@@ -6,7 +6,7 @@ import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizatio
 
 export const metadata: Metadata = {
   title: 'Symptom Hubs | AllOEMManuals',
-  description: 'Describe what your car is doing in plain English and find the right repair path. Symptom hubs map noises, leaks, and warning lights to causes, codes, and fixes.',
+  description: 'Describe what your car is doing in plain English and find the right repair path. Symptom hubs map noises, leaks, warning lights, and drivability complaints to likely causes, related DTC codes, and exact vehicle-specific fixes.',
   alternates: {
     canonical: 'https://alloemmanuals.com/symptoms',
   },

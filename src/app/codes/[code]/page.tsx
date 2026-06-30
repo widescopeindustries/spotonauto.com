@@ -33,7 +33,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         ? ` Covers ${oemMeta.n}+ vehicles.`
         : '';
     const title = `${dtc.code}: ${dtc.title} — Causes & Fix | AllOEMManuals`;
-    const description = `What is ${dtc.code}? ${dtc.title} — ${dtc.severity} severity, likely causes, symptom clues, and typical fix cost: ${dtc.estimatedCostRange}.${oemSuffix} Free step-by-step diagnosis and repair guide.`;
+    let description = `What is ${dtc.code}? ${dtc.title} — ${dtc.severity} severity OBD2 trouble code. Learn the likely causes, symptom clues, diagnostic steps, and typical repair cost: ${dtc.estimatedCostRange}.${oemSuffix} Free step-by-step diagnosis and repair guide from AllOEMManuals.`;
+    if (description.length < 150) {
+      description = `${description} Browse related ${dtc.code} fixes, wiring diagrams, and factory service manual references for the affected system.`;
+    }
+    if (description.length > 155) {
+      description = description.slice(0, 152).trim().replace(/[^\w\s]$/, '') + '…';
+    }
 
     return {
         title,

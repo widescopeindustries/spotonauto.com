@@ -39,7 +39,7 @@ const SITEMAP_TRIGGERS = [
   {
     sitemap: 'https://alloemmanuals.com/vehicles/sitemap.xml',
     triggers: ['src/app/vehicles/', 'src/data/vehicles', 'src/data/knowledge-graph',
-               'src/lib/knowledge-graph'],
+               'src/lib/knowledge-graph', 'scripts/generate-vehicle-sitemaps'],
   },
   {
     sitemap: 'https://alloemmanuals.com/codes/sitemap.xml',
@@ -59,12 +59,20 @@ const SITEMAP_TRIGGERS = [
     triggers: ['src/app/repair/winners/'],
   },
   {
+    sitemap: 'https://alloemmanuals.com/maintenance/sitemap.xml',
+    triggers: ['src/app/maintenance/', 'src/data/tools-pages'],
+  },
+  {
     sitemap: 'https://alloemmanuals.com/manual/sitemap.xml',
     triggers: ['src/app/manual/', 'src/data/manual'],
   },
   {
     sitemap: 'https://alloemmanuals.com/wiring/sitemap.xml',
     triggers: ['src/app/wiring/', 'scripts/generate-wiring-sitemaps', 'src/data/wiring'],
+  },
+  {
+    sitemap: 'https://alloemmanuals.com/bing-supplemental-sitemap.xml',
+    triggers: ['public/bing-supplemental-sitemap.xml'],
   },
 ];
 

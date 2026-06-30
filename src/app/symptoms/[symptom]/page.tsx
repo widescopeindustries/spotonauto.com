@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${cluster.label} | Symptom Hub, Repairs, Codes & Vehicle Paths`,
-    description: `${cluster.label} symptom hub with likely repair categories, related code pages, and exact vehicle workflows tied together by the AllOEMManuals knowledge graph.`,
+    description: `${cluster.label} symptom hub — map this complaint to likely repair categories, related DTC trouble codes, wiring diagrams, and exact vehicle-specific repair workflows connected by the AllOEMManuals knowledge graph.`,
     alternates: {
       canonical: `https://alloemmanuals.com${buildSymptomHref(cluster.slug)}`,
     },
