@@ -3219,8 +3219,6 @@ export default async function Page({ params }: PageProps) {
                     </ul>
                 </section>
 
-                <WhenToSeeMechanic className="mb-8" vehicle={`${year} ${make} ${model}`} context="repair_page" />
-
                 {/* Ad: After Safety Warnings */}
                 <AdUnit slot="repair-after-safety" format="horizontal" />
 
@@ -3228,13 +3226,26 @@ export default async function Page({ params }: PageProps) {
                 <section id="tools-required" className={sectionShell}>
                     <h2 className={sectionTitleClass}>Tools required</h2>
                     <p className="text-sm leading-6 text-gray-400 mb-4">
-                        Gather these before you start so the job flows cleanly once the vehicle is apart.
+                        Gather these before you start so the job flows cleanly once the vehicle is apart. Click any tool to shop it on Amazon.
                     </p>
                     <div className="grid md:grid-cols-2 gap-3">
                         {repairData.tools.map((tool, i) => (
-                            <div key={i} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-3.5">
-                                <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0" />
-                                <span className="text-gray-300">{tool}</span>
+                            <div key={i} className="group flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 p-3.5 hover:border-amber-500/30 transition-colors">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0" />
+                                    <span className="text-gray-300">{tool}</span>
+                                </div>
+                                <AffiliateLink
+                                    href={buildAmazonSearchUrl(`${vehicleName} ${tool}`, 'automotive', `${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}-tool`)}
+                                    partName={tool}
+                                    vehicle={vehicleName}
+                                    pageType="repair_guide"
+                                    subtag={`${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}-tool`}
+                                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-300 text-xs font-bold hover:bg-amber-500 hover:text-black transition-all opacity-90 group-hover:opacity-100"
+                                >
+                                    <ShoppingCartIcon className="w-3 h-3" />
+                                    Shop
+                                </AffiliateLink>
                             </div>
                         ))}
                     </div>
@@ -3304,6 +3315,29 @@ export default async function Page({ params }: PageProps) {
                             ))
                         )}
                     </div>
+
+                    {/* Complete Job Kit CTA */}
+                    <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/[0.07] p-4 md:p-5">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200/80">Bundle everything</p>
+                                <h3 className="mt-1 text-base font-semibold text-white">Shop the complete {cleanTask.replace(/-/g, ' ')} kit</h3>
+                                <p className="text-sm text-amber-100/70 mt-1">Pads, rotors, hardware, fluids, and tools — one search for the whole job.</p>
+                            </div>
+                            <AffiliateLink
+                                href={buildAmazonSearchUrl(`${vehicleName} ${cleanTask} kit`, 'automotive', `${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}-bundle`)}
+                                partName={`${cleanTask} kit`}
+                                vehicle={vehicleName}
+                                isHighTicket={HIGH_TICKET_PART_PATTERN.test(cleanTask)}
+                                pageType="repair_guide"
+                                subtag={`${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}-bundle`}
+                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-black hover:bg-amber-400 transition shrink-0"
+                            >
+                                <ShoppingCartIcon className="w-4 h-4" />
+                                Shop complete kit
+                            </AffiliateLink>
+                        </div>
+                    </div>
                 </section>
 
                 {affiliateSpotlightParts.length > 0 && (
@@ -3346,6 +3380,8 @@ export default async function Page({ params }: PageProps) {
                         </div>
                     </section>
                 )}
+
+                <WhenToSeeMechanic className="mb-8" vehicle={`${year} ${make} ${model}`} context="repair_page" />
 
                 {/* Ad: After Parts List */}
                 <AdUnit slot="repair-after-parts" format="rectangle" />

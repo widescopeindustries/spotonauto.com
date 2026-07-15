@@ -70,6 +70,12 @@ export default function RootLayout({
             __html: `if('modelContext' in navigator){try{navigator.modelContext.provideContext({name:'alloemmanuals',tools:[{name:'getRepairGuide',description:'Get a vehicle-specific repair guide.',inputSchema:{type:'object',properties:{year:{type:'integer'},make:{type:'string'},model:{type:'string'},task:{type:'string'}},required:['year','make','model','task']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/v1/repair?year='+i.year+'&make='+i.make+'&model='+i.model+'&task='+i.task);return r.json();}},{name:'getDTCInfo',description:'Look up diagnostic trouble code.',inputSchema:{type:'object',properties:{code:{type:'string'}},required:['code']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/graph/dtc/'+encodeURIComponent(i.code));return r.json();}}]});}catch(e){}}`
           }}
         />
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "wtdn1ew72d");`
+          }}
+        />
       </head>
       <body className={`bg-[#050507] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-[#FF6B00] selection:text-white ${inter.variable} ${spaceGrotesk.variable}`}>
           <div className="hidden" aria-hidden="true">

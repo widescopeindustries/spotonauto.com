@@ -1,0 +1,248 @@
+{
+  "date": "2026-06-24",
+  "profitProxy": -1570,
+  "scorecard": {
+    "rate404": 0.02037599252685661,
+    "total5xx": 12,
+    "issues": [
+      {
+        "severity": "high",
+        "metric": "5xx errors",
+        "value": 12,
+        "target": "0",
+        "impact": "Search engines and users hit broken pages"
+      },
+      {
+        "severity": "high",
+        "metric": "404 rate",
+        "value": "2.04%",
+        "target": "< 0.5%",
+        "impact": "Wasted crawl budget + origin load on broken/non-existent URLs"
+      },
+      {
+        "severity": "medium",
+        "metric": "Cloudflare cache ratio",
+        "value": "4.3%",
+        "target": "> 30%",
+        "impact": "Too many requests hit origin; cache rules or TTL can be tuned"
+      }
+    ]
+  },
+  "metrics": {
+    "date": "2026-06-24",
+    "nginx": {
+      "total": 325432,
+      "uniques": 6046,
+      "bytes": 9227545646,
+      "status200": 269400,
+      "status301": 2159,
+      "status302": 0,
+      "status307": 39,
+      "status308": 1389,
+      "status400": 42,
+      "status403": 0,
+      "status404": 6631,
+      "status444": 45131,
+      "status499": 81,
+      "status500": 12,
+      "status502": 0,
+      "status503": 0,
+      "status504": 0,
+      "statuses": {
+        "166": 23,
+        "200": 269400,
+        "204": 10,
+        "301": 2159,
+        "304": 487,
+        "307": 39,
+        "308": 1389,
+        "400": 42,
+        "404": 6631,
+        "444": 45131,
+        "499": 81,
+        "500": 12,
+        "-": 27,
+        "#\\xBF\\xC7\\xAA\\x9BBZ\\xD0\\x11\\xF0K\\x14\\xFCvd\\xDC\\x22\\x00&\\xCC\\xA8\\xCC\\xA9\\xC0/\\xC00\\xC0+\\xC0,\\xC0\\x13\\xC0\\x09\\xC0\\x14\\xC0": 1
+      },
+      "top404s": [
+        {
+          "path": "/apple-touch-icon-precomposed.png",
+          "count": 9
+        },
+        {
+          "path": "/ipfs/bafkreicyqcbhpicbos7ev4mrxofwqx6hvvge7pahpta6xuspr44crai5by",
+          "count": 8
+        },
+        {
+          "path": "/.env",
+          "count": 8
+        },
+        {
+          "path": "/tools/honda-crv-coolant-type",
+          "count": 7
+        },
+        {
+          "path": "/wp-json/gravitysmtp/v1/tests/mock-data?page=gravitysmtp-settings",
+          "count": 6
+        },
+        {
+          "path": "/.well-known/assetlinks.json",
+          "count": 6
+        },
+        {
+          "path": "/vehicles/2010/cadillac/sts-rwd-v8-4.6l/codes/b0012",
+          "count": 5
+        },
+        {
+          "path": "/core/.env",
+          "count": 5
+        },
+        {
+          "path": "/backend/.env",
+          "count": 5
+        },
+        {
+          "path": "/app/.env",
+          "count": 5
+        }
+      ],
+      "botHits": 939,
+      "bot200Count": 832,
+      "bot200Bytes": 26941265,
+      "searchBotHits": 16614,
+      "paywall402": 0
+    },
+    "postgres": {
+      "dbSizePretty": "10 GB",
+      "sizeMb": 10241,
+      "apiCustomers": 0,
+      "apiTransactions": 0,
+      "revenueCents": 0,
+      "revenueDollars": 0,
+      "todayRevenueCents": 0,
+      "todayRevenueDollars": 0,
+      "manualEmbeddings": 1835283,
+      "repairProfiles": 25779
+    },
+    "cloudflare": {
+      "requests": 422695,
+      "pageViews": 57881,
+      "bytes": 11494508957,
+      "threats": 0,
+      "uniques": 124078,
+      "cachedBytes": 491332632,
+      "uncachedBytes": 11003176325,
+      "cacheRatio": 0.04274498665737131
+    },
+    "ga4gsc": {
+      "ga4": {
+        "sessions": 5253,
+        "activeUsers": 5302,
+        "newUsers": 5305,
+        "pageViews": 152,
+        "avgDurationSec": 8,
+        "bounceRate": 96.55434989529792,
+        "organicSessions": 246,
+        "organicUsers": 228,
+        "events": [
+          {
+            "event": "session_start",
+            "count": 5330
+          },
+          {
+            "event": "first_visit",
+            "count": 5305
+          },
+          {
+            "event": "scroll",
+            "count": 4846
+          },
+          {
+            "event": "time_on_page",
+            "count": 449
+          },
+          {
+            "event": "user_engagement",
+            "count": 259
+          },
+          {
+            "event": "time_on_page_exit",
+            "count": 206
+          },
+          {
+            "event": "scroll_depth",
+            "count": 194
+          },
+          {
+            "event": "page_view",
+            "count": 152
+          },
+          {
+            "event": "page_view_custom",
+            "count": 98
+          },
+          {
+            "event": "wiring_diagram_interact",
+            "count": 78
+          },
+          {
+            "event": "track_impression",
+            "count": 64
+          },
+          {
+            "event": "knowledge_graph_impression",
+            "count": 36
+          },
+          {
+            "event": "vehicle_hub_enter",
+            "count": 19
+          },
+          {
+            "event": "entry_route_click",
+            "count": 18
+          },
+          {
+            "event": "repair_guide_open",
+            "count": 13
+          },
+          {
+            "event": "repair_page_view",
+            "count": 13
+          },
+          {
+            "event": "wiring_diagram_open",
+            "count": 13
+          },
+          {
+            "event": "wiring_diagram_search",
+            "count": 12
+          },
+          {
+            "event": "affiliate_click",
+            "count": 11
+          },
+          {
+            "event": "click",
+            "count": 11
+          }
+        ]
+      },
+      "gsc": {
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0,
+        "position": 0,
+        "topQueries": [],
+        "topPages": []
+      }
+    },
+    "infrastructure": {
+      "cacheSize": 300875928,
+      "diskTotal": 105021104128,
+      "diskUsed": 35609575424,
+      "diskFree": 64029450240,
+      "sslExpiry": "2026-08-18",
+      "serviceStatus": "active"
+    }
+  }
+}

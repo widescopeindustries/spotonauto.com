@@ -8,6 +8,7 @@ import { getProfilesForVehicle } from '@/lib/vehicleRepairProfiles';
 import { getToolPagesForVehicle, TOOL_TYPE_META, getConciseQuickAnswer } from '@/data/tools-pages';
 import { generateShopAllLinks } from '@/services/affiliateService';
 import AffiliateLink from '@/components/AffiliateLink';
+import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import VehicleLaneClient from './VehicleLaneClient';
 
 /**
@@ -409,6 +410,14 @@ export default async function VehicleLanePage({ params }: PageProps) {
           </Link>
         </div>
       </section>
+
+      <StickyAffiliateBar
+        vehicle={displayName}
+        intent="auto parts"
+        query={`${displayName} parts`}
+        subtag={`vehicle-hub-${identity.makeSlug}-${identity.modelSlug}`}
+        variant="parts"
+      />
     </div>
   );
 }

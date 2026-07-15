@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {
     getHighPriorityToolPages,
     TOOL_TYPE_META,
+    getToolPage,
     getToolPagesForType,
     getToolPagesForVehicle,
     getRelatedRepairLinks,
@@ -150,9 +151,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!result) return { title: 'Tool Not Found' };
     const { page, quality } = result;
 
-    // CTR-optimized title: rewrite based on tool type for maximum click-through.
-    // Formulas tested against GSC data — pages at positions 8-10 with 0 clicks
-    // need emotional hooks, authority signals, and completeness promises.
+    // Legacy template-only pages have no corpus backing; keep them out of the index.
+    const isStatic = !!getToolPage(slug);
+    const isDynamic = !!page.isDynamic;
+    const isLegacy = !isStatic && !isDynamic;
+
     const { make, model, toolType } = page;
     const vehicle = `${make} ${model}`;
 
@@ -299,7 +302,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
         title,
         description,
-        robots: getNoindexRobots(page.make, page.model),
+        robots: isLegacy
+            ? { index: false, follow: true }
+            : getNoindexRobots(page.make, page.model),
         keywords: page.keywords,
         openGraph: {
             title,

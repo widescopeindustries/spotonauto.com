@@ -5,6 +5,62 @@ Update it when product decisions, traps, or standing preferences change.
 
 ## Current State Snapshot (2026-06-17 — Post Full-Stack Audit)
 
+### 2026-07-15 — AI Citations Audit & Gap-Fill Deploy
+- **Trigger:** User shared Bing Webmaster Tools AI Performance data showing 1,616 citations across 50 sampled queries; Bing is the primary revenue channel.
+- **Actions:**
+  - Created `scripts/ai-citations-audit.mjs` to map AI-citation queries to vehicle-specific URLs, check production status, and output actionable gaps.
+  - Mapped all 50 queries; fixed query parsing for short model tokens (X1, X3, A5, CX-5), two-digit years, and make/model disambiguation.
+  - Added missing vehicle: `Ford EcoSport` to `src/data/vehicles.ts`.
+  - Added high-intent hand-crafted tool pages in `src/data/tools-pages.ts` to close data gaps:
+    - Chrysler PT Cruiser coolant type (100% citation rate)
+    - Dodge Durango fluid capacities
+    - Ford Excursion fluid capacities
+    - Nissan Maxima oil type & fluid capacities
+    - Mini Countryman oil type
+    - Land Rover Defender oil type
+  - Updated `scripts/seo-daily-monitor.mjs` to watch AI-citation mapped URLs for 200/noindex regressions and log to `scripts/seo-reports/monitor-ai-citations.jsonl`.
+  - Created `scripts/ai-citations-report.mjs` generating `reports/ai-citations-report-YYYY-MM-DD.md` with query clustering and affiliate revenue correlation.
+- **Deploy:** local `npx next build --webpack` passed; rsynced `.next/` to VPS; restarted `alloemmanuals-web`; verified localhost:3002 returns 200; attempted nginx cache purge (cache actively regenerating).
+- **Post-deploy verification:** AI-citation mapped URLs: 0 non-200, 1 noindexed make-guide (`/guides/toyota`) per existing Vehicle-Specific-Only policy.
+- **Files changed:** `src/data/vehicles.ts`, `src/data/tools-pages.ts`, `scripts/ai-citations-audit.mjs`, `scripts/ai-citations-report.mjs`, `scripts/seo-daily-monitor.mjs`, `reports/ai-citations-report-2026-07-15.md`.
+- **Next step:** Monitor AI citation counts in BWT over the next 7 days; if `/guides/toyota` and `/guides/ford` continue to earn citations, revisit the make-guide noindex policy with the user.
+
+### 2026-07-13 — Affiliate conversion optimization deployed
+- **Trigger:** User shared Amazon affiliate report for `aiautorepair-20`: 555 clicks, 50 items ordered, 9.01% conversion, $1,739.12 ordered revenue, $63.87 shipped earnings. Conversion is healthy; earnings are capped by low traffic volume, low AOV, and thin commission mix.
+- **Actions:**
+  - `src/components/InteractiveRepairGuide.tsx`: replaced the `return null` stub with a real render using `RepairGuideDisplay`. The “Open full guide” CTA on repair pages had been rendering a blank dead-end.
+  - `src/app/repair/[year]/[make]/[model]/[task]/page.tsx`:
+    - Added Amazon affiliate links to every item in the “Tools required” list.
+    - Added a “Shop complete {task} kit” bundle CTA after the parts list to lift AOV.
+    - Moved `WhenToSeeMechanic` / mobile-mechanic CTA below the affiliate parts/tools blocks so affiliate clicks happen before the lead-gen alternative.
+  - `src/app/vehicles/[year]/[make]/[model]/page.tsx`: added `StickyAffiliateBar` so the vehicle hub has a persistent parts CTA as users scroll.
+  - `src/app/layout.tsx`: added Microsoft Clarity tracking script (`wtdn1ew72d`) to all pages.
+- **Deploy:** local `npx next build --webpack` passed; rsynced `.next/` to VPS; restarted `alloemmanuals-web`; verified localhost:3002 returns 200; purged nginx cache.
+- **Next step:** Monitor affiliate CTR and earnings by subtag (`-tool`, `-bundle`, `vehicle-hub-...`) in Amazon Associates for 7–14 days. Consider adding multi-retailer buttons (Thinkcar 20%, Suncent 15%, Advance 10%) to repair-page parts list using existing `affiliateService.ts` logic.
+
+### 2026-07-10 — Emergency Sitemap Shrink + Bing Protection Deploy
+- **Trigger:** Google Search Console traffic collapsed ~95% after the repair sitemap ballooned to ~1.15M URLs and the tools sitemap to ~543K URLs; Bing is now the primary revenue driver.
+- **BWT audit pulled:** `scripts/seo-reports/bwt-audit-2026-07-10.json` shows Bing crawling aggressively (48,577 pages/day, 301K in-index on latest day) but 20+ failed/empty sitemap shards and 45 important pages not submitted via IndexNow.
+- **Full trajectory diagnosis (GSC + GA4 + Cloudflare):**
+  - **Google collapse date: 2026-06-24.** GSC daily clicks fell from 69 (Jun 22) → 41 (Jun 23) → 0 (Jun 24), impressions fell from 4,551 to 173.
+  - **Pre-drop (May 1 – Jun 23):** 11,181 pages reported, 1,130 clicks, 77,391 impressions.
+  - **Post-drop (Jun 24 – Jul 9):** 471 pages reported, 27 clicks, 823 impressions — **–95.8% pages, –97.6% clicks, –98.9% impressions.**
+  - **10,879 pages that previously earned Google clicks disappeared from reporting.** Lost winners include `/repair/2008/toyota/sienna/timing-belt-replacement`, `/repair/2020/lincoln/aviator/brake-pad-replacement`, `/tools/hummer-h3-serpentine-belt`, and multiple wiring pages.
+  - **GA4 organic sessions Apr 1 – Jul 9:** Bing 3,641 | DuckDuckGo 1,700 | Yahoo 1,512 | Google 975. Since Jun 24, Google organic has been ~0–5 sessions/day while Bing holds ~100–160/day.
+  - **Cloudflare edge (Jun 26 – Jul 9):** 18.85M requests, 3.5M page views, 596 GB bandwidth, 0 threats. Demand is still there; problem is Google index/quality signal.
+  - **Amazon affiliate baseline (`aiautorepair-20` US):** YTD $106.33 earnings, 928 clicks, 82 ordered items, 8.84% conversion, $2,872.48 ordered revenue. Bing + DDG + Yahoo are now effectively carrying this.
+- **Actions:**
+  - `scripts/generate-repair-sitemaps.mjs`: removed the blanket `validated-vehicles.json` expansion. Repair sitemap now only includes URLs backed by `vehicle_repair_profiles` or `VEHICLE_REPAIR_SPECS` — dropped from ~983K to ~41K URLs.
+  - `scripts/generate-tool-sitemaps.mjs`: restricted to the curated `TOOL_PAGES` corpus (which already contains the mined 8,895 corpus-backed pages). Tools sitemap dropped from ~483K to ~8,946 URLs.
+  - `src/app/tools/[slug]/page.tsx`: legacy template-only tool pages now emit `noindex, follow` so Bing/Google do not index thin, non-corpus pages.
+  - Kept repair task pages indexable (only existing `NOINDEX_MAKES` / `NON_US_MODELS` rules) to protect Bing rankings.
+- **Deploy:** built locally (VPS build hit a Next.js type-generation stale-cache issue), rsynced `.next/` to VPS, restarted `alloemmanuals-web`, purged nginx cache, purged Cloudflare cache for homepage + sitemaps.
+- **Bing resubmission:** resubmitted `sitemap_index.xml`, `/repair/sitemap.xml`, `/tools/sitemap.xml`, and `/bing-supplemental-sitemap.xml` via BWT API. Submitted all 70 URLs in `bing-supplemental-sitemap.xml` to IndexNow (HTTP 200).
+- **Daily monitoring:** created `scripts/seo-daily-monitor.mjs` to pull GSC, BWT, and GA4 organic split daily and append to JSONL logs. Baseline run: GSC 30d clicks 701 / GA4 Google organic 620 sessions / GA4 Bing organic 3,175 sessions / BWT 0 failed feeds, 15,050 last-day 4xx.
+- **Files changed:** `scripts/generate-repair-sitemaps.mjs`, `scripts/generate-tool-sitemaps.mjs`, `src/app/repair/[year]/[make]/[model]/[task]/page.tsx`, `src/app/tools/[slug]/page.tsx`, `scripts/bwt-full-audit.mjs`, `scripts/seo-daily-monitor.mjs`.
+- **Metrics archive:** `scripts/seo-reports/bwt-audit-2026-07-10.json`, `gsc-daily-trend-2026-07-10.csv`, `gsc-pages-2026-05-01-to-2026-06-23.csv`, `gsc-pages-2026-06-24-to-2026-07-09.csv`, `ga4-organic-daily-by-source-2026-07-10.csv`, `ga4-bing-recent-2026-07-10.txt`, `ga4-curated-google-bing-2026-07-10.txt`, `cloudflare-daily-audit-2026-07-10.txt`, `monitor-gsc.jsonl`, `monitor-ga4.jsonl`, `monitor-bwt.jsonl`, `monitor-summary.jsonl`.
+- **Next step:** Monitor GSC index recovery and BWT crawl-error counts for 7–14 days. If Google has not recovered by 2026-07-24, prepare a high-authority seed sitemap (~1,000 top pages) and request re-indexing. Do not re-expand sitemaps until Google traffic returns.
+
 ### 2026-06-17 — Full-Stack Audit Completed
 - **Trigger:** User requested a comprehensive audit of every facet of alloemmanuals.com (codebase, live site, monetization, VPS, AI discovery, SEO, security).
 - **Report:** `AUDIT-2026-06-17.md` saved in project root.

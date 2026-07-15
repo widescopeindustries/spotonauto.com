@@ -41,6 +41,7 @@ const SITEMAP_INDEXES = [
   'https://alloemmanuals.com/repair/sitemap.xml',
   'https://alloemmanuals.com/tools/sitemap.xml',
   'https://alloemmanuals.com/wiring/sitemap.xml',
+  'https://alloemmanuals.com/bing-supplemental-sitemap.xml',
 ];
 
 function getArg(name, fallback) {

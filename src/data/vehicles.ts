@@ -69,6 +69,7 @@ export const VEHICLE_PRODUCTION_YEARS: Record<string, Record<string, { start: nu
         Bronco2: { start: 1984, end: 1990 },
         Tempo: { start: 1984, end: 1994 },
         Excursion: { start: 2000, end: 2005 },
+        EcoSport: { start: 2018, end: 2022 },
         Flex: { start: 2009, end: 2019 },
         Probe: { start: 1989, end: 1997 },
         'Crown Victoria': { start: 1992, end: 2012 },

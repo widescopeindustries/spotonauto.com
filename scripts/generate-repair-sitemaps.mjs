@@ -113,33 +113,7 @@ async function main() {
         entries.push({ url, lastmod: LAST_MOD, changefreq: 'weekly', priority });
     }
 
-    // ── 1. Curated vehicle/task corpus from validated-vehicles.json ──────────
-    // This is the primary source: every model's confirmed year range × its task list.
-    let corpusVehicles = 0;
-    let corpusTasks = 0;
-    if (existsSync(VEHICLES_PATH)) {
-        const validated = JSON.parse(readFileSync(VEHICLES_PATH, 'utf-8'));
-        for (const [make, models] of Object.entries(validated)) {
-            const makeSlug = slugifyRoutePart(make);
-            if (NOINDEX_MAKES.has(makeSlug)) continue;
-            for (const [model, info] of Object.entries(models)) {
-                if (isNonUsModel(makeSlug, slugifyRoutePart(model))) continue;
-                const modelSlug = slugifyRoutePart(model);
-                const start = info.start || 1982;
-                const end = info.end || 2025;
-                const tasks = info.tasks || VALID_TASKS || [];
-                for (let year = start; year <= end; year++) {
-                    corpusVehicles++;
-                    for (const task of tasks) {
-                        addRepairUrl(year, makeSlug, modelSlug, task, 0.9);
-                        corpusTasks++;
-                    }
-                }
-            }
-        }
-    }
-
-    // ── 2. DB-generated repair profiles (catches anything not in JSON) ───────
+    // ── 1. DB-generated repair profiles (highest confidence) ────────────────
     try {
         const { rows } = await pool.query('SELECT key FROM vehicle_repair_profiles');
         for (const { key } of rows) {
@@ -151,7 +125,7 @@ async function main() {
         console.warn('Could not load vehicle_repair_profiles:', err.message);
     }
 
-    // ── 3. Static VEHICLE_REPAIR_SPECS pages (year-specific only) ────────────
+    // ── 2. Static VEHICLE_REPAIR_SPECS pages (year-specific only) ───────────
     const { VEHICLE_REPAIR_SPECS } = await import(join(ROOT, 'src', 'data', 'vehicle-repair-specs.ts'));
     for (const key of Object.keys(VEHICLE_REPAIR_SPECS)) {
         const parts = key.split('::');
@@ -166,10 +140,11 @@ async function main() {
         }
     }
 
-    await pool.end();
+    // NOTE: The blanket validated-vehicles.json expansion is intentionally removed
+    // to avoid publishing thin, template-only repair pages. Only profiles/specs
+    // with real corpus or generated data are included in the sitemap.
 
-    console.log(`Skipped ${skippedNoindex} noindex / non-US URLs`);
-    console.log(`Curated corpus: ${corpusVehicles} vehicle-years, ${corpusTasks} tasks`);
+    await pool.end();
 
     // ── 5. Deduplicate and write chunks ──────────────────────────────────────
     mkdirSync(OUT_DIR, { recursive: true });

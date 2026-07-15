@@ -1,0 +1,253 @@
+{
+  "date": "2026-06-25",
+  "profitProxy": -21493,
+  "scorecard": {
+    "rate404": 0.009895060220589617,
+    "total5xx": 406,
+    "issues": [
+      {
+        "severity": "high",
+        "metric": "5xx errors",
+        "value": 406,
+        "target": "0",
+        "impact": "Search engines and users hit broken pages"
+      },
+      {
+        "severity": "high",
+        "metric": "404 rate",
+        "value": "0.99%",
+        "target": "< 0.5%",
+        "impact": "Wasted crawl budget + origin load on broken/non-existent URLs"
+      },
+      {
+        "severity": "medium",
+        "metric": "Cloudflare cache ratio",
+        "value": "2.8%",
+        "target": "> 30%",
+        "impact": "Too many requests hit origin; cache rules or TTL can be tuned"
+      }
+    ]
+  },
+  "metrics": {
+    "date": "2026-06-25",
+    "nginx": {
+      "total": 425768,
+      "uniques": 13439,
+      "bytes": 11096764132,
+      "status200": 386896,
+      "status301": 2084,
+      "status302": 0,
+      "status307": 33,
+      "status308": 805,
+      "status400": 169,
+      "status403": 0,
+      "status404": 4213,
+      "status444": 30281,
+      "status499": 56,
+      "status500": 5,
+      "status502": 401,
+      "status503": 0,
+      "status504": 0,
+      "statuses": {
+        "166": 431,
+        "200": 386896,
+        "204": 4,
+        "301": 2084,
+        "304": 434,
+        "307": 33,
+        "308": 805,
+        "400": 169,
+        "404": 4213,
+        "444": 30281,
+        "499": 56,
+        "500": 5,
+        "502": 401,
+        "-": 156,
+        "Z\\xF4\\xE8~j|L\\xDBB\\x11\\x86@": 1,
+        "\\xF1>oQ\\xD3\\xDBR0\\x16\\xF0\\xD2\\xCD\\x99\\xFC\\xBA\\xC8\\xFA\\x00&\\xC0+\\xC0/\\xC0,\\xC00\\xCC\\xA9\\xCC\\xA8\\xC0\\x09\\xC0\\x13\\xC0": 1,
+        "\\xE4\\x00&\\xC0+\\xC0/\\xC0,\\xC00\\xCC\\xA9\\xCC\\xA8\\xC0\\x09\\xC0\\x13\\xC0": 1,
+        "\\xDE\\xEB]*:\\x9DA\\xCD\\x7F\\xE7mX\\x07\\x19\\xEEoX\\xD2": 1,
+        "\\xC7}\\xACZ\\xBA\\xFB\\xFC\\x0F\\xBC\\xB6@q:\\x99\\xFC\\xDC-1\\x8DL\\xCF\\x01\\xB4Mu[": 1,
+        "\\x92\\x12#\\xEB\\x0F\\xB3,\\xDD\\x14z\\x06\\xED\\x1B\\x00&\\xC0+\\xC0/\\xC0,\\xC00\\xCC\\xA9\\xCC\\xA8\\xC0\\x09\\xC0\\x13\\xC0": 1,
+        "\\x8C!'D/\\xF0\\xCAM": 1,
+        "<\\x10k\\xA5\\xBE\\x8F\\xEF<k\\x9D\\xDES\\xF2\\xB0\\xCBe\\xF0\\xFE\\x00\\xA5_\\x15\\x0F\\x96\\x98J\\x8B\\x00&\\xC0+\\xC0/\\xC0,\\xC00\\xCC\\xA9\\xCC\\xA8\\xC0\\x09\\xC0\\x13\\xC0": 1,
+        "\\x00&\\xC0+\\xC0/\\xC0,\\xC00\\xCC\\xA9\\xCC\\xA8\\xC0\\x09\\xC0\\x13\\xC0": 1,
+        "SP1": 1,
+        "k\\xDAR\\xC5\\x80\\xA9\\x94\\x8D\\xD0\\xDE\\xEC\\x99\\xA2\\x7FE}=K\\xEB\\x00&\\xC0+\\xC0/\\xC0,\\xC00\\xCC\\xA9\\xCC\\xA8\\xC0\\x09\\xC0\\x13\\xC0": 1,
+        "G\\x00&\\xC0+\\xC0/\\xC0,\\xC00\\xCC\\xA9\\xCC\\xA8\\xC0\\x09\\xC0\\x13\\xC0": 1,
+        "7\\xF9\\xB7\\xC0An\\xCB\\xCDB\\xABx\\x13\\x09\\xD0\\x92Y\\xA7\\x96\\xE5\\x82\\xC8\\x86\\xEB\\xE5\\xD2\\x00&\\xC0+\\xC0/\\xC0,\\xC00\\xCC\\xA9\\xCC\\xA8\\xC0\\x09\\xC0\\x13\\xC0": 1
+      },
+      "top404s": [
+        {
+          "path": "/",
+          "count": 15
+        },
+        {
+          "path": "/api/v1/courses?per_page=2",
+          "count": 10
+        },
+        {
+          "path": "/ipfs/bafkreicyqcbhpicbos7ev4mrxofwqx6hvvge7pahpta6xuspr44crai5by",
+          "count": 7
+        },
+        {
+          "path": "/robots.txt",
+          "count": 5
+        },
+        {
+          "path": "/classwithtostring.php",
+          "count": 5
+        },
+        {
+          "path": "/apple-touch-icon-precomposed.png",
+          "count": 5
+        },
+        {
+          "path": "/admin.php",
+          "count": 5
+        },
+        {
+          "path": "/officialsite",
+          "count": 4
+        },
+        {
+          "path": "/ioxi-o.php",
+          "count": 4
+        },
+        {
+          "path": "/Alvin9999/https/fanfan1.net/daohang",
+          "count": 4
+        }
+      ],
+      "botHits": 650,
+      "bot200Count": 571,
+      "bot200Bytes": 18589322,
+      "searchBotHits": 11529,
+      "paywall402": 0
+    },
+    "postgres": {
+      "dbSizePretty": "10 GB",
+      "sizeMb": 10241,
+      "apiCustomers": 0,
+      "apiTransactions": 0,
+      "revenueCents": 0,
+      "revenueDollars": 0,
+      "todayRevenueCents": 0,
+      "todayRevenueDollars": 0,
+      "manualEmbeddings": 1835283,
+      "repairProfiles": 25789
+    },
+    "cloudflare": {
+      "requests": 457390,
+      "pageViews": 48597,
+      "bytes": 12878173891,
+      "threats": 0,
+      "uniques": 182888,
+      "cachedBytes": 357273588,
+      "uncachedBytes": 12520900303,
+      "cacheRatio": 0.027742565912212375
+    },
+    "ga4gsc": {
+      "ga4": {
+        "sessions": 7332,
+        "activeUsers": 7196,
+        "newUsers": 7205,
+        "pageViews": 26,
+        "avgDurationSec": 2,
+        "bounceRate": 100,
+        "organicSessions": 39,
+        "organicUsers": 36,
+        "events": [
+          {
+            "event": "session_start",
+            "count": 7211
+          },
+          {
+            "event": "first_visit",
+            "count": 7205
+          },
+          {
+            "event": "scroll",
+            "count": 7120
+          },
+          {
+            "event": "time_on_page",
+            "count": 75
+          },
+          {
+            "event": "user_engagement",
+            "count": 58
+          },
+          {
+            "event": "scroll_depth",
+            "count": 38
+          },
+          {
+            "event": "time_on_page_exit",
+            "count": 36
+          },
+          {
+            "event": "page_view",
+            "count": 26
+          },
+          {
+            "event": "page_view_custom",
+            "count": 14
+          },
+          {
+            "event": "track_impression",
+            "count": 8
+          },
+          {
+            "event": "entry_route_click",
+            "count": 6
+          },
+          {
+            "event": "knowledge_graph_click",
+            "count": 6
+          },
+          {
+            "event": "vehicle_hub_enter",
+            "count": 6
+          },
+          {
+            "event": "repair_guide_open",
+            "count": 4
+          },
+          {
+            "event": "repair_page_view",
+            "count": 4
+          },
+          {
+            "event": "repair_answer_click",
+            "count": 3
+          },
+          {
+            "event": "affiliate_click",
+            "count": 1
+          },
+          {
+            "event": "form_start",
+            "count": 1
+          }
+        ]
+      },
+      "gsc": {
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0,
+        "position": 0,
+        "topQueries": [],
+        "topPages": []
+      }
+    },
+    "infrastructure": {
+      "cacheSize": 529417379,
+      "diskTotal": 105021104128,
+      "diskUsed": 35846754304,
+      "diskFree": 63792271360,
+      "sslExpiry": "2026-08-18",
+      "serviceStatus": "active"
+    }
+  }
+}
