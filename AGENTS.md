@@ -5,6 +5,11 @@ Update it when product decisions, traps, or standing preferences change.
 
 ## Current State Snapshot (2026-06-17 — Post Full-Stack Audit)
 
+### 2026-07-15 — OIDC Discovery compliance fix
+- **Trigger:** Well-known resource scanner flagged missing `subject_types_supported` and `id_token_signing_alg_values_supported` on `/.well-known/openid-configuration`.
+- **Fix:** Added `subject_types_supported: ['public']` and `id_token_signing_alg_values_supported: ['RS256']` to `src/app/.well-known/openid-configuration/route.ts`.
+- **Deploy:** Built locally, rsynced `.next/` to VPS, restarted `alloemmanuals-web`, verified live endpoint returns both fields.
+
 ### 2026-07-15 — AI Citations Audit & Gap-Fill Deploy
 - **Trigger:** User shared Bing Webmaster Tools AI Performance data showing 1,616 citations across 50 sampled queries; Bing is the primary revenue channel.
 - **Actions:**

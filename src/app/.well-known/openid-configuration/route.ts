@@ -12,6 +12,8 @@ export async function GET() {
     token_endpoint: 'https://alloemmanuals.com/.well-known/oauth-authorization-server',
     jwks_uri: 'https://alloemmanuals.com/.well-known/jwks.json',
     userinfo_endpoint: 'https://alloemmanuals.com/.well-known/oauth-authorization-server',
+    subject_types_supported: ['public'],
+    id_token_signing_alg_values_supported: ['RS256'],
     scopes_supported: ['openid', 'read:repair', 'read:dtc', 'read:premium'],
     response_types_supported: ['token'],
     grant_types_supported: ['client_credentials'],
