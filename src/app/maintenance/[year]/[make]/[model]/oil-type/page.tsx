@@ -185,6 +185,17 @@ export default async function OilTypePage({ params }: PageProps) {
           </Link>
         </div>
 
+        <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.05] p-4 mb-8 text-sm text-gray-400">
+          <span className="text-amber-400 font-medium">Sister site:</span> See this spec on{" "}
+          <a
+            href={`https://whattypeofoil.com/${year}/${slugifyRoutePart(displayMake)}/${slugifyRoutePart(displayModel)}/`}
+            className="text-amber-400 hover:text-amber-300 underline"
+          >
+            WhatTypeOfOil.com
+          </a>
+          {" "}— our quick oil type &amp; capacity lookup for every vehicle.
+        </div>
+
         {/* Maintenance specs nav */}
         <div className="flex flex-wrap gap-2 mb-8">
           <span className="text-xs text-gray-500 uppercase tracking-wider py-2">Other specs:</span>

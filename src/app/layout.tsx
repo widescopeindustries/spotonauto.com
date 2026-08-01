@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter, Space_Grotesk } from "next/font/google";
+import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
@@ -9,7 +10,6 @@ import TrackingScript from "@/components/TrackingScript";
 import AmazonOneLink from "@/components/AmazonOneLink";
 import AmazonGeoRedirect from "@/components/AmazonGeoRedirect";
 import { COMPANY_INFO } from "@/lib/companyInfo";
-// SpotOnGuide moved into Providers (client component) for lazy loading
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk", display: "swap" });
@@ -58,22 +58,18 @@ export default function RootLayout({
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt — AI crawler context for AllOEMManuals" />
         <meta name="ai-license" content="https://alloemmanuals.com/license" />
         <meta name='impact-site-verification' {...({ value: '39ff62d6-58f8-468a-80a0-5a794bd799fc' } as any)} />
-        <script
-          type="text/javascript"
+        <Script
+          id="impact-cdn"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `(function(i,m,p,a,c,t){c.ire_o=p;c[p]=c[p]||function(){(c[p].a=c[p].a||[]).push(arguments)};t=a.createElement(m);var z=a.getElementsByTagName(m)[0];t.async=1;t.src=i;z.parentNode.insertBefore(t,z)})('https://utt.impactcdn.com/P-A7329204-a09d-47c6-b03e-929ff1738bb31.js','script','impactStat',document,window);impactStat('transformLinks');impactStat('trackImpression');`
           }}
         />
-        <script
-          type="text/javascript"
+        <Script
+          id="model-context"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `if('modelContext' in navigator){try{navigator.modelContext.provideContext({name:'alloemmanuals',tools:[{name:'getRepairGuide',description:'Get a vehicle-specific repair guide.',inputSchema:{type:'object',properties:{year:{type:'integer'},make:{type:'string'},model:{type:'string'},task:{type:'string'}},required:['year','make','model','task']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/v1/repair?year='+i.year+'&make='+i.make+'&model='+i.model+'&task='+i.task);return r.json();}},{name:'getDTCInfo',description:'Look up diagnostic trouble code.',inputSchema:{type:'object',properties:{code:{type:'string'}},required:['code']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/graph/dtc/'+encodeURIComponent(i.code));return r.json();}}]});}catch(e){}}`
-          }}
-        />
-        <script
-          type="text/javascript"
-          dangerouslySetInnerHTML={{
-            __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "wtdn1ew72d");`
           }}
         />
       </head>
@@ -124,6 +120,7 @@ export default function RootLayout({
                 sameAs: [
                   "https://www.youtube.com/@alloemmanuals",
                   "https://widescopeindustries.com",
+                  "https://whattypeofoil.com",
                   COMPANY_INFO.googleReviewUrl.replace('/review', ''),
                 ],
                 priceRange: "$$",
