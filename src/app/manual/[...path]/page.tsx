@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import {
   buildBreadcrumbs,
   buildManualTitle,
@@ -70,6 +71,13 @@ function getVehicleLabel(segments: string[]): string {
 export default async function ManualBrowserPage({ params }: PageProps) {
   const { path } = await params;
   const normalizedPath = path.map((s) => safeDecodeSegment(s));
+
+  // Kill the /manual/hyperlink/ crawl trap: malformed legacy CHARM URLs that
+  // concatenate path segments infinitely. Hard 404 so Google drops them.
+  if (normalizedPath.some((s) => s.toLowerCase() === 'hyperlink')) {
+    notFound();
+  }
+
   const dbPath = '/' + normalizedPath.map((s) => encodeURIComponent(s)).join('/');
   const page = await fetchManualPage(normalizedPath);
   const breadcrumbs = buildBreadcrumbs(normalizedPath);

@@ -480,6 +480,12 @@ function normalizeCharmHref(href: string, parentSegments: string[]): string {
 
   // Relative path — prepend parent segments
   const relativeSegments = cleanHref.split('/').filter(Boolean).map(safeDecodeUriComponent);
+  // Legacy CHARM links of the form "hyperlink/A/B/C" are absolute from the
+  // manual root, not relative to the current page. Treating them as relative
+  // creates the /manual/hyperlink/... infinite crawl trap.
+  if (relativeSegments[0]?.toLowerCase() === 'hyperlink') {
+    return '/manual/' + relativeSegments.slice(1).map(s => encodeURIComponent(s)).join('/');
+  }
   const fullSegments = [...parentSegments.map(safeDecodeUriComponent), ...relativeSegments];
   return '/manual/' + fullSegments.map(s => encodeURIComponent(s)).join('/');
 }

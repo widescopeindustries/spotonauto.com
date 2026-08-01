@@ -56,6 +56,8 @@ function sanitizeHtml(raw: string): string {
     // Rewrite internal hyperlinks to our manual route
     .replace(/href='\/hyperlink\//g, "href='/manual/")
     .replace(/href="\/hyperlink\//g, 'href="/manual/')
+    .replace(/href='hyperlink\//g, "href='/manual/")
+    .replace(/href="hyperlink\//g, 'href="/manual/')
     // Strip CHARM branding elements
     .replace(/<div[^>]*class=['"]?breadcrumbs['"]?[^>]*>[\s\S]*?<\/div>/gi, '')
     .replace(/<button[\s\S]*?<\/button>/gi, '');

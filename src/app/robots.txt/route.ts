@@ -113,7 +113,6 @@ Disallow: /admin/
 Disallow: /api/internal/
 Disallow: /api/generate-guide
 Disallow: /community/*?page=
-Disallow: /manual/hyperlink/
 Disallow: /guides/
 Disallow: /repairs/
 Disallow: /symptoms/
