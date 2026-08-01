@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const gen = page ? findGenerationForYear(parseInt(year, 10), page.generations) : null;
   const fluidType = gen?.specs['Fluid Type'] || '';
 
-  const title = `${year} ${displayMake} ${displayModel} Brake Fluid Type${fluidType ? ` — ${fluidType.split('(')[0].trim()}` : ''} | AllOEMManuals`;
+  const baseTitle = `${year} ${displayMake} ${displayModel} Brake Fluid Type`;
+  const title = seoTitle(`${baseTitle}${fluidType ? ` — ${fluidType.split('(')[0].trim()}` : ''}`, baseTitle);
   const description = `${year} ${displayMake} ${displayModel} brake fluid type and capacity from the factory service manual. DOT spec, flush interval, and exact capacity for your model year.`;
 
   return {

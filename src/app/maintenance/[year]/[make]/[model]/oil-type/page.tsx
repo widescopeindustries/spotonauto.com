@@ -6,6 +6,7 @@ import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { year, make, model } = await params;
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
-  const title = `${year} ${displayMake} ${displayModel} Oil Type & Capacity | AllOEMManuals`;
+  const title = seoTitle(`${year} ${displayMake} ${displayModel} Oil Type & Capacity`);
   const description = `Exact engine oil type, capacity, and OEM spec for the ${year} ${displayMake} ${displayModel}. Factory service manual data with filter part number, drain plug torque, and step-by-step DIY guide.`;
   return {
     title,

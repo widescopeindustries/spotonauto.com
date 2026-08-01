@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const gen = page ? findGenerationForYear(parseInt(year, 10), page.generations) : null;
   const fluid = gen?.specs['Fluid'] || gen?.specs['Transmission Fluid'] || Object.entries(gen?.specs || {}).find(([k]) => k.toLowerCase().includes('fluid'))?.[1] || '';
 
-  const title = `${year} ${displayMake} ${displayModel} Transmission Fluid Type${fluid ? ` — ${fluid.split('(')[0].trim()}` : ''} | AllOEMManuals`;
+  const baseTitle = `${year} ${displayMake} ${displayModel} Transmission Fluid Type`;
+  const title = seoTitle(`${baseTitle}${fluid ? ` — ${fluid.split('(')[0].trim()}` : ''}`, baseTitle);
   const description = `${year} ${displayMake} ${displayModel} transmission fluid type and capacity from the factory service manual. Exact ATF or MTF spec, drain-and-fill vs dry-fill capacity, and change interval.`;
 
   return {

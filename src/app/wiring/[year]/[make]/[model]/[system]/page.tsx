@@ -17,9 +17,12 @@ import {
   type WiringDiagramIndex,
 } from '@/lib/wiringData';
 import WiringSeoTracker from '@/app/wiring/WiringSeoTracker';
+import { fitSeoTitle } from '@/lib/seoTitle';
 import WiringTrackedLink from '@/app/wiring/WiringTrackedLink';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
+import SystemPartsAffiliate from '@/components/SystemPartsAffiliate';
+import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import {
   getCodeLinksForWiringSystem,
   getRepairLinksForWiringVehicle,
@@ -170,7 +173,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const vehicleLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
   const canonical = `https://alloemmanuals.com${buildWiringSeoHref(vehicle, systemSlug)}`;
-  const title = `${vehicleLabel} ${systemMeta.title} | Free OEM Schematics`;
+  const title = fitSeoTitle(' | Free OEM Schematics', `${vehicleLabel} ${systemMeta.title}`);
   const description = `${vehicleLabel} ${systemMeta.title}: ${systemMeta.intro} Free access to searchable OEM electrical schematics, connector views, and diagram jump points for the exact variant and system.`;
 
   return {
@@ -583,6 +586,15 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         )}
       </section>
 
+      <section className="max-w-6xl mx-auto px-4 pb-10">
+        <SystemPartsAffiliate
+          contextLabel={`${vehicleLabel} ${systemMeta.shortLabel}`}
+          vehicle={vehicleLabel}
+          systemSlug={systemSlug}
+          surface={`wiring-${systemSlug}`}
+        />
+      </section>
+
       <section className="max-w-6xl mx-auto px-4 pb-16 grid lg:grid-cols-2 gap-6">
         {graphBlocks.length > 0 && (
           <>
@@ -654,6 +666,14 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
           compact
         />
       </section>
+
+      <StickyAffiliateBar
+        vehicle={vehicleLabel}
+        intent={systemMeta.shortLabel}
+        query={`${vehicleLabel} ${systemMeta.shortLabel} parts`}
+        subtag={`wiring-${systemSlug}`}
+        variant="mixed"
+      />
     </main>
   );
 }

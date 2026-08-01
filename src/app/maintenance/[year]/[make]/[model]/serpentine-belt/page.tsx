@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear, TOOL_TYPE_META } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -29,7 +30,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const routing = gen?.specs['Routing'] || gen?.specs['Belt Routing'] || '';
   const partNum = gen?.specs['Part Number'] || gen?.specs['Belt PN'] || '';
 
-  const title = `${year} ${displayMake} ${displayModel} Serpentine Belt${partNum ? ` — ${partNum}` : ''} | AllOEMManuals`;
+  const baseTitle = `${year} ${displayMake} ${displayModel} Serpentine Belt`;
+  const title = seoTitle(`${baseTitle}${partNum ? ` — ${partNum}` : ''}`, baseTitle);
   const description = `${year} ${displayMake} ${displayModel} serpentine belt routing diagram and replacement guide.${partNum ? ` OEM belt: ${partNum}.` : ''} Includes tensioner check, routing diagram, and squeal diagnosis from the factory manual.`;
 
   return {

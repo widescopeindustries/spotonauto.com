@@ -10,6 +10,7 @@ import {
 } from "@/lib/tireRackAffiliate";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { year, make, model } = await params;
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
-  const title = `${year} ${displayMake} ${displayModel} Tire Size & Pressure | AllOEMManuals`;
+  const title = seoTitle(`${year} ${displayMake} ${displayModel} Tire Size & Pressure`);
   const description = `Exact OEM tire size, pressure, and load rating for the ${year} ${displayMake} ${displayModel}. Factory spec from the service manual.`;
   return {
     title,

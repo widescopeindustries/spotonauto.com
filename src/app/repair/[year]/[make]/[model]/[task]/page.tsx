@@ -32,6 +32,7 @@ import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildRepairUrl } from '@/lib/vehicleIdentity';
 import { buildVehicleHubGraphViaGateway } from '@/lib/vehicleHubGateway';
+import { seoTitle } from '@/lib/seoTitle';
 
 // ISR: cache repair pages for 6 hours (matches wiring pages)
 export const revalidate = 21600;
@@ -2038,9 +2039,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const exactGuideProfile = await getExactGuideProfile(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
 
     const taskMeta = TASK_META[canonicalTask];
-    const title = taskMeta
-        ? `${vehicleName} ${taskMeta.title}${exactGuideProfile?.titleSuffix ? ` | ${exactGuideProfile.titleSuffix}` : ''} | AllOEMManuals`
-        : `${vehicleName} ${cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Guide | AllOEMManuals`;
+    const baseTitle = taskMeta
+        ? `${vehicleName} ${taskMeta.title}`
+        : `${vehicleName} ${cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Guide`;
+    const title = taskMeta && exactGuideProfile?.titleSuffix
+        ? seoTitle(`${baseTitle} | ${exactGuideProfile.titleSuffix}`, baseTitle)
+        : seoTitle(baseTitle);
     const description = taskMeta
         ? `${taskMeta.description.replace('{v}', vehicleName)}${exactGuideProfile?.descriptionSuffix ? ` ${exactGuideProfile.descriptionSuffix}` : ''}`
         : `DIY ${cleanTask} for your ${vehicleName}. Step-by-step guide with tools, parts list, and safety tips. Save $100–$400 vs. the shop.`;

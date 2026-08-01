@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const gen = page ? findGenerationForYear(parseInt(year, 10), page.generations) : null;
   const lowBeam = gen?.specs['Low Beam'] || '';
 
-  const title = `${year} ${displayMake} ${displayModel} Headlight Bulb Size${lowBeam ? ` — ${lowBeam.split('(')[0].trim()}` : ''} | AllOEMManuals`;
+  const baseTitle = `${year} ${displayMake} ${displayModel} Headlight Bulb Size`;
+  const title = seoTitle(`${baseTitle}${lowBeam ? ` — ${lowBeam.split('(')[0].trim()}` : ''}`, baseTitle);
   const description = `${year} ${displayMake} ${displayModel} headlight bulb type: low beam, high beam, and fog light specs from the factory service manual. Exact replacement part numbers and installation tips.`;
 
   return {

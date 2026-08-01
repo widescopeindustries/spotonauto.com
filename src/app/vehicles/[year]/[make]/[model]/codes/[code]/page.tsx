@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { getVehicleDtcFlow } from '@/lib/vehicleLane';
 import { fetchCharmPage } from '@/lib/charmParser';
 import { slugifyRoutePart } from '@/data/vehicles';
+import { seoTitle } from '@/lib/seoTitle';
 
 export const revalidate = 21600; // 6 hour ISR
 
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const upperCode = code.toUpperCase();
   const displayMake = decodeURIComponent(make);
   const displayModel = decodeURIComponent(model);
-  const title = `${upperCode} on ${year} ${displayMake} ${displayModel} — OEM Diagnostic Flow | AllOEMManuals`;
+  const title = seoTitle(`${upperCode} on ${year} ${displayMake} ${displayModel} — OEM Diagnostic Flow`, `${upperCode} on ${year} ${displayMake} ${displayModel} Diagnostic Flow`);
   const description = `Factory diagnostic procedure for code ${upperCode} on the ${year} ${displayMake} ${displayModel}. Step-by-step flowchart from the OEM service manual with diagrams and test procedures.`;
   const pageUrl = `https://alloemmanuals.com/vehicles/${year}/${make}/${model}/codes/${code}`;
 

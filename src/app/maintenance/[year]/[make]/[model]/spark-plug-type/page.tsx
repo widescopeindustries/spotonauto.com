@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const gen = page ? findGenerationForYear(parseInt(year, 10), page.generations) : null;
   const plug = gen?.specs['Plug'] || gen?.specs['Spark Plug'] || Object.entries(gen?.specs || {}).find(([k]) => k.toLowerCase().includes('plug'))?.[1] || '';
 
-  const title = `${year} ${displayMake} ${displayModel} Spark Plug Type${plug ? ` — ${plug.split('(')[0].trim()}` : ''} | AllOEMManuals`;
+  const baseTitle = `${year} ${displayMake} ${displayModel} Spark Plug Type`;
+  const title = seoTitle(`${baseTitle}${plug ? ` — ${plug.split('(')[0].trim()}` : ''}`, baseTitle);
   const description = `${year} ${displayMake} ${displayModel} spark plug type, gap, and torque from the factory service manual. Exact part numbers and replacement interval for the ${year} model year.`;
 
   return {

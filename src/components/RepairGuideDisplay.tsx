@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import type { RepairGuide } from '../types';
 import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon, ShieldCheckIcon, ClockIcon } from './Icons';
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
@@ -33,13 +34,11 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                 ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}
                             </span>
                         </div>
-                        <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter mb-4 drop-shadow-sm leading-tight">
+                        <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter mb-4 drop-shadow-sm leading-tight">
                             {guide.title}
-                        </h1>
+                        </h2>
                         <div className="flex flex-wrap items-center gap-3">
-                            <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm font-bold border border-blue-500/30 uppercase tracking-wider">
-                                {guide.vehicle}
-                            </span>
+                            <VehicleHubLink vehicle={guide.vehicle} />
                             <div className="flex items-center gap-4 ml-2 border-l border-white/10 pl-4">
                                 <div className="flex items-center gap-2">
                                     <ClockIcon className="w-4 h-4 text-gray-500" />
@@ -199,5 +198,35 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
         </div>
     );
 };
+
+function VehicleHubLink({ vehicle }: { vehicle: string }) {
+    const [href, setHref] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const match = window.location.pathname.match(/^\/repair\/([^/]+)\/([^/]+)\/([^/]+)\//);
+        if (match) {
+            const [, year, make, model] = match;
+            setHref(`/vehicles/${year}/${make}/${model}`);
+        }
+    }, []);
+
+    if (!href) {
+        return (
+            <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm font-bold border border-blue-500/30 uppercase tracking-wider">
+                {vehicle}
+            </span>
+        );
+    }
+
+    return (
+        <Link
+            href={href}
+            className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm font-bold border border-blue-500/30 uppercase tracking-wider hover:bg-blue-500/30 transition"
+        >
+            {vehicle}
+        </Link>
+    );
+}
 
 export default RepairGuideDisplay;

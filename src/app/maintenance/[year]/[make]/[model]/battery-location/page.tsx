@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear, TOOL_TYPE_META } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -29,7 +30,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const location = gen?.specs['Location'] || gen?.specs['Battery Location'] || page?.quickAnswer || '';
   const size = gen?.specs['Battery Size'] || gen?.specs['Group'] || '';
 
-  const title = `${year} ${displayMake} ${displayModel} Battery Location${size ? ` — ${size}` : ''} | AllOEMManuals`;
+  const baseTitle = `${year} ${displayMake} ${displayModel} Battery Location`;
+  const title = seoTitle(`${baseTitle}${size ? ` — ${size}` : ''}`, baseTitle);
   const description = `${year} ${displayMake} ${displayModel} battery location: ${location || 'under the hood'}. ${size ? `Size: ${size}. ` : ''}Step-by-step replacement guide with group size, CCA, and terminal orientation from the factory manual.`;
 
   return {

@@ -21,6 +21,7 @@ import { buildRepairUrl, buildVehicleNodeId } from '@/lib/vehicleIdentity';
 import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildVehicleHubGraphViaGateway } from '@/lib/vehicleHubGateway';
+import { seoTitle } from '@/lib/seoTitle';
 
 interface PageProps {
   params: Promise<{
@@ -363,7 +364,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const vehicleLabel = `${resolvedYear} ${originalMake} ${originalModel}`;
   return {
-    title: `${vehicleLabel} Repair Hub — Free DIY Guides & Specs | AllOEMManuals`,
+    title: seoTitle(`${vehicleLabel} Repair Guides & Specs`),
     description: `Fix your ${vehicleLabel} yourself. Free step-by-step repair guides, wiring diagrams, trouble codes, and factory specs. Save hundreds vs. the shop.`,
     alternates: {
       canonical: `https://alloemmanuals.com/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`,

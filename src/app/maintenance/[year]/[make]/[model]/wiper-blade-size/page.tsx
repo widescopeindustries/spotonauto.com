@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear, TOOL_TYPE_META } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -29,7 +30,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const driver = gen?.specs['Driver'] || gen?.specs['Driver Side'] || gen?.specs['Front Driver'] || '';
   const passenger = gen?.specs['Passenger'] || gen?.specs['Passenger Side'] || gen?.specs['Front Passenger'] || '';
 
-  const title = `${year} ${displayMake} ${displayModel} Wiper Blade Size${driver ? ` — ${driver}` : ''} | AllOEMManuals`;
+  const baseTitle = `${year} ${displayMake} ${displayModel} Wiper Blade Size`;
+  const title = seoTitle(`${baseTitle}${driver ? ` — ${driver}` : ''}`, baseTitle);
   const description = `${year} ${displayMake} ${displayModel} wiper blade size: Driver ${driver || 'TBD'}, Passenger ${passenger || 'TBD'}. OEM replacement sizes and installation tips from the factory service manual.`;
 
   return {

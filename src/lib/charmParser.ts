@@ -1,4 +1,5 @@
 import { CHARM_ARCHIVE_BASE } from '@/lib/charmBase';
+import { seoTitle } from '@/lib/seoTitle';
 
 // ─── Factory Manual Archive HTML Parser ───────────────────────────────────────
 // Parses HTML responses from the cached manual archive into structured data
@@ -508,6 +509,12 @@ function sanitizeContentHtml(html: string, pathSegments: string[]): string {
     `$1${CHARM_IMAGE_BASE}/$2$3`
   );
 
+  // Ensure every <img> has an alt attribute (Bing flags images missing alt)
+  sanitized = sanitized.replace(
+    /<img(?![^>]*\balt=)([^>]*)>/gi,
+    '<img alt="Factory service manual diagram"$1>'
+  );
+
   // Rewrite internal links to /manual/... paths
   sanitized = sanitized.replace(
     /(<a[^>]+href=['"])([^'"#][^'"]*?)(['"][^>]*>)/gi,
@@ -608,7 +615,7 @@ export function buildManualTitle(pathSegments: string[]): string {
 
   // Deeper paths: show last segment + vehicle context
   const vehicle = decoded.slice(0, 3).join(' ');
-  return `${last} - ${vehicle} Service Manual | AllOEMManuals`;
+  return seoTitle(`${last} - ${vehicle} Service Manual`, `${vehicle} Service Manual`);
 }
 
 export function buildManualDescription(pathSegments: string[]): string {

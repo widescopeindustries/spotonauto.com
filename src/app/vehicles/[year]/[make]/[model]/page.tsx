@@ -10,6 +10,7 @@ import { generateShopAllLinks } from '@/services/affiliateService';
 import AffiliateLink from '@/components/AffiliateLink';
 import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import VehicleLaneClient from './VehicleLaneClient';
+import { seoTitle } from '@/lib/seoTitle';
 
 /**
  * Detect variant-slug URLs like /vehicles/2011/ford/ranger-2d-pickup-extra-cab
@@ -130,14 +131,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   let description: string;
 
   if (topicSnippet) {
-    title = `${vehicleLabel} ${topicSnippet} & Factory Specs | AllOEMManuals`;
+    title = seoTitle(`${vehicleLabel} ${topicSnippet} & Factory Specs`, `${vehicleLabel} ${topicSnippet}`);
   } else if (topRepairTasks.length > 0) {
     const tasksText = topRepairTasks.length > 2
       ? `${topRepairTasks.slice(0, 2).join(', ')} & More`
       : topRepairTasks.join(', ');
-    title = `${vehicleLabel} ${tasksText} | AllOEMManuals`;
+    title = seoTitle(`${vehicleLabel} ${tasksText}`, `${vehicleLabel} Repair Guides`);
   } else {
-    title = `${vehicleLabel} Repair Guides, DTC Codes & Factory Specs | AllOEMManuals`;
+    title = seoTitle(`${vehicleLabel} Repair Guides, DTC Codes & Factory Specs`, `${vehicleLabel} Repair Guides & Factory Specs`);
   }
 
   if (specsSnippet) {

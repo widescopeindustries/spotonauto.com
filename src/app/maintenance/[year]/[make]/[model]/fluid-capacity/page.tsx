@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getToolPagesForVehicle, findGenerationForYear } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const gen = page ? findGenerationForYear(parseInt(year, 10), page.generations) : null;
   const oilCap = gen?.specs['Engine Oil'] || Object.entries(gen?.specs || {}).find(([k]) => k.toLowerCase().includes('oil'))?.[1] || '';
 
-  const title = `${year} ${displayMake} ${displayModel} Fluid Capacities${oilCap ? ` — ${oilCap.split('(')[0].trim()}` : ''} | AllOEMManuals`;
+  const baseTitle = `${year} ${displayMake} ${displayModel} Fluid Capacities`;
+  const title = seoTitle(`${baseTitle}${oilCap ? ` — ${oilCap.split('(')[0].trim()}` : ''}`, baseTitle);
   const description = `${year} ${displayMake} ${displayModel} fluid capacity chart: engine oil, coolant, transmission fluid, brake fluid, and power steering from the factory service manual.`;
 
   return {

@@ -5,6 +5,7 @@ import CodePageClient from './CodePageClient';
 import { getManualSectionLinksForCode } from '@/lib/manualSectionLinks';
 import { getDtcCrossVehicleSummary } from '@/lib/dtcCrossVehicle';
 import { getDTCGraphData } from '@/lib/graphQueries';
+import { seoTitle } from '@/lib/seoTitle';
 
 interface PageProps {
     params: Promise<{ code: string }>;
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const oemSuffix = oemMeta && oemMeta.n > 0
         ? ` Covers ${oemMeta.n}+ vehicles.`
         : '';
-    const title = `${dtc.code}: ${dtc.title} — Causes & Fix | AllOEMManuals`;
+    const title = seoTitle(`${dtc.code}: ${dtc.title} — Causes & Fix`, `${dtc.code}: ${dtc.title}`);
     let description = `What is ${dtc.code}? ${dtc.title} — ${dtc.severity} severity OBD2 trouble code. Learn the likely causes, symptom clues, diagnostic steps, and typical repair cost: ${dtc.estimatedCostRange}.${oemSuffix} Free step-by-step diagnosis and repair guide from AllOEMManuals.`;
     if (description.length < 150) {
       description = `${description} Browse related ${dtc.code} fixes, wiring diagrams, and factory service manual references for the affected system.`;

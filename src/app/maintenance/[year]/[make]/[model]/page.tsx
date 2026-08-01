@@ -5,6 +5,7 @@ import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { getToolPagesForVehicle } from "@/data/tools-pages";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
+import { seoTitle } from "@/lib/seoTitle";
 import KitCTA from '@/components/KitCTA';
 
 export const revalidate = 86400;
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { year, make, model } = await params;
   const displayMake = getDisplayName(make, "make");
   const displayModel = getDisplayName(model, "model");
-  const title = `${year} ${displayMake} ${displayModel} Maintenance Specs | AllOEMManuals`;
+  const title = seoTitle(`${year} ${displayMake} ${displayModel} Maintenance Specs`);
   const description = `Factory maintenance specifications for the ${year} ${displayMake} ${displayModel}: oil type, capacity, tire size, pressure, coolant, spark plugs, transmission fluid, and more from the OEM service manual.`;
   return {
     title,
