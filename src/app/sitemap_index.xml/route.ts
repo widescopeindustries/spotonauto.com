@@ -16,6 +16,10 @@ const ROUTE_SITEMAPS = [
   `${HOST}/maintenance/sitemap.xml`,
   `${HOST}/manual/sitemap.xml`,
   `${HOST}/vehicles/sitemap.xml`,
+  `${HOST}/repair/sitemap.xml`,
+  `${HOST}/repair/winners/sitemap.xml`,
+  `${HOST}/wiring/sitemap.xml`,
+  `${HOST}/tools/sitemap.xml`,
 ];
 
 /**
