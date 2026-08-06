@@ -191,6 +191,41 @@ const Footer = () => {
                     </p>
                 </div>
 
+                {/* Network Sister Sites */}
+                <div className="mt-6 pt-4 border-t border-white/5 text-center">
+                    <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-mono">
+                        Widescope Industries Network
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
+                        <a
+                            href="https://whattypeofoil.com"
+                            target="_blank"
+                            rel="noopener"
+                            className="text-amber-400/90 hover:text-amber-300 underline transition-colors"
+                        >
+                            WhatTypeOfOil.com — Oil Spec &amp; Capacity Lookup
+                        </a>
+                        <span className="text-gray-600">&bull;</span>
+                        <a
+                            href="https://whattiresfitmy.com"
+                            target="_blank"
+                            rel="noopener"
+                            className="text-cyan-400/90 hover:text-cyan-300 underline transition-colors"
+                        >
+                            WhatTiresFitMy.com — Tire Size &amp; Offset Calculator
+                        </a>
+                        <span className="text-gray-600">&bull;</span>
+                        <a
+                            href="https://youvselon.com"
+                            target="_blank"
+                            rel="noopener"
+                            className="text-gold hover:text-amber-400 underline transition-colors"
+                        >
+                            YouVsElon.com — Live Wealth Velocity Terminal
+                        </a>
+                    </div>
+                </div>
+
                 {/* Affiliate Disclosure */}
                 <div className="mt-4 pt-4 border-t border-white/5 text-center">
                     <p className="text-xs text-[#6E6E80]">
