@@ -17,12 +17,21 @@ const ALLOW_LIST = [
   'Googlebot','Bingbot','Googlebot-Mobile','Googlebot-Image','Googlebot-Video',
   'Googlebot-News','AdsBot-Google','Mediapartners-Google','BingPreview','MicrosoftPreview',
   'DuckDuckBot','DuckAssistBot','ChatGPT-User',
-  // SEO audits requested by site owner
-  'SE Ranking','se-ranking-bot','seranking','SiteAuditBot','SERPStatBot',
+  // SE Ranking audit crawlers & backlinks bots
+  'SEBot-WA','SERankingBacklinksBot','SERankingPCFBot','SEBot','SE Ranking','se-ranking-bot','seranking','SiteAuditBot','SERPStatBot',
   // Affiliate / ad verification crawlers (must access site to approve programs)
   'Impact.com Agent','Impact','Rakuten','CJ Affiliate','Commission Junction',
   'ShareASale','Awin','Partnerize','Skimlinks','VigLink','Sovrn',
 ];
+
+const SE_RANKING_IPS = new Set([
+  '5.9.48.208', '23.88.36.149', '37.27.13.192', '37.27.22.37', '37.27.22.127',
+  '37.27.29.8', '46.4.81.149', '62.238.32.219', '116.202.175.208', '136.243.103.47',
+  '138.201.137.152', '142.132.195.214', '144.76.14.242', '144.76.15.151', '144.76.69.81',
+  '144.76.164.62', '144.76.237.123', '162.55.94.175', '162.55.94.176', '162.55.244.19',
+  '167.233.95.57', '167.233.145.180', '167.233.148.147', '167.233.156.129', '168.119.64.236',
+  '176.9.41.54', '176.9.64.179', '176.9.74.49', '178.63.105.151'
+]);
 
 const MALICIOUS_BOTS = [
   'AhrefsBot','SemrushBot','DotBot','MJ12bot','DataForSeoBot',
@@ -86,7 +95,9 @@ function normalizeUA(request) {
   return (request.headers.get('User-Agent') || '').toLowerCase().trim();
 }
 
-function isAllowedBot(ua) {
+function isAllowedBot(request, ua) {
+  const ip = request.headers.get('CF-Connecting-IP');
+  if (ip && SE_RANKING_IPS.has(ip)) return true;
   if (!ua) return false;
   const lower = ua.toLowerCase();
   for (const a of ALLOW_LIST) {
@@ -362,7 +373,7 @@ export default {
     const acceptHeader = request.headers.get('Accept') || '';
 
     // ── 2. Allowed bots (search + citation) pass through ──
-    if (isAllowedBot(ua)) {
+    if (isAllowedBot(request, ua)) {
       return fetch(request);
     }
 

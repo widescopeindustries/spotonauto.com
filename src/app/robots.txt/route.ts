@@ -95,6 +95,30 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /*?_rsc*
 
+User-Agent: SEBot-WA
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?_rsc*
+
+User-Agent: SERankingBacklinksBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?_rsc*
+
+User-Agent: SERankingPCFBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?_rsc*
+
+User-Agent: SEBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?_rsc*
+
 User-Agent: SE Ranking
 Allow: /
 Disallow: /admin/
