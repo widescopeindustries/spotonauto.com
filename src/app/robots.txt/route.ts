@@ -95,6 +95,30 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /*?_rsc*
 
+User-Agent: SE Ranking
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?_rsc*
+
+User-Agent: se-ranking-bot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?_rsc*
+
+User-Agent: seranking
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?_rsc*
+
+User-Agent: SiteAuditBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?_rsc*
+
 User-Agent: AhrefsBot
 Disallow: /
 

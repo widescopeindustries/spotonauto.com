@@ -17,6 +17,8 @@ const ALLOW_LIST = [
   'Googlebot','Bingbot','Googlebot-Mobile','Googlebot-Image','Googlebot-Video',
   'Googlebot-News','AdsBot-Google','Mediapartners-Google','BingPreview','MicrosoftPreview',
   'DuckDuckBot','DuckAssistBot','ChatGPT-User',
+  // SEO audits requested by site owner
+  'SE Ranking','se-ranking-bot','seranking','SiteAuditBot','SERPStatBot',
   // Affiliate / ad verification crawlers (must access site to approve programs)
   'Impact.com Agent','Impact','Rakuten','CJ Affiliate','Commission Junction',
   'ShareASale','Awin','Partnerize','Skimlinks','VigLink','Sovrn',
@@ -46,7 +48,7 @@ const PAYWALL_LIST = [
   'CommonCrawl','CCBot','Cohere','Crawlspace','Brightbot','KangarooBot',
   'ImagesiftBot','OmniBot','PanguBot','PetalBot','VelenPublicWebCrawler',
   'iaskspider','ICC-Crawler','GingerCrawler','Linguee Bot',
-  'Magellan','Sidetrade','Simpple','SiteAuditBot','Timpibot','Yetibot',
+  'Magellan','Sidetrade','Simpple','Timpibot','Yetibot',
   'Zyte','Scrapy','AlexaWebSearch',
   // LLM platform crawlers
   'LLM-User','AI2Bot','OAI-SearchBot-Log','OAI-SearchBot-Preview','OAI-SearchBot-User',
@@ -74,6 +76,7 @@ const BANDWIDTH_THEFT_ASNS = {
   150436: 'Byteplus Pte. Ltd.',
   45899: 'VNPT Corp',
   14061: 'DigitalOcean, LLC',
+  132203: 'Tencent Building, Kejizhongyi Avenue',
   // 8075 Microsoft left out intentionally — Bing crawlers use it.
 };
 
@@ -233,7 +236,7 @@ function build402Response(url, preferMarkdown = false) {
     : 'https://alloemmanuals.com/api/premium-repair-data';
 
   if (preferMarkdown || apiEquivalent) {
-    return new Response(build402Markdown(url), {
+    return markBotResponse(new Response(build402Markdown(url), {
       status: 402,
       headers: {
         'Content-Type': 'text/markdown; charset=utf-8',
@@ -242,7 +245,7 @@ function build402Response(url, preferMarkdown = false) {
         'Link': `<https://alloemmanuals.com/.well-known/acp.json>; rel="payment", <${premiumApi}>; rel="premium-api"`,
         'Cache-Control': 'no-store',
       },
-    });
+    }));
   }
 
   const body = {
@@ -287,7 +290,7 @@ function build402Response(url, preferMarkdown = false) {
       ],
     },
   };
-  return new Response(JSON.stringify(body), {
+  return markBotResponse(new Response(JSON.stringify(body), {
     status: 402,
     headers: {
       'Content-Type': 'application/json',
@@ -296,7 +299,7 @@ function build402Response(url, preferMarkdown = false) {
       'Link': `<https://alloemmanuals.com/.well-known/acp.json>; rel="payment", <${premiumApi}>; rel="premium-api"`,
       'Cache-Control': 'no-store',
     },
-  });
+  }));
 }
 
 function build429Response() {
@@ -304,21 +307,27 @@ function build429Response() {
     error: 'Too Many Requests',
     message: 'Crawl rate exceeded. Reduce frequency or visit https://alloemmanuals.com/.well-known/acp.json for payment options.',
   };
-  return new Response(JSON.stringify(body), {
+  return markBotResponse(new Response(JSON.stringify(body), {
     status: 429,
     headers: {
       'Content-Type': 'application/json',
       'Retry-After': '60',
       'Cache-Control': 'no-store',
     },
-  });
+  }));
 }
 
 function build403Response() {
-  return new Response('Forbidden', {
+  return markBotResponse(new Response('Forbidden', {
     status: 403,
     headers: { 'Cache-Control': 'no-store' },
-  });
+  }));
+}
+
+function markBotResponse(response) {
+  response.headers.set('Set-Cookie', 'aom_analytics=0; Path=/; Max-Age=86400; Secure; SameSite=Lax');
+  response.headers.set('X-Traffic-Type', 'bot');
+  return response;
 }
 
 function isBandwidthTheftAsn(request) {
@@ -381,7 +390,7 @@ export default {
       // If they hit a vehicle page, redirect them to the clean paid feed
       const apiDataUrl = toApiDataUrl(url);
       if (apiDataUrl) {
-        return new Response(null, {
+        return markBotResponse(new Response(null, {
           status: 307,
           headers: {
             'Location': `https://alloemmanuals.com${apiDataUrl}`,
@@ -389,7 +398,7 @@ export default {
             'Cache-Control': 'no-store',
             'X-Bot-Policy': 'paywalled-training-crawler-redirect-to-feed',
           },
-        });
+        }));
       }
 
       const acceptHeader = request.headers.get('Accept') || '';
@@ -430,7 +439,7 @@ export default {
     if (isGenericBot(ua)) {
       const apiDataUrl = toApiDataUrl(url);
       if (apiDataUrl) {
-        return new Response(null, {
+        return markBotResponse(new Response(null, {
           status: 307,
           headers: {
             'Location': `https://alloemmanuals.com${apiDataUrl}`,
@@ -438,7 +447,7 @@ export default {
             'Cache-Control': 'no-store',
             'X-Bot-Policy': 'paywalled-bot-redirect-to-feed',
           },
-        });
+        }));
       }
       const acceptHeader = request.headers.get('Accept') || '';
       return build402Response(url, acceptHeader.includes('text/markdown'));
