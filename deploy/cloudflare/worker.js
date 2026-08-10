@@ -22,6 +22,7 @@ const ALLOW_LIST = [
   // Affiliate / ad verification crawlers (must access site to approve programs)
   'Impact.com Agent','Impact','Rakuten','CJ Affiliate','Commission Junction',
   'ShareASale','Awin','Partnerize','Skimlinks','VigLink','Sovrn',
+  'Monetag','Propeller','PropellerAds',
 ];
 
 const SE_RANKING_IPS = new Set([
