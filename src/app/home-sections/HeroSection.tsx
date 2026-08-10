@@ -70,7 +70,7 @@ export default function HeroSection() {
 
         {/* Glass morphism vehicle picker — frosted over the grid */}
         <div className="mx-auto mt-10 max-w-3xl">
-          <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-2xl p-6 sm:p-8 shadow-[0_0_80px_-20px_rgba(0,212,255,0.12)] overflow-hidden">
+          <div className="relative rounded-2xl border border-white/[0.08] bg-[#121319]/90 backdrop-blur-md p-6 sm:p-8 shadow-[0_0_80px_-20px_rgba(0,212,255,0.12)] overflow-hidden">
             {/* Inner gradient border shimmer */}
             <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
               background: "linear-gradient(135deg, rgba(0,212,255,0.08) 0%, transparent 50%, rgba(255,107,0,0.05) 100%)",

@@ -144,9 +144,9 @@ const ServiceManualGuide: React.FC<ServiceManualGuideProps> = ({ guide, onReset,
             <header className="manual-header">
                 <div className="manual-header-inner">
                     <div className="manual-badge">SERVICE MANUAL</div>
-                    <h1 className="manual-title">
+                    <h2 className="manual-title">
                         {guide.title}
-                    </h1>
+                    </h2>
                     <div className="manual-vehicle">{guide.vehicle}</div>
                     <div className="manual-meta">
                         <span className="manual-meta-item">

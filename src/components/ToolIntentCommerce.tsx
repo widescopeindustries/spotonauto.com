@@ -3,6 +3,7 @@ import type { ToolPage } from '@/data/tools-pages';
 import type { AmazonCtaVariant } from '@/lib/abTests';
 import { getAmazonCtaLabel } from '@/lib/abTests';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { buildPartsGeekSearchUrl } from '@/lib/partsgeekAffiliate';
 import { getToolSpecHighlights } from '@/lib/toolIntentOffers';
 import { Wrench, Package, AlertCircle, ShieldCheck, ArrowRight } from 'lucide-react';
 
@@ -213,17 +214,29 @@ export default function ToolIntentCommerce({ page, ctaVariant = 'A' }: ToolInten
             <h3 className="mt-2.5 text-xl font-bold text-white leading-snug">{primary.title}</h3>
             <p className="mt-1 text-sm text-gray-300 leading-relaxed max-w-2xl">{primary.subtitle}</p>
           </div>
-          <AffiliateLink
-            href={buildAmazonSearchUrl(`${vehicleName} ${primary.query}`, 'automotive', subtag)}
-            partName={primary.title}
-            vehicle={vehicleName}
-            pageType="parts_page"
-            subtag={subtag}
-            className="shrink-0 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-6 py-3 text-sm font-bold text-black shadow-[0_4px_12px_rgba(245,158,11,0.2)] transition-all duration-300 hover:bg-amber-400 hover:shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:scale-[1.03] active:scale-[0.98] group/btn"
-          >
-            {getAmazonCtaLabel(ctaVariant)}
-            <ArrowRight size={16} className="transition-transform duration-300 group-hover/btn:translate-x-1" />
-          </AffiliateLink>
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <AffiliateLink
+              href={buildAmazonSearchUrl(`${vehicleName} ${primary.query}`, 'automotive', subtag)}
+              partName={primary.title}
+              vehicle={vehicleName}
+              pageType="parts_page"
+              subtag={subtag}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-3 text-sm font-bold text-black shadow-[0_4px_12px_rgba(245,158,11,0.2)] transition-all duration-300 hover:bg-amber-400 hover:shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:scale-[1.03] active:scale-[0.98] group/btn"
+            >
+              {getAmazonCtaLabel(ctaVariant)}
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover/btn:translate-x-1" />
+            </AffiliateLink>
+            <AffiliateLink
+              href={buildPartsGeekSearchUrl(`${vehicleName} ${primary.query}`, `pg-${subtag}`)}
+              partName={primary.title}
+              vehicle={vehicleName}
+              pageType="parts_page"
+              subtag={`pg-${subtag}`}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-[0_4px_12px_rgba(37,99,235,0.2)] transition-all duration-300 hover:bg-blue-500 hover:shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:scale-[1.03] active:scale-[0.98] group/btn"
+            >
+              PartsGeek OEM Price →
+            </AffiliateLink>
+          </div>
         </div>
       </div>
 

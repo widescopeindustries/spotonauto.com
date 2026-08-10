@@ -1,65 +1,15 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { BookOpen, Sparkles, ArrowRight } from "lucide-react";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function EntryPathsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Heading reveal
-      if (headingRef.current) {
-        gsap.from(headingRef.current.children, {
-          y: 40,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-
-      // Cards stagger — each fades up independently like Osaka → Kyoto → Tokyo
-      if (cardsRef.current) {
-        gsap.from(cardsRef.current.children, {
-          y: 60,
-          opacity: 0,
-          duration: 0.9,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: cardsRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="relative overflow-hidden py-20 md:py-32">
+    <section className="relative overflow-hidden py-20 md:py-32">
       {/* Subtle section background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-cyan-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div ref={headingRef} className="mb-14 text-center">
+        <div className="mb-14 text-center">
+
           <span className="inline-block text-xs font-medium uppercase tracking-[0.2em] text-cyan-400/70 mb-3">
             Start Here
           </span>
@@ -71,7 +21,7 @@ export default function EntryPathsSection() {
           </p>
         </div>
 
-        <div ref={cardsRef} className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           {/* Path 1: I know what's wrong */}
           <Link
             href="/repair"

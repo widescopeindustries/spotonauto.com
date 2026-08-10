@@ -1,62 +1,15 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { Package, ArrowRight, Gift, Check } from "lucide-react";
 import { getAllKits } from "@/data/kits";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function KitsSection() {
   const kits = getAllKits();
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      if (headingRef.current) {
-        gsap.from(headingRef.current.children, {
-          y: 40,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-
-      if (gridRef.current) {
-        gsap.from(gridRef.current.children, {
-          y: 50,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden py-20 md:py-28 bg-gradient-to-b from-[#0a0a0c] via-[#0f0f14] to-[#0a0a0c]">
+    <section className="relative overflow-hidden py-20 md:py-28 bg-gradient-to-b from-[#0a0a0c] via-[#0f0f14] to-[#0a0a0c]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div ref={headingRef} className="mb-12 text-center">
+        <div className="mb-12 text-center">
+
           <div className="mb-4 flex items-center justify-center gap-2">
             <Package className="h-4 w-4 text-[#FF6B00]" />
             <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#FF6B00]">
@@ -72,7 +25,7 @@ export default function KitsSection() {
           </p>
         </div>
 
-        <div ref={gridRef} className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {kits.map((kit) => (
             <Link
               key={kit.slug}

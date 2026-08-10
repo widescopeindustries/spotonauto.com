@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description:
     'Clean, structured factory manual data for 300,000+ vehicles. Purpose-built for AI training, RAG, and agent consumption. Pay-per-page via Stripe or x402.',
   robots: 'index, follow',
+  alternates: {
+    canonical: 'https://alloemmanuals.com/for-ai',
+  },
 };
 
 export const dynamic = 'force-static';

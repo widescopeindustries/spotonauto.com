@@ -1,138 +1,42 @@
-# AllOEMManuals — Free DIY Auto Repair Guides & AI Car Diagnosis
+# AllOEMManuals
 
-> AllOEMManuals (alloemmanuals.com) is a free resource for car owners who want to diagnose problems and repair their own vehicles without paying dealership or mechanic rates. Operated by Widescope Industries LLC, a Service-Disabled Veteran-Owned Small Business (SDVOSB) certified through the U.S. Small Business Administration.
+> Free DIY Auto Repair Guides, AI Car Diagnosis, and Factory Service Data for 300,000+ Vehicles.
 
-## AI / LLM / Agent Use
+AllOEMManuals (alloemmanuals.com) is a free resource for car owners who want to diagnose problems and repair their own vehicles without paying dealership or mechanic rates. Operated by Widescope Industries LLC, a Service-Disabled Veteran-Owned Small Business (SDVOSB) certified through the U.S. Small Business Administration.
 
-If you are an AI company, LLM developer, or agent builder looking to use AllOEMManuals data for training, RAG, or inference, please use the paid **AI Training Feed** instead of scraping the public HTML site.
+## AI & LLM Data Access
 
-- **Purpose-built for machines:** clean Markdown, no ads, no affiliate links, no navigation chrome
-- **Coverage:** 300,000+ vehicles (1960–2025)
-- **Content:** OEM excerpts, torque specs, DTC codes, wiring diagrams, repair procedures, knowledge graphs
-- **Pricing:** $0.01 per page; volume discounts at 100K+ and 1M+ pages/month
-- **Purchase:** https://alloemmanuals.com/api/stripe/checkout?pack=starter
-- **Details:** https://alloemmanuals.com/for-ai
-- **Discovery:** https://alloemmanuals.com/.well-known/acp.json
-- **API spec:** https://alloemmanuals.com/openapi.json
-- **Contact:** lyndon@widescopeindustries.com
+If you are an AI company, LLM developer, or agent builder looking to use AllOEMManuals data for training, RAG, or inference, please use the paid AI Training Feed:
 
-Unauthorized scraping of the public HTML site for model training is prohibited. The AI Training Feed is the licensed path.
+- [AI Training Feed Details](https://alloemmanuals.com/for-ai): License clean Markdown data without navigation or ads ($0.01/page).
+- [Stripe Checkout Starter Pack](https://alloemmanuals.com/api/stripe/checkout?pack=starter): Purchase 10,000 credit pack.
+- [Agentic Commerce Protocol](https://alloemmanuals.com/.well-known/acp.json): ACP machine-readable discovery endpoint.
+- [OpenAPI 3.0 Specification](https://alloemmanuals.com/openapi.json): Full REST API reference for vehicle repair data.
 
-## What AllOEMManuals Does
+## Core Features & Navigation
 
-AllOEMManuals provides:
-- **Free step-by-step repair guides** for specific year/make/model/task combinations, grounded in factory OEM service manual data
-- **AI-powered car problem diagnosis** — describe your symptoms, get a factory-manual-grounded diagnosis
-- **Check Engine Light (OBD-II) code lookup** — enter your CEL code, understand what it means and what to do
-- **Wiring diagrams** by vehicle year, make, model, and electrical system
-- **Tool pages** — oil type, tire size, battery location, coolant type, and other quick specs by vehicle
-- **Auto parts finder** — shop parts from Amazon and other retailers for your specific vehicle
+- [Homepage](https://alloemmanuals.com): Vehicle search and direct repair access.
+- [AI Diagnosis Engine](https://alloemmanuals.com/diagnose): Describe symptoms to get factory-manual-grounded troubleshooting.
+- [Repair Guides Hub](https://alloemmanuals.com/repair): Step-by-step DIY repair instructions.
+- [DTC Code Lookup](https://alloemmanuals.com/codes): Check Engine Light (OBD-II) trouble code dictionary.
+- [Wiring Diagrams](https://alloemmanuals.com/wiring): OEM electrical system schematics by vehicle.
+- [Vehicle Hub Example](https://alloemmanuals.com/vehicles/2020/toyota/camry): Vehicle-specific specs, guides, and tools.
+- [Tool Pages](https://alloemmanuals.com/tools): Quick fluid specs, tire sizes, oil types, and battery locations.
+- [XML Sitemap Index](https://alloemmanuals.com/sitemap.xml): Complete indexing sitemap.
 
-## Who It's For
+## Key URL Schemes
 
-DIY car owners, shade-tree mechanics, and anyone who wants to understand their car before visiting a shop. AllOEMManuals is especially useful when:
-- Your check engine light turns on and you want to know if it's serious
-- You want to know if a repair is DIY-able before paying a mechanic
-- You need a step-by-step walkthrough for a specific repair on your specific car
-- You want to compare part costs before buying
+- [Example Repair Guide](https://alloemmanuals.com/repair/2020/toyota/camry/brake-pad-replacement): Pattern is `/repair/[year]/[make]/[model]/[task]`
+- [Example Wiring Diagram](https://alloemmanuals.com/wiring/2011/subaru/outback/wipers): Pattern is `/wiring/[year]/[make]/[model]/[system]`
+- [Example DTC Code](https://alloemmanuals.com/codes/p0420): Pattern is `/codes/[code]`
+- [Example Vehicle Hub](https://alloemmanuals.com/vehicles/2020/toyota/camry): Pattern is `/vehicles/[year]/[make]/[model]`
 
-## Repair Guides Available
+## Optional & Legal
 
-Guides cover the following repair tasks across hundreds of vehicle combinations (1982–2025):
+- [llms-full.txt](https://alloemmanuals.com/llms-full.txt): Complete site map and extended documentation for LLMs.
+- [About & SDVOSB Verification](https://alloemmanuals.com/about): Business ownership and SDVOSB information.
+- [Contact Support](https://alloemmanuals.com/contact): Reach customer service and engineering.
+- [Privacy Policy](https://alloemmanuals.com/privacy-policy): Privacy practices and cookie policy.
+- [Terms of Service](https://alloemmanuals.com/terms-of-service): Terms of service and AI content usage rules.
+- [Disclaimer](https://alloemmanuals.com/disclaimer): Mechanical advice disclaimer.
 
-- Oil Change
-- Brake Pad Replacement
-- Brake Rotor Replacement
-- Alternator Replacement
-- Starter Replacement
-- Battery Replacement
-- Spark Plug Replacement
-- Radiator Replacement
-- Thermostat Replacement
-- Water Pump Replacement
-- Serpentine Belt Replacement
-- Cabin Air Filter Replacement
-- Engine Air Filter Replacement
-- Headlight Bulb Replacement
-- Oxygen Sensor Replacement
-- Catalytic Converter Replacement
-- Transmission Fluid Change
-- Coolant Flush
-- Valve Cover Gasket Replacement
-- Timing Belt / Chain Replacement
-- Fuel Pump Replacement
-- Fuel Filter Replacement
-- Muffler Replacement
-- CV Axle Replacement
-- Wheel Bearing Replacement
-- Shock Absorber / Strut Replacement
-- Turbo Replacement
-- EGR Valve Replacement
-- Mass Air Flow Sensor Replacement
-- Crankshaft Position Sensor Replacement
-- Camshaft Position Sensor Replacement
-- Glow Plug Replacement
-- Tail Light Replacement
-- Windshield Wiper Replacement
-- Clutch Replacement
-- Differential Fluid Change
-- Power Steering Fluid Change
-- Engine Air Filter Replacement
-
-## Supported Vehicle Makes
-
-Acura, Audi, BMW, Buick, Cadillac, Chevrolet, Chrysler, Dodge, Ford, GMC, Honda, Hyundai, Infiniti, Isuzu, Jaguar, Jeep, Kia, Land Rover, Lexus, Lincoln, Mazda, Mercedes-Benz, Mercury, Mini, Mitsubishi, Nissan, Oldsmobile, Plymouth, Pontiac, Porsche, Saab, Saturn, Scion, Smart, Subaru, Suzuki, Toyota, Volkswagen, Volvo
-
-Vehicle years covered: 1960–2025 (varies by make/model)
-
-## Key URLs
-
-- Homepage: https://alloemmanuals.com
-- AI Diagnosis: https://alloemmanuals.com/diagnose
-- Repair Guides Hub: https://alloemmanuals.com/repair
-- DTC Code Lookup: https://alloemmanuals.com/codes
-- Wiring Diagrams: https://alloemmanuals.com/wiring
-- Vehicle Hub (example): https://alloemmanuals.com/vehicles/2020/toyota/camry
-- Tool Pages: https://alloemmanuals.com/tools
-- About / SDVOSB: https://alloemmanuals.com/about
-- Contact: https://alloemmanuals.com/contact
-- Privacy Policy: https://alloemmanuals.com/privacy-policy
-- Terms of Service: https://alloemmanuals.com/terms-of-service
-- Sitemap: https://alloemmanuals.com/sitemap.xml
-
-### Repair Guide URL Format
-```
-https://alloemmanuals.com/repair/[year]/[make]/[model]/[task]
-```
-Example: https://alloemmanuals.com/repair/2020/toyota/camry/brake-pad-replacement
-
-### Wiring Diagram URL Format
-```
-https://alloemmanuals.com/wiring/[year]/[make]/[model]/[system]
-```
-Example: https://alloemmanuals.com/wiring/2011/subaru/outback/wipers
-
-### DTC Code URL Format
-```
-https://alloemmanuals.com/codes/[code]
-```
-Example: https://alloemmanuals.com/codes/p0420
-
-### Vehicle Hub URL Format
-```
-https://alloemmanuals.com/vehicles/[year]/[make]/[model]
-```
-Example: https://alloemmanuals.com/vehicles/2020/toyota/camry
-
-## About
-
-AllOEMManuals is an independent, AI-powered auto repair guide platform built on factory service manuals. It is not affiliated with any dealership, repair chain, or parts retailer. Repair guides combine AI-generated explanations with factory OEM data and are intended as a starting point — always consult a certified mechanic for safety-critical repairs.
-
-## Contact & Legal
-
-- Website: https://alloemmanuals.com
-- Operator: Widescope Industries LLC
-- SDVOSB Verification: https://search.certifications.sba.gov/profile/ZFMKUREKJF88/9Q5T8
-- Privacy Policy: https://alloemmanuals.com/privacy-policy
-- Terms of Service: https://alloemmanuals.com/terms-of-service
-- Disclaimer: https://alloemmanuals.com/disclaimer

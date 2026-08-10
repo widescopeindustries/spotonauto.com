@@ -2,6 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import AffiliateLink from '@/components/AffiliateLink';
+import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import { ShoppingCartIcon } from '@/components/Icons';
 
 interface DtcCodeEntry {
   code: string;
@@ -288,6 +291,45 @@ export default function VehicleLaneClient({
           <div className="text-xs text-gray-500 mt-1">AI diagnosis</div>
         </Link>
       </div>
+
+      {/* ── Shop Popular Parts for This Vehicle ── */}
+      <section className="mb-10 rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.06] to-transparent p-5">
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <ShoppingCartIcon className="w-5 h-5 text-amber-400" />
+              Shop Popular Parts for {displayName}
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">Common maintenance and repair parts with your vehicle in the search.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { query: 'brake pads', label: 'Brake Pads' },
+            { query: 'brake rotors', label: 'Brake Rotors' },
+            { query: 'oil filter', label: 'Oil Filter' },
+            { query: 'spark plugs', label: 'Spark Plugs' },
+            { query: 'battery', label: 'Battery' },
+            { query: 'wiper blades', label: 'Wiper Blades' },
+          ].map((item) => {
+            const subtag = `vehicle-hub-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+            return (
+              <AffiliateLink
+                key={item.label}
+                href={buildAmazonSearchUrl(`${displayName} ${item.query}`, 'automotive', subtag)}
+                partName={item.label}
+                vehicle={displayName}
+                pageType="parts_page"
+                subtag={subtag}
+                className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-4 hover:border-amber-400/40 hover:bg-white/[0.06] transition-all text-center"
+              >
+                <span className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{item.label}</span>
+                <span className="text-[10px] font-bold text-amber-400/80 group-hover:text-amber-300 uppercase tracking-wider">Shop</span>
+              </AffiliateLink>
+            );
+          })}
+        </div>
+      </section>
 
       {/* ── Vehicle-Scoped Search ── */}
       <div className="mb-10">

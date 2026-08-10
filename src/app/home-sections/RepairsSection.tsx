@@ -1,8 +1,3 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import {
   BookOpen,
@@ -22,7 +17,6 @@ import {
 import HolographicCard from "@/components/home/HolographicCard";
 import { TIER_1_RESCUE_PAGES } from "@/data/rescuePriority";
 
-gsap.registerPlugin(ScrollTrigger);
 
 interface RepairLink {
   href: string;
@@ -141,58 +135,17 @@ function buildFallbackCards(): RepairCard[] {
 }
 
 export default function RepairsSection({ repairs }: RepairsSectionProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
   const parsed = repairs
     .map(parseRepairLink)
     .filter((c): c is RepairCard => c !== null);
 
   const cards = parsed.length >= 6 ? parsed.slice(0, 6) : [...parsed, ...buildFallbackCards()].slice(0, 6);
 
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      if (headingRef.current) {
-        gsap.from(headingRef.current.children, {
-          y: 40,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-
-      if (gridRef.current) {
-        gsap.from(gridRef.current.children, {
-          y: 50,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.12,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section ref={sectionRef} id="manual" className="relative overflow-hidden py-24 md:py-32">
+    <section id="manual" className="relative overflow-hidden py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div ref={headingRef} className="mb-16 text-center">
+        <div className="mb-16 text-center">
+
           <div className="mb-4 flex items-center justify-center gap-2">
             <BookOpen className="h-4 w-4 text-[#FF6B00]" />
             <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#FF6B00]">
@@ -209,7 +162,7 @@ export default function RepairsSection({ repairs }: RepairsSectionProps) {
           </p>
         </div>
 
-        <div ref={gridRef} className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((card) => {
             const Icon = card.category.icon;
             return (

@@ -1,8 +1,3 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import {
   Droplets,
@@ -16,7 +11,6 @@ import {
   Wrench,
 } from "lucide-react";
 
-gsap.registerPlugin(ScrollTrigger);
 
 interface ToolCard {
   slug: string;
@@ -104,67 +98,11 @@ const TOP_TOOLS: ToolCard[] = [
 ];
 
 export default function PopularToolsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      if (headingRef.current) {
-        gsap.from(headingRef.current.children, {
-          y: 40,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-
-      if (gridRef.current) {
-        gsap.from(gridRef.current.children, {
-          y: 50,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-
-      if (ctaRef.current) {
-        gsap.from(ctaRef.current, {
-          y: 20,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: "top 90%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="relative overflow-hidden py-20 md:py-28">
+    <section className="relative overflow-hidden py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div ref={headingRef} className="mb-12 text-center">
+        <div className="mb-12 text-center">
+
           <div className="mb-4 flex items-center justify-center gap-2">
             <ShoppingBag className="h-4 w-4 text-[#FF6B00]" />
             <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#FF6B00]">
@@ -180,7 +118,7 @@ export default function PopularToolsSection() {
           </p>
         </div>
 
-        <div ref={gridRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {TOP_TOOLS.map((tool) => {
             const Icon = tool.icon;
             return (
@@ -213,7 +151,7 @@ export default function PopularToolsSection() {
           })}
         </div>
 
-        <div ref={ctaRef} className="mt-10 text-center">
+        <div className="mt-10 text-center">
           <Link
             href="/tools"
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:border-[#FF6B00]/40 hover:bg-white/10 hover:shadow-[0_0_30px_-10px_rgba(255,107,0,0.2)]"

@@ -9,9 +9,9 @@
  * Tire Rack search page (direct, non-affiliated).
  */
 
-const CJ_DOMAIN = process.env.NEXT_PUBLIC_CJ_DOMAIN?.trim() || '';
-const CJ_PID = process.env.NEXT_PUBLIC_CJ_PID?.trim() || '';
-const CJ_AID_TIRE_RACK = process.env.NEXT_PUBLIC_CJ_AID_TIRE_RACK?.trim() || '';
+const CJ_DOMAIN = process.env.NEXT_PUBLIC_CJ_DOMAIN?.trim() || 'anrdoezrs.net';
+const CJ_PID = process.env.NEXT_PUBLIC_CJ_PID?.trim() || '7974446';
+const CJ_AID_TIRE_RACK = process.env.NEXT_PUBLIC_CJ_AID_TIRE_RACK?.trim() || '1463221';
 
 export interface ParsedTireSize {
   width: number;

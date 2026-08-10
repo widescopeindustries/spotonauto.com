@@ -25,6 +25,9 @@ import { PricingTrackedLink } from '@/components/PricingTracking';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
+import SystemPartsAffiliate from '@/components/SystemPartsAffiliate';
+import StickyAffiliateBar from '@/components/StickyAffiliateBar';
+import { getPartsForCode } from '@/lib/codePartsMap';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     low: { label: 'Low Severity', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/30' },
@@ -357,6 +360,14 @@ export default async function CodePageClient({
                 );
             })()}
 
+            {/* Common parts for this code */}
+            <SystemPartsAffiliate
+                contextLabel={`${code.code} ${code.title}`}
+                recommendations={getPartsForCode(code.code, code.title, code.affectedSystem, code.commonFix, 6)}
+                surface={`code-${code.code.toLowerCase()}`}
+                className="mb-8"
+            />
+
             <div className="mb-8">
                 <SearchLandingMonetizationRail
                     surface="codes_index"
@@ -530,6 +541,14 @@ export default async function CodePageClient({
                 </Link>
                 <p className="text-gray-600 text-sm mt-3">100% Free — No signup required</p>
             </div>
+
+            <StickyAffiliateBar
+                vehicle={`${code.code} ${code.title}`}
+                intent="common replacement parts"
+                query={`${code.affectedSystem} ${code.commonFix} replacement parts`}
+                subtag={`code-${code.code.toLowerCase()}`}
+                variant="parts"
+            />
         </section>
     );
 }

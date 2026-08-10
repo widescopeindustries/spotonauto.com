@@ -1,6 +1,5 @@
 "use client";
 import { useRef, useState } from 'react'
-import { motion } from 'framer-motion'
 
 interface HolographicCardProps {
   children: React.ReactNode
@@ -34,17 +33,14 @@ export default function HolographicCard({ children, className = '' }: Holographi
 
   return (
     <div className={`perspective-1000 ${className}`}>
-      <motion.div
+      <div
         ref={cardRef}
-        className="preserve-3d relative overflow-hidden rounded-2xl bg-[#12121A]/80 border border-white/10 backdrop-blur-sm"
+        className="preserve-3d relative overflow-hidden rounded-2xl bg-[#12121A]/80 border border-white/10 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]"
         style={{
           transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-          transition: 'transform 0.15s ease-out',
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        whileHover={{ scale: 1.02 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         role="article"
       >
         <div
@@ -56,7 +52,7 @@ export default function HolographicCard({ children, className = '' }: Holographi
           }}
         />
         {children}
-      </motion.div>
+      </div>
     </div>
   )
 }

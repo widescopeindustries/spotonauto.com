@@ -11,6 +11,33 @@ const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-KS1JPX
 const AHREFS_KEY = 'Id9DIK0mrHJtsEHStxIWNA';
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || 'wk5l41apgb';
 
+type TrafficType = 'human' | 'suspect' | 'known_bot';
+
+function hasBotCookie() {
+  if (typeof document === 'undefined') return false;
+  return document.cookie.split('; ').some((c) => c.startsWith('aom_analytics=0'));
+}
+
+function getTrafficType(): TrafficType {
+  if (typeof window === 'undefined') return 'known_bot';
+  const ua = navigator.userAgent.toLowerCase();
+  if (navigator.webdriver) return 'known_bot';
+  if (hasBotCookie()) return 'known_bot';
+  if (/bot|crawl|spider|scraper|headless|puppeteer|selenium|playwright|lighthouse|phantomjs/.test(ua)) {
+    return 'known_bot';
+  }
+
+  // Suspicious / headless-browser signals. These can false-positive on privacy
+  // hardened real browsers, so they get their own bucket instead of blocked.
+  const chromeFamily = /chrome|chromium|crios/.test(ua);
+  const noPlugins = navigator.plugins.length === 0 && navigator.mimeTypes.length === 0;
+  const headlessWindow = window.outerWidth === 0 && window.outerHeight === 0;
+  const noChromeObject = chromeFamily && typeof (window as any).chrome === 'undefined';
+  if (noPlugins || headlessWindow || noChromeObject) return 'suspect';
+
+  return 'human';
+}
+
 function ClarityPageTags() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -27,13 +54,14 @@ function ClarityPageTags() {
 
 export default function AnalyticsScripts() {
   const [enabled, setEnabled] = useState(false);
+  const trafficType = getTrafficType();
 
   useEffect(() => {
     if (window.location.hostname !== CANONICAL_HOST) return;
-    if (navigator.webdriver) return;
+    if (trafficType === 'known_bot') return;
     const timer = setTimeout(() => setEnabled(true), 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [trafficType]);
 
   useEffect(() => {
     if (!enabled || !CLARITY_ID) return;
@@ -56,9 +84,13 @@ export default function AnalyticsScripts() {
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               window.gtag = gtag;
+              window.__AOM_TRAFFIC_TYPE__ = '${trafficType}';
               gtag('js', new Date());
+              gtag('set', 'user_properties', { traffic_type: '${trafficType}' });
               gtag('config', '${GA_MEASUREMENT_ID}', {
-                send_page_view: false
+                send_page_view: true,
+                transport_type: 'beacon',
+                cookie_flags: 'SameSite=None;Secure',
               });
             `}
           </Script>
