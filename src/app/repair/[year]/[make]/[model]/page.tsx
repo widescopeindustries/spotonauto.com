@@ -143,15 +143,28 @@ function resolveVehicle(makeSlug: string, modelSlug: string) {
   );
   if (!originalMake) return null;
 
-  const originalModel = Object.keys(VEHICLE_PRODUCTION_YEARS[originalMake]).find(
+  const models = VEHICLE_PRODUCTION_YEARS[originalMake];
+  let originalModel = Object.keys(models).find(
     (model) => slugifyRoutePart(model) === modelSlug,
   );
+
+  if (!originalModel) {
+    const sortedModelKeys = Object.keys(models).sort((a, b) => b.length - a.length);
+    for (const key of sortedModelKeys) {
+      const slugKey = slugifyRoutePart(key);
+      if (modelSlug.startsWith(slugKey + '-') || modelSlug === slugKey) {
+        originalModel = key;
+        break;
+      }
+    }
+  }
+
   if (!originalModel) return null;
 
   return {
     originalMake,
     originalModel,
-    production: VEHICLE_PRODUCTION_YEARS[originalMake][originalModel],
+    production: models[originalModel],
     canonicalMake: slugifyRoutePart(originalMake),
     canonicalModel: slugifyRoutePart(originalModel),
   };

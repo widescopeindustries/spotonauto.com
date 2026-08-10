@@ -158,6 +158,7 @@ Disallow: /
 User-Agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /cdn-cgi/
 Disallow: /api/internal/
 Disallow: /api/generate-guide
 Disallow: /community/*?page=
