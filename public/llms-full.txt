@@ -1,0 +1,52 @@
+# AllOEMManuals Full Technical & LLM Documentation
+
+> AllOEMManuals (alloemmanuals.com) — Complete index of AI endpoints, repair schemas, and vehicle manual coverage for LLM agents.
+
+## Overview
+
+AllOEMManuals provides step-by-step DIY auto repair guides, DTC diagnostic trouble code lookups, wiring diagrams, and part recommendations for 300,000+ vehicle variants (1960–2025).
+
+## Machine API Endpoints (x402 & OpenAPI)
+
+- [AI Training Feed Endpoint](https://alloemmanuals.com/api/data/2020/toyota/camry): x402 paywalled clean Markdown ($0.01 per page).
+- [OpenAPI Specification](https://alloemmanuals.com/openapi.json): Full API schema for vehicle repair procedures, wiring diagrams, and trouble codes.
+- [Agentic Commerce Protocol](https://alloemmanuals.com/.well-known/acp.json): Payment and discovery specification.
+- [MCP Server Card](https://alloemmanuals.com/.well-known/mcp/server-card.json): Model Context Protocol metadata.
+
+## Supported Repair Tasks
+
+- Oil Change
+- Brake Pad Replacement
+- Brake Rotor Replacement
+- Alternator Replacement
+- Starter Replacement
+- Battery Replacement
+- Spark Plug Replacement
+- Radiator Replacement
+- Thermostat Replacement
+- Water Pump Replacement
+- Serpentine Belt Replacement
+- Cabin Air Filter Replacement
+- Engine Air Filter Replacement
+- Headlight Bulb Replacement
+- Oxygen Sensor Replacement
+- Catalytic Converter Replacement
+- Transmission Fluid Change
+- Coolant Flush
+- Valve Cover Gasket Replacement
+- Timing Belt / Chain Replacement
+- Fuel Pump Replacement
+- Fuel Filter Replacement
+- Muffler Replacement
+- CV Axle Replacement
+- Wheel Bearing Replacement
+- Shock Absorber / Strut Replacement
+- Turbo Replacement
+- EGR Valve Replacement
+- Mass Air Flow Sensor Replacement
+- Crankshaft Position Sensor Replacement
+- Camshaft Position Sensor Replacement
+
+## Supported Vehicle Makes
+
+Acura, Audi, BMW, Buick, Cadillac, Chevrolet, Chrysler, Dodge, Ford, GMC, Honda, Hyundai, Infiniti, Isuzu, Jaguar, Jeep, Kia, Land Rover, Lexus, Lincoln, Mazda, Mercedes-Benz, Mercury, Mini, Mitsubishi, Nissan, Oldsmobile, Plymouth, Pontiac, Porsche, Saab, Saturn, Scion, Smart, Subaru, Suzuki, Toyota, Volkswagen, Volvo.
