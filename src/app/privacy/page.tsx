@@ -53,19 +53,25 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-cyan-400">3. Affiliate Links &amp; Third-Party Services</h2>
+          <h2 className="text-xl font-bold text-cyan-400">3. Advertising &amp; Affiliate Disclosures</h2>
+          <p className="text-sm">
+            This Site is affiliated with Monumetric (dba for The Blogger Network, LLC) for the purposes of placing advertising on the Site, and Monumetric will collect and use certain data for advertising purposes. To learn more about Monumetric&apos;s data usage, click here:{' '}
+            <a href="http://www.monumetric.com/publisher-advertising-privacy" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">
+              Publisher Advertising Privacy
+            </a>.
+          </p>
           <p className="text-sm">
             AllOEMManuals participates in affiliate programs with <strong>Amazon Associates</strong> and <strong>TOPDON</strong> (via GoAffPro).
             When you click a product link on our Site and make a purchase, we may earn a commission at no additional cost to you.
             For full details, see our <Link href="/disclosure" className="text-cyan-400 hover:underline">Affiliate Disclosure</Link>.
           </p>
           <p className="text-sm">
-            These affiliate partners may use cookies to track that a purchase originated from our Site. We do not control their
-            cookie policies. Please review:
+            These affiliate partners and ad networks may use cookies to track referral purchases and deliver relevant advertisements. Please review:
           </p>
           <ul className="list-disc pl-6 space-y-1 text-sm">
             <li><a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=468496" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">Amazon Privacy Notice</a></li>
             <li><a href="https://www.topdon.us/pages/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">TOPDON Privacy Policy</a></li>
+            <li><a href="http://www.monumetric.com/publisher-advertising-privacy" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">Monumetric Publisher Advertising Privacy Policy</a></li>
           </ul>
         </section>
 
