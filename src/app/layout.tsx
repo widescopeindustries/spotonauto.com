@@ -58,12 +58,10 @@ export default function RootLayout({
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt — AI crawler context for AllOEMManuals" />
         <meta name="ai-license" content="https://alloemmanuals.com/license" />
         <meta name='impact-site-verification' {...({ value: '39ff62d6-58f8-468a-80a0-5a794bd799fc' } as any)} />
-        <Script
-          id="adsense-script"
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4727419009542011"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
         <Script
           id="impact-cdn"
