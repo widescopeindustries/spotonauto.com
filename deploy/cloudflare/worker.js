@@ -37,7 +37,7 @@ const SE_RANKING_IPS = new Set([
 const MALICIOUS_BOTS = [
   'AhrefsBot','SemrushBot','DotBot','MJ12bot','DataForSeoBot',
   'webzio','webzio-extended','Screaming Frog','Sitebulb','Turnitin','Copyscape',
-  'CCBot','Bytespider','YouBot','Diffbot',
+  'CCBot','Bytespider','YouBot','Diffbot','Dragonfly','publisherdiscovery',
   'Sogou','Baiduspider','YandexBot','YandexRenderResources',
 ];
 
@@ -354,11 +354,30 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // ── 1. Static assets & discovery endpoints pass through (no bot gate) ──
+    const ua = normalizeUA(request);
+    const acceptHeader = request.headers.get('Accept') || '';
+
+    // ── 1. Malicious / SEO scrapers → 403 (evaluated BEFORE static assets) ──
+    if (isMaliciousBot(ua)) {
+      return build403Response();
+    }
+
+    // ── 2. Known bandwidth-theft ASNs → 403 ──
+    if (isBandwidthTheftAsn(request)) {
+      return build403Response();
+    }
+
+    // ── 3. Allowed bots (search + citation) pass through ──
+    if (isAllowedBot(request, ua)) {
+      return fetch(request);
+    }
+
+    // ── 4. Static assets & discovery endpoints pass through (for humans & allowed bots) ──
     if (
       url.pathname.startsWith('/_next/') ||
       url.pathname.startsWith('/static/') ||
       url.pathname === '/favicon.ico' ||
+      url.pathname === '/favicon.svg' ||
       url.pathname === '/robots.txt' ||
       url.pathname === '/llms.txt' ||
       url.pathname === '/openapi.json' ||
@@ -368,26 +387,6 @@ export default {
       url.pathname.startsWith('/.well-known/')
     ) {
       return fetch(request);
-    }
-
-    const ua = normalizeUA(request);
-    const acceptHeader = request.headers.get('Accept') || '';
-
-    // ── 2. Allowed bots (search + citation) pass through ──
-    if (isAllowedBot(request, ua)) {
-      return fetch(request);
-    }
-
-    // ── 3. Known bandwidth-theft ASNs → 403 ──
-    // These data centers pull GBs/day of HTML with spoofed browser UAs.
-    // Allowed-bot UAs are already handled above, so real search crawlers are safe.
-    if (isBandwidthTheftAsn(request)) {
-      return build403Response();
-    }
-
-    // ── 4. Malicious / SEO scrapers → 403 ──
-    if (isMaliciousBot(ua)) {
-      return build403Response();
     }
 
     // ── 5. Known AI / data crawlers → redirect to clean feed or 402 ──

@@ -59,6 +59,13 @@ export default function RootLayout({
         <meta name="ai-license" content="https://alloemmanuals.com/license" />
         <meta name='impact-site-verification' {...({ value: '39ff62d6-58f8-468a-80a0-5a794bd799fc' } as any)} />
         <Script
+          id="adsense-script"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4727419009542011"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+        <Script
           id="impact-cdn"
           strategy="lazyOnload"
           dangerouslySetInnerHTML={{
@@ -72,16 +79,12 @@ export default function RootLayout({
             __html: `if('modelContext' in navigator){try{navigator.modelContext.provideContext({name:'alloemmanuals',tools:[{name:'getRepairGuide',description:'Get a vehicle-specific repair guide.',inputSchema:{type:'object',properties:{year:{type:'integer'},make:{type:'string'},model:{type:'string'},task:{type:'string'}},required:['year','make','model','task']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/v1/repair?year='+i.year+'&make='+i.make+'&model='+i.model+'&task='+i.task);return r.json();}},{name:'getDTCInfo',description:'Look up diagnostic trouble code.',inputSchema:{type:'object',properties:{code:{type:'string'}},required:['code']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/graph/dtc/'+encodeURIComponent(i.code));return r.json();}}]});}catch(e){}}`
           }}
         />
-        <Script
-          id="monetag-ad-tag"
-          strategy="afterInteractive"
+        <script
           dangerouslySetInnerHTML={{
             __html: `(function(s){s.dataset.zone='11547041',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
           }}
         />
-        <Script
-          id="monetag-vignette-tag"
-          strategy="afterInteractive"
+        <script
           dangerouslySetInnerHTML={{
             __html: `(function(s){s.dataset.zone='11547049',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
           }}
