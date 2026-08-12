@@ -97,6 +97,14 @@ export default function AnalyticsScripts() {
         </>
       )}
 
+      {/* Google AdSense */}
+      <Script
+        id="adsense-script"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4727419009542011"
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
+
       <Script id="ahrefs-deferred" strategy="lazyOnload">
         {`
           (function () {
