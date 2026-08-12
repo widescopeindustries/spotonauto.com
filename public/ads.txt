@@ -1,3 +1,4 @@
+google.com, pub-4727419009542011, DIRECT, f08c47fec0942fa0
 google.com, pub-3105584943212740, DIRECT, f08c47fec0942fa0
 
 # Monumetric GAM / MCM Ads.txt Lines
