@@ -27,7 +27,7 @@ const HistoryDisplay: React.FC<HistoryDisplayProps> = ({ history, onViewItem, on
                 <div className="flex items-center gap-3">
                     <BookOpenIcon className="w-8 h-8 text-brand-cyan"/>
                     <div>
-                        <h1 className="text-2xl font-bold text-white uppercase tracking-wider">Repair History</h1>
+                        <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Repair History</h2>
                         <p className="text-md text-brand-cyan-light font-semibold">Your saved guides</p>
                     </div>
                 </div>

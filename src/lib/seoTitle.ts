@@ -2,7 +2,7 @@
 // Build titles that keep the brand suffix when they fit, fall back to
 // progressively shorter candidates, and hard-cap at a word boundary.
 
-const MAX_TITLE_LENGTH = 65;
+const MAX_TITLE_LENGTH = 58;
 const DEFAULT_BRAND_SUFFIX = ' | AllOEMManuals';
 
 /**

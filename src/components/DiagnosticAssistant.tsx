@@ -74,7 +74,7 @@ const DiagnosticAssistant: React.FC<DiagnosticAssistantProps> = ({ vehicle, init
         <div className="flex items-center gap-3">
             <WrenchIcon className="w-6 h-6 text-brand-cyan" />
             <div>
-                <h1 className="text-lg font-bold text-white uppercase tracking-wider">Diagnostic Assistant</h1>
+                <h2 className="text-lg font-bold text-white uppercase tracking-wider">Diagnostic Assistant</h2>
                 <p className="text-sm text-brand-cyan font-semibold">{`${vehicle.year} ${vehicle.make} ${vehicle.model}`}</p>
             </div>
         </div>

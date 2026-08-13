@@ -35,7 +35,7 @@ const VehicleInfoDisplay: React.FC<VehicleInfoDisplayProps> = ({
         <header className="p-6 border-b border-brand-cyan/30">
             <div className="flex justify-between items-start">
                 <div>
-                    <h1 className="text-2xl font-bold text-white uppercase tracking-wider">{task}</h1>
+                    <h2 className="text-2xl font-bold text-white uppercase tracking-wider">{task}</h2>
                     <p className="text-lg text-brand-cyan font-semibold">{`${vehicle.year} ${vehicle.make} ${vehicle.model}`}</p>
                 </div>
                 <button onClick={onBack} className="text-sm font-semibold text-brand-cyan hover:underline">New Search</button>

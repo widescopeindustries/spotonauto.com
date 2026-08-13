@@ -44,7 +44,7 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ vehicle, setVehicle, task, se
     <div className="w-full max-w-2xl mx-auto animate-fade-in">
       <div className="text-center mb-10">
         <WrenchIcon className="w-16 h-16 mx-auto text-brand-cyan" />
-        <h1 className="text-4xl md:text-5xl font-bold text-white mt-4 uppercase tracking-wider">AI Auto Repair</h1>
+        <h2 className="text-4xl md:text-5xl font-bold text-white mt-4 uppercase tracking-wider">AI Auto Repair</h2>
         <p className="text-lg text-gray-300 mt-2">
           Your personal AI mechanic for repairs and diagnostics.
         </p>
