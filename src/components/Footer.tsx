@@ -203,7 +203,7 @@ const Footer = () => {
                             rel="noopener"
                             className="text-amber-400/90 hover:text-amber-300 underline transition-colors"
                         >
-                            WhatTypeOfOil.com — Oil Spec &amp; Capacity Lookup
+                            WhatTypeOfOil.com — Oil Spec &amp; Capacity
                         </a>
                         <span className="text-gray-600">&bull;</span>
                         <a
@@ -212,16 +212,25 @@ const Footer = () => {
                             rel="noopener"
                             className="text-cyan-400/90 hover:text-cyan-300 underline transition-colors"
                         >
-                            WhatTiresFitMy.com — Tire Size &amp; Offset Calculator
+                            WhatTiresFitMy.com — Tire Size &amp; Fitment
                         </a>
                         <span className="text-gray-600">&bull;</span>
                         <a
-                            href="https://youvselon.com"
+                            href="https://whatwipersfitmy.com"
                             target="_blank"
                             rel="noopener"
-                            className="text-gold hover:text-amber-400 underline transition-colors"
+                            className="text-sky-400/90 hover:text-sky-300 underline transition-colors"
                         >
-                            YouVsElon.com — Live Wealth Velocity Terminal
+                            WhatWipersFitMy.com — Wiper Blade Sizes
+                        </a>
+                        <span className="text-gray-600">&bull;</span>
+                        <a
+                            href="https://whatbulbfitsmy.com"
+                            target="_blank"
+                            rel="noopener"
+                            className="text-yellow-400/90 hover:text-yellow-300 underline transition-colors"
+                        >
+                            WhatBulbFitsMy.com — Light Bulb Sizes
                         </a>
                     </div>
                 </div>

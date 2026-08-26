@@ -403,6 +403,38 @@ export default async function VehicleLanePage({ params }: PageProps) {
           >
             DIY Repair Guides
           </Link>
+          <a
+            href={`https://whattypeofoil.com/${year}/${identity.makeSlug}/${identity.modelSlug}/`}
+            target="_blank"
+            rel="noopener"
+            className="px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm hover:bg-amber-500/20 transition"
+          >
+            🛢️ Oil Specs &amp; Capacity
+          </a>
+          <a
+            href={`https://whattiresfitmy.com/${year}/${identity.makeSlug}/${identity.modelSlug}/`}
+            target="_blank"
+            rel="noopener"
+            className="px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-sm hover:bg-cyan-500/20 transition"
+          >
+            🛞 Tire Size &amp; Pressure
+          </a>
+          <a
+            href={`https://whatwipersfitmy.com/${year}/${identity.makeSlug}/${identity.modelSlug}/`}
+            target="_blank"
+            rel="noopener"
+            className="px-4 py-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-300 text-sm hover:bg-sky-500/20 transition"
+          >
+            🌧️ Wiper Blade Sizes
+          </a>
+          <a
+            href={`https://whatbulbfitsmy.com/${year}/${identity.makeSlug}/${identity.modelSlug}/`}
+            target="_blank"
+            rel="noopener"
+            className="px-4 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-sm hover:bg-yellow-500/20 transition"
+          >
+            💡 Light Bulb Sizes
+          </a>
           <Link
             href={`/manual/${encodeURIComponent(identity.make)}/${year}`}
             className="px-4 py-2 rounded-lg bg-slate-500/10 border border-slate-500/20 text-slate-300 text-sm hover:bg-slate-500/20 transition"
