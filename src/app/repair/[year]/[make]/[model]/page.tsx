@@ -137,37 +137,66 @@ function toTitleCase(value: string): string {
   return value.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function resolveVehicle(makeSlug: string, modelSlug: string) {
+function productionIncludes(
+  production: { start: number; end: number },
+  year: number | null,
+): boolean {
+  if (year == null || !Number.isInteger(year)) return true;
+  return year >= production.start && year <= production.end;
+}
+
+function findModelForSlug(
+  models: Record<string, { start: number; end: number }>,
+  modelSlug: string,
+  year: number | null,
+): string | null {
+  const exact = Object.keys(models).find((model) => slugifyRoutePart(model) === modelSlug);
+  if (exact && productionIncludes(models[exact], year)) return exact;
+
+  const sortedModelKeys = Object.keys(models).sort(
+    (a, b) => slugifyRoutePart(b).length - slugifyRoutePart(a).length,
+  );
+  for (const key of sortedModelKeys) {
+    const slugKey = slugifyRoutePart(key);
+    const prefixed = modelSlug === slugKey || modelSlug.startsWith(`${slugKey}-`);
+    if (prefixed && productionIncludes(models[key], year)) return key;
+  }
+
+  return null;
+}
+
+function resolveVehicle(makeSlug: string, modelSlug: string, year: number | null = null) {
+  const finish = (originalMake: string, originalModel: string) => {
+    const models = VEHICLE_PRODUCTION_YEARS[originalMake];
+    return {
+      originalMake,
+      originalModel,
+      production: models[originalModel],
+      canonicalMake: slugifyRoutePart(originalMake),
+      canonicalModel: slugifyRoutePart(originalModel),
+    };
+  };
+
   const originalMake = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
     (make) => slugifyRoutePart(make) === makeSlug,
   );
-  if (!originalMake) return null;
-
-  const models = VEHICLE_PRODUCTION_YEARS[originalMake];
-  let originalModel = Object.keys(models).find(
-    (model) => slugifyRoutePart(model) === modelSlug,
-  );
-
-  if (!originalModel) {
-    const sortedModelKeys = Object.keys(models).sort((a, b) => b.length - a.length);
-    for (const key of sortedModelKeys) {
-      const slugKey = slugifyRoutePart(key);
-      if (modelSlug.startsWith(slugKey + '-') || modelSlug === slugKey) {
-        originalModel = key;
-        break;
-      }
-    }
+  if (originalMake) {
+    const originalModel = findModelForSlug(VEHICLE_PRODUCTION_YEARS[originalMake], modelSlug, year);
+    if (originalModel) return finish(originalMake, originalModel);
   }
 
-  if (!originalModel) return null;
+  // A 2017 "Dodge Ram 2500" is the Ram 2500. Dodge's own Ram entry ended in 2011.
+  for (const [otherMake, otherModels] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
+    const otherMakeSlug = slugifyRoutePart(otherMake);
+    if (!otherMakeSlug || otherMakeSlug === makeSlug) continue;
+    if (modelSlug !== otherMakeSlug && !modelSlug.startsWith(`${otherMakeSlug}-`)) continue;
+    const remainder = modelSlug.slice(otherMakeSlug.length + 1);
+    if (!remainder) continue;
+    const originalModel = findModelForSlug(otherModels, remainder, year);
+    if (originalModel) return finish(otherMake, originalModel);
+  }
 
-  return {
-    originalMake,
-    originalModel,
-    production: models[originalModel],
-    canonicalMake: slugifyRoutePart(originalMake),
-    canonicalModel: slugifyRoutePart(originalModel),
-  };
+  return null;
 }
 
 function getRelatedYears(year: number, start: number, end: number): number[] {
@@ -358,7 +387,11 @@ function formatSignedDelta(value: number): string {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { year, make, model } = await params;
   const resolvedYear = Number(year);
-  const resolvedVehicle = resolveVehicle(make.toLowerCase(), model.toLowerCase());
+  const resolvedVehicle = resolveVehicle(
+    make.toLowerCase(),
+    model.toLowerCase(),
+    Number.isInteger(resolvedYear) ? resolvedYear : null,
+  );
 
   if (!resolvedVehicle || !Number.isInteger(resolvedYear)) {
     return {
@@ -388,8 +421,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function VehicleRepairHubPage({ params }: PageProps) {
   const { year, make, model } = await params;
-  const resolvedVehicle = resolveVehicle(make.toLowerCase(), model.toLowerCase());
   const resolvedYear = Number(year);
+  const resolvedVehicle = resolveVehicle(
+    make.toLowerCase(),
+    model.toLowerCase(),
+    Number.isInteger(resolvedYear) ? resolvedYear : null,
+  );
 
   if (!resolvedVehicle || !Number.isInteger(resolvedYear)) notFound();
 

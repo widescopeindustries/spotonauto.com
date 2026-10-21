@@ -21,7 +21,6 @@ import ToolIntentCommerce from '@/components/ToolIntentCommerce';
 import AffiliateLink from '@/components/AffiliateLink';
 import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
-import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import LlmExtractionBox from '@/components/LlmExtractionBox';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import {
@@ -151,11 +150,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!result) return { title: 'Tool Not Found' };
     const { page, quality } = result;
 
-    // Legacy template-only pages have no corpus backing; keep them out of the index.
-    const isStatic = !!getToolPage(slug);
-    const isDynamic = !!page.isDynamic;
-    const isLegacy = !isStatic && !isDynamic;
-
     const { make, model, toolType } = page;
     const vehicle = `${make} ${model}`;
 
@@ -195,9 +189,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
                 : `${vehicle} Coolant Type — Exact Factory Manual Spec`;
             break;
         case 'transmission-fluid-type':
-            title = shortSpec
-                ? `${vehicle} Transmission Fluid — Exact Spec [${shortSpec}]`
-                : `${vehicle} Transmission Fluid — Exact Factory Spec`;
+            title = `${vehicle} Transmission Fluid Type and Capacity`;
             break;
         case 'brake-fluid-type':
             title = shortSpec
@@ -236,26 +228,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title = trunc(title, 58);
     }
 
-    // CTR-optimized description: lead with consequence/authority hook,
-    // then the exact answer, then coverage. Positions 8-12 need urgency
-    // to steal clicks from higher-ranked results.
+    // Lead with the spec the search asked for. A scare line in the snippet
+    // does not match a fluid or parts question, and it is the wrong tone
+    // next to a premium ad layout.
     const cleanAnswer = page.quickAnswer
         ? page.quickAnswer.replace(/\s+/g, ' ').trim().replace(/\.$/, '')
         : '';
-
-    const CONSEQUENCE_HOOKS: Record<string, string> = {
-        'oil-type': 'Wrong oil accelerates engine wear.',
-        'coolant-type': 'Wrong coolant causes corrosion and gasket damage.',
-        'transmission-fluid-type': 'Wrong ATF destroys transmissions.',
-        'brake-fluid-type': 'Wrong brake fluid risks brake failure.',
-        'battery-location': 'OEM battery location and group size.',
-        'serpentine-belt': 'Wrong belt routing destroys accessories.',
-        'tire-size': 'Wrong tire size throws off speedometer and handling.',
-        'spark-plug-type': 'Wrong plugs cause misfires and converter damage.',
-        'wiper-blade-size': 'Wrong wiper size leaves streaks or hits trim.',
-        'headlight-bulb': 'Wrong bulbs blind oncoming traffic or fail inspection.',
-        'fluid-capacity': 'Wrong capacity causes overheating or starvation.',
-    };
 
     let description: string;
     const toolLabel = (TOOL_TYPE_META[toolType]?.label || 'spec').toLowerCase();
@@ -263,12 +241,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         ? shortYearRange
         : (page.generations[0]?.years || 'All Years');
     if (cleanAnswer) {
-        const hook = CONSEQUENCE_HOOKS[toolType] || 'Exact factory manual data.';
         const coverageSnippet = page.generations.length > 1
             ? `Covers ${shortYearRange}.`
             : '';
-        // Build: Hook + Answer + Coverage — front-load the consequence
-        let desc = `${hook} ${cleanAnswer}`;
+        let desc = `${vehicle} ${toolLabel}: ${cleanAnswer}`;
         if (coverageSnippet) {
             desc = `${desc} ${coverageSnippet}`;
         }
@@ -283,9 +259,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         }
         description = desc;
     } else {
-        const hook = CONSEQUENCE_HOOKS[toolType] || 'Exact factory manual data.';
         const fallback = page.description.replace(/\s+/g, ' ').trim();
-        let desc = `${hook} ${fallback}`;
+        let desc = `${vehicle} ${toolLabel}. ${fallback}`;
         // Ensure ~150–155 chars
         if (desc.length < 150) {
             const context = ` Factory ${toolLabel} spec for the ${vehicle} (${yearCoverage}). Verify before buying parts or fluids.`;
@@ -302,9 +277,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
         title,
         description,
-        robots: isLegacy
-            ? { index: false, follow: true }
-            : getNoindexRobots(page.make, page.model),
+        robots: getNoindexRobots(page.make, page.model) ?? { index: true, follow: true },
         keywords: page.keywords,
         openGraph: {
             title,
@@ -771,13 +744,6 @@ export default async function ToolPage({ params }: PageProps) {
                 </div>
             </section>
 
-            <StickyAffiliateBar
-                vehicle={`${page.make} ${page.model}`}
-                intent={TOOL_TYPE_META[page.toolType]?.label || 'Parts'}
-                query={`${page.make} ${page.model} ${page.toolType.replace(/-/g, ' ')}`}
-                subtag={`tool-sticky-${page.toolType}`}
-                variant="mixed"
-            />
         </div>
     );
 }

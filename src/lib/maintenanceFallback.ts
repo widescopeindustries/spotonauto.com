@@ -1,4 +1,5 @@
-import { getToolPagesForVehicle, TOOL_TYPE_META, type ToolType } from '@/data/tools-pages';
+import { getToolPagesForVehicle, findGenerationForYear, type ToolType } from '@/data/tools-pages';
+import { getClampedYear, slugifyRoutePart } from '@/data/vehicles';
 
 /**
  * When a vehicle-specific maintenance page doesn't have CHARM corpus data,
@@ -26,4 +27,19 @@ export function getMaintenanceFallbackUrl(
   const slug = getMaintenanceFallbackSlug(make, model, toolType);
   if (!slug) return null;
   return `/tools/${slug}`;
+}
+
+/** Link only to covered year-specific specs, or an existing model reference. */
+export function getMaintenanceSpecLink(
+  year: string | number,
+  make: string,
+  model: string,
+  toolType: ToolType
+): string | null {
+  const yearNum = Number(year);
+  if (!Number.isInteger(yearNum) || getClampedYear(String(yearNum), make, model) !== null) return null;
+  const page = getToolPagesForVehicle(make, model).find((p) => p.toolType === toolType);
+  if (!page) return null;
+  if (!findGenerationForYear(yearNum, page.generations)) return `/tools/${page.slug}`;
+  return `/maintenance/${yearNum}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}/${toolType}`;
 }

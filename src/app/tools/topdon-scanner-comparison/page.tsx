@@ -6,16 +6,15 @@ import AdUnit from '@/components/AdUnit';
 import {
   TOPDON_PRODUCTS,
   TOPDON_SCANNERS,
-  TOPDON_LOGO,
   buildTopdonProductUrl,
   buildTopdonStoreUrl,
   buildProductItemListSchema,
 } from '@/lib/topdonAffiliate';
 
 export const metadata: Metadata = {
-  title: 'TOPDON Scanner Comparison: Every Model Side by Side (2026) | AllOEMManuals',
+  title: 'TOPDON Scan Tool Comparison Chart | AllOEMManuals',
   description:
-    'Compare every TOPDON OBD2 scanner side-by-side. Full feature comparison chart — ArtiLink300 vs TopScan vs ArtiDiag500 vs ArtiDiag900 Lite vs ArtiDiag Pro and more.',
+    'TOPDON scan tool comparison chart. ArtiLink, TopScan, ArtiDiag, and UltraDiag side by side: price, connection, systems, and updates.',
   keywords: [
     'topdon scanner comparison',
     'topdon scanner',
@@ -27,9 +26,9 @@ export const metadata: Metadata = {
     'best topdon scanner',
   ],
   openGraph: {
-    title: 'TOPDON Scanner Comparison: Every Model Side by Side',
+    title: 'TOPDON Scan Tool Comparison Chart',
     description:
-      'Full feature comparison chart for every TOPDON OBD2 scanner. Find the right one for your car.',
+      'TOPDON scan tool comparison chart for ArtiLink, TopScan, ArtiDiag, and UltraDiag.',
     type: 'article',
     url: 'https://alloemmanuals.com/tools/topdon-scanner-comparison',
   },
@@ -203,7 +202,7 @@ export default function TopdonScannerComparisonPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="mv-content min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
@@ -213,33 +212,21 @@ export default function TopdonScannerComparisonPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productListSchema) }}
       />
 
-      <section className="py-16 px-4 max-w-7xl mx-auto">
-        {/* Breadcrumb */}
-        <nav className="text-sm text-gray-400 mb-8">
+      <section className="px-4 pt-28 pb-10 max-w-7xl mx-auto">
+        <nav className="text-sm text-gray-400 mb-4">
           <Link href="/tools" className="hover:text-cyan-400 transition">Tools</Link>
           <span className="mx-2">/</span>
           <Link href="/tools/best-topdon-scanner" className="hover:text-cyan-400 transition">Best TOPDON Scanner</Link>
           <span className="mx-2">/</span>
-          <span className="text-gray-300">Comparison</span>
+          <span className="text-gray-300">Comparison chart</span>
         </nav>
 
-        {/* Hero */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <Image
-              src={TOPDON_LOGO}
-              alt="TOPDON"
-              width={120}
-              height={36}
-              className="invert brightness-200"
-            />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            TOPDON Scanner <span className="text-orange-400">Comparison</span>
+        <div className="mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            TOPDON Scan Tool Comparison Chart
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Every current TOPDON OBD2 scanner compared feature-by-feature.
-            Find exactly what you need.
+          <p className="text-base text-gray-400 max-w-2xl">
+            Price, connection, and which systems each scanner can reach. The chart is the page.
           </p>
         </div>
 

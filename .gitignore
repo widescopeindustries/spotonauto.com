@@ -82,3 +82,27 @@ __pycache__/
 test-results/
 .youtube-oauth-state.json
 .youtube-token.pickle
+
+# Build copies and scratch. Not the site.
+.next*
+.build-temp/
+/bullpen/
+/data-fallback/
+*.bak
+*.bak-*
+/reports/
+/tmp/
+design-preview.html
+ads.txt.mediavine_backup
+deploy/cloudflare/deploy.bat
+deploy/cloudflare/*.before-*
+
+# One-off probes left on the server
+scripts/debug-*.mjs
+scripts/check-camry*.mjs
+scripts/check-indexes.mjs
+scripts/benchmark-coverage*.mjs
+scripts/generate-lemon-bullpen.mjs
+scripts/test-fetch-html.mjs
+scripts/test-index-speed.mjs
+scripts/test-precision.mjs

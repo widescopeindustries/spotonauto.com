@@ -140,19 +140,19 @@ function buildSupportingOffers(intent: MonetizationIntent, contextLabel?: string
         {
           title: 'Breaker bar',
           description: 'Extra leverage for tight bolts and stubborn fasteners.',
-          reason: 'Repair pages turn into purchases when the right leverage tool is obvious.',
+          reason: 'High-leverage breaker bars prevent rounding factory-torqued caliper bracket and suspension bolts.',
           query: `${context} breaker bar automotive`,
         },
         {
           title: 'Shop towels',
           description: 'Keep hands, pulleys, and work areas clean during teardown.',
-          reason: 'Small cleanup items are easy add-ons and often bought with the repair part.',
+          reason: 'Clean mating surfaces prevent oil and debris contamination on new gaskets and seals.',
           query: `${context} shop towels automotive`,
         },
         {
           title: 'Nitrile gloves',
           description: 'Protect your hands while handling fluids and greasy hardware.',
-          reason: 'Consumable protection gear is a low-friction cart addition.',
+          reason: 'Essential barrier protection against prolonged contact with used motor oil and harsh solvents.',
           query: `${context} nitrile gloves automotive`,
         },
       ];
@@ -172,30 +172,30 @@ export default function SearchLandingMonetizationRail({
   const subtag = `landing-${surface}-${intent}`;
   const vehicleName = contextLabel || 'AllOEMManuals';
   const wrapperClassName =
-    className || 'my-12 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-950/20 to-transparent p-6 md:p-8 backdrop-blur-md transition-all duration-300 hover:border-emerald-500/35';
+    className || 'my-10 rounded-xl border border-slate-800 bg-slate-900/60 p-6 md:p-7 shadow-sm transition-all duration-200';
 
   return (
     <section className={wrapperClassName}>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
-          Recommended Tools & Savings
+        <span className="inline-flex items-center rounded-md border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-300">
+          Factory Service Tools
         </span>
       </div>
 
-      <h2 className="mt-4 text-2xl font-bold text-white tracking-wide">{copy.title}</h2>
-      <p className="mt-3 text-sm leading-6 text-gray-300">{copy.description}</p>
-      <p className="mt-2 text-xs uppercase tracking-[0.16em] text-emerald-400/60 font-medium">
-        Affiliate disclosure: We may earn a commission at no extra cost to you.
+      <h2 className="mt-3 text-xl font-bold text-white tracking-tight">{copy.title}</h2>
+      <p className="mt-2 text-sm leading-6 text-slate-300">{copy.description}</p>
+      <p className="mt-2 text-[11px] uppercase tracking-wider text-slate-500 font-medium">
+        Disclosure: Verified tool recommendations may earn an affiliate commission at no cost to you.
       </p>
 
-      <div className="mt-6 flex flex-wrap gap-3">
+      <div className="mt-5 flex flex-wrap gap-3">
         <AffiliateLink
           href={buildAmazonSearchUrl(query, 'automotive', subtag)}
           partName={`${intent}-tooling`}
           vehicle={vehicleName}
           pageType="parts_page"
           subtag={subtag}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-bold text-black shadow-[0_4px_12px_rgba(245,158,11,0.15)] transition-all duration-300 hover:bg-amber-400 hover:shadow-[0_4px_18px_rgba(245,158,11,0.3)] hover:scale-[1.02] active:scale-[0.98] group/rail-btn"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-500 group/rail-btn"
         >
           {copy.affiliateCta}
           <ArrowRight size={14} className="transition-transform group-hover/rail-btn:translate-x-0.5" />
@@ -204,24 +204,24 @@ export default function SearchLandingMonetizationRail({
           href="/second-opinion"
           target="starter_free"
           label={`${surface}_${intent}_free_quote`}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-cyan-300 px-5 py-2.5 text-sm font-bold text-black shadow-[0_4px_12px_rgba(6,182,212,0.1)] transition-all duration-300 hover:bg-cyan-200 hover:shadow-[0_4px_18px_rgba(6,182,212,0.2)] hover:scale-[1.02] active:scale-[0.98]"
+          className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-700 hover:text-white"
         >
-          Free Quote Check
+          Compare Repair Quote
         </PricingTrackedLink>
         <PricingTrackedLink
           href="/pricing"
           target="pro_waitlist"
           label={`${surface}_${intent}_pro_offer`}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-cyan-200/30 px-5 py-2.5 text-sm font-semibold text-cyan-100 transition-all duration-300 hover:border-cyan-100 hover:text-white hover:bg-cyan-500/5 active:scale-[0.98]"
+          className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-medium text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-200"
         >
           Quote Shield Pro
         </PricingTrackedLink>
       </div>
 
       {!compact && (
-        <details className="mt-6 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 backdrop-blur-md transition-all duration-300">
-          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100/80 hover:text-emerald-300 transition-colors select-none">
-            View supporting tool options
+        <details className="mt-6 rounded-lg border border-slate-800 bg-slate-900/40 p-4 transition-colors">
+          <summary className="cursor-pointer text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition-colors select-none">
+            View factory recommended tools
           </summary>
           <div className="mt-3 grid gap-3 md:grid-cols-3">
             {supportingOffers.map((offer) => (
@@ -232,14 +232,14 @@ export default function SearchLandingMonetizationRail({
                 vehicle={vehicleName}
                 pageType="parts_page"
                 subtag={`${subtag}-support`}
-                className="group rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 text-left transition-all duration-300 hover:border-emerald-400/30 hover:bg-white/[0.05] hover:-translate-y-0.5 hover:shadow-[0_6px_15px_rgba(16,185,129,0.03)] flex flex-col h-full"
+                className="group rounded-lg border border-slate-800/80 bg-slate-900/80 p-4 text-left transition-all hover:border-slate-700 hover:bg-slate-800/60 flex flex-col h-full"
               >
                 <div className="flex h-full flex-col">
-                  <h3 className="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">{offer.title}</h3>
-                  <p className="mt-2 text-xs leading-5 text-gray-300 flex-grow">{offer.description}</p>
-                  <p className="mt-3 text-xs leading-5 text-emerald-400/60 font-medium">{offer.reason}</p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-amber-300 group-hover:text-amber-400 transition-colors">
-                    Shop on Amazon
+                  <h3 className="text-sm font-semibold text-white group-hover:text-sky-400 transition-colors">{offer.title}</h3>
+                  <p className="mt-1.5 text-xs leading-5 text-slate-300 flex-grow">{offer.description}</p>
+                  <p className="mt-2.5 text-xs leading-5 text-slate-400 font-medium">{offer.reason}</p>
+                  <span className="mt-3.5 inline-flex items-center gap-1 text-xs font-semibold text-sky-400 group-hover:text-sky-300 transition-colors">
+                    Check Specifications
                     <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>

@@ -6,10 +6,9 @@ import RepairsSection from "./home-sections/RepairsSection";
 import ConversionZone from "@/components/ConversionZone";
 import { TIER_1_RESCUE_PAGES } from "@/data/rescuePriority";
 
-
 export default function ClientHome() {
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-[#EAEAEA]">
+    <div className="mv-content min-h-screen bg-[#0a0a0c] text-[#EAEAEA]">
       <HeroSection />
       <PopularToolsSection />
       <KitsSection />

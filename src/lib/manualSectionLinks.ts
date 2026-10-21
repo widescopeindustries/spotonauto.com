@@ -20,6 +20,7 @@ import {
   buildRepairNodeId,
   buildWiringNodeId,
 } from '@/lib/knowledgeGraph';
+import { getLemonExcerptsForRepair } from '@/lib/lemonExcerpts';
 
 function buildManualUrl(path: string): string {
   const segments = path.split('/').filter(Boolean).map((segment) => encodeURIComponent(decodeURIComponent(segment)));
@@ -152,6 +153,20 @@ export async function getOEMExcerptsForRepair(args: {
   displayModel: string;
   limit?: number;
 }): Promise<OEMExcerptData[]> {
+  // If post-2013, PostgreSQL manual_embeddings has 0 rows; query LEMON directly
+  if (args.year >= 2014) {
+    const lemonExcerpts = await getLemonExcerptsForRepair({
+      make: args.make,
+      year: args.year,
+      model: args.model,
+      task: args.task,
+      displayMake: args.displayMake,
+      displayModel: args.displayModel,
+      limit: args.limit || 3,
+    });
+    if (lemonExcerpts.length > 0) return lemonExcerpts;
+  }
+
   const profile = getRepairTaskProfile(args.task);
   const taskLabel = args.task.replace(/-/g, ' ');
   const rows = await safeFindRows(
@@ -166,7 +181,7 @@ export async function getOEMExcerptsForRepair(args: {
       }),
   );
 
-  return rows
+  const excerpts = rows
     .filter((row) => row.contentPreview && row.contentPreview.length > 80)
     .map((row) => ({
       path: row.path,
@@ -177,6 +192,21 @@ export async function getOEMExcerptsForRepair(args: {
       contentPreview: row.contentPreview,
       manualHref: buildManualUrl(row.path),
     }));
+
+  if (excerpts.length > 0) {
+    return excerpts;
+  }
+
+  // Fallback to LEMON corpus if CHARM Postgres had 0 rows
+  return getLemonExcerptsForRepair({
+    make: args.make,
+    year: args.year,
+    model: args.model,
+    task: args.task,
+    displayMake: args.displayMake,
+    displayModel: args.displayModel,
+    limit: args.limit || 3,
+  });
 }
 
 export async function getManualSectionLinksForRepair(args: {
@@ -190,6 +220,47 @@ export async function getManualSectionLinksForRepair(args: {
 }): Promise<DiagnosticCrossLink[]> {
   const profile = getRepairTaskProfile(args.task);
   const taskLabel = args.task.replace(/-/g, ' ');
+
+  // If post-2013, PostgreSQL manual_embeddings has 0 rows; query LEMON directly
+  if (args.year >= 2014) {
+    const lemonExcerpts = await getLemonExcerptsForRepair({
+      make: args.make,
+      year: args.year,
+      model: args.model,
+      task: args.task,
+      displayMake: args.displayMake,
+      displayModel: args.displayModel,
+      limit: args.limit || 4,
+    });
+    if (lemonExcerpts.length > 0) {
+      return lemonExcerpts.map((excerpt) => ({
+        ...buildEdgeReference({
+          sourceNodeId: buildRepairNodeId(args.year, args.displayMake, args.displayModel, args.task),
+          targetNodeId: buildManualNodeId(excerpt.path),
+          relation: 'has-manual',
+          year: args.year,
+          make: args.displayMake,
+          model: args.displayModel,
+          task: args.task,
+          confidence: 0.85,
+          evidence: [{
+            source: 'manual-embedding',
+            path: excerpt.path,
+            href: excerpt.manualHref,
+            snippet: clip(excerpt.contentPreview, 220),
+            matchedTerms: [taskLabel],
+            score: 0.85,
+            observedAt: new Date().toISOString(),
+          }],
+        }),
+        href: excerpt.manualHref,
+        label: `${args.year} ${args.displayMake} ${args.displayModel} ${excerpt.sectionTitle}`,
+        description: clip(excerpt.contentPreview || `${taskLabel} procedures from the OEM service manual for this vehicle.`),
+        badge: 'OEM Manual',
+      }));
+    }
+  }
+
   const rows = await safeFindRows(
     `repair:${args.year}-${args.displayMake}-${args.displayModel}-${args.task}`,
     () =>
@@ -202,21 +273,60 @@ export async function getManualSectionLinksForRepair(args: {
       }),
   );
 
-  return rows.map((row) => ({
+  if (rows.length > 0) {
+    return rows.map((row) => ({
+      ...buildEdgeReference({
+        sourceNodeId: buildRepairNodeId(args.year, args.displayMake, args.displayModel, args.task),
+        targetNodeId: buildManualNodeId(row.path),
+        relation: 'has-manual',
+        year: args.year,
+        make: args.displayMake,
+        model: args.displayModel,
+        task: args.task,
+        confidence: estimateConfidence(row),
+        evidence: toEvidence(row),
+      }),
+      href: buildManualUrl(row.path),
+      label: `${args.year} ${args.displayMake} ${args.displayModel} ${row.sectionTitle}`,
+      description: clip(row.contentPreview || `${taskLabel} procedures from the OEM service manual for this vehicle.`),
+      badge: 'OEM Manual',
+    }));
+  }
+
+  // Fallback to LEMON if CHARM Postgres returned 0 rows
+  const fallbackLemon = await getLemonExcerptsForRepair({
+    make: args.make,
+    year: args.year,
+    model: args.model,
+    task: args.task,
+    displayMake: args.displayMake,
+    displayModel: args.displayModel,
+    limit: args.limit || 4,
+  });
+
+  return fallbackLemon.map((excerpt) => ({
     ...buildEdgeReference({
       sourceNodeId: buildRepairNodeId(args.year, args.displayMake, args.displayModel, args.task),
-      targetNodeId: buildManualNodeId(row.path),
+      targetNodeId: buildManualNodeId(excerpt.path),
       relation: 'has-manual',
       year: args.year,
       make: args.displayMake,
       model: args.displayModel,
       task: args.task,
-      confidence: estimateConfidence(row),
-      evidence: toEvidence(row),
+      confidence: 0.85,
+      evidence: [{
+        source: 'manual-embedding',
+        path: excerpt.path,
+        href: excerpt.manualHref,
+        snippet: clip(excerpt.contentPreview, 220),
+        matchedTerms: [taskLabel],
+        score: 0.85,
+        observedAt: new Date().toISOString(),
+      }],
     }),
-    href: buildManualUrl(row.path),
-    label: `${args.year} ${args.displayMake} ${args.displayModel} ${row.sectionTitle}`,
-    description: clip(row.contentPreview || `${taskLabel} procedures from the OEM service manual for this vehicle.`),
+    href: excerpt.manualHref,
+    label: `${args.year} ${args.displayMake} ${args.displayModel} ${excerpt.sectionTitle}`,
+    description: clip(excerpt.contentPreview || `${taskLabel} procedures from the OEM service manual for this vehicle.`),
     badge: 'OEM Manual',
   }));
 }

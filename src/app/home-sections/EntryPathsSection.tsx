@@ -1,88 +1,69 @@
 import Link from "next/link";
-import { BookOpen, Sparkles, ArrowRight } from "lucide-react";
+import { BookOpen, Stethoscope, ArrowRight } from "lucide-react";
 
 export default function EntryPathsSection() {
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
-      {/* Subtle section background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-cyan-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
-
+    <section className="relative overflow-hidden py-16 md:py-24 border-t border-slate-800/60 bg-[#0B0F17]">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-14 text-center">
-
-          <span className="inline-block text-xs font-medium uppercase tracking-[0.2em] text-cyan-400/70 mb-3">
-            Start Here
+        <div className="mb-10 text-center">
+          <span className="inline-block text-xs font-mono uppercase tracking-wider text-sky-400 mb-2">
+            Technical Service Navigation
           </span>
-          <h2 className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl font-display">
-            How can we help?
+          <h2 className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl tracking-tight">
+            Select Your Workshop Workflow
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-gray-400">
-            Pick the path that matches where you are right now.
+          <p className="mx-auto mt-2.5 max-w-lg text-slate-400 text-sm sm:text-base">
+            Choose direct procedure specifications or diagnostic fault tree navigation.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Path 1: I know what's wrong */}
+        <div className="grid gap-5 md:grid-cols-2">
+          {/* Path 1: Direct Manual Procedures */}
           <Link
             href="/repair"
-            className="group relative flex h-full flex-col rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl p-8 overflow-hidden transition-all duration-500 hover:border-cyan-500/30 hover:bg-white/[0.05] hover:shadow-[0_0_60px_-15px_rgba(0,212,255,0.15)]"
+            className="group relative flex h-full flex-col rounded-xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8 transition-all duration-200 hover:border-sky-500/40 hover:bg-slate-800/50 shadow-xs"
           >
-            {/* Hover gradient sweep */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-              style={{
-                background: "linear-gradient(135deg, rgba(0,212,255,0.05) 0%, transparent 60%)",
-              }}
-            />
             <div className="relative">
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-                <BookOpen className="h-6 w-6 text-cyan-400" />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
+                <BookOpen className="h-5 w-5" />
               </div>
 
-              <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">
-                You know what is wrong
+              <h3 className="text-lg font-bold text-slate-200 group-hover:text-white transition-colors">
+                OEM Repair &amp; Service Procedures
               </h3>
-              <p className="mt-2 text-gray-400 leading-relaxed">
-                You just need the factory service data — torque specs, fluid
-                capacities, wiring diagrams, and step-by-step procedures for your
-                exact year, make, and model.
+              <p className="mt-2 text-sm text-slate-400 leading-relaxed">
+                Direct factory documentation &mdash; fastener torque specifications, fluid capacities,
+                pinout diagrams, and teardown steps indexed by vehicle year, make, and model.
               </p>
 
-              <div className="mt-auto flex items-center gap-2 pt-6 text-sm font-medium text-cyan-400 group-hover:text-cyan-300 transition-colors">
-                Open the repair hub
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <div className="mt-6 flex items-center gap-1.5 text-xs font-mono font-semibold text-sky-400 group-hover:text-sky-300 transition-colors">
+                <span>Open Repair Procedure Index</span>
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
               </div>
             </div>
           </Link>
 
-          {/* Path 2: Talk to Manuel */}
+          {/* Path 2: Diagnostic Fault Tree */}
           <Link
             href="/diagnose"
-            className="group relative flex h-full flex-col rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl p-8 overflow-hidden transition-all duration-500 hover:border-[#FF6B00]/30 hover:bg-white/[0.05] hover:shadow-[0_0_60px_-15px_rgba(255,107,0,0.12)]"
+            className="group relative flex h-full flex-col rounded-xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8 transition-all duration-200 hover:border-sky-500/40 hover:bg-slate-800/50 shadow-xs"
           >
-            {/* Hover gradient sweep */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-              style={{
-                background: "linear-gradient(135deg, rgba(255,107,0,0.05) 0%, transparent 60%)",
-              }}
-            />
             <div className="relative">
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/20">
-                <Sparkles className="h-6 w-6 text-[#FF6B00]" />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
+                <Stethoscope className="h-5 w-5" />
               </div>
 
-              <h3 className="text-xl font-bold text-white group-hover:text-[#FF9500] transition-colors duration-300">
-                Talk to Manuel
+              <h3 className="text-lg font-bold text-slate-200 group-hover:text-white transition-colors">
+                Diagnostic Troubleshooting Flowcharts
               </h3>
-              <p className="mt-2 text-gray-400 leading-relaxed">
-                Hey, I&apos;m Manuel — your factory-trained AI mechanic. Tell me what&apos;s
-                wrong: read me a code, describe a noise, or just say &quot;it won&apos;t start.&quot;
-                I&apos;ll walk you through the exact diagnostic flowchart from the OEM
-                manual, step by step. No typing required — just talk.
+              <p className="mt-2 text-sm text-slate-400 leading-relaxed">
+                Step-by-step diagnostic trees for OBD-II trouble codes, electrical short-to-ground
+                tests, and mechanical symptom isolation straight from factory service bulletins.
               </p>
 
-              <div className="mt-auto flex items-center gap-2 pt-6 text-sm font-medium text-[#FF6B00] group-hover:text-[#FF9500] transition-colors">
-                Ask Manuel
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <div className="mt-6 flex items-center gap-1.5 text-xs font-mono font-semibold text-sky-400 group-hover:text-sky-300 transition-colors">
+                <span>Start Diagnostic Session</span>
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
               </div>
             </div>
           </Link>

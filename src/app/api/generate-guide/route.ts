@@ -99,24 +99,43 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON request' }, { status: 400 });
+    }
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
     const { action, payload = {}, stream, turnstileToken } = body;
+
+    if (!['decode-vin', 'vehicle-info', 'generate-guide', 'diagnostic-chat'].includes(action)) {
+      return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    }
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+    }
+
+    const limited = checkRateLimit(req, 10, 60_000);
+    if (limited) return limited;
 
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
 
     // Verify Turnstile for expensive actions
     if (action === 'generate-guide') {
-      if (!turnstileToken) {
+      if (typeof turnstileToken !== 'string' || !turnstileToken || turnstileToken.length > 2048) {
         return NextResponse.json({ error: 'Missing security token' }, { status: 400 });
       }
 
       const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
       if (!turnstileSecret) {
         console.error('[Turnstile] TURNSTILE_SECRET_KEY is not configured');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+        return NextResponse.json({ error: 'Guide enhancement is temporarily unavailable.' }, { status: 503 });
       }
       const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
         method: 'POST',
+        signal: AbortSignal.timeout(10_000),
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           secret: turnstileSecret,
@@ -125,15 +144,16 @@ export async function POST(req: NextRequest) {
         }),
       });
 
+      if (!verifyRes.ok) {
+        return NextResponse.json({ error: 'Security verification is temporarily unavailable. Please try again.' }, { status: 503 });
+      }
+
       const verifyData = await verifyRes.json();
-      if (!verifyData.success) {
+      if (!verifyData.success || !['alloemmanuals.com', 'www.alloemmanuals.com'].includes(verifyData.hostname)) {
         logWarn(`[Turnstile] Validation failed for IP ${ip}: ${JSON.stringify(verifyData['error-codes'])}`);
         return NextResponse.json({ error: 'Security validation failed' }, { status: 403 });
       }
     }
-
-    const limited = checkRateLimit(req, 10, 60_000); // 10 actions/min per IP
-    if (limited) return limited;
 
     if (!action) {
       return NextResponse.json({ error: 'Missing action' }, { status: 400 });

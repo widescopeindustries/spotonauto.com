@@ -256,6 +256,63 @@ export const EV_MODELS = new Set([
     'tesla:model-s',
     'tesla:model-x',
     'tesla:cybertruck',
+    // Electric variants present in the self-hosted vehicle catalog.
+    'toyota:rav4-ev',
+    'toyota:rav4-ev-ele-electric-engine',
+    'toyota:rav4-ev',
+    'honda:ev-plus',
+    'honda:ev',
+    'honda:fit-ev',
+    'honda:fit-ev-ele-electric-engine',
+    'honda:fit-ev',
+    'ford:ranger-ev',
+    'ford:focus-ele-electric-engine',
+    'ford:f-150-lightning',
+    'chevrolet:spark-ev',
+    'chevrolet:silverado-ev',
+    'nissan:altra-ev',
+    'nissan:ariya-hatchback',
+    'hyundai:kona-electric',
+    'hyundai:ioniq-5-n',
+    'kia:soul-ev',
+    'kia:niro-ev',
+    'mercedes-benz:b-electric-drive',
+    'mercedes-benz:eqs-amg',
+    'mercedes-benz:eqe-amg',
+    'mercedes-benz:eqe-suv-amg',
+    'audi:e-tron-quattro',
+    'audi:e-tron-s',
+    'audi:e-tron-s-sportback',
+    'audi:q4-e-tron-sportback',
+    'audi:q8-e-tron-sportback',
+    'audi:sq8-e-tron',
+    'audi:sq8-e-tron-sportback',
+    'audi:q6-e-tron',
+    'audi:s-e-tron-gt',
+    'audi:sq6-e-tron',
+    'mazda:mx30-ev',
+    'mitsubishi:i-miev-ele-electric-engine',
+    'mitsubishi:i-miev-es',
+    'gmc:electric-vehicle',
+    'gmc:hummer-ev',
+    'gmc:sierra-ev',
+    'porsche:macan-ev',
+    'fiat:500e-ele-electric-engine',
+    'smart:fortwo-electric-drive',
+    'eagle:suzhou-eagle-electric-vehicle',
+    'dodge and ram:promaster-ev',
+    'general motors:ev1',
+    'nissan datsun:altra-ev',
+    'nissan datsun:leaf-ele-electric-engine',
+    'nissan datsun:leaf-sl',
+    'nissan datsun:leaf-sv',
+    'nissan datsun:leaf-s',
+    'nissan datsun:altra-ev',
+    'nissan datsun:leaf',
+    'nissan datsun:ariya',
+    'scion:iq-ev',
+    'scion:iq-ev-ele-electric-engine',
+    'scion:iq-ev',
 ]);
 
 /** Repair tasks that only apply to internal combustion engines */
@@ -277,7 +334,7 @@ export const ICE_ONLY_TASKS = new Set([
 
 export function isEvModel(make: string, model: string): boolean {
     const key = `${make.toLowerCase()}:${model.toLowerCase().replace(/\s+/g, '-')}`;
-    return EV_MODELS.has(key);
+    return EV_MODELS.has(key) || [...EV_MODELS].some((entry) => entry.replace(/\s+/g, '-') === key);
 }
 
 /** Tasks that only apply to diesel engines — block for all gas/EV vehicles */
@@ -307,6 +364,39 @@ export function slugifyRoutePart(value: string): string {
         .replace(/^-|-$/g, '');
 }
 
+type ProductionRange = { start: number; end: number };
+let vehicleIndexes: {
+    makes: Map<string, string>;
+    models: Map<string, string>;
+    ranges: Map<string, Map<string, ProductionRange[]>>;
+} | undefined;
+
+function getVehicleIndexes() {
+    if (vehicleIndexes) return vehicleIndexes;
+    const makes = new Map<string, string>();
+    const models = new Map<string, string>();
+    const ranges = new Map<string, Map<string, ProductionRange[]>>();
+    for (const [make, entries] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
+        const makeSlug = slugifyRoutePart(make);
+        const makeRanges = new Map<string, ProductionRange[]>();
+        // Keep the original scan's first match when names share a slug.
+        if (!makes.has(makeSlug)) {
+            makes.set(makeSlug, make);
+            ranges.set(makeSlug, makeRanges);
+        }
+        for (const [model, range] of Object.entries(entries)) {
+            const modelSlug = slugifyRoutePart(model);
+            if (!models.has(modelSlug)) models.set(modelSlug, model);
+            const compact = modelSlug.replace(/-/g, '');
+            const modelRanges = makeRanges.get(compact) || [];
+            modelRanges.push(range);
+            makeRanges.set(compact, modelRanges);
+        }
+    }
+    vehicleIndexes = { makes, models, ranges };
+    return vehicleIndexes;
+}
+
 /**
  * Validates if a vehicle/year combination is valid.
  * Permissive: rejects only known-impossible combos (e.g. year outside production range).
@@ -330,28 +420,8 @@ export function isValidVehicleCombination(
     if (!make || make.trim().length === 0) return false;
     if (!model || model.trim().length === 0) return false;
 
-    // If we have production year data for this vehicle, validate the year range
-    const makeEntry = Object.entries(VEHICLE_PRODUCTION_YEARS).find(
-        ([m]) => slugifyRoutePart(m) === slugifyRoutePart(make)
-    );
-
-    if (makeEntry) {
-        const [, models] = makeEntry;
-        const modelEntry = Object.entries(models).find(([m]) => {
-            return slugifyRoutePart(m) === slugifyRoutePart(model);
-        });
-
-        if (modelEntry) {
-            const [, productionYears] = modelEntry;
-            if (yearNum < productionYears.start || yearNum > productionYears.end) {
-                console.warn(
-                    `[VALIDATION] Rejected ${yearNum} ${make} ${model}: ` +
-                    `valid range is ${productionYears.start}-${productionYears.end}`
-                );
-                return false;
-            }
-        }
-    }
+    // Use the same alias-aware range check as route canonicalization.
+    if (getClampedYear(yearNum, make, model) !== null) return false;
 
     // Block ICE-only tasks for electric vehicles
     if (isEvModel(make, model) && ICE_ONLY_TASKS.has(task)) return false;
@@ -373,21 +443,16 @@ export function getClampedYear(
     const yearNum = typeof year === 'string' ? parseInt(year, 10) : year;
     if (isNaN(yearNum)) return null;
 
-    const makeEntry = Object.entries(VEHICLE_PRODUCTION_YEARS).find(
-        ([m]) => slugifyRoutePart(m) === slugifyRoutePart(make)
-    );
-    if (!makeEntry) return null;
-
-    const [, models] = makeEntry;
-    const modelEntry = Object.entries(models).find(([m]) => {
-        return slugifyRoutePart(m) === slugifyRoutePart(model);
-    });
-    if (!modelEntry) return null;
-
-    const [, { start, end }] = modelEntry;
-    if (yearNum < start) return start;
-    if (yearNum > end) return end;
-    return null; // year is already valid
+    const models = getVehicleIndexes().ranges.get(slugifyRoutePart(make));
+    if (!models) return null;
+    // Corpus aliases such as F 150 and F-150 describe different year slices
+    // of the same model. Preserve all recorded ranges instead of taking the
+    // first exact spelling and redirecting a valid older vehicle to a newer year.
+    const ranges = models.get(slugifyRoutePart(model).replace(/-/g, '')) || [];
+    if (!ranges.length) return null;
+    if (ranges.some(({ start, end }) => yearNum >= start && yearNum <= end)) return null;
+    return ranges.flatMap(({ start, end }) => [start, end])
+        .sort((a, b) => Math.abs(a - yearNum) - Math.abs(b - yearNum))[0];
 }
 
 /**
@@ -395,20 +460,9 @@ export function getClampedYear(
  * Fallback: Capitalize words if not found in lookup table
  */
 export function getDisplayName(slug: string, type: 'make' | 'model'): string {
-    // Try to find in hardcoded list first
-    if (type === 'make') {
-        const found = Object.keys(VEHICLE_PRODUCTION_YEARS).find(
-            m => slugifyRoutePart(m) === slugifyRoutePart(slug)
-        );
-        if (found) return found;
-    } else {
-        for (const [, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
-            const found = Object.keys(models).find(
-                m => slugifyRoutePart(m) === slugifyRoutePart(slug)
-            );
-            if (found) return found;
-        }
-    }
+    const indexes = getVehicleIndexes();
+    const found = (type === 'make' ? indexes.makes : indexes.models).get(slugifyRoutePart(slug));
+    if (found) return found;
 
     // Fallback: decode URI and Title Case
     return decodeURIComponent(slug)

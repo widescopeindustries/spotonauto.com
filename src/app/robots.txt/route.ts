@@ -9,12 +9,16 @@ export async function GET() {
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /manual/hyperlink/
+Disallow: */hyperlink/*
 Disallow: /*?_rsc*
 
 User-Agent: bingbot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /manual/hyperlink/
+Disallow: */hyperlink/*
 Disallow: /*?_rsc*
 
 User-Agent: ChatGPT-User
@@ -167,12 +171,12 @@ Disallow: /repairs/
 Disallow: /symptoms/
 Disallow: /tools/type/
 Disallow: /manual-navigator
+Disallow: /manual/hyperlink/
+Disallow: */hyperlink/*
 Disallow: /*?_rsc*
 
-Content-Signal: ai-train=licensed, search=yes, ai-input=yes
-
-Host: https://alloemmanuals.com
 Sitemap: https://alloemmanuals.com/sitemap_index.xml
+Sitemap: https://alloemmanuals.com/sitemap-priority-winners.xml
 `;
 
   return new NextResponse(body, {

@@ -24,20 +24,8 @@ const TRACKING_SCRIPT = `
       }
     }catch(e){}
   }
-  function clarityEvent(name){
-    try{
-      if(window.clarity){
-        window.clarity('event', name);
-      }
-    }catch(e){}
-  }
-  function clarityUpgrade(reason){
-    try{
-      if(window.clarity){
-        window.clarity('upgrade', reason);
-      }
-    }catch(e){}
-  }
+  function clarityEvent(name){}
+  function clarityUpgrade(reason){}
   function setup(){
     fire('page_view_custom',{
       page_path: window.location.pathname,

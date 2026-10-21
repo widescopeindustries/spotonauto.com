@@ -7,158 +7,126 @@ import {
   Thermometer,
   Zap,
   ArrowRight,
-  ShoppingBag,
+  Sliders,
   Wrench,
 } from "lucide-react";
-
 
 interface ToolCard {
   slug: string;
   label: string;
   vehicle: string;
   icon: React.ComponentType<{ className?: string }>;
-  iconColor: string;
-  bgColor: string;
-  borderColor: string;
 }
 
 const TOP_TOOLS: ToolCard[] = [
   {
     slug: "/tools/toyota-camry-oil-type",
-    label: "Oil Type",
+    label: "Engine Oil Spec",
     vehicle: "Toyota Camry",
     icon: Droplets,
-    iconColor: "text-[#5B8DB8]",
-    bgColor: "bg-[#5B8DB8]/10",
-    borderColor: "border-[#5B8DB8]/20",
   },
   {
     slug: "/tools/honda-civic-oil-type",
-    label: "Oil Type",
+    label: "Engine Oil Spec",
     vehicle: "Honda Civic",
     icon: Droplets,
-    iconColor: "text-[#5B8DB8]",
-    bgColor: "bg-[#5B8DB8]/10",
-    borderColor: "border-[#5B8DB8]/20",
   },
   {
     slug: "/tools/bmw-x3-battery-location",
-    label: "Battery Location",
+    label: "Battery Group & Location",
     vehicle: "BMW X3",
     icon: Battery,
-    iconColor: "text-[#FBBF24]",
-    bgColor: "bg-[#FBBF24]/10",
-    borderColor: "border-[#FBBF24]/20",
   },
   {
     slug: "/tools/toyota-camry-tire-size",
-    label: "Tire Size",
+    label: "OEM Tire & Wheel Fitment",
     vehicle: "Toyota Camry",
     icon: CircleDot,
-    iconColor: "text-[#EC4899]",
-    bgColor: "bg-[#EC4899]/10",
-    borderColor: "border-[#EC4899]/20",
   },
   {
     slug: "/tools/nissan-pathfinder-serpentine-belt",
-    label: "Serpentine Belt",
+    label: "Drive Belt Routing & Spec",
     vehicle: "Nissan Pathfinder",
     icon: Cog,
-    iconColor: "text-[#06B6D4]",
-    bgColor: "bg-[#06B6D4]/10",
-    borderColor: "border-[#06B6D4]/20",
   },
   {
     slug: "/tools/chevrolet-silverado-coolant-type",
-    label: "Coolant Type",
+    label: "Cooling System Capacity",
     vehicle: "Chevrolet Silverado",
     icon: Thermometer,
-    iconColor: "text-[#EF4444]",
-    bgColor: "bg-[#EF4444]/10",
-    borderColor: "border-[#EF4444]/20",
   },
   {
     slug: "/tools/honda-civic-spark-plug-type",
-    label: "Spark Plug Type",
+    label: "Spark Plug Gap & Torque",
     vehicle: "Honda Civic",
     icon: Zap,
-    iconColor: "text-[#10B981]",
-    bgColor: "bg-[#10B981]/10",
-    borderColor: "border-[#10B981]/20",
   },
   {
     slug: "/tools/audi-q5-transmission-fluid-type",
-    label: "Transmission Fluid",
+    label: "Transmission Fluid Spec",
     vehicle: "Audi Q5",
     icon: Droplets,
-    iconColor: "text-[#8B5CF6]",
-    bgColor: "bg-[#8B5CF6]/10",
-    borderColor: "border-[#8B5CF6]/20",
   },
 ];
 
 export default function PopularToolsSection() {
   return (
-    <section className="relative overflow-hidden py-20 md:py-28">
+    <section className="relative overflow-hidden py-16 md:py-24 border-t border-slate-800/60 bg-[#0C101A]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-
-          <div className="mb-4 flex items-center justify-center gap-2">
-            <ShoppingBag className="h-4 w-4 text-[#FF6B00]" />
-            <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#FF6B00]">
-              Shop by Spec
+        <div className="mb-10 text-center">
+          <div className="mb-3 flex items-center justify-center gap-2">
+            <Sliders className="h-4 w-4 text-sky-400" />
+            <span className="text-xs font-mono uppercase tracking-wider text-sky-400">
+              Quick Reference Database
             </span>
           </div>
-          <h2 className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl font-display">
-            Most Searched <span className="text-gradient-orange">Specs</span>
+          <h2 className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl tracking-tight">
+            Factory Service Specifications
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-gray-400">
-            The exact oil, battery, tire, and fluid specs people look up every
-            day — with links to the right parts on Amazon.
+          <p className="mx-auto mt-2.5 max-w-xl text-slate-400 text-sm sm:text-base">
+            OEM fluid capacities, battery group sizes, torque tolerances, and fitment charts
+            indexed by exact vehicle year and trim.
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {TOP_TOOLS.map((tool) => {
             const Icon = tool.icon;
             return (
               <Link
                 key={tool.slug}
                 href={tool.slug}
-                className="group flex h-full flex-col rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-sm p-5 transition-all duration-500 hover:border-white/[0.15] hover:bg-white/[0.06] hover:shadow-[0_0_40px_-10px_rgba(0,212,255,0.1)]"
+                className="group flex h-full flex-col rounded-xl border border-slate-800 bg-slate-900/60 p-4 transition-all duration-200 hover:border-sky-500/40 hover:bg-slate-800/50 shadow-xs"
               >
-                <div className="mb-4 flex items-center justify-between">
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg ${tool.bgColor} border ${tool.borderColor}`}
-                  >
-                    <Icon className={`h-5 w-5 ${tool.iconColor}`} />
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
+                    <Icon className="h-4 w-4" />
                   </div>
-                  <span className="text-xs font-medium text-gray-500">
+                  <span className="text-[11px] font-mono font-medium text-slate-400">
                     {tool.label}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white group-hover:text-[#FF6B00] transition-colors duration-300">
+                <h3 className="text-base font-bold text-slate-200 group-hover:text-white transition-colors">
                   {tool.vehicle}
                 </h3>
 
-                <div className="mt-auto flex items-center gap-1 pt-4 text-sm font-medium text-[#FF6B00] group-hover:text-[#FF9500] transition-colors">
-                  Get the exact spec
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                <div className="mt-auto flex items-center gap-1.5 pt-4 text-xs font-mono font-semibold text-sky-400 group-hover:text-sky-300 transition-colors">
+                  <span>View OEM Specs</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                 </div>
               </Link>
             );
           })}
         </div>
 
-        <div className="mt-10 text-center">
+        <div className="mt-8 text-center">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:border-[#FF6B00]/40 hover:bg-white/10 hover:shadow-[0_0_30px_-10px_rgba(255,107,0,0.2)]"
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/80 px-5 py-2.5 text-xs font-mono font-semibold text-slate-200 transition-colors hover:bg-slate-700 hover:border-slate-600"
           >
-            <Wrench className="h-4 w-4 text-[#FF6B00]" />
-            Browse all 76 spec lookups
-            <ArrowRight className="h-4 w-4" />
+            <Wrench className="h-3.5 w-3.5 text-sky-400" />
+            <span>Browse Complete Specification Database &rarr;</span>
           </Link>
         </div>
       </div>

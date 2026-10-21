@@ -1,5 +1,5 @@
 import 'server-only';
-import neo4j, { Driver, Session, QueryResult } from 'neo4j-driver';
+import neo4j, { type Driver, type Session, type QueryResult } from 'neo4j-driver';
 
 const NEO4J_URI = process.env.NEO4J_URI || 'bolt://localhost:7687';
 const NEO4J_USER = process.env.NEO4J_USER || 'neo4j';

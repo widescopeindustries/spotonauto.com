@@ -22,7 +22,6 @@ import WiringTrackedLink from '@/app/wiring/WiringTrackedLink';
 import KnowledgeGraphGroup from '@/components/KnowledgeGraphGroup';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import SystemPartsAffiliate from '@/components/SystemPartsAffiliate';
-import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import {
   getCodeLinksForWiringSystem,
   getRepairLinksForWiringVehicle,
@@ -458,6 +457,7 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(knowledgeGraphExport) }}
       />
 
+      <div className="mv-content">
       <section className="max-w-6xl mx-auto px-4 pt-24 pb-12">
         <p className="text-cyan-400 text-xs uppercase tracking-[0.2em] font-bold mb-3">Wiring Diagram Cluster</p>
         <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
@@ -667,13 +667,7 @@ export default async function WiringSystemSeoPage({ params }: PageProps) {
         />
       </section>
 
-      <StickyAffiliateBar
-        vehicle={vehicleLabel}
-        intent={systemMeta.shortLabel}
-        query={`${vehicleLabel} ${systemMeta.shortLabel} parts`}
-        subtag={`wiring-${systemSlug}`}
-        variant="mixed"
-      />
+      </div>
     </main>
   );
 }

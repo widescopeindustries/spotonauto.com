@@ -149,11 +149,10 @@ export default function DeferredWiringDiagramBrowser() {
   return (
     <main className="max-w-5xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
       <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
-      <SafetyWarningBox className="mb-6" />
-      <section className="rounded-[2rem] border border-cyan-500/15 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.14),_transparent_48%),rgba(255,255,255,0.03)] p-8 sm:p-10">
+      <section className="mv-content rounded-[2rem] border border-cyan-500/15 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.14),_transparent_48%),rgba(255,255,255,0.03)] p-8 sm:p-10">
         <div className="max-w-3xl">
           <h1 className="font-display text-4xl font-black tracking-tight text-white sm:text-5xl">
-            Find Wiring Diagrams for Your Vehicle
+            Wiring Diagrams
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-gray-300 sm:text-lg">
             Browse 148,000+ factory electrical diagrams covering 82 makes from 1982 to 2025.
@@ -252,6 +251,8 @@ export default function DeferredWiringDiagramBrowser() {
             </div>
           )}
         </div>
+
+        <SafetyWarningBox className="mt-6" />
 
         {/* ── Full browser toggle ──────────────────────────────────────── */}
         <div className="mt-8 flex flex-wrap gap-3">

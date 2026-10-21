@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: PageProps) {
     alternates: {
       canonical: `https://alloemmanuals.com/guides/${canonicalMake}/${canonicalModel}`,
     },
-    robots: { index: false, follow: true },
+    robots: { index: true, follow: true },
   };
 }
 

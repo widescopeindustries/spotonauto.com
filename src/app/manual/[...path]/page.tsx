@@ -8,7 +8,8 @@ import {
   type CharmLink,
 } from '@/lib/charmParser';
 import { fetchManualPage, getSectionByPath, getChildSections } from '@/lib/manualService';
-import JarvisManualViewer from '@/components/manual/JarvisManualViewer';
+import { isBoilerplateManualPath, isBoilerplateManualStoredPath } from '@/lib/manualBoilerplate';
+import WorkshopManualViewer from '@/components/manual/WorkshopManualViewer';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
 import SafetyWarningBox from '@/components/SafetyWarningBox';
 import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
@@ -31,6 +32,9 @@ function safeDecodeSegment(value: string): string {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { path } = await params;
   const decodedPath = path.map((s) => safeDecodeSegment(s));
+  if (decodedPath.some((s) => s.toLowerCase() === 'hyperlink') || isBoilerplateManualPath(decodedPath)) {
+    notFound();
+  }
   const title = buildManualTitle(decodedPath);
   const description = buildManualDescription(decodedPath);
   const canonical = 'https://alloemmanuals.com/manual/' + decodedPath.map(s => encodeURIComponent(s)).join('/');
@@ -77,35 +81,18 @@ export default async function ManualBrowserPage({ params }: PageProps) {
   if (normalizedPath.some((s) => s.toLowerCase() === 'hyperlink')) {
     notFound();
   }
+  if (isBoilerplateManualPath(normalizedPath)) {
+    notFound();
+  }
 
   const dbPath = '/' + normalizedPath.map((s) => encodeURIComponent(s)).join('/');
   const page = await fetchManualPage(normalizedPath);
   const breadcrumbs = buildBreadcrumbs(normalizedPath);
   const depth = path.length;
 
-  // ── Error state ──
+  // ── Error state: emit true HTTP 404 to eliminate Google Soft 404 penalty ──
   if (page.status !== 200) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-24">
-        <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
-        <SafetyWarningBox className="mb-6" />
-        <Breadcrumbs items={breadcrumbs} />
-        <div className="text-center py-16">
-          <h1 className="text-4xl font-display font-bold text-white mb-4">Page Not Found</h1>
-          <p className="text-gray-400 text-lg mb-8">
-            {page.status === 404
-              ? 'This service manual page could not be found. The path may have changed or the vehicle may not be in our database.'
-              : `Something went wrong loading this page (error ${page.status}). Please try again in a few minutes.`}
-          </p>
-          <Link
-            href="/manual"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-display font-bold tracking-wider hover:shadow-lg hover:shadow-cyan-500/25 transition-all"
-          >
-            Back to All Makes
-          </Link>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   // ── Fetch related sections for JARVIS viewer ──
@@ -115,6 +102,8 @@ export default async function ManualBrowserPage({ params }: PageProps) {
     parentPath ? getChildSections(parentPath).catch(() => []) : Promise.resolve([]),
     getChildSections(dbPath).catch(() => []),
   ]);
+  const visibleSiblings = siblingSections.filter((s) => !isBoilerplateManualStoredPath(s.path));
+  const visibleChildren = childSections.filter((s) => !isBoilerplateManualStoredPath(s.path));
 
   const parent = parentSection
     ? {
@@ -125,7 +114,7 @@ export default async function ManualBrowserPage({ params }: PageProps) {
       }
     : undefined;
 
-  const siblings = siblingSections
+  const siblings = visibleSiblings
     .filter((s) => s.path !== dbPath)
     .map((s) => ({
       id: s.path,
@@ -135,7 +124,7 @@ export default async function ManualBrowserPage({ params }: PageProps) {
       preview: s.contentPreview?.slice(0, 80) + '...',
     }));
 
-  const children = childSections.map((s) => ({
+  const children = visibleChildren.map((s) => ({
     id: s.path,
     title: s.sectionTitle || s.path.split('/').pop() || 'Section',
     path: '/manual' + s.path.split('/').map(encodeURIComponent).join('/'),
@@ -152,7 +141,7 @@ export default async function ManualBrowserPage({ params }: PageProps) {
     <>
       <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
       <SafetyWarningBox className="mb-6" />
-      <JarvisManualViewer
+      <WorkshopManualViewer
         title={page.title}
         vehicle={getVehicleLabel(normalizedPath)}
         contentHtml={page.contentHtml}

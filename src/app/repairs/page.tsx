@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://alloemmanuals.com/repairs',
   },
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
 };
 
 // Force dynamic rendering to avoid prerender errors from data helpers that may

@@ -251,7 +251,7 @@ export default function VehicleLaneClient({
 
         {/* Wiring */}
         <Link
-          href={`/wiring/${basePath.split('/').slice(2).join('/')}`}
+          href="/wiring"
           className={`rounded-2xl border p-4 transition-all group text-center ${
             hasWiring
               ? 'border-violet-500/20 bg-violet-500/[0.04] hover:border-violet-500/40'
@@ -559,7 +559,7 @@ export default function VehicleLaneClient({
                 {graph.dtcs.map((dtc) => (
                   <Link
                     key={dtc.code}
-                    href={`${basePath}/codes/${dtc.code.toLowerCase()}`}
+                    href={dtcCodes.some((entry) => entry.code === dtc.code) ? `${basePath}/codes/${dtc.code.toLowerCase()}` : `${basePath}#codes`}
                     className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-xs uppercase tracking-[0.16em] text-amber-100 hover:border-amber-400/35 hover:bg-amber-500/15 transition-all"
                   >
                     {dtc.code}
@@ -592,7 +592,7 @@ export default function VehicleLaneClient({
                 {filteredCodes.map((dtc) => (
                   <Link
                     key={dtc.code}
-                    href={`${basePath}/codes/${dtc.code.toLowerCase()}`}
+                    href={dtcCodes.some((entry) => entry.code === dtc.code) ? `${basePath}/codes/${dtc.code.toLowerCase()}` : `${basePath}#codes`}
                     className="flex items-center justify-between px-4 py-3 hover:bg-white/5 transition border-b border-white/5 last:border-0"
                   >
                     <div>
@@ -668,7 +668,7 @@ export default function VehicleLaneClient({
             {(codeSearch ? filteredCodes : filteredCodes.slice(0, 50)).map((dtc) => (
               <Link
                 key={dtc.code}
-                href={`${basePath}/codes/${dtc.code.toLowerCase()}`}
+                href={dtcCodes.some((entry) => entry.code === dtc.code) ? `${basePath}/codes/${dtc.code.toLowerCase()}` : `${basePath}#codes`}
                 className="flex items-center justify-between px-4 py-3 hover:bg-white/5 transition group"
               >
                 <div className="flex items-center gap-3">

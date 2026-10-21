@@ -1027,7 +1027,7 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
         </div>
       </header>
 
-      <main className="wl-main" id="diagram-browser">
+      <main className="wl-main mv-content" id="diagram-browser">
         {/* Vehicle Selector */}
         <div className="wl-selector">
           <h2 className="wl-selector-title">Select Your Vehicle</h2>

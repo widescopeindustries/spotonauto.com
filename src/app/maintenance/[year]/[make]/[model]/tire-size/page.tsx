@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { logWarn } from '@/lib/logger';
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import {
@@ -12,9 +12,9 @@ import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicle
 import { getNoindexRobots } from "@/lib/seo";
 import { seoTitle } from "@/lib/seoTitle";
 import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
+import MaintenanceSpecLinks from "@/components/MaintenanceSpecLinks";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
-import StickyAffiliateBar from "@/components/StickyAffiliateBar";
 
 export const revalidate = 86400;
 
@@ -69,7 +69,7 @@ export default async function TireSizePage({ params }: PageProps) {
   if (!data || !data.tires) {
     const fallback = getMaintenanceFallbackUrl(displayMake, displayModel, 'tire-size');
     if (fallback) {
-      redirect(fallback);
+      permanentRedirect(fallback);
     }
     notFound();
   }
@@ -109,9 +109,7 @@ export default async function TireSizePage({ params }: PageProps) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Maintenance", item: "https://alloemmanuals.com/maintenance" },
-      { "@type": "ListItem", position: 2, name: displayMake, item: `https://alloemmanuals.com/maintenance/${canonicalMake}` },
-      { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://alloemmanuals.com/maintenance/${canonicalMake}/${canonicalModel}` },
-      { "@type": "ListItem", position: 4, name: `${year} Tire Size`, item: `https://alloemmanuals.com/maintenance/${year}/${canonicalMake}/${canonicalModel}/tire-size` },
+      { "@type": "ListItem", position: 2, name: `${year} Tire Size`, item: `https://alloemmanuals.com/maintenance/${year}/${canonicalMake}/${canonicalModel}/tire-size` },
     ],
   };
 
@@ -129,9 +127,9 @@ export default async function TireSizePage({ params }: PageProps) {
           <ol className="flex flex-wrap items-center gap-1.5 text-sm font-body">
             <li><Link href="/maintenance" className="text-cyan-400 hover:text-cyan-300 transition-colors">Maintenance</Link></li>
             <span className="text-gray-600">/</span>
-            <li><Link href={`/maintenance/${canonicalMake}`} className="text-cyan-400 hover:text-cyan-300 transition-colors">{displayMake}</Link></li>
+            <li><span className="text-cyan-400 hover:text-cyan-300 transition-colors">{displayMake}</span></li>
             <span className="text-gray-600">/</span>
-            <li><Link href={`/maintenance/${canonicalMake}/${canonicalModel}`} className="text-cyan-400 hover:text-cyan-300 transition-colors">{displayModel}</Link></li>
+            <li><Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}`} className="text-cyan-400 hover:text-cyan-300 transition-colors">{displayModel}</Link></li>
             <span className="text-gray-600">/</span>
             <li className="text-gray-400">{year} Tire Size</li>
           </ol>
@@ -174,18 +172,7 @@ export default async function TireSizePage({ params }: PageProps) {
         </div>
 
         {/* Maintenance specs nav */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <span className="text-xs text-gray-500 uppercase tracking-wider py-2">Other specs:</span>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">All specs</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/oil-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Oil Type</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/coolant-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Coolant</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/battery-location`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Battery</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/spark-plug-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Spark Plugs</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/transmission-fluid-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Trans Fluid</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/headlight-bulb`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Headlights</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/brake-fluid-type`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Brake Fluid</Link>
-          <Link href={`/maintenance/${year}/${canonicalMake}/${canonicalModel}/fluid-capacity`} className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-gray-300 hover:bg-white/[0.08] hover:text-white transition">Capacities</Link>
-        </div>
+        <MaintenanceSpecLinks year={year} make={displayMake} model={displayModel} excludeType="tire-size" />
 
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">Shop Tires</h2>
@@ -259,13 +246,6 @@ export default async function TireSizePage({ params }: PageProps) {
           </dl>
         </section>
 
-        <StickyAffiliateBar
-          vehicle={`${year} ${displayMake} ${displayModel}`}
-          intent="Tires"
-          query={`${year} ${displayMake} ${displayModel} tires OEM`}
-          subtag="maint-tiresize"
-          variant="mixed"
-        />
       </div>
     </>
   );

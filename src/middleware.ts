@@ -68,6 +68,18 @@ export function middleware(request: NextRequest) {
     return applyCrawlerHeaders(NextResponse.next(), shouldNoindexHost, isRobots, isLlmstxt);
   }
 
+  // 3b. Kill malformed legacy CHARM crawl trap URLs instantly with HTTP 410 Gone
+  if (pathname.includes('/hyperlink')) {
+    return new NextResponse('Gone', {
+      status: 410,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'public, max-age=31536000, immutable',
+        'X-Robots-Tag': 'noindex, nofollow, noarchive',
+      },
+    });
+  }
+
   // 4. Markdown negotiation for AI agents
   const acceptHeader = request.headers.get('accept') || '';
   const wantsMarkdown = acceptHeader.includes('text/markdown');

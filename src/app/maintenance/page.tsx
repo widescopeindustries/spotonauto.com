@@ -4,7 +4,6 @@ import { VEHICLE_PRODUCTION_YEARS } from "@/data/vehicles";
 import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import { ShoppingCartIcon } from "@/components/Icons";
 import AffiliateLink from "@/components/AffiliateLink";
-import StickyAffiliateBar from "@/components/StickyAffiliateBar";
 
 export const metadata: Metadata = {
   title: "Maintenance Specs by Vehicle | AllOEMManuals",
@@ -99,13 +98,6 @@ export default function MaintenanceLandingPage() {
         })}
       </div>
 
-      <StickyAffiliateBar
-        vehicle="your vehicle"
-        intent="maintenance parts"
-        query="automotive maintenance parts oil filter brake pads"
-        subtag="maint-landing"
-        variant="parts"
-      />
     </div>
   );
 }

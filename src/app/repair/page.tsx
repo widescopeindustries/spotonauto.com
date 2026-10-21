@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://alloemmanuals.com/repair',
   },
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
 };
 
 function formatTaskLabel(task: string): string {
@@ -29,7 +29,7 @@ export default function RepairHubPage() {
   const homepageMomentum = getHomepageMomentumData();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="mv-content max-w-7xl mx-auto px-4 py-12">
       <nav className="text-sm text-gray-500 mb-6">
         <Link href="/" className="hover:text-cyan-400 transition-colors">Home</Link>
         <span className="mx-2">/</span>

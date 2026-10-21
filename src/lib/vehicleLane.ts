@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { findDiagnosticTroubleCodeSections, findVehicleManualSections, type ManualSectionMatchRow } from '@/lib/manualEmbeddingsStore';
+import { findVehicleManualSections, type ManualSectionMatchRow } from '@/lib/manualEmbeddingsStore';
 import { slugifyRoutePart } from '@/data/vehicles';
 import { getVehicleGraphData } from '@/lib/graphQueries';
 
@@ -261,12 +261,14 @@ export async function getVehicleDtcFlow(
   flowHashes: string[];
   relatedByType: Record<string, VehicleLaneContentEntry[]>;
 } | null> {
-  const codeRows = await findDiagnosticTroubleCodeSections(code, 40);
-  const filtered = codeRows.filter((row) => {
-    const rowMake = row.make.trim().toLowerCase();
-    const rowModel = row.model.trim().toLowerCase();
-    return row.year === year && rowMake === make.trim().toLowerCase() && rowModel === model.trim().toLowerCase();
-  });
+  // Query the vehicle first: a globally limited code search can omit the
+  // exact vehicle whose hub already lists this reference.
+  if (!/^[BPCU]\d{4}$/i.test(code)) return null;
+  const vehicleRows = await findVehicleManualSections({ make, year, model, limit: 500 });
+  const upperCode = code.toUpperCase();
+  const filtered = vehicleRows.filter((row) =>
+    collectDtcCodes([row]).some((entry) => entry.code === upperCode),
+  );
 
   if (!filtered.length) return null;
 

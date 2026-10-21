@@ -65,7 +65,7 @@ export default function CodesPage() {
             />
 
             {/* Hero */}
-            <section className="py-16 px-4 max-w-6xl mx-auto">
+            <section className="mv-content py-16 px-4 max-w-6xl mx-auto">
                 <div className="text-center mb-12">
                     <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-2 mb-6 text-sm font-medium tracking-wide text-cyan-300">
                         <span>🔍</span>

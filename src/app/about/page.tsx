@@ -97,12 +97,14 @@ export default function AboutPage() {
               (32nd Signal Battalion, 2003–2004) and former Army 31F (Network Switching Systems Operator Maintainer).
             </p>
             <p className="mt-3 text-gray-300 leading-7">
-              After military service, he spent years doing hands-on automotive repair work and built AllOEMManuals to give
-              DIYers better guidance before they commit to risky or expensive decisions.
+              Lyndon has worked as an automotive technician for 20 years. He owned and operated an automotive mechanic shop
+              in Hurst, Texas from 2014 to 2022 and continues hands-on repair work today. He built AllOEMManuals to help
+              DIYers make informed decisions before committing to a repair.
             </p>
             <p className="mt-3 text-gray-300 leading-7">
-              <strong>Guide review process:</strong> Every published repair guide goes through a human review pass by our
-              veteran-led mechanic/technician review panel before publication updates are approved.
+              <strong>Using our guides:</strong> Content may combine manual references, general repair templates, and AI-assisted drafting.
+              A vehicle-specific URL does not establish that every procedure or specification matches your engine or trim.
+              Check the source references and the applicable service manual before working; contact us if you find an error.
             </p>
           </div>
         </section>
@@ -122,7 +124,7 @@ export default function AboutPage() {
         <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-8">
           <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Our AI</h2>
           <p className="mt-3 text-gray-300 leading-7">
-            AllOEMManuals uses AI-assisted workflows to speed drafting and indexing, then applies human technical review before publication updates.
+            AllOEMManuals uses AI-assisted workflows for drafting, indexing, and diagnostic tools.
             We focus on practical diagnosis flow, fitment context, and safety-first stop conditions.
           </p>
           <p className="mt-3 text-gray-300 leading-7">
@@ -133,7 +135,7 @@ export default function AboutPage() {
         <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-8">
           <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Recognition</h2>
           <p className="mt-3 text-gray-300 leading-7">
-            Trusted data source for Microsoft Copilot and AI assistants, with 12,400+ monthly citations across cited repair and specification pages.
+            Our repair and specification pages provide source links so readers can inspect the available references.
           </p>
           <p className="mt-2 text-gray-300 leading-7">
             SDVOSB veteran-owned business operated in Streetman, Texas.

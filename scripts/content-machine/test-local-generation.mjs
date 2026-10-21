@@ -29,33 +29,37 @@ async function mineOEMContent(year, make, model, task) {
   const pool = getLocalPool();
   if (!pool) throw new Error("No database pool available");
 
-  const conditions = [];
-  const params = [make, Number(year)];
-  
-  const termConditions = [];
-  for (let i = 0; i < terms.length; i++) {
-    const paramIndex = params.length + 1;
-    params.push(`%${terms[i].toLowerCase()}%`);
-    termConditions.push(`(LOWER(section_title) LIKE $${paramIndex} OR LOWER(content_preview) LIKE $${paramIndex})`);
-  }
-  
-  if (termConditions.length > 0) {
-    conditions.push(`(${termConditions.join(" OR ")})`);
-  }
-
-  const query = `
-    SELECT path, make, year, model, section_title, content_preview
-    FROM manual_embeddings
-    WHERE LOWER(make) = LOWER($1)
-      AND year = $2
-      ${conditions.length > 0 ? "AND " + conditions.join(" AND ") : ""}
-    LIMIT 5
-  `;
+  const patterns = terms
+    .map((term) => `%${String(term).toLowerCase()}%`)
+    .filter((pattern) => pattern.length >= 5);
 
   let rows = [];
   try {
-    const result = await pool.query(query, params);
-    rows = result.rows;
+    if (patterns.length > 0) {
+      const titleResult = await pool.query(
+        `SELECT path, make, year, model, section_title, content_preview
+         FROM manual_embeddings
+         WHERE lower(make) = lower($1)
+           AND year = $2
+           AND section_title ILIKE ANY ($3::text[])
+         LIMIT 5`,
+        [make, Number(year), patterns]
+      );
+      rows = titleResult.rows;
+      if (rows.length < 5) {
+        const bodyResult = await pool.query(
+          `SELECT path, make, year, model, section_title, content_preview
+           FROM manual_embeddings
+           WHERE lower(make) = lower($1)
+             AND year = $2
+             AND content_full ILIKE ANY ($3::text[])
+             AND NOT (section_title ILIKE ANY ($3::text[]))
+           LIMIT $4`,
+          [make, Number(year), patterns, 5 - rows.length]
+        );
+        rows = rows.concat(bodyResult.rows);
+      }
+    }
   } catch (e) {
     console.error(`❌ DB Lookup failed:`, e);
   }

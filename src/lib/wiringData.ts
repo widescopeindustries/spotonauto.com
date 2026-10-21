@@ -1,4 +1,4 @@
-import { getCharmMakesForDisplay } from '@/lib/wiringCoverage';
+import { getWiringCorpusMakes } from '@/lib/wiringCoverage';
 import { CHARM_ARCHIVE_BASE } from '@/lib/charmBase';
 
 const CHARM_BASE = CHARM_ARCHIVE_BASE;
@@ -196,7 +196,7 @@ export async function fetchWiringMakes(): Promise<string[]> {
 }
 
 export async function fetchWiringYears(make: string): Promise<number[]> {
-  const charmMakes = getCharmMakesForDisplay(make);
+  const charmMakes = getWiringCorpusMakes(make);
   const allYears = new Set<number>();
 
   for (const charmMake of charmMakes) {
@@ -221,7 +221,7 @@ export async function fetchWiringYears(make: string): Promise<number[]> {
 
 export async function fetchWiringVariants(make: string, year: string): Promise<string[]> {
   // Try all CHARM makes that map to this display make (e.g. "Ford" → ["Ford", "Ford Truck"])
-  const charmMakes = getCharmMakesForDisplay(make);
+  const charmMakes = getWiringCorpusMakes(make, year);
   const allVariants = new Set<string>();
 
   for (const charmMake of charmMakes) {
@@ -274,7 +274,7 @@ async function fetchRepairAndDiagnosisHtml(
   variant: string,
 ): Promise<{ html: string; resolvedVariant: string; resolvedMake: string }> {
   // Try all CHARM makes for this display make (e.g. "Ford" → ["Ford", "Ford Truck"])
-  const charmMakes = getCharmMakesForDisplay(make);
+  const charmMakes = getWiringCorpusMakes(make, year);
 
   // 1. Try exact variant match across all CHARM makes first
   for (const charmMake of charmMakes) {
@@ -329,7 +329,7 @@ async function resolveVariantIfDiagramBucketIsEmpty(args: {
 }): Promise<{ html: string; resolvedVariant: string; resolvedMake: string } | null> {
   if (args.hasDiagrams || args.currentVariant !== args.variant) return null;
 
-  const charmMakes = getCharmMakesForDisplay(args.make);
+  const charmMakes = getWiringCorpusMakes(args.make, args.year);
   for (const charmMake of charmMakes) {
     try {
       const resolveYearUrl = `${CHARM_BASE}/${encodeCharmSegment(charmMake)}/${args.year}/`;
@@ -350,6 +350,84 @@ async function resolveVariantIfDiagramBucketIsEmpty(args: {
   }
 
   return null;
+}
+
+function archiveUrl(pageUrl: string, link: string): string {
+  if (link.startsWith('http')) return link;
+  if (link.startsWith('/')) return `${CHARM_BASE}${link}`;
+  const base = pageUrl.endsWith('/') ? pageUrl : `${pageUrl}/`;
+  return `${base}${link}`;
+}
+
+function decodedLink(link: string): string {
+  return decodeSegment(link).replace(/\/+$/, '');
+}
+
+/**
+ * 2014+ books keep schematics in one "System Wiring Diagrams" folder.
+ * The older books list each drawing directly under a "Diagrams" folder.
+ */
+async function fetchLemonWiringSystems(
+  repairAndDiagnosisUrl: string,
+  links: string[],
+): Promise<WiringDiagramSystem[]> {
+  const folders = links.filter((link) => {
+    const decoded = decodedLink(link).toLowerCase();
+    return decoded.endsWith('system wiring diagrams') && !decoded.includes('using ');
+  });
+  if (folders.length === 0) return [];
+
+  const preferred = folders.find((link) => decodedLink(link).toLowerCase().includes('quick lookups')) || folders[0];
+  const folderUrl = archiveUrl(repairAndDiagnosisUrl, preferred);
+  let html: string;
+  try {
+    html = await fetchCharmText(folderUrl, 3600, 'Wiring diagrams not found');
+  } catch {
+    return [];
+  }
+
+  const children = extractLinks(html, folderUrl).filter((link) => {
+    if (!link || link.startsWith('/') || link.startsWith('http') || link.startsWith('#') || link.includes('.css') || link.includes('.js')) {
+      return false;
+    }
+    if (!link.endsWith('/')) return false;
+    const name = decodedLink(link).toLowerCase();
+    return name.length > 0 && !name.startsWith('using ');
+  });
+
+  const systems: Record<string, WiringDiagramEntry[]> = {};
+  for (const link of children) {
+    const parts = link.split('/').filter(Boolean).map((part) => decodeSegment(part));
+    if (parts.length === 0) continue;
+    const system = parts[0];
+    const name = parts.join(' — ');
+    if (!systems[system]) systems[system] = [];
+    systems[system].push({ name, url: archiveUrl(folderUrl, link), subPath: name });
+  }
+
+  return Object.entries(systems)
+    .map(([system, diagrams]) => ({ system, diagrams }))
+    .sort((a, b) => a.system.localeCompare(b.system));
+}
+
+function toPublicManualMediaUrl(src: string): string {
+  const trimmed = src.trim();
+  if (!trimmed || trimmed.startsWith('data:') || trimmed.includes('/icons/')) return '';
+  if (trimmed.startsWith('/manual-media/')) return trimmed;
+
+  let path = trimmed;
+  if (trimmed.startsWith('http://127.0.0.1:8080') || trimmed.startsWith('http://localhost:8080')) {
+    try {
+      path = new URL(trimmed).pathname;
+    } catch {
+      return '';
+    }
+  } else if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+
+  if (!path.startsWith('/')) path = `/${path}`;
+  return `/manual-media${path}`;
 }
 
 export async function fetchWiringDiagramIndex(
@@ -415,12 +493,19 @@ export async function fetchWiringDiagramIndex(
     systems[system].push({ name, url: absoluteUrl, subPath });
   }
 
-  const sortedSystems: WiringDiagramSystem[] = Object.entries(systems)
+  let sortedSystems: WiringDiagramSystem[] = Object.entries(systems)
     .map(([system, diagrams]) => ({
       system,
       diagrams,
     }))
     .sort((a, b) => a.system.localeCompare(b.system));
+
+  if (sortedSystems.every((system) => system.diagrams.length === 0)) {
+    const lemonSystems = await fetchLemonWiringSystems(repairAndDiagnosisUrl, allLinks);
+    if (lemonSystems.length > 0) sortedSystems = lemonSystems;
+  }
+
+  const totalDiagrams = sortedSystems.reduce((sum, system) => sum + system.diagrams.length, 0);
 
   return {
     vehicle: `${year} ${make} ${decodeSegment(resolvedVariant)}`,
@@ -428,18 +513,35 @@ export async function fetchWiringDiagramIndex(
     year,
     variant: resolvedVariant,
     systems: sortedSystems,
-    totalDiagrams: diagramLinks.length,
+    totalDiagrams,
   };
 }
 
 export async function fetchWiringDiagramImages(url: string): Promise<WiringImageData> {
   const html = await fetchCharmText(url, 86400, 'Diagram page not found');
-  const imageMatches = html.matchAll(/<img[^>]+class=['"]big-img['"][^>]+src=['"]([^'"]+)['"]/g);
-  const images = [...imageMatches].map(match => `${CHARM_BASE}${match[1]}`);
+  const images: string[] = [];
+  const seen = new Set<string>();
+  const pushImage = (src: string) => {
+    const publicUrl = toPublicManualMediaUrl(src);
+    if (!publicUrl || seen.has(publicUrl)) return;
+    seen.add(publicUrl);
+    images.push(publicUrl);
+  };
+
+  for (const match of html.matchAll(/<img[^>]+class=['"]big-img['"][^>]+src=['"]([^'"]+)['"]/g)) {
+    pushImage(match[1]);
+  }
+  for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
+    const tag = match[0];
+    if (!/clsArticleSvg/.test(tag) && !/\/images25\//.test(tag)) continue;
+    const src = tag.match(/\ssrc=['"]([^'"]+)['"]/i);
+    if (src) pushImage(src[1]);
+  }
+
   const titleMatch = html.match(/<h1>([^<]+)<\/h1>/);
 
   return {
     images,
-    title: titleMatch ? titleMatch[1] : '',
+    title: titleMatch ? titleMatch[1].replace(/&amp;/g, '&') : '',
   };
 }

@@ -63,6 +63,10 @@ const EV_NAME_PATTERNS = [
   /\bcooper.se\b/i, /\bex[39]0\b/i, /\bgv60\b/i,
 ];
 
+// The historical Mercedes 500E is combustion-powered, and A3 e-tron is a
+// plug-in hybrid. Keep these explicit exceptions to the EV name heuristic.
+const VERIFIED_NON_BEV = new Set(['mercedes-benz:500e', 'mercedes-benz:500e-(124.036)', 'audi:a3-sportback-e-tron']);
+
 function looksLikeEv(model) {
   return EV_NAME_PATTERNS.some(p => p.test(model));
 }
@@ -76,7 +80,7 @@ for (const [make, models] of Object.entries(VEHICLE_PRODUCTION_YEARS)) {
   for (const model of Object.keys(models)) {
     if (looksLikeEv(model)) {
       const slug = `${make.toLowerCase()}:${model.toLowerCase().replace(/\s+/g, '-')}`;
-      if (!EV_MODELS.has(slug)) {
+      if (!VERIFIED_NON_BEV.has(slug) && !isEvModel(make, model)) {
         fail('EV_UNCLASSIFIED', `${make} ${model} looks like an EV but is NOT in EV_MODELS. Add it or verify it's ICE/hybrid.`);
       }
       evCheckCount++;

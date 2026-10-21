@@ -7,13 +7,19 @@ import { AlertIcon, WrenchIcon, ListIcon, CheckCircleIcon, ShoppingCartIcon, Shi
 import { generateToolLinks, generateAllPartsWithLinks } from '../services/affiliateService';
 import PartsComparison from './PartsComparison';
 import { trackToolClick } from '../lib/analytics';
+import { normalizeRepairGuide } from '@/lib/repairGuideData';
 
 interface RepairGuideDisplayProps {
     guide: RepairGuide;
     onReset: () => void;
 }
 
-const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset }) => {
+const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide: rawGuide, onReset }) => {
+    const displayId = React.useId();
+    const guide = React.useMemo(() => normalizeRepairGuide(rawGuide), [rawGuide]);
+    if (!guide) {
+        return <p role="status">This interactive guide is unavailable. The repair information above is still available.</p>;
+    }
     // Generate enhanced parts data with all affiliate links
     const partsWithLinks = generateAllPartsWithLinks(guide.parts || [], guide.vehicle);
 
@@ -31,7 +37,7 @@ const RepairGuideDisplay: React.FC<RepairGuideDisplayProps> = ({ guide, onReset 
                                 Verified Diagnostic
                             </span>
                             <span className="text-white/30 text-[10px] font-mono tracking-widest uppercase">
-                                ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}
+                                ID: {displayId.replace(/:/g, '').toUpperCase()}
                             </span>
                         </div>
                         <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter mb-4 drop-shadow-sm leading-tight">

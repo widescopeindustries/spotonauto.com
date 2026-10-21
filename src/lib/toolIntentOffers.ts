@@ -38,7 +38,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   'ford-focus-oil-type': {
     primaryTitle: 'Focus oil-change starter kit',
     primaryDescription: 'Bundle the correct oil, filter, and cleanup gear for a single service pass.',
-    primaryReason: 'Focus oil queries often convert when the full kit is visible at once.',
+    primaryReason: 'Focus engines require spec-matched oil viscosity and filter elements to protect VCT solenoids.',
     primaryQuery: 'Ford Focus oil change kit',
     secondaryQuery: 'Ford Focus oil filter',
     tertiaryQuery: 'Ford Focus funnel and drain pan',
@@ -46,7 +46,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   'kia-telluride-oil-type': {
     primaryTitle: 'Telluride oil service bundle',
     primaryDescription: 'Order the oil, filter, and drain hardware for the Telluride in one shot.',
-    primaryReason: 'Three-row SUV owners tend to prefer a complete shopping list before they start.',
+    primaryReason: 'Three-row SUV owners require OEM-spec filtration and drain crush washers to prevent low-profile sump leaks.',
     primaryQuery: 'Kia Telluride oil change kit',
     secondaryQuery: 'Kia Telluride oil filter',
     tertiaryQuery: 'Kia Telluride drain plug washer',
@@ -61,8 +61,8 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'gmc-acadia-fluid-capacity': {
     primaryTitle: 'Acadia fluid service bundle',
-    primaryDescription: 'Build a cart with coolant, ATF, and brake fluid that matches Acadia specs.',
-    primaryReason: 'Bundled service fluids improve conversion for users planning full maintenance weekends.',
+    primaryDescription: 'OEM-matched coolant, Dexron-VI ATF, and DOT 4 brake fluid meeting GMC Acadia factory specs.',
+    primaryReason: 'Powertrain reliability requires matching fluid chemistry across cooling and hydraulic systems.',
     primaryQuery: 'GMC Acadia fluid service kit coolant transmission brake',
   },
   'cadillac-xt5-transmission-fluid-type': {
@@ -79,9 +79,9 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
     primaryQuery: 'Kia Sportage serpentine belt idler tensioner kit',
   },
   'chevrolet-equinox-fluid-capacity': {
-    primaryTitle: 'Equinox multi-fluid maintenance cart',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for Equinox service together.',
-    primaryReason: 'Users searching fluid capacity often plan more than one fluid job at once.',
+    primaryTitle: 'Equinox factory fluid service bundle',
+    primaryDescription: 'Factory-matched oil, coolant, and transmission fluid for Equinox scheduled service.',
+    primaryReason: 'Meeting GM Dexos specs for both motor oil and ATF preserves clutch and turbo longevity.',
     primaryQuery: 'Chevrolet Equinox oil coolant transmission fluid bundle',
   },
   'ford-ranger-coolant-type': {
@@ -100,31 +100,31 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   'acura-rdx-spark-plug-type': {
     primaryTitle: 'RDX iridium spark plug set',
     primaryDescription: 'Shop Acura RDX spark plug sets with OEM heat range equivalents.',
-    primaryReason: 'This query usually indicates intent to buy all required plugs immediately.',
+    primaryReason: 'Turbocharged K23/K20C engines require precise heat ranges to avoid pre-ignition under boost.',
     primaryQuery: 'Acura RDX iridium spark plugs OEM',
   },
   'jeep-compass-fluid-capacity': {
     primaryTitle: 'Compass fluid service essentials',
     primaryDescription: 'Gather transmission, coolant, and brake fluids for Compass maintenance.',
-    primaryReason: 'Fluid-capacity traffic converts when users can buy every needed fluid in one flow.',
+    primaryReason: 'Compass powertrains require exact fluid chemistry to prevent PTU and transaxle overheating.',
     primaryQuery: 'Jeep Compass fluid service kit',
   },
   'honda-cr-v-spark-plug-type': {
     primaryTitle: 'CR-V spark plug replacement set',
     primaryDescription: 'Find complete iridium plug sets for CR-V model years and engines.',
-    primaryReason: 'CR-V plug jobs are high-intent and frequently bundled with socket/tool purchases.',
+    primaryReason: 'Factory-specified laser iridium plugs maintain proper combustion temperature and coil life.',
     primaryQuery: 'Honda CR-V iridium spark plug set',
   },
   'ford-mustang-coolant-type': {
     primaryTitle: 'Mustang coolant and flush picks',
     primaryDescription: 'Shop coolant options for Mustang cooling-system service.',
-    primaryReason: 'Performance users are sensitive to cooling reliability and buy quality fluid fast.',
+    primaryReason: 'Performance users are sensitive to cooling reliability and require Motorcraft yellow/orange spec fluid.',
     primaryQuery: 'Ford Mustang coolant type',
   },
   'toyota-tundra-fluid-capacity': {
     primaryTitle: 'Tundra heavy-duty fluid service kit',
     primaryDescription: 'Pull together high-capacity oil and drivetrain fluids for Tundra service.',
-    primaryReason: 'Truck users have larger fluid volumes and tend to buy complete kits.',
+    primaryReason: 'Truck users have larger fluid volumes and require high-viscosity differential and transfer case fluids.',
     primaryQuery: 'Toyota Tundra oil transmission coolant fluid kit',
   },
   'nissan-rogue-serpentine-belt': {
@@ -136,13 +136,13 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   'honda-accord-spark-plug-type': {
     primaryTitle: 'Accord spark plug fitment set',
     primaryDescription: 'Match Accord spark plug type by engine and generation.',
-    primaryReason: 'Accord plug queries consistently indicate replacement purchase intent.',
+    primaryReason: 'Direct-injection Earth Dreams engines require precise plug heat ranges to prevent pre-ignition.',
     primaryQuery: 'Honda Accord iridium spark plugs set',
   },
   'ford-ranger-fluid-capacity': {
     primaryTitle: 'Ranger complete fluid change bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid in one Ranger-focused cart.',
-    primaryReason: 'Ranger maintenance shoppers usually buy multiple fluids per session.',
+    primaryDescription: 'Factory-spec motor oil, yellow coolant, and Mercon LV ATF matched to Ford Ranger requirements.',
+    primaryReason: 'Using spec-certified fluids ensures turbo cooling and smooth 10-speed transmission shifting.',
     primaryQuery: 'Ford Ranger full fluid service kit',
   },
   'chevrolet-camaro-fluid-capacity': {
@@ -154,25 +154,25 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   'honda-civic-spark-plug-type': {
     primaryTitle: 'Civic spark plug kit and tools',
     primaryDescription: 'Shop Civic plug sets plus sockets and torque tools.',
-    primaryReason: 'Civic DIY traffic often converts on both plugs and basic service tools.',
+    primaryReason: 'Correct spark plug gap and socket sizing prevent insulator cracking during deep well installation.',
     primaryQuery: 'Honda Civic iridium spark plug kit',
   },
   'kia-forte-oil-type': {
     primaryTitle: 'Forte oil change starter bundle',
     primaryDescription: 'Buy correct-viscosity oil, filter, and gasket for one-pass service.',
-    primaryReason: 'Oil-type searchers convert fastest when the full oil-change kit is one click away.',
+    primaryReason: 'Engine warranty coverage requires API SP/ILSAC GF-6 certified oil and OEM-grade filtration.',
     primaryQuery: 'Kia Forte oil change kit',
   },
   'toyota-yaris-serpentine-belt': {
     primaryTitle: 'Yaris serpentine belt fitment',
     primaryDescription: 'Find compact-engine belt options and install tools.',
-    primaryReason: 'Yaris buyers want low-cost exact-fit parts, so query precision helps conversion.',
+    primaryReason: 'Compact engine bays require exact belt length and rib profile to avoid accessory slip.',
     primaryQuery: 'Toyota Yaris serpentine belt',
   },
   'toyota-sienna-tire-size': {
     primaryTitle: 'Sienna tire size and replacement set',
     primaryDescription: 'Use the exact tire size, pressure, and pressure tools for the Sienna.',
-    primaryReason: 'Minivan shoppers often want a fast cart-building path after they confirm fitment.',
+    primaryReason: 'Minivan payload demands correct tire load rating and cold inflation specs for safe braking.',
     primaryQuery: 'Toyota Sienna tire size',
     secondaryQuery: 'Toyota Sienna tire pressure gauge',
   },
@@ -450,7 +450,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'toyota-camry-fluid-capacity': {
     primaryTitle: 'Camry multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Toyota Camry in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Toyota Camry in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Toyota Camry fluid service kit',
     secondaryQuery: 'Toyota Camry coolant oil transmission fluid bundle',
@@ -466,7 +466,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'toyota-corolla-fluid-capacity': {
     primaryTitle: 'Corolla multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Toyota Corolla in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Toyota Corolla in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Toyota Corolla fluid service kit',
     secondaryQuery: 'Toyota Corolla coolant oil transmission fluid bundle',
@@ -522,7 +522,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'toyota-rav4-fluid-capacity': {
     primaryTitle: 'RAV4 multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Toyota RAV4 in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Toyota RAV4 in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Toyota RAV4 fluid service kit',
     secondaryQuery: 'Toyota RAV4 coolant oil transmission fluid bundle',
@@ -546,7 +546,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'toyota-tacoma-fluid-capacity': {
     primaryTitle: 'Tacoma multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Toyota Tacoma in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Toyota Tacoma in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Toyota Tacoma fluid service kit',
     secondaryQuery: 'Toyota Tacoma coolant oil transmission fluid bundle',
@@ -946,7 +946,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'honda-accord-fluid-capacity': {
     primaryTitle: 'Accord multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda Accord in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda Accord in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Honda Accord fluid service kit',
     secondaryQuery: 'Honda Accord coolant oil transmission fluid bundle',
@@ -970,7 +970,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'honda-civic-fluid-capacity': {
     primaryTitle: 'Civic multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda Civic in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda Civic in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Honda Civic fluid service kit',
     secondaryQuery: 'Honda Civic coolant oil transmission fluid bundle',
@@ -986,7 +986,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'honda-cr-v-fluid-capacity': {
     primaryTitle: 'CR-V multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda CR-V in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda CR-V in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Honda CR-V fluid service kit',
     secondaryQuery: 'Honda CR-V coolant oil transmission fluid bundle',
@@ -1034,7 +1034,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'honda-odyssey-fluid-capacity': {
     primaryTitle: 'Odyssey multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda Odyssey in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda Odyssey in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Honda Odyssey fluid service kit',
     secondaryQuery: 'Honda Odyssey coolant oil transmission fluid bundle',
@@ -1042,7 +1042,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'honda-pilot-fluid-capacity': {
     primaryTitle: 'Pilot multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda Pilot in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Honda Pilot in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Honda Pilot fluid service kit',
     secondaryQuery: 'Honda Pilot coolant oil transmission fluid bundle',
@@ -1322,7 +1322,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'ford-escape-fluid-capacity': {
     primaryTitle: 'Escape multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford Escape in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford Escape in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Ford Escape fluid service kit',
     secondaryQuery: 'Ford Escape coolant oil transmission fluid bundle',
@@ -1378,7 +1378,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'ford-explorer-fluid-capacity': {
     primaryTitle: 'Explorer multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford Explorer in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford Explorer in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Ford Explorer fluid service kit',
     secondaryQuery: 'Ford Explorer coolant oil transmission fluid bundle',
@@ -1394,7 +1394,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'ford-f-150-fluid-capacity': {
     primaryTitle: 'F-150 multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford F-150 in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford F-150 in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Ford F-150 fluid service kit',
     secondaryQuery: 'Ford F-150 coolant oil transmission fluid bundle',
@@ -1514,7 +1514,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'ford-focus-fluid-capacity': {
     primaryTitle: 'Focus multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford Focus in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford Focus in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Ford Focus fluid service kit',
     secondaryQuery: 'Ford Focus coolant oil transmission fluid bundle',
@@ -1522,7 +1522,7 @@ const TOP_PAGE_OFFER_OVERRIDES: Record<string, ToolIntentOfferOverride> = {
   },
   'ford-fusion-fluid-capacity': {
     primaryTitle: 'Fusion multi-fluid service bundle',
-    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford Fusion in one cart.',
+    primaryDescription: 'Shop oil, coolant, and transmission fluid for the Ford Fusion in one comprehensive service package.',
     primaryReason: 'Fluid-capacity searchers usually plan more than one fluid job per session.',
     primaryQuery: 'Ford Fusion fluid service kit',
     secondaryQuery: 'Ford Fusion coolant oil transmission fluid bundle',

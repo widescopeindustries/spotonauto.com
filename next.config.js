@@ -35,17 +35,17 @@ const nextConfig = {
           {
             key: 'Content-Security-Policy',
             value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://analytics.ahrefs.com https://widget.intercom.io https://js.intercomcdn.com https://adservice.google.com https://www.google.com https://*.adtrafficquality.google https://fundingchoicesmessages.google.com",
-              "style-src 'self' 'unsafe-inline'",
+              "default-src 'self' https:",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+              "style-src 'self' 'unsafe-inline' https:",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://*.google-analytics.com https://*.googleapis.com https://*.googletagmanager.com https://analytics.ahrefs.com https://*.intercom.io https://*.intercomcdn.com https://*.googlesyndication.com https://*.adtrafficquality.google https://*.doubleclick.net https://*.google.com https://vpic.nhtsa.dot.gov https://fundingchoicesmessages.google.com",
-              "frame-src 'self' https://googleads.g.doubleclick.net https://*.doubleclick.net https://www.google.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://fundingchoicesmessages.google.com",
-              "media-src 'self'",
+              "connect-src 'self' https:",
+              "frame-src 'self' data: https:",
+              "media-src 'self' https:",
               "object-src 'none'",
               "base-uri 'self'",
-              "form-action 'self'",
+              "form-action 'self' https:",
               "frame-ancestors 'self'",
             ].join('; '),
           },
@@ -171,6 +171,14 @@ const nextConfig = {
       // Consolidate generic /repairs/ → /repair (vehicle-specific hub)
       { source: '/repairs/:path*', destination: '/repair', permanent: true },
       { source: '/repairs', destination: '/repair', permanent: true },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/manual-media/:path*',
+        destination: 'http://127.0.0.1:8080/:path*',
+      },
     ];
   },
 }

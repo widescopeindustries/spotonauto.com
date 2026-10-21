@@ -37,14 +37,14 @@ export default function ConversionZone({
       <div className="mt-3 flex flex-wrap justify-center gap-3">
         <Link
           href="/second-opinion"
-          className="inline-flex items-center justify-center rounded-lg bg-cyan-300 px-4 py-2 text-sm font-bold text-black transition hover:bg-cyan-200"
+          className="inline-flex items-center justify-center rounded-md bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-500 shadow-xs"
           data-track-click='{"event_name":"quote_request_submission","event_category":"quote_request","surface":"conversion_zone"}'
         >
-          Get Free Quote Check
+          Compare Shop Estimates
         </Link>
         <Link
           href={`/diagnose?q=${encodeURIComponent(intentLabel)}`}
-          className="inline-flex items-center justify-center rounded-lg border border-cyan-200/40 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-100 hover:text-white"
+          className="inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-700 hover:text-white"
         >
           Diagnose Another Issue
         </Link>

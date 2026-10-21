@@ -1,5 +1,3 @@
-import MobileMechanicCTA from './MobileMechanicCTA';
-
 interface WhenToSeeMechanicProps {
   className?: string;
   title?: string;
@@ -18,11 +16,9 @@ const DEFAULT_SIGNALS = [
 export default function WhenToSeeMechanic({
   className = '',
   title = 'When to See a Mechanic',
-  vehicle = 'your vehicle',
-  context = 'repair_page',
 }: WhenToSeeMechanicProps) {
   return (
-    <div className={`space-y-5 ${className}`}>
+    <div className={className}>
       <section className="rounded-2xl border border-amber-400/25 bg-amber-500/[0.08] p-6">
         <h2 className="text-xl font-semibold tracking-tight text-amber-100">{title}</h2>
         <p className="mt-2 text-sm leading-6 text-amber-50/80">
@@ -36,7 +32,6 @@ export default function WhenToSeeMechanic({
           ))}
         </ul>
       </section>
-      <MobileMechanicCTA vehicle={vehicle} context={context} />
     </div>
   );
 }

@@ -15,18 +15,18 @@ const AUTHORS: AuthorProfile[] = [
   {
     slug: 'alloemmanuals-editorial-team',
     name: 'AllOEMManuals Editorial Team',
-    credentials: 'ASE-aligned technical review process',
-    years: '15+ years combined field experience',
+    credentials: 'AllOEMManuals publishing and corrections',
+    years: 'Led by founder Lyndon Bedford, an automotive technician with 20 years of experience',
     specialization: 'OBD2 diagnostics and maintenance planning',
-    bio: 'The AllOEMManuals editorial team combines AI-assisted drafting with human technical review for safety-critical automotive guidance. Every published guide is checked for fitment context, tool requirements, and practical risk points before updates go live.',
+    bio: 'This profile represents the publishing and corrections function of AllOEMManuals. Our content can combine manual references, general repair templates, and AI-assisted drafting. Contact us to report an error or request clarification of a source. This profile does not certify that every guide has received an individual technical review.',
   },
   {
     slug: 'lyndon-bedford',
     name: 'Lyndon Bedford',
-    credentials: 'Founder, veteran-owned operator',
-    years: 'Military + hands-on automotive operations background',
+    credentials: 'Automotive technician, former shop owner, and founder',
+    years: '20 years as an automotive technician; shop owner and operator, 2014 to 2022',
     specialization: 'DIY workflow clarity and repair risk communication',
-    bio: 'Lyndon founded AllOEMManuals to make trustworthy repair information easier to use for everyday drivers. He focuses on practical, safe, and monetizable information architecture that helps users decide between DIY and professional service.',
+    bio: 'Lyndon Bedford has worked as an automotive technician for 20 years. He owned and operated an automotive mechanic shop in Hurst, Texas from 2014 to 2022 and continues hands-on repair work today. He founded AllOEMManuals to make repair information easier to navigate and help drivers assess when a repair calls for professional service.',
   },
 ];
 

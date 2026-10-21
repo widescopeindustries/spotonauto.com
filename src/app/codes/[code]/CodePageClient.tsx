@@ -26,7 +26,6 @@ import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizatio
 import ConversionZone from '@/components/ConversionZone';
 import AuthorBioCard from '@/components/AuthorBioCard';
 import SystemPartsAffiliate from '@/components/SystemPartsAffiliate';
-import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import { getPartsForCode } from '@/lib/codePartsMap';
 
 const SEVERITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
@@ -184,7 +183,7 @@ export default async function CodePageClient({
     const schemaDate = new Date().toISOString().slice(0, 10);
 
     return (
-        <section className="py-16 px-4 max-w-4xl mx-auto">
+        <section className="mv-content py-16 px-4 max-w-4xl mx-auto">
             <script
                 id="knowledge-graph-export"
                 type="application/json"
@@ -542,13 +541,6 @@ export default async function CodePageClient({
                 <p className="text-gray-600 text-sm mt-3">100% Free — No signup required</p>
             </div>
 
-            <StickyAffiliateBar
-                vehicle={`${code.code} ${code.title}`}
-                intent="common replacement parts"
-                query={`${code.affectedSystem} ${code.commonFix} replacement parts`}
-                subtag={`code-${code.code.toLowerCase()}`}
-                variant="parts"
-            />
         </section>
     );
 }

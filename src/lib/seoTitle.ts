@@ -27,3 +27,47 @@ export function fitSeoTitle(brandSuffix: string, ...candidates: string[]): strin
 export function seoTitle(...candidates: string[]): string {
   return fitSeoTitle(DEFAULT_BRAND_SUFFIX, ...candidates);
 }
+
+const TITLE_TOKEN: Record<string, string> = {
+  egr: 'EGR',
+  cv: 'CV',
+  abs: 'ABS',
+  pcm: 'PCM',
+  o2: 'O2',
+  maf: 'MAF',
+  map: 'MAP',
+  pcv: 'PCV',
+  vvt: 'VVT',
+  dpf: 'DPF',
+  def: 'DEF',
+  obd: 'OBD',
+  hvac: 'HVAC',
+};
+
+/**
+ * "how to replace the egr valve" style line for a replacement guide.
+ * Returns null when the line would be cut off by the title cap, so the
+ * caller can keep the shorter vehicle-first title.
+ */
+export function howToReplaceLine(vehicle: string, cleanTask: string): string | null {
+  if (!cleanTask.endsWith(' replacement')) return null;
+  const noun = cleanTask.slice(0, -' replacement'.length).trim();
+  if (!noun) return null;
+  const titled = noun.split(/\s+/).map((word) => {
+    return TITLE_TOKEN[word] || word.charAt(0).toUpperCase() + word.slice(1);
+  }).join(' ');
+  const line = `How to Replace the ${titled} on a ${vehicle}`;
+  return line.length <= MAX_TITLE_LENGTH ? line : null;
+}
+
+/** Put the search phrase first, then as much of the existing description as fits. */
+export function leadDescription(lead: string, rest: string, max = 165): string {
+  const combined = `${lead}. ${rest}`.replace(/\s+/g, ' ').trim();
+  if (combined.length <= max) return combined;
+  const room = max - lead.length - 2;
+  if (room < 40) return lead;
+  const cut = rest.slice(0, room);
+  const lastSpace = cut.lastIndexOf(' ');
+  const kept = (lastSpace > 40 ? cut.slice(0, lastSpace) : cut).replace(/[\s,;:—-]+$/, '');
+  return `${lead}. ${kept}`;
+}

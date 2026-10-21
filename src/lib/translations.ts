@@ -6,6 +6,7 @@ const en = {
   // Header nav
   'nav.features': 'Features',
   'nav.howItWorks': 'How It Works',
+  'nav.manuals': 'Manuals',
   'nav.guides': 'Guides',
   'nav.repairGuides': 'Repair Guides',
   'nav.diagnose': 'Diagnose',

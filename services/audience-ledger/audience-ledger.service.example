@@ -1,0 +1,28 @@
+[Unit]
+Description=Independent first-party audience evidence collector
+After=network.target
+
+[Service]
+Type=simple
+User=audience-ledger
+Group=audience-ledger
+WorkingDirectory=/opt/audience-ledger
+ExecStart=/usr/bin/python3 /opt/audience-ledger/server.py
+EnvironmentFile=/etc/audience-ledger.env
+Environment=AUDIENCE_DB=/var/lib/audience-ledger/events.sqlite3
+Environment=PUBLIC_BASE=https://alloemmanuals.com
+StateDirectory=audience-ledger
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/audience-ledger
+MemoryMax=192M
+TasksMax=32
+CPUQuota=25%
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

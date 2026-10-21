@@ -22,6 +22,7 @@ import {
   type CharmPage,
   type CharmLink,
 } from './charmParser';
+import { isBoilerplateManualPath, isBoilerplateManualStoredPath } from './manualBoilerplate';
 
 // ─── Content cleaning ────────────────────────────────────────────────────────
 
@@ -125,6 +126,16 @@ export async function fetchManualPage(
   pathSegments: string[] = [],
   options: { allowParentRecovery?: boolean } = {},
 ): Promise<CharmPage> {
+  if (isBoilerplateManualPath(pathSegments)) {
+    return {
+      title: 'Not found',
+      isNavigation: false,
+      links: [],
+      contentHtml: '',
+      status: 404,
+    };
+  }
+
   const dbPath = '/' + pathSegments.map((s) => encodeURIComponent(s)).join('/');
 
   const dbSection = await getSectionByPath(dbPath).catch(() => null);
@@ -136,7 +147,7 @@ export async function fetchManualPage(
       return {
         title: dbSection.sectionTitle,
         isNavigation: true,
-        links: children.map(sectionToCharmLink),
+        links: children.filter((child) => !isBoilerplateManualStoredPath(child.path)).map(sectionToCharmLink),
         contentHtml: '',
         status: 200,
       };

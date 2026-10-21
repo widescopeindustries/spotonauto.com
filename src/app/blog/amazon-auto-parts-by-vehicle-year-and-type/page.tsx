@@ -71,7 +71,7 @@ export default function AmazonAutoPartsPage() {
         <nav className="mb-5 text-sm text-gray-500">
           <Link href="/" className="hover:text-cyan-300">Home</Link>
           <span className="mx-2">/</span>
-          <Link href="/blog" className="hover:text-cyan-300">Blog</Link>
+          <Link href="/" className="hover:text-cyan-300">Home</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-300">Amazon Auto Parts by Vehicle Year and Type</span>
         </nav>

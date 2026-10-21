@@ -22,18 +22,18 @@ const Footer = () => {
                                 className="h-10 w-auto object-contain"
                             />
                         </div>
-                        <p className="text-sm text-[#6E6E80] leading-relaxed mb-4">
-                            AI-powered auto repair guides. Save $200–$500 per repair with step-by-step instructions tailored to your exact vehicle.
+                        <p className="text-sm text-gray-400 leading-relaxed mb-4">
+                            Factory service manual data for 300,000+ vehicles — the same specifications dealership technicians rely on.
                         </p>
                         <div className="flex flex-wrap gap-2">
-                            <span className="px-2 py-1 text-xs rounded-full bg-[#FF6B00]/10 text-[#FF6B00] border border-[#FF6B00]/20">
+                            <span className="px-2.5 py-1 text-xs font-mono rounded-md bg-slate-800 text-slate-300 border border-slate-700">
                                 100% Free
                             </span>
-                            <span className="px-2 py-1 text-xs rounded-full bg-[#5B8DB8]/10 text-[#5B8DB8] border border-[#5B8DB8]/20">
+                            <span className="px-2.5 py-1 text-xs font-mono rounded-md bg-slate-800 text-slate-300 border border-slate-700">
                                 No Login Required
                             </span>
                         </div>
-                        <p className="mt-4 text-xs text-[#6E6E80] leading-5">
+                        <p className="mt-4 text-xs text-gray-400 leading-5">
                             {formatBusinessAddress()}
                         </p>
                     </div>
@@ -53,7 +53,7 @@ const Footer = () => {
                                 <li key={item.href + item.label}>
                                     <Link
                                         href={item.href}
-                                        className="flex items-center gap-2 text-sm text-[#6E6E80] hover:text-[#FF6B00] transition-colors"
+                                        className="flex items-center gap-2 text-sm text-gray-400 hover:text-sky-400 transition-colors"
                                     >
                                         <item.icon className="w-3.5 h-3.5" />
                                         {item.label}
@@ -78,7 +78,7 @@ const Footer = () => {
                                 <li key={item.href}>
                                     <Link
                                         href={item.href}
-                                        className="text-sm text-[#6E6E80] hover:text-[#FF6B00] transition-colors"
+                                        className="text-sm text-gray-400 hover:text-sky-400 transition-colors"
                                     >
                                         {item.label}
                                     </Link>
@@ -104,7 +104,7 @@ const Footer = () => {
                                 <li key={item.href}>
                                     <Link
                                         href={item.href}
-                                        className="text-sm text-[#6E6E80] hover:text-[#FF6B00] transition-colors"
+                                        className="text-sm text-gray-400 hover:text-sky-400 transition-colors"
                                     >
                                         {item.label}
                                     </Link>
@@ -115,19 +115,19 @@ const Footer = () => {
                         <div className="mt-6 pt-4 border-t border-white/5 space-y-2">
                             <a
                                 href={COMPANY_INFO.phoneTel}
-                                className="flex items-center gap-2 text-sm text-[#6E6E80] hover:text-[#FF6B00] transition-colors"
+                                className="flex items-center gap-2 text-sm text-gray-400 hover:text-sky-400 transition-colors"
                             >
                                 <Phone className="w-3.5 h-3.5" />
                                 {COMPANY_INFO.phoneDisplay}
                             </a>
                             <a
                                 href={`mailto:${COMPANY_INFO.supportEmail}`}
-                                className="flex items-center gap-2 text-sm text-[#6E6E80] hover:text-[#FF6B00] transition-colors"
+                                className="flex items-center gap-2 text-sm text-gray-400 hover:text-sky-400 transition-colors"
                             >
                                 <Mail className="w-3.5 h-3.5" />
                                 {COMPANY_INFO.supportEmail}
                             </a>
-                            <p className="flex items-start gap-2 text-xs text-[#6E6E80]">
+                            <p className="flex items-start gap-2 text-xs text-gray-400">
                                 <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                                 {COMPANY_INFO.streetAddress}, {COMPANY_INFO.city}, {COMPANY_INFO.state} {COMPANY_INFO.zip}
                             </p>
@@ -145,7 +145,7 @@ const Footer = () => {
                         <h3 className="text-lg font-bold text-white mb-2">
                             Found AllOEMManuals helpful?
                         </h3>
-                        <p className="text-sm text-[#6E6E80] mb-4">
+                        <p className="text-sm text-gray-400 mb-4">
                             A 30-second review on Google helps other DIYers find exact repair guides for their cars.
                         </p>
                         <a
@@ -158,7 +158,7 @@ const Footer = () => {
                             Leave a 5-Star Review on Google
                             <span>★</span>
                         </a>
-                        <p className="mt-3 text-xs text-[#6E6E80]">
+                        <p className="mt-3 text-xs text-gray-400">
                             Veteran-owned &amp; SDVOSB-certified — your feedback keeps this resource free.
                         </p>
                     </div>
@@ -166,13 +166,13 @@ const Footer = () => {
 
                 {/* SDVOSB Branding */}
                 <div className="mt-8 pt-6 border-t border-white/5 text-center">
-                    <p className="text-sm text-[#FF6B00]/80">
-                        SDVOSB Certified • Veteran-Owned &amp; Operated • Streetman, Texas
+                    <p className="text-xs font-mono text-slate-400">
+                        SDVOSB Certified &bull; Veteran-Owned &amp; Operated &bull; Streetman, Texas
                     </p>
                     <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                         <Link
                             href="/about"
-                            className="inline-flex items-center rounded-full border border-[#FF6B00]/30 bg-[#FF6B00]/10 px-4 py-2 text-xs font-semibold tracking-wide text-[#FF6B00] hover:bg-[#FF6B00]/20"
+                            className="inline-flex items-center rounded-lg border border-slate-700 bg-slate-800/80 px-4 py-2 text-xs font-mono font-semibold tracking-wide text-slate-200 hover:bg-slate-700 transition-colors"
                         >
                             About Widescope Industries LLC
                         </Link>
@@ -180,13 +180,13 @@ const Footer = () => {
                             href={COMPANY_INFO.sbaVerificationUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center rounded-full border border-[#5B8DB8]/30 bg-[#5B8DB8]/10 px-4 py-2 text-xs font-semibold tracking-wide text-[#5B8DB8] hover:bg-[#5B8DB8]/20"
+                            className="inline-flex items-center rounded-lg border border-sky-500/30 bg-sky-500/10 px-4 py-2 text-xs font-mono font-semibold tracking-wide text-sky-400 hover:bg-sky-500/20 transition-colors"
                             aria-label="Verify SDVOSB certification with SBA"
                         >
                             Verify SDVOSB on SBA
                         </a>
                     </div>
-                    <p className="mt-3 text-xs text-[#6E6E80]">
+                    <p className="mt-3 text-xs text-gray-400">
                         {COMPANY_INFO.legalName} • {COMPANY_INFO.streetAddress}, {COMPANY_INFO.city}, {COMPANY_INFO.state} {COMPANY_INFO.zip}
                     </p>
                 </div>
@@ -200,7 +200,7 @@ const Footer = () => {
                         <a
                             href="https://whattypeofoil.com"
                             target="_blank"
-                            rel="noopener"
+                            rel="nofollow noopener"
                             className="text-amber-400/90 hover:text-amber-300 underline transition-colors"
                         >
                             WhatTypeOfOil.com — Oil Spec &amp; Capacity
@@ -209,7 +209,7 @@ const Footer = () => {
                         <a
                             href="https://whattiresfitmy.com"
                             target="_blank"
-                            rel="noopener"
+                            rel="nofollow noopener"
                             className="text-cyan-400/90 hover:text-cyan-300 underline transition-colors"
                         >
                             WhatTiresFitMy.com — Tire Size &amp; Fitment
@@ -218,7 +218,7 @@ const Footer = () => {
                         <a
                             href="https://whatwipersfitmy.com"
                             target="_blank"
-                            rel="noopener"
+                            rel="nofollow noopener"
                             className="text-sky-400/90 hover:text-sky-300 underline transition-colors"
                         >
                             WhatWipersFitMy.com — Wiper Blade Sizes
@@ -227,7 +227,7 @@ const Footer = () => {
                         <a
                             href="https://whatbulbfitsmy.com"
                             target="_blank"
-                            rel="noopener"
+                            rel="nofollow noopener"
                             className="text-yellow-400/90 hover:text-yellow-300 underline transition-colors"
                         >
                             WhatBulbFitsMy.com — Light Bulb Sizes
@@ -237,26 +237,26 @@ const Footer = () => {
 
                 {/* Affiliate Disclosure */}
                 <div className="mt-4 pt-4 border-t border-white/5 text-center">
-                    <p className="text-xs text-[#6E6E80]">
+                    <p className="text-xs text-gray-400">
                         As an Amazon Associate, AllOEMManuals earns from qualifying purchases.
                         We also earn commissions from TOPDON purchases via our referral links.{' '}
-                        <Link href="/disclosure" className="text-[#6E6E80] hover:text-[#FF6B00] underline transition-colors">Full disclosure</Link>.
+                        <Link href="/disclosure" className="text-gray-400 hover:text-sky-400 underline transition-colors">Full disclosure</Link>.
                     </p>
-                    <p className="mt-2 text-xs text-[#6E6E80]">
-                        Full sitemap: <Link href="/sitemap.xml" className="underline hover:text-[#FF6B00]">sitemap.xml</Link>
+                    <p className="mt-2 text-xs text-gray-400">
+                        Full sitemap: <Link href="/sitemap.xml" className="underline hover:text-sky-400">sitemap.xml</Link>
                     </p>
                 </div>
 
                 {/* Bottom bar */}
                 <div className="mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-xs text-[#6E6E80]">
-                        © {year} AllOEMManuals. All rights reserved. AI-generated content is for informational purposes only.
+                    <p className="text-xs text-gray-400">
+                        © {year} AllOEMManuals. All rights reserved. Factory service data verified by our mechanic review team.
                     </p>
                     <div className="flex items-center gap-4">
-                        <span className="text-xs text-[#6E6E80]">AI-assisted repair guidance</span>
+                        <span className="text-xs text-gray-400">OEM-sourced repair data</span>
                         <div className="flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-xs text-[#6E6E80]">Verified coverage index active</span>
+                            <span className="text-xs text-gray-400">Verified coverage index active</span>
                         </div>
                     </div>
                 </div>

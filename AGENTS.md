@@ -1212,3 +1212,10 @@ Disallow: /*?_rsc=*
 - ~~Remove VPS deploy from GitHub Actions~~ — CI now only verifies build; auto-deploy handles production.
 
 ---
+
+## 2026-10-09 — Public crawler/payment gate retired for Mediavine pre-launch
+- User authorized removing/fully disabling the gate after Ben Rodriguez's October 8 email reported HTTP 402 for automated tools AND human Solutions Engineering reviewers. User-supplied portal says Google MCM Approved and preparing for launch; ads live/revenue not verified.
+- Live Cloudflare `alloemmanuals-bot-gate` is now a pure origin pass-through, deployed 16:29 UTC. Removed custom Worker payment gates, public-page-to-paid-feed redirects, and UA/ASN/IP/score checks. Do not restore old gate variants or backups: broad automated and human access is required for the ad launch.
+- Local/VPS `deploy/cloudflare/worker.js` synchronized. Cloudflare settings/routes, WAF, origin nginx protections and explicit paid API billing remain unchanged. No app rebuild/restart, Git push, indexing submission, or support message.
+- 48 local + 30 VPS final HTTP checks passed (all 200); earlier Mac Chrome, Python, and Criteo checks reproduced 402. Mediavine script still present. Browser UI runtime failed, so no interactive browser verification claimed.
+- Evidence and unsent Ben reply: `reports/PAYWALL-REMOVAL-2026-10-09/`. VPS backup `/root/alloem-paywall-removal-20261009/worker-before.js`. Restoring old paywall would reinstate the launch blocker.

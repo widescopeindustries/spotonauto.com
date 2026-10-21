@@ -325,11 +325,11 @@ export async function getVehicleGraphData(
   ]);
 
   // Build URLs using variant uriPath + encodedPath
-  const proxyBase = 'http://127.0.0.1:8080';
   const procedures = procRows.map((r) => {
     let url: string | null = null;
     if (variant.uriPath && r.encodedPath) {
-      url = `${proxyBase}${variant.uriPath}Repair%20and%20Diagnosis/${r.encodedPath}`;
+      const cleanUri = variant.uriPath.replace(/^\/+|\/+$/g, '');
+      url = `/manual/${cleanUri}/Repair%20and%20Diagnosis/${r.encodedPath}`;
     }
     return {
       id: r.id,

@@ -9,6 +9,7 @@ import { RepairGuide } from '@/types';
 import { trackGuideGenerated, trackRepairGuideOpen, trackRepairPageView, trackRetrievalBackbone } from '@/lib/analytics';
 import { deriveIntentCluster } from '@/lib/analyticsContext';
 import { Turnstile } from '@marsidev/react-turnstile';
+import { normalizeRepairGuide } from '@/lib/repairGuideData';
 
 interface GuideContentProps {
     params: {
@@ -21,6 +22,7 @@ interface GuideContentProps {
 }
 
 const guideCache = new Map<string, RepairGuide>();
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 export default function GuideContent({ params, fallbackGuide }: GuideContentProps) {
     const router = useRouter();
@@ -61,15 +63,21 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
     useEffect(() => {
         const checkCache = async () => {
             const guideId = `${year}-${make}-${model}-${cleanTask}`.toLowerCase().replace(/\s+/g, '-');
-            const cached = await getGuideById(guideId);
+            const cached = normalizeRepairGuide(await getGuideById(guideId).catch(() => null));
             if (cached) {
                 setGuide(cached);
                 setEnhancing(false);
                 return;
             }
-            if (guideCache.has(guideId)) {
-                setGuide(guideCache.get(guideId)!);
+            const memoryGuide = normalizeRepairGuide(guideCache.get(guideId));
+            if (memoryGuide) {
+                setGuide(memoryGuide);
                 setEnhancing(false);
+                return;
+            }
+            if (!turnstileSiteKey) {
+                setEnhancing(false);
+                setEnhanceError('AI enhancement is temporarily unavailable.');
                 return;
             }
             setNeedsGeneration(true);
@@ -89,7 +97,8 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
                 const vehicle = { year, make, model };
                 const guideId = `${year}-${make}-${model}-${cleanTask}`.toLowerCase().replace(/\s+/g, '-');
 
-                const generatedGuide = await generateFullRepairGuide(vehicle, cleanTask, turnstileToken);
+                const generatedGuide = normalizeRepairGuide(await generateFullRepairGuide(vehicle, cleanTask, turnstileToken));
+                if (!generatedGuide) throw new Error('Guide enhancement returned an unsupported data format.');
                 guideCache.set(guideId, generatedGuide);
                 await saveGuide(generatedGuide);
                 trackGuideGenerated({
@@ -135,12 +144,17 @@ export default function GuideContent({ params, fallbackGuide }: GuideContentProp
 
     return (
         <div className="relative">
-            {needsGeneration && !turnstileToken && (
+            {needsGeneration && !turnstileToken && turnstileSiteKey && (
                 <div className="absolute right-4 top-16 z-20 overflow-hidden rounded opacity-50 transition-opacity hover:opacity-100">
                     <Turnstile
-                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
+                        siteKey={turnstileSiteKey}
                         onSuccess={(token) => setTurnstileToken(token)}
-                        onError={() => setEnhanceError('Security check failed.')}
+                        onError={() => {
+                            setEnhancing(false);
+                            setNeedsGeneration(false);
+                            setEnhanceError('Security check failed. Reload to try again.');
+                        }}
+                        onExpire={() => setTurnstileToken(null)}
                     />
                 </div>
             )}

@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: `https://alloemmanuals.com/repairs/${canonicalTask}`,
     },
     robots: {
-      index: false,
+      index: true,
       follow: true,
     },
   };

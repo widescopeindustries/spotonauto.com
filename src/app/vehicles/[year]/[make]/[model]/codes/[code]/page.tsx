@@ -5,6 +5,7 @@ import { getVehicleDtcFlow } from '@/lib/vehicleLane';
 import { fetchCharmPage } from '@/lib/charmParser';
 import { slugifyRoutePart } from '@/data/vehicles';
 import { seoTitle } from '@/lib/seoTitle';
+import { DTC_CODES_MAP } from '@/data/dtc-codes-data';
 
 export const revalidate = 21600; // 6 hour ISR
 
@@ -17,8 +18,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const upperCode = code.toUpperCase();
   const displayMake = decodeURIComponent(make);
   const displayModel = decodeURIComponent(model);
-  const title = seoTitle(`${upperCode} on ${year} ${displayMake} ${displayModel} — OEM Diagnostic Flow`, `${upperCode} on ${year} ${displayMake} ${displayModel} Diagnostic Flow`);
-  const description = `Factory diagnostic procedure for code ${upperCode} on the ${year} ${displayMake} ${displayModel}. Step-by-step flowchart from the OEM service manual with diagrams and test procedures.`;
+  const title = seoTitle(`${upperCode} on ${year} ${displayMake} ${displayModel} — Factory Manual References`, `${upperCode} on ${year} ${displayMake} ${displayModel} Diagnostic Flow`);
+  const description = `Factory diagnostic procedure for code ${upperCode} on the ${year} ${displayMake} ${displayModel}. Browse matching manual references, diagrams, and related test information.`;
   const pageUrl = `https://alloemmanuals.com/vehicles/${year}/${make}/${model}/codes/${code}`;
 
   return {
@@ -93,7 +94,7 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
               <span className="text-amber-400 font-mono">{flow.code}</span>
             </h1>
             <span className="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-bold">
-              OEM Diagnostic Flow
+              Factory Manual References
             </span>
           </div>
           <p className="text-gray-400">
@@ -101,7 +102,7 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
           </p>
         </div>
 
-        {/* OEM Diagnostic Flow Content */}
+        {/* Factory Manual References Content */}
         {availablePages.length > 0 ? (
           <div className="mb-10 space-y-6">
             {availablePages.map((page, i) => (
@@ -215,10 +216,10 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
             ← Back to {displayName}
           </Link>
           <Link
-            href={`/codes/${flow.code.toLowerCase()}`}
+            href={DTC_CODES_MAP.has(flow.code) ? `/codes/${flow.code.toLowerCase()}` : `${vehiclePath}#codes`}
             className="px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm hover:bg-amber-500/20 transition"
           >
-            General {flow.code} Info
+            {DTC_CODES_MAP.has(flow.code) ? `General ${flow.code} Info` : 'Browse vehicle codes'}
           </Link>
           <Link
             href={`/repair/${year}/${slugifyRoutePart(v.make)}/${slugifyRoutePart(v.model)}`}

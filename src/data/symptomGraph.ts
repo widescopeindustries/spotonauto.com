@@ -264,25 +264,34 @@ function normalizeSymptomText(value: string): string {
   return slugifyRoutePart(value).replace(/-/g, ' ').trim();
 }
 
+const normalizedClusters = SYMPTOM_CLUSTERS.map((cluster) => ({
+  cluster,
+  label: normalizeSymptomText(cluster.label),
+  shortLabel: normalizeSymptomText(cluster.shortLabel),
+  aliases: cluster.aliases.map(normalizeSymptomText),
+  systems: cluster.systems.map(normalizeSymptomText),
+}));
+
 export function getSymptomClusterBySlug(slug: string): SymptomCluster | null {
   const normalized = slugifyRoutePart(slug);
   return SYMPTOM_CLUSTERS.find((cluster) => cluster.slug === normalized) || null;
 }
 
 export function getSymptomClusterFromText(text: string): SymptomCluster | null {
-  const normalized = normalizeSymptomText(text);
+  const slug = slugifyRoutePart(text);
+  const normalized = slug.replace(/-/g, ' ').trim();
   if (!normalized) return null;
 
-  const exact = SYMPTOM_CLUSTERS.find((cluster) =>
-    cluster.slug === slugifyRoutePart(text) ||
-    cluster.aliases.some((alias) => normalizeSymptomText(alias) === normalized) ||
-    normalizeSymptomText(cluster.label) === normalized
+  const exact = normalizedClusters.find(({ cluster, aliases, label }) =>
+    cluster.slug === slug ||
+    aliases.some((alias) => alias === normalized) ||
+    label === normalized
   );
-  if (exact) return exact;
+  if (exact) return exact.cluster;
 
-  return SYMPTOM_CLUSTERS.find((cluster) =>
-    cluster.aliases.some((alias) => normalized.includes(normalizeSymptomText(alias)) || normalizeSymptomText(alias).includes(normalized))
-  ) || null;
+  return normalizedClusters.find(({ aliases }) =>
+    aliases.some((alias) => normalized.includes(alias) || alias.includes(normalized))
+  )?.cluster || null;
 }
 
 export function getSymptomClustersForTexts(texts: string[], limit = 6): SymptomCluster[] {
@@ -306,17 +315,17 @@ export function getSymptomClustersForRepairTask(task: string, texts: string[] = 
     .map((text) => normalizeSymptomText(text))
     .filter(Boolean);
 
-  return SYMPTOM_CLUSTERS
-    .map((cluster) => {
+  return normalizedClusters
+    .map(({ cluster, label, shortLabel, aliases, systems }) => {
       let score = cluster.likelyTasks.includes(normalizedTask) ? 100 : 0;
       if (score === 0) return { cluster, score };
 
       for (const text of normalizedTexts) {
-        if (normalizeSymptomText(cluster.label) === text) score += 40;
-        if (normalizeSymptomText(cluster.shortLabel) === text) score += 24;
-        if (cluster.aliases.some((alias) => normalizeSymptomText(alias) === text)) score += 32;
-        if (cluster.aliases.some((alias) => text.includes(normalizeSymptomText(alias)))) score += 16;
-        if (cluster.systems.some((system) => text.includes(normalizeSymptomText(system)))) score += 8;
+        if (label === text) score += 40;
+        if (shortLabel === text) score += 24;
+        if (aliases.some((alias) => alias === text)) score += 32;
+        if (aliases.some((alias) => text.includes(alias))) score += 16;
+        if (systems.some((system) => text.includes(system))) score += 8;
       }
 
       return { cluster, score };

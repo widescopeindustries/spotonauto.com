@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
@@ -6,10 +7,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import AnalyticsScripts from "@/components/AnalyticsScripts";
+import Ga4PageView from "@/components/Ga4PageView";
 import TrackingScript from "@/components/TrackingScript";
 import AmazonOneLink from "@/components/AmazonOneLink";
 import AmazonGeoRedirect from "@/components/AmazonGeoRedirect";
 import { COMPANY_INFO } from "@/lib/companyInfo";
+import { GA_MEASUREMENT_ID } from "@/lib/ga";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk", display: "swap" });
@@ -17,7 +20,7 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space
 export const metadata: Metadata = {
   metadataBase: new URL('https://alloemmanuals.com'),
   title: "AllOEMManuals | Free DIY Auto Repair Guides for Your Car",
-  description: "Save hundreds on auto repairs. Get instant AI-generated repair guides for your exact vehicle — step-by-step instructions, parts lists, and pro tips. Skip the shop, fix it yourself.",
+  description: "Free factory service manual data for your exact vehicle. Step-by-step repair procedures, torque specs, DTC codes, and wiring diagrams used by professional technicians.",
   keywords: [
     "DIY auto repair",
     "car repair guide",
@@ -32,7 +35,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "AllOEMManuals | Skip the Shop. Fix It Yourself.",
-    description: "Free AI-powered repair guides for any car. Save $200-500 per repair with step-by-step instructions and parts lists.",
+    description: "Free factory-data repair guides for any vehicle. OEM torque specs, DTC codes, fluid capacities, and step-by-step procedures.",
     type: "website",
     url: "https://alloemmanuals.com",
     siteName: "AllOEMManuals",
@@ -40,10 +43,17 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AllOEMManuals | Free DIY Auto Repair Guides",
-    description: "Save hundreds on auto repairs. Instant AI guides for your exact vehicle.",
+    description: "Save hundreds on auto repairs. Factory service data for your exact vehicle.",
+  },
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'AllOEMManuals',
   },
   other: {
     "fo-verify": "b3487b75-b248-4d32-9c11-5746d7d02087",
+    "google-adsense-account": "ca-pub-3105584943212740",
   },
 };
 
@@ -55,15 +65,27 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script defer data-cfasync="false" src="/audience-ledger.js?v=20261016" />
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
+        <script
+          id="ga4"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}',{send_page_view:true});`,
+          }}
+        />
+        {/* Mediavine Script Wrapper */}
+        <script
+          type="text/javascript"
+          async
+          data-noptimize="1"
+          data-cfasync="false"
+          src="//scripts.mediavine.com/tags/64b496ca-b6f8-40ae-b329-c276001da62e.js"
+        />
+
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt — AI crawler context for AllOEMManuals" />
         <meta name="ai-license" content="https://alloemmanuals.com/license" />
-        <meta name="google-adsense-account" content="ca-pub-4727419009542011" />
+        <meta name="google-adsense-account" content="ca-pub-3105584943212740" />
         <meta name='impact-site-verification' {...({ value: '39ff62d6-58f8-468a-80a0-5a794bd799fc' } as any)} />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4727419009542011"
-          crossOrigin="anonymous"
-        />
         <Script
           id="impact-cdn"
           strategy="lazyOnload"
@@ -78,22 +100,15 @@ export default function RootLayout({
             __html: `if('modelContext' in navigator){try{navigator.modelContext.provideContext({name:'alloemmanuals',tools:[{name:'getRepairGuide',description:'Get a vehicle-specific repair guide.',inputSchema:{type:'object',properties:{year:{type:'integer'},make:{type:'string'},model:{type:'string'},task:{type:'string'}},required:['year','make','model','task']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/v1/repair?year='+i.year+'&make='+i.make+'&model='+i.model+'&task='+i.task);return r.json();}},{name:'getDTCInfo',description:'Look up diagnostic trouble code.',inputSchema:{type:'object',properties:{code:{type:'string'}},required:['code']},execute:async(i)=>{const r=await fetch('https://alloemmanuals.com/api/graph/dtc/'+encodeURIComponent(i.code));return r.json();}}]});}catch(e){}}`
           }}
         />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(s){s.dataset.zone='11547041',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(s){s.dataset.zone='11547049',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
-          }}
-        />
       </head>
-      <body className={`bg-[#050507] text-gray-200 font-sans antialiased overflow-x-hidden selection:bg-[#FF6B00] selection:text-white ${inter.variable} ${spaceGrotesk.variable}`}>
+      <body className={`bg-[#0B0F17] text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-sky-500/30 selection:text-sky-200 ${inter.variable} ${spaceGrotesk.variable}`}>
           <div className="hidden" aria-hidden="true">
             Impact-Site-Verification: a22a6f24-e23a-49ea-845e-4bb3c9358673
           </div>
           <AnalyticsScripts />
+          <Suspense fallback={null}>
+            <Ga4PageView />
+          </Suspense>
 
         {/* Organization + WebSite schema — global site identity for Google */}
         <script
@@ -106,7 +121,7 @@ export default function RootLayout({
                 "@id": "https://alloemmanuals.com/#organization",
                 name: "AllOEMManuals",
                 url: "https://alloemmanuals.com",
-                description: "Free AI-powered DIY auto repair guides. OEM-level service data for every vehicle.",
+                description: "Free DIY auto repair guides backed by factory service manual data for every vehicle.",
                 foundingDate: "2026",
                 contactPoint: {
                   "@type": "ContactPoint",
@@ -130,7 +145,7 @@ export default function RootLayout({
                 "@type": "LocalBusiness",
                 "@id": "https://alloemmanuals.com/#localbusiness",
                 name: "AllOEMManuals",
-                description: "Manuel — your factory-trained AI mechanic. Free OEM repair guides, DTC codes, wiring diagrams, and torque specs for your exact year, make, and model.",
+                description: "Free OEM repair guides, DTC codes, wiring diagrams, and torque specs for your exact year, make, and model — backed by factory service manual data.",
                 url: "https://alloemmanuals.com",
                 logo: "https://alloemmanuals.com/logo.png",
                 sameAs: [

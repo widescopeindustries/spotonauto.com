@@ -65,36 +65,39 @@ async function mineOEMContent(pool, year, make, model, code) {
 
   const allTerms = [...terms, ...systemTerms];
 
-  const conditions = [];
-  const params = [make, Number(year)];
-
-  const termConditions = [];
-  for (let i = 0; i < allTerms.length; i++) {
-    const paramIndex = params.length + 1;
-    params.push(`%${allTerms[i].toLowerCase()}%`);
-    termConditions.push(`(LOWER(section_title) LIKE $${paramIndex} OR LOWER(content_preview) LIKE $${paramIndex})`);
-  }
-
-  if (termConditions.length > 0) {
-    conditions.push(`(${termConditions.join(" OR ")})`);
-  }
-
-  const query = `
-    SELECT path, make, year, model, section_title, content_preview
-    FROM manual_embeddings
-    WHERE LOWER(make) = LOWER($1)
-      AND year = $2
-      ${conditions.length > 0 ? "AND " + conditions.join(" AND ") : ""}
-    LIMIT 5
-  `;
+  const patterns = allTerms
+    .map((term) => `%${String(term).toLowerCase()}%`)
+    .filter((pattern) => pattern.length >= 5);
+  const mapRows = (rows) => rows.map((r) => ({
+    sectionTitle: r.section_title,
+    contentPreview: r.content_preview,
+    path: r.path,
+  }));
+  if (patterns.length === 0) return [];
 
   try {
-    const result = await pool.query(query, params);
-    return result.rows.map((r) => ({
-      sectionTitle: r.section_title,
-      contentPreview: r.content_preview,
-      path: r.path,
-    }));
+    const titleResult = await pool.query(
+      `SELECT path, make, year, model, section_title, content_preview
+       FROM manual_embeddings
+       WHERE lower(make) = lower($1)
+         AND year = $2
+         AND section_title ILIKE ANY ($3::text[])
+       LIMIT 5`,
+      [make, Number(year), patterns]
+    );
+    if (titleResult.rows.length >= 5) return mapRows(titleResult.rows);
+
+    const bodyResult = await pool.query(
+      `SELECT path, make, year, model, section_title, content_preview
+       FROM manual_embeddings
+       WHERE lower(make) = lower($1)
+         AND year = $2
+         AND content_full ILIKE ANY ($3::text[])
+         AND NOT (section_title ILIKE ANY ($3::text[]))
+       LIMIT $4`,
+      [make, Number(year), patterns, 5 - titleResult.rows.length]
+    );
+    return mapRows([...titleResult.rows, ...bodyResult.rows]);
   } catch (e) {
     console.error(`   DB error for ${year} ${make} ${model} ${code}:`, e.message);
     return [];

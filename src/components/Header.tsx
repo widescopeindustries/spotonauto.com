@@ -7,13 +7,12 @@ import { useRouter } from 'next/navigation';
 import { Cpu, Menu, X, Car } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useT } from '@/lib/translations';
-import { clarityEvent } from '@/lib/clarity';
 
 const desktopNavItems = [
-  { key: 'nav.diagnose', label: 'Diagnose', href: '/diagnose' },
+  { key: 'nav.manuals', label: 'Manuals', href: '/manual' },
   { key: 'nav.repairGuides', label: 'Guides', href: '/repair' },
   { key: 'nav.codes', label: 'Codes', href: '/codes' },
-  { key: 'nav.developers', label: 'API', href: '/developers' },
+  { key: 'nav.diagnose', label: 'Diagnose', href: '/diagnose' },
 ];
 
 export default function Header() {
@@ -33,17 +32,16 @@ export default function Header() {
     e.preventDefault();
     const query = search.trim();
     if (!query) return;
-    clarityEvent('search_submitted', { query: query.slice(0, 60) });
     router.push(`/diagnose?q=${encodeURIComponent(query)}`);
   }
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'bg-[#050507]/80 backdrop-blur-xl border-b border-white/5'
-            : 'bg-transparent'
+            ? 'bg-[#0B0F17]/95 backdrop-blur-md border-b border-slate-800/80 shadow-sm'
+            : 'bg-[#0B0F17]/80 backdrop-blur-sm border-b border-slate-800/40'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,21 +57,21 @@ export default function Header() {
                 width={200}
                 height={83}
                 priority
-                className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+                className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-[1.01]"
               />
             </Link>
 
-            <form onSubmit={handleSearchSubmit} className="hidden lg:flex min-w-[260px] items-center gap-2 rounded-full border border-white/10 bg-[#0a0a0f]/60 px-3 py-1.5">
+            <form onSubmit={handleSearchSubmit} className="hidden lg:flex min-w-[280px] items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/90 px-3 py-1.5 focus-within:border-sky-500/60 transition-colors">
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search symptom, code, or repair"
+                placeholder="Search symptom, code, or manual..."
                 aria-label="Search AllOEMManuals"
-                className="w-full bg-transparent text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none"
+                className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
               />
               <button
                 type="submit"
-                className="rounded-full bg-[#FF6B00] px-3 py-1 text-xs font-bold text-white hover:bg-[#FF9500]"
+                className="rounded-md bg-sky-600 px-3 py-1 text-xs font-semibold text-white hover:bg-sky-500 transition-colors"
                 data-track-click='{"event_name":"search_submit","event_category":"search","surface":"header"}'
               >
                 Search
@@ -85,10 +83,10 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="relative px-4 py-2 text-sm text-[#EAEAEA]/70 hover:text-white transition-colors group"
+                  className="relative px-3.5 py-2 text-sm text-slate-300 hover:text-white transition-colors group"
                 >
                   {t(item.key) || item.label}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#FF6B00] group-hover:w-3/4 transition-all duration-300" />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-sky-500 group-hover:w-3/4 transition-all duration-200" />
                 </Link>
               ))}
             </nav>
@@ -97,15 +95,15 @@ export default function Header() {
               <LanguageSelector />
               <Link
                 href="/history"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#FF6B00] px-4 py-2 text-xs font-bold text-white hover:bg-[#FF9500] transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 px-3.5 py-1.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white transition-colors"
               >
-                <Car className="w-3.5 h-3.5" />
+                <Car className="w-3.5 h-3.5 text-slate-400" />
                 Garage
               </Link>
             </div>
 
             <button
-              className="md:hidden p-2 text-white"
+              className="md:hidden p-2 text-slate-300 hover:text-white"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             >
@@ -116,40 +114,40 @@ export default function Header() {
       </header>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 bg-[#050507]/95 backdrop-blur-xl md:hidden">
-          <div className="flex flex-col items-center justify-center h-full gap-8 pt-20">
+        <div className="fixed inset-0 z-40 bg-[#0B0F17]/98 backdrop-blur-xl md:hidden">
+          <div className="flex flex-col items-center justify-center h-full gap-7 pt-20">
             {desktopNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 text-2xl text-white"
+                className="flex items-center gap-3 text-xl text-slate-200 hover:text-sky-400 font-medium transition-colors"
               >
                 {t(item.key) || item.label}
               </Link>
             ))}
-            <div className="flex items-center gap-3 mt-4">
-              <span className="text-sm text-gray-400">{t('nav.guideLanguage') || 'Language'}</span>
+            <div className="flex items-center gap-3 mt-2">
+              <span className="text-sm text-slate-400">{t('nav.guideLanguage') || 'Language'}</span>
               <LanguageSelector />
             </div>
             <Link
               href="/history"
               onClick={() => setMobileOpen(false)}
-              className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-bold text-white hover:bg-[#FF9500] transition-colors mt-4"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-5 py-2.5 text-sm font-semibold text-slate-100 hover:bg-slate-700 transition-colors mt-2"
             >
-              <Car className="w-4 h-4" />
+              <Car className="w-4 h-4 text-slate-400" />
               Garage
             </Link>
-            <form onSubmit={handleSearchSubmit} className="flex w-72 items-center gap-2 rounded-full border border-white/10 bg-[#0a0a0f]/60 px-3 py-2 mt-4">
+            <form onSubmit={handleSearchSubmit} className="flex w-72 items-center gap-2 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 mt-2">
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="w-full bg-transparent text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none"
+                placeholder="Search manuals..."
+                className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
               />
               <button
                 type="submit"
-                className="rounded-full bg-[#FF6B00] px-3 py-1 text-xs font-bold text-white"
+                className="rounded-md bg-sky-600 px-3 py-1 text-xs font-semibold text-white hover:bg-sky-500"
               >
                 Go
               </button>

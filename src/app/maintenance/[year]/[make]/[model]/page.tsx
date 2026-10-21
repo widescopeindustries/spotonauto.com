@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchMaintenanceData } from "@/lib/maintenanceData";
-import { getToolPagesForVehicle } from "@/data/tools-pages";
+import { getToolPagesForVehicle, type ToolType } from "@/data/tools-pages";
+import { getMaintenanceSpecLink } from "@/lib/maintenanceFallback";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
 import { seoTitle } from "@/lib/seoTitle";
@@ -170,7 +171,19 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
       href: `${basePath}/fluid-capacity`,
       tone: "cyan",
     },
-  ];
+  ].map((spec) => {
+    const hasExactData = spec.id === 'oil-type' ? !!data?.oil
+      : spec.id === 'tire-size' ? !!data?.tires
+      : spec.id === 'coolant-type' ? !!data?.coolant : false;
+    const href = hasExactData ? spec.href
+      : getMaintenanceSpecLink(year, displayMake, displayModel, spec.id as ToolType);
+    return {
+      ...spec,
+      href: href ?? '',
+      available: !!href,
+      summary: href?.startsWith('/tools/') ? 'Model reference ? check year coverage' : spec.summary,
+    };
+  });
 
   const availableCount = specs.filter((s) => s.available).length;
 
@@ -179,9 +192,7 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Maintenance", item: "https://alloemmanuals.com/maintenance" },
-      { "@type": "ListItem", position: 2, name: displayMake, item: `https://alloemmanuals.com/maintenance/${canonicalMake}` },
-      { "@type": "ListItem", position: 3, name: `${displayMake} ${displayModel}`, item: `https://alloemmanuals.com/maintenance/${canonicalMake}/${canonicalModel}` },
-      { "@type": "ListItem", position: 4, name: `${year} ${displayMake} ${displayModel} Maintenance`, item: `https://alloemmanuals.com/maintenance/${year}/${canonicalMake}/${canonicalModel}` },
+      { "@type": "ListItem", position: 2, name: `${year} ${displayMake} ${displayModel} Maintenance`, item: `https://alloemmanuals.com/maintenance/${year}/${canonicalMake}/${canonicalModel}` },
     ],
   };
 
@@ -236,7 +247,7 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
             </li>
             <span className="text-gray-600">/</span>
             <li>
-              <Link href={`/maintenance/${canonicalMake}`} className="text-cyan-400 hover:text-cyan-300 transition-colors">{displayMake}</Link>
+              <span className="text-cyan-400 hover:text-cyan-300 transition-colors">{displayMake}</span>
             </li>
             <span className="text-gray-600">/</span>
             <li className="text-gray-400">{displayModel}</li>

@@ -58,7 +58,7 @@ export default async function DiagnosticPage({
     const hasVehicle = Boolean(year && make && model);
 
     return (
-        <>
+        <div className="mv-content">
             <h1 className="pt-24 mb-4 text-center text-2xl font-display font-bold text-white">Talk to Manuel — Your Factory-Trained AI Mechanic</h1>
             <p className="mb-6 text-center text-sm text-gray-400 max-w-xl mx-auto">
                 Describe symptoms, read codes aloud, or ask repair questions. Manuel knows your car&apos;s exact service manual, wiring diagrams, and torque specs.
@@ -181,6 +181,6 @@ export default async function DiagnosticPage({
                     <WhenToSeeMechanic context="diagnose" />
                 </div>
             </div>
-        </>
+        </div>
     );
 }

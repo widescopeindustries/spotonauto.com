@@ -4,30 +4,30 @@
 @tailwind utilities;
 
 :root {
-  --background: 210 14% 11%;
-  --foreground: 0 0% 100%;
-  --card: 210 11% 14%;
-  --card-foreground: 0 0% 100%;
-  --primary: 187 100% 50%;
-  --primary-foreground: 0 0% 0%;
-  --secondary: 210 10% 16%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 210 10% 20%;
-  --muted-foreground: 0 0% 60%;
-  --accent: 187 100% 50%;
-  --accent-foreground: 0 0% 0%;
+  --background: 222 47% 7%;
+  --foreground: 210 40% 98%;
+  --card: 222 35% 11%;
+  --card-foreground: 210 40% 98%;
+  --primary: 199 89% 48%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 215 25% 18%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 215 25% 18%;
+  --muted-foreground: 217 19% 65%;
+  --accent: 199 89% 48%;
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 210 10% 24%;
-  --input: 210 10% 24%;
-  --ring: 187 100% 50%;
-  --radius: 0.75rem;
+  --border: 217 24% 18%;
+  --input: 217 24% 18%;
+  --ring: 199 89% 48%;
+  --radius: 0.5rem;
 
-  --cyan: #00d4ff;
-  --cyan-glow: rgba(0, 212, 255, 0.4);
-  --dark-void: #12171b;
-  --charcoal: #1a2025;
-  --text-secondary: #c7d0d7;
+  --cyan: #38bdf8;
+  --cyan-glow: rgba(56, 189, 248, 0.12);
+  --dark-void: #0b0f17;
+  --charcoal: #111827;
+  --text-secondary: #94a3b8;
 }
 
 * {
@@ -45,20 +45,19 @@
 
 @layer base {
   body {
-    font-family: 'Inter', sans-serif;
-    background: var(--dark-void);
-    color: white;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0b0f17;
+    color: #f1f5f9;
     overflow-x: hidden;
     line-height: 1.6;
     background-image:
-      radial-gradient(circle at 50% 0%, rgba(255, 107, 0, 0.1), transparent 34%),
-      radial-gradient(circle at 100% 12%, rgba(255, 255, 255, 0.04), transparent 22%),
-      linear-gradient(180deg, #171c21 0%, #11161a 42%, #191f24 100%);
+      linear-gradient(180deg, #0d121c 0%, #0b0f17 35%, #080c13 100%);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: 0.02em;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.015em;
+    font-weight: 600;
   }
 }
 
@@ -68,21 +67,21 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--dark-void);
+  background: #0b0f17;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FF6B00;
+  background: #334155;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 107, 0, 0.8);
+  background: #475569;
 }
 
 /* Typography */
 .font-display {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .font-body {
@@ -139,45 +138,50 @@
   }
 
   .conversion-zone {
-    background: linear-gradient(135deg, #0f766e 0%, #164e63 100%);
-    color: white;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
     padding: 32px;
     border-radius: 12px;
     margin: 40px 0;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   }
 
   .conversion-zone h3 {
     font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 12px;
+    color: #ffffff;
   }
 
   .conversion-zone p {
     margin-bottom: 20px;
-    opacity: 0.92;
+    color: #94a3b8;
   }
 
   .conversion-zone input {
     padding: 12px 16px;
-    border: none;
+    background: #0b0f17;
+    border: 1px solid #334155;
     border-radius: 6px;
     min-width: 240px;
-    color: #111827;
+    color: #f8fafc;
   }
 
   .conversion-zone button {
     padding: 12px 24px;
-    background: #f59e0b;
-    color: #1a1a1a;
+    background: #0284c7;
+    color: #ffffff;
     border: none;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.2s ease;
   }
 
   .conversion-zone button:hover {
-    background: #d97706;
+    background: #0369a1;
   }
 
   @media (max-width: 640px) {
@@ -279,7 +283,7 @@
   }
 
   .glass-panel-hover {
-    @apply hover:bg-glass-white hover:border-[#FF6B00]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,107,0,0.15)];
+    @apply hover:bg-glass-white hover:border-sky-500/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(56,189,248,0.1)];
   }
 
   /* Gradient Border */
@@ -532,8 +536,8 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #FF6B00;
-  box-shadow: 0 0 10px var(--cyan-glow);
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
 }
 
 input::placeholder, textarea::placeholder {
@@ -543,50 +547,33 @@ input::placeholder, textarea::placeholder {
 /* Button Base */
 .btn-cyber {
   position: relative;
-  padding: 0.875rem 2rem;
-  font-family: 'Space Grotesk', sans-serif;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 0.875rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid #FF6B00;
-  color: #FF6B00;
+  letter-spacing: 0.025em;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f1f5f9;
   border-radius: 0.5rem;
   cursor: pointer;
   overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.btn-cyber::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.btn-cyber:hover::before {
-  left: 100%;
+  transition: all 0.2s ease;
 }
 
 .btn-cyber:hover {
-  background: rgba(0, 212, 255, 0.1);
-  box-shadow: 0 0 20px var(--cyan-glow);
+  background: #334155;
+  border-color: #475569;
 }
 
 .btn-cyber-primary {
-  background: #FF6B00;
-  color: var(--dark-void);
-  border: none;
+  background: #0284c7;
+  color: #ffffff;
+  border: 1px solid #0369a1;
 }
 
 .btn-cyber-primary:hover {
-  background: #00e5ff;
-  box-shadow: 0 0 30px var(--cyan-glow);
+  background: #0369a1;
 }
 
 /* Responsive */
@@ -686,30 +673,30 @@ input::placeholder, textarea::placeholder {
   }
 
   .glass-button:hover {
-    @apply bg-[#FF6B00]/20 border-[#FF6B00];
-    box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+    @apply bg-sky-500/20 border-sky-500;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
   }
 
   .glass-panel {
-    @apply bg-[#12121A]/60 backdrop-blur-xl border border-white/5 rounded-2xl;
+    @apply bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-xl;
   }
 
   .text-gradient-orange {
-    background: linear-gradient(135deg, #FF6B00 0%, #FF9500 100%);
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .text-gradient-steel {
-    background: linear-gradient(135deg, #5B8DB8 0%, #4A7FA8 100%);
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .glow-orange {
-    box-shadow: 0 0 20px rgba(255, 107, 0, 0.3), 0 0 40px rgba(255, 107, 0, 0.1);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
   }
 
   .glow-steel {

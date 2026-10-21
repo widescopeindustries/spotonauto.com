@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getToolPagesForVehicle, TOOL_TYPE_META } from "@/data/tools-pages";
+import { getMaintenanceSpecLink } from "@/lib/maintenanceFallback";
+import { getToolPagesForVehicle, findGenerationForYear, TOOL_TYPE_META } from "@/data/tools-pages";
 import { getProfilesForVehicle } from "@/lib/vehicleRepairProfiles";
 import { slugifyRoutePart } from "@/data/vehicles";
 
@@ -53,13 +54,15 @@ export default async function RelatedForVehicle({ year, make, model, excludeType
       if (excludeType && type === excludeType) return null;
       const tp = toolPages.find((p) => p.toolType === type);
       if (!tp) return null;
+      const href = getMaintenanceSpecLink(yearNum, make, model, tp.toolType);
+      if (!href) return null;
       const meta = TOOL_TYPE_META[type];
       if (!meta) return null;
       return {
         type,
         label: meta.label,
         icon: meta.icon,
-        href: `${basePath}/${type}`,
+        href,
       };
     })
     .filter(Boolean) as Array<{ type: string; label: string; icon: string; href: string }>;

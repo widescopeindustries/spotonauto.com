@@ -19,9 +19,9 @@ import OEMExcerpt from '@/components/OEMExcerpt';
 import TopdonProductSpotlight from '@/components/TopdonProductSpotlight';
 import CoverageWaitlist from '@/components/CoverageWaitlist';
 import SafetyWarningBox from '@/components/SafetyWarningBox';
-import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import WhenToSeeMechanic from '@/components/WhenToSeeMechanic';
 import RiskAcknowledgementGate from '@/components/RiskAcknowledgementGate';
+import ProWorkflowMatrix from '@/components/ProWorkflowMatrix';
 import { getVehicleRepairSpec, PartSpec } from '@/data/vehicle-repair-specs';
 import { getRelatedToolLinksForRepair } from '@/data/tools-pages';
 import { getPriorityCodePagesForTasks, getPrioritySymptomHubsForTasks, getSupportGapRepairsForTasks } from '@/lib/graphPriorityLinks';
@@ -32,7 +32,8 @@ import { buildKnowledgeGraphExport } from '@/lib/knowledgeGraphExport';
 import { rankKnowledgeGraphBlocks } from '@/lib/knowledgeGraphRanking';
 import { buildRepairUrl } from '@/lib/vehicleIdentity';
 import { buildVehicleHubGraphViaGateway } from '@/lib/vehicleHubGateway';
-import { seoTitle } from '@/lib/seoTitle';
+import { howToReplaceLine, leadDescription, seoTitle } from '@/lib/seoTitle';
+import Corolla2006SparkPlugs from '@/components/book/Corolla2006SparkPlugs';
 
 // ISR: cache repair pages for 6 hours (matches wiring pages)
 export const revalidate = 21600;
@@ -1009,40 +1010,40 @@ const TASK_SUPPORT_TONE_CLASSES: Record<string, {
     bullet: string;
 }> = {
     cyan: {
-        shell: 'border-cyan-500/20 bg-cyan-500/[0.06]',
-        eyebrow: 'text-cyan-200/80',
+        shell: 'border-slate-800 bg-slate-900/60 shadow-sm',
+        eyebrow: 'text-sky-400 font-semibold tracking-wider',
         title: 'text-white',
-        bullet: 'text-cyan-50/90',
+        bullet: 'text-slate-200',
     },
     emerald: {
-        shell: 'border-emerald-500/20 bg-emerald-500/[0.06]',
-        eyebrow: 'text-emerald-200/80',
+        shell: 'border-slate-800 bg-slate-900/60 shadow-sm',
+        eyebrow: 'text-emerald-400 font-semibold tracking-wider',
         title: 'text-white',
-        bullet: 'text-emerald-50/90',
+        bullet: 'text-slate-200',
     },
     amber: {
-        shell: 'border-amber-500/20 bg-amber-500/[0.06]',
-        eyebrow: 'text-amber-200/80',
+        shell: 'border-amber-500/30 bg-amber-950/20 shadow-sm',
+        eyebrow: 'text-amber-400 font-semibold tracking-wider',
         title: 'text-white',
-        bullet: 'text-amber-50/90',
+        bullet: 'text-amber-100',
     },
     violet: {
-        shell: 'border-violet-500/20 bg-violet-500/[0.06]',
-        eyebrow: 'text-violet-200/80',
+        shell: 'border-slate-800 bg-slate-900/60 shadow-sm',
+        eyebrow: 'text-sky-400 font-semibold tracking-wider',
         title: 'text-white',
-        bullet: 'text-violet-50/90',
+        bullet: 'text-slate-200',
     },
     rose: {
-        shell: 'border-rose-500/20 bg-rose-500/[0.06]',
-        eyebrow: 'text-rose-200/80',
+        shell: 'border-rose-500/30 bg-rose-950/20 shadow-sm',
+        eyebrow: 'text-rose-400 font-semibold tracking-wider',
         title: 'text-white',
-        bullet: 'text-rose-50/90',
+        bullet: 'text-rose-100',
     },
     indigo: {
-        shell: 'border-indigo-500/20 bg-indigo-500/[0.06]',
-        eyebrow: 'text-indigo-200/80',
+        shell: 'border-slate-800 bg-slate-900/60 shadow-sm',
+        eyebrow: 'text-sky-400 font-semibold tracking-wider',
         title: 'text-white',
-        bullet: 'text-indigo-50/90',
+        bullet: 'text-slate-200',
     },
 };
 
@@ -2022,10 +2023,13 @@ function dedupeCommerceParts(parts: PartSpec[]): PartSpec[] {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { year, make, model, task } = await params;
+    if (!/^\d{4}$/.test(year)) {
+        return { title: 'Page Not Found | AllOEMManuals' };
+    }
     const canonicalMake = slugifyRoutePart(make);
     const canonicalModel = slugifyRoutePart(model);
     const canonicalTask = slugifyRoutePart(task);
-    const canonicalYear = String(getClampedYear(year, canonicalMake, canonicalModel) ?? year);
+    const canonicalYear = year;
 
     // Return generic metadata for invalid combos — page will 404/redirect anyway
     if (!isValidVehicleCombination(canonicalYear, canonicalMake, canonicalModel, canonicalTask)) {
@@ -2039,15 +2043,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const exactGuideProfile = await getExactGuideProfile(canonicalYear, canonicalMake, canonicalModel, canonicalTask);
 
     const taskMeta = TASK_META[canonicalTask];
+    const howTo = howToReplaceLine(vehicleName, cleanTask);
     const baseTitle = taskMeta
         ? `${vehicleName} ${taskMeta.title}`
         : `${vehicleName} ${cleanTask.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Guide`;
-    const title = taskMeta && exactGuideProfile?.titleSuffix
+    const title = howTo
+        ? howTo
+        : taskMeta && exactGuideProfile?.titleSuffix
         ? seoTitle(`${baseTitle} | ${exactGuideProfile.titleSuffix}`, baseTitle)
         : seoTitle(baseTitle);
-    const description = taskMeta
+    const rawDescription = taskMeta
         ? `${taskMeta.description.replace('{v}', vehicleName)}${exactGuideProfile?.descriptionSuffix ? ` ${exactGuideProfile.descriptionSuffix}` : ''}`
         : `DIY ${cleanTask} for your ${vehicleName}. Step-by-step guide with tools, parts list, and safety tips. Save $100–$400 vs. the shop.`;
+    const description = (
+        canonicalYear === '2006'
+        && canonicalMake === 'toyota'
+        && canonicalModel === 'corolla'
+        && canonicalTask === 'spark-plug-replacement'
+    )
+        ? '1ZZ-FE: DENSO SK16R11 or NGK IFR5A11, gap 1.0 to 1.3 mm, torque 25 N·m. 2ZZ-GE: SK20R11 or IFR6A11, torque 18 N·m.'
+        : (howTo ? leadDescription(howTo, rawDescription) : rawDescription);
 
     const baseKeywords = [
         `${canonicalYear} ${displayMake} ${displayModel} ${cleanTask}`,
@@ -2085,9 +2100,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function Page({ params }: PageProps) {
     const resolvedParams = await params;
     const { year, make, model, task } = resolvedParams;
+    if (!/^\d{4}$/.test(year)) {
+        notFound();
+    }
     const canonicalMake = slugifyRoutePart(make);
     const canonicalModel = slugifyRoutePart(model);
     const canonicalTask = slugifyRoutePart(task);
+    if (!VALID_TASKS.includes(canonicalTask)) notFound();
 
     // Resolve canonical make/model slugs so aliases (e.g. /mercedes/glc/) 301 to
     // the canonical form (/mercedes-benz/glc-class/). This prevents Bing/Google
@@ -2097,13 +2116,11 @@ export default async function Page({ params }: PageProps) {
     const resolvedMakeSlug = canonicalMakeName ? slugifyRoutePart(canonicalMakeName) : canonicalMake;
     const resolvedModelSlug = canonicalModelName ? slugifyRoutePart(canonicalModelName) : canonicalModel;
 
-    // For known vehicles outside their production range, redirect to nearest valid year
-    // so users land on useful content and Google updates its index via 301.
-    const clampedYear = getClampedYear(year, resolvedMakeSlug, resolvedModelSlug);
-    const resolvedYear = String(clampedYear ?? year);
+    // Never substitute another model year for an unsupported vehicle.
+    if (getClampedYear(year, resolvedMakeSlug, resolvedModelSlug) !== null) notFound();
+    const resolvedYear = year;
     const canonicalPath = buildRepairPath(resolvedYear, resolvedMakeSlug, resolvedModelSlug, canonicalTask);
     if (
-        clampedYear !== null ||
         make !== resolvedMakeSlug ||
         model !== resolvedModelSlug ||
         task !== canonicalTask ||
@@ -2125,6 +2142,7 @@ export default async function Page({ params }: PageProps) {
     const isAiAssistedGuide = Number(resolvedYear) > CORPUS_YEAR_MAX;
 
     const vehicleName = `${resolvedYear} ${displayMake} ${displayModel}`;
+    const howToTitle = howToReplaceLine(vehicleName, cleanTask);
     const vehicleHubHref = `/repair/${resolvedYear}/${canonicalMake}/${canonicalModel}`;
     const tier1RescueEntry = getTier1RescueEntryByHref(canonicalPath);
     const sameTaskSupportGapPages = getSupportGapRepairsForTasks([canonicalTask], 6)
@@ -2435,13 +2453,19 @@ export default async function Page({ params }: PageProps) {
         "name": `How to Do a ${repairData.difficulty} ${cleanTask.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} on a ${vehicleName}`,
         "description": `DIY ${cleanTask} for the ${vehicleName}. Takes ${repairData.time}. Difficulty: ${repairData.difficulty}. Save $100–$400 vs. a shop with this step-by-step guide.`,
         "author": {
-            "@type": "Organization",
-            "name": "AllOEMManuals"
+            "@type": "Person",
+            "name": "Lyndon Bedford",
+            "jobTitle": "Automotive Technical Lead & Founder",
+            "url": "https://alloemmanuals.com/author/lyndon-bedford"
         },
         "publisher": {
             "@type": "Organization",
             "name": "AllOEMManuals",
-            "url": "https://alloemmanuals.com"
+            "url": "https://alloemmanuals.com",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://alloemmanuals.com/icon-512.png"
+            }
         },
         "inLanguage": "en",
         "totalTime": toIso8601Duration(repairData.time),
@@ -2472,10 +2496,19 @@ export default async function Page({ params }: PageProps) {
         }))
     };
 
-    const sectionShell = 'mb-8 rounded-2xl border border-white/10 bg-white/[0.035] p-6 md:p-7';
+    const sectionShell = 'mb-8 rounded-xl border border-slate-800 bg-slate-900/60 p-6 md:p-7 shadow-sm';
     const sectionTitleClass = 'text-xl font-semibold text-white mb-4 tracking-tight';
-    const statCardClass = 'rounded-xl border border-white/10 bg-black/20 p-4';
-    const resourceCardClass = 'rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-all group';
+    const statCardClass = 'rounded-lg border border-slate-800 bg-slate-950/60 p-4';
+    const resourceCardClass = 'rounded-lg border border-slate-800 bg-slate-900/40 p-4 hover:border-slate-700 hover:bg-slate-800/50 transition-all group';
+
+    if (
+        resolvedYear === '2006'
+        && canonicalMake === 'toyota'
+        && canonicalModel === 'corolla'
+        && canonicalTask === 'spark-plug-replacement'
+    ) {
+        return <Corolla2006SparkPlugs vehicleHubHref={vehicleHubHref} />;
+    }
 
     return (
         <>
@@ -2523,7 +2556,7 @@ export default async function Page({ params }: PageProps) {
             </nav>
 
             {/* SEO Content - Renders server-side for Google */}
-            <article className="max-w-5xl mx-auto px-4 py-8 md:py-10">
+            <article className="mv-content max-w-5xl mx-auto px-4 py-8 md:py-10">
                 {/* Hero */}
                 <header className="mb-8 md:mb-10">
                     <RepairSectionTracker
@@ -2533,14 +2566,25 @@ export default async function Page({ params }: PageProps) {
                         label={`${vehicleName} ${cleanTask} hero`}
                         itemCount={2}
                     />
-                    <p className="text-sm font-medium tracking-wide text-cyan-300/80 mb-3">
+                    <p className="text-sm font-medium tracking-wide text-cyan-300/80 mb-2">
                         DIY repair guide for {vehicleName}
                     </p>
-                    <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-4">
-                        {cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guide {'\u2014'} {vehicleName}
+                    <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-3">
+                        {howToTitle || `${cleanTask.charAt(0).toUpperCase() + cleanTask.slice(1)} Guide \u2014 ${vehicleName}`}
                     </h1>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400 mb-4">
+                        <span>By <Link href="/author/lyndon-bedford" className="text-cyan-400 hover:text-cyan-300 font-medium hover:underline">Lyndon Bedford</Link></span>
+                        <span className="text-gray-600">•</span>
+                        <span>Technical Lead &amp; Founder</span>
+                        <span className="text-gray-600">•</span>
+                        <span><Link href="/about" className="text-gray-300 hover:text-white hover:underline">Sources and editorial approach</Link></span>
+                        <span className="text-gray-600">•</span>
+                        <span className="text-emerald-400/90 font-medium">Check exact vehicle applicability</span>
+                    </div>
                     <p className="text-base md:text-lg leading-7 text-gray-300 max-w-3xl">
-                        Start with the exact-fit quick answer below, then open the full guide when you want the longer procedure, parts, and factory references.
+                        {howToTitle
+                            ? `${howToTitle}. The quick answer is below, then the longer procedure, parts, and factory references.`
+                            : 'Start with the exact-fit quick answer below, then open the full guide when you want the longer procedure, parts, and factory references.'}
                     </p>
                     <div className="mt-5 flex flex-wrap gap-3">
                         <RepairTrackedLink
@@ -2565,31 +2609,15 @@ export default async function Page({ params }: PageProps) {
                         >
                             Browse the full {vehicleName} vehicle hub
                         </RepairTrackedLink>
-                        <PricingTrackedLink
-                            href="/second-opinion"
-                            target="starter_free"
-                            label={`repair_${canonicalTask}_quote_check`}
-                            className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 hover:border-emerald-400/45 hover:bg-emerald-500/15 transition-all"
-                        >
-                            Free quote check
-                        </PricingTrackedLink>
-                        <PricingTrackedLink
-                            href="/pricing"
-                            target="pro_waitlist"
-                            label={`repair_${canonicalTask}_quote_pro`}
-                            className="inline-flex items-center gap-2 rounded-lg border border-emerald-300/25 bg-white/[0.03] px-4 py-2 text-sm font-medium text-emerald-100 hover:border-emerald-200/45 hover:bg-white/[0.06] transition-all"
-                        >
-                            Quote Shield Pro
-                        </PricingTrackedLink>
                     </div>
                 </header>
 
                 <OEMExcerpt excerpts={oemExcerpts} vehicleName={vehicleName} task={canonicalTask} />
 
-                <CorpusBadge year={Number(resolvedYear)} vehicleName={vehicleName} />
+                <CorpusBadge hasManualReferences={oemExcerpts.length > 0} vehicleName={vehicleName} />
                 {isAiAssistedGuide && (
                     <div className="mb-8 inline-flex items-center rounded-full border border-orange-400/40 bg-orange-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-orange-100">
-                        AI-Assisted Guide - Human Reviewed
+                        AI-Assisted Guide - Confirm With Your Service Manual
                     </div>
                 )}
 
@@ -3390,6 +3418,13 @@ export default async function Page({ params }: PageProps) {
                 {/* Ad: After Parts List */}
                 <AdUnit slot="repair-after-parts" format="rectangle" />
 
+                {/* What the Pros Prefer — 4-Step Workflow & Essential Tool Matrix */}
+                <ProWorkflowMatrix
+                    task={canonicalTask}
+                    vehicleName={vehicleName}
+                    subtag={`${resolvedYear}-${canonicalMake}-${canonicalModel}-${canonicalTask}`}
+                />
+
                 {/* Basic Steps */}
                 <section className={sectionShell}>
                     <h2 className={sectionTitleClass}>Basic procedure overview</h2>
@@ -3724,14 +3759,6 @@ export default async function Page({ params }: PageProps) {
 
             <CoverageWaitlist vehicleName={vehicleName} year={Number(resolvedYear)} />
 
-            {/* Sticky affiliate bar — captures high-intent mobile scrollers */}
-            <StickyAffiliateBar
-                vehicle={vehicleName}
-                intent={cleanTask}
-                query={`${vehicleName} ${cleanTask} parts`}
-                subtag={`repair-${canonicalTask}`}
-                variant="mixed"
-            />
         </>
     );
 }

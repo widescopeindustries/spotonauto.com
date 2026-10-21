@@ -1,6 +1,7 @@
 import 'server-only';
 
 import verifiedWiringCoverage from '@/data/wiring-coverage.json';
+import lemonWiringSelector from '@/data/wiring-lemon-selector.json';
 
 export interface WiringCoverageVehicle {
   year: number;
@@ -15,6 +16,30 @@ export interface WiringSelectorData {
 }
 
 const WIRING_COVERAGE = (verifiedWiringCoverage as { vehicles?: WiringCoverageVehicle[] }).vehicles || [];
+const LEMON_SELECTOR = (lemonWiringSelector as { vehicles?: WiringCoverageVehicle[] }).vehicles || [];
+
+/**
+ * Display names for 2014+ books whose archive folder is not the name in the dropdown.
+ * Older years stay on the verified coverage list and do not use these folders.
+ */
+const LEMON_CORPUS_MAKES: Record<string, string[]> = {
+  Dodge: ['Dodge and Ram'],
+  Ram: ['Dodge and Ram'],
+  Nissan: ['Nissan-Datsun'],
+  'Mercedes-Benz': ['Mercedes Benz'],
+};
+
+export function getWiringCorpusMakes(displayMake: string, year?: string): string[] {
+  const makes = getCharmMakesForDisplay(displayMake);
+  const yearNum = Number(year);
+  const includeLemon = year == null || year === '' || (Number.isFinite(yearNum) && yearNum >= 2014);
+  if (!includeLemon) return makes;
+
+  for (const corpusMake of LEMON_CORPUS_MAKES[displayMake] || []) {
+    if (!makes.includes(corpusMake)) makes.push(corpusMake);
+  }
+  return makes;
+}
 
 /**
  * Normalize CHARM make names by merging "X Truck", "X Fuso" etc. into base make.
@@ -69,7 +94,7 @@ function buildWiringSelectorData(): WiringSelectorData {
   const makesByYear = new Map<string, Set<string>>();
   const modelsByYearMake = new Map<string, Set<string>>();
 
-  for (const vehicle of WIRING_COVERAGE) {
+  for (const vehicle of [...WIRING_COVERAGE, ...LEMON_SELECTOR]) {
     if (!Number.isFinite(vehicle.year)) continue;
 
     const yearKey = String(vehicle.year);

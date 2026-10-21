@@ -8,9 +8,9 @@ import { getProfilesForVehicle } from '@/lib/vehicleRepairProfiles';
 import { getToolPagesForVehicle, TOOL_TYPE_META, getConciseQuickAnswer } from '@/data/tools-pages';
 import { generateShopAllLinks } from '@/services/affiliateService';
 import AffiliateLink from '@/components/AffiliateLink';
-import StickyAffiliateBar from '@/components/StickyAffiliateBar';
 import VehicleLaneClient from './VehicleLaneClient';
 import { seoTitle } from '@/lib/seoTitle';
+import { getMaintenanceSpecLink } from '@/lib/maintenanceFallback';
 
 /**
  * Detect variant-slug URLs like /vehicles/2011/ford/ranger-2d-pickup-extra-cab
@@ -197,6 +197,10 @@ export default async function VehicleLanePage({ params }: PageProps) {
 
   // Top DTCs for server-rendered snippet
   const topDtcs = (data?.dtcCodes ?? []).slice(0, 6);
+  const knownVehicle = Object.entries(VEHICLE_PRODUCTION_YEARS).some(([m, models]) =>
+    slugifyRoutePart(m) === identity.makeSlug && Object.entries(models).some(([name, years]) =>
+      slugifyRoutePart(name) === identity.modelSlug && yearNum >= years.start && yearNum <= years.end));
+  if (!knownVehicle && !data && repairProfiles.length === 0 && toolPages.length === 0) notFound();
 
   // Top repair profiles for server-rendered snippet
   const topRepairs = repairProfiles.slice(0, 5);
@@ -226,26 +230,15 @@ export default async function VehicleLanePage({ params }: PageProps) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'WebPage',
-            name: `${displayName} Repair Hub`,
-            about: {
-              '@type': 'Vehicle',
-              name: displayName,
-              manufacturer: { '@type': 'Organization', name: identity.displayMake },
-              model: identity.displayModel,
-              productionDate: year,
-              offers: {
-                '@type': 'Offer',
-                price: '0',
-                priceCurrency: 'USD',
-                availability: 'https://schema.org/InStock',
-                url: `https://alloemmanuals.com/vehicles/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}`,
-              },
-              ...(identity.displayVariant
-                ? { vehicleEngine: { '@type': 'EngineSpecification', name: identity.displayVariant } }
-                : {}),
-            },
+            '@type': 'ItemPage',
+            name: `${displayName} Repair Hub & Factory Specs`,
+            description: `Factory service manual specifications, diagnostic trouble codes, wiring diagrams, and OEM repair data for the ${displayName}.`,
             url: `https://alloemmanuals.com/vehicles/${year}/${slugifyRoutePart(make)}/${slugifyRoutePart(model)}`,
+            about: {
+              '@type': 'Thing',
+              name: displayName,
+              description: `${identity.displayMake} ${identity.displayModel} (${year})`,
+            },
           }),
         }}
       />
@@ -308,7 +301,10 @@ export default async function VehicleLanePage({ params }: PageProps) {
                 // Skip cards with no real data — generic text poisons SERP snippets
                 if (!concise) return null;
                 const maintPath = `/maintenance/${year}/${identity.makeSlug}/${identity.modelSlug}/${tp.toolType}`;
-                const href = MAINTENANCE_TOOL_TYPES.has(tp.toolType) ? maintPath : `/tools/${tp.slug}`;
+                const href = MAINTENANCE_TOOL_TYPES.has(tp.toolType)
+                  ? getMaintenanceSpecLink(yearNum, identity.make, identity.model, tp.toolType)
+                  : `/tools/${tp.slug}`;
+                if (!href) return null;
                 return (
                   <Link
                     key={tp.slug}
@@ -337,7 +333,7 @@ export default async function VehicleLanePage({ params }: PageProps) {
               {topDtcs.map((dtc) => (
                 <Link
                   key={dtc.code}
-                  href={`/codes/${dtc.code.toLowerCase()}`}
+                  href={`${basePath}/codes/${dtc.code.toLowerCase()}`}
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm hover:bg-amber-500/20 transition"
                 >
                   <span className="font-mono font-semibold">{dtc.code}</span>
@@ -444,13 +440,6 @@ export default async function VehicleLanePage({ params }: PageProps) {
         </div>
       </section>
 
-      <StickyAffiliateBar
-        vehicle={displayName}
-        intent="auto parts"
-        query={`${displayName} parts`}
-        subtag={`vehicle-hub-${identity.makeSlug}-${identity.modelSlug}`}
-        variant="parts"
-      />
     </div>
   );
 }
