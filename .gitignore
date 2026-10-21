@@ -106,3 +106,6 @@ scripts/generate-lemon-bullpen.mjs
 scripts/test-fetch-html.mjs
 scripts/test-index-speed.mjs
 scripts/test-precision.mjs
+
+# Generated winner list. Do not publish it from git.
+public/sitemap-priority-winners.xml
