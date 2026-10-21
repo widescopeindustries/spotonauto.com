@@ -6,7 +6,7 @@ import { seoTitle } from '@/lib/seoTitle';
 // for the /manual/* browser route.
 
 const CHARM_BASE = CHARM_ARCHIVE_BASE;
-const CHARM_IMAGE_BASE = CHARM_BASE;
+const CHARM_IMAGE_BASE = '/manual-media';
 // NEVER fall back to external domains. The VPS LMDB backend (localhost:8080)
 // is the sole source of truth for all manual data.
 const CHARM_ORIGINS = [CHARM_BASE];
@@ -73,7 +73,10 @@ export async function fetchCharmPage(
   pathSegments: string[] = [],
   options: { allowParentRecovery?: boolean } = {},
 ): Promise<CharmPage> {
-  const { allowParentRecovery = true } = options;
+  // Parent recovery fetches and parses the whole parent book after a miss.
+  // On 2026-10-21 that ran about 290,000 times in a day, rescued 484 pages,
+  // and the extra downloads stalled the app until the homepage returned 502.
+  const { allowParentRecovery = false } = options;
 
   // Map makes to backend expectations
   const backendSegments = [...pathSegments];
@@ -104,9 +107,6 @@ export async function fetchCharmPage(
 
         lastStatus = res.status;
         if (res.status === 404) {
-          if (pathSegments.length >= 3) {
-            console.warn(`[manual] upstream 404 for ${url} (path=${pathSegments.join(' / ')})`);
-          }
           sawNotFound = true;
           break;
         }
@@ -137,7 +137,7 @@ export async function fetchCharmPage(
       console.warn(`[manual] recovered via parent navigation (path=${pathSegments.join(' / ')})`);
       return recovered;
     }
-    console.warn(`[manual] parent recovery failed (path=${pathSegments.join(' / ')})`);
+
   }
 
   // Treat as true 404 only when every attempted origin resolved as 404.
@@ -509,10 +509,16 @@ function sanitizeContentHtml(html: string, pathSegments: string[]): string {
   sanitized = sanitized.replace(/Operation\s+CHARM/gi, '');
   sanitized = sanitized.replace(/charm\.li/gi, '');
 
-  // Rewrite image src to use absolute URLs from the data server
+  // Rewrite image src to use /manual-media proxy
   sanitized = sanitized.replace(
-    /(<img[^>]+src=['"])\/([^'"]+)(['"][^>]*>)/gi,
-    `$1${CHARM_IMAGE_BASE}/$2$3`
+    /(<img[^>]+src=['"])(?:https?:\/\/[^/'"]+)?\/?([^'"]+)(['"][^>]*>)/gi,
+    (_match, prefix, imagePath, suffix) => {
+      if (imagePath.startsWith('data:')) {
+        return `${prefix}${imagePath}${suffix}`;
+      }
+      const cleanPath = imagePath.replace(/^manual-media\//, '');
+      return `${prefix}/manual-media/${cleanPath}${suffix}`;
+    }
   );
 
   // Ensure every <img> has an alt attribute (Bing flags images missing alt)
