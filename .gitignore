@@ -109,3 +109,10 @@ scripts/test-precision.mjs
 
 # Generated winner list. Do not publish it from git.
 public/sitemap-priority-winners.xml
+
+# Local-only files. Two Bing scripts contain an API key and must stay off GitHub.
+/.agents/
+public/alloemmanuals.com_official_badge.png
+scripts/check-bing-feeds.mjs
+scripts/report_manual_boilerplate.py
+scripts/submit-bing-winners.mjs
