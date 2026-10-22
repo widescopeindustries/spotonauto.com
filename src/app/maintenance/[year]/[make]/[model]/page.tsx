@@ -7,7 +7,6 @@ import { getMaintenanceSpecLink } from "@/lib/maintenanceFallback";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
 import { seoTitle } from "@/lib/seoTitle";
-import KitCTA from '@/components/KitCTA';
 
 export const revalidate = 86400;
 
@@ -263,8 +262,6 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
         <p className="text-gray-500 text-xs mb-8">
           {availableCount} of {specs.length} specs available
         </p>
-
-        <KitCTA make={displayMake} model={displayModel} />
 
         <div className="grid md:grid-cols-3 gap-4 mb-10">
           {specs.map((spec) => (

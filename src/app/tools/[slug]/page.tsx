@@ -16,7 +16,6 @@ import AdUnit from '@/components/AdUnit';
 import ToolManualConfirmation from '@/components/ToolManualConfirmation';
 import MaintenanceSupplies from '@/components/MaintenanceSupplies';
 import ManualPartsList from '@/components/ManualPartsList';
-import KitCTA from '@/components/KitCTA';
 import ToolIntentCommerce from '@/components/ToolIntentCommerce';
 import AffiliateLink from '@/components/AffiliateLink';
 import ConversionZone from '@/components/ConversionZone';
@@ -511,11 +510,6 @@ export default async function ToolPage({ params }: PageProps) {
                     className="mb-8"
                 />
 
-                {/* Kit CTA Integration */}
-                {(page.toolType === 'oil-type' || page.toolType === 'fluid-capacity') && (
-                    <KitCTA make={page.make} model={page.model} />
-                )}
-
                 {/* Factory Specs CTA — drives internal link equity to maintenance hubs */}
                 <div className="mb-8 rounded-xl border border-teal-500/20 bg-teal-500/5 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
@@ -623,10 +617,6 @@ export default async function ToolPage({ params }: PageProps) {
                         </div>
                     ))}
                 </div>
-
-                {page.toolType === 'oil-type' && (
-                    <KitCTA make={page.make} model={page.model} />
-                )}
 
                 <ToolIntentCommerce page={page} ctaVariant={amazonCtaVariant} />
 

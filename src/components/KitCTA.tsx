@@ -1,3 +1,5 @@
+// Unused until a kit is actually for sale.
+// Mount it on that vehicle's page. Do not put it back on the homepage.
 import Link from 'next/link';
 import { findKitForVehicle } from '@/data/kits';
 import { Package, Gift, ArrowRight } from 'lucide-react';
