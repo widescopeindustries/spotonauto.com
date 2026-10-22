@@ -1,6 +1,5 @@
 import HeroSection from "./home-sections/HeroSection";
 import PopularToolsSection from "./home-sections/PopularToolsSection";
-import KitsSection from "./home-sections/KitsSection";
 import EntryPathsSection from "./home-sections/EntryPathsSection";
 import RepairsSection from "./home-sections/RepairsSection";
 import ConversionZone from "@/components/ConversionZone";
@@ -11,7 +10,6 @@ export default function ClientHome() {
     <div className="mv-content min-h-screen bg-[#0a0a0c] text-[#EAEAEA]">
       <HeroSection />
       <PopularToolsSection />
-      <KitsSection />
       <EntryPathsSection />
       <RepairsSection
         repairs={TIER_1_RESCUE_PAGES.map((p) => ({
