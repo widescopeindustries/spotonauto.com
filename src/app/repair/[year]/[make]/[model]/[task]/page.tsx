@@ -34,6 +34,7 @@ import { buildRepairUrl } from '@/lib/vehicleIdentity';
 import { buildVehicleHubGraphViaGateway } from '@/lib/vehicleHubGateway';
 import { howToReplaceLine, leadDescription, seoTitle } from '@/lib/seoTitle';
 import Corolla2006SparkPlugs from '@/components/book/Corolla2006SparkPlugs';
+import Encore2022ThermostatHousing from '@/components/book/Encore2022ThermostatHousing';
 
 // ISR: cache repair pages for 6 hours (matches wiring pages)
 export const revalidate = 21600;
@@ -2062,6 +2063,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         && canonicalTask === 'spark-plug-replacement'
     )
         ? '1ZZ-FE: DENSO SK16R11 or NGK IFR5A11, gap 1.0 to 1.3 mm, torque 25 N·m. 2ZZ-GE: SK20R11 or IFR6A11, torque 18 N·m.'
+        : (
+            canonicalYear === '2022'
+            && canonicalMake === 'buick'
+            && canonicalModel === 'encore'
+            && canonicalTask === 'thermostat-replacement'
+        )
+        ? 'Two housing bolts at 10 N·m (89 lb in). Use a new gasket. Drain the coolant, then take the lower radiator hose off. The book gives no thermostat part number.'
         : (howTo ? leadDescription(howTo, rawDescription) : rawDescription);
 
     const baseKeywords = [
@@ -2508,6 +2516,15 @@ export default async function Page({ params }: PageProps) {
         && canonicalTask === 'spark-plug-replacement'
     ) {
         return <Corolla2006SparkPlugs vehicleHubHref={vehicleHubHref} />;
+    }
+
+    if (
+        resolvedYear === '2022'
+        && canonicalMake === 'buick'
+        && canonicalModel === 'encore'
+        && canonicalTask === 'thermostat-replacement'
+    ) {
+        return <Encore2022ThermostatHousing vehicleHubHref={vehicleHubHref} />;
     }
 
     return (
