@@ -23,6 +23,10 @@ import {
   type CharmLink,
 } from './charmParser';
 import { isBoilerplateManualPath, isBoilerplateManualStoredPath } from './manualBoilerplate';
+import { ManualDeliveryCache } from './manualDeliveryCache';
+
+const shared = globalThis as typeof globalThis & { __manualPageDeliveryV1?: ManualDeliveryCache<CharmPage> };
+const pageCache = shared.__manualPageDeliveryV1 ??= new ManualDeliveryCache<CharmPage>(4000, 64 * 1024 * 1024);
 
 // ─── Content cleaning ────────────────────────────────────────────────────────
 
@@ -112,7 +116,9 @@ function textToSimpleHtml(text: string): string {
 
 function sectionToCharmLink(section: { path: string; sectionTitle: string }): CharmLink {
   const segments = section.path.split('/').filter(Boolean);
-  const href = '/manual/' + segments.map((s) => encodeURIComponent(s)).join('/');
+  const href = '/manual/' + segments.map((s) => {
+    try { return encodeURIComponent(decodeURIComponent(s)); } catch { return encodeURIComponent(s); }
+  }).join('/');
   return {
     label: section.sectionTitle || segments[segments.length - 1] || 'Untitled',
     href,
@@ -126,6 +132,16 @@ export async function fetchManualPage(
   pathSegments: string[] = [],
   options: { allowParentRecovery?: boolean } = {},
 ): Promise<CharmPage> {
+  return pageCache.get(JSON.stringify([pathSegments, !!options.allowParentRecovery]), () => loadManualPage(pathSegments, options), page => ({
+    ttl: page.status === 200 ? 600_000 : page.status === 404 ? 15_000 : 0,
+    bytes: Buffer.byteLength(page.contentHtml) + Buffer.byteLength(JSON.stringify(page.links)) + 512,
+  }));
+}
+
+async function loadManualPage(
+  pathSegments: string[],
+  options: { allowParentRecovery?: boolean },
+): Promise<CharmPage> {
   if (isBoilerplateManualPath(pathSegments)) {
     return {
       title: 'Not found',
@@ -137,8 +153,17 @@ export async function fetchManualPage(
   }
 
   const dbPath = '/' + pathSegments.map((s) => encodeURIComponent(s)).join('/');
-
-  const dbSection = await getSectionByPath(dbPath).catch(() => null);
+  // Archive HTML retains diagrams/tables. Embeddings are a fallback for
+  // confirmed source misses, never a prerequisite for opening a manual.
+  const archivePage = await fetchCharmPage(pathSegments, { ...options, timeoutMs: 3500, retries: 0 });
+  if (archivePage.status === 200 && (archivePage.contentHtml.trim() || archivePage.links.length)) return archivePage;
+  if (archivePage.status !== 404 && archivePage.status !== 200) return archivePage;
+  let dbSection: ManualSectionMatchRow | null;
+  try {
+    dbSection = await getSectionByPath(dbPath);
+  } catch {
+    return { title: 'Manual Temporarily Unavailable', isNavigation: false, links: [], contentHtml: '', status: 503 };
+  }
 
   if (dbSection) {
     const children = await getChildSections(dbPath).catch(() => []);
@@ -167,5 +192,7 @@ export async function fetchManualPage(
     };
   }
 
-  return fetchCharmPage(pathSegments, options);
+  return archivePage.status === 404 ? archivePage : {
+    title: 'Manual Temporarily Unavailable', isNavigation: false, links: [], contentHtml: '', status: 503,
+  };
 }

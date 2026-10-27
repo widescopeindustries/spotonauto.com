@@ -7,7 +7,8 @@ import {
   buildManualDescription,
   type CharmLink,
 } from '@/lib/charmParser';
-import { fetchManualPage, getSectionByPath, getChildSections } from '@/lib/manualService';
+import { fetchManualPage, getChildSections } from '@/lib/manualService';
+import { getSectionMetadataByPath } from '@/lib/manualEmbeddingsStore';
 import { isBoilerplateManualPath, isBoilerplateManualStoredPath } from '@/lib/manualBoilerplate';
 import WorkshopManualViewer from '@/components/manual/WorkshopManualViewer';
 import SearchLandingMonetizationRail from '@/components/SearchLandingMonetizationRail';
@@ -91,16 +92,17 @@ export default async function ManualBrowserPage({ params }: PageProps) {
   const depth = path.length;
 
   // ── Error state: emit true HTTP 404 to eliminate Google Soft 404 penalty ──
-  if (page.status !== 200) {
+  if (page.status === 404) {
     notFound();
   }
+  if (page.status !== 200) throw new Error(`MANUAL_TEMPORARY_UNAVAILABLE_${page.status}`);
 
   // ── Fetch related sections for JARVIS viewer ──
   const parentPath = getParentPath(normalizedPath);
   const [parentSection, siblingSections, childSections] = await Promise.all([
-    parentPath ? getSectionByPath(parentPath).catch(() => null) : Promise.resolve(null),
-    parentPath ? getChildSections(parentPath).catch(() => []) : Promise.resolve([]),
-    getChildSections(dbPath).catch(() => []),
+    parentPath && depth >= 4 ? getSectionMetadataByPath(parentPath).catch(() => null) : Promise.resolve(null),
+    parentPath && depth >= 4 ? getChildSections(parentPath).catch(() => []) : Promise.resolve([]),
+    depth >= 3 ? getChildSections(dbPath).catch(() => []) : Promise.resolve([]),
   ]);
   const visibleSiblings = siblingSections.filter((s) => !isBoilerplateManualStoredPath(s.path));
   const visibleChildren = childSections.filter((s) => !isBoilerplateManualStoredPath(s.path));
@@ -109,17 +111,22 @@ export default async function ManualBrowserPage({ params }: PageProps) {
     ? {
         id: parentSection.path,
         title: parentSection.sectionTitle || 'Parent Section',
-        path: '/manual' + parentSection.path.split('/').map(encodeURIComponent).join('/'),
+        path: '/manual' + parentSection.path,
         type: 'parent' as const,
       }
-    : undefined;
+    : breadcrumbs.length > 1 ? {
+        id: breadcrumbs[breadcrumbs.length - 2].href,
+        title: breadcrumbs[breadcrumbs.length - 2].label,
+        path: breadcrumbs[breadcrumbs.length - 2].href,
+        type: 'parent' as const,
+      } : undefined;
 
   const siblings = visibleSiblings
     .filter((s) => s.path !== dbPath)
     .map((s) => ({
       id: s.path,
       title: s.sectionTitle || s.path.split('/').pop() || 'Section',
-      path: '/manual' + s.path.split('/').map(encodeURIComponent).join('/'),
+      path: '/manual' + s.path,
       type: 'sibling' as const,
       preview: s.contentPreview?.slice(0, 80) + '...',
     }));
@@ -127,7 +134,7 @@ export default async function ManualBrowserPage({ params }: PageProps) {
   const children = visibleChildren.map((s) => ({
     id: s.path,
     title: s.sectionTitle || s.path.split('/').pop() || 'Section',
-    path: '/manual' + s.path.split('/').map(encodeURIComponent).join('/'),
+    path: '/manual' + s.path,
     type: 'child' as const,
   }));
 

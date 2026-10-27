@@ -10,16 +10,26 @@ const CHARM_IMAGE_BASE = '/manual-media';
 // NEVER fall back to external domains. The VPS LMDB backend (localhost:8080)
 // is the sole source of truth for all manual data.
 const CHARM_ORIGINS = [CHARM_BASE];
+// An explicitly configured local replica may use the original identical archive
+// during maintenance. No external origin is accepted as a fallback.
+if (process.env.CHARM_ARCHIVE_FALLBACK_BASE) {
+  const fallback = new URL(process.env.CHARM_ARCHIVE_FALLBACK_BASE);
+  if (fallback.protocol !== 'http:' || !['127.0.0.1', '[::1]', 'localhost'].includes(fallback.hostname)) {
+    throw new Error('Manual archive fallback must be a loopback replica');
+  }
+  const base = fallback.href.replace(/\/+$/, '');
+  if (!CHARM_ORIGINS.includes(base)) CHARM_ORIGINS.push(base);
+}
 
 const FETCH_TIMEOUT_MS = 8000;
 const FETCH_RETRIES = 1;
 const RETRY_DELAY_MS = 250;
 
-function buildFetchOpts(): RequestInit {
+function buildFetchOpts(timeoutMs = FETCH_TIMEOUT_MS): RequestInit {
   return {
     headers: { 'User-Agent': 'AllOEMManuals/1.0 (+https://alloemmanuals.com) repair-guide-builder' },
     signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout
-      ? AbortSignal.timeout(FETCH_TIMEOUT_MS)
+      ? AbortSignal.timeout(timeoutMs)
       : undefined,
     // Prevent stale cached 404s from pinning valid manual pages as missing.
     cache: 'no-store',
@@ -71,7 +81,7 @@ function sanitizeCharmBrandingText(text: string): string {
  */
 export async function fetchCharmPage(
   pathSegments: string[] = [],
-  options: { allowParentRecovery?: boolean } = {},
+  options: { allowParentRecovery?: boolean; timeoutMs?: number; retries?: number } = {},
 ): Promise<CharmPage> {
   // Parent recovery fetches and parses the whole parent book after a miss.
   // On 2026-10-21 that ran about 290,000 times in a day, rescued 484 pages,
@@ -93,12 +103,13 @@ export async function fetchCharmPage(
   let lastStatus = 504;
 
   // Try the cached proxy first, then direct CHARM as a resilient fallback.
-  for (const origin of CHARM_ORIGINS) {
+  for (const [originIndex, origin] of CHARM_ORIGINS.entries()) {
     const url = `${origin}/${encodedPath}${encodedPath ? '/' : ''}`;
 
-    for (let attempt = 0; attempt <= FETCH_RETRIES; attempt += 1) {
+    const retries = options.retries ?? FETCH_RETRIES;
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
       try {
-        const res = await fetch(url, buildFetchOpts());
+        const res = await fetch(url, buildFetchOpts(options.timeoutMs));
 
         if (res.ok) {
           const html = await res.text();
@@ -113,18 +124,18 @@ export async function fetchCharmPage(
 
         sawNonNotFoundFailure = true;
 
-        if (attempt === FETCH_RETRIES) {
+        if (attempt === retries && originIndex === CHARM_ORIGINS.length - 1) {
           console.warn(`[manual] upstream returned ${res.status} for ${url}`);
         }
       } catch (error) {
         sawNonNotFoundFailure = true;
-        if (attempt === FETCH_RETRIES) {
+        if (attempt === retries && originIndex === CHARM_ORIGINS.length - 1) {
           console.warn(`[manual] fetch failed for ${url}`, error);
           lastStatus = 504;
         }
       }
 
-      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      if (attempt < retries) await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
     }
   }
 
@@ -158,7 +169,7 @@ export async function fetchCharmPage(
     isNavigation: false,
     links: [],
     contentHtml: '',
-    status: lastStatus,
+    status: lastStatus >= 500 ? lastStatus : 503,
   };
 }
 

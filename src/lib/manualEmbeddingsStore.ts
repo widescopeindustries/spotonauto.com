@@ -1,4 +1,5 @@
 import { Pool, type QueryResultRow } from 'pg';
+import { ManualDeliveryCache } from './manualDeliveryCache';
 
 export type ManualEmbeddingsBackend = 'local' | 'none';
 
@@ -58,6 +59,8 @@ export interface ManualEmbeddingsHealth {
 }
 
 let localPool: Pool | null | undefined;
+let schemaReady: Promise<void> | undefined;
+const navigationCache = new ManualDeliveryCache<ManualSectionMatchRow[]>(5000, 24 * 1024 * 1024);
 
 function getLocalDatabaseUrl(): string | null {
   return (
@@ -84,7 +87,7 @@ export function getLocalPool(): Pool | null {
 
   localPool = new Pool({
     connectionString,
-    max: 25,
+    max: Math.min(25, getTimeoutMs(process.env.MANUAL_DATABASE_POOL_MAX, 25)),
     connectionTimeoutMillis: getTimeoutMs(process.env.LOCAL_DATABASE_CONNECT_TIMEOUT_MS, 8000),
     query_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 20000),
     statement_timeout: getTimeoutMs(process.env.LOCAL_DATABASE_QUERY_TIMEOUT_MS, 20000),
@@ -98,7 +101,8 @@ async function ensureLocalSchema(): Promise<void> {
   const pool = getLocalPool();
   if (!pool) return;
 
-  await pool.query(`
+  if (schemaReady) return schemaReady;
+  schemaReady = pool.query(`
     create table if not exists manual_embeddings (
       path text primary key,
       make text not null,
@@ -114,7 +118,8 @@ async function ensureLocalSchema(): Promise<void> {
     create index if not exists manual_embeddings_make_idx on manual_embeddings (make);
     create index if not exists manual_embeddings_year_idx on manual_embeddings (year);
     create index if not exists manual_embeddings_make_year_idx on manual_embeddings (make, year);
-  `);
+  `).then(() => undefined).catch(error => { schemaReady = undefined; throw error; });
+  return schemaReady;
 }
 
 function normalizeEmbedding(embedding: number[]): number[] {
@@ -585,20 +590,35 @@ export async function getChildSections(prefixPath: string): Promise<ManualSectio
   await ensureLocalSchema();
 
   const normalized = prefixPath.replace(/\/+$/, '');
-  const { rows } = await pool.query(
-    `SELECT path, make, year, model, section_title, content_preview, content_full
-     FROM manual_embeddings
-     WHERE path LIKE $1 || '%'
-       AND path != $1
-     ORDER BY section_title ASC
-     LIMIT 200`,
-    [`${normalized}/`],
-  );
+  return navigationCache.get(normalized, async () => {
+    const prefix = `${normalized}/`;
+    const literalPattern = prefix.replace(/[\\%_]/g, '\\$&') + '%';
+    const { rows } = await pool.query(
+      `SELECT path, make, year, model, section_title, left(content_preview, 160) AS content_preview
+       FROM manual_embeddings
+       WHERE path LIKE $1 ESCAPE '\\'
+         AND length(rtrim(substring(path from $2::integer), '/')) > 0
+         AND position('/' in rtrim(substring(path from $2::integer), '/')) = 0
+       ORDER BY section_title ASC, path ASC
+       LIMIT 200`,
+      [literalPattern, prefix.length + 1],
+    );
+    return mapSectionRows(rows);
+  }, rows => ({ ttl: 300_000, bytes: Buffer.byteLength(JSON.stringify(rows)) + 128 }));
+}
 
-  const prefixDepth = normalized.split('/').filter(Boolean).length;
-  return mapSectionRows(rows).filter(
-    (r) => r.path.split('/').filter(Boolean).length === prefixDepth + 1,
-  );
+export async function getSectionMetadataByPath(path: string): Promise<ManualSectionMatchRow | null> {
+  const pool = getLocalPool();
+  if (!pool) return null;
+  await ensureLocalSchema();
+  const rows = await navigationCache.get(`exact:${path}`, async () => {
+    const result = await pool.query(
+      `SELECT path, make, year, model, section_title, left(content_preview, 160) AS content_preview
+       FROM manual_embeddings WHERE path = $1 LIMIT 1`, [path],
+    );
+    return mapSectionRows(result.rows);
+  }, value => ({ ttl: 300_000, bytes: Buffer.byteLength(JSON.stringify(value)) + 128 }));
+  return rows[0] ?? null;
 }
 
 // ─── DB-first coverage queries (for manual-navigator) ───────────────────────
