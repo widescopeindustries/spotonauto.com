@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import VehicleManualCta from '@/components/VehicleManualCta';
+import { manualYearHref } from '@/lib/manualBookLink';
 
 // High-value SEO page for Honda Odyssey serpentine belt (5 impressions)
 export const metadata: Metadata = {
@@ -124,6 +126,17 @@ export default function HondaOdysseyBeltPage() {
                         </table>
                     </div>
                 </div>
+
+                <VehicleManualCta
+                    href={manualYearHref('Honda', 2018)}
+                    buttonLabel="Open the 2018 Honda manual"
+                    detail="The belt size is above. Open the factory book for your Odyssey's year if you need the routing procedure for that exact van."
+                    links={[
+                        { href: manualYearHref('Honda', 2011), label: '2011 book' },
+                        { href: manualYearHref('Honda', 2005), label: '2005 book' },
+                        { href: manualYearHref('Honda', 1999), label: '1999 book' },
+                    ]}
+                />
 
                 {/* Important Note for 2005-2010 */}
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6 mb-12">

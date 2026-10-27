@@ -15,6 +15,8 @@ import { getMaintenanceFallbackUrl } from "@/lib/maintenanceFallback";
 import MaintenanceSpecLinks from "@/components/MaintenanceSpecLinks";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
+import VehicleManualCta from "@/components/VehicleManualCta";
+import { manualYearHref } from "@/lib/manualBookLink";
 
 export const revalidate = 86400;
 
@@ -160,16 +162,11 @@ export default async function TireSizePage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 mb-8 text-sm text-gray-400">
-          <span className="text-cyan-400 font-medium">Source:</span> Factory service manual — {year} {displayMake} {displayModel} {variant}.
-          {" "}
-          <Link
-            href={`/manual/${encodeURIComponent(displayMake)}/${year}/${encodeURIComponent(variant)}/Repair%20and%20Diagnosis/Quick%20Lookups/Tire%20Fitment`}
-            className="text-cyan-400 hover:text-cyan-300 underline"
-          >
-            View full manual section →
-          </Link>
-        </div>
+        <VehicleManualCta
+          href={`${manualYearHref(displayMake, year)}/${encodeURIComponent(variant)}/Repair%20and%20Diagnosis/Quick%20Lookups/Tire%20Fitment`}
+          buttonLabel={`Open the ${year} ${displayMake} manual`}
+          detail={`The tire spec is above. This opens the tire section of the ${year} ${displayMake} ${displayModel} ${variant} factory book.`}
+        />
 
         {/* Maintenance specs nav */}
         <MaintenanceSpecLinks year={year} make={displayMake} model={displayModel} excludeType="tire-size" />

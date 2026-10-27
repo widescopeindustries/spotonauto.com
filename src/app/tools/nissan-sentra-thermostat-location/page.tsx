@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import VehicleManualCta from '@/components/VehicleManualCta';
+import { manualYearHref } from '@/lib/manualBookLink';
 
 // High-value SEO page for Nissan Sentra thermostat location (5 impressions)
 export const metadata: Metadata = {
@@ -148,6 +150,17 @@ export default function NissanSentraThermostatPage() {
                         </table>
                     </div>
                 </div>
+
+                <VehicleManualCta
+                    href={manualYearHref('Nissan', 2020)}
+                    buttonLabel="Open the 2020 Nissan manual"
+                    detail="The location is above. Open the factory book for your Sentra's year if you need the replacement procedure for that exact car."
+                    links={[
+                        { href: manualYearHref('Nissan', 2013), label: '2013 book' },
+                        { href: manualYearHref('Nissan', 2007), label: '2007 book' },
+                        { href: manualYearHref('Nissan', 2000), label: '2000 book' },
+                    ]}
+                />
 
                 {/* Symptoms */}
                 <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mb-12">

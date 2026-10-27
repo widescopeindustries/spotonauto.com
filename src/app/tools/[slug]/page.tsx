@@ -28,6 +28,8 @@ import {
 } from '@/lib/tireRackAffiliate';
 import { getAmazonCtaLabel, getAmazonCtaVariantForSlug } from '@/lib/abTests';
 import { getToolManualCitationGroups, getToolVerificationNote } from '@/lib/toolManualCitations';
+import { manualMakeName, manualYearHref } from '@/lib/manualBookLink';
+import VehicleManualCta from '@/components/VehicleManualCta';
 import type { ToolPage } from '@/data/tools-pages';
 
 interface PageProps {
@@ -308,8 +310,22 @@ export default async function ToolPage({ params }: PageProps) {
     const vehicleName = `${page.make} ${page.model}`;
     const manualCitationGroups = await getToolManualCitationGroups(page);
     const verificationNote = getToolVerificationNote(page.toolType);
-    const makeManualHref = `/manual/${encodeURIComponent(page.make)}`;
+    const makeManualHref = `/manual/${encodeURIComponent(manualMakeName(page.make))}`;
     const manualNavigatorHref = '/manual-navigator';
+    const generationBooks = page.generations.flatMap((gen) => {
+        const year = representativeManualYear(gen.years);
+        if (!year) return [];
+        const group = manualCitationGroups.find(
+            (entry) => entry.year === year || entry.generationLabel === gen.name,
+        );
+        return [{
+            name: gen.name,
+            year,
+            href: group?.citations[0]?.href || manualYearHref(page.make, year),
+        }];
+    });
+    const primaryBook = generationBooks[0];
+    const bookByGeneration = new Map(generationBooks.map((book) => [book.name, book]));
 
     const sameVehicleTools = getToolPagesForVehicle(page.make, page.model, page.slug).slice(0, 6);
     const sameTypeTools = getToolPagesForType(page.toolType, page.slug)
@@ -510,21 +526,22 @@ export default async function ToolPage({ params }: PageProps) {
                     className="mb-8"
                 />
 
-                {/* Factory Specs CTA — drives internal link equity to maintenance hubs */}
-                <div className="mb-8 rounded-xl border border-teal-500/20 bg-teal-500/5 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h3 className="text-teal-300 font-semibold text-sm uppercase tracking-wider mb-1">Factory Manual Verification</h3>
-                        <p className="text-gray-400 text-sm">
-                            Cross-check these specs against the official {page.make} {page.model} maintenance schedule.
-                        </p>
-                    </div>
-                    <Link
-                        href={maintenanceHubHref}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-500 text-black text-sm font-bold rounded-lg hover:bg-teal-400 transition shrink-0"
-                    >
-                        View Factory Specs →
+                {primaryBook && (
+                    <VehicleManualCta
+                        href={primaryBook.href}
+                        buttonLabel={`Open the ${primaryBook.year} ${page.make} manual`}
+                        detail={`The spec is above. This opens the ${primaryBook.year} ${page.make} ${page.model} factory book. Use another year if yours is older.`}
+                        links={generationBooks.slice(1).map((book) => ({
+                            href: book.href,
+                            label: `${book.year} book`,
+                        }))}
+                    />
+                )}
+                <p className="mb-8 text-sm text-gray-500">
+                    <Link href={maintenanceHubHref} className="text-teal-300 hover:text-teal-200">
+                        {page.make} {page.model} maintenance schedule
                     </Link>
-                </div>
+                </p>
 
                 <nav className="mb-8 flex flex-wrap gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm">
                     <a href="#specs" className="text-cyan-300 hover:text-cyan-200">Step-by-Step Specs</a>
@@ -540,17 +557,30 @@ export default async function ToolPage({ params }: PageProps) {
                     quickAnswer={page.quickAnswer}
                     verificationNote={verificationNote}
                     manualNavigatorHref={manualNavigatorHref}
-                    makeManualHref={makeManualHref}
+                    bookHref={primaryBook?.href || makeManualHref}
+                    bookLabel={primaryBook ? `Open the ${primaryBook.year} factory manual` : `Open ${vehicleName} manuals`}
                     citationGroups={manualCitationGroups}
                 />
 
                 {/* Generation Breakdown */}
                 <div id="specs" className="space-y-8 mb-12">
-                    {page.generations.map((gen, i) => (
+                    {page.generations.map((gen, i) => {
+                        const generationBook = bookByGeneration.get(gen.name);
+                        return (
                         <div key={i} className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden">
-                            <div className="bg-white/[0.05] px-6 py-4 border-b border-white/10 flex items-center justify-between">
+                            <div className="bg-white/[0.05] px-6 py-4 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
                                 <h2 className="text-xl font-bold text-white">{gen.name}</h2>
-                                <span className="text-sm text-gray-400 font-mono">{gen.years}</span>
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <span className="text-sm text-gray-400 font-mono">{gen.years}</span>
+                                    {generationBook && (
+                                        <Link
+                                            href={generationBook.href}
+                                            className="text-sm font-semibold text-cyan-300 hover:text-cyan-200"
+                                        >
+                                            Open {generationBook.year} manual
+                                        </Link>
+                                    )}
+                                </div>
                             </div>
                             <div className="p-6">
                                 {/* Specs Table */}
@@ -615,7 +645,8 @@ export default async function ToolPage({ params }: PageProps) {
                                 </div>
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 <ToolIntentCommerce page={page} ctaVariant={amazonCtaVariant} />
@@ -736,4 +767,9 @@ export default async function ToolPage({ params }: PageProps) {
 
         </div>
     );
+}
+
+function representativeManualYear(yearsLabel: string): number | null {
+    const match = yearsLabel.match(/\b(?:19|20)\d{2}\b/);
+    return match ? Number(match[0]) : null;
 }

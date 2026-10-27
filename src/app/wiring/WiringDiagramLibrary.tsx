@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useDeferredValue, useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import {
   trackWiringDiagramExit,
   trackWiringDiagramInteract,
@@ -12,6 +13,7 @@ import type { WiringSelectorData } from '@/lib/wiringCoverage';
 import AffiliateLink from '@/components/AffiliateLink';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
 import { Zap, Wrench, ShoppingCart, ArrowRight } from 'lucide-react';
+import { manualVehicleHref } from '@/lib/manualBookLink';
 
 interface DiagramEntry {
   name: string;
@@ -1127,6 +1129,14 @@ export default function WiringDiagramLibrary({ selectorData }: WiringDiagramLibr
                 )}
               </div>
             </div>
+
+            <Link
+              href={manualVehicleHref(selectedMake, selectedYear, archiveTarget)}
+              className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-400/30 bg-cyan-400/10 px-6 py-3 text-sm font-semibold text-cyan-100 hover:bg-cyan-400/20 hover:text-white"
+            >
+              <span>Open the {selectedYear} {archiveTarget} factory manual</span>
+              <span>This exact vehicle →</span>
+            </Link>
 
             {/* System Accordion */}
             <div className="wl-systems">

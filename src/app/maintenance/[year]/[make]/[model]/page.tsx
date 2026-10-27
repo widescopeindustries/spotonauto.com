@@ -7,6 +7,8 @@ import { getMaintenanceSpecLink } from "@/lib/maintenanceFallback";
 import { getDisplayName, slugifyRoutePart, getClampedYear } from "@/data/vehicles";
 import { getNoindexRobots } from "@/lib/seo";
 import { seoTitle } from "@/lib/seoTitle";
+import VehicleManualCta from "@/components/VehicleManualCta";
+import { manualYearHref } from "@/lib/manualBookLink";
 
 export const revalidate = 86400;
 
@@ -298,6 +300,16 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
             </div>
           ))}
         </div>
+
+        <VehicleManualCta
+          href={data?.variant
+            ? `${manualYearHref(displayMake, year)}/${encodeURIComponent(data.variant)}`
+            : manualYearHref(displayMake, year)}
+          buttonLabel={`Open the ${year} ${displayMake} manual`}
+          detail={data?.variant
+            ? `The specs are above. This opens the ${year} ${displayMake} ${data.variant} factory book.`
+            : `The specs are above. This opens the ${year} ${displayMake} factory books so you can pick the ${displayModel}.`}
+        />
 
         {/* Maintenance Intervals Hub */}
         <div className="mb-10">

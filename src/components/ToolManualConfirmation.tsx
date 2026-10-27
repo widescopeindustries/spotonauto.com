@@ -8,7 +8,8 @@ interface ToolManualConfirmationProps {
   quickAnswer: string;
   verificationNote: string;
   manualNavigatorHref: string;
-  makeManualHref: string;
+  bookHref: string;
+  bookLabel: string;
   citationGroups: ToolManualCitationGroup[];
 }
 
@@ -19,7 +20,8 @@ export default function ToolManualConfirmation({
   quickAnswer,
   verificationNote,
   manualNavigatorHref,
-  makeManualHref,
+  bookHref,
+  bookLabel,
   citationGroups,
 }: ToolManualConfirmationProps) {
   return (
@@ -51,20 +53,20 @@ export default function ToolManualConfirmation({
             Exact Vehicle Check
           </h3>
           <p className="mt-3 text-sm leading-6 text-gray-300">
-            Use the archive navigator when you need the exact engine, trim, or production-branch manual instead of a broad year-range summary. That keeps the buying list and repair steps aligned with the real vehicle.
+            The button opens the factory book for this vehicle. Use the engine picker only when your trim is not the one this page already matched.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
-              href={manualNavigatorHref}
+              href={bookHref}
               className="inline-flex items-center justify-center rounded-lg bg-cyan-400 px-4 py-2 text-sm font-bold text-black transition hover:bg-cyan-300"
             >
-              Open Manual Navigator
+              {bookLabel}
             </Link>
             <Link
-              href={makeManualHref}
+              href={manualNavigatorHref}
               className="inline-flex items-center justify-center rounded-lg border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/15"
             >
-              Open {vehicleName} Manuals
+              Different engine or trim
             </Link>
           </div>
         </div>
@@ -121,7 +123,7 @@ export default function ToolManualConfirmation({
         </div>
       ) : (
         <div className="mt-8 rounded-xl border border-dashed border-white/15 bg-black/20 p-5 text-sm leading-6 text-gray-300">
-          Open the manual links above to confirm the exact engine and trim branch before ordering parts.
+          Open the factory manual above to confirm the exact engine before ordering parts.
         </div>
       )}
     </section>

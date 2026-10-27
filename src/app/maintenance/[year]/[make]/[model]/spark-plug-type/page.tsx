@@ -10,6 +10,8 @@ import { buildAmazonSearchUrl } from "@/lib/amazonAffiliate";
 import MaintenanceSpecLinks from "@/components/MaintenanceSpecLinks";
 import RelatedForVehicle from "@/components/RelatedForVehicle";
 import SafetyWarningBox from "@/components/SafetyWarningBox";
+import VehicleManualCta from "@/components/VehicleManualCta";
+import { manualYearHref } from "@/lib/manualBookLink";
 
 export const revalidate = 86400;
 
@@ -226,6 +228,12 @@ export default async function SparkPlugTypePage({ params }: PageProps) {
 
         {/* Maintenance specs nav */}
         <MaintenanceSpecLinks year={year} make={displayMake} model={displayModel} excludeType="spark-plug-type" />
+
+        <VehicleManualCta
+          href={manualYearHref(displayMake, year)}
+          buttonLabel={`Open the ${year} ${displayMake} manual`}
+          detail={`The spec is above. This opens the ${year} ${displayMake} factory books so you can go into the ${displayModel} procedure.`}
+        />
 
         <div className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">What You&apos;ll Need</h2>

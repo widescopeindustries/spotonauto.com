@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import VehicleManualCta from '@/components/VehicleManualCta';
+import { manualYearHref } from '@/lib/manualBookLink';
 
 // High-value SEO page for Hyundai Sonata belt diagram (6 impressions)
 export const metadata: Metadata = {
@@ -125,6 +127,17 @@ export default function HyundaiSonataBeltDiagramPage() {
                         </table>
                     </div>
                 </div>
+
+                <VehicleManualCta
+                    href={manualYearHref('Hyundai', 2020)}
+                    buttonLabel="Open the 2020 Hyundai manual"
+                    detail="The belt size is above. Open the factory book for your Sonata's year if you need the routing procedure for that exact car."
+                    links={[
+                        { href: manualYearHref('Hyundai', 2015), label: '2015 book' },
+                        { href: manualYearHref('Hyundai', 2011), label: '2011 book' },
+                        { href: manualYearHref('Hyundai', 2006), label: '2006 book' },
+                    ]}
+                />
 
                 {/* Belt Routing Diagrams */}
                 <h2 className="text-2xl font-bold mb-6">📐 Belt Routing By Generation</h2>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import VehicleManualCta from '@/components/VehicleManualCta';
+import { manualYearHref } from '@/lib/manualBookLink';
 
 // Hand-crafted page targeting high-volume BMW X3 oil queries
 // GSC: "bmw x3 oil change" = 56 impressions/week at position 72 (machine page too generic)
@@ -221,6 +223,16 @@ export default function BMWX3OilTypePage() {
                         </div>
                     </div>
                 </div>
+
+                <VehicleManualCta
+                    href={manualYearHref('BMW', 2018)}
+                    buttonLabel="Open the 2018 BMW manual"
+                    detail="The oil spec is above. Open the factory book for your X3's year if you need the drain procedure or the exact engine."
+                    links={[
+                        { href: manualYearHref('BMW', 2011), label: '2011 book' },
+                        { href: manualYearHref('BMW', 2004), label: '2004 book' },
+                    ]}
+                />
 
                 {/* BMW Spec Explanation */}
                 <div className="mb-12">

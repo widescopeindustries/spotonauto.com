@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildAmazonSearchUrl } from '@/lib/amazonAffiliate';
+import VehicleManualCta from '@/components/VehicleManualCta';
+import { manualYearHref } from '@/lib/manualBookLink';
 
 // High-value SEO page for BMW X3 headlight queries (14 impressions in Search Console)
 export const metadata: Metadata = {
@@ -122,6 +124,16 @@ export default function BMWX3HeadlightPage() {
                         </table>
                     </div>
                 </div>
+
+                <VehicleManualCta
+                    href={manualYearHref('BMW', 2018)}
+                    buttonLabel="Open the 2018 BMW manual"
+                    detail="The bulb size is above. Open the factory book for your X3's year if you need the housing procedure for that exact car."
+                    links={[
+                        { href: manualYearHref('BMW', 2011), label: '2011 book' },
+                        { href: manualYearHref('BMW', 2004), label: '2004 book' },
+                    ]}
+                />
 
                 {/* Difficulty & Time */}
                 <div className="grid md:grid-cols-3 gap-6 mb-12">
