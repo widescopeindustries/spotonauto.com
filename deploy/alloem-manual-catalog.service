@@ -1,0 +1,15 @@
+[Unit]
+Description=AllOEMManuals resumable source entry-point catalog
+After=alloem-manual-archive.service
+RequiresMountsFor=/srv/alloem-manuals
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/alloemmanuals/manual-catalog.py
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+CPUWeight=10
+CPUQuota=50%
+MemoryMax=1536M
+TimeoutStartSec=15min

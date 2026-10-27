@@ -25,6 +25,9 @@ ENV_PATH = "/root/.config/alloem-health.env"
 LOCK_PATH = "/var/run/alloem-http-watch.lock"
 
 PROBE_TIMEOUT = 8
+# The manuals homepage can take longer than 8s while a crawl is walking it.
+# That is a slow answer, not the dead process from 2026-10-21.
+HOME_TIMEOUT = 20
 STRIKES = 2
 RESTART_COOLDOWN = 600
 PUBLIC_EVERY = 300
@@ -98,12 +101,12 @@ def load_env():
     return values
 
 
-def probe(port, path):
+def probe(port, path, timeout=PROBE_TIMEOUT):
     url = f"http://127.0.0.1:{port}{path}"
     started = time.time()
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "alloem-http-watch"})
-        with urllib.request.urlopen(req, timeout=PROBE_TIMEOUT) as res:
+        with urllib.request.urlopen(req, timeout=timeout) as res:
             body = res.read(64)
             elapsed = time.time() - started
             return res.status == 200 and len(body) > 0, res.status, elapsed
@@ -148,7 +151,25 @@ def wait_until_up(check):
 
 def origin_ok(check):
     details = []
-    for path in check["paths"]:
+    paths = check["paths"]
+    # On the manuals app, restart only when every path fails. A homepage that
+    # is slow while the privacy page still answers is a busy process.
+    if check["name"] == "alloemmanuals-web" and len(paths) > 1:
+        failed = 0
+        for path in paths:
+            timeout = HOME_TIMEOUT if path == "/" else PROBE_TIMEOUT
+            ok, code, elapsed = probe(check["port"], path, timeout)
+            details.append(f"{path} {code} {elapsed:.2f}s")
+            if not ok:
+                failed += 1
+        detail = ", ".join(details)
+        if failed == 0:
+            return True, detail
+        if failed < len(paths):
+            log(f"SLOW {check['name']}: {detail}")
+            return True, detail
+        return False, detail
+    for path in paths:
         ok, code, elapsed = probe(check["port"], path)
         details.append(f"{path} {code} {elapsed:.2f}s")
         if not ok:
@@ -249,7 +270,10 @@ def run(check_only):
             log(f"RESTART {name} suppressed; cooldown has {int(RESTART_COOLDOWN - (now - last))}s left")
             continue
         # Count the cooldown from before the restart so a slow boot cannot loop.
-        restarts[name] = now
+        # Save it before the restart call. A hung restart used to skip the
+        # save, and the next minute restarted the app again.
+        restarts[name] = time.time()
+        save_state(state)
         if not restart_service(name):
             continue
         if wait_until_up(check):

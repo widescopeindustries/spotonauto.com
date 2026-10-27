@@ -1,0 +1,14 @@
+/srv/alloem-manuals/logs/*.log /srv/alloem-manuals/logs/*.jsonl {
+    daily
+    maxsize 100M
+    rotate 48
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 www-data adm
+    sharedscripts
+    postrotate
+        /usr/bin/systemctl kill --kill-who=main --signal=USR1 alloem-manual-cache.service >/dev/null 2>&1 || true
+    endscript
+}

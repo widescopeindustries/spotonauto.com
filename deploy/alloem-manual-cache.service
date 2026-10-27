@@ -1,0 +1,24 @@
+[Unit]
+Description=AllOEMManuals independent persistent manual and media cache
+After=network.target
+RequiresMountsFor=/srv/alloem-manuals
+
+[Service]
+Type=simple
+RuntimeDirectory=alloem-manual-cache
+ExecStartPre=/usr/bin/mountpoint -q /srv/alloem-manuals
+ExecStartPre=/usr/sbin/nginx -t -p /srv/alloem-manuals/ -c /etc/alloemmanuals/manual-cache.conf
+ExecStart=/usr/sbin/nginx -p /srv/alloem-manuals/ -c /etc/alloemmanuals/manual-cache.conf -g "daemon off;"
+ExecReload=/usr/sbin/nginx -p /srv/alloem-manuals/ -c /etc/alloemmanuals/manual-cache.conf -s reload
+Restart=always
+RestartSec=3
+TimeoutStopSec=15
+KillSignal=SIGQUIT
+CPUWeight=900
+MemoryHigh=1536M
+MemoryMax=2G
+TasksMax=64
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

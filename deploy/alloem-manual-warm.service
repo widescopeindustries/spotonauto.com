@@ -1,0 +1,15 @@
+[Unit]
+Description=AllOEMManuals foreground-aware demand warming
+After=alloem-manual-cache.service alloem-manual-gateway.service
+RequiresMountsFor=/srv/alloem-manuals
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/alloemmanuals/manual-warm.py
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+CPUWeight=10
+CPUQuota=25%
+MemoryMax=128M
+TimeoutStartSec=5min

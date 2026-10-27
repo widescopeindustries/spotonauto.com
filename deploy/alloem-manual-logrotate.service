@@ -1,0 +1,8 @@
+[Unit]
+Description=Rotate bounded AllOEMManuals delivery logs
+RequiresMountsFor=/srv/alloem-manuals
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/logrotate --state /var/lib/logrotate/alloem-manual-delivery.status /etc/logrotate.d/alloem-manual-delivery
+Nice=10
+CPUWeight=10

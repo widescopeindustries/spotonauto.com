@@ -1,0 +1,20 @@
+[Unit]
+Description=AllOEMManuals read-only NVMe text archive replica
+After=network.target
+RequiresMountsFor=/srv/alloem-manuals
+
+[Service]
+Type=simple
+WorkingDirectory=/data/lemon-manuals
+ExecStart=/data/lemon-manuals/lemon-website-linux-x86_64-glibc --listen-address 127.0.0.1:8081 /srv/alloem-manuals/source/charm/index.json /srv/alloem-manuals/source/lemon/index.json
+Restart=always
+RestartSec=3
+CPUWeight=800
+CPUQuota=200%
+MemoryHigh=6G
+MemoryMax=10G
+TasksMax=128
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

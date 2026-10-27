@@ -1,0 +1,22 @@
+[Unit]
+Description=AllOEMManuals bounded manual render admission
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/alloemmanuals
+EnvironmentFile=/etc/alloemmanuals/manual-delivery.env
+Environment=NODE_OPTIONS=--max-old-space-size=256
+ExecStart=/usr/bin/node /opt/alloemmanuals/manual-delivery-gateway.mjs
+Restart=always
+RestartSec=2
+TimeoutStopSec=16
+CPUWeight=800
+CPUQuota=150%
+MemoryHigh=1G
+MemoryMax=1536M
+TasksMax=64
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
