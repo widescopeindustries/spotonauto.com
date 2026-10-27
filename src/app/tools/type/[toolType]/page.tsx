@@ -52,7 +52,7 @@ export default async function ToolTypeHubPage({ params }: PageProps) {
         .map(([make, toolPages]) => [make, [...toolPages].sort((a, b) => a.model.localeCompare(b.model))] as const);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+        <div className="mv-content min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
             <section className="py-14 px-4 max-w-7xl mx-auto">
                 <Link href="/tools" className="text-cyan-400 hover:underline text-sm">
                     ← Back to Tools

@@ -120,7 +120,7 @@ export default async function TaskCategoryPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="mv-content max-w-7xl mx-auto px-4 py-12">
         <nav className="text-sm text-gray-500 mb-6">
           <Link href="/" className="hover:text-cyan-400 transition-colors">Home</Link>
           <span className="mx-2">/</span>

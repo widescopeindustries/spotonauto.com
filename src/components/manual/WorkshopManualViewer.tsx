@@ -220,7 +220,7 @@ export default function WorkshopManualViewer({
 
           {/* Center/Main Column: Manual Content */}
           <main className={childSections.length > 0 || siblings.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'}>
-            <div className="rounded-2xl bg-[#131722] border border-slate-800/90 shadow-lg p-6 sm:p-10">
+            <div className="mv-content rounded-2xl bg-[#131722] border border-slate-800/90 shadow-lg p-6 sm:p-10">
               {/* Header Info */}
               <div className="pb-6 mb-6 border-b border-slate-800">
                 <div className="flex flex-wrap items-center gap-2 mb-3">

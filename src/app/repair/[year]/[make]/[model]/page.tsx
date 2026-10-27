@@ -676,7 +676,7 @@ export default async function VehicleRepairHubPage({ params }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-950 via-[#141a1f] to-[#1b2126] text-white">
+    <main className="mv-content min-h-screen bg-gradient-to-b from-slate-950 via-[#141a1f] to-[#1b2126] text-white">
       <VehicleHubTracker vehicle={vehicleLabel} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />

@@ -161,7 +161,7 @@ export default async function ModelGuidesPage({ params }: PageProps) {
           ],
         }) }}
       />
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="mv-content max-w-7xl mx-auto px-4 py-12">
         <FadeInUp>
           <div className="flex items-center gap-4 mb-8">
             <Link href={`/guides/${canonicalMake}`} className="text-cyan-400 hover:underline">← Back to {originalMake}</Link>

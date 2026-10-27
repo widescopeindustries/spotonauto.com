@@ -74,7 +74,7 @@ export default async function VehicleDtcFlowPage({ params }: PageProps) {
   const specs = flow.relatedByType.specification?.slice(0, 6) ?? [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="mv-content min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <section className="py-12 px-4 max-w-4xl mx-auto">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8 flex-wrap">

@@ -120,7 +120,7 @@ export default async function TireSizePage({ params }: PageProps) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="mv-content max-w-5xl mx-auto px-4 py-12">
         <SafetyWarningBox className="mb-6" />
 
         <nav aria-label="Breadcrumb" className="mb-6">

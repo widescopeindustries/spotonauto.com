@@ -61,7 +61,7 @@ const PARTS_CATEGORIES = [
 
 export default function PartsPage() {
     return (
-        <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="mv-content max-w-7xl mx-auto px-4 py-12">
             {/* Hero */}
             <section className="text-center mb-12 pt-12">
                 <h1 className="text-4xl sm:text-5xl font-display font-bold text-white mb-4">

@@ -209,7 +209,7 @@ export default async function VehicleLanePage({ params }: PageProps) {
   const MAINTENANCE_TOOL_TYPES = new Set(['oil-type', 'coolant-type', 'tire-size', 'battery-location', 'wiper-blade-size', 'serpentine-belt', 'brake-fluid-type', 'transmission-fluid-type', 'spark-plug-type', 'headlight-bulb']);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="mv-content min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

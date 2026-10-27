@@ -19,7 +19,7 @@ export default function GuidesPage() {
     .sort();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="mv-content max-w-7xl mx-auto px-4 py-12">
       <FadeInUp>
         <h1 className="text-4xl font-display font-bold text-white mb-4">Repair Guide <span className="text-cyan-400">Directory</span></h1>
         <p className="text-gray-400 mb-12 max-w-2xl">

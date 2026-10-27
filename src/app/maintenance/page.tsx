@@ -21,7 +21,7 @@ export default function MaintenanceLandingPage() {
   const allMakes = Object.keys(VEHICLE_PRODUCTION_YEARS).slice(0, 30);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
+    <div className="mv-content max-w-6xl mx-auto px-4 py-12">
       <h1 className="text-3xl sm:text-4xl font-display font-bold text-white mb-4">
         Vehicle Maintenance Specs
       </h1>

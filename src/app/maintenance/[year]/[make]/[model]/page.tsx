@@ -238,7 +238,7 @@ export default async function MaintenanceHubPage({ params }: PageProps) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="mv-content max-w-5xl mx-auto px-4 py-12">
         <nav aria-label="Breadcrumb" className="mb-6">
           <ol className="flex flex-wrap items-center gap-1.5 text-sm font-body">
             <li>

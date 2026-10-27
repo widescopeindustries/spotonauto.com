@@ -1,3 +1,13 @@
+# Current deployment handoff
+
+## Manual delivery rollout completed 2026-10-27
+
+Read reports/MANUAL-DELIVERY-ROLLOUT-2026-10-27.md before acting. It supersedes older design-only and no-partitioning notes below. All manual content now uses cache3022 -> gateway3020 -> independent renderers3017/3018/3019/3021. Manual release DFFjauCfIojCOX-Q3eCYK is selected by /opt/alloemmanuals/manual-current, with its own copied dependencies. Main stays jQRYPq-bTXk7hkn1c6Rk1. Preserve original 39 ad-target edits and all dirty work.
+
+The synchronized mirrored ext4 volume /srv/alloem-manuals exists on new NVMe partition4. Text hashes verified; replica8081 has original8080 fallback; images and original stores retained. Do not restore partition tables for application rollback. Final Cloudflare manual rules preserve private/alternate response bypasses. Live Nginx has independent manual routing; do not overwrite it with an older repo template. Main startup syncs assets/ads.txt; auto-deploy refuses tracked/untracked dirty trees. Separate repair/enrichment hotspots remain. No new visual paid-fill validation. See candidate/deploy/MANUAL-DELIVERY-RUNBOOK.md under /data/alloem-manual-delivery-20261027 for operations.
+
+Earlier historical project notes follow; deployment status above takes precedence.
+
 # AllOEMManuals Memory
 
 This file is the durable project memory for future Codex runs in this repo.

@@ -85,7 +85,7 @@ export default function TopdonBatteryTesterPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="mv-content min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}

@@ -63,7 +63,7 @@ export default function AmazonAutoPartsPage() {
   };
 
   return (
-    <main className="min-h-screen px-4 pb-16 pt-24 sm:px-6 lg:px-8">
+    <main className="mv-content min-h-screen px-4 pb-16 pt-24 sm:px-6 lg:px-8">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 

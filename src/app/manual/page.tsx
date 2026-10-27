@@ -61,7 +61,7 @@ export default function ManualLandingPage() {
   const oldestCoverageYear = Math.min(...coverageYears);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="mv-content max-w-7xl mx-auto px-4 py-12">
       <RiskAcknowledgementGate storageKey="spotonauto:risk_ack:guides:v1" />
       <SafetyWarningBox className="mb-8" />
       {/* Hero */}

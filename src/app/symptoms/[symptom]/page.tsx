@@ -128,7 +128,7 @@ export default async function SymptomHubPage({ params }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-950 text-white">
+    <main className="mv-content min-h-screen bg-gradient-to-b from-gray-950 via-black to-gray-950 text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script

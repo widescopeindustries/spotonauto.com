@@ -74,7 +74,7 @@ const SONATA_BELT_DATA = [
 
 export default function HyundaiSonataBeltDiagramPage() {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+        <div className="mv-content min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
             <section className="py-16 px-4 max-w-6xl mx-auto">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
